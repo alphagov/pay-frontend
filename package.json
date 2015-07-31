@@ -1,7 +1,7 @@
 {
   "name": "pay-frontend",
   "description": "Payments Frontend application",
-  "version": "0.0.0",
+  "version": "0.0.1-SNAPSHOT",
   "private": true,
   "license": "MIT",
   "engines": {
