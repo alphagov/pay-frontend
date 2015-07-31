@@ -1,0 +1,11 @@
+.sass-cache
+.DS_Store
+.start.pid
+.project
+.settings
+.start.pid
+public
+govuk_modules
+node_modules/*
+*.txt
+*.log
