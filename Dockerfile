@@ -1,4 +1,4 @@
-FROM          node:0.10.40
+FROM          node:0.12.7
 
 ADD           . /app
 WORKDIR       /app
@@ -6,6 +6,6 @@ WORKDIR       /app
 ENV PORT      9000
 EXPOSE        9000
 
-RUN           npm install
+RUN           npm install --production
 
-CMD           npm rebuild node-sass && npm start
+CMD           npm start
