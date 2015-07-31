@@ -3,7 +3,7 @@ var app = require(__dirname + '/../server.js').getApp;
 
 describe('The /greeting endpoint returned json', function () {
 
-  it('should return greeting and name attributes', response_to(app, '/greeting').contains(
+  it('should contain the following elements', response_to(app, '/greeting').contains(
     {
       'greeting': 'Hello',
       'name': 'World'
