@@ -10,3 +10,9 @@ govuk_modules
 node_modules/*
 *.txt
 *.log
+
+# IntelliJ gubbins
+.idea
+*.iml
+*.ipr
+*.iws
