@@ -9,14 +9,14 @@ module.exports = {
       response(req.headers.accept, res, 'greeting', data);
     });
 
-    app.get('/payment/:payid', function(req, res) {
-      var connectorUrl = process.env.CONNECTOR_URL.replace('{payId}', req.params.payid);
+    app.get('/charge/:chargeId', function(req, res) {
+      var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', req.params.chargeId);
       var args = {
         headers: {}
       };
       client.get(connectorUrl, args, function(connectorData, connectorResponse) {
         var uiAmount = (connectorData.amount/100).toFixed(2);
-        response(req.headers.accept, res, 'payment', {"amount": uiAmount});
+        response(req.headers.accept, res, 'charge', {"amount": uiAmount});
       });
     });
   }

@@ -6,20 +6,20 @@ var portfinder = require('portfinder');
 var nock = require('nock');
 
 portfinder.getPort(function(err, connectorPort) {
-  process.env.CONNECTOR_URL="http://localhost:" + connectorPort + "/info/payment/{payId}"
+  process.env.CONNECTOR_URL="http://localhost:" + connectorPort + "/v1/info/charge/{chargeId}"
   var app = require(__dirname + '/../server.js').getApp;
   var connectorMock = nock('http://localhost:' + connectorPort);
 
-  describe('The /payment', function () {
-    it('should include the amount of the payment', function(done) {
+  describe('The /charge', function () {
+    it('should include the amount of the charge', function(done) {
       connectorMock
-        .get('/info/payment/PAYID')
+        .get('/v1/info/charge/CHARGEID')
         .reply(200, {
           'amount': 2344
         });
 
       request(app)
-        .get('/payment/PAYID')
+        .get('/charge/CHARGEID')
         .set('Accept', 'application/json')
         .expect(200)
         .end(function(err, res) {
