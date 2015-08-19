@@ -1,5 +1,9 @@
 #!/bin/bash
+if [ "x${ghprbActualCommit}" = "x" ]; then
+    COMMIT=$(git rev-parse HEAD)
+else
+    COMMIT=$ghprbActualCommit
+fi
 
-COMMIT=$(git rev-parse HEAD)
 IMAGE="govukpay/frontend:$COMMIT"
 npm install && npm test && docker build -t $IMAGE . && docker push $IMAGE
