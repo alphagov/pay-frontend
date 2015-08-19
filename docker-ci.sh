@@ -5,5 +5,5 @@ else
     COMMIT=$ghprbActualCommit
 fi
 
-IMAGE="govukpay/frontend:$COMMIT"
-npm install && npm test && docker build -t $IMAGE . && docker push $IMAGE
+echo COMMIT=$COMMIT
+
