@@ -1,14 +1,39 @@
 {{<layout}}
 
 {{$pageTitle}}
-	Look up a charge.
+Look up a charge.
 {{/pageTitle}}
 
 {{$content}}
 
 <main id="content" role="main">
 
-	The amount of the charge was <p id="amount">£{{amount}}</p>
+    <a id="back" href="{{service_url}}">&lt;&lt; Back</a>
+    The amount of the charge was <p id="amount">£{{amount}}</p>
+
+    <form id="cardDetails" name="cardDetails" method="POST" action="{{card_auth_url}}">
+        <div>
+            <label id="cardNo-lbl" for="cardNo">
+                Card number
+                <input id="cardNo" type="text" name="cardNo">
+            </label>
+        </div>
+        <div>
+            <label id="cvc-lbl" for="cvc">
+                Card security code
+                <input id="cvc" type="text" value="" name="cvc">
+            </label>
+        </div>
+        <div>
+            <label id="expiryDate-lbl" for="expiryDate">
+                Expiry Date
+                <input id="expiryDate" type="text" name="expiryDate">
+            </label>
+        </div>
+        <div>
+            <input id="submitCardDetails" type="submit" class="button" value="Make payment" name="submitCardDetails">
+        </div>
+    </form>
 
 </main>
 

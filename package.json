@@ -30,7 +30,8 @@
     "grunt-nodemon": "0.3.0",
     "grunt-sass": "1.0.0",
     "grunt-text-replace": "0.3.12",
-    "node-rest-client": "^1.5.1"
+    "node-rest-client": "^1.5.1",
+    "array.prototype.find": "1.0.0"
   },
   "devDependencies": {
     "chai": "^3.2.0",

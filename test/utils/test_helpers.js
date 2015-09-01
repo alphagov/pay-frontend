@@ -3,7 +3,7 @@ var should = require('chai').should();
 var cheerio = require('cheerio');
 
 module.exports = {
-  response_to: function (app, endpoint) {
+  responseTo: function (app, endpoint) {
 
     return {
       contains: function(expectedResponse) {
