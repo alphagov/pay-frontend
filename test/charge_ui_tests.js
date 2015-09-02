@@ -1,17 +1,20 @@
 var renderer = require(__dirname + '/utils/renderer.js').renderer;
 var cheerio = require('cheerio');
 
-describe('The charge view', function () {
+describe('The charge view', function() {
 
   function renderCharge(templateData, checkFunction) {
     renderer('charge', templateData, function(htmlOutput) {
       $ = cheerio.load(htmlOutput);
       checkFunction($);
     });
-  };
+  }
+  ;
 
-  it('should render the amount', function (done) {
-    var templateData = {'amount': '50.00'};
+  it('should render the amount', function(done) {
+    var templateData = {
+      'amount' : '50.00'
+    };
 
     renderCharge(templateData, function($) {
       $('#amount').text().should.equal('£50.00');
@@ -20,20 +23,38 @@ describe('The charge view', function () {
   });
 
   it('should have a submit form.', function(done) {
-    var cardAuthUrl = "http://connector.service/post_card_url";
-    var templateData = { 'card_auth_url': cardAuthUrl };
+    var postAction = "/post_card_path";
+    var templateData = {
+      'post_card_action' : postAction
+    };
 
     renderCharge(templateData, function($) {
-      $('form#cardDetails').attr('action').should.equal(cardAuthUrl);
-      $('form#cardDetails').attr('method').should.equal("POST");
-      $('form#cardDetails').attr('name').should.equal("cardDetails");
+      var cardForm = $('form#cardDetails');
+      cardForm.attr('action').should.equal(postAction);
+      cardForm.attr('method').should.equal("POST");
+      cardForm.attr('name').should.equal("cardDetails");
+      done();
+    });
+  });
+
+  it('should have a hidden field for the post card URL of the connector.', function(done) {
+    var cardAuthUrl = "http://connector.service/post_card_url";
+    var templateData = {
+      'card_auth_url' : cardAuthUrl
+    };
+
+    renderCharge(templateData, function($) {
+      checkInputField($, 'cardUrl', 'hidden');
+      $('input#cardUrl').val().should.equal(cardAuthUrl)
       done();
     });
   });
 
   it('should have a \'Back to service\' button.', function(done) {
     var serviceUrl = "http://example.com/service";
-    var templateData = { 'service_url': serviceUrl };
+    var templateData = {
+      'service_url' : serviceUrl
+    };
 
     renderCharge(templateData, function($) {
       $('#back').attr('href').should.equal(serviceUrl);
@@ -57,26 +78,30 @@ describe('The charge view', function () {
 
   it('should show required input fields.', function(done) {
     renderCharge({}, function($) {
-      checkInputFieldWithLabel($, 'cardNo', 'text', 'cardNo-lbl');
-      checkInputFieldWithLabel($, 'cvc', 'text', 'cvc-lbl');
-      checkInputFieldWithLabel($, 'expiryDate', 'text', 'expiryDate-lbl');
+      checkInputFieldWithLabel($, 'cardNo', 'text', 'cardNo-lbl', '19');
+      checkInputFieldWithLabel($, 'cvc', 'text', 'cvc-lbl', '3');
+      checkInputFieldWithLabel($, 'expiryDate', 'text', 'expiryDate-lbl', '5');
       done();
     });
   });
 
-  function checkInputField($, id, inputType) {
+  function checkInputField($, id, inputType, maxLength) {
     var inputElement = $('input#' + id);
 
     inputElement.should.have.length(1);
     inputElement.attr('name').should.equal(id);
     inputElement.attr('type').should.equal(inputType);
+
+    if(maxLength) {
+      inputElement.attr('maxlength').should.equal(maxLength);
+    }
   }
 
-  function checkInputFieldWithLabel($, id, inputType, labelId) {
+  function checkInputFieldWithLabel($, id, inputType, labelId, maxLength) {
     var labelElement = $('label#' + labelId);
 
     labelElement.should.have.length(1);
     labelElement.attr('for').should.equal(id);
-    checkInputField($, id, inputType);
+    checkInputField($, id, inputType, maxLength);
   }
 });

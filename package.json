@@ -31,7 +31,8 @@
     "grunt-sass": "1.0.0",
     "grunt-text-replace": "0.3.12",
     "node-rest-client": "^1.5.1",
-    "array.prototype.find": "1.0.0"
+    "array.prototype.find": "1.0.0",
+    "body-parser": "1.13.3"
   },
   "devDependencies": {
     "chai": "^3.2.0",

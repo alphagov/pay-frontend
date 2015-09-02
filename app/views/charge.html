@@ -16,23 +16,25 @@ Look up a charge.
         The amount of the charge was <p id="amount">£{{amount}}</p>
     </div>
 
-    <form id="cardDetails" name="cardDetails" method="POST" action="{{card_auth_url}}">
+    <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}">
+        <input id="cardUrl" name="cardUrl" type="hidden" value="{{card_auth_url}}">
+
         <div>
             <label id="cardNo-lbl" for="cardNo">
                 Card number
-                <input id="cardNo" type="text" name="cardNo">
+                <input id="cardNo" type="text" name="cardNo" maxlength="19">
             </label>
         </div>
         <div>
             <label id="cvc-lbl" for="cvc">
                 Card security code
-                <input id="cvc" type="text" value="" name="cvc">
+                <input id="cvc" type="text" value="" name="cvc" maxlength="3">
             </label>
         </div>
         <div>
             <label id="expiryDate-lbl" for="expiryDate">
                 Expiry Date
-                <input id="expiryDate" type="text" name="expiryDate">
+                <input id="expiryDate" type="text" name="expiryDate" maxlength="5">
             </label>
         </div>
         <div>

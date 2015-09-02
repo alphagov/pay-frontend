@@ -2,30 +2,41 @@ require('array.prototype.find');
 
 var Client = require('node-rest-client').Client;
 var response = require('../utils/response.js').response;
+var redirect = require('../utils/response.js').redirect;
 var client = new Client();
 
 module.exports.bindRoutesTo = function(app) {
+  var chargePath = "/charge";
 
-    app.get('/charge/:chargeId', function(req, res) {
-      var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', req.params.chargeId);
+  app.get(chargePath + '/:chargeId', function(req, res) {
+    var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', req.params.chargeId);
 
-      client.get(connectorUrl, function(connectorData, connectorResponse) {
-        var uiAmount = (connectorData.amount / 100).toFixed(2);
-        var authLink = findLinkForRelation(connectorData.links, 'cardAuth');
+    client.get(connectorUrl, function(connectorData, connectorResponse) {
+      var uiAmount = (connectorData.amount / 100).toFixed(2);
+      var authLink = findLinkForRelation(connectorData.links, 'cardAuth');
 
-        response(req.headers.accept, res, 'charge',
-            {
-                'amount': uiAmount,
-                'service_url': connectorData.service_url,
-                'card_auth_url': authLink.href
-            }
-        );
+      response(req.headers.accept, res, 'charge', {
+        'amount' : uiAmount,
+        'service_url' : connectorData.service_url,
+        'card_auth_url' : authLink.href,
+        'post_card_action' : chargePath
       });
     });
+  });
 
-    function findLinkForRelation(links, rel) {
-        return links.find(function(link) {
-            return link.rel === rel;
-        });
-    }
+  app.post(chargePath, function(req, res) {
+//    console.log('request content-type: ' + req.get('Content-Type'));
+//    console.log("---------------------------------");
+//    console.log('body:  ' + req.body.cardNo);
+//    console.log('params:' + req.params);
+//    console.log("---------------------------------");
+
+    res.sendStatus(204)
+  });
+
+  function findLinkForRelation(links, rel) {
+    return links.find(function(link) {
+      return link.rel === rel;
+    });
+  }
 }
