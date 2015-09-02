@@ -41,6 +41,13 @@ describe('The charge view', function () {
     });
   });
 
+  it('should not show the \'Back to service\' when no service_url passed.', function(done) {
+    renderCharge({}, function($) {
+      $('#back').should.have.length(0);
+      done();
+    });
+  });
+
   it('should have a \'Make payment\' button.', function(done) {
     renderCharge({}, function($) {
       checkInputField($, 'submitCardDetails', 'submit');

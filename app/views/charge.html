@@ -1,4 +1,4 @@
-{{<layout}}
+{{< layout}}
 
 {{$pageTitle}}
 Look up a charge.
@@ -8,8 +8,13 @@ Look up a charge.
 
 <main id="content" role="main">
 
-    <a id="back" href="{{service_url}}">&lt;&lt; Back</a>
-    The amount of the charge was <p id="amount">£{{amount}}</p>
+    {{#service_url}}
+        <a id="back" href="{{service_url}}">&lt;&lt; Back</a>
+    {{/service_url}}
+
+    <div>
+        The amount of the charge was <p id="amount">£{{amount}}</p>
+    </div>
 
     <form id="cardDetails" name="cardDetails" method="POST" action="{{card_auth_url}}">
         <div>
