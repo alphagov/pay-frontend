@@ -9,6 +9,7 @@ module.exports.bindRoutesTo = function(app) {
   var confirmPath = '/confirm';
 
   var chargeView = 'charge';
+  var errorView = 'error';
 
   app.get(chargePath + '/:chargeId', function(req, res) {
     var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', req.params.chargeId);
@@ -36,7 +37,14 @@ module.exports.bindRoutesTo = function(app) {
       }
     };
     client.post(req.body.cardUrl, cardData, function(data, connectorResponse) {
-      res.redirect(303, chargePath + '/' + req.body.chargeId + confirmPath);
+      if(connectorResponse.statusCode == 204) {
+        res.redirect(303, chargePath + '/' + req.body.chargeId + confirmPath);
+        return;
+      }
+
+      response(req.headers.accept, res, errorView, {
+        'message': 'Payment could not be processed, please contact your issuing bank'
+      });
     });
   });
 

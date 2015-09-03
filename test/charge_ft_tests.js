@@ -15,7 +15,7 @@ portfinder.getPort(function(err, connectorPort) {
   process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
   var connectorMock = nock(localServer);
 
-  describe('The charge endpoint', function() {
+  describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function(done) {
       var serviceUrl = 'http://www.example.com/service';
 
@@ -33,7 +33,7 @@ portfinder.getPort(function(err, connectorPort) {
         .get(frontendChargePath + '/' + chargeId)
         .set('Accept', 'application/json')
         .expect(200, {
-          'amount' : "23.45",
+          'amount' : '23.45',
           'service_url' : serviceUrl,
           'card_auth_url' : connectorAuthUrl,
           'post_card_action' : frontendChargePath,
@@ -57,10 +57,32 @@ portfinder.getPort(function(err, connectorPort) {
           'cvc': '234',
           'expiryDate': '11/99'
         })
-        .set('Content-Type', 'application/x-www-form-urlencoded')
-        .expect('Location', frontendChargePath + '/' + chargeId + "/confirm")
+        .expect('Location', frontendChargePath + '/' + chargeId + '/confirm')
         .expect(303)
         .end(done);
+    });
+
+    it('show an error page when authorization was refused', function(done) {
+      connectorMock.post(connectorChargePath + chargeId + '/cards', {
+        'card_number' : '5105105105105100',
+        'cvc' : '234',
+        'expiry_date' : '11/99'
+      }).reply(400, { 'message': 'This transaction was declined.' });
+
+      request(app)
+        .post(frontendChargePath)
+        .send({
+          'cardUrl': connectorAuthUrl,
+          'chargeId': chargeId,
+          'cardNo': '5105 1051 0510 5100',
+          'cvc': '234',
+          'expiryDate': '11/99'
+        })
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .set('Accept', 'application/json')
+        .expect(200, {
+          'message' : 'Payment could not be processed, please contact your issuing bank'
+        }, done);
     });
   });
 });

@@ -1,7 +1,7 @@
 {{< layout}}
 
 {{$pageTitle}}
-Look up a charge.
+Enter your card details.
 {{/pageTitle}}
 
 {{$content}}
@@ -12,8 +12,11 @@ Look up a charge.
         <a id="back" href="{{service_url}}">&lt;&lt; Back</a>
     {{/service_url}}
 
+    <h1>
+        Pay by credit card
+    </h1>
     <div>
-        The amount of the charge was <p id="amount">£{{amount}}</p>
+        Total Amount: <p id="amount">£{{amount}}</p>
     </div>
 
     <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}">

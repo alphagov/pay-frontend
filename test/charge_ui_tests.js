@@ -8,8 +8,7 @@ describe('The charge view', function() {
       $ = cheerio.load(htmlOutput);
       checkFunction($);
     });
-  }
-  ;
+  };
 
   it('should render the amount', function(done) {
     var templateData = {
@@ -99,7 +98,7 @@ describe('The charge view', function() {
     if(maxLength) {
       inputElement.attr('maxlength').should.equal(maxLength);
     }
-  }
+  };
 
   function checkInputFieldWithLabel($, id, inputType, labelId, maxLength) {
     var labelElement = $('label#' + labelId);
@@ -107,5 +106,5 @@ describe('The charge view', function() {
     labelElement.should.have.length(1);
     labelElement.attr('for').should.equal(id);
     checkInputField($, id, inputType, maxLength);
-  }
+  };
 });
