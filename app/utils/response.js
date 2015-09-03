@@ -6,9 +6,5 @@ module.exports = {
     } else {
       res.render(template, data);
     }
-  },
-
-  redirect : function(res, location) {
-    res.redirect(301, location);
   }
 };

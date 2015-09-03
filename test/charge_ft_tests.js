@@ -36,7 +36,8 @@ portfinder.getPort(function(err, connectorPort) {
           'amount' : "23.45",
           'service_url' : serviceUrl,
           'card_auth_url' : connectorAuthUrl,
-          'post_card_action' : frontendChargePath
+          'post_card_action' : frontendChargePath,
+          'charge_id' : chargeId
         }, done);
     });
 
@@ -51,12 +52,13 @@ portfinder.getPort(function(err, connectorPort) {
         .post(frontendChargePath)
         .send({
           'cardUrl': connectorAuthUrl,
+          'chargeId': chargeId,
           'cardNo': '5105 1051 0510 5100',
           'cvc': '234',
           'expiryDate': '11/99'
         })
         .set('Content-Type', 'application/x-www-form-urlencoded')
-        .expect('Location', localServer + frontendChargePath + '/' + chargeId)
+        .expect('Location', frontendChargePath + '/' + chargeId + "/confirm")
         .expect(303)
         .end(done);
     });

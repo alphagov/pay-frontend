@@ -2,11 +2,13 @@ require('array.prototype.find');
 
 var Client = require('node-rest-client').Client;
 var response = require('../utils/response.js').response;
-var redirect = require('../utils/response.js').redirect;
 var client = new Client();
 
 module.exports.bindRoutesTo = function(app) {
-  var chargePath = "/charge";
+  var chargePath = '/charge';
+  var confirmPath = '/confirm';
+
+  var chargeView = 'charge';
 
   app.get(chargePath + '/:chargeId', function(req, res) {
     var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', req.params.chargeId);
@@ -15,28 +17,36 @@ module.exports.bindRoutesTo = function(app) {
       var uiAmount = (connectorData.amount / 100).toFixed(2);
       var authLink = findLinkForRelation(connectorData.links, 'cardAuth');
 
-      response(req.headers.accept, res, 'charge', {
+      response(req.headers.accept, res, chargeView, {
         'amount' : uiAmount,
         'service_url' : connectorData.service_url,
         'card_auth_url' : authLink.href,
-        'post_card_action' : chargePath
+        'post_card_action' : chargePath ,
+        'charge_id' : req.params.chargeId
       });
     });
   });
 
   app.post(chargePath, function(req, res) {
-//    console.log('request content-type: ' + req.get('Content-Type'));
-//    console.log("---------------------------------");
-//    console.log('body:  ' + req.body.cardNo);
-//    console.log('params:' + req.params);
-//    console.log("---------------------------------");
-
-    res.sendStatus(204)
+    var cardData = {
+      data: {
+        'card_number': cleanCardNumber(req.body.cardNo),
+        'cvc': req.body.cvc,
+        'expiry_date': req.body.expiryDate
+      }
+    };
+    client.post(req.body.cardUrl, cardData, function(data, connectorResponse) {
+      res.redirect(303, chargePath + '/' + req.body.chargeId + confirmPath);
+    });
   });
 
   function findLinkForRelation(links, rel) {
     return links.find(function(link) {
       return link.rel === rel;
     });
+  }
+
+  function cleanCardNumber(cardNumber) {
+    return cardNumber.replace(/\s/g, "")
   }
 }
