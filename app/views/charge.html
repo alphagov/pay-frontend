@@ -1,14 +1,50 @@
-{{<layout}}
+{{< layout}}
 
 {{$pageTitle}}
-	Look up a charge.
+Enter your card details.
 {{/pageTitle}}
 
 {{$content}}
 
 <main id="content" role="main">
 
-	The amount of the charge was <p id="amount">£{{amount}}</p>
+    {{#service_url}}
+        <a id="back" href="{{service_url}}">&lt;&lt; Back</a>
+    {{/service_url}}
+
+    <h1>
+        Pay by credit card
+    </h1>
+    <div>
+        Total Amount: <p id="amount">£{{amount}}</p>
+    </div>
+
+    <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}">
+        <input id="cardUrl" name="cardUrl" type="hidden" value="{{card_auth_url}}">
+        <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}">
+
+        <div>
+            <label id="cardNo-lbl" for="cardNo">
+                Card number
+                <input id="cardNo" type="text" name="cardNo" maxlength="19">
+            </label>
+        </div>
+        <div>
+            <label id="cvc-lbl" for="cvc">
+                Card security code
+                <input id="cvc" type="text" value="" name="cvc" maxlength="3">
+            </label>
+        </div>
+        <div>
+            <label id="expiryDate-lbl" for="expiryDate">
+                Expiry Date
+                <input id="expiryDate" type="text" name="expiryDate" maxlength="5">
+            </label>
+        </div>
+        <div>
+            <input id="submitCardDetails" type="submit" class="button" value="Make payment" name="submitCardDetails">
+        </div>
+    </form>
 
 </main>
 
