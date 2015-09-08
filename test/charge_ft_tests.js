@@ -2,6 +2,8 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
+var getTo = require(__dirname + '/utils/test_helpers.js').get;
+var postTo = require(__dirname + '/utils/test_helpers.js').post;
 
 portfinder.getPort(function(err, connectorPort) {
   var localServer = 'http://localhost:' + connectorPort;
@@ -16,9 +18,10 @@ portfinder.getPort(function(err, connectorPort) {
   var connectorMock = nock(localServer);
 
   describe('The /charge endpoint', function() {
-    it('should include the data required for the frontend', function(done) {
-      var serviceUrl = 'http://www.example.com/service';
 
+    describe('together with a successful connector mock for GET /v1/api/charge/23144323', function() {
+
+      var serviceUrl = 'http://www.example.com/service';
       connectorMock.get(connectorChargePath + chargeId).reply(200, {
         'amount' : 2345,
         'service_url' : serviceUrl,
@@ -29,60 +32,71 @@ portfinder.getPort(function(err, connectorPort) {
         } ]
       });
 
-      request(app)
-        .get(frontendChargePath + '/' + chargeId)
-        .set('Accept', 'application/json')
-        .expect(200, {
-          'amount' : '23.45',
-          'service_url' : serviceUrl,
-          'card_auth_url' : connectorAuthUrl,
-          'post_card_action' : frontendChargePath,
-          'charge_id' : chargeId
-        }, done);
+      it('should return the data required for the frontend',
+
+        getTo(app, frontendChargePath + '/' + chargeId)
+          .is(200)
+          .contains({
+              'amount' : '23.45',
+              'service_url' : serviceUrl,
+              'card_auth_url' : connectorAuthUrl,
+              'post_card_action' : frontendChargePath,
+              'charge_id' : chargeId
+            })
+      );
     });
 
-    it('should send clean card data to connector', function(done) {
+    describe('together with a successful connector mock for POST /v1/api/charge/23144323', function() {
+
       connectorMock.post(connectorChargePath + chargeId + '/cards', {
         'card_number' : '5105105105105100',
         'cvc' : '234',
         'expiry_date' : '11/99'
-      }).reply(204);
+       }).reply(204);
 
-      request(app)
-        .post(frontendChargePath)
-        .send({
-          'cardUrl': connectorAuthUrl,
-          'chargeId': chargeId,
-          'cardNo': '5105 1051 0510 5100',
-          'cvc': '234',
-          'expiryDate': '11/99'
-        })
-        .expect('Location', frontendChargePath + '/' + chargeId + '/confirm')
-        .expect(303)
-        .end(done);
+      it('should send clean card data to connector',
+
+        postTo(app, frontendChargePath)
+          .withData({
+              'cardUrl': connectorAuthUrl,
+              'chargeId': chargeId,
+              'cardNo': '5105 1051 0510 5100',
+              'cvc': '234',
+              'expiryDate': '11/99'
+            })
+          .is(303)
+          .location(frontendChargePath + '/' + chargeId + '/confirm')
+
+      );
     });
 
-    it('show an error page when authorization was refused', function(done) {
+    describe('together with a failing connector mock for POST /v1/api/charge/23144323', function() {
+
       connectorMock.post(connectorChargePath + chargeId + '/cards', {
         'card_number' : '5105105105105100',
         'cvc' : '234',
         'expiry_date' : '11/99'
       }).reply(400, { 'message': 'This transaction was declined.' });
 
-      request(app)
-        .post(frontendChargePath)
-        .send({
-          'cardUrl': connectorAuthUrl,
-          'chargeId': chargeId,
-          'cardNo': '5105 1051 0510 5100',
-          'cvc': '234',
-          'expiryDate': '11/99'
-        })
-        .set('Content-Type', 'application/x-www-form-urlencoded')
-        .set('Accept', 'application/json')
-        .expect(200, {
-          'message' : 'Payment could not be processed, please contact your issuing bank'
-        }, done);
+      it('show an error page when authorization was refused',
+
+        postTo(app, frontendChargePath)
+          .withData({
+            'cardUrl': connectorAuthUrl,
+            'chargeId': chargeId,
+            'cardNo': '5105 1051 0510 5100',
+            'cvc': '234',
+            'expiryDate': '11/99'
+            })
+          .is(200)
+          .contains({
+            'message' : 'Payment could not be processed, please contact your issuing bank'
+          })
+
+      );
+
     });
+
   });
+
 });
