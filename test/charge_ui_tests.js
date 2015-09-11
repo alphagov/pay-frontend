@@ -36,23 +36,6 @@ describe('The charge view', function() {
     });
   });
 
-  it('should have a hidden field for the chargeId and POST card URL of the connector.', function(done) {
-    var chargeId = "43624765765";
-    var cardAuthUrl = "http://connector.service/post_card_url";
-    var templateData = {
-      'card_auth_url' : cardAuthUrl,
-      'charge_id' : chargeId
-    };
-
-    renderCharge(templateData, function($) {
-      checkInputField($, 'cardUrl', 'hidden');
-      checkInputField($, 'chargeId', 'hidden');
-      $('input#cardUrl').val().should.equal(cardAuthUrl);
-      $('input#chargeId').val().should.equal(chargeId);
-      done();
-    });
-  });
-
   it('should have a \'Back to service\' button.', function(done) {
     var serviceUrl = "http://example.com/service";
     var templateData = {

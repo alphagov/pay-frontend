@@ -1,21 +1,36 @@
+process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
+
 var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
+var clientSessions = require("client-sessions");
 
 portfinder.getPort(function(err, connectorPort) {
-  var localServer = 'http://localhost:' + connectorPort;
+  describe('The /card_details endpoint', function() {
+    var localServer = 'http://localhost:' + connectorPort;
 
-  var connectorChargePath = '/v1/api/charge/';
-  var frontendChargePath = '/charge';
-  var chargeId = '23144323';
+    var connectorChargePath = '/v1/api/charge/';
+    var frontendCardDetailsPath = '/card_details';
+    var chargeId = '23144323';
 
-  var connectorAuthUrl = localServer + connectorChargePath + chargeId +  '/cards';
+    var connectorAuthUrl = localServer + connectorChargePath + chargeId +  '/cards';
 
-  process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
-  var connectorMock = nock(localServer);
+    var connectorMock = nock(localServer);
 
-  describe('The /charge endpoint', function() {
+    process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
+
+    var cookieValue = clientSessions.util.encode(
+      {
+        'cookieName': 'session_state',
+        'secret':     process.env.SESSION_ENCRYPTION_KEY
+      },
+      {
+        'chargeId'   : chargeId,
+        'cardAuthUrl': connectorAuthUrl
+      }
+    );
+
     it('should include the data required for the frontend', function(done) {
       var serviceUrl = 'http://www.example.com/service';
 
@@ -30,14 +45,13 @@ portfinder.getPort(function(err, connectorPort) {
       });
 
       request(app)
-        .get(frontendChargePath + '/' + chargeId)
+        .get(frontendCardDetailsPath)
+        .set('Cookie', ['session_state='+cookieValue])
         .set('Accept', 'application/json')
         .expect(200, {
           'amount' : '23.45',
           'service_url' : serviceUrl,
-          'card_auth_url' : connectorAuthUrl,
-          'post_card_action' : frontendChargePath,
-          'charge_id' : chargeId
+          'post_card_action' : frontendCardDetailsPath
         }, done);
     });
 
@@ -49,15 +63,14 @@ portfinder.getPort(function(err, connectorPort) {
       }).reply(204);
 
       request(app)
-        .post(frontendChargePath)
+        .post(frontendCardDetailsPath)
+        .set('Cookie', ['session_state='+cookieValue])
         .send({
-          'cardUrl': connectorAuthUrl,
-          'chargeId': chargeId,
           'cardNo': '5105 1051 0510 5100',
           'cvc': '234',
           'expiryDate': '11/99'
         })
-        .expect('Location', frontendChargePath + '/' + chargeId + '/confirm')
+        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .expect(303)
         .end(done);
     });
@@ -70,10 +83,9 @@ portfinder.getPort(function(err, connectorPort) {
       }).reply(400, { 'message': 'This transaction was declined.' });
 
       request(app)
-        .post(frontendChargePath)
+        .post(frontendCardDetailsPath)
+        .set('Cookie', ['session_state='+cookieValue])
         .send({
-          'cardUrl': connectorAuthUrl,
-          'chargeId': chargeId,
           'cardNo': '5105 1051 0510 5100',
           'cvc': '234',
           'expiryDate': '11/99'
