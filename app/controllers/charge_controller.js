@@ -18,10 +18,7 @@ module.exports.bindRoutesTo = function(app) {
 
     req.session_state.chargeId = req.params.chargeId;
 
-    res.writeHead(303, {
-      'Location': CARD_DETAILS_PATH
-    });
-    res.end();
+    res.redirect(303, CARD_DETAILS_PATH);
   });
 
   app.get(CARD_DETAILS_PATH, function(req, res) {
@@ -79,7 +76,6 @@ module.exports.bindRoutesTo = function(app) {
       }
 
       renderErrorView(req,res, 'Payment could not be processed, please contact your issuing bank');
-
     }).on('error', function(err) {
       logger.error('Exception raised calling connector');
       response(req.headers.accept, res, ERROR_VIEW, {
