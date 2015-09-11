@@ -62,7 +62,12 @@ module.exports.bindRoutesTo = function(app) {
       data: {
         'card_number': cleanCardNumber(req.body.cardNo),
         'cvc': req.body.cvc,
-        'expiry_date': req.body.expiryDate
+        'expiry_date': req.body.expiryDate,
+        'cardholder_name' : req.body.cardholder_name,
+        'address' : {
+          'line1' : req.body.address_line1,
+          'postcode' : req.body.address_postcode
+        }
       }
     };
 
@@ -100,4 +105,4 @@ module.exports.bindRoutesTo = function(app) {
       'message': msg
     });
   }
-}
+};
