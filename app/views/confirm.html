@@ -1,0 +1,40 @@
+{{< layout}}
+
+{{$pageTitle}}
+Confirm your details.
+{{/pageTitle}}
+
+{{$content}}
+
+<main id="content" role="main">
+
+    {{#back_url}}
+        <a id="back" href="{{back_url}}">&lt;&lt; Back</a>
+    {{/back_url}}
+
+    <h1>
+        Check your details are correct before confirming
+    </h1>
+
+
+    <table>
+        <tr>
+            <td>Card number:</td>
+            <td id="cardNumber">{{cardNumber}}</td>
+        </tr>
+        <tr>
+            <td>Expiry date:</td>
+            <td id="expiryDate">{{expiryDate}}</td>
+        </tr>
+        <tr>
+            <td>Amount to pay:</td>
+            <td id="amount">£{{amount}}</td>
+        </tr>
+
+    </table>
+
+</main>
+
+{{/content}}
+
+{{/layout}}

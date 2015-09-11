@@ -6,10 +6,15 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
+var clientSessions = require("client-sessions");
+var should = require('chai').should();
+
+var sessionCookieOpts = {'cookieName': 'session_state', 'secret': process.env.SESSION_ENCRYPTION_KEY};
+
 var createCookieValue = require(__dirname + '/utils/session.js').createCookieValue;
 
 portfinder.getPort(function(err, connectorPort) {
-  
+
   var localServer = 'http://localhost:' + connectorPort;
 
   var connectorChargePath = '/v1/api/charge/';
@@ -94,13 +99,20 @@ portfinder.getPort(function(err, connectorPort) {
       );
 
       default_connector_response_for_get_charge();
-
+      
       var serviceUrl = 'http://www.example.com/service';
-      get_charge_request(cookieValue, chargeId).expect(200, {
-        'amount': '23.45',
-        'charge_id': chargeId,
-        'service_url': serviceUrl,
-        'post_card_action': frontendCardDetailsPath
+      
+      get_charge_request(cookieValue, chargeId)
+        .expect(function(res) {
+          var encryptedString = res.headers['set-cookie'][0].split(";")[0].split("=")[1];
+          var decryptedString = clientSessions.util.decode(sessionCookieOpts, encryptedString);
+          should.equal(decryptedString.content.amount, 2345);
+        })
+        .expect(200, {
+          'amount': '23.45',
+          'charge_id': chargeId,
+          'service_url': serviceUrl,
+          'post_card_action': frontendCardDetailsPath
       }).end(done);
     });
 
@@ -146,6 +158,12 @@ portfinder.getPort(function(err, connectorPort) {
 
       post_charge_request(cookieValue, form_data)
           .expect(303)
+          .expect(function(res) {
+                    var encryptedString = res.headers['set-cookie'][0].split(";")[0].split("=")[1];
+                    var decryptedString = clientSessions.util.decode(sessionCookieOpts, encryptedString);
+                    should.equal(decryptedString.content.cardNumber, "************5100");
+                    should.equal(decryptedString.content.expiryDate, '11/99');
+                  })
           .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .end(done);
     });
@@ -274,5 +292,65 @@ portfinder.getPort(function(err, connectorPort) {
                 .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
                 .end(done);
     });
+
+    it('show an error page when the chargeId is not found on the session', function(done) {
+      var cookieValue = createCookieValue(
+        'cardAuthUrl', connectorAuthUrl
+      );
+
+      connectorMock.post(connectorChargePath + chargeId + '/cards', {
+        'card_number' : '5105105105105100',
+        'cvc' : '234',
+        'expiry_date' : '11/99'
+      }).reply(400, { 'message': 'This transaction was declined.' });
+
+      request(app)
+        .post(frontendCardDetailsPath)
+        .set('Cookie', ['session_state=' + cookieValue])
+        .send({
+          'chargeId'  : chargeId,
+          'cardNo'    : '5105 1051 0510 5100',
+          'cvc'       : '234',
+          'expiryDate': '11/99'
+        })
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .set('Accept', 'application/json')
+        .expect(200, {
+          'message' : 'There is a problem with the payments platform'
+        }, done);
+    });
+
   });
+
+  describe('The /card_details/charge_id/confirm endpoint', function() {
+      it('should return the data needed for the UI', function(done) {
+
+        var cookieValue = createCookieValue(
+          'cardAuthUrl', connectorAuthUrl,
+          'amount', 1000,
+          'cardNumber', "************5100",
+          'expiryDate', "11/99"
+        );
+
+        request(app)
+          .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['session_state=' + cookieValue])
+          .set('Accept', 'application/json')
+          .expect(200, {
+            'cardNumber' : "************5100",
+            'expiryDate' : "11/99",
+            'amount' : "10.00",
+          }, done);
+      });
+
+      it('should display Session expired message if the needed data is not in the session', function(done) {
+        request(app)
+          .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Accept', 'application/json')
+          .expect(200, {
+            'message' : 'Session expired'
+          }, done);
+      });
+    });
+
 });

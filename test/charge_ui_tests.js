@@ -102,3 +102,26 @@ describe('The charge view', function() {
     checkInputField($, id, inputType, maxLength);
   }
 });
+
+
+describe('The confirm view', function() {
+
+  it('should render the following fields', function(done) {
+    var templateData = {
+      'cardNumber' : "************5100",
+      'expiryDate' : "11/99",
+      'amount' : "10.00",
+    };
+
+    renderer('confirm', templateData, function(htmlOutput) {
+      $ = cheerio.load(htmlOutput);
+      $('#cardNumber').text().should.equal('************5100');
+      $('#expiryDate').text().should.equal('11/99');
+      $('#amount').text().should.equal('£10.00');
+    });
+
+    done();
+
+  });
+
+});

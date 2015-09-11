@@ -16,6 +16,7 @@ module.exports.bindRoutesTo = function(app) {
   var CARD_DETAILS_PATH = '/card_details';
 
   var CHARGE_VIEW = 'charge';
+  var CONFIRM_VIEW = 'confirm';
 
   var REQUIRED_FORM_FIELDS = {
     'cardNo': 'Card number',
@@ -71,7 +72,10 @@ module.exports.bindRoutesTo = function(app) {
 
       if(connectorResponse.statusCode === 200) {
         logger.info('connector data = ', connectorData);
-        var uiAmount = (connectorData.amount / 100).toFixed(2);
+        var amountInPence = connectorData.amount;
+        var uiAmount = (amountInPence / 100).toFixed(2);
+        
+        req.session_state.amount = amountInPence;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
           'charge_id'        : chargeId,
@@ -110,12 +114,15 @@ module.exports.bindRoutesTo = function(app) {
       return;
     }
 
+    var plainCardNumber = removeWhitespaces(req.body.cardNo);
+    var expiryDate = req.body.expiryDate;
+
     var payload = {
       headers:{"Content-Type": "application/json"},
       data: {
-        'card_number': cleanCardNumber(req.body.cardNo),
+        'card_number': plainCardNumber,
         'cvc': req.body.cvc,
-        'expiry_date': req.body.expiryDate,
+        'expiry_date': expiryDate,
         'cardholder_name': req.body.cardholderName,
         'address': addressFrom(req.body)
       }
@@ -127,11 +134,14 @@ module.exports.bindRoutesTo = function(app) {
       var cardAuthUrl = authLink.href;
 
       client.post(cardAuthUrl, payload, function(data, connectorResponse) {
+  
         if(connectorResponse.statusCode === 204) {
+          req.session_state.cardNumber = hashOutCardNumber(plainCardNumber);
+          req.session_state.expiryDate = expiryDate;
           res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
           return;
         }
-
+  
         renderErrorView(req,res, 'Payment could not be processed, please contact your issuing bank');
       }).on('error', function(err) {
         logger.error('Exception raised calling connector');
@@ -144,6 +154,25 @@ module.exports.bindRoutesTo = function(app) {
       response(req.headers.accept, res, ERROR_VIEW, {
         'message': ERROR_MESSAGE
       });
+    });
+  });
+
+  app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function(req, res) {
+
+    if (!('amount' in req.session_state) ||
+        !('expiryDate' in req.session_state) ||
+        !('cardNumber' in req.session_state)) {
+      renderErrorView(req,res, 'Session expired');
+      return;
+    }
+
+    var amountInPence = req.session_state.amount;
+    var uiAmount = (amountInPence / 100).toFixed(2);
+
+    response(req.headers.accept, res, CONFIRM_VIEW, {
+      'amount'    : uiAmount,
+      'expiryDate': req.session_state.expiryDate,
+      'cardNumber': req.session_state.cardNumber
     });
   });
 
@@ -174,8 +203,12 @@ module.exports.bindRoutesTo = function(app) {
     return checkResult
   }
 
-  function cleanCardNumber(cardNumber) {
-    return cardNumber.replace(/\s/g, "")
+  function removeWhitespaces(s) {
+    return s.replace(/\s/g, "")
+  }
+
+  function hashOutCardNumber(cardNumber) {
+    return '************' + cardNumber.substring(12);
   }
 
   function normaliseAddress(body) {
