@@ -5,10 +5,10 @@ describe('The error view', function() {
 
   function renderErrorPage(templateData, checkFunction) {
     renderer('error', templateData, function(htmlOutput) {
-      $ = cheerio.load(htmlOutput);
+      var $ = cheerio.load(htmlOutput);
       checkFunction($);
     });
-  };
+  }
 
   it('should render an error message', function(done) {
     var msg = 'shut up and take my money!';

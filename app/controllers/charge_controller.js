@@ -13,6 +13,15 @@ module.exports.bindRoutesTo = function(app) {
   var CHARGE_VIEW = 'charge';
   var ERROR_VIEW = 'error';
 
+  var REQUIRED_FORM_FIELDS = {
+    'cardNo': 'Card number',
+    'cvc': 'CVC',
+    'expiryDate': 'Expiry date',
+    'cardholderName': 'Name on card',
+    'addressLine1': 'Building name/number and street',
+    'addressPostcode': 'Postcode'
+  };
+
   app.get(CHARGE_PATH + '/:chargeId', function(req, res) {
     logger.info('GET ' + CHARGE_PATH + '/:chargeId');
 
@@ -57,17 +66,20 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('POST ' + CARD_DETAILS_PATH);
     var chargeId = req.session_state.chargeId
 
+    var checkResult = checkRequiredFields(req.body);
+    if (checkResult.hasError) {
+      renderErrorView(req, res, checkResult.errorMessage);
+      return;
+    }
+
     var payload = {
       headers:{"Content-Type": "application/json"},
       data: {
         'card_number': cleanCardNumber(req.body.cardNo),
         'cvc': req.body.cvc,
         'expiry_date': req.body.expiryDate,
-        'cardholder_name' : req.body.cardholder_name,
-        'address' : {
-          'line1' : req.body.address_line1,
-          'postcode' : req.body.address_postcode
-        }
+        'cardholder_name': req.body.cardholderName,
+        'address': addressFrom(req.body)
       }
     };
 
@@ -95,14 +107,40 @@ module.exports.bindRoutesTo = function(app) {
     });
   }
 
+  function checkRequiredFields(body) {
+    var checkResult = {
+      hasError: false,
+      errorMessage: "The following fields are required:\n"
+    };
+    for (var key in REQUIRED_FORM_FIELDS) {
+      if (!body[key]) {
+        checkResult.hasError = true;
+        checkResult.errorMessage += "* " + REQUIRED_FORM_FIELDS[key] + "\n";
+      }
+    }
+    return checkResult
+  }
+
   function cleanCardNumber(cardNumber) {
     return cardNumber.replace(/\s/g, "")
   }
 
   function renderErrorView(req, res, msg) {
-    logger.error('Error status code received from connector');
+    logger.error('An error occurred: ' + msg);
     response(req.headers.accept, res, ERROR_VIEW, {
       'message': msg
     });
+  }
+
+  function addressFrom(body) {
+    return {
+      'line1': body.addressLine1,
+      'line2': body.addressLine2,
+      'line3': body.addressLine3,
+      'city': body.addressCity,
+      'county': body.addressCounty,
+      'postcode': body.addressPostcode,
+      'country': 'GB'
+    };
   }
 };

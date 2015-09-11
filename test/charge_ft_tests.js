@@ -16,6 +16,8 @@ portfinder.getPort(function(err, connectorPort) {
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
 
+  process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
+
   var connectorMock = nock(localServer);
 
   process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
@@ -63,7 +65,8 @@ portfinder.getPort(function(err, connectorPort) {
       'cardholder_name': 'Jimi Hendrix',
       'address': {
         'line1': '32 Whip Ma Whop Ma Avenue',
-        'postcode': 'Y1 1YN'
+        'postcode': 'Y1 1YN',
+        'country': 'GB'
       }
     };
   }
@@ -75,16 +78,14 @@ portfinder.getPort(function(err, connectorPort) {
       'cardNo': card_number,
       'cvc': '234',
       'expiryDate': '11/99',
-      'cardholder_name': 'Jimi Hendrix',
-      'address_line1': '32 Whip Ma Whop Ma Avenue',
-      'address_postcode': 'Y1 1YN'
+      'cardholderName': 'Jimi Hendrix',
+      'addressLine1': '32 Whip Ma Whop Ma Avenue',
+      'addressPostcode': 'Y1 1YN'
     };
   }
 
-
-  describe('The /charge endpoint', function () {
-
-    xit('should include the data required for the frontend', function(done) {
+  describe('The /charge endpoint', function() {
+    it('should include the data required for the frontend', function(done) {
       var serviceUrl = 'http://www.example.com/service';
       connector_responds_with({
         'amount': 2345,
@@ -104,7 +105,7 @@ portfinder.getPort(function(err, connectorPort) {
       }).end(done);
     });
 
-    xit('should send clean card data to connector', function(done) {
+    it('should send clean card data to connector', function(done) {
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
 
@@ -120,16 +121,15 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line3 = 'blublu';
       card_data.address.city = 'London';
       card_data.address.county = 'Greater London';
-      card_data.address.country = 'country-code';
+      card_data.address.country = 'GB';
 
       connector_expects(card_data).reply(204);
 
       var form_data = minimum_form_card_data('5105105105105100');
-      form_data.address_line2 = card_data.address.address_line2;
-      form_data.address_line3 = card_data.address.address_line3;
-      form_data.address_city = card_data.address.city;
-      form_data.address_county = card_data.address.county;
-      form_data.address_country = card_data.address.country;
+      form_data.addressLine2 = card_data.address.line2;
+      form_data.addressLine3 = card_data.address.line3;
+      form_data.addressCity = card_data.address.city;
+      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(form_data)
           .expect(303)
@@ -137,7 +137,7 @@ portfinder.getPort(function(err, connectorPort) {
           .end(done);
     });
 
-    xit('show an error page when authorization was refused', function(done) {
+    it('show an error page when authorization was refused', function(done) {
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
 

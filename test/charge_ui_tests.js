@@ -1,14 +1,16 @@
 var renderer = require(__dirname + '/utils/renderer.js').renderer;
 var cheerio = require('cheerio');
+var assert = require('chai').assert
+
 
 describe('The charge view', function() {
 
   function renderCharge(templateData, checkFunction) {
     renderer('charge', templateData, function(htmlOutput) {
-      $ = cheerio.load(htmlOutput);
+      var $ = cheerio.load(htmlOutput);
       checkFunction($);
     });
-  };
+  }
 
   it('should render the amount', function(done) {
     var templateData = {
@@ -62,11 +64,18 @@ describe('The charge view', function() {
     });
   });
 
-  it('should show required input fields.', function(done) {
+  it('should show all input fields.', function (done) {
     renderCharge({}, function($) {
-      checkInputFieldWithLabel($, 'cardNo', 'text', 'cardNo-lbl', '19');
-      checkInputFieldWithLabel($, 'cvc', 'text', 'cvc-lbl', '3');
-      checkInputFieldWithLabel($, 'expiryDate', 'text', 'expiryDate-lbl', '5');
+      checkInputFieldWithLabel($, 'cardNo', 'text', 'cardNo-lbl', 'Card number', '19');
+      checkInputFieldWithLabel($, 'cvc', 'text', 'cvc-lbl', 'Card security code', '3');
+      checkInputFieldWithLabel($, 'expiryDate', 'text', 'expiryDate-lbl', 'Expiry date', '5');
+      checkInputFieldWithLabel($, 'cardholderName', 'text', 'cardholderName-lbl', 'Name on card', '200');
+      checkInputFieldWithLabel($, 'addressLine1', 'text', 'addressLine1-lbl', 'Billing address', '100');
+      checkInputField($, 'addressLine2', 'text', '100');
+      checkInputField($, 'addressLine3', 'text', '100');
+      checkInputFieldWithLabel($, 'addressCity', 'text', 'addressCity-lbl', 'Town or city', '100');
+      checkInputFieldWithLabel($, 'addressCounty', 'text', 'addressCounty-lbl', 'County', '100');
+      checkInputFieldWithLabel($, 'addressPostcode', 'text', 'addressPostcode-lbl', 'Postcode', '10');
       done();
     });
   });
@@ -81,13 +90,15 @@ describe('The charge view', function() {
     if(maxLength) {
       inputElement.attr('maxlength').should.equal(maxLength);
     }
-  };
+  }
 
-  function checkInputFieldWithLabel($, id, inputType, labelId, maxLength) {
+  function checkInputFieldWithLabel($, id, inputType, labelId, labelText, maxLength) {
     var labelElement = $('label#' + labelId);
 
     labelElement.should.have.length(1);
     labelElement.attr('for').should.equal(id);
+    var actualLabelText = labelElement.html().trim();
+    assert(actualLabelText.indexOf(labelText) === 0, actualLabelText + "\ndid not start with " + labelText);
     checkInputField($, id, inputType, maxLength);
   };
 });
