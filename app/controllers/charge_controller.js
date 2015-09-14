@@ -31,8 +31,24 @@ module.exports.bindRoutesTo = function(app) {
     res.redirect(303, CARD_DETAILS_PATH);
   });
 
-  app.get(CARD_DETAILS_PATH, function(req, res) {
-    var chargeId = req.session_state.chargeId
+  app.get(CARD_DETAILS_PATH + '/:chargeId', function(req, res) {
+    var chargeId = req.params.chargeId;
+    if(!chargeId) {
+      logger.error('Unexpected: chargeId was not found in request.');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': 'There is a problem with the payments platform1'
+      });
+      return;
+    }
+    var sessionChargeIdKey = 'ch_' + chargeId;
+
+    if(!req.session_state[sessionChargeIdKey]) {
+      logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': 'There is a problem with the payments platform'
+      });
+      return;
+    }
 
     var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
 
@@ -46,8 +62,9 @@ module.exports.bindRoutesTo = function(app) {
         req.session_state.cardAuthUrl = authLink.href;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
-          'amount' : uiAmount,
-          'service_url' : connectorData.service_url,
+          'chargeId'         : chargeId,
+          'amount'           : uiAmount,
+          'service_url'      : connectorData.service_url,
           'post_card_action' : CARD_DETAILS_PATH
         });
         return;
@@ -65,7 +82,24 @@ module.exports.bindRoutesTo = function(app) {
 
   app.post(CARD_DETAILS_PATH, function(req, res) {
     logger.info('POST ' + CARD_DETAILS_PATH);
-    var chargeId = req.session_state.chargeId
+
+    var chargeId = req.body.chargeId;
+    if(!chargeId) {
+      logger.error('Unexpected: chargeId was not found in request.');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': 'There is a problem with the payments platform1'
+      });
+      return;
+    }
+    var sessionChargeIdKey = 'ch_' + chargeId;
+
+    if(!req.session_state[sessionChargeIdKey]) {
+      logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': 'There is a problem with the payments platform'
+      });
+      return;
+    }
 
     var checkResult = validateNewCharge(normaliseAddress(req.body));
     if (checkResult.hasError) {

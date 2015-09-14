@@ -20,6 +20,7 @@ Enter your card details.
     </div>
 
     <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}">
+        <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
         <div>
             <label id="cardholderName-lbl" for="cardholderName">
                 Name on card
