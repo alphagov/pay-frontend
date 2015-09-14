@@ -145,5 +145,12 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200, {'message': 'Payment could not be processed, please contact your issuing bank'})
           .end(done);
     });
+
+    it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
+      post_charge_request(minimum_form_card_data('1111111111111111'))
+          .expect(200, {'message': 'You probably mistyped the card number. Please check and try again.'})
+          .end(done);
+    })
+
   });
 });

@@ -1,5 +1,6 @@
 require('array.prototype.find');
 var logger = require('winston');
+var luhn = require('luhn');
 
 var Client = require('node-rest-client').Client;
 var response = require('../utils/response.js').response;
@@ -54,7 +55,7 @@ module.exports.bindRoutesTo = function(app) {
 
       renderErrorView(req,res, 'There is a problem with the payments platform');
     }).on('error', function(err) {
-      logger.error('Exception raised calling connector');
+      logger.error('Exception raised calling connector: ' + err);
       response(req.headers.accept, res, ERROR_VIEW, {
         'message': 'There is a problem with the payments platform'
       });
@@ -66,7 +67,7 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('POST ' + CARD_DETAILS_PATH);
     var chargeId = req.session_state.chargeId
 
-    var checkResult = checkRequiredFields(req.body);
+    var checkResult = validateNewCharge(req.body);
     if (checkResult.hasError) {
       renderErrorView(req, res, checkResult.errorMessage);
       return;
@@ -107,7 +108,7 @@ module.exports.bindRoutesTo = function(app) {
     });
   }
 
-  function checkRequiredFields(body) {
+  function validateNewCharge(body) {
     var checkResult = {
       hasError: false,
       errorMessage: "The following fields are required:\n"
@@ -118,6 +119,13 @@ module.exports.bindRoutesTo = function(app) {
         checkResult.errorMessage += "* " + REQUIRED_FORM_FIELDS[key] + "\n";
       }
     }
+    if (body['cardNo']) {
+      if (!luhn.validate(body.cardNo)) {
+        checkResult.hasError = true;
+        checkResult.errorMessage = "You probably mistyped the card number. Please check and try again."
+      }
+    }
+
     return checkResult
   }
 
