@@ -6,25 +6,7 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
-var clientSessions = require("client-sessions");
-
-function createCookieValue() {
-    var params = arguments;
-    var sessionMap = {};
-    for(var i = 0; i < params.length; i += 2) {
-      sessionMap[params[i]] = params[i+1];
-    }
-
-    var cookieValue = clientSessions.util.encode(
-      {
-        'cookieName': 'session_state',
-        'secret':     process.env.SESSION_ENCRYPTION_KEY
-      },
-      sessionMap
-    );
-
-    return cookieValue;
-}
+var createCookieValue = require(__dirname + '/utils/session.js').createCookieValue;
 
 portfinder.getPort(function(err, connectorPort) {
   
