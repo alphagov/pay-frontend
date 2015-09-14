@@ -11,12 +11,10 @@ portfinder.getPort(function(err, connectorPort) {
   var localServer = 'http://localhost:' + connectorPort;
 
   var connectorChargePath = '/v1/api/charge/';
-  var frontendChargePath = '/charge';
   var chargeId = '23144323';
+  var frontendCardDetailsPath = '/card_details';
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
-
-  process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
 
   var connectorMock = nock(localServer);
 
@@ -43,14 +41,14 @@ portfinder.getPort(function(err, connectorPort) {
 
   function get_charge_request() {
     return request(app)
-        .get(frontendChargePath)
+        .get(frontendCardDetailsPath)
         .set('Cookie', ['session_state=' + cookieValue])
         .set('Accept', 'application/json');
   }
 
   function post_charge_request(data) {
     return request(app)
-        .post(frontendChargePath)
+        .post(frontendCardDetailsPath)
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Cookie', ['session_state=' + cookieValue])
         .set('Accept', 'application/json')
@@ -98,10 +96,9 @@ portfinder.getPort(function(err, connectorPort) {
       });
 
       get_charge_request().expect(200, {
-          'amount' : '23.45',
-          'service_url' : serviceUrl,
-        'card_auth_url': connectorAuthUrl,
-        'post_card_action': frontendChargePath
+        'amount': '23.45',
+        'service_url': serviceUrl,
+        'post_card_action': frontendCardDetailsPath
       }).end(done);
     });
 
@@ -111,7 +108,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       post_charge_request(minimum_form_card_data('5105 1051 0510 5100'))
           .expect(303)
-          .expect('Location', frontendChargePath + '/' + chargeId + '/confirm')
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .end(done);
     });
 
@@ -133,7 +130,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       post_charge_request(form_data)
           .expect(303)
-          .expect('Location', frontendChargePath + '/' + chargeId + '/confirm')
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .end(done);
     });
 
@@ -151,6 +148,61 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200, {'message': 'You probably mistyped the card number. Please check and try again.'})
           .end(done);
     })
+
+    it('should ignore empty/null address lines when second address line populated', function (done) {
+      var card_data = minimum_connector_card_data('5105105105105100');
+      card_data.address.line1 = 'bla bla';
+      card_data.address.line2 = 'blublu';
+      delete card_data.address.line3;
+
+      connector_expects(card_data).reply(204);
+      var form_data = minimum_form_card_data('5105105105105100');
+      form_data.addressLine1 = '';
+      form_data.addressLine2 = card_data.address.line1;
+      form_data.addressLine3 = card_data.address.line2;
+
+      post_charge_request(form_data)
+                .expect(303, '')
+                .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+                .end(done);
+    })
+
+    it('should ignore empty/null address lines when only third address line populated', function (done) {
+      var card_data = minimum_connector_card_data('5105105105105100');
+      card_data.address.line1 = 'bla bla';
+      delete card_data.address.line2;
+      delete card_data.address.line3;
+
+      connector_expects(card_data).reply(204);
+      var form_data = minimum_form_card_data('5105105105105100');
+      form_data.addressLine1 = '';
+      form_data.addressLine2 = '';
+      form_data.addressLine3 = card_data.address.line1;
+
+      post_charge_request(form_data)
+                .expect(303, '')
+                .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+                .end(done);
+    })
+
+    it('should pass through empty address lines when the first and third address line are populated', function (done) {
+      var card_data = minimum_connector_card_data('5105105105105100');
+      card_data.address.line1 = '31 gated avenue';
+      card_data.address.line2 = 'Hampshire';
+      delete card_data.address.line3;
+
+      connector_expects(card_data).reply(204); 
+      var form_data = minimum_form_card_data('5105105105105100');
+      form_data.addressLine1 = card_data.address.line1;
+      form_data.addressLine2 = '';
+      form_data.addressLine3 = card_data.address.line2;
+
+      post_charge_request(form_data)
+                .expect(303, '')
+                .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+                .end(done);
+    })
+
 
   });
 });

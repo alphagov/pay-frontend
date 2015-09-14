@@ -67,7 +67,7 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('POST ' + CARD_DETAILS_PATH);
     var chargeId = req.session_state.chargeId
 
-    var checkResult = validateNewCharge(req.body);
+    var checkResult = validateNewCharge(normaliseAddress(req.body));
     if (checkResult.hasError) {
       renderErrorView(req, res, checkResult.errorMessage);
       return;
@@ -138,6 +138,24 @@ module.exports.bindRoutesTo = function(app) {
     response(req.headers.accept, res, ERROR_VIEW, {
       'message': msg
     });
+  }
+
+  function normaliseAddress(body) {
+    if (!body.addressLine1 && !body.addressLine2 && body.addressLine3) {
+      body.addressLine1 = body.addressLine3;
+      delete body.addressLine2;
+      delete body.addressLine3;
+    }
+    if (!body.addressLine1 && body.addressLine2) {
+      body.addressLine1 = body.addressLine2;
+      body.addressLine2 = body.addressLine3;
+      delete body.addressLine3
+    }
+    if (body.addressLine1 && !body.addressLine2 && body.addressLine3) {
+      body.addressLine2 = body.addressLine3;
+      delete body.addressLine3
+    }
+    return body;
   }
 
   function addressFrom(body) {
