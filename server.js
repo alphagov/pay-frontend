@@ -30,6 +30,12 @@ app.use(function (req, res, next) {
   next();
 });
 
+if (process.env.NODE_ENV === 'development') {
+  // Will return stack traces to the browser as well - only use in development!
+  var errorhandler = require('errorhandler');
+  app.use(errorhandler())
+}
+
 routes.bind(app);
 
 app.listen(port);
