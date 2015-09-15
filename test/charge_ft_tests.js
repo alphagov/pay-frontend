@@ -1,5 +1,7 @@
 process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
 
+var EMPTY_BODY='';
+
 var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
@@ -7,7 +9,7 @@ var app = require(__dirname + '/../server.js').getApp;
 var clientSessions = require("client-sessions");
 
 portfinder.getPort(function(err, connectorPort) {
-
+  
   var localServer = 'http://localhost:' + connectorPort;
 
   var connectorChargePath = '/v1/api/charge/';
@@ -147,7 +149,7 @@ portfinder.getPort(function(err, connectorPort) {
       post_charge_request(minimum_form_card_data('1111111111111111'))
           .expect(200, {'message': 'You probably mistyped the card number. Please check and try again.'})
           .end(done);
-    })
+    });
 
     it('should ignore empty/null address lines when second address line populated', function (done) {
       var card_data = minimum_connector_card_data('5105105105105100');
@@ -162,10 +164,10 @@ portfinder.getPort(function(err, connectorPort) {
       form_data.addressLine3 = card_data.address.line2;
 
       post_charge_request(form_data)
-                .expect(303, '')
+                .expect(303, EMPTY_BODY)
                 .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
                 .end(done);
-    })
+    });
 
     it('should ignore empty/null address lines when only third address line populated', function (done) {
       var card_data = minimum_connector_card_data('5105105105105100');
@@ -180,10 +182,10 @@ portfinder.getPort(function(err, connectorPort) {
       form_data.addressLine3 = card_data.address.line1;
 
       post_charge_request(form_data)
-                .expect(303, '')
+                .expect(303, EMPTY_BODY)
                 .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
                 .end(done);
-    })
+    });
 
     it('should pass through empty address lines when the first and third address line are populated', function (done) {
       var card_data = minimum_connector_card_data('5105105105105100');
@@ -198,10 +200,10 @@ portfinder.getPort(function(err, connectorPort) {
       form_data.addressLine3 = card_data.address.line2;
 
       post_charge_request(form_data)
-                .expect(303, '')
+                .expect(303, EMPTY_BODY)
                 .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
                 .end(done);
-    })
+    });
 
 
   });

@@ -8,7 +8,7 @@
     "start": "node start.js",
     "watch": "chokidar app test -c 'npm run test'",
     "test": "npm run lint && npm run grunt-test",
-    "lint": "node ./node_modules/.bin/jshint --verbose ./app/*.js",
+    "lint": "node ./node_modules/.bin/jshint --verbose ./app/*.js ./test/*.js",
     "grunt-test": "node ./node_modules/.bin/grunt test"
   },
   "dependencies": {

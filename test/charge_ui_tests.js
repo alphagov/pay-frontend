@@ -1,6 +1,6 @@
 var renderer = require(__dirname + '/utils/renderer.js').renderer;
 var cheerio = require('cheerio');
-var assert = require('chai').assert
+var assert = require('chai').assert;
 
 
 describe('The charge view', function() {
@@ -100,5 +100,5 @@ describe('The charge view', function() {
     var actualLabelText = labelElement.html().trim();
     assert(actualLabelText.indexOf(labelText) === 0, actualLabelText + "\ndid not start with " + labelText);
     checkInputField($, id, inputType, maxLength);
-  };
+  }
 });
