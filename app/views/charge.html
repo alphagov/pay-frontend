@@ -21,6 +21,12 @@ Enter your card details.
 
     <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}">
         <div>
+            <label id="cardholderName-lbl" for="cardholderName">
+                Name on card
+                <input id="cardholderName" type="text" name="cardholderName" maxlength="200">
+            </label>
+        </div>
+        <div>
             <label id="cardNo-lbl" for="cardNo">
                 Card number
                 <input id="cardNo" type="text" name="cardNo" maxlength="19">
@@ -34,8 +40,41 @@ Enter your card details.
         </div>
         <div>
             <label id="expiryDate-lbl" for="expiryDate">
-                Expiry Date
+                Expiry date
                 <input id="expiryDate" type="text" name="expiryDate" maxlength="5">
+            </label>
+        </div>
+
+        <div>
+            <label id="addressLine1-lbl" for="addressLine1">
+                Billing address
+                <input id="addressLine1" type="text" name="addressLine1" maxlength="100">
+            </label>
+        </div>
+
+        <div>
+            <input id="addressLine2" type="text" name="addressLine2" maxlength="100">
+        </div>
+        <div>
+            <input id="addressLine3" type="text" name="addressLine3" maxlength="100">
+        </div>
+
+        <div>
+            <label id="addressCity-lbl" for="addressCity">
+                Town or city
+                <input id="addressCity" type="text" name="addressCity" maxlength="100">
+            </label>
+        </div>
+        <div>
+            <label id="addressCounty-lbl" for="addressCounty">
+                County
+                <input id="addressCounty" type="text" name="addressCounty" maxlength="100">
+            </label>
+        </div>
+        <div>
+            <label id="addressPostcode-lbl" for="addressPostcode">
+                Postcode
+                <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10">
             </label>
         </div>
         <div>
