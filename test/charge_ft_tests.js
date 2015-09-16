@@ -359,7 +359,8 @@ portfinder.getPort(function(err, connectorPort) {
             'amount': "10.00",
             'cardholderName': "T Eulenspiegel",
             'address': 'Kneitlingen, Brunswick, Germany',
-            'serviceName': 'Pranks incorporated'
+            'serviceName': 'Pranks incorporated',
+            'backUrl': frontendCardDetailsPath + '/' + chargeId
           }, done);
     });
 

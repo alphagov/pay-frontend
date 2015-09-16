@@ -86,7 +86,7 @@ describe('The confirm view', function () {
   });
 
   it('should render a back link', function () {
-    var body = renderTemplate('confirm', {back_url: 'some.url'});
+    var body = renderTemplate('confirm', {backUrl: 'some.url'});
     body.should.containSelector('a#back').withText("Back").withAttribute("href", "some.url");
   });
   
