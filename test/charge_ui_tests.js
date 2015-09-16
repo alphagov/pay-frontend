@@ -89,5 +89,15 @@ describe('The confirm view', function () {
     var body = renderTemplate('confirm', {backUrl: 'some.url'});
     body.should.containSelector('a#back').withText("Back").withAttribute("href", "some.url");
   });
+
+  it('should render a confirm button', function () {
+    var body = renderTemplate('confirm', {confirmUrl: '/card_details/123/confirm'});
+    body.should.containSelector('form#confirmation').withAttributes(
+        {
+          action: '/card_details/123/confirm',
+          method: "POST"
+        });
+    body.should.containSelector('button#confirm').withText("Confirm");
+  });
   
 });

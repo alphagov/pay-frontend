@@ -180,7 +180,8 @@ module.exports.bindRoutesTo = function(app) {
       'cardholderName' : req.session_state.cardholderName,
       'address' : req.session_state.address,
       'serviceName': req.session_state.serviceName,
-      'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId
+      'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
+      'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
     });
   });
 

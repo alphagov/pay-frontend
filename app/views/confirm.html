@@ -8,9 +8,7 @@ Confirm your details.
 
 <main id="content" role="main">
 
-    {{#backUrl}}
-        <a id="back" href="{{backUrl}}">&lt;&lt; Back</a>
-    {{/backUrl}}
+    <a id="back" href="{{backUrl}}">&lt;&lt; Back</a>
 
     <h1>
         Check your details are correct before confirming
@@ -44,6 +42,10 @@ Confirm your details.
         </tr>
 
     </table>
+
+    <form id="confirmation" method="POST" action="{{confirmUrl}}">
+        <button id="confirm">Confirm</button>
+    </form>
 
 </main>
 
