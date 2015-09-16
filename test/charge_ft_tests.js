@@ -17,7 +17,7 @@ portfinder.getPort(function(err, connectorPort) {
 
   var localServer = 'http://localhost:' + connectorPort;
 
-  var connectorChargePath = '/v1/api/charge/';
+  var connectorChargePath = '/v1/frontend/charge/';
   var chargeId = '23144323';
   var frontendCardDetailsPath = '/card_details';
 
@@ -65,6 +65,17 @@ portfinder.getPort(function(err, connectorPort) {
     };
   }
 
+
+  function full_connector_card_data(card_number) {
+    var card_data = minimum_connector_card_data(card_number);
+    card_data.address.line2 = 'bla bla';
+    card_data.address.line3 = 'blublu';
+    card_data.address.city = 'London';
+    card_data.address.county = 'Greater London';
+    card_data.address.country = 'GB';
+    return card_data;
+  }
+
   function minimum_form_card_data(card_number) {
     console.log('chargeId=' + chargeId);
     return {
@@ -78,6 +89,14 @@ portfinder.getPort(function(err, connectorPort) {
       'addressPostcode': 'Y1 1YN'
     };
   }
+
+  function decryptCookie(res) {
+    return clientSessions.util.decode(sessionCookieOpts, res.headers['set-cookie'][0].split(";")[0].split("=")[1]);
+  }
+
+  beforeEach(function() {
+    nock.cleanAll();
+  });
 
   function default_connector_response_for_get_charge() {
     var serviceUrl = 'http://www.example.com/service';
@@ -93,10 +112,8 @@ portfinder.getPort(function(err, connectorPort) {
   }
 
   describe('The /charge endpoint', function() {
-    it('should include the data required for the frontend', function(done) {
-      var cookieValue = createCookieValue(
-        'ch_' + chargeId, true
-      );
+    it.only('should include the data required for the frontend', function(done) {
+      var cookieValue = createCookieValue({}, chargeId);
 
       default_connector_response_for_get_charge();
       
@@ -104,9 +121,8 @@ portfinder.getPort(function(err, connectorPort) {
       
       get_charge_request(cookieValue, chargeId)
         .expect(function(res) {
-          var encryptedString = res.headers['set-cookie'][0].split(";")[0].split("=")[1];
-          var decryptedString = clientSessions.util.decode(sessionCookieOpts, encryptedString);
-          should.equal(decryptedString.content.amount, 2345);
+            var decryptedJson = decryptCookie(res);
+            should.equal(decryptedJson.content.amount, 2345);
         })
         .expect(200, {
           'amount': '23.45',
@@ -117,10 +133,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should send clean card data to connector', function(done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl},chargeId);
 
       default_connector_response_for_get_charge();
 
@@ -134,19 +147,11 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should send card data including optional fields to connector', function (done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
 
       default_connector_response_for_get_charge();
 
-      var card_data = minimum_connector_card_data('5105105105105100');
-      card_data.address.line2 = 'bla bla';
-      card_data.address.line3 = 'blublu';
-      card_data.address.city = 'London';
-      card_data.address.county = 'Greater London';
-      card_data.address.country = 'GB';
+      var card_data = full_connector_card_data('5105105105105100');
 
       connector_expects(card_data).reply(204);
 
@@ -158,21 +163,42 @@ portfinder.getPort(function(err, connectorPort) {
 
       post_charge_request(cookieValue, form_data)
           .expect(303)
-          .expect(function(res) {
-                    var encryptedString = res.headers['set-cookie'][0].split(";")[0].split("=")[1];
-                    var decryptedString = clientSessions.util.decode(sessionCookieOpts, encryptedString);
-                    should.equal(decryptedString.content.cardNumber, "************5100");
-                    should.equal(decryptedString.content.expiryDate, '11/99');
-                  })
           .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .end(done);
     });
 
+    it('should add card data including optional fields to session', function (done) {
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+
+      default_connector_response_for_get_charge();
+
+      connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
+
+      var card_data = full_connector_card_data('5105105105105100');
+      var form_data = minimum_form_card_data('5105105105105100');
+
+      form_data.addressLine2 = card_data.address.line2;
+      form_data.addressLine3 = card_data.address.line3;
+      form_data.addressCity = card_data.address.city;
+      form_data.addressCounty = card_data.address.county;
+
+      var address = '32 Whip Ma Whop Ma Avenue, bla bla, blublu, London, Greater London, Y1 1YN';
+
+      post_charge_request(cookieValue, form_data)
+          .expect(303, {})
+          .expect(function(res) {
+                    var decryptedJson = decryptCookie(res);
+                    should.equal(decryptedJson.content.cardNumber, "************5100");
+                    should.equal(decryptedJson.content.expiryDate, '11/99');
+                    should.equal(decryptedJson.content.cardholderName, 'Jimi Hendrix');
+                    should.equal(decryptedJson.content.address, address);
+                    should.equal(decryptedJson.content.serviceName, "Demo Service");
+                  })
+          .end(done);
+    });
+
     it('show an error page when authorization was refused', function(done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
 
       default_connector_response_for_get_charge();
 
@@ -185,9 +211,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('show an error page when the chargeId is not found on the session', function(done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl});
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line2 = 'bla bla';
@@ -211,20 +235,15 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200, {'message': 'You probably mistyped the card number. Please check and try again.'})
           .end(done);
     });
 
     it('should ignore empty/null address lines when second address line populated', function (done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
@@ -245,10 +264,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should ignore empty/null address lines when only third address line populated', function (done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
@@ -270,17 +286,15 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should pass through empty address lines when the first and third address line are populated', function (done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl,
-        'ch_' + chargeId, true
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = '31 gated avenue';
       card_data.address.line2 = 'Hampshire';
       delete card_data.address.line3;
 
       default_connector_response_for_get_charge();
-
+      
       connector_expects(card_data).reply(204); 
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = card_data.address.line1;
@@ -294,9 +308,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('show an error page when the chargeId is not found on the session', function(done) {
-      var cookieValue = createCookieValue(
-        'cardAuthUrl', connectorAuthUrl
-      );
+      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl});
 
       connectorMock.post(connectorChargePath + chargeId + '/cards', {
         'card_number' : '5105105105105100',
@@ -325,35 +337,51 @@ portfinder.getPort(function(err, connectorPort) {
 
   });
 
-  describe('The /card_details/charge_id/confirm endpoint', function() {
-      it('should return the data needed for the UI', function(done) {
+  describe('The /card_details/charge_id/confirm endpoint', function () {
+    var fullSessionData = {
+      'cardAuthUrl': connectorAuthUrl,
+      'amount': 1000,
+      'cardNumber': "************5100",
+      'expiryDate': "11/99",
+      'cardholderName': 'T Eulenspiegel',
+      'address': 'Kneitlingen, Brunswick, Germany',
+      'serviceName': 'Pranks incorporated'
+    };
 
-        var cookieValue = createCookieValue(
-          'cardAuthUrl', connectorAuthUrl,
-          'amount', 1000,
-          'cardNumber', "************5100",
-          'expiryDate', "11/99"
-        );
-
-        request(app)
+    it('should return the data needed for the UI', function (done) {
+      request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookieValue])
+          .set('Cookie', ['session_state=' + createCookieValue(fullSessionData, chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {
-            'cardNumber' : "************5100",
-            'expiryDate' : "11/99",
-            'amount' : "10.00",
+            'cardNumber': "************5100",
+            'expiryDate': "11/99",
+            'amount': "10.00",
+            'cardholderName': "T Eulenspiegel",
+            'address': 'Kneitlingen, Brunswick, Germany',
+            'serviceName': 'Pranks incorporated'
           }, done);
-      });
-
-      it('should display Session expired message if the needed data is not in the session', function(done) {
-        request(app)
-          .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Accept', 'application/json')
-          .expect(200, {
-            'message' : 'Session expired'
-          }, done);
-      });
     });
+
+    function missing_field_test(missing_field) {
+      return function (done) {
+
+        var sessionData = JSON.parse(JSON.stringify(fullSessionData));
+        delete sessionData[missing_field];
+
+        request(app)
+            .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+            .set('Cookie', ['session_state=' + createCookieValue(sessionData, chargeId)])
+            .set('Accept', 'application/json')
+            .expect(200, {
+              'message': 'Session expired'
+            }, done);
+      };
+    }
+
+    ['amount', 'expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'].map(function (missing_field) {
+      it('should display Session expired message if ' + missing_field + ' is not in the session', missing_field_test(missing_field));
+    });
+  });
 
 });

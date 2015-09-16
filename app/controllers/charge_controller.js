@@ -98,7 +98,6 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('POST ' + CARD_DETAILS_PATH);
 
     var chargeId = req.body.chargeId;
-    var sessionChargeIdKey = createChargeIdSessionKey(chargeId);
 
     if(
       !validChargeIdInTheRequest(req, res, chargeId) ||
@@ -137,6 +136,9 @@ module.exports.bindRoutesTo = function(app) {
         if(connectorResponse.statusCode === 204) {
           req.session_state.cardNumber = hashOutCardNumber(plainCardNumber);
           req.session_state.expiryDate = expiryDate;
+          req.session_state.cardholderName = req.body.cardholderName;
+          req.session_state.address = buildAddressLine(req.body);
+          req.session_state.serviceName = "Demo Service";
           res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
           return;
         }
@@ -160,7 +162,10 @@ module.exports.bindRoutesTo = function(app) {
 
     if (!('amount' in req.session_state) ||
         !('expiryDate' in req.session_state) ||
-        !('cardNumber' in req.session_state)) {
+        !('cardNumber' in req.session_state) ||
+        !('cardholderName' in req.session_state) ||
+        !('address' in req.session_state) ||
+        !('serviceName' in req.session_state)) {
       renderErrorView(req,res, 'Session expired');
       return;
     }
@@ -171,7 +176,10 @@ module.exports.bindRoutesTo = function(app) {
     response(req.headers.accept, res, CONFIRM_VIEW, {
       'amount'    : uiAmount,
       'expiryDate': req.session_state.expiryDate,
-      'cardNumber': req.session_state.cardNumber
+      'cardNumber': req.session_state.cardNumber,
+      'cardholderName' : req.session_state.cardholderName,
+      'address' : req.session_state.address,
+      'serviceName': req.session_state.serviceName
     });
   });
 
@@ -238,5 +246,18 @@ module.exports.bindRoutesTo = function(app) {
       'postcode': body.addressPostcode,
       'country': 'GB'
     };
+  }
+
+  function buildAddressLine(body) {
+    return [body.addressLine1,
+      body.addressLine2,
+      body.addressLine3,
+      body.addressCity,
+      body.addressCounty,
+      body.addressPostcode].filter(notNullOrEmpty).join(", ");
+  }
+
+  function notNullOrEmpty(str) {
+    return str;
   }
 };

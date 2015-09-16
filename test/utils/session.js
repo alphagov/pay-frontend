@@ -6,20 +6,14 @@ var sessionConfig = {
 };
 
 module.exports = {
-    createCookieValue : function () {
-        var params = arguments;
-        var sessionMap = {};
-        for(var i = 0; i < params.length; i += 2) {
-          sessionMap[params[i]] = params[i+1];
-        }
+    createCookieValue : function (sessionMap, chargeId) {
+      if (arguments.length > 1) {
+        sessionMap['ch_' + chargeId] = true;
+      }
 
-        var cookieValue = clientSessions.util.encode(
-          sessionConfig,
-          sessionMap
-        );
-
-        return cookieValue;
+      return clientSessions.util.encode(sessionConfig, sessionMap);
     },
+
     getCookieValue : function(encodedCookieString) {
         return clientSessions.util.decode(
           sessionConfig,

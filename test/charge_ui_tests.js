@@ -65,22 +65,29 @@ describe('The charge view', function() {
 
 describe('The confirm view', function () {
 
-  it('should render cardNumber, expiryDate and amount fields', function () {
+  it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
     var templateData = {
       'cardNumber': "************5100",
       'expiryDate': "11/99",
-      'amount': "10.00"
+      'amount': "10.00",
+      'cardholderName': 'Francisco Blaya-Gonzalvez',
+      'address': '1 street lane, avenue city, AB1 3DF',
+      'serviceName': 'Service 1'
     };
 
     var body = renderTemplate('confirm', templateData);
     body.should.containSelector('#cardNumber').withText('************5100');
     body.should.containSelector('#expiryDate').withText('11/99');
     body.should.containSelector('#amount').withText('£10.00');
+    body.should.containSelector('#cardholderName').withText('Francisco Blaya-Gonzalvez');
+    body.should.containSelector('#address').withText('1 street lane, avenue city, AB1 3DF');
+    body.should.containSelector('#serviceName').withText('Service 1');
+
   });
 
   it('should render a back link', function () {
     var body = renderTemplate('confirm', {back_url: 'some.url'});
-    body.should.containSelector('a#back').withText("Back");
+    body.should.containSelector('a#back').withText("Back").withAttribute("href", "some.url");
   });
   
 });

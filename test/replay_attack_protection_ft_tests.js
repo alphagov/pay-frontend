@@ -9,12 +9,8 @@ var getCookieValue = session.getCookieValue;
 var createCookieValue = session.createCookieValue;
 
 describe('dummy feature - trigger', function() {
-  it('for the next tests in the file', function(done) {
-    done();
-  });
-
   portfinder.getPort(function(err, connectorPort) {
-    describe('secure The /charge endpoint', function() {
+    describe('The secure /charge endpoint', function() {
       beforeEach(function() {
         nock.cleanAll();
       });
@@ -25,8 +21,6 @@ describe('dummy feature - trigger', function() {
       var frontendChargePath = '/charge';
       var chargeId = '23144323';
       var chargeTokenId = 'asdnwnbwkk';
-
-      var connectorTokensUrl = localServer + connectorTokenPath + chargeId +  '/cards';
 
       it('should successfully verify the chargeTokenId', function(done) {
         process.env.CONNECTOR_TOKEN_URL = localServer + connectorTokenPath + '{chargeTokenId}';
@@ -64,10 +58,7 @@ describe('dummy feature - trigger', function() {
 
         var frontendCardDetailsPath = '/card_details';
 
-        var cookieValue = createCookieValue(
-          'ch_' + chargeId, true
-        );
-        console.log('cookieValue=' + cookieValue);
+        var cookieValue = createCookieValue({}, chargeId);
 
         request(app)
           .get(frontendChargePath + '/' + chargeId + '?chargeTokenId=' + chargeTokenId)
@@ -86,8 +77,6 @@ describe('dummy feature - trigger', function() {
         connectorMock.get(connectorTokenPath + chargeTokenId).reply(404, {
           'message' : 'Token has expired!'
         });
-
-        var frontendCardDetailsPath = '/card_details';
 
         request(app)
           .get(frontendChargePath + '/' + chargeId + '?chargeTokenId=' + chargeTokenId)
