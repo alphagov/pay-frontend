@@ -315,6 +315,9 @@ portfinder.getPort(function(err, connectorPort) {
         })
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Accept', 'application/json')
+        .expect(function(res) {
+          should.not.exist(res.headers['set-cookie']);
+        })
         .expect(200, {
           'message' : 'There is a problem with the payments platform'
         }, done);

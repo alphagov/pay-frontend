@@ -57,7 +57,6 @@ module.exports.bindRoutesTo = function(app) {
 
   app.get(CARD_DETAILS_PATH + '/:chargeId', function(req, res) {
     var chargeId = req.params.chargeId;
-    var sessionChargeIdKey = 'ch_' + chargeId;
 
     if(
       !validChargeIdInTheRequest(req, res, chargeId) ||
