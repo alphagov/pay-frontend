@@ -19,7 +19,7 @@ portfinder.getPort(function(err, connectorPort) {
 
   var localServer = 'http://localhost:' + connectorPort;
 
-  var connectorChargePath = '/v1/frontend/charge/';
+  var connectorChargePath = '/v1/frontend/charges/';
   var chargeId = '23144323';
   var frontendCardDetailsPath = '/card_details';
 

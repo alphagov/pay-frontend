@@ -57,6 +57,7 @@ module.exports.bindRoutesTo = function(app) {
   }
 
   app.get(CARD_DETAILS_PATH + '/:chargeId', function(req, res) {
+    logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId');
     var chargeId = req.params.chargeId;
 
     if(
@@ -159,6 +160,8 @@ module.exports.bindRoutesTo = function(app) {
   });
 
   app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function(req, res) {
+
+    logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
 
     if (!('amount' in req.session_state) ||
         !('expiryDate' in req.session_state) ||
