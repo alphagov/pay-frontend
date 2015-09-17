@@ -13,6 +13,8 @@ var sessionCookieOpts = {'cookieName': 'session_state', 'secret': process.env.SE
 
 var createCookieValue = require(__dirname + '/utils/session.js').createCookieValue;
 
+var winston = require('winston');
+
 portfinder.getPort(function(err, connectorPort) {
 
   var localServer = 'http://localhost:' + connectorPort;
@@ -78,7 +80,6 @@ portfinder.getPort(function(err, connectorPort) {
   }
 
   function minimum_form_card_data(card_number) {
-    console.log('chargeId=' + chargeId);
     return {
       'cardUrl': connectorAuthUrl,
       'chargeId': chargeId,
@@ -97,6 +98,11 @@ portfinder.getPort(function(err, connectorPort) {
 
   beforeEach(function() {
     nock.cleanAll();
+  });
+
+  before(function () {
+    // Disable logging.
+    winston.level = 'none';
   });
 
   function default_connector_response_for_get_charge() {
