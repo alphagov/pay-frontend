@@ -22,6 +22,7 @@ portfinder.getPort(function(err, connectorPort) {
   var frontendCardDetailsPath = '/card_details';
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
+  var connectorCaptureUrl = localServer + connectorChargePath + chargeId + '/capture';
 
   var connectorMock = nock(localServer);
 
@@ -107,28 +108,44 @@ portfinder.getPort(function(err, connectorPort) {
         'href': connectorAuthUrl,
         'rel': 'cardAuth',
         'method': 'POST'
+      }, {
+        'href': connectorCaptureUrl,
+        'rel': 'cardCapture',
+        'method': 'POST'
       }]
     });
   }
 
   describe('The /charge endpoint', function() {
-    it.only('should include the data required for the frontend', function(done) {
-      var cookieValue = createCookieValue({}, chargeId);
+    it('should include the data required for the frontend', function (done) {
+      var serviceUrl = 'http://www.example.com/service';
+      connector_responds_with({
+        'amount': 2345,
+        'service_url': serviceUrl,
+        'links': [{
+          'href': connectorAuthUrl,
+          'rel': 'cardAuth',
+          'method': 'POST'
+        }, {
+          'href': connectorCaptureUrl,
+          'rel': 'cardCapture',
+          'method': 'POST'
+        }]
+      });
 
+      var cookieValue = createCookieValue({}, chargeId);
       default_connector_response_for_get_charge();
       
-      var serviceUrl = 'http://www.example.com/service';
-      
       get_charge_request(cookieValue, chargeId)
-        .expect(function(res) {
+          .expect(function (res) {
             var decryptedJson = decryptCookie(res);
             should.equal(decryptedJson.content.amount, 2345);
-        })
-        .expect(200, {
-          'amount': '23.45',
-          'charge_id': chargeId,
-          'service_url': serviceUrl,
-          'post_card_action': frontendCardDetailsPath
+          })
+          .expect(200, {
+            'amount': '23.45',
+            'charge_id': chargeId,
+            'service_url': serviceUrl,
+            'post_card_action': frontendCardDetailsPath
       }).end(done);
     });
 
@@ -384,6 +401,49 @@ portfinder.getPort(function(err, connectorPort) {
     ['amount', 'expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'].map(function (missing_field) {
       it('should display Session expired message if ' + missing_field + ' is not in the session', missing_field_test(missing_field));
     });
-  });
 
+    it('should post to the connector capture url looked up from the connector when a post arrives', function (done) {
+      default_connector_response_for_get_charge();
+      connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(204);
+
+      request(app)
+          .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Accept', 'application/json')
+          .expect(303, {})
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirmed')
+          .end(done);
+    });
+
+    it('should produce an error if the connector responds with a 404 for the charge', function (done) {
+      connectorMock.get(connectorChargePath + chargeId).reply(404);
+
+      request(app)
+          .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Accept', 'application/json')
+          .expect(200, {'message': 'There is a problem with the payments platform'}, done);
+    });
+
+
+    it('should produce an error if the connector returns a non-204 status', function (done) {
+      default_connector_response_for_get_charge();
+      connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(500);
+
+      request(app)
+          .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Accept', 'application/json')
+          .expect(200, {'message': 'There is a problem with the payments platform'}, done);
+    });
+
+    it('should produce an error if the connector is unreachable for the confirm', function (done) {
+      default_connector_response_for_get_charge();
+      request(app)
+          .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Accept', 'application/json')
+          .expect(200, {'message': 'There is a problem with the payments platform'}, done);
+    });
+  });
 });

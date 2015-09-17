@@ -13,6 +13,7 @@ var renderErrorView = require('../utils/response.js').renderErrorView;
 
 module.exports.bindRoutesTo = function(app) {
   var CONFIRM_PATH = '/confirm';
+  var CONFIRMED_PATH = '/confirmed';
   var CARD_DETAILS_PATH = '/card_details';
 
   var CHARGE_VIEW = 'charge';
@@ -73,7 +74,6 @@ module.exports.bindRoutesTo = function(app) {
         logger.info('connector data = ', connectorData);
         var amountInPence = connectorData.amount;
         var uiAmount = (amountInPence / 100).toFixed(2);
-        
         req.session_state.amount = amountInPence;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
@@ -183,6 +183,51 @@ module.exports.bindRoutesTo = function(app) {
       'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
       'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
     });
+  });
+
+  app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
+
+    logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
+
+    var chargeId = req.params.chargeId;
+
+    if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
+      return;
+    }
+
+    var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+    client.get(connectorUrl, function (chargeData, chargeResponse) {
+      if (chargeResponse.statusCode === 200) {
+        var captureLink = findLinkForRelation(chargeData.links, 'cardCapture');
+        var cardCaptureUrl = captureLink.href;
+
+        var payload = {headers: {"Content-Type": "application/json"}, data: {}};
+        client.post(cardCaptureUrl, payload, function (data, connectorResponse) {
+          if (connectorResponse.statusCode === 204) {
+            res.redirect(303, CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRMED_PATH);
+            return;
+          }
+
+          renderErrorView(req, res, ERROR_MESSAGE);
+        }).on('error', function (err) {
+          logger.error('Exception raised calling connector');
+          response(req.headers.accept, res, ERROR_VIEW, {
+            'message': ERROR_MESSAGE
+          });
+        });
+        return;
+      }
+      renderErrorView(req, res, ERROR_MESSAGE);
+    }).on('error', function (err) {
+      logger.error('Exception raised calling connector');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': ERROR_MESSAGE
+      });
+    });
+  });
+
+  app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRMED_PATH, function (req, res) {
+    res.send("The payment has been confirmed. :)");
   });
 
   function findLinkForRelation(links, rel) {
