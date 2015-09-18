@@ -3,16 +3,19 @@ var logger = require('winston');
 var luhn = require('luhn');
 
 var Client = require('node-rest-client').Client;
-var response = require('../utils/response.js').response;
-var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var client = new Client();
+
+var response = require('../utils/response.js').response;
+
+var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
+var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
+var renderErrorView = require('../utils/response.js').renderErrorView;
 
 module.exports.bindRoutesTo = function(app) {
   var CONFIRM_PATH = '/confirm';
   var CARD_DETAILS_PATH = '/card_details';
 
   var CHARGE_VIEW = 'charge';
-  var ERROR_VIEW = 'error';
 
   var REQUIRED_FORM_FIELDS = {
     'cardNo': 'Card number',
@@ -168,13 +171,6 @@ module.exports.bindRoutesTo = function(app) {
 
   function cleanCardNumber(cardNumber) {
     return cardNumber.replace(/\s/g, "")
-  }
-
-  function renderErrorView(req, res, msg) {
-    logger.error('An error occurred: ' + msg);
-    response(req.headers.accept, res, ERROR_VIEW, {
-      'message': msg
-    });
   }
 
   function normaliseAddress(body) {

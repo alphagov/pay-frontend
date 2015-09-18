@@ -2,7 +2,10 @@ require('array.prototype.find');
 var logger = require('winston');
 
 var response = require('../utils/response.js').response;
+
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
+var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
+var renderErrorView = require('../utils/response.js').renderErrorView;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
@@ -75,7 +78,13 @@ module.exports.bindRoutesTo = function(app) {
             }
             logger.error('Failed to delete token=' + chargeTokenId + ' response code from connector=' + tokenDeleteResponse.statusCode);
             renderErrorView(req, res, ERROR_MESSAGE);
-          });
+          })
+          .on('error', function(err) {
+                logger.error('Exception raised calling connector');
+                response(req.headers.accept, res, ERROR_VIEW, {
+                  'message': ERROR_MESSAGE
+                });
+              });
           break;
         }
 
