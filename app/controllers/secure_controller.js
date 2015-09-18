@@ -26,54 +26,22 @@ module.exports.bindRoutesTo = function(app) {
       var connectorUrl = process.env.CONNECTOR_TOKEN_URL.replace('{chargeTokenId}', chargeTokenId);
 
       logger.info('trying to validate token=' + chargeTokenId);
-      client.get(connectorUrl, function(tokenVerifyData, tokenVerifyResponse) {
-        logger.info('response from the connector=' + tokenVerifyResponse.statusCode);
-
-        switch(tokenVerifyResponse.statusCode) {
-          case 200: {
-            logger.info('valid token found chargeTokenId=' + chargeTokenId)
-            logger.info('tokenVerifyData=', tokenVerifyData);
-            if(chargeId != tokenVerifyData.chargeId) {
-              logger.error('Unexpected: chargeId from connector=' + tokenVerifyData.chargeId + ' != chargeId from query=' + chargeId);
-
-              renderErrorView(req,res, ERROR_MESSAGE);
-              return;
-            }
-
-            logger.info('trying to delete token=' + chargeTokenId);
-            client.delete(connectorUrl, function(tokenDeleteData, tokenDeleteResponse) {
-              logger.info('response from the connector=' + tokenDeleteResponse.statusCode);
-              if(tokenDeleteResponse.statusCode === 204) {
-                req.session_state[sessionChargeIdKey] = true;
-                redirectToCardDetails(res, chargeId);
-                return;
-              }
-              logger.error('Failed to delete token=' + chargeTokenId + ' response code from connector=' + tokenDeleteResponse.statusCode);
-              renderErrorView(req, res, ERROR_MESSAGE);
-            });
-            break;
-          }
-
-          case 404: {
-            if(tokenVerifyData.message == "Token has expired!") {
-              logger.error(tokenVerifyData.message);
-            } else {
-              logger.error('Error while deleting token statusCode=' + tokenDeleteResponse.statusCode);
-            }
-            res.status(400).send(ERROR_MESSAGE);
-            break;
-          }
-
-          default: {
-            logger.error('Unexpected from connector response code:' + connectorResponse.statusCode);
-            renderErrorView(req, res, ERROR_MESSAGE);
-          }
-        }
-        return;
-      }).on('error', function(err) {
-        logger.error('Exception raised calling connector');
-        renderErrorView(req, res, ERROR_MESSAGE);
-      });
+      client
+        .get(
+          connectorUrl,
+          secureRedirectHandler(
+            req,
+            res,
+            chargeTokenId,
+            chargeId,
+            connectorUrl,
+            sessionChargeIdKey
+          )
+        )
+        .on('error', function(err) {
+          logger.error('Exception raised calling connector');
+          renderErrorView(req, res, ERROR_MESSAGE);
+        });
       return;
     } else {
       logger.info('token already verified chargeTokenId=' + req.query.chargeTokenId);
@@ -81,6 +49,53 @@ module.exports.bindRoutesTo = function(app) {
 
     redirectToCardDetails(res, chargeId);
   });
+
+  function secureRedirectHandler(req, res, chargeTokenId, chargeId, connectorUrl, sessionChargeIdKey) {
+    return function(tokenVerifyData, tokenVerifyResponse) {
+      logger.info('response from the connector=' + tokenVerifyResponse.statusCode);
+
+      switch(tokenVerifyResponse.statusCode) {
+        case 200: {
+          logger.info('valid token found chargeTokenId=' + chargeTokenId)
+          logger.info('tokenVerifyData=', tokenVerifyData);
+          if(chargeId != tokenVerifyData.chargeId) {
+            logger.error('Unexpected: chargeId from connector=' + tokenVerifyData.chargeId + ' != chargeId from query=' + chargeId);
+
+            renderErrorView(req,res, ERROR_MESSAGE);
+            return;
+          }
+
+          logger.info('trying to delete token=' + chargeTokenId);
+          client.delete(connectorUrl, function(tokenDeleteData, tokenDeleteResponse) {
+            logger.info('response from the connector=' + tokenDeleteResponse.statusCode);
+            if(tokenDeleteResponse.statusCode === 204) {
+              req.session_state[sessionChargeIdKey] = true;
+              redirectToCardDetails(res, chargeId);
+              return;
+            }
+            logger.error('Failed to delete token=' + chargeTokenId + ' response code from connector=' + tokenDeleteResponse.statusCode);
+            renderErrorView(req, res, ERROR_MESSAGE);
+          });
+          break;
+        }
+
+        case 404: {
+          if(tokenVerifyData.message == "Token has expired!") {
+            logger.error(tokenVerifyData.message);
+          } else {
+            logger.error('Error while deleting token statusCode=' + tokenDeleteResponse.statusCode);
+          }
+          res.status(400).send(ERROR_MESSAGE);
+          break;
+        }
+
+        default: {
+          logger.error('Unexpected from connector response code:' + connectorResponse.statusCode);
+          renderErrorView(req, res, ERROR_MESSAGE);
+        }
+      }
+    };
+  }
 
   function redirectToCardDetails(res, chargeId) {
     res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId);
