@@ -23,22 +23,42 @@ module.exports.bindRoutesTo = function(app) {
     'addressPostcode': 'Postcode'
   };
 
-  app.get(CARD_DETAILS_PATH + '/:chargeId', function(req, res) {
-    var chargeId = req.params.chargeId;
+  function createChargeIdSessionKey(chargeId) {
+    return 'ch_' + chargeId;
+  }
+
+  function validChargeIdInTheRequest(req, res, chargeId) {
     if(!chargeId) {
       logger.error('Unexpected: chargeId was not found in request.');
       response(req.headers.accept, res, ERROR_VIEW, {
         'message': ERROR_MESSAGE
       });
-      return;
+      return false;
     }
-    var sessionChargeIdKey = 'ch_' + chargeId;
 
-    if(!req.session_state[sessionChargeIdKey]) {
+    return true;
+  }
+
+  function validChargeIdOnTheSession(req, res, chargeId) {
+    if(!req.session_state[createChargeIdSessionKey(chargeId)]) {
       logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
       response(req.headers.accept, res, ERROR_VIEW, {
         'message': ERROR_MESSAGE
       });
+      return false;
+    }
+
+    return true;
+  }
+
+  app.get(CARD_DETAILS_PATH + '/:chargeId', function(req, res) {
+    var chargeId = req.params.chargeId;
+    var sessionChargeIdKey = 'ch_' + chargeId;
+
+    if(
+      !validChargeIdInTheRequest(req, res, chargeId) ||
+      !validChargeIdOnTheSession(req, res, chargeId)
+    ) {
       return;
     }
 
@@ -75,20 +95,12 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('POST ' + CARD_DETAILS_PATH);
 
     var chargeId = req.body.chargeId;
-    if(!chargeId) {
-      logger.error('Unexpected: chargeId was not found in request.');
-      response(req.headers.accept, res, ERROR_VIEW, {
-        'message': ERROR_MESSAGE
-      });
-      return;
-    }
-    var sessionChargeIdKey = 'ch_' + chargeId;
+    var sessionChargeIdKey = createChargeIdSessionKey(chargeId);
 
-    if(!req.session_state[sessionChargeIdKey]) {
-      logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
-      response(req.headers.accept, res, ERROR_VIEW, {
-        'message': ERROR_MESSAGE
-      });
+    if(
+      !validChargeIdInTheRequest(req, res, chargeId) ||
+      !validChargeIdOnTheSession(req, res, chargeId)
+    ) {
       return;
     }
 

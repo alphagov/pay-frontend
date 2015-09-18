@@ -43,9 +43,9 @@ module.exports.bindRoutesTo = function(app) {
           renderErrorView(req, res, ERROR_MESSAGE);
         });
       return;
-    } else {
-      logger.info('token already verified chargeTokenId=' + req.query.chargeTokenId);
     }
+
+    logger.info('token already verified chargeTokenId=' + req.query.chargeTokenId);
 
     redirectToCardDetails(res, chargeId);
   });
