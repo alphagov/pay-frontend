@@ -4,6 +4,7 @@ var luhn = require('luhn');
 
 var Client = require('node-rest-client').Client;
 var response = require('../utils/response.js').response;
+var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var client = new Client();
 
 module.exports.bindRoutesTo = function(app) {
@@ -27,7 +28,7 @@ module.exports.bindRoutesTo = function(app) {
     if(!chargeId) {
       logger.error('Unexpected: chargeId was not found in request.');
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform1'
+        'message': ERROR_MESSAGE
       });
       return;
     }
@@ -36,7 +37,7 @@ module.exports.bindRoutesTo = function(app) {
     if(!req.session_state[sessionChargeIdKey]) {
       logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform'
+        'message': ERROR_MESSAGE
       });
       return;
     }
@@ -61,11 +62,11 @@ module.exports.bindRoutesTo = function(app) {
         return;
       }
 
-      renderErrorView(req, res, 'There is a problem with the payments platform');
+      renderErrorView(req, res, ERROR_MESSAGE);
     }).on('error', function(err) {
       logger.error('Exception raised calling connector: ' + err);
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform'
+        'message': ERROR_MESSAGE
       });
     });
   });
@@ -77,7 +78,7 @@ module.exports.bindRoutesTo = function(app) {
     if(!chargeId) {
       logger.error('Unexpected: chargeId was not found in request.');
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform1'
+        'message': ERROR_MESSAGE
       });
       return;
     }
@@ -86,7 +87,7 @@ module.exports.bindRoutesTo = function(app) {
     if(!req.session_state[sessionChargeIdKey]) {
       logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform'
+        'message': ERROR_MESSAGE
       });
       return;
     }
@@ -121,7 +122,7 @@ module.exports.bindRoutesTo = function(app) {
     }).on('error', function(err) {
       logger.error('Exception raised calling connector');
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform'
+        'message': ERROR_MESSAGE
       });
     });
   });

@@ -2,6 +2,7 @@ require('array.prototype.find');
 var logger = require('winston');
 
 var response = require('../utils/response.js').response;
+var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
@@ -35,7 +36,7 @@ module.exports.bindRoutesTo = function(app) {
             if(chargeId != tokenVerifyData.chargeId) {
               logger.error('Unexpected: chargeId from connector=' + tokenVerifyData.chargeId + ' != chargeId from query=' + chargeId);
 
-              renderErrorView(req,res, 'There is a problem with the payments platform');
+              renderErrorView(req,res, ERROR_MESSAGE);
               return;
             }
 
@@ -48,26 +49,30 @@ module.exports.bindRoutesTo = function(app) {
                 return;
               }
               logger.error('Failed to delete token=' + chargeTokenId + ' response code from connector=' + tokenDeleteResponse.statusCode);
-              renderErrorView(req, res, 'There is a problem with the payments platform');
+              renderErrorView(req, res, ERROR_MESSAGE);
             });
             break;
           }
 
           case 404: {
-            logger.error('Token has already been used!');
-            res.status(400).send('There is a problem with the payments platform');
+            if(tokenVerifyData.message == "Token has expired!") {
+              logger.error(tokenVerifyData.message);
+            } else {
+              logger.error('Error while deleting token statusCode=' + tokenDeleteResponse.statusCode);
+            }
+            res.status(400).send(ERROR_MESSAGE);
             break;
           }
 
           default: {
             logger.error('Unexpected from connector response code:' + connectorResponse.statusCode);
-            renderErrorView(req, res, 'There is a problem with the payments platform');
+            renderErrorView(req, res, ERROR_MESSAGE);
           }
         }
         return;
       }).on('error', function(err) {
         logger.error('Exception raised calling connector');
-        renderErrorView(req, res, 'There is a problem with the payments platform');
+        renderErrorView(req, res, ERROR_MESSAGE);
       });
       return;
     } else {
