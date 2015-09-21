@@ -77,7 +77,7 @@ module.exports.bindRoutesTo = function(app) {
         req.session_state.cardAuthUrl = authLink.href;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
-          'chargeId'         : chargeId,
+          'charge_id'        : chargeId,
           'amount'           : uiAmount,
           'service_url'      : connectorData.service_url,
           'post_card_action' : CARD_DETAILS_PATH

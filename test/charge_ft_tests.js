@@ -93,7 +93,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       get_charge_request(cookieValue, chargeId).expect(200, {
         'amount': '23.45',
-        'chargeId': chargeId,
+        'charge_id': chargeId,
         'service_url': serviceUrl,
         'post_card_action': frontendCardDetailsPath
       }).end(done);
