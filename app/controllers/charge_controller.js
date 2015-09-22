@@ -3,16 +3,19 @@ var logger = require('winston');
 var luhn = require('luhn');
 
 var Client = require('node-rest-client').Client;
-var response = require('../utils/response.js').response;
 var client = new Client();
 
+var response = require('../utils/response.js').response;
+
+var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
+var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
+var renderErrorView = require('../utils/response.js').renderErrorView;
+
 module.exports.bindRoutesTo = function(app) {
-  var CHARGE_PATH = '/charge';
   var CONFIRM_PATH = '/confirm';
   var CARD_DETAILS_PATH = '/card_details';
 
   var CHARGE_VIEW = 'charge';
-  var ERROR_VIEW = 'error';
 
   var REQUIRED_FORM_FIELDS = {
     'cardNo': 'Card number',
@@ -23,16 +26,44 @@ module.exports.bindRoutesTo = function(app) {
     'addressPostcode': 'Postcode'
   };
 
-  app.get(CHARGE_PATH + '/:chargeId', function(req, res) {
-    logger.info('GET ' + CHARGE_PATH + '/:chargeId');
+  function createChargeIdSessionKey(chargeId) {
+    return 'ch_' + chargeId;
+  }
 
-    req.session_state.chargeId = req.params.chargeId;
+  function validChargeIdInTheRequest(req, res, chargeId) {
+    if(!chargeId) {
+      logger.error('Unexpected: chargeId was not found in request.');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': ERROR_MESSAGE
+      });
+      return false;
+    }
 
-    res.redirect(303, CARD_DETAILS_PATH);
-  });
+    return true;
+  }
 
-  app.get(CARD_DETAILS_PATH, function(req, res) {
-    var chargeId = req.session_state.chargeId
+  function validChargeIdOnTheSession(req, res, chargeId) {
+    if(!req.session_state[createChargeIdSessionKey(chargeId)]) {
+      logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
+      response(req.headers.accept, res, ERROR_VIEW, {
+        'message': ERROR_MESSAGE
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  app.get(CARD_DETAILS_PATH + '/:chargeId', function(req, res) {
+    var chargeId = req.params.chargeId;
+    var sessionChargeIdKey = 'ch_' + chargeId;
+
+    if(
+      !validChargeIdInTheRequest(req, res, chargeId) ||
+      !validChargeIdOnTheSession(req, res, chargeId)
+    ) {
+      return;
+    }
 
     var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
 
@@ -41,31 +72,37 @@ module.exports.bindRoutesTo = function(app) {
       if(connectorResponse.statusCode === 200) {
         logger.info('connector data = ', connectorData);
         var uiAmount = (connectorData.amount / 100).toFixed(2);
-        var authLink = findLinkForRelation(connectorData.links, 'cardAuth');
-
-        req.session_state.cardAuthUrl = authLink.href;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
-          'amount' : uiAmount,
-          'service_url' : connectorData.service_url,
+          'charge_id'        : chargeId,
+          'amount'           : uiAmount,
+          'service_url'      : connectorData.service_url,
           'post_card_action' : CARD_DETAILS_PATH
         });
         return;
       }
 
-      renderErrorView(req,res, 'There is a problem with the payments platform');
+      renderErrorView(req, res, ERROR_MESSAGE);
     }).on('error', function(err) {
       logger.error('Exception raised calling connector: ' + err);
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform'
+        'message': ERROR_MESSAGE
       });
     });
-
   });
 
   app.post(CARD_DETAILS_PATH, function(req, res) {
     logger.info('POST ' + CARD_DETAILS_PATH);
-    var chargeId = req.session_state.chargeId
+
+    var chargeId = req.body.chargeId;
+    var sessionChargeIdKey = createChargeIdSessionKey(chargeId);
+
+    if(
+      !validChargeIdInTheRequest(req, res, chargeId) ||
+      !validChargeIdOnTheSession(req, res, chargeId)
+    ) {
+      return;
+    }
 
     var checkResult = validateNewCharge(normaliseAddress(req.body));
     if (checkResult.hasError) {
@@ -84,20 +121,28 @@ module.exports.bindRoutesTo = function(app) {
       }
     };
 
-    var cardAuthUrl = req.session_state.cardAuthUrl
+    var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+    client.get(connectorUrl, function(chargeData, chargeResponse) {
+      var authLink = findLinkForRelation(chargeData.links, 'cardAuth');
+      var cardAuthUrl = authLink.href;
 
-    client.post(cardAuthUrl, payload, function(data, connectorResponse) {
+      client.post(cardAuthUrl, payload, function(data, connectorResponse) {
+        if(connectorResponse.statusCode === 204) {
+          res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
+          return;
+        }
 
-      if(connectorResponse.statusCode === 204) {
-        res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
-        return;
-      }
-
-      renderErrorView(req,res, 'Payment could not be processed, please contact your issuing bank');
+        renderErrorView(req,res, 'Payment could not be processed, please contact your issuing bank');
+      }).on('error', function(err) {
+        logger.error('Exception raised calling connector');
+        response(req.headers.accept, res, ERROR_VIEW, {
+          'message': ERROR_MESSAGE
+        });
+      });
     }).on('error', function(err) {
       logger.error('Exception raised calling connector');
       response(req.headers.accept, res, ERROR_VIEW, {
-        'message': 'There is a problem with the payments platform'
+        'message': ERROR_MESSAGE
       });
     });
   });
@@ -131,13 +176,6 @@ module.exports.bindRoutesTo = function(app) {
 
   function cleanCardNumber(cardNumber) {
     return cardNumber.replace(/\s/g, "")
-  }
-
-  function renderErrorView(req, res, msg) {
-    logger.error('An error occurred: ' + msg);
-    response(req.headers.accept, res, ERROR_VIEW, {
-      'message': msg
-    });
   }
 
   function normaliseAddress(body) {

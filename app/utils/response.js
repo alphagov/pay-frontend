@@ -1,10 +1,24 @@
+var logger = require('winston');
+
+function response(accept, res, template, data) {
+  if (accept === "application/json") {
+    res.setHeader('Content-Type', 'application/json');
+    res.json(data);
+  } else {
+    res.render(template, data);
+  }
+}
+
 module.exports = {
-  response : function(accept, res, template, data) {
-    if (accept === "application/json") {
-      res.setHeader('Content-Type', 'application/json');
-      res.json(data);
-    } else {
-      res.render(template, data);
-    }
+  ERROR_MESSAGE : 'There is a problem with the payments platform',
+  ERROR_VIEW : 'error',
+
+  response : response,
+
+  renderErrorView : function (req, res, msg) {
+    logger.error('An error occurred: ' + msg);
+    response(req.headers.accept, res, 'error', {
+      'message': msg
+    });
   }
 };
