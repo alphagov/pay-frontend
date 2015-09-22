@@ -72,9 +72,6 @@ module.exports.bindRoutesTo = function(app) {
       if(connectorResponse.statusCode === 200) {
         logger.info('connector data = ', connectorData);
         var uiAmount = (connectorData.amount / 100).toFixed(2);
-        var authLink = findLinkForRelation(connectorData.links, 'cardAuth');
-
-        req.session_state.cardAuthUrl = authLink.href;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
           'charge_id'        : chargeId,
@@ -124,16 +121,24 @@ module.exports.bindRoutesTo = function(app) {
       }
     };
 
-    var cardAuthUrl = req.session_state.cardAuthUrl
+    var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+    client.get(connectorUrl, function(chargeData, chargeResponse) {
+      var authLink = findLinkForRelation(chargeData.links, 'cardAuth');
+      var cardAuthUrl = authLink.href;
 
-    client.post(cardAuthUrl, payload, function(data, connectorResponse) {
+      client.post(cardAuthUrl, payload, function(data, connectorResponse) {
+        if(connectorResponse.statusCode === 204) {
+          res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
+          return;
+        }
 
-      if(connectorResponse.statusCode === 204) {
-        res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
-        return;
-      }
-
-      renderErrorView(req,res, 'Payment could not be processed, please contact your issuing bank');
+        renderErrorView(req,res, 'Payment could not be processed, please contact your issuing bank');
+      }).on('error', function(err) {
+        logger.error('Exception raised calling connector');
+        response(req.headers.accept, res, ERROR_VIEW, {
+          'message': ERROR_MESSAGE
+        });
+      });
     }).on('error', function(err) {
       logger.error('Exception raised calling connector');
       response(req.headers.accept, res, ERROR_VIEW, {

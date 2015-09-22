@@ -74,23 +74,28 @@ portfinder.getPort(function(err, connectorPort) {
     };
   }
 
+  function default_connector_response_for_get_charge() {
+    var serviceUrl = 'http://www.example.com/service';
+    connector_responds_with({
+      'amount': 2345,
+      'service_url': serviceUrl,
+      'links': [{
+        'href': connectorAuthUrl,
+        'rel': 'cardAuth',
+        'method': 'POST'
+      }]
+    });
+  }
+
   describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function(done) {
-      var serviceUrl = 'http://www.example.com/service';
       var cookieValue = createCookieValue(
         'ch_' + chargeId, true
       );
 
-      connector_responds_with({
-        'amount': 2345,
-        'service_url': serviceUrl,
-        'links': [{
-          'href': connectorAuthUrl,
-          'rel': 'cardAuth',
-          'method': 'POST'
-        }]
-      });
+      default_connector_response_for_get_charge();
 
+      var serviceUrl = 'http://www.example.com/service';
       get_charge_request(cookieValue, chargeId).expect(200, {
         'amount': '23.45',
         'charge_id': chargeId,
@@ -104,6 +109,9 @@ portfinder.getPort(function(err, connectorPort) {
         'cardAuthUrl', connectorAuthUrl,
         'ch_' + chargeId, true
       );
+
+      default_connector_response_for_get_charge();
+
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
 
@@ -118,6 +126,8 @@ portfinder.getPort(function(err, connectorPort) {
         'cardAuthUrl', connectorAuthUrl,
         'ch_' + chargeId, true
       );
+
+      default_connector_response_for_get_charge();
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line2 = 'bla bla';
@@ -145,6 +155,8 @@ portfinder.getPort(function(err, connectorPort) {
         'cardAuthUrl', connectorAuthUrl,
         'ch_' + chargeId, true
       );
+
+      default_connector_response_for_get_charge();
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
@@ -201,6 +213,7 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line2 = 'blublu';
       delete card_data.address.line3;
 
+      default_connector_response_for_get_charge();
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -224,6 +237,8 @@ portfinder.getPort(function(err, connectorPort) {
       delete card_data.address.line2;
       delete card_data.address.line3;
 
+      default_connector_response_for_get_charge();
+
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -245,6 +260,8 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line1 = '31 gated avenue';
       card_data.address.line2 = 'Hampshire';
       delete card_data.address.line3;
+
+      default_connector_response_for_get_charge();
 
       connector_expects(card_data).reply(204); 
       var form_data = minimum_form_card_data('5105105105105100');
