@@ -3,10 +3,7 @@ var portfinder = require('portfinder');
 var nock = require('nock');
 var assert = require('chai').assert;
 var app = require(__dirname + '/../server.js').getApp;
-var session = require(__dirname + '/utils/session.js');
-
-var getCookieValue = session.getCookieValue;
-var createCookieValue = session.createCookieValue;
+var cookie = require(__dirname + '/utils/session.js');
 
 describe('dummy feature - trigger', function() {
   portfinder.getPort(function(err, connectorPort) {
@@ -40,10 +37,8 @@ describe('dummy feature - trigger', function() {
           .expect('Location', frontendCardDetailsPath + '/' + chargeId)
           .expect(303)
           .expect(function(res) {
-            var sessionCookie = res.headers['set-cookie'];
-            var sessionCookieValue = /session_state=([^;]+)/.exec(sessionCookie)[1];
-            var decoded_session = getCookieValue(sessionCookieValue);
-            assert.equal(true, decoded_session.content['ch_' + chargeId]);
+            var decoded_session = cookie.decrypt(res, chargeId);
+            assert.deepEqual({}, decoded_session);
           })
           .end(done);
       });
@@ -58,7 +53,7 @@ describe('dummy feature - trigger', function() {
 
         var frontendCardDetailsPath = '/card_details';
 
-        var cookieValue = createCookieValue({}, chargeId);
+        var cookieValue = cookie.create(chargeId);
 
         request(app)
           .get(frontendChargePath + '/' + chargeId + '?chargeTokenId=' + chargeTokenId)

@@ -49,7 +49,7 @@ describe('The charge view', function() {
   });
 
   it('should show all input fields.', function () {
-     var body = renderTemplate('charge', {});
+     var body = renderTemplate('charge', {'charge_id' : '1234'});
      body.should.containInputField('cardNo', 'text').withAttribute('maxlength', '19').withLabel('cardNo-lbl', 'Card number');
      body.should.containInputField('cvc', 'text').withAttribute('maxlength', '3').withLabel('cvc-lbl', 'Card security code');
      body.should.containInputField('expiryDate', 'text').withAttribute('maxlength', '5').withLabel('expiryDate-lbl', 'Expiry date');
@@ -60,6 +60,7 @@ describe('The charge view', function() {
      body.should.containInputField('addressCity', 'text').withAttribute('maxlength', '100').withLabel('addressCity-lbl', 'Town or city');
      body.should.containInputField('addressCounty', 'text').withAttribute('maxlength', '100').withLabel('addressCounty-lbl', 'County');
      body.should.containInputField('addressPostcode', 'text').withAttribute('maxlength', '10').withLabel('addressPostcode-lbl', 'Postcode');
+     body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234');
   });
 });
 
@@ -91,13 +92,14 @@ describe('The confirm view', function () {
   });
 
   it('should render a confirm button', function () {
-    var body = renderTemplate('confirm', {confirmUrl: '/card_details/123/confirm'});
+    var body = renderTemplate('confirm', {confirmUrl: '/card_details/123/confirm', 'charge_id': 1234});
     body.should.containSelector('form#confirmation').withAttributes(
         {
           action: '/card_details/123/confirm',
           method: "POST"
         });
     body.should.containSelector('button#confirm').withText("Confirm");
+    body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234');
   });
   
 });

@@ -72,7 +72,7 @@ module.exports.bindRoutesTo = function(app) {
           client.delete(connectorUrl, function(tokenDeleteData, tokenDeleteResponse) {
             logger.info('response from the connector=' + tokenDeleteResponse.statusCode);
             if(tokenDeleteResponse.statusCode === 204) {
-              req.session_state[sessionChargeIdKey] = true;
+              req.session_state[sessionChargeIdKey] = {};
               redirectToCardDetails(res, chargeId);
               return;
             }

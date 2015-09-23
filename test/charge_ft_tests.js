@@ -6,12 +6,9 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
-var clientSessions = require("client-sessions");
 var should = require('chai').should();
 
-var sessionCookieOpts = {'cookieName': 'session_state', 'secret': process.env.SESSION_ENCRYPTION_KEY};
-
-var createCookieValue = require(__dirname + '/utils/session.js').createCookieValue;
+var cookie = require(__dirname + '/utils/session.js');
 
 var winston = require('winston');
 
@@ -92,10 +89,6 @@ portfinder.getPort(function(err, connectorPort) {
     };
   }
 
-  function decryptCookie(res) {
-    return clientSessions.util.decode(sessionCookieOpts, res.headers['set-cookie'][0].split(";")[0].split("=")[1]);
-  }
-
   beforeEach(function() {
     nock.cleanAll();
   });
@@ -139,13 +132,13 @@ portfinder.getPort(function(err, connectorPort) {
         }]
       });
 
-      var cookieValue = createCookieValue({}, chargeId);
+      var cookieValue = cookie.create(chargeId);
       default_connector_response_for_get_charge();
       
       get_charge_request(cookieValue, chargeId)
           .expect(function (res) {
-            var decryptedJson = decryptCookie(res);
-            should.equal(decryptedJson.content.amount, 2345);
+            var session = cookie.decrypt(res, chargeId);
+            should.equal(session.amount, 2345);
           })
           .expect(200, {
             'amount': '23.45',
@@ -156,7 +149,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should send clean card data to connector', function(done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl},chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       default_connector_response_for_get_charge();
 
@@ -170,7 +163,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should send card data including optional fields to connector', function (done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       default_connector_response_for_get_charge();
 
@@ -190,8 +183,8 @@ portfinder.getPort(function(err, connectorPort) {
           .end(done);
     });
 
-    it('should add card data including optional fields to session', function (done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+    it('should add card data including optional fields to the chargeIds session', function (done) {
+      var cookieValue = cookie.create(chargeId);
 
       default_connector_response_for_get_charge();
 
@@ -210,18 +203,18 @@ portfinder.getPort(function(err, connectorPort) {
       post_charge_request(cookieValue, form_data)
           .expect(303, {})
           .expect(function(res) {
-                    var decryptedJson = decryptCookie(res);
-                    should.equal(decryptedJson.content.cardNumber, "************5100");
-                    should.equal(decryptedJson.content.expiryDate, '11/99');
-                    should.equal(decryptedJson.content.cardholderName, 'Jimi Hendrix');
-                    should.equal(decryptedJson.content.address, address);
-                    should.equal(decryptedJson.content.serviceName, "Demo Service");
+                    var session = cookie.decrypt(res, chargeId);
+                    should.equal(session.cardNumber, "************5100");
+                    should.equal(session.expiryDate, '11/99');
+                    should.equal(session.cardholderName, 'Jimi Hendrix');
+                    should.equal(session.address, address);
+                    should.equal(session.serviceName, "Demo Service");
                   })
           .end(done);
     });
 
     it('show an error page when authorization was refused', function(done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       default_connector_response_for_get_charge();
 
@@ -234,7 +227,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('show an error page when the chargeId is not found on the session', function(done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl});
+      var cookieValue = cookie.create();
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line2 = 'bla bla';
@@ -258,7 +251,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200, {'message': 'You probably mistyped the card number. Please check and try again.'})
@@ -266,7 +259,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should ignore empty/null address lines when second address line populated', function (done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
@@ -287,7 +280,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should ignore empty/null address lines when only third address line populated', function (done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
@@ -309,7 +302,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should pass through empty address lines when the first and third address line are populated', function (done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl}, chargeId);
+      var cookieValue = cookie.create(chargeId);
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = '31 gated avenue';
@@ -331,7 +324,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('show an error page when the chargeId is not found on the session', function(done) {
-      var cookieValue = createCookieValue({cardAuthUrl: connectorAuthUrl});
+      var cookieValue = cookie.create();
 
       connectorMock.post(connectorChargePath + chargeId + '/cards', {
         'card_number' : '5105105105105100',
@@ -362,7 +355,6 @@ portfinder.getPort(function(err, connectorPort) {
 
   describe('The /card_details/charge_id/confirm endpoint', function () {
     var fullSessionData = {
-      'cardAuthUrl': connectorAuthUrl,
       'amount': 1000,
       'cardNumber': "************5100",
       'expiryDate': "11/99",
@@ -374,7 +366,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should return the data needed for the UI', function (done) {
       request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + createCookieValue(fullSessionData, chargeId)])
+          .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
           .set('Accept', 'application/json')
           .expect(200, {
             'cardNumber': "************5100",
@@ -384,7 +376,8 @@ portfinder.getPort(function(err, connectorPort) {
             'address': 'Kneitlingen, Brunswick, Germany',
             'serviceName': 'Pranks incorporated',
             'backUrl': frontendCardDetailsPath + '/' + chargeId,
-            'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm'
+            'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm',
+            'charge_id': chargeId
           }, done);
     });
 
@@ -396,7 +389,7 @@ portfinder.getPort(function(err, connectorPort) {
 
         request(app)
             .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-            .set('Cookie', ['session_state=' + createCookieValue(sessionData, chargeId)])
+            .set('Cookie', ['session_state=' + cookie.create(chargeId, sessionData)])
             .set('Accept', 'application/json')
             .expect(200, {
               'message': 'Session expired'
@@ -414,7 +407,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(303, {})
           .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirmed')
@@ -426,7 +419,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {'message': 'There is a problem with the payments platform'}, done);
     });
@@ -438,7 +431,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {'message': 'There is a problem with the payments platform'}, done);
     });
@@ -447,7 +440,7 @@ portfinder.getPort(function(err, connectorPort) {
       default_connector_response_for_get_charge();
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + createCookieValue({}, chargeId)])
+          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {'message': 'There is a problem with the payments platform'}, done);
     });

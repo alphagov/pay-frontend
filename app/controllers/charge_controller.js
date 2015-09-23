@@ -32,6 +32,10 @@ module.exports.bindRoutesTo = function(app) {
     return 'ch_' + chargeId;
   }
 
+  function chargeState(req, chargeId) {
+    return req.session_state[createChargeIdSessionKey(chargeId)];
+  }
+
   function validChargeIdInTheRequest(req, res, chargeId) {
     if(!chargeId) {
       logger.error('Unexpected: chargeId was not found in request.');
@@ -75,7 +79,8 @@ module.exports.bindRoutesTo = function(app) {
         logger.info('connector data = ', connectorData);
         var amountInPence = connectorData.amount;
         var uiAmount = (amountInPence / 100).toFixed(2);
-        req.session_state.amount = amountInPence;
+        var chargeSession = chargeState(req, chargeId);
+        chargeSession.amount = amountInPence;
 
         response(req.headers.accept, res, CHARGE_VIEW, {
           'charge_id'        : chargeId,
@@ -135,11 +140,12 @@ module.exports.bindRoutesTo = function(app) {
       client.post(cardAuthUrl, payload, function(data, connectorResponse) {
   
         if(connectorResponse.statusCode === 204) {
-          req.session_state.cardNumber = hashOutCardNumber(plainCardNumber);
-          req.session_state.expiryDate = expiryDate;
-          req.session_state.cardholderName = req.body.cardholderName;
-          req.session_state.address = buildAddressLine(req.body);
-          req.session_state.serviceName = "Demo Service";
+          var chargeSession = chargeState(req, chargeId);
+          chargeSession.cardNumber = hashOutCardNumber(plainCardNumber);
+          chargeSession.expiryDate = expiryDate;
+          chargeSession.cardholderName = req.body.cardholderName;
+          chargeSession.address = buildAddressLine(req.body);
+          chargeSession.serviceName = "Demo Service";
           res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
           return;
         }
@@ -162,27 +168,36 @@ module.exports.bindRoutesTo = function(app) {
   app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function(req, res) {
 
     logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
+    
+    var chargeId = req.params.chargeId;
 
-    if (!('amount' in req.session_state) ||
-        !('expiryDate' in req.session_state) ||
-        !('cardNumber' in req.session_state) ||
-        !('cardholderName' in req.session_state) ||
-        !('address' in req.session_state) ||
-        !('serviceName' in req.session_state)) {
+    if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
+      return;
+    }
+
+    var chargeSession = chargeState(req, chargeId);
+
+    if (!('amount' in chargeSession) ||
+        !('expiryDate' in chargeSession) ||
+        !('cardNumber' in chargeSession) ||
+        !('cardholderName' in chargeSession) ||
+        !('address' in chargeSession) ||
+        !('serviceName' in chargeSession)) {
       renderErrorView(req,res, 'Session expired');
       return;
     }
 
-    var amountInPence = req.session_state.amount;
+    var amountInPence = chargeSession.amount;
     var uiAmount = (amountInPence / 100).toFixed(2);
 
     response(req.headers.accept, res, CONFIRM_VIEW, {
+      'charge_id' : chargeId,
       'amount'    : uiAmount,
-      'expiryDate': req.session_state.expiryDate,
-      'cardNumber': req.session_state.cardNumber,
-      'cardholderName' : req.session_state.cardholderName,
-      'address' : req.session_state.address,
-      'serviceName': req.session_state.serviceName,
+      'expiryDate': chargeSession.expiryDate,
+      'cardNumber': chargeSession.cardNumber,
+      'cardholderName' : chargeSession.cardholderName,
+      'address' : chargeSession.address,
+      'serviceName': chargeSession.serviceName,
       'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
       'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
     });
