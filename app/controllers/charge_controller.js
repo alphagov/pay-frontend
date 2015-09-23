@@ -280,7 +280,9 @@ module.exports.bindRoutesTo = function(app) {
   }
 
   function hashOutCardNumber(cardNumber) {
-    return '************' + cardNumber.substring(12);
+    var hashedSize = cardNumber.length - 4;
+    var lastFour = cardNumber.substring(hashedSize);
+    return new Array(hashedSize + 1).join('*') + lastFour;
   }
 
   function normaliseAddress(body) {
