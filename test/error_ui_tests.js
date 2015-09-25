@@ -1,20 +1,9 @@
-var renderer = require(__dirname + '/utils/renderer.js').renderer;
-var cheerio = require('cheerio');
+var renderTemplate = require(__dirname + '/utils/html_assertions.js').render;
 
 describe('The error view', function() {
-
-  function renderErrorPage(templateData, checkFunction) {
-    renderer('error', templateData, function(htmlOutput) {
-      var $ = cheerio.load(htmlOutput);
-      checkFunction($);
-    });
-  }
-
-  it('should render an error message', function(done) {
+  it('should render an error message', function() {
     var msg = 'shut up and take my money!';
-    renderErrorPage({ 'message' : msg }, function($) {
-      $('#errorMsg').text().should.equal(msg);
-      done();
-    });
+    var body = renderTemplate('error', { 'message' : msg });
+    body.should.containSelector('#errorMsg').withText(msg);
   });
 });

@@ -8,5 +8,5 @@ EXPOSE        9000
 
 RUN           npm install --production
 
-CMD           npm start
+CMD           NODE_ENV=production npm start
 

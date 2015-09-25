@@ -1,17 +1,12 @@
-var renderer = require(__dirname + '/utils/renderer.js').renderer;
-var cheerio = require('cheerio');
+var renderTemplate = require(__dirname + '/utils/html_assertions.js').render;
 
 describe('The greeting view', function () {
 
-  it('should render both variables in a paragraph', function (done) {
+  it('should render both variables in a paragraph', function () {
     var templateData = {'greeting': 'Hello', 'name': 'World'};
-    var templateName = 'greeting';
 
-    renderer(templateName, templateData, function(htmlOutput) {
-      $ = cheerio.load(htmlOutput);
-      $('#greeting').text().should.equal('Hello World');
-      done();
-    });
+    var body = renderTemplate('greeting', templateData);
+    body.should.containSelector('#greeting').withText('Hello World');
   });
 
 });

@@ -5,25 +5,24 @@ var sessionConfig = {
     'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
+function createSessionChargeKey(chargeId) {
+  return 'ch_' + chargeId;
+}
+
 module.exports = {
-    createCookieValue : function () {
-        var params = arguments;
-        var sessionMap = {};
-        for(var i = 0; i < params.length; i += 2) {
-          sessionMap[params[i]] = params[i+1];
-        }
+    create : function (chargeId, chargeSession) {
+      chargeSession = chargeSession || {};
+      var session = {};
+      if (arguments.length > 0) {
+        session[createSessionChargeKey(chargeId)] = chargeSession;
+      }
 
-        var cookieValue = clientSessions.util.encode(
-          sessionConfig,
-          sessionMap
-        );
-
-        return cookieValue;
+      return clientSessions.util.encode(sessionConfig, session);
     },
-    getCookieValue : function(encodedCookieString) {
-        return clientSessions.util.decode(
-          sessionConfig,
-          encodedCookieString
-        );
+
+    decrypt: function decryptCookie(res, chargeId) {
+      var content = clientSessions.util.decode(sessionConfig, res.headers['set-cookie'][0].split(";")[0].split("=")[1]).content;
+      return chargeId ? content[createSessionChargeKey(chargeId)] : content;
     }
+
 };

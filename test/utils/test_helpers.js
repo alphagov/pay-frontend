@@ -1,6 +1,5 @@
 var request = require('supertest');
 var should = require('chai').should();
-var cheerio = require('cheerio');
 
 module.exports = {
   responseTo: function (app, endpoint) {
