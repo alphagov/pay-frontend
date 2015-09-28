@@ -1,4 +1,4 @@
-hashOutCardNumber = require(__dirname + '/../app/controllers/charge_controller.js').hashOutCardNumber;
+hashOutCardNumber = require(__dirname + '/../app/utils/charge_utils.js').hashOutCardNumber;
 var chai = require('chai');
 chai.use(require('chai-string'));
 var should = chai.should();
