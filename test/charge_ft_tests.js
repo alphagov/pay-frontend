@@ -100,11 +100,12 @@ portfinder.getPort(function(err, connectorPort) {
     winston.level = 'none';
   });
 
-  function default_connector_response_for_get_charge() {
+  function default_connector_response_for_get_charge(state) {
     init_connector_url();
     var serviceUrl = 'http://www.example.com/service';
     connector_responds_with({
       'amount': 2345,
+      'state' : state,
       'service_url': serviceUrl,
       'links': [{
         'href': connectorAuthUrl,
@@ -121,22 +122,9 @@ portfinder.getPort(function(err, connectorPort) {
   describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function (done) {
       var serviceUrl = 'http://www.example.com/service';
-      connector_responds_with({
-        'amount': 2345,
-        'service_url': serviceUrl,
-        'links': [{
-          'href': connectorAuthUrl,
-          'rel': 'cardAuth',
-          'method': 'POST'
-        }, {
-          'href': connectorCaptureUrl,
-          'rel': 'cardCapture',
-          'method': 'POST'
-        }]
-      });
 
       var cookieValue = cookie.create(chargeId);
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('ENTERING_CARD_DETAILS');
       
       get_charge_request(cookieValue, chargeId)
           .expect(function (res) {

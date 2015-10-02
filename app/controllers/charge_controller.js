@@ -9,6 +9,7 @@ var response = require('../utils/response.js').response;
 
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
+var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 
@@ -76,6 +77,12 @@ module.exports.bindRoutesTo = function (app) {
         client.get(connectorUrl, function (connectorData, connectorResponse) {
 
             if (connectorResponse.statusCode === 200) {
+                if(connectorData.state != 'ENTERING_CARD_DETAILS') {
+                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                    });
+                    return;
+                }
                 logger.info('connector data = ', connectorData);
                 var amountInPence = connectorData.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
