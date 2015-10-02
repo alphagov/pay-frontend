@@ -25,7 +25,9 @@ portfinder.getPort(function(err, connectorPort) {
 
   var connectorMock = nock(localServer);
 
-  process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
+  function init_connector_url() {
+    process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
+  }
 
   function connector_responds_with(charge) {
     connectorMock.get(connectorChargePath + chargeId).reply(200, charge);
@@ -99,6 +101,7 @@ portfinder.getPort(function(err, connectorPort) {
   });
 
   function default_connector_response_for_get_charge() {
+    init_connector_url();
     var serviceUrl = 'http://www.example.com/service';
     connector_responds_with({
       'amount': 2345,
