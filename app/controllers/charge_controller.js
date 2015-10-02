@@ -77,7 +77,7 @@ module.exports.bindRoutesTo = function (app) {
         client.get(connectorUrl, function (connectorData, connectorResponse) {
 
             if (connectorResponse.statusCode === 200) {
-                if(connectorData.state != 'ENTERING_CARD_DETAILS') {
+                if(connectorData.status != 'ENTERING_CARD_DETAILS') {
                     response(req.headers.accept, res.status(404), ERROR_VIEW, {
                         'message': PAGE_NOT_FOUND_ERROR_MESSAGE
                     });

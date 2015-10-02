@@ -100,12 +100,12 @@ portfinder.getPort(function(err, connectorPort) {
     winston.level = 'none';
   });
 
-  function default_connector_response_for_get_charge(state) {
+  function default_connector_response_for_get_charge(status) {
     init_connector_url();
     var serviceUrl = 'http://www.example.com/service';
     connector_responds_with({
       'amount': 2345,
-      'state' : state,
+      'status' : status,
       'service_url': serviceUrl,
       'links': [{
         'href': connectorAuthUrl,

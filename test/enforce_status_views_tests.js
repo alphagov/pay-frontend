@@ -28,12 +28,12 @@ portfinder.getPort(function (err, connectorPort) {
         connectorMock.get(connectorChargePath + chargeId).reply(200, charge);
     }
 
-    function default_connector_response_for_get_charge(state) {
+    function default_connector_response_for_get_charge(status) {
         init_connector_url();
         var serviceUrl = 'http://www.example.com/service';
         connector_responds_with({
             'amount': 2345,
-            'state': state,
+            'status': status,
             'service_url': serviceUrl,
             'links': [{
                 'href': connectorAuthUrl,
@@ -69,7 +69,7 @@ portfinder.getPort(function (err, connectorPort) {
 
 
         card_details_not_allowed_states.forEach(function (status) {
-            it('should error when the payment state is '+ status, function (done) {
+            it('should error when the payment status is '+ status, function (done) {
 
                 var cookieValue = cookie.create(chargeId);
                 default_connector_response_for_get_charge(status);
