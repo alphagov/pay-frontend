@@ -77,7 +77,7 @@ module.exports.bindRoutesTo = function (app) {
         client.get(connectorUrl, function (connectorData, connectorResponse) {
 
             if (connectorResponse.statusCode === 200) {
-                if(connectorData.status != 'ENTERING_CARD_DETAILS') {
+                if (connectorData.status != 'CREATED') {
                     response(req.headers.accept, res.status(404), ERROR_VIEW, {
                         'message': PAGE_NOT_FOUND_ERROR_MESSAGE
                     });
@@ -188,20 +188,33 @@ module.exports.bindRoutesTo = function (app) {
             return;
         }
 
-        var amountInPence = chargeSession.amount;
-        var uiAmount = (amountInPence / 100).toFixed(2);
+        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        client.get(connectorUrl, function (connectorData, connectorResponse) {
+            if (connectorResponse.statusCode === 200) {
+                if (connectorData.status != 'AUTHORISATION SUCCESS') {
+                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                    });
+                    return;
+                }
 
-        response(req.headers.accept, res, CONFIRM_VIEW, {
-            'charge_id': chargeId,
-            'amount': uiAmount,
-            'expiryDate': chargeSession.expiryDate,
-            'cardNumber': chargeSession.cardNumber,
-            'cardholderName': chargeSession.cardholderName,
-            'address': chargeSession.address,
-            'serviceName': chargeSession.serviceName,
-            'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
-            'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
+                var amountInPence = chargeSession.amount;
+                var uiAmount = (amountInPence / 100).toFixed(2);
+
+                response(req.headers.accept, res, CONFIRM_VIEW, {
+                    'charge_id': chargeId,
+                    'amount': uiAmount,
+                    'expiryDate': chargeSession.expiryDate,
+                    'cardNumber': chargeSession.cardNumber,
+                    'cardholderName': chargeSession.cardholderName,
+                    'address': chargeSession.address,
+                    'serviceName': chargeSession.serviceName,
+                    'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
+                    'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
+                });
+            }
         });
+
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {

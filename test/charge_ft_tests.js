@@ -124,8 +124,8 @@ portfinder.getPort(function(err, connectorPort) {
       var serviceUrl = 'http://www.example.com/service';
 
       var cookieValue = cookie.create(chargeId);
-      default_connector_response_for_get_charge('ENTERING_CARD_DETAILS');
-      
+      default_connector_response_for_get_charge('CREATED');
+
       get_charge_request(cookieValue, chargeId)
           .expect(function (res) {
             var session = cookie.decrypt(res, chargeId);
@@ -142,7 +142,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('CREATED');
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
@@ -156,7 +156,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should send card data including optional fields to connector', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('CREATED');
 
       var card_data = full_connector_card_data('5105105105105100');
 
@@ -177,7 +177,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should add card data including optional fields to the chargeIds session', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('CREATED');
 
       connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
 
@@ -207,7 +207,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('show an error page when authorization was refused', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('CREATED');
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
@@ -257,7 +257,7 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line2 = 'blublu';
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('CREATED');
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -278,7 +278,7 @@ portfinder.getPort(function(err, connectorPort) {
       delete card_data.address.line2;
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge('CREATED');
 
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
@@ -300,9 +300,9 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line2 = 'Hampshire';
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge();
-      
-      connector_expects(card_data).reply(204); 
+      default_connector_response_for_get_charge('CREATED');
+
+      connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = card_data.address.line1;
       form_data.addressLine2 = '';
@@ -355,21 +355,24 @@ portfinder.getPort(function(err, connectorPort) {
     };
 
     it('should return the data needed for the UI', function (done) {
+
+      default_connector_response_for_get_charge('AUTHORISATION SUCCESS');
+
       request(app)
-          .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
-          .set('Accept', 'application/json')
-          .expect(200, {
-            'cardNumber': "************5100",
-            'expiryDate': "11/99",
-            'amount': "10.00",
-            'cardholderName': "T Eulenspiegel",
-            'address': 'Kneitlingen, Brunswick, Germany',
-            'serviceName': 'Pranks incorporated',
-            'backUrl': frontendCardDetailsPath + '/' + chargeId,
-            'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm',
-            'charge_id': chargeId
-          }, done);
+        .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+        .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Accept', 'application/json')
+        .expect(200, {
+          'cardNumber': "************5100",
+          'expiryDate': "11/99",
+          'amount': "10.00",
+          'cardholderName': "T Eulenspiegel",
+          'address': 'Kneitlingen, Brunswick, Germany',
+          'serviceName': 'Pranks incorporated',
+          'backUrl': frontendCardDetailsPath + '/' + chargeId,
+          'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm',
+          'charge_id': chargeId
+        }, done);
     });
 
     function missing_field_test(missing_field) {
