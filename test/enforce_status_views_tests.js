@@ -8,7 +8,7 @@ var should = require('chai').should();
 
 var cookie = require(__dirname + '/utils/session.js');
 
-portfinder.getPort(function(err, connectorPort) {
+portfinder.getPort(function (err, connectorPort) {
     var localServer = 'http://localhost:' + connectorPort;
 
     var connectorChargePath = '/v1/frontend/charges/';
@@ -33,7 +33,7 @@ portfinder.getPort(function(err, connectorPort) {
         var serviceUrl = 'http://www.example.com/service';
         connector_responds_with({
             'amount': 2345,
-            'state' : state,
+            'state': state,
             'service_url': serviceUrl,
             'links': [{
                 'href': connectorAuthUrl,
@@ -54,17 +54,31 @@ portfinder.getPort(function(err, connectorPort) {
             .set('Accept', 'application/json');
     }
 
-    describe('The /card_details endpoint', function() {
-        it('should fail when the payment state is not ENTERING_CARD_DETAILS', function (done) {
-            var serviceUrl = 'http://www.example.com/service';
+    describe('The /card_details endpoint', function () {
+        var card_details_not_allowed_states = [
+            'AUTHORISATION SUBMITTED',
+            'CREATED',
+            'AUTHORISATION SUCCESS',
+            'AUTHORISATION REJECTED',
+            'READY_FOR_CAPTURE',
+            'AUTHORISATION SUBMITTED',
+            'SYSTEM ERROR',
+            'SYSTEM CANCELLED',
+            'CAPTURED'
+        ];
 
-            var cookieValue = cookie.create(chargeId);
-            default_connector_response_for_get_charge('AUTHORISATION SUBMITTED');
 
-            get_charge_request(cookieValue, chargeId)
-                .expect(404, {
-                    'message': 'Page cannot be found'
-                }).end(done);
+        card_details_not_allowed_states.forEach(function (status) {
+            it('should error when the payment state is '+ status, function (done) {
+
+                var cookieValue = cookie.create(chargeId);
+                default_connector_response_for_get_charge(status);
+
+                get_charge_request(cookieValue, chargeId)
+                    .expect(404, {
+                        'message': 'Page cannot be found'
+                    }).end(done);
+            });
         });
     });
 });
