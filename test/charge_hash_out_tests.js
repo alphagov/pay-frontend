@@ -15,8 +15,8 @@ describe('Card number masking', function() {
    '123456789012345AAAA'
   ];
 
-  it('should only show last 4 digits, regardless of card number length.', function () {
-    cardNumbers_12_to_19.forEach(function (key) {
+  cardNumbers_12_to_19.forEach(function (key) {
+    it('should only show last 4 digits, regardless of card number length. key=' + key, function () {
       var hashedNumber = hashOutCardNumber(key);
       hashedNumber.should.endWith('AAAA');
       var expectedStarCount = hashedNumber.length - 4;
