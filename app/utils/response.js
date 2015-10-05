@@ -12,6 +12,7 @@ function response(accept, res, template, data) {
 module.exports = {
   ERROR_MESSAGE : 'There is a problem with the payments platform',
   ERROR_VIEW : 'error',
+  PAGE_NOT_FOUND_ERROR_MESSAGE : 'Page cannot be found',
 
   response : response,
 

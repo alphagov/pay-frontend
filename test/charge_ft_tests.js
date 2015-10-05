@@ -12,6 +12,9 @@ var cookie = require(__dirname + '/utils/session.js');
 
 var winston = require('winston');
 
+var get_charge_request = require(__dirname + '/utils/test_helpers.js').get_charge_request;
+var default_connector_response_for_get_charge = require(__dirname + '/utils/test_helpers.js').default_connector_response_for_get_charge;
+
 portfinder.getPort(function(err, connectorPort) {
 
   var localServer = 'http://localhost:' + connectorPort;
@@ -21,25 +24,10 @@ portfinder.getPort(function(err, connectorPort) {
   var frontendCardDetailsPath = '/card_details';
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
-  var connectorCaptureUrl = localServer + connectorChargePath + chargeId + '/capture';
-
   var connectorMock = nock(localServer);
-
-  process.env.CONNECTOR_URL = localServer + connectorChargePath + '{chargeId}';
-
-  function connector_responds_with(charge) {
-    connectorMock.get(connectorChargePath + chargeId).reply(200, charge);
-  }
 
   function connector_expects(data) {
     return connectorMock.post(connectorChargePath + chargeId + '/cards', data);
-  }
-
-  function get_charge_request(cookieValue, chargeId) {
-    return request(app)
-        .get(frontendCardDetailsPath + '/' + chargeId)
-        .set('Cookie', ['session_state=' + cookieValue])
-        .set('Accept', 'application/json');
   }
 
   function post_charge_request(cookieValue, data) {
@@ -98,44 +86,14 @@ portfinder.getPort(function(err, connectorPort) {
     winston.level = 'none';
   });
 
-  function default_connector_response_for_get_charge() {
-    var serviceUrl = 'http://www.example.com/service';
-    connector_responds_with({
-      'amount': 2345,
-      'service_url': serviceUrl,
-      'links': [{
-        'href': connectorAuthUrl,
-        'rel': 'cardAuth',
-        'method': 'POST'
-      }, {
-        'href': connectorCaptureUrl,
-        'rel': 'cardCapture',
-        'method': 'POST'
-      }]
-    });
-  }
-
   describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function (done) {
       var serviceUrl = 'http://www.example.com/service';
-      connector_responds_with({
-        'amount': 2345,
-        'service_url': serviceUrl,
-        'links': [{
-          'href': connectorAuthUrl,
-          'rel': 'cardAuth',
-          'method': 'POST'
-        }, {
-          'href': connectorCaptureUrl,
-          'rel': 'cardCapture',
-          'method': 'POST'
-        }]
-      });
 
       var cookieValue = cookie.create(chargeId);
-      default_connector_response_for_get_charge();
-      
-      get_charge_request(cookieValue, chargeId)
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+
+      get_charge_request(app, cookieValue, chargeId)
           .expect(function (res) {
             var session = cookie.decrypt(res, chargeId);
             should.equal(session.amount, 2345);
@@ -151,7 +109,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
@@ -165,7 +123,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should send card data including optional fields to connector', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
 
       var card_data = full_connector_card_data('5105105105105100');
 
@@ -186,7 +144,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should add card data including optional fields to the chargeIds session', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
 
       connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
 
@@ -216,7 +174,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('show an error page when authorization was refused', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
@@ -266,7 +224,7 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line2 = 'blublu';
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -287,7 +245,7 @@ portfinder.getPort(function(err, connectorPort) {
       delete card_data.address.line2;
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
 
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
@@ -309,9 +267,9 @@ portfinder.getPort(function(err, connectorPort) {
       card_data.address.line2 = 'Hampshire';
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge();
-      
-      connector_expects(card_data).reply(204); 
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+
+      connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = card_data.address.line1;
       form_data.addressLine2 = '';
@@ -364,21 +322,24 @@ portfinder.getPort(function(err, connectorPort) {
     };
 
     it('should return the data needed for the UI', function (done) {
+
+      default_connector_response_for_get_charge(connectorPort, chargeId, 'AUTHORISATION SUCCESS');
+
       request(app)
-          .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
-          .set('Accept', 'application/json')
-          .expect(200, {
-            'cardNumber': "************5100",
-            'expiryDate': "11/99",
-            'amount': "10.00",
-            'cardholderName': "T Eulenspiegel",
-            'address': 'Kneitlingen, Brunswick, Germany',
-            'serviceName': 'Pranks incorporated',
-            'backUrl': frontendCardDetailsPath + '/' + chargeId,
-            'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm',
-            'charge_id': chargeId
-          }, done);
+        .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+        .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Accept', 'application/json')
+        .expect(200, {
+          'cardNumber': "************5100",
+          'expiryDate': "11/99",
+          'amount': "10.00",
+          'cardholderName': "T Eulenspiegel",
+          'address': 'Kneitlingen, Brunswick, Germany',
+          'serviceName': 'Pranks incorporated',
+          'backUrl': frontendCardDetailsPath + '/' + chargeId,
+          'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm',
+          'charge_id': chargeId
+        }, done);
     });
 
     function missing_field_test(missing_field) {
@@ -402,7 +363,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should post to the connector capture url looked up from the connector when a post arrives', function (done) {
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, "CREATED");
       connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(204);
 
       request(app)
@@ -426,7 +387,7 @@ portfinder.getPort(function(err, connectorPort) {
 
 
     it('should produce an error if the connector returns a non-204 status', function (done) {
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, "CREATED");
       connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(500);
 
       request(app)
@@ -437,7 +398,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should produce an error if the connector is unreachable for the confirm', function (done) {
-      default_connector_response_for_get_charge();
+      default_connector_response_for_get_charge(connectorPort, chargeId, "CREATED");
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['session_state=' + cookie.create(chargeId)])

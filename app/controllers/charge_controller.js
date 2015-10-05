@@ -9,6 +9,7 @@ var response = require('../utils/response.js').response;
 
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
+var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 
@@ -76,6 +77,12 @@ module.exports.bindRoutesTo = function (app) {
         client.get(connectorUrl, function (connectorData, connectorResponse) {
 
             if (connectorResponse.statusCode === 200) {
+                if (connectorData.status != 'CREATED') {
+                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                    });
+                    return;
+                }
                 logger.info('connector data = ', connectorData);
                 var amountInPence = connectorData.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
@@ -181,20 +188,33 @@ module.exports.bindRoutesTo = function (app) {
             return;
         }
 
-        var amountInPence = chargeSession.amount;
-        var uiAmount = (amountInPence / 100).toFixed(2);
+        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        client.get(connectorUrl, function (connectorData, connectorResponse) {
+            if (connectorResponse.statusCode === 200) {
+                if (connectorData.status != 'AUTHORISATION SUCCESS') {
+                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                    });
+                    return;
+                }
 
-        response(req.headers.accept, res, CONFIRM_VIEW, {
-            'charge_id': chargeId,
-            'amount': uiAmount,
-            'expiryDate': chargeSession.expiryDate,
-            'cardNumber': chargeSession.cardNumber,
-            'cardholderName': chargeSession.cardholderName,
-            'address': chargeSession.address,
-            'serviceName': chargeSession.serviceName,
-            'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
-            'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
+                var amountInPence = chargeSession.amount;
+                var uiAmount = (amountInPence / 100).toFixed(2);
+
+                response(req.headers.accept, res, CONFIRM_VIEW, {
+                    'charge_id': chargeId,
+                    'amount': uiAmount,
+                    'expiryDate': chargeSession.expiryDate,
+                    'cardNumber': chargeSession.cardNumber,
+                    'cardholderName': chargeSession.cardholderName,
+                    'address': chargeSession.address,
+                    'serviceName': chargeSession.serviceName,
+                    'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
+                    'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
+                });
+            }
         });
+
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
