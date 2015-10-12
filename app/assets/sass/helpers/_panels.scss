@@ -1,0 +1,50 @@
+// Panels
+// ==========================================================================
+// GOV.UK front end toolkit dependencies
+@import "helpers";
+
+.payment-summary {
+  clear: both;
+  margin: $gutter 0;
+
+  .inner {
+    background-color: $canvas-colour;
+    border: $gutter-one-third solid $border-colour;
+    padding: $gutter-half;
+    h2 {
+      padding-bottom: $gutter-two-thirds;
+    }
+    p {
+      @include core-19;
+      .amount {
+        @include bold-36;
+        display: block;
+      }
+    }
+
+    @include media(tablet) {
+      width: 200px;
+    }
+    @include media(desktop) {
+      width: 250px;
+    }
+  }
+
+  @include media(tablet) {
+    margin: 0;
+    position: absolute;
+    top: $gutter;
+    right: 0;
+    width: 250px;
+  }
+  @include media(desktop) {
+    width: 300px;
+  }
+}
+
+.content-fixed {
+  @include media {
+    position: fixed;
+    top: $gutter;
+  }
+}

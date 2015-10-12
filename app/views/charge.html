@@ -9,73 +9,66 @@ Enter your card details.
 <main id="content" role="main">
 
     {{#service_url}}
-        <a id="back" href="{{service_url}}">&lt;&lt; Back</a>
+        <a id="back" href="{{service_url}}">&#9664; Back</a>
     {{/service_url}}
 
-    <h1>
-        Pay by credit card
-    </h1>
-    <div>
-        Total Amount: <p id="amount">£{{amount}}</p>
-    </div>
+    <h1 class="form-title">Pay by card</h1>
+    <p>Total Amount: <span id="amount">£{{amount}}</span></p>
 
-    <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}">
+    <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
-        <div>
-            <label id="cardholderName-lbl" for="cardholderName">
+        <div class="form-group">
+            <label id="cardholderName-lbl" for="cardholderName" class="form-label-bold">
                 Name on card
-                <input id="cardholderName" type="text" name="cardholderName" maxlength="200">
+                <input id="cardholderName" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
             </label>
         </div>
-        <div>
-            <label id="cardNo-lbl" for="cardNo">
+        <div class="form-group">
+            <label id="cardNo-lbl" for="cardNo" class="form-label-bold">
                 Card number
-                <input id="cardNo" type="text" name="cardNo" maxlength="19">
+                <input id="cardNo" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
             </label>
         </div>
-        <div>
-            <label id="cvc-lbl" for="cvc">
+        <div class="form-group">
+            <label id="cvc-lbl" for="cvc" class="form-label-bold">
                 Card security code
-                <input id="cvc" type="text" value="" name="cvc" maxlength="3">
+                <p class="form-hint">This is the 3 digit code at the back of your card</p>
+                <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
             </label>
         </div>
-        <div>
-            <label id="expiryDate-lbl" for="expiryDate">
+        <div class="form-group">
+            <label id="expiryDate-lbl" for="expiryDate" class="form-label-bold">
                 Expiry date
-                <input id="expiryDate" type="text" name="expiryDate" maxlength="5">
+                <p class="form-hint">For example, 07/17</p>
+                <input id="expiryDate" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
             </label>
         </div>
 
-        <div>
-            <label id="addressLine1-lbl" for="addressLine1">
+        <div class="form-group address">
+            <label id="addressLine1-lbl" for="addressLine1" class="form-label-bold">
                 Billing address
-                <input id="addressLine1" type="text" name="addressLine1" maxlength="100">
+                <input id="addressLine1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
             </label>
+            <input id="addressLine2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
+            <input id="addressLine3" type="text" name="addressLine3" maxlength="100" class="form-control-1-2">
         </div>
 
-        <div>
-            <input id="addressLine2" type="text" name="addressLine2" maxlength="100">
-        </div>
-        <div>
-            <input id="addressLine3" type="text" name="addressLine3" maxlength="100">
-        </div>
-
-        <div>
-            <label id="addressCity-lbl" for="addressCity">
+        <div class="form-group">
+            <label id="addressCity-lbl" for="addressCity" class="form-label-bold">
                 Town or city
-                <input id="addressCity" type="text" name="addressCity" maxlength="100">
+                <input id="addressCity" type="text" name="addressCity" maxlength="100" class="form-control-1-2">
             </label>
         </div>
-        <div>
-            <label id="addressCounty-lbl" for="addressCounty">
+        <div class="form-group">
+            <label id="addressCounty-lbl" for="addressCounty" class="form-label-bold">
                 County
-                <input id="addressCounty" type="text" name="addressCounty" maxlength="100">
+                <input id="addressCounty" type="text" name="addressCounty" maxlength="100" class="form-control-1-2">
             </label>
         </div>
-        <div>
-            <label id="addressPostcode-lbl" for="addressPostcode">
+        <div class="form-group">
+            <label id="addressPostcode-lbl" for="addressPostcode" class="form-label-bold">
                 Postcode
-                <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10">
+                <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
             </label>
         </div>
         <div>
