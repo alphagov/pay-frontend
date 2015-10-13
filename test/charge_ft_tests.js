@@ -13,6 +13,7 @@ var cookie = require(__dirname + '/utils/session.js');
 var winston = require('winston');
 
 var get_charge_request = require(__dirname + '/utils/test_helpers.js').get_charge_request;
+var connector_response_for_put_charge = require(__dirname + '/utils/test_helpers.js').connector_response_for_put_charge;
 var default_connector_response_for_get_charge = require(__dirname + '/utils/test_helpers.js').default_connector_response_for_get_charge;
 
 portfinder.getPort(function(err, connectorPort) {
@@ -92,7 +93,9 @@ portfinder.getPort(function(err, connectorPort) {
       var returnUrl = 'http://www.example.com/service';
 
       var cookieValue = cookie.create(chargeId);
+      connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
       default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
+
 
       get_charge_request(app, cookieValue, chargeId)
           .expect(function (res) {
@@ -285,15 +288,34 @@ portfinder.getPort(function(err, connectorPort) {
 
         it('It should show card details page if charge status is in "ENTERING CARD DETAILS" state', function (done){
             var cookieValue = cookie.create(chargeId);
-
             default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
+            connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
 
             get_charge_request(app, cookieValue, chargeId)
                                 .expect(200, {'charge_id': chargeId,
                                               'amount': '23.45',
                                               'service_url': 'http://www.example.com/service',
                                               'post_card_action': '/card_details'
-                                              }).end(done);
+                                              })
+                                .end(done);
+        });
+
+        it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done){
+            var cookieValue = cookie.create(chargeId);
+            connector_response_for_put_charge(connectorPort, chargeId, 400 , {'message':'some error'});
+
+            get_charge_request(app, cookieValue, chargeId)
+                                .expect(404, {'message': 'Page cannot be found'})
+                                .end(done);
+        });
+
+        it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 500 connector response', function (done){
+            var cookieValue = cookie.create(chargeId);
+            connector_response_for_put_charge(connectorPort, chargeId, 500 , {});
+
+            get_charge_request(app, cookieValue, chargeId)
+                                .expect(404, {'message': 'Page cannot be found'})
+                                .end(done);
         });
   });
 

@@ -65,44 +65,65 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId');
         var chargeId = req.params.chargeId;
-
-        if (
-            !validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)
-        ) {
+        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        logger.info("connectorUrl from env var: " + connectorUrl);
+        var enteringCardDetailsStatus = 'ENTERING CARD DETAILS';
+        var payload = {
+            headers: {"Content-Type": "application/json"},
+            data: {'new_status': enteringCardDetailsStatus}
+        };
 
-        client.get(connectorUrl, function (connectorData, connectorResponse) {
+        //update charge status to 'ENTERING CARD DETAILS' {chargeId}/status/{newStatus}
+        client.put(connectorUrl + '/status', payload, function(data, putResponse) {
+            logger.debug('set charge status to: '+ enteringCardDetailsStatus);
+            logger.debug('response from the connector=' + putResponse.statusCode);
 
-            if (connectorResponse.statusCode === 200) {
-                if (connectorData.status != 'ENTERING CARD DETAILS') {
-                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
-                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+            if (putResponse.statusCode === 204) {
+                //now get the charge
+                client.get(connectorUrl, function (connectorData, connectorResponse) {
+                    if (connectorResponse.statusCode === 200) {
+                        logger.info('connector data = ', connectorData);
+                        if (connectorData.status != enteringCardDetailsStatus) {
+                            response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                                'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                            });
+                            return;
+                        }
+                        var amountInPence = connectorData.amount;
+                        var uiAmount = (amountInPence / 100).toFixed(2);
+                        var chargeSession = chargeState(req, chargeId);
+                        chargeSession.amount = amountInPence;
+
+                        response(req.headers.accept, res, CHARGE_VIEW, {
+                            'charge_id': chargeId,
+                            'amount': uiAmount,
+                            'return_url': connectorData.service_url,
+                            'post_card_action': CARD_DETAILS_PATH
+                        });
+                        return;
+                    }
+                    renderErrorView(req, res, ERROR_MESSAGE);
+                })
+                .on('error', function (err) {
+                    logger.error('Exception raised calling connector for get: ' + err);
+                    response(req.headers.accept, res, ERROR_VIEW, {
+                        'message': ERROR_MESSAGE
                     });
-                    return;
-                }
-                logger.info('connector data = ', connectorData);
-                var amountInPence = connectorData.amount;
-                var uiAmount = (amountInPence / 100).toFixed(2);
-                var chargeSession = chargeState(req, chargeId);
-                chargeSession.amount = amountInPence;
-
-                response(req.headers.accept, res, CHARGE_VIEW, {
-                    'charge_id': chargeId,
-                    'amount': uiAmount,
-                    'return_url': connectorData.return_url,
-                    'post_card_action': CARD_DETAILS_PATH
                 });
                 return;
             }
-
-            renderErrorView(req, res, ERROR_MESSAGE);
-        }).on('error', function (err) {
-            logger.error('Exception raised calling connector: ' + err);
+            logger.error('Failed to update charge status to ' +enteringCardDetailsStatus+ ', response code from connector=' + putResponse.statusCode);
+            response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+            });
+        })
+        .on('error', function(err) {
+            logger.error('Exception raised calling connector for put' + err);
             response(req.headers.accept, res, ERROR_VIEW, {
-                'message': ERROR_MESSAGE
+              'message': ERROR_MESSAGE
             });
         });
     });
