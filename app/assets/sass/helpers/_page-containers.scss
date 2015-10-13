@@ -1,0 +1,13 @@
+//Page containers
+#page-container {
+  @extend %site-width-container;
+}
+
+.grid-row {
+  @extend %grid-row;
+
+  .column-full {
+    @include grid-column( 1 );
+  }
+}
+

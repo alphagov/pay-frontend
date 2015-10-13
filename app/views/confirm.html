@@ -8,14 +8,12 @@ Confirm your details.
 
 <main id="content" role="main">
 
-    <a id="back" href="{{backUrl}}">&lt;&lt; Back</a>
+    <a id="back" href="{{backUrl}}" class="previous-page">Back</a>
 
-    <h1>
-        Check your details are correct before confirming
-    </h1>
+    <h1>Check your details are correct before confirming</h1>
 
 
-    <table>
+    <table class="confirm-details">
         <tr>
             <td>Name on card:</td>
             <td id="cardholderName">{{cardholderName}}</td>
@@ -45,7 +43,7 @@ Confirm your details.
 
     <form id="confirmation" method="POST" action="{{confirmUrl}}">
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
-        <button id="confirm">Confirm</button>
+        <button id="confirm" class="button">Confirm</button>
     </form>
 
 </main>
