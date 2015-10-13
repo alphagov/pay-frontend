@@ -189,3 +189,22 @@
     background-image: file-url("icons/icon-pointer-2x.png");
   }
 }
+
+.previous-page {
+  @include bold-19;
+  border-bottom: 1px solid $link-colour;
+  color: $link-colour;
+  text-decoration: none;
+
+  &:before {
+    content: "\25c0  ";
+  }
+  &:visited {
+    border-color: $link-visited-colour;
+  }
+  &:focus,
+  &:hover {
+    border-color: $link-colour;
+  }
+}
+
