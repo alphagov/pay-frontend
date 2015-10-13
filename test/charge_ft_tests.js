@@ -25,6 +25,8 @@ portfinder.getPort(function(err, connectorPort) {
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
   var connectorMock = nock(localServer);
+  var enteringCardDetailsState = 'ENTERING CARD DETAILS';
+  var aHappyState = 'HAPPY-STATE';
 
   function connector_expects(data) {
     return connectorMock.post(connectorChargePath + chargeId + '/cards', data);
@@ -90,7 +92,7 @@ portfinder.getPort(function(err, connectorPort) {
       var returnUrl = 'http://www.example.com/service';
 
       var cookieValue = cookie.create(chargeId);
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+      default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
 
       get_charge_request(app, cookieValue, chargeId)
           .expect(function (res) {
@@ -108,7 +110,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
@@ -122,7 +124,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should send card data including optional fields to connector', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
 
       var card_data = full_connector_card_data('5105105105105100');
 
@@ -142,7 +144,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('should add card data including optional fields to the chargeIds session', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
 
       connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
 
@@ -171,7 +173,7 @@ portfinder.getPort(function(err, connectorPort) {
     it('show an error page when authorization was refused', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
@@ -216,9 +218,28 @@ portfinder.getPort(function(err, connectorPort) {
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
+      delete card_data.address.line3;
+
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+      connector_expects(card_data).reply(204);
+      var form_data = minimum_form_card_data('5105105105105100');
+      form_data.addressLine1 = '';
+      form_data.addressLine2 = card_data.address.line1;
+
+      post_charge_request(cookieValue, form_data)
+                .expect(303, EMPTY_BODY)
+                .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+                .end(done);
+    });
+
+    it('should ignore empty/null address lines when only third address line populated', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      var card_data = minimum_connector_card_data('5105105105105100');
+      card_data.address.line1 = 'bla bla';
       delete card_data.address.line2;
 
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -258,6 +279,22 @@ portfinder.getPort(function(err, connectorPort) {
         }, done);
     });
 
+  });
+
+  describe('The /card_details/charge_id endpoint', function(){
+
+        it('It should show card details page if charge status is in "ENTERING CARD DETAILS" state', function (done){
+            var cookieValue = cookie.create(chargeId);
+
+            default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
+
+            get_charge_request(app, cookieValue, chargeId)
+                                .expect(200, {'charge_id': chargeId,
+                                              'amount': '23.45',
+                                              'service_url': 'http://www.example.com/service',
+                                              'post_card_action': '/card_details'
+                                              }).end(done);
+        });
   });
 
   describe('The /card_details/charge_id/confirm endpoint', function () {
@@ -312,7 +349,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should post to the connector capture url looked up from the connector when a post arrives', function (done) {
-      default_connector_response_for_get_charge(connectorPort, chargeId, "CREATED");
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
       connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(204);
 
       request(app)
@@ -336,7 +373,7 @@ portfinder.getPort(function(err, connectorPort) {
 
 
     it('should produce an error if the connector returns a non-204 status', function (done) {
-      default_connector_response_for_get_charge(connectorPort, chargeId, "CREATED");
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
       connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(500);
 
       request(app)
@@ -347,7 +384,7 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('should produce an error if the connector is unreachable for the confirm', function (done) {
-      default_connector_response_for_get_charge(connectorPort, chargeId, "CREATED");
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['session_state=' + cookie.create(chargeId)])
