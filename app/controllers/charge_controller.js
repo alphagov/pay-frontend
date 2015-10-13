@@ -158,13 +158,13 @@ module.exports.bindRoutesTo = function (app) {
 
                 renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
             }).on('error', function (err) {
-                logger.error('Exception raised calling connector');
+                logger.error('Exception raised calling connector: ' + err);
                 response(req.headers.accept, res, ERROR_VIEW, {
                     'message': ERROR_MESSAGE
                 });
             });
         }).on('error', function (err) {
-            logger.error('Exception raised calling connector');
+            logger.error('Exception raised calling connector: ' + err);
             response(req.headers.accept, res, ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
@@ -242,7 +242,7 @@ module.exports.bindRoutesTo = function (app) {
 
                     renderErrorView(req, res, ERROR_MESSAGE);
                 }).on('error', function (err) {
-                    logger.error('Exception raised calling connector');
+                    logger.error('Exception raised calling connector: ' + err);
                     response(req.headers.accept, res, ERROR_VIEW, {
                         'message': ERROR_MESSAGE
                     });
@@ -251,7 +251,7 @@ module.exports.bindRoutesTo = function (app) {
             }
             renderErrorView(req, res, ERROR_MESSAGE);
         }).on('error', function (err) {
-            logger.error('Exception raised calling connector');
+            logger.error('Exception raised calling connector: ' + err);
             response(req.headers.accept, res, ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
