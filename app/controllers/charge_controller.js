@@ -12,6 +12,8 @@ var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
+var enteringCardDetailsStatus = 'ENTERING CARD DETAILS';
+
 
 module.exports.bindRoutesTo = function (app) {
     var CONFIRM_PATH = '/confirm';
@@ -70,7 +72,6 @@ module.exports.bindRoutesTo = function (app) {
         }
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         logger.info("connectorUrl from env var: " + connectorUrl);
-        var enteringCardDetailsStatus = 'ENTERING CARD DETAILS';
         var payload = {
             headers: {"Content-Type": "application/json"},
             data: {'new_status': enteringCardDetailsStatus}
@@ -82,37 +83,7 @@ module.exports.bindRoutesTo = function (app) {
             logger.debug('response from the connector=' + putResponse.statusCode);
 
             if (putResponse.statusCode === 204) {
-                //now get the charge
-                client.get(connectorUrl, function (connectorData, connectorResponse) {
-                    if (connectorResponse.statusCode === 200) {
-                        logger.info('connector data = ', connectorData);
-                        if (connectorData.status != enteringCardDetailsStatus) {
-                            response(req.headers.accept, res.status(404), ERROR_VIEW, {
-                                'message': PAGE_NOT_FOUND_ERROR_MESSAGE
-                            });
-                            return;
-                        }
-                        var amountInPence = connectorData.amount;
-                        var uiAmount = (amountInPence / 100).toFixed(2);
-                        var chargeSession = chargeState(req, chargeId);
-                        chargeSession.amount = amountInPence;
-
-                        response(req.headers.accept, res, CHARGE_VIEW, {
-                            'charge_id': chargeId,
-                            'amount': uiAmount,
-                            'return_url': connectorData.service_url,
-                            'post_card_action': CARD_DETAILS_PATH
-                        });
-                        return;
-                    }
-                    renderErrorView(req, res, ERROR_MESSAGE);
-                })
-                .on('error', function (err) {
-                    logger.error('Exception raised calling connector for get: ' + err);
-                    response(req.headers.accept, res, ERROR_VIEW, {
-                        'message': ERROR_MESSAGE
-                    });
-                });
+                getCharge(chargeId, req, res);
                 return;
             }
             logger.error('Failed to update charge status to ' +enteringCardDetailsStatus+ ', response code from connector=' + putResponse.statusCode);
@@ -127,6 +98,41 @@ module.exports.bindRoutesTo = function (app) {
             });
         });
     });
+
+    function getCharge(chargeId, req, res) {
+        //now get the charge
+        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        client.get(connectorUrl, function (connectorData, connectorResponse) {
+            if (connectorResponse.statusCode === 200) {
+                logger.info('connector data = ', connectorData);
+                if (connectorData.status != enteringCardDetailsStatus) {
+                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                    });
+                    return;
+                }
+                var amountInPence = connectorData.amount;
+                var uiAmount = (amountInPence / 100).toFixed(2);
+                var chargeSession = chargeState(req, chargeId);
+                chargeSession.amount = amountInPence;
+
+                response(req.headers.accept, res, CHARGE_VIEW, {
+                    'charge_id': chargeId,
+                    'amount': uiAmount,
+                    'return_url': connectorData.service_url,
+                    'post_card_action': CARD_DETAILS_PATH
+                });
+                return;
+            }
+            renderErrorView(req, res, ERROR_MESSAGE);
+        })
+        .on('error', function (err) {
+            logger.error('Exception raised calling connector for get: ' + err);
+            response(req.headers.accept, res, ERROR_VIEW, {
+                'message': ERROR_MESSAGE
+            });
+        });
+    }
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
         logger.info('POST ' + CARD_DETAILS_PATH);
