@@ -70,10 +70,10 @@ fieldset {
 
 // Form title
 .form-title {
-  @include bold-48;
+  @include bold-36;
   padding: $gutter-half 0 $gutter;
   @include media(tablet) {
-    padding: $gutter 0 ($gutter*2);
+    padding: $gutter 0 $gutter;
     width: $half;
   }
   @include media($min-width: 900px) {
