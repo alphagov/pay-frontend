@@ -6,37 +6,37 @@ Confirm your details.
 
 {{$content}}
 
-<main id="content" role="main">
+<main id="content" role="main" class="content-wrapper">
 
     <a id="back" href="{{backUrl}}" class="previous-page">Back</a>
 
-    <h1>Check your details are correct before confirming</h1>
+    <h1 class="form-title">Check your details are correct before confirming</h1>
 
 
     <table class="confirm-details">
         <tr>
             <td>Name on card:</td>
-            <td id="cardholderName">{{cardholderName}}</td>
+            <td id="cardholderName" class="details">{{cardholderName}}</td>
         </tr>
         <tr>
             <td>Card number:</td>
-            <td id="cardNumber">{{cardNumber}}</td>
+            <td id="cardNumber" class="details">{{cardNumber}}</td>
         </tr>
         <tr>
             <td>Expiry date:</td>
-            <td id="expiryDate">{{expiryDate}}</td>
+            <td id="expiryDate" class="details">{{expiryDate}}</td>
         </tr>
         <tr>
             <td>Billing address:</td>
-            <td id="address">{{address}}</td>
+            <td id="address" class="details">{{address}}</td>
         </tr>
         <tr>
             <td>Payment of:</td>
-            <td id="serviceName">{{serviceName}}</td>
+            <td id="serviceName" class="details">{{serviceName}}</td>
         </tr>
         <tr>
             <td>Amount to pay:</td>
-            <td id="amount">£{{amount}}</td>
+            <td id="amount" class="details">£{{amount}}</td>
         </tr>
 
     </table>

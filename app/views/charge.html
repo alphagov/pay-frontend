@@ -6,14 +6,13 @@ Enter your card details.
 
 {{$content}}
 
-<main id="content" role="main">
+<main id="content" role="main" class="content-wrapper">
 
     {{#service_url}}
         <a id="back" href="{{service_url}}" class="previous-page">Back</a>
     {{/service_url}}
 
     <h1 class="form-title">Pay by card</h1>
-    <p>Total Amount: <span id="amount">£{{amount}}</span></p>
 
     <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
@@ -75,6 +74,17 @@ Enter your card details.
             <input id="submitCardDetails" type="submit" class="button" value="Make payment" name="submitCardDetails">
         </div>
     </form>
+
+    <aside class="payment-summary">
+      <div class="inner js-stick-at-top-when-scrolling">
+        <h2>Payment summary</h2>
+        <p><strong id="service-name">Example Government Service</strong></p>
+        <p>
+          Amount to pay:
+          <span id="amount" class="amount">£{{amount}}</span></p>
+        </p>
+      </div>
+    </aside>
 
 </main>
 
