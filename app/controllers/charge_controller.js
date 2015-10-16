@@ -137,24 +137,19 @@ module.exports.bindRoutesTo = function (app) {
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
         logger.info('POST ' + CARD_DETAILS_PATH);
-
         var chargeId = req.body.chargeId;
-
-        if (
-            !validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)
-        ) {
+        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
-        var checkResult = validateNewCharge(normaliseAddress(req.body));
+        var checkResult = validateNewCharge(normaliseAddress(req.body), chargeId);
         if (checkResult.hasError) {
-            renderErrorView(req, res, checkResult.errorMessage);
+            logger.info('post errors: '+JSON.stringify(checkResult, null, 2));
+            response(req.headers.accept, res, CHARGE_VIEW, checkResult);
             return;
         }
 
         var plainCardNumber = removeWhitespaces(req.body.cardNo);
         var expiryDate = req.body.expiryDate;
-
         var payload = {
             headers: {"Content-Type": "application/json"},
             data: {
@@ -331,10 +326,11 @@ module.exports.bindRoutesTo = function (app) {
         });
     }
 
-    function validateNewCharge(body) {
+    function validateNewCharge(body, chargeId) {
         var checkResult = {
+            charge_id: chargeId,
             hasError: false,
-            errorMessage: "The following fields are required:\n"
+            errorMessage: "The following fields are required:"
         };
         for (var key in REQUIRED_FORM_FIELDS) {
             if (!body[key]) {
@@ -348,7 +344,6 @@ module.exports.bindRoutesTo = function (app) {
                 checkResult.errorMessage = "You probably mistyped the card number. Please check and try again."
             }
         }
-
         return checkResult
     }
 
