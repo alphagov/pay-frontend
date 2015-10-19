@@ -294,19 +294,9 @@ module.exports.bindRoutesTo = function (app) {
     }
 
     function normaliseAddress(body) {
-        if (!body.addressLine1 && !body.addressLine2 && body.addressLine3) {
-            body.addressLine1 = body.addressLine3;
-            delete body.addressLine2;
-            delete body.addressLine3;
-        }
         if (!body.addressLine1 && body.addressLine2) {
             body.addressLine1 = body.addressLine2;
-            body.addressLine2 = body.addressLine3;
-            delete body.addressLine3
-        }
-        if (body.addressLine1 && !body.addressLine2 && body.addressLine3) {
-            body.addressLine2 = body.addressLine3;
-            delete body.addressLine3
+            delete body.addressLine2;
         }
         return body;
     }
@@ -315,7 +305,6 @@ module.exports.bindRoutesTo = function (app) {
         return {
             'line1': body.addressLine1,
             'line2': body.addressLine2,
-            'line3': body.addressLine3,
             'city': body.addressCity,
             'county': body.addressCounty,
             'postcode': body.addressPostcode,
@@ -326,7 +315,6 @@ module.exports.bindRoutesTo = function (app) {
     function buildAddressLine(body) {
         return [body.addressLine1,
             body.addressLine2,
-            body.addressLine3,
             body.addressCity,
             body.addressCounty,
             body.addressPostcode].filter(notNullOrEmpty).join(", ");

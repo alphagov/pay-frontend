@@ -57,7 +57,6 @@ portfinder.getPort(function(err, connectorPort) {
   function full_connector_card_data(card_number) {
     var card_data = minimum_connector_card_data(card_number);
     card_data.address.line2 = 'bla bla';
-    card_data.address.line3 = 'blublu';
     card_data.address.city = 'London';
     card_data.address.county = 'Greater London';
     card_data.address.country = 'GB';
@@ -131,7 +130,6 @@ portfinder.getPort(function(err, connectorPort) {
 
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
-      form_data.addressLine3 = card_data.address.line3;
       form_data.addressCity = card_data.address.city;
       form_data.addressCounty = card_data.address.county;
 
@@ -152,11 +150,10 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
 
       form_data.addressLine2 = card_data.address.line2;
-      form_data.addressLine3 = card_data.address.line3;
       form_data.addressCity = card_data.address.city;
       form_data.addressCounty = card_data.address.county;
 
-      var address = '32 Whip Ma Whop Ma Avenue, bla bla, blublu, London, Greater London, Y1 1YN';
+      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Greater London, Y1 1YN';
 
       post_charge_request(cookieValue, form_data)
           .expect(303, {})
@@ -189,7 +186,6 @@ portfinder.getPort(function(err, connectorPort) {
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line2 = 'bla bla';
-      card_data.address.line3 = 'blublu';
       card_data.address.city = 'London';
       card_data.address.county = 'Greater London';
       card_data.address.country = 'GB';
@@ -198,7 +194,6 @@ portfinder.getPort(function(err, connectorPort) {
 
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
-      form_data.addressLine3 = card_data.address.line3;
       form_data.addressCity = card_data.address.city;
       form_data.addressCounty = card_data.address.county;
 
@@ -221,59 +216,13 @@ portfinder.getPort(function(err, connectorPort) {
 
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
-      card_data.address.line2 = 'blublu';
-      delete card_data.address.line3;
+      delete card_data.address.line2;
 
       default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
       form_data.addressLine2 = card_data.address.line1;
-      form_data.addressLine3 = card_data.address.line2;
-
-      post_charge_request(cookieValue, form_data)
-                .expect(303, EMPTY_BODY)
-                .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
-                .end(done);
-    });
-
-    it('should ignore empty/null address lines when only third address line populated', function (done) {
-      var cookieValue = cookie.create(chargeId);
-
-      var card_data = minimum_connector_card_data('5105105105105100');
-      card_data.address.line1 = 'bla bla';
-      delete card_data.address.line2;
-      delete card_data.address.line3;
-
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
-
-      connector_expects(card_data).reply(204);
-      var form_data = minimum_form_card_data('5105105105105100');
-      form_data.addressLine1 = '';
-      form_data.addressLine2 = '';
-      form_data.addressLine3 = card_data.address.line1;
-
-      post_charge_request(cookieValue, form_data)
-                .expect(303, EMPTY_BODY)
-                .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
-                .end(done);
-    });
-
-    it('should pass through empty address lines when the first and third address line are populated', function (done) {
-      var cookieValue = cookie.create(chargeId);
-
-      var card_data = minimum_connector_card_data('5105105105105100');
-      card_data.address.line1 = '31 gated avenue';
-      card_data.address.line2 = 'Hampshire';
-      delete card_data.address.line3;
-
-      default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
-
-      connector_expects(card_data).reply(204);
-      var form_data = minimum_form_card_data('5105105105105100');
-      form_data.addressLine1 = card_data.address.line1;
-      form_data.addressLine2 = '';
-      form_data.addressLine3 = card_data.address.line2;
 
       post_charge_request(cookieValue, form_data)
                 .expect(303, EMPTY_BODY)
