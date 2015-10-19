@@ -87,7 +87,7 @@ portfinder.getPort(function(err, connectorPort) {
 
   describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function (done) {
-      var serviceUrl = 'http://www.example.com/service';
+      var returnUrl = 'http://www.example.com/service';
 
       var cookieValue = cookie.create(chargeId);
       default_connector_response_for_get_charge(connectorPort, chargeId, 'CREATED');
@@ -100,7 +100,7 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200, {
             'amount': '23.45',
             'charge_id': chargeId,
-            'service_url': serviceUrl,
+            'return_url': returnUrl,
             'post_card_action': frontendCardDetailsPath
       }).end(done);
     });
