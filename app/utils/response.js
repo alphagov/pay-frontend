@@ -21,5 +21,12 @@ module.exports = {
     response(req.headers.accept, res, 'error', {
       'message': msg
     });
+  },
+  renderErrorViewWithReturnUrl : function (req, res, msg, returnUrl) {
+    logger.error('An error occurred: ' + msg);
+    response(req.headers.accept, res, 'error_with_return_url', {
+      'message': msg,
+      'return_url' : returnUrl
+    });
   }
 };

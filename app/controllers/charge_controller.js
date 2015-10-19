@@ -11,6 +11,7 @@ var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
+var renderErrorViewWithReturnUrl = require('../utils/response.js').renderErrorViewWithReturnUrl;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 
@@ -263,9 +264,18 @@ module.exports.bindRoutesTo = function (app) {
 
                 var payload = {headers: {"Content-Type": "application/json"}, data: {}};
                 client.post(cardCaptureUrl, payload, function (data, connectorResponse) {
-                    if (connectorResponse.statusCode === 204) {
-                        res.redirect(303, CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRMED_PATH);
-                        return;
+                    switch (connectorResponse.statusCode) {
+                        case 204:
+                            res.redirect(303, CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRMED_PATH);
+                            return;
+                        case 500:
+                            renderErrorViewWithReturnUrl(
+                                req,
+                                res,
+                                'There was a problem processing your payment. Please contact the service.',
+                                chargeData.return_url
+                            );
+                            return;
                     }
 
                     renderErrorView(req, res, ERROR_MESSAGE);
