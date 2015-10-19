@@ -54,9 +54,8 @@ describe('The charge view', function() {
      body.should.containInputField('cvc', 'text').withAttribute('maxlength', '3').withLabel('cvc-lbl', 'Card security code');
      body.should.containInputField('expiryDate', 'text').withAttribute('maxlength', '5').withLabel('expiryDate-lbl', 'Expiry date');
      body.should.containInputField('cardholderName', 'text').withAttribute('maxlength', '200').withLabel('cardholderName-lbl', 'Name on card');
-     body.should.containInputField('addressLine1', 'text').withAttribute('maxlength', '100').withLabel('addressLine1-lbl', 'Billing address');
+     body.should.containInputField('addressLine1', 'text').withAttribute('maxlength', '100').withLabel('addressLine1-lbl', 'Building name and/or number and street');
      body.should.containInputField('addressLine2', 'text').withAttribute('maxlength', '100');
-     body.should.containInputField('addressLine3', 'text').withAttribute('maxlength', '100');
      body.should.containInputField('addressCity', 'text').withAttribute('maxlength', '100').withLabel('addressCity-lbl', 'Town or city');
      body.should.containInputField('addressCounty', 'text').withAttribute('maxlength', '100').withLabel('addressCounty-lbl', 'County');
      body.should.containInputField('addressPostcode', 'text').withAttribute('maxlength', '10').withLabel('addressPostcode-lbl', 'Postcode');
