@@ -12,7 +12,7 @@ var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
-var enteringCardDetailsStatus = 'ENTERING CARD DETAILS';
+var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 
 
 module.exports.bindRoutesTo = function (app) {
@@ -30,6 +30,11 @@ module.exports.bindRoutesTo = function (app) {
         'cardholderName': 'Name on card',
         'addressLine1': 'Building name/number and street',
         'addressPostcode': 'Postcode'
+    };
+
+    var UPDATE_STATUS_PAYLOAD = {
+        headers: {"Content-Type": "application/json"},
+        data: {'new_status': ENTERING_CARD_DETAILS_STATUS}
     };
 
     function createChargeIdSessionKey(chargeId) {
@@ -72,21 +77,17 @@ module.exports.bindRoutesTo = function (app) {
         }
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         logger.info("connectorUrl from env var: " + connectorUrl);
-        var payload = {
-            headers: {"Content-Type": "application/json"},
-            data: {'new_status': enteringCardDetailsStatus}
-        };
 
         //update charge status to 'ENTERING CARD DETAILS' {chargeId}/status/{newStatus}
-        client.put(connectorUrl + '/status', payload, function(data, putResponse) {
-            logger.debug('set charge status to: '+ enteringCardDetailsStatus);
+        client.put(connectorUrl + '/status', UPDATE_STATUS_PAYLOAD, function(data, putResponse) {
+            logger.debug('set charge status to: '+ ENTERING_CARD_DETAILS_STATUS);
             logger.debug('response from the connector=' + putResponse.statusCode);
 
             if (putResponse.statusCode === 204) {
-                getCharge(chargeId, req, res);
+                getChargeAndBuildResponse(chargeId, req, res);
                 return;
             }
-            logger.error('Failed to update charge status to ' +enteringCardDetailsStatus+ ', response code from connector=' + putResponse.statusCode);
+            logger.error('Failed to update charge status to ' +ENTERING_CARD_DETAILS_STATUS+ ', response code from connector=' + putResponse.statusCode);
             response(req.headers.accept, res.status(404), ERROR_VIEW, {
                 'message': PAGE_NOT_FOUND_ERROR_MESSAGE
             });
@@ -289,13 +290,13 @@ module.exports.bindRoutesTo = function (app) {
         res.send("The payment has been confirmed. :)");
     });
 
-    function getCharge(chargeId, req, res) {
+    function getChargeAndBuildResponse(chargeId, req, res) {
         //now get the charge
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (connectorData, connectorResponse) {
             if (connectorResponse.statusCode === 200) {
                 logger.info('connector data = ', connectorData);
-                if (connectorData.status != enteringCardDetailsStatus) {
+                if (connectorData.status != ENTERING_CARD_DETAILS_STATUS) {
                     response(req.headers.accept, res.status(404), ERROR_VIEW, {
                         'message': PAGE_NOT_FOUND_ERROR_MESSAGE
                     });
