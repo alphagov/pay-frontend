@@ -29,13 +29,13 @@ describe('The charge view', function() {
   });
 
   it('should have a \'Back to service\' button.', function () {
-    var serviceUrl = "http://example.com/service";
+    var returnUrl = "http://example.com/service";
     var templateData = {
-      'return_url' : serviceUrl
+      'return_url' : returnUrl
     };
 
     var body = renderTemplate('charge', templateData);
-    body.should.containSelector('#back').withAttribute('href', serviceUrl);
+    body.should.containSelector('#back').withAttribute('href', returnUrl);
   });
 
   it('should not show the \'Back to service\' when no return_url passed.', function () {

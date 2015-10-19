@@ -58,11 +58,11 @@ module.exports = {
 
     default_connector_response_for_get_charge: function (connectorPort, chargeId, status) {
         init_connector_url(connectorPort);
-        var serviceUrl = 'http://www.example.com/service';
+        var returnUrl = 'http://www.example.com/service';
         connector_responds_with(connectorPort, chargeId, {
             'amount': 2345,
             'status': status,
-            'return_url': serviceUrl,
+            'return_url': returnUrl,
             'links': [{
                 'href': connectorAuthUrl(connectorPort, chargeId),
                 'rel': 'cardAuth',
