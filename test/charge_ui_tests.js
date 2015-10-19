@@ -31,14 +31,14 @@ describe('The charge view', function() {
   it('should have a \'Back to service\' button.', function () {
     var serviceUrl = "http://example.com/service";
     var templateData = {
-      'service_url' : serviceUrl
+      'return_url' : serviceUrl
     };
 
     var body = renderTemplate('charge', templateData);
     body.should.containSelector('#back').withAttribute('href', serviceUrl);
   });
 
-  it('should not show the \'Back to service\' when no service_url passed.', function () {
+  it('should not show the \'Back to service\' when no return_url passed.', function () {
     var body = renderTemplate('charge', {});
     body.should.not.containSelector('#back');
   });

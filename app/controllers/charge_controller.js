@@ -92,7 +92,7 @@ module.exports.bindRoutesTo = function (app) {
                 response(req.headers.accept, res, CHARGE_VIEW, {
                     'charge_id': chargeId,
                     'amount': uiAmount,
-                    'service_url': connectorData.service_url,
+                    'return_url': connectorData.return_url,
                     'post_card_action': CARD_DETAILS_PATH
                 });
                 return;

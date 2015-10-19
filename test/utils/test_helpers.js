@@ -62,7 +62,7 @@ module.exports = {
         connector_responds_with(connectorPort, chargeId, {
             'amount': 2345,
             'status': status,
-            'service_url': serviceUrl,
+            'return_url': serviceUrl,
             'links': [{
                 'href': connectorAuthUrl(connectorPort, chargeId),
                 'rel': 'cardAuth',

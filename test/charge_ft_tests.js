@@ -101,7 +101,7 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200, {
             'amount': '23.45',
             'charge_id': chargeId,
-            'service_url': serviceUrl,
+            'return_url': serviceUrl,
             'post_card_action': frontendCardDetailsPath
       }).end(done);
     });
