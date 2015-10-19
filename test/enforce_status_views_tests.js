@@ -9,6 +9,7 @@ var cookie = require(__dirname + '/utils/session.js');
 
 var get_charge_request = require(__dirname + '/utils/test_helpers.js').get_charge_request;
 var default_connector_response_for_get_charge = require(__dirname + '/utils/test_helpers.js').default_connector_response_for_get_charge;
+var connector_response_for_put_charge = require(__dirname + '/utils/test_helpers.js').connector_response_for_put_charge;
 
 portfinder.getPort(function (err, connectorPort) {
     var chargeId = '23144323';
@@ -29,8 +30,8 @@ portfinder.getPort(function (err, connectorPort) {
 
         card_details_not_allowed_statuses.forEach(function (status) {
             it('should error when the payment status is ' + status, function (done) {
-
                 var cookieValue = cookie.create(chargeId);
+                connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
                 default_connector_response_for_get_charge(connectorPort, chargeId, status);
 
                 get_charge_request(app, cookieValue, chargeId)

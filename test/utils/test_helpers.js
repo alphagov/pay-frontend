@@ -56,6 +56,14 @@ module.exports = {
             .set('Accept', 'application/json');
     },
 
+    connector_response_for_put_charge: function (connectorPort, chargeId, statusCode , responseBody) {
+        init_connector_url(connectorPort);
+        var connectorMock = nock(localServer(connectorPort));
+        var mockPath = connectorChargePath + chargeId + '/status';
+        var payload = {'new_status':'ENTERING CARD DETAILS'};
+        connectorMock.put(mockPath, payload).reply(statusCode, responseBody);
+    },
+
     default_connector_response_for_get_charge: function (connectorPort, chargeId, status) {
         init_connector_url(connectorPort);
         var returnUrl = 'http://www.example.com/service';

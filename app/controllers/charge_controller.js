@@ -12,6 +12,8 @@ var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
+var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
+
 
 module.exports.bindRoutesTo = function (app) {
     var CONFIRM_PATH = '/confirm';
@@ -28,6 +30,11 @@ module.exports.bindRoutesTo = function (app) {
         'cardholderName': 'Name on card',
         'addressLine1': 'Building name/number and street',
         'addressPostcode': 'Postcode'
+    };
+
+    var UPDATE_STATUS_PAYLOAD = {
+        headers: {"Content-Type": "application/json"},
+        data: {'new_status': ENTERING_CARD_DETAILS_STATUS}
     };
 
     function createChargeIdSessionKey(chargeId) {
@@ -65,25 +72,46 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId');
         var chargeId = req.params.chargeId;
-
-        if (
-            !validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)
-        ) {
+        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        logger.info("connectorUrl from env var: " + connectorUrl);
 
+        //update charge status to 'ENTERING CARD DETAILS' {chargeId}/status/{newStatus}
+        client.put(connectorUrl + '/status', UPDATE_STATUS_PAYLOAD, function(data, putResponse) {
+            logger.debug('set charge status to: '+ ENTERING_CARD_DETAILS_STATUS);
+            logger.debug('response from the connector=' + putResponse.statusCode);
+
+            if (putResponse.statusCode === 204) {
+                getChargeAndBuildResponse(chargeId, req, res);
+                return;
+            }
+            logger.error('Failed to update charge status to ' +ENTERING_CARD_DETAILS_STATUS+ ', response code from connector=' + putResponse.statusCode);
+            response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+            });
+        })
+        .on('error', function(err) {
+            logger.error('Exception raised calling connector for put' + err);
+            response(req.headers.accept, res, ERROR_VIEW, {
+              'message': ERROR_MESSAGE
+            });
+        });
+    });
+
+    function getCharge(chargeId, req, res) {
+        //now get the charge
+        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (connectorData, connectorResponse) {
-
             if (connectorResponse.statusCode === 200) {
-                if (connectorData.status != 'CREATED') {
+                logger.info('connector data = ', connectorData);
+                if (connectorData.status != enteringCardDetailsStatus) {
                     response(req.headers.accept, res.status(404), ERROR_VIEW, {
                         'message': PAGE_NOT_FOUND_ERROR_MESSAGE
                     });
                     return;
                 }
-                logger.info('connector data = ', connectorData);
                 var amountInPence = connectorData.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
                 var chargeSession = chargeState(req, chargeId);
@@ -97,15 +125,15 @@ module.exports.bindRoutesTo = function (app) {
                 });
                 return;
             }
-
             renderErrorView(req, res, ERROR_MESSAGE);
-        }).on('error', function (err) {
-            logger.error('Exception raised calling connector: ' + err);
+        })
+        .on('error', function (err) {
+            logger.error('Exception raised calling connector for get: ' + err);
             response(req.headers.accept, res, ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
         });
-    });
+    }
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
         logger.info('POST ' + CARD_DETAILS_PATH);
@@ -261,6 +289,41 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRMED_PATH, function (req, res) {
         res.send("The payment has been confirmed. :)");
     });
+
+    function getChargeAndBuildResponse(chargeId, req, res) {
+        //now get the charge
+        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        client.get(connectorUrl, function (connectorData, connectorResponse) {
+            if (connectorResponse.statusCode === 200) {
+                logger.info('connector data = ', connectorData);
+                if (connectorData.status != ENTERING_CARD_DETAILS_STATUS) {
+                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                    });
+                    return;
+                }
+                var amountInPence = connectorData.amount;
+                var uiAmount = (amountInPence / 100).toFixed(2);
+                var chargeSession = chargeState(req, chargeId);
+                chargeSession.amount = amountInPence;
+
+                response(req.headers.accept, res, CHARGE_VIEW, {
+                    'charge_id': chargeId,
+                    'amount': uiAmount,
+                    'return_url': connectorData.return_url,
+                    'post_card_action': CARD_DETAILS_PATH
+                });
+                return;
+            }
+            renderErrorView(req, res, ERROR_MESSAGE);
+        })
+        .on('error', function (err) {
+            logger.error('Exception raised calling connector for get: ' + err);
+            response(req.headers.accept, res, ERROR_VIEW, {
+                'message': ERROR_MESSAGE
+            });
+        });
+    }
 
     function findLinkForRelation(links, rel) {
         return links.find(function (link) {
