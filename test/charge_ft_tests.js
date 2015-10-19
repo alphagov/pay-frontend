@@ -294,7 +294,7 @@ portfinder.getPort(function(err, connectorPort) {
             get_charge_request(app, cookieValue, chargeId)
                                 .expect(200, {'charge_id': chargeId,
                                               'amount': '23.45',
-                                              'service_url': 'http://www.example.com/service',
+                                              'return_url': 'http://www.example.com/service',
                                               'post_card_action': '/card_details'
                                               })
                                 .end(done);
