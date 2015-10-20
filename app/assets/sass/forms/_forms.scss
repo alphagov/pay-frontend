@@ -251,7 +251,10 @@ fieldset {
 
 .form-control-1-4 {
   @extend .form-control;
-  width: 25%;
+  width: $two-thirds;
+  @include media(tablet) {
+    width: $one-quarter;
+  }
 }
 
 .form-control-1-8 {
