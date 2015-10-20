@@ -383,6 +383,22 @@ portfinder.getPort(function(err, connectorPort) {
           .end(done);
     });
 
+    it('connector failure when trying to capture should result in error page', function (done) {
+      default_connector_response_for_get_charge(connectorPort, chargeId, "AUTHORISATION SUCCESS");
+      connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(500);
+
+      request(app)
+          .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
+          .set('Accept', 'application/json')
+          .expect(200,
+            {
+              'message'    : 'There was a problem processing your payment. Please contact the service.',
+              'return_url': 'http://www.example.com/service'
+            })
+          .end(done);
+    });
+
     it('should produce an error if the connector responds with a 404 for the charge', function (done) {
       connectorMock.get(connectorChargePath + chargeId).reply(404);
 
@@ -396,7 +412,7 @@ portfinder.getPort(function(err, connectorPort) {
 
     it('should produce an error if the connector returns a non-204 status', function (done) {
       default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
-      connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(500);
+      connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(1234);
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
