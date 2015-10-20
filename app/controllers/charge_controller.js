@@ -141,8 +141,9 @@ module.exports.bindRoutesTo = function (app) {
         if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-        var checkResult = validateNewCharge(normaliseAddress(req.body), chargeId);
+        var checkResult = validateNewCharge(normaliseAddress(req.body));
         if (checkResult.hasError) {
+            checkResult.charge_id = chargeId;
             logger.info('post errors: '+JSON.stringify(checkResult, null, 2));
             response(req.headers.accept, res, CHARGE_VIEW, checkResult);
             return;
@@ -326,9 +327,8 @@ module.exports.bindRoutesTo = function (app) {
         });
     }
 
-    function validateNewCharge(body, chargeId) {
+    function validateNewCharge(body) {
         var checkResult = {
-            charge_id: chargeId,
             hasError: false,
             errorMessage: "The following fields are required:"
         };
