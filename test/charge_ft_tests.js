@@ -212,7 +212,7 @@ portfinder.getPort(function(err, connectorPort) {
       var cookieValue = cookie.create(chargeId);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
-          .expect(200, {'message': 'You probably mistyped the card number. Please check and try again.'})
+          .expect(200, { charge_id: chargeId, hasError: true, errorMessage: 'You probably mistyped the card number. Please check and try again.' })
           .end(done);
     });
 
