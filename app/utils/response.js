@@ -13,6 +13,7 @@ module.exports = {
   ERROR_MESSAGE : 'There is a problem with the payments platform',
   ERROR_VIEW : 'error',
   PAGE_NOT_FOUND_ERROR_MESSAGE : 'Page cannot be found',
+  PROCESSING_PROBLEM_MESSAGE : 'There was a problem processing your payment. Please contact the service.',
 
   response : response,
 
