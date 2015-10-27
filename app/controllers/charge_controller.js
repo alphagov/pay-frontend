@@ -10,6 +10,7 @@ var response = require('../utils/response.js').response;
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
+var PROCESSING_PROBLEM_MESSAGE = require('../utils/response.js').PROCESSING_PROBLEM_MESSAGE;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 var renderErrorViewWithReturnUrl = require('../utils/response.js').renderErrorViewWithReturnUrl;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
@@ -134,19 +135,25 @@ module.exports.bindRoutesTo = function (app) {
             var cardAuthUrl = authLink.href;
 
             client.post(cardAuthUrl, payload, function (data, connectorResponse) {
-
-                if (connectorResponse.statusCode === 204) {
-                    var chargeSession = chargeState(req, chargeId);
-                    chargeSession.cardNumber = hashOutCardNumber(plainCardNumber);
-                    chargeSession.expiryDate = expiryDate;
-                    chargeSession.cardholderName = req.body.cardholderName;
-                    chargeSession.address = buildAddressLine(req.body);
-                    chargeSession.serviceName = "Demo Service";
-                    res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
-                    return;
+                logger.info('posting card details');
+                switch (connectorResponse.statusCode) {
+                    case 204:
+                        logger.info('got response code 200 from connector');
+                        var chargeSession = chargeState(req, chargeId);
+                        chargeSession.cardNumber = hashOutCardNumber(plainCardNumber);
+                        chargeSession.expiryDate = expiryDate;
+                        chargeSession.cardholderName = req.body.cardholderName;
+                        chargeSession.address = buildAddressLine(req.body);
+                        chargeSession.serviceName = "Demo Service";
+                        res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
+                        return;
+                    case 500:
+                        logger.error('got response code 500 from connector');
+                        renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
+                        return;
+                    default:
+                        renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
                 }
-
-                renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
             }).on('error', function (err) {
                 logger.error('Exception raised calling connector: ' + err);
                 response(req.headers.accept, res, ERROR_VIEW, {
@@ -187,6 +194,7 @@ module.exports.bindRoutesTo = function (app) {
                     });
                     return;
                 }
+
 
                 var amountInPence = chargeSession.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
@@ -230,16 +238,13 @@ module.exports.bindRoutesTo = function (app) {
                             res.redirect(303, CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRMED_PATH);
                             return;
                         case 500:
-                            renderErrorViewWithReturnUrl(
-                                req,
-                                res,
-                                'There was a problem processing your payment. Please contact the service.',
-                                chargeData.return_url
-                            );
+                            renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
+                            return;
+                        default:
+                            renderErrorView(req, res, ERROR_MESSAGE);
                             return;
                     }
 
-                    renderErrorView(req, res, ERROR_MESSAGE);
                 }).on('error', function (err) {
                     logger.error('Exception raised calling connector: ' + err);
                     response(req.headers.accept, res, ERROR_VIEW, {

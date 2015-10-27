@@ -399,6 +399,26 @@ portfinder.getPort(function(err, connectorPort) {
           .end(done);
     });
 
+    it('connector failure when trying to authorise payment should result in error page', function (done) {
+      var cookieValue = cookie.create(chargeId);
+      default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+      var card_data = full_connector_card_data('5105105105105100');
+      connector_expects(card_data).reply(500);
+
+      var form_data = minimum_form_card_data('5105105105105100');
+      form_data.addressLine2 = card_data.address.line2;
+      form_data.addressCity = card_data.address.city;
+      form_data.addressCounty = card_data.address.county;
+
+      post_charge_request(cookieValue, form_data)
+          .expect(200,
+            {
+              'message'    : 'There was a problem processing your payment. Please contact the service.',
+              'return_url': 'http://www.example.com/service'
+            })
+          .end(done);
+    });
+
     it('should produce an error if the connector responds with a 404 for the charge', function (done) {
       connectorMock.get(connectorChargePath + chargeId).reply(404);
 
