@@ -230,12 +230,13 @@ module.exports.bindRoutesTo = function (app) {
             if (chargeResponse.statusCode === 200) {
                 var captureLink = findLinkForRelation(chargeData.links, 'cardCapture');
                 var cardCaptureUrl = captureLink.href;
+                var returnUrl = chargeData.return_url;
 
                 var payload = {headers: {"Content-Type": "application/json"}, data: {}};
                 client.post(cardCaptureUrl, payload, function (data, connectorResponse) {
                     switch (connectorResponse.statusCode) {
                         case 204:
-                            res.redirect(303, CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRMED_PATH);
+                            res.redirect(303, returnUrl);
                             return;
                         case 500:
                             renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
@@ -260,10 +261,6 @@ module.exports.bindRoutesTo = function (app) {
                 'message': ERROR_MESSAGE
             });
         });
-    });
-
-    app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRMED_PATH, function (req, res) {
-        res.send("The payment has been confirmed. :)");
     });
 
     function getChargeAndBuildResponse(chargeId, req, res) {
