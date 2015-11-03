@@ -124,9 +124,12 @@ module.exports.bindRoutesTo = function (app) {
             return;
         }
         var checkResult = validateNewCharge(normaliseAddress(req.body));
+
         if (checkResult.hasError) {
             checkResult.charge_id = chargeId;
-            logger.info('post errors: '+JSON.stringify(checkResult, null, 2));
+            checkResult.amount = req.body.hiddenAmount;
+            checkResult.return_url = req.body.returnUrl;
+            checkResult.post_card_action = CARD_DETAILS_PATH;
             response(req.headers.accept, res, CHARGE_VIEW, checkResult);
             return;
         }
@@ -184,21 +187,16 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-
         logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-
         var chargeId = req.params.chargeId;
-
         if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
         var chargeSession = chargeState(req, chargeId);
 
         if (!validSession(chargeSession, req, res)) {
             return;
         }
-
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (connectorData, connectorResponse) {
             if (connectorResponse.statusCode === 200) {
@@ -208,8 +206,6 @@ module.exports.bindRoutesTo = function (app) {
                     });
                     return;
                 }
-
-
                 var amountInPence = chargeSession.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
 
@@ -227,19 +223,14 @@ module.exports.bindRoutesTo = function (app) {
                 });
             }
         });
-
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-
         logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-
         var chargeId = req.params.chargeId;
-
         if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (chargeData, chargeResponse) {
             if (chargeResponse.statusCode === 200) {
@@ -260,7 +251,6 @@ module.exports.bindRoutesTo = function (app) {
                             renderErrorView(req, res, ERROR_MESSAGE);
                             return;
                     }
-
                 }).on('error', function (err) {
                     logger.error('Exception raised calling connector: ' + err);
                     response(req.headers.accept, res, ERROR_VIEW, {
@@ -324,20 +314,25 @@ module.exports.bindRoutesTo = function (app) {
     function validateNewCharge(body) {
         var checkResult = {
             hasError: false,
-            errorMessage: "The following fields are required:"
+            errorMessage: "The following fields are either missing or have errors in them:",
+            errorFields: [],
+            highlightErrorFields: {}
         };
-        for (var key in REQUIRED_FORM_FIELDS) {
-            if (!body[key]) {
+        for (var field in REQUIRED_FORM_FIELDS) {
+            if (!body[field]) {
                 checkResult.hasError = true;
-                checkResult.errorMessage += "* " + REQUIRED_FORM_FIELDS[key] + "\n";
+                checkResult.errorFields.push({'key':field, 'value': REQUIRED_FORM_FIELDS[field] + ' missing'});
+                checkResult.highlightErrorFields[field] = 'missing';
             }
         }
         if (body['cardNo']) {
             if (!luhn.validate(body.cardNo)) {
                 checkResult.hasError = true;
-                checkResult.errorMessage = "You probably mistyped the card number. Please check and try again."
+                checkResult.errorFields.push({'key':'cardNo', 'value': REQUIRED_FORM_FIELDS['cardNo'] + ' invalid'});
+                checkResult.highlightErrorFields['cardNo'] = 'invalid';
             }
         }
+        logger.info("Card details check result: "+JSON.stringify(checkResult));
         return checkResult
     }
 

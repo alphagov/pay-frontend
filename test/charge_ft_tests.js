@@ -28,6 +28,7 @@ portfinder.getPort(function(err, connectorPort) {
   var connectorMock = nock(localServer);
   var enteringCardDetailsState = 'ENTERING CARD DETAILS';
   var aHappyState = 'HAPPY-STATE';
+  var RETURN_URL = 'http://www.example.com/service';
 
   function connector_expects(data) {
     return connectorMock.post(connectorChargePath + chargeId + '/cards', data);
@@ -68,6 +69,8 @@ portfinder.getPort(function(err, connectorPort) {
 
   function minimum_form_card_data(card_number) {
     return {
+      'hiddenAmount': '23.45',
+      'returnUrl': RETURN_URL,
       'cardUrl': connectorAuthUrl,
       'chargeId': chargeId,
       'cardNo': card_number,
@@ -79,18 +82,25 @@ portfinder.getPort(function(err, connectorPort) {
     };
   }
 
+  function missing_form_card_data() {
+    return {
+      'hiddenAmount': '23.45',
+      'chargeId': chargeId,
+      'returnUrl': RETURN_URL
+    };
+  }
+
   beforeEach(function() {
     nock.cleanAll();
   });
 
   before(function () {
     // Disable logging.
-    winston.level = 'none';
+//    winston.level = 'none';
   });
 
   describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function (done) {
-      var returnUrl = 'http://www.example.com/service';
 
       var cookieValue = cookie.create(chargeId);
       connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
@@ -105,7 +115,7 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200, {
             'amount': '23.45',
             'charge_id': chargeId,
-            'return_url': returnUrl,
+            'return_url': RETURN_URL,
             'paymentDescription': "Payment Description",
             'post_card_action': frontendCardDetailsPath
       }).end(done);
@@ -213,7 +223,47 @@ portfinder.getPort(function(err, connectorPort) {
       var cookieValue = cookie.create(chargeId);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
-          .expect(200, { charge_id: chargeId, hasError: true, errorMessage: 'You probably mistyped the card number. Please check and try again.' })
+          .expect(200, {
+                charge_id: chargeId,
+                return_url: RETURN_URL,
+                post_card_action: frontendCardDetailsPath,
+                hasError: true,
+                amount: '23.45',
+                errorFields: [{"key": "cardNo", "value": "Card number invalid"}],
+                highlightErrorFields: {"cardNo": "invalid"},
+                errorMessage: 'The following fields are either missing or have errors in them:'
+                })
+          .end(done);
+    });
+
+    it('shows an error when a card is submitted with missing fields', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      post_charge_request(cookieValue, missing_form_card_data())
+          .expect(200, {
+                charge_id: chargeId,
+                return_url: RETURN_URL,
+                post_card_action: frontendCardDetailsPath,
+                hasError: true,
+                amount: '23.45',
+                errorMessage: 'The following fields are either missing or have errors in them:',
+                errorFields: [
+                    {"key": "cardNo", "value": "Card number missing"},
+                    {"key": "cvc", "value": "CVC missing"},
+                    {"key": "expiryDate", "value": "Expiry date missing"},
+                    {"key": "cardholderName", "value": "Name on card missing"},
+                    {"key": "addressLine1", "value": "Building name/number and street missing"},
+                    {"key": "addressPostcode", "value": "Postcode missing"}
+                ],
+                highlightErrorFields: {
+                    "cardNo":"missing",
+                    "cvc":"missing",
+                    "expiryDate":"missing",
+                    "cardholderName":"missing",
+                    "addressLine1":"missing",
+                    "addressPostcode":"missing"
+                    }
+          })
           .end(done);
     });
 

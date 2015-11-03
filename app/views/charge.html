@@ -6,31 +6,41 @@ Enter your card details.
 
 {{$content}}
 <main id="content" role="main" class="content-wrapper">
-    <p id="errorMessage"><font color="red">{{errorMessage}}</font></p>
 
     {{#return_url}}
         <a id="back" href="{{return_url}}" class="previous-page">Back</a>
     {{/return_url}}
 
+    {{#errorMessage}}
+        <p id="errorMessage"><font color="red">{{errorMessage}}</font></p>
+        {{#errorFields}}
+            <li><a href="#{{key}}" id="{{key}}Error"><font color="red">{{value}}</font></a></li>
+        {{/errorFields}}
+    {{/errorMessage}}
     <h1 class="form-title">Pay by card</h1>
 
     <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
-        <div class="form-group">
+        <input id="hidden-amount" name="hiddenAmount" type="hidden" value="{{amount}}" />
+        <input id="return-url" name="returnUrl" type="hidden" value="{{return_url}}" />
+        <div class="form-group {{#highlightErrorFields.cardholderName}}error{{/highlightErrorFields.cardholderName}}">
             <label id="cardholderName-lbl" for="cardholderName" class="form-label-bold">
                 Name on card
+                {{#highlightErrorFields.cardholderName}}<font color="red">{{highlightErrorFields.cardholderName}}</font>{{/highlightErrorFields.cardholderName}}
                 <input id="cardholderName" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
             </label>
         </div>
         <div class="form-group">
             <label id="cardNo-lbl" for="cardNo" class="form-label-bold">
                 Card number
+                {{#highlightErrorFields.cardNo}}<font color="red">{{highlightErrorFields.cardNo}}</font>{{/highlightErrorFields.cardNo}}
                 <input id="cardNo" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
             </label>
         </div>
         <div class="form-group">
             <label id="cvc-lbl" for="cvc" class="form-label-bold">
                 Card security code
+                {{#highlightErrorFields.cvc}}<font color="red">{{highlightErrorFields.cvc}}</font>{{/highlightErrorFields.cvc}}
                 <p class="form-hint">This is the 3 digit code at the back of your card</p>
                 <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
             </label>
@@ -38,6 +48,7 @@ Enter your card details.
         <div class="form-group">
             <label id="expiryDate-lbl" for="expiryDate" class="form-label-bold">
                 Expiry date
+                {{#highlightErrorFields.expiryDate}}<font color="red">{{highlightErrorFields.expiryDate}}</font>{{/highlightErrorFields.expiryDate}}
                 <p class="form-hint">For example, 07/17</p>
                 <input id="expiryDate" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
             </label>
@@ -48,6 +59,7 @@ Enter your card details.
             <p class="form-hint">This is the address associated with the card</p>
             <label id="addressLine1-lbl" for="addressLine1" class="form-label-bold">
                 Building name and/or number and street
+                {{#highlightErrorFields.addressLine1}}<font color="red">{{highlightErrorFields.addressLine1}}</font>{{/highlightErrorFields.addressLine1}}
                 <input id="addressLine1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
             </label>
             <input id="addressLine2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
@@ -56,18 +68,21 @@ Enter your card details.
         <div class="form-group">
             <label id="addressCity-lbl" for="addressCity" class="form-label-bold">
                 Town or city
+                {{#highlightErrorFields.addressLine1}}<font color="red">{{highlightErrorFields.addressLine1}}</font>{{/highlightErrorFields.addressLine1}}
                 <input id="addressCity" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
             </label>
         </div>
         <div class="form-group">
             <label id="addressCounty-lbl" for="addressCounty" class="form-label-bold">
                 County
+                {{#highlightErrorFields.addressLine1}}<font color="red">{{highlightErrorFields.addressLine1}}</font>{{/highlightErrorFields.addressLine1}}
                 <input id="addressCounty" type="text" name="addressCounty" maxlength="100" class="form-control-1-4">
             </label>
         </div>
         <div class="form-group">
             <label id="addressPostcode-lbl" for="addressPostcode" class="form-label-bold">
                 Postcode
+                {{#highlightErrorFields.addressPostcode}}<font color="red">{{highlightErrorFields.addressPostcode}}</font>{{/highlightErrorFields.addressPostcode}}
                 <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
             </label>
         </div>
