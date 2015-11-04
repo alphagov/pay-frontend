@@ -96,7 +96,7 @@ portfinder.getPort(function(err, connectorPort) {
 
   before(function () {
     // Disable logging.
-//    winston.level = 'none';
+    winston.level = 'none';
   });
 
   describe('The /charge endpoint', function() {
