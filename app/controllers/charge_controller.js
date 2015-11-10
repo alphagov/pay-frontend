@@ -70,6 +70,22 @@ module.exports.bindRoutesTo = function (app) {
         return true;
     }
 
+    function validSession(chargeSession, req, res) {
+        if (
+            !('amount' in chargeSession) ||
+            !('paymentDescription' in chargeSession) ||
+            !('expiryDate' in chargeSession) ||
+            !('cardNumber' in chargeSession) ||
+            !('cardholderName' in chargeSession) ||
+            !('address' in chargeSession) ||
+            !('serviceName' in chargeSession)
+        ) {
+            renderErrorView(req, res, 'Session expired');
+            return false;
+        }
+        return true;
+    }
+
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId');
         var chargeId = req.params.chargeId;
@@ -179,8 +195,7 @@ module.exports.bindRoutesTo = function (app) {
 
         var chargeSession = chargeState(req, chargeId);
 
-        if (!('amount' in chargeSession) || !('expiryDate' in chargeSession) || !('cardNumber' in chargeSession) || !('cardholderName' in chargeSession) || !('address' in chargeSession) || !('serviceName' in chargeSession)) {
-            renderErrorView(req, res, 'Session expired');
+        if (!validSession(chargeSession, req, res)) {
             return;
         }
 
@@ -206,6 +221,7 @@ module.exports.bindRoutesTo = function (app) {
                     'cardholderName': chargeSession.cardholderName,
                     'address': chargeSession.address,
                     'serviceName': chargeSession.serviceName,
+                    'paymentDescription': chargeSession.paymentDescription,
                     'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
                     'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
                 });
@@ -278,11 +294,13 @@ module.exports.bindRoutesTo = function (app) {
                 var uiAmount = (amountInPence / 100).toFixed(2);
                 var chargeSession = chargeState(req, chargeId);
                 chargeSession.amount = amountInPence;
+                chargeSession.paymentDescription = connectorData.description;
 
                 response(req.headers.accept, res, CHARGE_VIEW, {
                     'charge_id': chargeId,
                     'amount': uiAmount,
                     'return_url': connectorData.return_url,
+                    'paymentDescription': chargeSession.paymentDescription,
                     'post_card_action': CARD_DETAILS_PATH
                 });
                 return;

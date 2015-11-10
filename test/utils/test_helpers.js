@@ -69,6 +69,7 @@ module.exports = {
         var returnUrl = 'http://www.example.com/service';
         connector_responds_with(connectorPort, chargeId, {
             'amount': 2345,
+            'description': "Payment Description",
             'status': status,
             'return_url': returnUrl,
             'links': [{

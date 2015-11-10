@@ -106,6 +106,7 @@ portfinder.getPort(function(err, connectorPort) {
             'amount': '23.45',
             'charge_id': chargeId,
             'return_url': returnUrl,
+            'paymentDescription': "Payment Description",
             'post_card_action': frontendCardDetailsPath
       }).end(done);
     });
@@ -295,6 +296,7 @@ portfinder.getPort(function(err, connectorPort) {
                                 .expect(200, {'charge_id': chargeId,
                                               'amount': '23.45',
                                               'return_url': 'http://www.example.com/service',
+                                              'paymentDescription': "Payment Description",
                                               'post_card_action': '/card_details'
                                               })
                                 .end(done);
@@ -322,6 +324,7 @@ portfinder.getPort(function(err, connectorPort) {
   describe('The /card_details/charge_id/confirm endpoint', function () {
     var fullSessionData = {
       'amount': 1000,
+      'paymentDescription': "Payment description",
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'cardholderName': 'T Eulenspiegel',
@@ -341,6 +344,7 @@ portfinder.getPort(function(err, connectorPort) {
           'cardNumber': "************5100",
           'expiryDate': "11/99",
           'amount': "10.00",
+          'paymentDescription': "Payment description",
           'cardholderName': "T Eulenspiegel",
           'address': 'Kneitlingen, Brunswick, Germany',
           'serviceName': 'Pranks incorporated',
