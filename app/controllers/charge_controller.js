@@ -19,7 +19,6 @@ var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 
 module.exports.bindRoutesTo = function (app) {
     var CONFIRM_PATH = '/confirm';
-    var CONFIRMED_PATH = '/confirmed';
     var CARD_DETAILS_PATH = '/card_details';
 
     var CHARGE_VIEW = 'charge';
