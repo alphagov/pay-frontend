@@ -379,7 +379,7 @@ portfinder.getPort(function(err, connectorPort) {
           .set('Cookie', ['session_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(303, {})
-          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirmed')
+          .expect('Location', 'http://www.example.com/service')
           .end(done);
     });
 
