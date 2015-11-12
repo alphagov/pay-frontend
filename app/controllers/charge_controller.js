@@ -321,8 +321,8 @@ module.exports.bindRoutesTo = function (app) {
         for (var field in REQUIRED_FORM_FIELDS) {
             if (!body[field]) {
                 checkResult.hasError = true;
-                checkResult.errorFields.push({'key':field, 'value': REQUIRED_FORM_FIELDS[field] + ' missing'});
-                checkResult.highlightErrorFields[field] = 'missing';
+                checkResult.errorFields.push({'key':field, 'value': REQUIRED_FORM_FIELDS[field] + ' is missing'});
+                checkResult.highlightErrorFields[field] = 'Please enter';
             }
         }
         if (body['cardNo']) {
@@ -353,7 +353,6 @@ module.exports.bindRoutesTo = function (app) {
             'line1': body.addressLine1,
             'line2': body.addressLine2,
             'city': body.addressCity,
-            'county': body.addressCounty,
             'postcode': body.addressPostcode,
             'country': 'GB'
         };
@@ -363,7 +362,6 @@ module.exports.bindRoutesTo = function (app) {
         return [body.addressLine1,
             body.addressLine2,
             body.addressCity,
-            body.addressCounty,
             body.addressPostcode].filter(notNullOrEmpty).join(", ");
     }
 
