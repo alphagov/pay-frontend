@@ -7,100 +7,112 @@ Enter your card details.
 {{$content}}
 <main id="content" role="main" class="content-wrapper">
 
-    {{#return_url}}
-        <a id="back" href="{{return_url}}" class="previous-page">Back</a>
-    {{/return_url}}
+  {{#return_url}}
+      <a id="back" href="{{return_url}}" class="previous-page">Back</a>
+  {{/return_url}}
 
+  <div class="error-summary" role="group" >
     {{#errorMessage}}
-        <p id="errorMessage"><font color="red">{{errorMessage}}</font></p>
+      <h1 class="heading-medium error-summary-heading" id="errorMessage">{{errorMessage}}</h1>
+      <ul class="error-summary-list">
         {{#errorFields}}
-            <li><a href="#{{key}}" id="{{key}}Error"><font color="red">{{value}}</font></a></li>
+          <li><a href="#{{key}}" id="{{key}}Error">{{value}}</a></li>
         {{/errorFields}}
+      </ul>
     {{/errorMessage}}
-    <h1 class="form-title">Pay by card</h1>
+  </div>
 
-    <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
-        <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
-        <input id="hidden-amount" name="hiddenAmount" type="hidden" value="{{amount}}" />
-        <input id="return-url" name="returnUrl" type="hidden" value="{{return_url}}" />
-        <div class="form-group {{#highlightErrorFields.cardholderName}}error{{/highlightErrorFields.cardholderName}}">
-            <label id="cardholderName-lbl" for="cardholderName" class="form-label-bold">
-                Name on card
-                {{#highlightErrorFields.cardholderName}}<font color="red">{{highlightErrorFields.cardholderName}}</font>{{/highlightErrorFields.cardholderName}}
-                <input id="cardholderName" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
-            </label>
-        </div>
-        <div class="form-group">
-            <label id="cardNo-lbl" for="cardNo" class="form-label-bold">
-                Card number
-                {{#highlightErrorFields.cardNo}}<font color="red">{{highlightErrorFields.cardNo}}</font>{{/highlightErrorFields.cardNo}}
-                <input id="cardNo" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
-            </label>
-        </div>
-        <div class="form-group">
-            <label id="cvc-lbl" for="cvc" class="form-label-bold">
-                Card security code
-                {{#highlightErrorFields.cvc}}<font color="red">{{highlightErrorFields.cvc}}</font>{{/highlightErrorFields.cvc}}
-                <p class="form-hint">This is the 3 digit code at the back of your card</p>
-                <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
-            </label>
-        </div>
-        <div class="form-group">
-            <label id="expiryDate-lbl" for="expiryDate" class="form-label-bold">
-                Expiry date
-                {{#highlightErrorFields.expiryDate}}<font color="red">{{highlightErrorFields.expiryDate}}</font>{{/highlightErrorFields.expiryDate}}
-                <p class="form-hint">For example, 07/17</p>
-                <input id="expiryDate" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
-            </label>
-        </div>
+  <h1 class="form-title">Pay by card</h1>
 
-        <div class="form-group address">
-            <h2>Billing address</h2>
-            <p class="form-hint">This is the address associated with the card</p>
-            <label id="addressLine1-lbl" for="addressLine1" class="form-label-bold">
-                Building name and/or number and street
-                {{#highlightErrorFields.addressLine1}}<font color="red">{{highlightErrorFields.addressLine1}}</font>{{/highlightErrorFields.addressLine1}}
-                <input id="addressLine1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
-            </label>
-            <input id="addressLine2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
-        </div>
-
-        <div class="form-group">
-            <label id="addressCity-lbl" for="addressCity" class="form-label-bold">
-                Town or city
-                {{#highlightErrorFields.addressLine1}}<font color="red">{{highlightErrorFields.addressLine1}}</font>{{/highlightErrorFields.addressLine1}}
-                <input id="addressCity" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
-            </label>
-        </div>
-        <div class="form-group">
-            <label id="addressCounty-lbl" for="addressCounty" class="form-label-bold">
-                County
-                {{#highlightErrorFields.addressLine1}}<font color="red">{{highlightErrorFields.addressLine1}}</font>{{/highlightErrorFields.addressLine1}}
-                <input id="addressCounty" type="text" name="addressCounty" maxlength="100" class="form-control-1-4">
-            </label>
-        </div>
-        <div class="form-group">
-            <label id="addressPostcode-lbl" for="addressPostcode" class="form-label-bold">
-                Postcode
-                {{#highlightErrorFields.addressPostcode}}<font color="red">{{highlightErrorFields.addressPostcode}}</font>{{/highlightErrorFields.addressPostcode}}
-                <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
-            </label>
-        </div>
-        <div>
-            <input id="submitCardDetails" type="submit" class="button" value="Make payment" name="submitCardDetails">
-        </div>
-    </form>
-
-    <aside class="payment-summary">
-      <div class="inner js-stick-at-top-when-scrolling">
-        <h2>Payment summary</h2>
-        <p><strong id="service-name">Example Government Service</strong></p>
-        <p>
-          Amount to pay:
-          <span id="amount" class="amount">£{{amount}}</span></p>
-        </p>
+  <form id="cardDetails" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
+      <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
+      <input id="hidden-amount" name="hiddenAmount" type="hidden" value="{{amount}}" />
+      <input id="return-url" name="returnUrl" type="hidden" value="{{return_url}}" />
+      <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}">
+          <label id="cardholderName-lbl" for="cardholderName" class="form-label-bold">
+              Name on card
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.cardholderName}}{{highlightErrorFields.cardholderName}} your full name{{/highlightErrorFields.cardholderName}}
+              </p>
+              <input id="cardholderName" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
+          </label>
       </div>
-    </aside>
+      <div class="form-group{{#highlightErrorFields.cardNo}} error{{/highlightErrorFields.cardNo}}">
+          <label id="cardNo-lbl" for="cardNo" class="form-label-bold">
+              Card number
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.cardNo}}{{highlightErrorFields.cardNo}} a valid card number{{/highlightErrorFields.cardNo}}
+              </p>
+              <input id="cardNo" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
+          </label>
+      </div>
+      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}">
+          <label id="cvc-lbl" for="cvc" class="form-label-bold">
+              Card security code
+              <p class="form-hint">This is the 3 digit code at the back of your card</p>
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.cvc}}{{highlightErrorFields.cvc}} your card security code{{/highlightErrorFields.cvc}}
+              </p>
+              <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
+          </label>
+      </div>
+      <div class="form-group{{#highlightErrorFields.expiryDate}} error{{/highlightErrorFields.expiryDate}}">
+          <label id="expiryDate-lbl" for="expiryDate" class="form-label-bold">
+              Expiry date
+              <p class="form-hint">For example, 07/17</p>
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.expiryDate}}{{highlightErrorFields.expiryDate}} a valid expiry date{{/highlightErrorFields.expiryDate}}
+              </p>
+              <input id="expiryDate" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
+          </label>
+      </div>
+
+      <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
+          <h2>Billing address</h2>
+          <p class="form-hint">This is the address associated with the card</p>
+          <label id="addressLine1-lbl" for="addressLine1" class="form-label-bold">
+              Building name and/or number and street
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.addressLine1}}{{highlightErrorFields.addressLine1}} your address{{/highlightErrorFields.addressLine1}}
+              </p>
+              <input id="addressLine1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
+          </label>
+          <input id="addressLine2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
+      </div>
+
+      <div class="form-group{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
+          <label id="addressCity-lbl" for="addressCity" class="form-label-bold">
+              Town or city
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.addressLine1}}{{highlightErrorFields.addressLine1}} town or city{{/highlightErrorFields.addressLine1}}
+              </p>
+              <input id="addressCity" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
+          </label>
+      </div>
+      <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}">
+          <label id="addressPostcode-lbl" for="addressPostcode" class="form-label-bold">
+              Postcode
+              <p class="error-message" id="error-message-ni-number">
+                {{#highlightErrorFields.addressPostcode}}{{highlightErrorFields.addressPostcode}} a valid postcode{{/highlightErrorFields.addressPostcode}}
+              </p>
+              <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
+          </label>
+      </div>
+      <div>
+          <input id="submitCardDetails" type="submit" class="button" value="Make payment" name="submitCardDetails">
+      </div>
+  </form>
+
+  <aside class="payment-summary">
+    <div class="inner js-stick-at-top-when-scrolling">
+      <h2>Payment summary</h2>
+      <p><strong id="service-name">Example Government Service</strong></p>
+      <p>
+        Amount to pay:
+        <span id="amount" class="amount">£{{amount}}</span></p>
+      </p>
+    </div>
+  </aside>
 
 </main>
 

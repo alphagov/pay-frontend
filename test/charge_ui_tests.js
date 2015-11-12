@@ -57,7 +57,6 @@ describe('The charge view', function() {
      body.should.containInputField('addressLine1', 'text').withAttribute('maxlength', '100').withLabel('addressLine1-lbl', 'Building name and/or number and street');
      body.should.containInputField('addressLine2', 'text').withAttribute('maxlength', '100');
      body.should.containInputField('addressCity', 'text').withAttribute('maxlength', '100').withLabel('addressCity-lbl', 'Town or city');
-     body.should.containInputField('addressCounty', 'text').withAttribute('maxlength', '100').withLabel('addressCounty-lbl', 'County');
      body.should.containInputField('addressPostcode', 'text').withAttribute('maxlength', '10').withLabel('addressPostcode-lbl', 'Postcode');
      body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234');
   });

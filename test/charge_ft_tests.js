@@ -62,7 +62,6 @@ portfinder.getPort(function(err, connectorPort) {
     var card_data = minimum_connector_card_data(card_number);
     card_data.address.line2 = 'bla bla';
     card_data.address.city = 'London';
-    card_data.address.county = 'Greater London';
     card_data.address.country = 'GB';
     return card_data;
   }
@@ -146,7 +145,6 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(cookieValue, form_data)
           .expect(303)
@@ -166,9 +164,8 @@ portfinder.getPort(function(err, connectorPort) {
 
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
-      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Greater London, Y1 1YN';
+      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Y1 1YN';
 
       post_charge_request(cookieValue, form_data)
           .expect(303, {})
@@ -202,7 +199,6 @@ portfinder.getPort(function(err, connectorPort) {
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line2 = 'bla bla';
       card_data.address.city = 'London';
-      card_data.address.county = 'Greater London';
       card_data.address.country = 'GB';
 
       connector_expects(card_data).reply(204);
@@ -210,7 +206,6 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(cookieValue, form_data)
         .expect(200, {
@@ -458,7 +453,6 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(cookieValue, form_data)
           .expect(200,
