@@ -25,12 +25,24 @@ module.exports.bindRoutesTo = function (app) {
     var CONFIRM_VIEW = 'confirm';
 
     var REQUIRED_FORM_FIELDS = {
-        'cardNo': 'Card number',
-        'cvc': 'CVC',
-        'expiryDate': 'Expiry date',
-        'cardholderName': 'Name on card',
-        'addressLine1': 'Building name/number and street',
-        'addressPostcode': 'Postcode'
+        cardNo: {
+            name: 'Card number',
+            message: 'Please enter a valid card number' },
+        cvc: {
+            name: 'CVC',
+            message: 'Please enter your card security code' },
+        expiryDate: {
+            name: 'Expiry date',
+            message: 'Please enter a valid expiry date' },
+        cardholderName: {
+            name: 'Name on card',
+            message: 'Please enter your full name' },
+        addressLine1: {
+            name: 'Building name/number and street',
+            message:'Please enter your address' },
+        addressPostcode: {
+            name: 'Postcode',
+            message: 'Please enter a valid postcode' }
     };
 
     var UPDATE_STATUS_PAYLOAD = {
@@ -321,15 +333,21 @@ module.exports.bindRoutesTo = function (app) {
         for (var field in REQUIRED_FORM_FIELDS) {
             if (!body[field]) {
                 checkResult.hasError = true;
-                checkResult.errorFields.push({'key':field, 'value': REQUIRED_FORM_FIELDS[field] + ' is missing'});
-                checkResult.highlightErrorFields[field] = 'Please enter';
+                checkResult.errorFields.push({
+                    key: field,
+                    value: REQUIRED_FORM_FIELDS[field].name + ' is missing'
+                });
+                checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
         }
         if (body['cardNo']) {
             if (!luhn.validate(body.cardNo)) {
                 checkResult.hasError = true;
-                checkResult.errorFields.push({'key':'cardNo', 'value': REQUIRED_FORM_FIELDS['cardNo'] + ' invalid'});
-                checkResult.highlightErrorFields['cardNo'] = 'invalid';
+                checkResult.errorFields.push({
+                    key: 'cardNo',
+                    value: REQUIRED_FORM_FIELDS['cardNo'].name + ' is invalid'
+                });
+                checkResult.highlightErrorFields['cardNo'] = REQUIRED_FORM_FIELDS['cardNo'].message;
             }
         }
         logger.info("Card details check result: "+JSON.stringify(checkResult));
