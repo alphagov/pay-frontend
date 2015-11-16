@@ -223,8 +223,8 @@ portfinder.getPort(function(err, connectorPort) {
                 post_card_action: frontendCardDetailsPath,
                 hasError: true,
                 amount: '23.45',
-                errorFields: [{"key": "cardNo", "value": "Card number invalid"}],
-                highlightErrorFields: {"cardNo": "invalid"},
+                errorFields: [{"key": "cardNo", "value": "Card number is invalid"}],
+                highlightErrorFields: {"cardNo": "Please enter a valid card number"},
                 errorMessage: 'The following fields are either missing or have errors in them:'
                 })
           .end(done);
@@ -242,20 +242,20 @@ portfinder.getPort(function(err, connectorPort) {
                 amount: '23.45',
                 errorMessage: 'The following fields are either missing or have errors in them:',
                 errorFields: [
-                    {"key": "cardNo", "value": "Card number missing"},
-                    {"key": "cvc", "value": "CVC missing"},
-                    {"key": "expiryDate", "value": "Expiry date missing"},
-                    {"key": "cardholderName", "value": "Name on card missing"},
-                    {"key": "addressLine1", "value": "Building name/number and street missing"},
-                    {"key": "addressPostcode", "value": "Postcode missing"}
+                    {"key": "cardNo", "value": "Card number is missing"},
+                    {"key": "cvc", "value": "CVC is missing"},
+                    {"key": "expiryDate", "value": "Expiry date is missing"},
+                    {"key": "cardholderName", "value": "Name on card is missing"},
+                    {"key": "addressLine1", "value": "Building name/number and street is missing"},
+                    {"key": "addressPostcode", "value": "Postcode is missing"}
                 ],
                 highlightErrorFields: {
-                    "cardNo":"missing",
-                    "cvc":"missing",
-                    "expiryDate":"missing",
-                    "cardholderName":"missing",
-                    "addressLine1":"missing",
-                    "addressPostcode":"missing"
+                    "cardNo":"Please enter a valid card number",
+                    "cvc":"Please enter your card security code",
+                    "expiryDate":"Please enter a valid expiry date",
+                    "cardholderName":"Please enter your full name",
+                    "addressLine1":"Please enter your address",
+                    "addressPostcode":"Please enter a valid postcode"
                     }
           })
           .end(done);
