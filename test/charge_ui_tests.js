@@ -70,6 +70,7 @@ describe('The confirm view', function () {
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'amount': "10.00",
+      'paymentDescription': "Payment Description",
       'cardholderName': 'Francisco Blaya-Gonzalvez',
       'address': '1 street lane, avenue city, AB1 3DF',
       'serviceName': 'Service 1'
@@ -79,10 +80,9 @@ describe('The confirm view', function () {
     body.should.containSelector('#cardNumber').withText('************5100');
     body.should.containSelector('#expiryDate').withText('11/99');
     body.should.containSelector('#amount').withText('£10.00');
+    body.should.containSelector('#paymentDescription').withText('Payment Description');
     body.should.containSelector('#cardholderName').withText('Francisco Blaya-Gonzalvez');
     body.should.containSelector('#address').withText('1 street lane, avenue city, AB1 3DF');
-    body.should.containSelector('#serviceName').withText('Service 1');
-
   });
 
   it('should render a back link', function () {
