@@ -31,7 +31,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}">
           <label id="cardholderName-lbl" for="cardholderName" class="form-label-bold">
               Name on card
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-cardholder-name">
                 {{highlightErrorFields.cardholderName}}
               </p>
               <input id="cardholderName" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
@@ -40,7 +40,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.cardNo}} error{{/highlightErrorFields.cardNo}}">
           <label id="cardNo-lbl" for="cardNo" class="form-label-bold">
               Card number
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-cardNo">
                 {{highlightErrorFields.cardNo}}
               </p>
               <input id="cardNo" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
@@ -50,7 +50,7 @@ Enter your card details.
           <label id="cvc-lbl" for="cvc" class="form-label-bold">
               Card security code
               <p class="form-hint">This is the 3 digit code at the back of your card</p>
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-cvc">
                 {{highlightErrorFields.cvc}}
               </p>
               <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
@@ -60,7 +60,7 @@ Enter your card details.
           <label id="expiryDate-lbl" for="expiryDate" class="form-label-bold">
               Expiry date
               <p class="form-hint">For example, 07/17</p>
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-expiry-date">
                 {{highlightErrorFields.expiryDate}}
               </p>
               <input id="expiryDate" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
@@ -72,7 +72,7 @@ Enter your card details.
           <p class="form-hint">This is the address associated with the card</p>
           <label id="addressLine1-lbl" for="addressLine1" class="form-label-bold">
               Building name and/or number and street
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-address-line1">
                 {{highlightErrorFields.addressLine1}}
               </p>
               <input id="addressLine1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
@@ -83,7 +83,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
           <label id="addressCity-lbl" for="addressCity" class="form-label-bold">
               Town or city
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-address-city">
                 {{highlightErrorFields.addressLine1}}
               </p>
               <input id="addressCity" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
@@ -92,7 +92,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}">
           <label id="addressPostcode-lbl" for="addressPostcode" class="form-label-bold">
               Postcode
-              <p class="error-message" id="error-message-ni-number">
+              <p class="error-message" id="error-address-postcode">
                 {{highlightErrorFields.addressPostcode}}
               </p>
               <input id="addressPostcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
