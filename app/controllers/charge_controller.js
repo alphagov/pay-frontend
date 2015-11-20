@@ -27,7 +27,7 @@ module.exports.bindRoutesTo = function (app) {
     var REQUIRED_FORM_FIELDS = {
         cardNo: {
             name: 'Card number',
-            message: 'Please enter a valid card number' },
+            message: 'Please enter the long number on the front of your card' },
         cvc: {
             name: 'CVC',
             message: 'Please enter your card security code' },
@@ -326,7 +326,7 @@ module.exports.bindRoutesTo = function (app) {
     function validateNewCharge(body) {
         var checkResult = {
             hasError: false,
-            errorMessage: "The following fields are either missing or have errors in them:",
+            errorMessage: "The following fields are missing or contain errors",
             errorFields: [],
             highlightErrorFields: {}
         };
