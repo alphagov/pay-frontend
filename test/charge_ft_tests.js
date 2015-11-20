@@ -225,8 +225,8 @@ portfinder.getPort(function(err, connectorPort) {
                 hasError: true,
                 amount: '23.45',
                 errorFields: [{"key": "cardNo", "value": "Card number is invalid"}],
-                highlightErrorFields: {"cardNo": "Please enter a valid card number"},
-                errorMessage: 'The following fields are either missing or have errors in them:'
+                highlightErrorFields: {"cardNo": "Please enter the long number on the front of your card"},
+                errorMessage: 'The following fields are missing or contain errors'
                 })
           .end(done);
     });
@@ -241,7 +241,7 @@ portfinder.getPort(function(err, connectorPort) {
                 post_card_action: frontendCardDetailsPath,
                 hasError: true,
                 amount: '23.45',
-                errorMessage: 'The following fields are either missing or have errors in them:',
+                errorMessage: 'The following fields are missing or contain errors',
                 errorFields: [
                     {"key": "cardNo", "value": "Card number is missing"},
                     {"key": "cvc", "value": "CVC is missing"},
@@ -251,7 +251,7 @@ portfinder.getPort(function(err, connectorPort) {
                     {"key": "addressPostcode", "value": "Postcode is missing"}
                 ],
                 highlightErrorFields: {
-                    "cardNo":"Please enter a valid card number",
+                    "cardNo":"Please enter the long number on the front of your card",
                     "cvc":"Please enter your card security code",
                     "expiryDate":"Please enter a valid expiry date",
                     "cardholderName":"Please enter your full name",
