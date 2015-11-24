@@ -20,7 +20,7 @@ describe('The charge view', function() {
 
     var body = renderTemplate('charge', templateData);
 
-    body.should.containSelector('form#cardDetails').withAttributes(
+    body.should.containSelector('form#card-details').withAttributes(
         {
           action: postAction,
           method: "POST",
@@ -45,20 +45,20 @@ describe('The charge view', function() {
 
   it('should have a \'Make payment\' button.', function () {
     var body = renderTemplate('charge', {});
-    body.should.containInputField('submitCardDetails', 'submit');
+    body.should.containInputField('submit-card-details', 'submit');
   });
 
   it('should show all input fields.', function () {
      var body = renderTemplate('charge', {'charge_id' : '1234'});
-     body.should.containInputField('cardNo', 'text').withAttribute('maxlength', '19').withLabel('cardNo-lbl', 'Card number');
+     body.should.containInputField('card-no', 'text').withAttribute('maxlength', '19').withLabel('card-no-lbl', 'Card number');
      body.should.containInputField('cvc', 'text').withAttribute('maxlength', '3').withLabel('cvc-lbl', 'Card security code');
-     body.should.containInputField('expiryDate', 'text').withAttribute('maxlength', '5').withLabel('expiryDate-lbl', 'Expiry date');
-     body.should.containInputField('cardholderName', 'text').withAttribute('maxlength', '200').withLabel('cardholderName-lbl', 'Name on card');
-     body.should.containInputField('addressLine1', 'text').withAttribute('maxlength', '100').withLabel('addressLine1-lbl', 'Building name and/or number and street');
-     body.should.containInputField('addressLine2', 'text').withAttribute('maxlength', '100');
-     body.should.containInputField('addressCity', 'text').withAttribute('maxlength', '100').withLabel('addressCity-lbl', 'Town or city');
-     body.should.containInputField('addressPostcode', 'text').withAttribute('maxlength', '10').withLabel('addressPostcode-lbl', 'Postcode');
-     body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234');
+     body.should.containInputField('expiry-date', 'text').withAttribute('maxlength', '5').withLabel('expiry-date-lbl', 'Expiry date');
+     body.should.containInputField('cardholder-name', 'text').withAttribute('maxlength', '200').withLabel('cardholder-name-lbl', 'Name on card');
+     body.should.containInputField('address-line1', 'text').withAttribute('maxlength', '100').withLabel('address-line1-lbl', 'Building name and/or number and street');
+     body.should.containInputField('address-line2', 'text').withAttribute('maxlength', '100');
+     body.should.containInputField('address-city', 'text').withAttribute('maxlength', '100').withLabel('address-city-lbl', 'Town or city');
+     body.should.containInputField('address-postcode', 'text').withAttribute('maxlength', '10').withLabel('address-postcode-lbl', 'Postcode');
+     body.should.containInputField('charge-id', 'hidden').withAttribute('value', '1234');
   });
 });
 
@@ -76,11 +76,11 @@ describe('The confirm view', function () {
     };
 
     var body = renderTemplate('confirm', templateData);
-    body.should.containSelector('#cardNumber').withText('************5100');
-    body.should.containSelector('#expiryDate').withText('11/99');
+    body.should.containSelector('#card-number').withText('************5100');
+    body.should.containSelector('#expiry-date').withText('11/99');
     body.should.containSelector('#amount').withText('£10.00');
-    body.should.containSelector('#paymentDescription').withText('Payment Description');
-    body.should.containSelector('#cardholderName').withText('Francisco Blaya-Gonzalvez');
+    body.should.containSelector('#payment-description').withText('Payment Description');
+    body.should.containSelector('#cardholder-name').withText('Francisco Blaya-Gonzalvez');
     body.should.containSelector('#address').withText('1 street lane, avenue city, AB1 3DF');
   });
 
