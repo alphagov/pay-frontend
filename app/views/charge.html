@@ -32,9 +32,9 @@ Enter your card details.
           <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
               Name on card
               {{#highlightErrorFields.cardholderName}}
-              <p class="error-message" id="error-cardholder-name">
-                {{highlightErrorFields.cardholderName}}
-              </p>
+                  <p class="error-message" id="error-cardholder-name">
+                    {{highlightErrorFields.cardholderName}}
+                  </p>
               {{/highlightErrorFields.cardholderName}}
               <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
           </label>
@@ -43,9 +43,9 @@ Enter your card details.
           <label id="card-no-lbl" for="card-no" class="form-label-bold">
               Card number
               {{#highlightErrorFields.cardNo}}
-              <p class="error-message" id="error-card-no">
-                {{highlightErrorFields.cardNo}}
-              </p>
+                <p class="error-message" id="error-card-no">
+                    {{highlightErrorFields.cardNo}}
+                </p>
               {{/highlightErrorFields.cardNo}}
               <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
@@ -54,9 +54,11 @@ Enter your card details.
           <label id="cvc-lbl" for="cvc" class="form-label-bold">
               Card security code
               <p class="form-hint">This is the 3 digit code on the back of your card</p>
-              <p class="error-message" id="error-cvc">
-                {{highlightErrorFields.cvc}}
-              </p>
+              {{#highlightErrorFields.cvc}}
+                  <p class="error-message" id="error-cvc">
+                        {{highlightErrorFields.cvc}}
+                  </p>
+              {{/highlightErrorFields.cvc}}
               <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
           </label>
       </div>
@@ -64,9 +66,11 @@ Enter your card details.
           <label id="expiry-date-lbl" for="expiry-date" class="form-label-bold">
               Expiry date
               <p class="form-hint">For example, 07/17</p>
-              <p class="error-message" id="error-expiry-date">
-                {{highlightErrorFields.expiryDate}}
-              </p>
+              {{#highlightErrorFields.expiryDate}}
+                <p class="error-message" id="error-expiry-date">
+                    {{highlightErrorFields.expiryDate}}
+                </p>
+              {{/highlightErrorFields.expiryDate}}
               <input id="expiry-date" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
           </label>
       </div>
@@ -76,9 +80,11 @@ Enter your card details.
           <p class="form-hint">This is the address associated with the card</p>
           <label id="address-line1-lbl" for="address-line1" class="form-label-bold">
               Building name and/or number and street
-              <p class="error-message" id="error-address-line1">
-                {{highlightErrorFields.addressLine1}}
-              </p>
+              {{#highlightErrorFields.addressLine1}}
+                <p class="error-message" id="error-address-line1">
+                    {{highlightErrorFields.addressLine1}}
+                </p>
+              {{/highlightErrorFields.addressLine1}}
               <input id="address-line1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
           </label>
           <input id="address-line2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
@@ -87,18 +93,22 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
               Town or city
-              <p class="error-message" id="error-address-city">
-                {{highlightErrorFields.addressLine1}}
-              </p>
+              {{#highlightErrorFields.addressLine1}}
+                <p class="error-message" id="error-address-city">
+                    {{highlightErrorFields.addressLine1}}
+                </p>
+              {{/highlightErrorFields.addressLine1}}
               <input id="address-city" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}">
           <label id="address-postcode-lbl" for="address-postcode" class="form-label-bold">
               Postcode
-              <p class="error-message" id="error-address-postcode">
-                {{highlightErrorFields.addressPostcode}}
-              </p>
+              {{#highlightErrorFields.addressPostcode}}
+                <p class="error-message" id="error-address-postcode">
+                    {{highlightErrorFields.addressPostcode}}
+                </p>
+              {{/highlightErrorFields.addressPostcode}}
               <input id="address-postcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
           </label>
       </div>
