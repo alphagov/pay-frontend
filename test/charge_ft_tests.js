@@ -224,7 +224,7 @@ portfinder.getPort(function(err, connectorPort) {
                 post_card_action: frontendCardDetailsPath,
                 hasError: true,
                 amount: '23.45',
-                errorFields: [{"key": "cardNo", "value": "Card number is invalid"}],
+                errorFields: [{"key": "card-no", "value": "Card number is invalid"}],
                 highlightErrorFields: {"cardNo": "Please enter the long number on the front of your card"},
                 errorMessage: 'The following fields are missing or contain errors'
                 })
@@ -243,12 +243,12 @@ portfinder.getPort(function(err, connectorPort) {
                 amount: '23.45',
                 errorMessage: 'The following fields are missing or contain errors',
                 errorFields: [
-                    {"key": "cardNo", "value": "Card number is missing"},
+                    {"key": "card-no", "value": "Card number is missing"},
                     {"key": "cvc", "value": "CVC is missing"},
-                    {"key": "expiryDate", "value": "Expiry date is missing"},
-                    {"key": "cardholderName", "value": "Name on card is missing"},
-                    {"key": "addressLine1", "value": "Building name/number and street is missing"},
-                    {"key": "addressPostcode", "value": "Postcode is missing"}
+                    {"key": "expiry-date", "value": "Expiry date is missing"},
+                    {"key": "cardholder-name", "value": "Name on card is missing"},
+                    {"key": "address-line1", "value": "Building name/number and street is missing"},
+                    {"key": "address-postcode", "value": "Postcode is missing"}
                 ],
                 highlightErrorFields: {
                     "cardNo":"Please enter the long number on the front of your card",
