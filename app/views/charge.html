@@ -25,7 +25,7 @@ Enter your card details.
   <h1 class="form-title">Pay by card</h1>
 
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
-      <input id="charge-id" name="charge-id" type="hidden" value="{{charge_id}}" />
+      <input id="charge-id" name="chargeId" type="hidden" value="{{charge_id}}" />
       <input id="hidden-amount" name="hiddenAmount" type="hidden" value="{{amount}}" />
       <input id="return-url" name="returnUrl" type="hidden" value="{{return_url}}" />
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}">
@@ -36,7 +36,7 @@ Enter your card details.
                 {{highlightErrorFields.cardholderName}}
               </p>
               {{/highlightErrorFields.cardholderName}}
-              <input id="cardholder-name" type="text" name="cardholder-name" maxlength="200" class="form-control-1-2">
+              <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.cardNo}} error{{/highlightErrorFields.cardNo}}">
@@ -47,7 +47,7 @@ Enter your card details.
                 {{highlightErrorFields.cardNo}}
               </p>
               {{/highlightErrorFields.cardNo}}
-              <input id="card-no" type="text" name="card-no" maxlength="19" class="form-control-1-2">
+              <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}">
@@ -67,7 +67,7 @@ Enter your card details.
               <p class="error-message" id="error-expiry-date">
                 {{highlightErrorFields.expiryDate}}
               </p>
-              <input id="expiry-date" type="text" name="expiry-date" maxlength="5" class="form-control-1-8 cvc">
+              <input id="expiry-date" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
           </label>
       </div>
 
@@ -79,9 +79,9 @@ Enter your card details.
               <p class="error-message" id="error-address-line1">
                 {{highlightErrorFields.addressLine1}}
               </p>
-              <input id="address-line1" type="text" name="address-line1" maxlength="100" class="form-control-1-2">
+              <input id="address-line1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
           </label>
-          <input id="address-line2" type="text" name="address-line2" maxlength="100" class="form-control-1-2">
+          <input id="address-line2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
       </div>
 
       <div class="form-group{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
@@ -90,7 +90,7 @@ Enter your card details.
               <p class="error-message" id="error-address-city">
                 {{highlightErrorFields.addressLine1}}
               </p>
-              <input id="address-city" type="text" name="address-city" maxlength="100" class="form-control-1-4">
+              <input id="address-city" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}">
@@ -99,11 +99,11 @@ Enter your card details.
               <p class="error-message" id="error-address-postcode">
                 {{highlightErrorFields.addressPostcode}}
               </p>
-              <input id="address-postcode" type="text" name="address-postcode" maxlength="10" class="form-control-1-8">
+              <input id="address-postcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8">
           </label>
       </div>
       <div>
-          <input id="submit-card-details" type="submit" class="button" value="Make payment" name="submit-card-details">
+          <input id="submit-card-details" type="submit" class="button" value="Make payment" name="submitCardDetails">
       </div>
   </form>
 

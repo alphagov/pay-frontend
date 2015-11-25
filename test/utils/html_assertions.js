@@ -72,6 +72,11 @@ chai.use(function (_chai, utils) {
     utils.flag(this, 'inputFieldId', idAndName);
   });
 
+  chai.Assertion.addMethod('containInputWithIdAndName', function(id, name, type) {
+    this.containSelector('input#' + id).withAttributes({name: name, type: type})
+    utils.flag(this, 'inputFieldId', id);
+  });
+
   chai.Assertion.addMethod('withLabel', function(labelId, labelText) {
     var inputFieldId = utils.flag(this, 'inputFieldId');
     var subAssertion = new chai.Assertion(utils.flag(this, "rawHtml"));
