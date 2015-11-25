@@ -28,6 +28,7 @@ portfinder.getPort(function(err, connectorPort) {
   var connectorMock = nock(localServer);
   var enteringCardDetailsState = 'ENTERING CARD DETAILS';
   var aHappyState = 'HAPPY-STATE';
+  var RETURN_URL = 'http://www.example.com/service';
 
   function connector_expects(data) {
     return connectorMock.post(connectorChargePath + chargeId + '/cards', data);
@@ -61,13 +62,14 @@ portfinder.getPort(function(err, connectorPort) {
     var card_data = minimum_connector_card_data(card_number);
     card_data.address.line2 = 'bla bla';
     card_data.address.city = 'London';
-    card_data.address.county = 'Greater London';
     card_data.address.country = 'GB';
     return card_data;
   }
 
   function minimum_form_card_data(card_number) {
     return {
+      'hiddenAmount': '23.45',
+      'returnUrl': RETURN_URL,
       'cardUrl': connectorAuthUrl,
       'chargeId': chargeId,
       'cardNo': card_number,
@@ -76,6 +78,14 @@ portfinder.getPort(function(err, connectorPort) {
       'cardholderName': 'Jimi Hendrix',
       'addressLine1': '32 Whip Ma Whop Ma Avenue',
       'addressPostcode': 'Y1 1YN'
+    };
+  }
+
+  function missing_form_card_data() {
+    return {
+      'hiddenAmount': '23.45',
+      'chargeId': chargeId,
+      'returnUrl': RETURN_URL
     };
   }
 
@@ -90,7 +100,6 @@ portfinder.getPort(function(err, connectorPort) {
 
   describe('The /charge endpoint', function() {
     it('should include the data required for the frontend', function (done) {
-      var returnUrl = 'http://www.example.com/service';
 
       var cookieValue = cookie.create(chargeId);
       connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
@@ -105,7 +114,7 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200, {
             'amount': '23.45',
             'charge_id': chargeId,
-            'return_url': returnUrl,
+            'return_url': RETURN_URL,
             'paymentDescription': "Payment Description",
             'post_card_action': frontendCardDetailsPath
       }).end(done);
@@ -137,7 +146,6 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(cookieValue, form_data)
           .expect(303)
@@ -157,9 +165,8 @@ portfinder.getPort(function(err, connectorPort) {
 
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
-      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Greater London, Y1 1YN';
+      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Y1 1YN';
 
       post_charge_request(cookieValue, form_data)
           .expect(303, {})
@@ -193,7 +200,6 @@ portfinder.getPort(function(err, connectorPort) {
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line2 = 'bla bla';
       card_data.address.city = 'London';
-      card_data.address.county = 'Greater London';
       card_data.address.country = 'GB';
 
       connector_expects(card_data).reply(204);
@@ -201,7 +207,6 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(cookieValue, form_data)
         .expect(200, {
@@ -213,7 +218,47 @@ portfinder.getPort(function(err, connectorPort) {
       var cookieValue = cookie.create(chargeId);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
-          .expect(200, { charge_id: chargeId, hasError: true, errorMessage: 'You probably mistyped the card number. Please check and try again.' })
+          .expect(200, {
+                charge_id: chargeId,
+                return_url: RETURN_URL,
+                post_card_action: frontendCardDetailsPath,
+                hasError: true,
+                amount: '23.45',
+                errorFields: [{"key": "card-no", "value": "Card number is invalid"}],
+                highlightErrorFields: {"cardNo": "Please enter the long number on the front of your card"},
+                errorMessage: 'The following fields are missing or contain errors'
+                })
+          .end(done);
+    });
+
+    it('shows an error when a card is submitted with missing fields', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      post_charge_request(cookieValue, missing_form_card_data())
+          .expect(200, {
+                charge_id: chargeId,
+                return_url: RETURN_URL,
+                post_card_action: frontendCardDetailsPath,
+                hasError: true,
+                amount: '23.45',
+                errorMessage: 'The following fields are missing or contain errors',
+                errorFields: [
+                    {"key": "card-no", "value": "Card number is missing"},
+                    {"key": "cvc", "value": "CVC is missing"},
+                    {"key": "expiry-date", "value": "Expiry date is missing"},
+                    {"key": "cardholder-name", "value": "Name on card is missing"},
+                    {"key": "address-line1", "value": "Building name/number and street is missing"},
+                    {"key": "address-postcode", "value": "Postcode is missing"}
+                ],
+                highlightErrorFields: {
+                    "cardNo":"Please enter the long number on the front of your card",
+                    "cvc":"Please enter your card security code",
+                    "expiryDate":"Please enter a valid expiry date",
+                    "cardholderName":"Please enter your full name",
+                    "addressLine1":"Please enter your address",
+                    "addressPostcode":"Please enter a valid postcode"
+                    }
+          })
           .end(done);
     });
 
@@ -412,7 +457,6 @@ portfinder.getPort(function(err, connectorPort) {
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
-      form_data.addressCounty = card_data.address.county;
 
       post_charge_request(cookieValue, form_data)
           .expect(200,

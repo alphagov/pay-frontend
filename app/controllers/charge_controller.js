@@ -25,12 +25,30 @@ module.exports.bindRoutesTo = function (app) {
     var CONFIRM_VIEW = 'confirm';
 
     var REQUIRED_FORM_FIELDS = {
-        'cardNo': 'Card number',
-        'cvc': 'CVC',
-        'expiryDate': 'Expiry date',
-        'cardholderName': 'Name on card',
-        'addressLine1': 'Building name/number and street',
-        'addressPostcode': 'Postcode'
+        cardNo: {
+            id: 'card-no',
+            name: 'Card number',
+            message: 'Please enter the long number on the front of your card' },
+        cvc: {
+            id: 'cvc',
+            name: 'CVC',
+            message: 'Please enter your card security code' },
+        expiryDate: {
+            id: 'expiry-date',
+            name: 'Expiry date',
+            message: 'Please enter a valid expiry date' },
+        cardholderName: {
+            id: 'cardholder-name',
+            name: 'Name on card',
+            message: 'Please enter your full name' },
+        addressLine1: {
+            id: 'address-line1',
+            name: 'Building name/number and street',
+            message:'Please enter your address' },
+        addressPostcode: {
+            id: 'address-postcode',
+            name: 'Postcode',
+            message: 'Please enter a valid postcode' }
     };
 
     var UPDATE_STATUS_PAYLOAD = {
@@ -124,9 +142,12 @@ module.exports.bindRoutesTo = function (app) {
             return;
         }
         var checkResult = validateNewCharge(normaliseAddress(req.body));
+
         if (checkResult.hasError) {
             checkResult.charge_id = chargeId;
-            logger.info('post errors: '+JSON.stringify(checkResult, null, 2));
+            checkResult.amount = req.body.hiddenAmount;
+            checkResult.return_url = req.body.returnUrl;
+            checkResult.post_card_action = CARD_DETAILS_PATH;
             response(req.headers.accept, res, CHARGE_VIEW, checkResult);
             return;
         }
@@ -184,21 +205,16 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-
         logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-
         var chargeId = req.params.chargeId;
-
         if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
         var chargeSession = chargeState(req, chargeId);
 
         if (!validSession(chargeSession, req, res)) {
             return;
         }
-
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (connectorData, connectorResponse) {
             if (connectorResponse.statusCode === 200) {
@@ -208,8 +224,6 @@ module.exports.bindRoutesTo = function (app) {
                     });
                     return;
                 }
-
-
                 var amountInPence = chargeSession.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
 
@@ -227,19 +241,14 @@ module.exports.bindRoutesTo = function (app) {
                 });
             }
         });
-
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-
         logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-
         var chargeId = req.params.chargeId;
-
         if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
             return;
         }
-
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (chargeData, chargeResponse) {
             if (chargeResponse.statusCode === 200) {
@@ -260,7 +269,6 @@ module.exports.bindRoutesTo = function (app) {
                             renderErrorView(req, res, ERROR_MESSAGE);
                             return;
                     }
-
                 }).on('error', function (err) {
                     logger.error('Exception raised calling connector: ' + err);
                     response(req.headers.accept, res, ERROR_VIEW, {
@@ -324,20 +332,31 @@ module.exports.bindRoutesTo = function (app) {
     function validateNewCharge(body) {
         var checkResult = {
             hasError: false,
-            errorMessage: "The following fields are required:"
+            errorMessage: "The following fields are missing or contain errors",
+            errorFields: [],
+            highlightErrorFields: {}
         };
-        for (var key in REQUIRED_FORM_FIELDS) {
-            if (!body[key]) {
+        for (var field in REQUIRED_FORM_FIELDS) {
+            if (!body[field]) {
                 checkResult.hasError = true;
-                checkResult.errorMessage += "* " + REQUIRED_FORM_FIELDS[key] + "\n";
+                checkResult.errorFields.push({
+                    key: REQUIRED_FORM_FIELDS[field].id,
+                    value: REQUIRED_FORM_FIELDS[field].name + ' is missing'
+                });
+                checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
         }
         if (body['cardNo']) {
             if (!luhn.validate(body.cardNo)) {
                 checkResult.hasError = true;
-                checkResult.errorMessage = "You probably mistyped the card number. Please check and try again."
+                checkResult.errorFields.push({
+                    key: REQUIRED_FORM_FIELDS['cardNo'].id,
+                    value: REQUIRED_FORM_FIELDS['cardNo'].name + ' is invalid'
+                });
+                checkResult.highlightErrorFields['cardNo'] = REQUIRED_FORM_FIELDS['cardNo'].message;
             }
         }
+        logger.info("Card details check result: "+JSON.stringify(checkResult));
         return checkResult
     }
 
@@ -358,7 +377,6 @@ module.exports.bindRoutesTo = function (app) {
             'line1': body.addressLine1,
             'line2': body.addressLine2,
             'city': body.addressCity,
-            'county': body.addressCounty,
             'postcode': body.addressPostcode,
             'country': 'GB'
         };
@@ -368,7 +386,6 @@ module.exports.bindRoutesTo = function (app) {
         return [body.addressLine1,
             body.addressLine2,
             body.addressCity,
-            body.addressCounty,
             body.addressPostcode].filter(notNullOrEmpty).join(", ");
     }
 
