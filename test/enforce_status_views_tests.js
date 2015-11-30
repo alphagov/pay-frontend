@@ -72,7 +72,7 @@ portfinder.getPort(function (err, connectorPort) {
                 default_connector_response_for_get_charge(connectorPort, chargeId, status);
                 request(app)
                     .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-                    .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
+                    .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
                     .set('Accept', 'application/json')
                     .expect(404, {
                         'message': 'Page cannot be found'

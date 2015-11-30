@@ -61,7 +61,7 @@ module.exports.bindRoutesTo = function (app) {
     }
 
     function chargeState(req, chargeId) {
-        return req.session_state[createChargeIdSessionKey(chargeId)];
+        return req.frontend_state[createChargeIdSessionKey(chargeId)];
     }
 
     function validChargeIdInTheRequest(req, res, chargeId) {
@@ -77,7 +77,7 @@ module.exports.bindRoutesTo = function (app) {
     }
 
     function validChargeIdOnTheSession(req, res, chargeId) {
-        if (!req.session_state[createChargeIdSessionKey(chargeId)]) {
+        if (!req.frontend_state[createChargeIdSessionKey(chargeId)]) {
             logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
             response(req.headers.accept, res, ERROR_VIEW, {
                 'message': ERROR_MESSAGE

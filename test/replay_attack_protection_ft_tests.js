@@ -58,7 +58,7 @@ describe('dummy feature - trigger', function() {
         request(app)
           .get(frontendChargePath + '/' + chargeId + '?chargeTokenId=' + chargeTokenId)
           .set('Accept', 'application/json')
-          .set('Cookie', ['session_state=' + cookieValue])
+          .set('Cookie', ['frontend_state=' + cookieValue])
           .expect('Location', frontendCardDetailsPath + '/' + chargeId)
           .expect(303)
           .end(done);
