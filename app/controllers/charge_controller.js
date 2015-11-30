@@ -25,6 +25,10 @@ module.exports.bindRoutesTo = function (app) {
     var CONFIRM_VIEW = 'confirm';
 
     var REQUIRED_FORM_FIELDS = {
+        cardholderName: {
+            id: 'cardholder-name',
+            name: 'Name on card',
+            message: 'Please enter your full name' },
         cardNo: {
             id: 'card-no',
             name: 'Card number',
@@ -37,10 +41,6 @@ module.exports.bindRoutesTo = function (app) {
             id: 'expiry-date',
             name: 'Expiry date',
             message: 'Please enter a valid expiry date' },
-        cardholderName: {
-            id: 'cardholder-name',
-            name: 'Name on card',
-            message: 'Please enter your full name' },
         addressLine1: {
             id: 'address-line1',
             name: 'Building name/number and street',
@@ -345,15 +345,15 @@ module.exports.bindRoutesTo = function (app) {
                 });
                 checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
-        }
-        if (body['cardNo']) {
-            if (!luhn.validate(body.cardNo)) {
-                checkResult.hasError = true;
-                checkResult.errorFields.push({
-                    key: REQUIRED_FORM_FIELDS['cardNo'].id,
-                    value: REQUIRED_FORM_FIELDS['cardNo'].name + ' is invalid'
-                });
-                checkResult.highlightErrorFields['cardNo'] = REQUIRED_FORM_FIELDS['cardNo'].message;
+            if (field === 'cardNo' && body['cardNo']) {
+                if (!luhn.validate(body.cardNo)) {
+                    checkResult.hasError = true;
+                    checkResult.errorFields.push({
+                        key: REQUIRED_FORM_FIELDS['cardNo'].id,
+                        value: REQUIRED_FORM_FIELDS['cardNo'].name + ' is invalid'
+                    });
+                    checkResult.highlightErrorFields['cardNo'] = REQUIRED_FORM_FIELDS['cardNo'].message;
+                }
             }
         }
         logger.info("Card details check result: "+JSON.stringify(checkResult));
