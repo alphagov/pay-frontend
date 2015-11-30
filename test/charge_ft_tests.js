@@ -38,7 +38,7 @@ portfinder.getPort(function(err, connectorPort) {
     return request(app)
         .post(frontendCardDetailsPath)
         .set('Content-Type', 'application/x-www-form-urlencoded')
-        .set('Cookie', ['session_state=' + cookieValue])
+        .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
         .send(data);
   }
@@ -311,7 +311,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
         .post(frontendCardDetailsPath)
-        .set('Cookie', ['session_state=' + cookieValue])
+        .set('Cookie', ['frontend_state=' + cookieValue])
         .send({
           'chargeId'  : chargeId,
           'cardNo'    : '5105 1051 0510 5100',
@@ -383,7 +383,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .set('Cookie', ['session_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .set('Accept', 'application/json')
         .expect(200, {
           'cardNumber': "************5100",
@@ -407,7 +407,7 @@ portfinder.getPort(function(err, connectorPort) {
 
         request(app)
             .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-            .set('Cookie', ['session_state=' + cookie.create(chargeId, sessionData)])
+            .set('Cookie', ['frontend_state=' + cookie.create(chargeId, sessionData)])
             .set('Accept', 'application/json')
             .expect(200, {
               'message': 'Session expired'
@@ -425,7 +425,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
+          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(303, {})
           .expect('Location', 'http://www.example.com/service')
@@ -438,7 +438,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
+          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200,
             {
@@ -472,7 +472,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
+          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {'message': 'There is a problem with the payments platform'}, done);
     });
@@ -484,7 +484,7 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
+          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {'message': 'There is a problem with the payments platform'}, done);
     });
@@ -493,7 +493,7 @@ portfinder.getPort(function(err, connectorPort) {
       default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['session_state=' + cookie.create(chargeId)])
+          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(200, {'message': 'There is a problem with the payments platform'}, done);
     });

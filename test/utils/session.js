@@ -1,7 +1,7 @@
 var clientSessions = require("client-sessions");
 
 var sessionConfig = {
-    'cookieName': 'session_state',
+    'cookieName': 'frontend_state',
     'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
