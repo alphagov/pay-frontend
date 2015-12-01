@@ -23,9 +23,9 @@ module.exports.bindRoutesTo = function(app) {
     var chargeId = req.params.chargeId;
     var sessionChargeIdKey = 'ch_' + chargeId;
 
-    logger.info('req.session_state[' + sessionChargeIdKey + ']=' + req.session_state[sessionChargeIdKey])
+    logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey])
 
-    if(!req.session_state[sessionChargeIdKey]) {
+    if(!req.frontend_state[sessionChargeIdKey]) {
       var connectorUrl = process.env.CONNECTOR_TOKEN_URL.replace('{chargeTokenId}', chargeTokenId);
 
       logger.info('trying to validate token=' + chargeTokenId);
@@ -72,7 +72,7 @@ module.exports.bindRoutesTo = function(app) {
           client.delete(connectorUrl, function(tokenDeleteData, tokenDeleteResponse) {
             logger.info('response from the connector=' + tokenDeleteResponse.statusCode);
             if(tokenDeleteResponse.statusCode === 204) {
-              req.session_state[sessionChargeIdKey] = {};
+              req.frontend_state[sessionChargeIdKey] = {};
               redirectToCardDetails(res, chargeId);
               return;
             }

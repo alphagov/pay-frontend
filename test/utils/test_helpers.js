@@ -52,7 +52,7 @@ module.exports = {
     get_charge_request: function (app, cookieValue, chargeId) {
         return request(app)
             .get(frontendCardDetailsPath + '/' + chargeId)
-            .set('Cookie', ['session_state=' + cookieValue])
+            .set('Cookie', ['frontend_state=' + cookieValue])
             .set('Accept', 'application/json');
     },
 
