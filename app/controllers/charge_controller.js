@@ -346,7 +346,7 @@ module.exports.bindRoutesTo = function (app) {
                 });
                 checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
-            else if (field === CARD_NUMBER_FIELD && !luhn.validate(body.cardNo)) {
+            else if (field === CARD_NUMBER_FIELD && !luhn.validate(body[CARD_NUMBER_FIELD])) {
                 checkResult.hasError = true;
                 checkResult.errorFields.push({
                     key: REQUIRED_FORM_FIELDS[CARD_NUMBER_FIELD].id,
