@@ -251,7 +251,7 @@ portfinder.getPort(function(err, connectorPort) {
                     {"key": "address-postcode", "value": "Postcode is missing"}
                 ],
                 highlightErrorFields: {
-                    "cardholderName":"Please enter your full name",
+                    "cardholderName":"Please enter the name as it appears on the card",
                     "cardNo":"Please enter the long number on the front of your card",
                     "cvc":"Please enter your card security code",
                     "expiryDate":"Please enter a valid expiry date",

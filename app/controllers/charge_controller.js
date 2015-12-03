@@ -29,7 +29,7 @@ module.exports.bindRoutesTo = function (app) {
         cardholderName: {
             id: 'cardholder-name',
             name: 'Name on card',
-            message: 'Please enter your full name' },
+            message: 'Please enter the name as it appears on the card' },
         cardNo: {
             id: 'card-no',
             name: 'Card number',
