@@ -144,8 +144,11 @@ module.exports.bindRoutesTo = function (app) {
         }
         var checkResult = validateNewCharge(normaliseAddress(req.body));
 
+        var chargeSession = chargeState(req, chargeId);
+
         if (checkResult.hasError) {
             checkResult.charge_id = chargeId;
+            checkResult.paymentDescription = chargeSession.paymentDescription;
             checkResult.amount = req.body.hiddenAmount;
             checkResult.return_url = req.body.returnUrl;
             checkResult.post_card_action = CARD_DETAILS_PATH;
@@ -176,7 +179,6 @@ module.exports.bindRoutesTo = function (app) {
                 switch (connectorResponse.statusCode) {
                     case 204:
                         logger.info('got response code 200 from connector');
-                        var chargeSession = chargeState(req, chargeId);
                         chargeSession.cardNumber = hashOutCardNumber(plainCardNumber);
                         chargeSession.expiryDate = expiryDate;
                         chargeSession.cardholderName = req.body.cardholderName;

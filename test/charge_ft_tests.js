@@ -57,7 +57,6 @@ portfinder.getPort(function(err, connectorPort) {
     };
   }
 
-
   function full_connector_card_data(card_number) {
     var card_data = minimum_connector_card_data(card_number);
     card_data.address.line2 = 'bla bla';
@@ -232,11 +231,15 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     it('shows an error when a card is submitted with missing fields', function (done) {
-      var cookieValue = cookie.create(chargeId);
+      var sessionData = {
+                'paymentDescription': "Payment description"
+      };
+      var cookieValue = cookie.create(chargeId, sessionData);
 
       post_charge_request(cookieValue, missing_form_card_data())
           .expect(200, {
                 charge_id: chargeId,
+                paymentDescription: sessionData.paymentDescription,
                 return_url: RETURN_URL,
                 post_card_action: frontendCardDetailsPath,
                 hasError: true,
