@@ -346,13 +346,13 @@ module.exports.bindRoutesTo = function (app) {
                 });
                 checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
-            else if (field === CARD_NUMBER_FIELD && !luhn.validate(body[CARD_NUMBER_FIELD])) {
+            else if (field === CARD_NUMBER_FIELD && !luhn.validate(body[field])) {
                 checkResult.hasError = true;
                 checkResult.errorFields.push({
-                    key: REQUIRED_FORM_FIELDS[CARD_NUMBER_FIELD].id,
-                    value: REQUIRED_FORM_FIELDS[CARD_NUMBER_FIELD].name + ' is invalid'
+                    key: REQUIRED_FORM_FIELDS[field].id,
+                    value: REQUIRED_FORM_FIELDS[field].name + ' is invalid'
                 });
-                checkResult.highlightErrorFields[CARD_NUMBER_FIELD] = REQUIRED_FORM_FIELDS[CARD_NUMBER_FIELD].message;
+                checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
         }
         logger.info("Card details check result: "+JSON.stringify(checkResult));
