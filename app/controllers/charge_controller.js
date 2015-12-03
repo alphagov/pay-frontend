@@ -338,19 +338,15 @@ module.exports.bindRoutesTo = function (app) {
             highlightErrorFields: {}
         };
         for (var field in REQUIRED_FORM_FIELDS) {
-            if (!body[field]) {
+            var fieldInBody = body[field];
+            var cardNoInvalid = (field === CARD_NUMBER_FIELD && !luhn.validate(body[field]));
+
+            if (!fieldInBody || cardNoInvalid) {
+                var errorType = !fieldInBody? ' is missing': ' is invalid';
                 checkResult.hasError = true;
                 checkResult.errorFields.push({
                     key: REQUIRED_FORM_FIELDS[field].id,
-                    value: REQUIRED_FORM_FIELDS[field].name + ' is missing'
-                });
-                checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
-            }
-            else if (field === CARD_NUMBER_FIELD && !luhn.validate(body[field])) {
-                checkResult.hasError = true;
-                checkResult.errorFields.push({
-                    key: REQUIRED_FORM_FIELDS[field].id,
-                    value: REQUIRED_FORM_FIELDS[field].name + ' is invalid'
+                    value: REQUIRED_FORM_FIELDS[field].name + errorType
                 });
                 checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
             }
