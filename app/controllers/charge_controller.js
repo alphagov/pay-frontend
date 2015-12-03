@@ -15,6 +15,7 @@ var renderErrorView = require('../utils/response.js').renderErrorView;
 var renderErrorViewWithReturnUrl = require('../utils/response.js').renderErrorViewWithReturnUrl;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
+var CARD_NUMBER_FIELD = 'cardNo';
 
 
 module.exports.bindRoutesTo = function (app) {
@@ -25,6 +26,10 @@ module.exports.bindRoutesTo = function (app) {
     var CONFIRM_VIEW = 'confirm';
 
     var REQUIRED_FORM_FIELDS = {
+        cardholderName: {
+            id: 'cardholder-name',
+            name: 'Name on card',
+            message: 'Please enter the name as it appears on the card' },
         cardNo: {
             id: 'card-no',
             name: 'Card number',
@@ -37,10 +42,6 @@ module.exports.bindRoutesTo = function (app) {
             id: 'expiry-date',
             name: 'Expiry date',
             message: 'Please enter a valid expiry date' },
-        cardholderName: {
-            id: 'cardholder-name',
-            name: 'Name on card',
-            message: 'Please enter your full name' },
         addressLine1: {
             id: 'address-line1',
             name: 'Building name/number and street',
@@ -337,23 +338,17 @@ module.exports.bindRoutesTo = function (app) {
             highlightErrorFields: {}
         };
         for (var field in REQUIRED_FORM_FIELDS) {
-            if (!body[field]) {
+            var fieldInBody = body[field];
+            var cardNoInvalid = (field === CARD_NUMBER_FIELD && !luhn.validate(body[field]));
+
+            if (!fieldInBody || cardNoInvalid) {
+                var errorType = !fieldInBody? ' is missing': ' is invalid';
                 checkResult.hasError = true;
                 checkResult.errorFields.push({
                     key: REQUIRED_FORM_FIELDS[field].id,
-                    value: REQUIRED_FORM_FIELDS[field].name + ' is missing'
+                    value: REQUIRED_FORM_FIELDS[field].name + errorType
                 });
                 checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
-            }
-        }
-        if (body['cardNo']) {
-            if (!luhn.validate(body.cardNo)) {
-                checkResult.hasError = true;
-                checkResult.errorFields.push({
-                    key: REQUIRED_FORM_FIELDS['cardNo'].id,
-                    value: REQUIRED_FORM_FIELDS['cardNo'].name + ' is invalid'
-                });
-                checkResult.highlightErrorFields['cardNo'] = REQUIRED_FORM_FIELDS['cardNo'].message;
             }
         }
         logger.info("Card details check result: "+JSON.stringify(checkResult));

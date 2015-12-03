@@ -243,18 +243,18 @@ portfinder.getPort(function(err, connectorPort) {
                 amount: '23.45',
                 errorMessage: 'The following fields are missing or contain errors',
                 errorFields: [
+                    {"key": "cardholder-name", "value": "Name on card is missing"},
                     {"key": "card-no", "value": "Card number is missing"},
                     {"key": "cvc", "value": "CVC is missing"},
                     {"key": "expiry-date", "value": "Expiry date is missing"},
-                    {"key": "cardholder-name", "value": "Name on card is missing"},
                     {"key": "address-line1", "value": "Building name/number and street is missing"},
                     {"key": "address-postcode", "value": "Postcode is missing"}
                 ],
                 highlightErrorFields: {
+                    "cardholderName":"Please enter the name as it appears on the card",
                     "cardNo":"Please enter the long number on the front of your card",
                     "cvc":"Please enter your card security code",
                     "expiryDate":"Please enter a valid expiry date",
-                    "cardholderName":"Please enter your full name",
                     "addressLine1":"Please enter your address",
                     "addressPostcode":"Please enter a valid postcode"
                     }
