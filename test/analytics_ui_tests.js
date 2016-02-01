@@ -19,7 +19,7 @@ describe('Frontend analytics', function () {
             'expiryDate': "11/99",
             'amount': "10.00",
             'paymentDescription': "Payment Description",
-            'cardholderName': 'Francisco Blaya-Gonzalvez',
+            'cardholderName': 'Random dude',
             'address': '1 street lane, avenue city, AB1 3DF',
             'serviceName': 'Service 1'
         };
@@ -29,13 +29,13 @@ describe('Frontend analytics', function () {
     });
 
     it('should be enabled in error view', function() {
-        var msg = 'shut up and take my money!';
+        var msg = 'error processing your payment!';
         var body = renderTemplate('error', { 'message' : msg });
         body.should.containSelector('script').withText(googleAnalyticsScript);
     });
 
     it('should be enabled in error with return url view', function() {
-        var msg = 'shut up and take my money!';
+        var msg = 'error processing your payment!';
         var return_url = 'http://some.return.url';
         var body = renderTemplate('error',
             { 'message' : msg,
