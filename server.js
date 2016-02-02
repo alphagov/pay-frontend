@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var routes = require(__dirname + '/app/routes.js');
 var bodyParser = require('body-parser');
 var clientSessions = require("client-sessions");
+var logger = require('winston');
 
 var port = (process.env.PORT || 3000);
 var app = express();
@@ -32,6 +33,12 @@ app.use('/public', express.static(__dirname + '/govuk_modules/govuk_frontend_too
 app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images','favicon.ico')));
 app.use(function (req, res, next) {
   res.locals.assetPath = '/public/';
+  if(typeof process.env.ANALYTICS_TRACKING_ID === "undefined") {
+    logger.warn('Google Analytics Tracking ID [ANALYTICS_TRACKING_ID] is not set');
+    res.locals.analyticsTrackingId = ""; //to not break the app
+  } else {
+    res.locals.analyticsTrackingId = process.env.ANALYTICS_TRACKING_ID;
+  }
   next();
 });
 
