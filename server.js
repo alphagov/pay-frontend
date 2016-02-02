@@ -33,7 +33,7 @@ app.use('/public', express.static(__dirname + '/govuk_modules/govuk_frontend_too
 app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images','favicon.ico')));
 app.use(function (req, res, next) {
   res.locals.assetPath = '/public/';
-  if(process.env.ANALYTICS_TRACKING_ID === undefined) {
+  if(typeof process.env.ANALYTICS_TRACKING_ID === "undefined") {
     logger.warn('Google Analytics Tracking ID [ANALYTICS_TRACKING_ID] is not set');
     res.locals.analyticsTrackingId = ""; //to not break the app
   } else {
