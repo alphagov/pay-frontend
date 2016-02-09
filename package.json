@@ -33,7 +33,7 @@
     "moment": "^2.10.3",
     "newrelic": "^1.24.0",
     "node-rest-client": "^1.5.1",
-    "node-sass": "3.2.0",
+    "node-sass": "3.4.2",
     "readdir": "0.0.6",
     "serve-favicon": "~2.3.0",
     "winston": "^1.0.1"
@@ -53,6 +53,6 @@
     "nock": "^2.10.0",
     "portfinder": "^0.4.0",
     "superagent": "^1.2.0",
-    "supertest": "^1.0.1"
+    "supertest": "^1.1.0"
   }
 }
