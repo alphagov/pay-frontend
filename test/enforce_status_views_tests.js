@@ -35,9 +35,7 @@ portfinder.getPort(function (err, connectorPort) {
                 default_connector_response_for_get_charge(connectorPort, chargeId, status);
 
                 get_charge_request(app, cookieValue, chargeId)
-                    .expect(404, {
-                        'message': 'Page cannot be found'
-                    }).end(done);
+                    .expect(404).end(done);
             });
         });
     });
@@ -73,10 +71,7 @@ portfinder.getPort(function (err, connectorPort) {
                 request(app)
                     .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
                     .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
-                    .set('Accept', 'application/json')
-                    .expect(404, {
-                        'message': 'Page cannot be found'
-                    }).end(done);
+                    .expect(404).end(done);
             });
         });
     });
