@@ -150,7 +150,6 @@ module.exports.bindRoutesTo = function (app) {
             checkResult.charge_id = chargeId;
             checkResult.paymentDescription = chargeSession.paymentDescription;
             checkResult.amount = req.body.hiddenAmount;
-            checkResult.return_url = req.body.returnUrl;
             checkResult.post_card_action = CARD_DETAILS_PATH;
             response(req.headers.accept, res, CHARGE_VIEW, checkResult);
             return;
@@ -239,7 +238,6 @@ module.exports.bindRoutesTo = function (app) {
                     'address': chargeSession.address,
                     'serviceName': chargeSession.serviceName,
                     'paymentDescription': chargeSession.paymentDescription,
-                    'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
                     'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
                 });
             }
@@ -310,7 +308,6 @@ module.exports.bindRoutesTo = function (app) {
                 response(req.headers.accept, res, CHARGE_VIEW, {
                     'charge_id': chargeId,
                     'amount': uiAmount,
-                    'return_url': connectorData.return_url,
                     'paymentDescription': chargeSession.paymentDescription,
                     'post_card_action': CARD_DETAILS_PATH
                 });

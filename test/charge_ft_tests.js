@@ -274,7 +274,6 @@ portfinder.getPort(function(err, connectorPort) {
               "addressLine1":"Please enter your address",
               "addressPostcode":"Please enter a valid postcode"
             });
-
           })
           .end(done);
     });

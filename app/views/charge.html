@@ -7,10 +7,6 @@ Enter your card details.
 {{$content}}
 <main id="content" role="main" class="content-wrapper">
 
-  {{#return_url}}
-      <a id="back" href="{{return_url}}" class="previous-page">Back</a>
-  {{/return_url}}
-
     {{#errorMessage}}
       <div class="error-summary" role="group" >
           <h1 class="heading-medium error-summary-heading" id="error-message">{{errorMessage}}</h1>
@@ -27,7 +23,6 @@ Enter your card details.
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{charge_id}}" />
       <input id="hidden-amount" name="hiddenAmount" type="hidden" value="{{amount}}" />
-      <input id="return-url" name="returnUrl" type="hidden" value="{{return_url}}" />
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}">
           <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
               Name on card
