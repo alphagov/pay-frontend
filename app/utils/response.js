@@ -1,12 +1,7 @@
 var logger = require('winston');
 
 function response(accept, res, template, data) {
-  if (accept === "application/json") {
-    res.setHeader('Content-Type', 'application/json');
-    res.json(data);
-  } else {
-    res.render(template, data);
-  }
+  res.render(template, data);
 }
 
 module.exports = {

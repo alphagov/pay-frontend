@@ -80,6 +80,7 @@ module.exports.bindRoutesTo = function (app) {
     function validChargeIdOnTheSession(req, res, chargeId) {
         if (!req.frontend_state[createChargeIdSessionKey(chargeId)]) {
             logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
+            res.status(403);
             response(req.headers.accept, res, ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
@@ -99,6 +100,7 @@ module.exports.bindRoutesTo = function (app) {
             !('address' in chargeSession) ||
             !('serviceName' in chargeSession)
         ) {
+            res.status(403);
             renderErrorView(req, res, 'Session expired');
             return false;
         }
@@ -171,6 +173,7 @@ module.exports.bindRoutesTo = function (app) {
 
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (chargeData, chargeResponse) {
+
             var authLink = findLinkForRelation(chargeData.links, 'cardAuth');
             var cardAuthUrl = authLink.href;
 
@@ -188,6 +191,7 @@ module.exports.bindRoutesTo = function (app) {
                         return;
                     case 500:
                         logger.error('got response code 500 from connector');
+                        res.status(500)
                         renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
                         return;
                     default:
@@ -266,23 +270,28 @@ module.exports.bindRoutesTo = function (app) {
                             res.redirect(303, returnUrl);
                             return;
                         case 500:
+                            res.status(503);
                             renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
                             return;
                         default:
+                            res.status(503);
                             renderErrorView(req, res, ERROR_MESSAGE);
                             return;
                     }
                 }).on('error', function (err) {
                     logger.error('Exception raised calling connector: ' + err);
+                    res.status(503);
                     response(req.headers.accept, res, ERROR_VIEW, {
                         'message': ERROR_MESSAGE
                     });
                 });
                 return;
             }
+            res.status(503);
             renderErrorView(req, res, ERROR_MESSAGE);
         }).on('error', function (err) {
             logger.error('Exception raised calling connector: ' + err);
+            res.status(503);
             response(req.headers.accept, res, ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });

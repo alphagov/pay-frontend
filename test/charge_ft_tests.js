@@ -7,6 +7,7 @@ var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
 var should = require('chai').should();
+var chai_expect = require('chai').expect;
 
 var cookie = require(__dirname + '/utils/session.js');
 
@@ -110,13 +111,15 @@ portfinder.getPort(function(err, connectorPort) {
             var session = cookie.decrypt(res, chargeId);
             should.equal(session.amount, 2345);
           })
-          .expect(200, {
-            'amount': '23.45',
-            'charge_id': chargeId,
-            'return_url': RETURN_URL,
-            'paymentDescription': "Payment Description",
-            'post_card_action': frontendCardDetailsPath
-      }).end(done);
+          .expect(200)
+          .expect(function(res){
+            chai_expect(res.text).to.contain('23.45');
+            chai_expect(res.text).to.contain(chargeId);
+            chai_expect(res.text).to.contain(RETURN_URL);
+            chai_expect(res.text).to.contain("Payment Description");
+            chai_expect(res.text).to.contain(frontendCardDetailsPath);
+          })
+          .end(done);
     });
 
     it('should send clean card data to connector', function(done) {
@@ -189,7 +192,10 @@ portfinder.getPort(function(err, connectorPort) {
           .reply(400, {'message': 'This transaction was declined.'});
 
       post_charge_request(cookieValue, minimum_form_card_data('5105105105105100'))
-          .expect(200, {'message': 'Payment could not be processed, please contact your issuing bank'})
+          .expect(200)
+          .expect(function(res){
+            chai_expect(res.text).to.contain("Payment could not be processed, please contact your issuing bank");
+          })
           .end(done);
     });
 
@@ -208,25 +214,18 @@ portfinder.getPort(function(err, connectorPort) {
       form_data.addressCity = card_data.address.city;
 
       post_charge_request(cookieValue, form_data)
-        .expect(200, {
-          'message' : 'There is a problem with the payments platform'
-        }, done);
+        .expect(403, done);
     });
 
     it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
       var cookieValue = cookie.create(chargeId);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
-          .expect(200, {
-                charge_id: chargeId,
-                return_url: RETURN_URL,
-                post_card_action: frontendCardDetailsPath,
-                hasError: true,
-                amount: '23.45',
-                errorFields: [{"key": "card-no", "value": "Card number is invalid"}],
-                highlightErrorFields: {"cardNo": "Please enter the long number on the front of your card"},
-                errorMessage: 'The following fields are missing or contain errors'
-                })
+          .expect(200)
+          .expect(function(res){
+            chai_expect(res.text).to.contain("Card number is invalid");
+
+          })
           .end(done);
     });
 
@@ -237,30 +236,25 @@ portfinder.getPort(function(err, connectorPort) {
       var cookieValue = cookie.create(chargeId, sessionData);
 
       post_charge_request(cookieValue, missing_form_card_data())
-          .expect(200, {
-                charge_id: chargeId,
-                paymentDescription: sessionData.paymentDescription,
-                return_url: RETURN_URL,
-                post_card_action: frontendCardDetailsPath,
-                hasError: true,
-                amount: '23.45',
-                errorMessage: 'The following fields are missing or contain errors',
-                errorFields: [
-                    {"key": "cardholder-name", "value": "Name on card is missing"},
-                    {"key": "card-no", "value": "Card number is missing"},
-                    {"key": "cvc", "value": "CVC is missing"},
-                    {"key": "expiry-date", "value": "Expiry date is missing"},
-                    {"key": "address-line1", "value": "Building name/number and street is missing"},
-                    {"key": "address-postcode", "value": "Postcode is missing"}
-                ],
-                highlightErrorFields: {
-                    "cardholderName":"Please enter the name as it appears on the card",
-                    "cardNo":"Please enter the long number on the front of your card",
-                    "cvc":"Please enter your card security code",
-                    "expiryDate":"Please enter a valid expiry date",
-                    "addressLine1":"Please enter your address",
-                    "addressPostcode":"Please enter a valid postcode"
-                    }
+          .expect(200)
+          .expect(function(res){
+            chai_expect(res.text).to.contain(chargeId);
+            chai_expect(res.text).to.contain(sessionData.paymentDescription);
+            chai_expect(res.text).to.contain(RETURN_URL);
+            chai_expect(res.text).to.contain(frontendCardDetailsPath);
+            chai_expect(res.text).to.contain('23.45');
+            chai_expect(res.text).to.contain('The following fields are missing or contain errors');
+            chai_expect(res.text).to.contain("Name on card is missing");
+            chai_expect(res.text).to.contain("Card number is missing");
+            chai_expect(res.text).to.contain("CVC is missing");
+            chai_expect(res.text).to.contain("Expiry date is missing");
+            chai_expect(res.text).to.contain("Building name/number and street is missing");
+            chai_expect(res.text).to.contain("Postcode is missing");
+            chai_expect(res.text).to.contain("Please enter the name as it appears on the card");
+            chai_expect(res.text).to.contain("Please enter your card security code");
+            chai_expect(res.text).to.contain("Please enter a valid expiry date");
+            chai_expect(res.text).to.contain("Please enter your address");
+            chai_expect(res.text).to.contain("Please enter a valid postcode");
           })
           .end(done);
     });
@@ -326,11 +320,8 @@ portfinder.getPort(function(err, connectorPort) {
         .expect(function(res) {
           should.not.exist(res.headers['set-cookie']);
         })
-        .expect(200, {
-          'message' : 'There is a problem with the payments platform'
-        }, done);
+        .expect(403, done);
     });
-
   });
 
   describe('The /card_details/charge_id endpoint', function(){
@@ -341,13 +332,15 @@ portfinder.getPort(function(err, connectorPort) {
             connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
 
             get_charge_request(app, cookieValue, chargeId)
-                                .expect(200, {'charge_id': chargeId,
-                                              'amount': '23.45',
-                                              'return_url': 'http://www.example.com/service',
-                                              'paymentDescription': "Payment Description",
-                                              'post_card_action': '/card_details'
-                                              })
-                                .end(done);
+              .expect(200)
+              .expect(function(res){
+                chai_expect(res.text).to.contain(chargeId);
+                chai_expect(res.text).to.contain(23.45);
+                chai_expect(res.text).to.contain("http://www.example.com/service");
+                chai_expect(res.text).to.contain("Payment Description");
+                chai_expect(res.text).to.contain("/card_details");
+              })
+              .end(done);
         });
 
         it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done){
@@ -355,7 +348,7 @@ portfinder.getPort(function(err, connectorPort) {
             connector_response_for_put_charge(connectorPort, chargeId, 400 , {'message':'some error'});
 
             get_charge_request(app, cookieValue, chargeId)
-                                .expect(404, {'message': 'Page cannot be found'})
+                                .expect(404)
                                 .end(done);
         });
 
@@ -364,14 +357,14 @@ portfinder.getPort(function(err, connectorPort) {
             connector_response_for_put_charge(connectorPort, chargeId, 500 , {});
 
             get_charge_request(app, cookieValue, chargeId)
-                                .expect(404, {'message': 'Page cannot be found'})
+                                .expect(404)
                                 .end(done);
         });
   });
 
   describe('The /card_details/charge_id/confirm endpoint', function () {
     var fullSessionData = {
-      'amount': 1000,
+      'amount': 1234,
       'paymentDescription': "Payment description",
       'cardNumber': "************5100",
       'expiryDate': "11/99",
@@ -387,19 +380,18 @@ portfinder.getPort(function(err, connectorPort) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
-        .set('Accept', 'application/json')
-        .expect(200, {
-          'cardNumber': "************5100",
-          'expiryDate': "11/99",
-          'amount': "10.00",
-          'paymentDescription': "Payment description",
-          'cardholderName': "T Eulenspiegel",
-          'address': 'Kneitlingen, Brunswick, Germany',
-          'serviceName': 'Pranks incorporated',
-          'backUrl': frontendCardDetailsPath + '/' + chargeId,
-          'confirmUrl':  frontendCardDetailsPath + '/' + chargeId + '/confirm',
-          'charge_id': chargeId
-        }, done);
+        .expect(function(res){
+          chai_expect(res.text).to.contain("12.34");
+          chai_expect(res.text).to.contain("************5100");
+          chai_expect(res.text).to.contain("11/99");
+          chai_expect(res.text).to.contain("Payment description");
+          chai_expect(res.text).to.contain("T Eulenspiegel");
+          chai_expect(res.text).to.contain("Kneitlingen, Brunswick, Germany");
+          chai_expect(res.text).to.contain(frontendCardDetailsPath + '/' + chargeId);
+          chai_expect(res.text).to.contain(frontendCardDetailsPath + '/' + chargeId + '/confirm');
+          chai_expect(res.text).to.contain(chargeId);
+        })
+        .end(done);
     });
 
     function missing_field_test(missing_field) {
@@ -411,10 +403,7 @@ portfinder.getPort(function(err, connectorPort) {
         request(app)
             .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.create(chargeId, sessionData)])
-            .set('Accept', 'application/json')
-            .expect(200, {
-              'message': 'Session expired'
-            }, done);
+            .expect(403, done);
       };
     }
 
@@ -443,11 +432,7 @@ portfinder.getPort(function(err, connectorPort) {
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
-          .expect(200,
-            {
-              'message'    : 'There was a problem processing your payment. Please contact the service.',
-              'return_url': 'http://www.example.com/service'
-            })
+          .expect(503)
           .end(done);
     });
 
@@ -462,12 +447,7 @@ portfinder.getPort(function(err, connectorPort) {
       form_data.addressCity = card_data.address.city;
 
       post_charge_request(cookieValue, form_data)
-          .expect(200,
-            {
-              'message'    : 'There was a problem processing your payment. Please contact the service.',
-              'return_url': 'http://www.example.com/service'
-            })
-          .end(done);
+          .expect(500).end(done);
     });
 
     it('should produce an error if the connector responds with a 404 for the charge', function (done) {
@@ -476,10 +456,8 @@ portfinder.getPort(function(err, connectorPort) {
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-          .set('Accept', 'application/json')
-          .expect(200, {'message': 'There is a problem with the payments platform'}, done);
+          .expect(503, done);
     });
-
 
     it('should produce an error if the connector returns a non-204 status', function (done) {
       default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
@@ -488,8 +466,7 @@ portfinder.getPort(function(err, connectorPort) {
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-          .set('Accept', 'application/json')
-          .expect(200, {'message': 'There is a problem with the payments platform'}, done);
+          .expect(503, done);
     });
 
     it('should produce an error if the connector is unreachable for the confirm', function (done) {
@@ -497,8 +474,7 @@ portfinder.getPort(function(err, connectorPort) {
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-          .set('Accept', 'application/json')
-          .expect(200, {'message': 'There is a problem with the payments platform'}, done);
+          .expect(503, done);
     });
   });
 });

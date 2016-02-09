@@ -5,7 +5,8 @@ var controllers = require('./controllers');
 module.exports.bind = function (app) {
     app.get('/greeting', function (req, res) {
       var data = {'greeting': 'Hello', 'name': 'World'};
-      response(req.headers.accept, res, 'greeting', data);
+      res.setHeader('Content-Type', 'application/json');
+      res.json(data);
     });
 
     controllers.bindRoutesTo(app);
