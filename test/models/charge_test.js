@@ -11,6 +11,7 @@ var wrongPromise = require(__dirname + '/../utils/test_helpers.js').unexpectedPr
 
 describe('when connector is unavailable', function () {
   before(function() {
+    nock.cleanAll();
     process.env.CONNECTOR_HOST = "http://unavailableServer:65535"
   });
 
@@ -29,6 +30,7 @@ describe('when connector is unavailable', function () {
 
 describe('when connector returns wrong response to update', function () {
   before(function() {
+    nock.cleanAll();
     nock(originalHost)
     .put("/v1/frontend/charges/1/status")
     .reply(422, '<html></html>')
@@ -46,6 +48,7 @@ describe('when connector returns wrong response to update', function () {
 
 describe('when connector returns correct from update but not get', function () {
   before(function() {
+    nock.cleanAll();
     nock(originalHost)
     .put("/v1/frontend/charges/1/status")
     .reply(204);
