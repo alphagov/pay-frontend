@@ -1,11 +1,11 @@
 require('array.prototype.find');
-var logger = require('winston');
-var luhn = require('luhn');
-
-var Client = require('node-rest-client').Client;
-var client = new Client();
-
-var response = require('../utils/response.js').response;
+var logger          = require('winston');
+var luhn            = require('luhn');
+var Client          = require('node-rest-client').Client;
+var client          = new Client();
+var response        = require('../utils/response.js').response;
+var chargeParam     = require('../services/charge_param_retriever.js')
+var genericError    = require('../utils/response.js').genericError
 
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
@@ -61,10 +61,6 @@ module.exports.bindRoutesTo = function (app) {
         return 'ch_' + chargeId;
     }
 
-    function createReturnUrlKey(chargeId) {
-        return 'return_url_' + chargeId;
-    }
-
     function chargeState(req, chargeId) {
         return req.frontend_state[createChargeIdSessionKey(chargeId)];
     }
@@ -72,7 +68,7 @@ module.exports.bindRoutesTo = function (app) {
     function validChargeIdInTheRequest(req, res, chargeId) {
         if (!chargeId) {
             logger.error('Unexpected: chargeId was not found in request.');
-            response(req.headers.accept, res, ERROR_VIEW, {
+            res.render(ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
             return false;
@@ -84,9 +80,9 @@ module.exports.bindRoutesTo = function (app) {
     function validChargeIdOnTheSession(req, res, chargeId) {
         if (!req.frontend_state[createChargeIdSessionKey(chargeId)]) {
             logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
-            response(req.headers.accept, res, ERROR_VIEW, {
+            res.render(ERROR_VIEW,{
                 'message': ERROR_MESSAGE
-            });
+            })
             return false;
         }
 
@@ -110,13 +106,11 @@ module.exports.bindRoutesTo = function (app) {
     }
 
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
-        logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId');
-        var chargeId = req.params.chargeId;
-        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
-            return;
-        }
+        var chargeId = chargeParam.retrieve(req);
+        if (!chargeId) return genericError(res);
+
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
-        logger.info("connectorUrl from env var: " + connectorUrl);
+
 
         //update charge status to 'ENTERING CARD DETAILS' {chargeId}/status/{newStatus}
         client.put(connectorUrl + '/status', UPDATE_STATUS_PAYLOAD, function(data, putResponse) {
@@ -128,13 +122,15 @@ module.exports.bindRoutesTo = function (app) {
                 return;
             }
             logger.error('Failed to update charge status to ' +ENTERING_CARD_DETAILS_STATUS+ ', response code from connector=' + putResponse.statusCode);
-            response(req.headers.accept, res.status(404), ERROR_VIEW, {
-                'message': PAGE_NOT_FOUND_ERROR_MESSAGE
-            });
+                res.status(404)
+                res.render(ERROR_VIEW, {
+                    'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+                });
+
         })
         .on('error', function(err) {
             logger.error('Exception raised calling connector for put' + err);
-            response(req.headers.accept, res, ERROR_VIEW, {
+            res.render(ERROR_VIEW, {
               'message': ERROR_MESSAGE
             });
         });
@@ -154,8 +150,9 @@ module.exports.bindRoutesTo = function (app) {
             checkResult.charge_id = chargeId;
             checkResult.paymentDescription = chargeSession.paymentDescription;
             checkResult.amount = req.body.hiddenAmount;
+            checkResult.return_url = req.body.returnUrl;
             checkResult.post_card_action = CARD_DETAILS_PATH;
-            response(req.headers.accept, res, CHARGE_VIEW, checkResult);
+            res.render(CHARGE_VIEW, checkResult);
             return;
         }
 
@@ -191,20 +188,20 @@ module.exports.bindRoutesTo = function (app) {
                         return;
                     case 500:
                         logger.error('got response code 500 from connector');
-                        renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, decodeURIComponent(req.frontend_state[createReturnUrlKey(chargeId)]));
+                        renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
                         return;
                     default:
                         renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
                 }
             }).on('error', function (err) {
                 logger.error('Exception raised calling connector: ' + err);
-                response(req.headers.accept, res, ERROR_VIEW, {
+                res.render(ERROR_VIEW, {
                     'message': ERROR_MESSAGE
                 });
             });
         }).on('error', function (err) {
             logger.error('Exception raised calling connector: ' + err);
-            response(req.headers.accept, res, ERROR_VIEW, {
+            res.render(ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
         });
@@ -225,7 +222,8 @@ module.exports.bindRoutesTo = function (app) {
         client.get(connectorUrl, function (connectorData, connectorResponse) {
             if (connectorResponse.statusCode === 200) {
                 if (connectorData.status != 'AUTHORISATION SUCCESS') {
-                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                    res.status(404);
+                    res.render(ERROR_VIEW, {
                         'message': PAGE_NOT_FOUND_ERROR_MESSAGE
                     });
                     return;
@@ -233,7 +231,7 @@ module.exports.bindRoutesTo = function (app) {
                 var amountInPence = chargeSession.amount;
                 var uiAmount = (amountInPence / 100).toFixed(2);
 
-                response(req.headers.accept, res, CONFIRM_VIEW, {
+                res.render(CONFIRM_VIEW, {
                     'charge_id': chargeId,
                     'amount': uiAmount,
                     'expiryDate': chargeSession.expiryDate,
@@ -242,6 +240,7 @@ module.exports.bindRoutesTo = function (app) {
                     'address': chargeSession.address,
                     'serviceName': chargeSession.serviceName,
                     'paymentDescription': chargeSession.paymentDescription,
+                    'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
                     'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
                 });
             }
@@ -268,7 +267,7 @@ module.exports.bindRoutesTo = function (app) {
                             res.redirect(303, returnUrl);
                             return;
                         case 500:
-                            renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, decodeURIComponent(req.frontend_state[createReturnUrlKey(chargeId)]));
+                            renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
                             return;
                         default:
                             renderErrorView(req, res, ERROR_MESSAGE);
@@ -276,7 +275,7 @@ module.exports.bindRoutesTo = function (app) {
                     }
                 }).on('error', function (err) {
                     logger.error('Exception raised calling connector: ' + err);
-                    response(req.headers.accept, res, ERROR_VIEW, {
+                    res.render( ERROR_VIEW, {
                         'message': ERROR_MESSAGE
                     });
                 });
@@ -298,7 +297,8 @@ module.exports.bindRoutesTo = function (app) {
             if (connectorResponse.statusCode === 200) {
                 logger.info('connector data = ', connectorData);
                 if (connectorData.status != ENTERING_CARD_DETAILS_STATUS) {
-                    response(req.headers.accept, res.status(404), ERROR_VIEW, {
+                    res.status(404)
+                    res.render(ERROR_VIEW, {
                         'message': PAGE_NOT_FOUND_ERROR_MESSAGE
                     });
                     return;
@@ -308,14 +308,13 @@ module.exports.bindRoutesTo = function (app) {
                 var chargeSession = chargeState(req, chargeId);
                 chargeSession.amount = amountInPence;
                 chargeSession.paymentDescription = connectorData.description;
-
-				//store the encoded return_url in the cookie, in order to allow the user to return to the 
+                //store the encoded return_url in the cookie, in order to allow the user to return to the
                 //government service in case connector returns a 500 error code
                 req.frontend_state[createReturnUrlKey(chargeId)] = encodeURIComponent(connectorData.return_url);
-
-                response(req.headers.accept, res, CHARGE_VIEW, {
+                res.render(CHARGE_VIEW, {
                     'charge_id': chargeId,
                     'amount': uiAmount,
+                    'return_url': connectorData.return_url,
                     'paymentDescription': chargeSession.paymentDescription,
                     'post_card_action': CARD_DETAILS_PATH
                 });
@@ -325,7 +324,7 @@ module.exports.bindRoutesTo = function (app) {
         })
         .on('error', function (err) {
             logger.error('Exception raised calling connector for get: ' + err);
-            response(req.headers.accept, res, ERROR_VIEW, {
+            res.render(ERROR_VIEW, {
                 'message': ERROR_MESSAGE
             });
         });

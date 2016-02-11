@@ -86,5 +86,9 @@ module.exports = {
     },
     expectTemplateTohave: function(res,key,value){
         return chai_expect(JSON.parse(res.text)[key]).to.deep.equal(value);
+    },
+    unexpectedPromise: function(data){
+        throw new Error('Promise was unexpectedly fulfilled.')
     }
+
 };
