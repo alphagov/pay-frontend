@@ -120,7 +120,6 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(function(res){
             helper.expectTemplateTohave(res,"amount",'23.45');
             helper.expectTemplateTohave(res,"charge_id",chargeId);
-            helper.expectTemplateTohave(res,"return_url",RETURN_URL);
             helper.expectTemplateTohave(res,"paymentDescription","Payment Description");
             helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
           })
@@ -233,7 +232,6 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(200)
           .expect(function(res){
             helper.expectTemplateTohave(res,"charge_id",chargeId);
-            helper.expectTemplateTohave(res,"return_url",RETURN_URL);
             helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
             helper.expectTemplateTohave(res,"hasError",true);
             helper.expectTemplateTohave(res,"amount",'23.45');
@@ -360,7 +358,6 @@ portfinder.getPort(function(err, connectorPort) {
               .expect(function(res){
                 helper.expectTemplateTohave(res,"charge_id",chargeId);
                 helper.expectTemplateTohave(res,"amount",'23.45');
-                helper.expectTemplateTohave(res,"return_url",'http://www.example.com/service');
                 helper.expectTemplateTohave(res,"paymentDescription",'Payment Description');
                 helper.expectTemplateTohave(res,"post_card_action",'/card_details');
               })
@@ -420,7 +417,6 @@ portfinder.getPort(function(err, connectorPort) {
           helper.expectTemplateTohave(res,"cardholderName","T Eulenspiegel");
           helper.expectTemplateTohave(res,"address","Kneitlingen, Brunswick, Germany");
           helper.expectTemplateTohave(res,"serviceName","Pranks incorporated");
-          helper.expectTemplateTohave(res,"backUrl",frontendCardDetailsPath + '/' + chargeId);
           helper.expectTemplateTohave(res,"confirmUrl",frontendCardDetailsPath + '/' + chargeId + '/confirm');
           helper.expectTemplateTohave(res,"charge_id",chargeId);
         })
@@ -467,17 +463,18 @@ portfinder.getPort(function(err, connectorPort) {
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-          .expect(200)
+          .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
+          .set('Accept', 'application/json')
+		  .expect(200)
           .expect(function(res){
             helper.expectTemplateTohave(res,"message","There was a problem processing your payment. Please contact the service.");
-            helper.expectTemplateTohave(res,"return_url","http://www.example.com/service");
+			helper.expectTemplateTohave(res,"return_url","http://www.example.com/service");
           })
           .end(done);
     });
 
     it('connector failure when trying to authorise payment should result in error page', function (done) {
-      var cookieValue = cookie.create(chargeId);
+      var cookieValue = cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service');
       default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
       var card_data = full_connector_card_data('5105105105105100');
       connector_expects(card_data).reply(500);

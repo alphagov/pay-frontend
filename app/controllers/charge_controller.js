@@ -61,6 +61,10 @@ module.exports.bindRoutesTo = function (app) {
         return 'ch_' + chargeId;
     }
 
+    function createReturnUrlKey(chargeId) {
+        return 'return_url_' + chargeId;
+    }
+
     function chargeState(req, chargeId) {
         return req.frontend_state[createChargeIdSessionKey(chargeId)];
     }
@@ -187,7 +191,7 @@ module.exports.bindRoutesTo = function (app) {
                         return;
                     case 500:
                         logger.error('got response code 500 from connector');
-                        renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
+                        renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, decodeURIComponent(req.frontend_state[createReturnUrlKey(chargeId)]));
                         return;
                     default:
                         renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
@@ -264,7 +268,7 @@ module.exports.bindRoutesTo = function (app) {
                             res.redirect(303, returnUrl);
                             return;
                         case 500:
-                            renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
+                            renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, decodeURIComponent(req.frontend_state[createReturnUrlKey(chargeId)]));
                             return;
                         default:
                             renderErrorView(req, res, ERROR_MESSAGE);
@@ -304,6 +308,10 @@ module.exports.bindRoutesTo = function (app) {
                 var chargeSession = chargeState(req, chargeId);
                 chargeSession.amount = amountInPence;
                 chargeSession.paymentDescription = connectorData.description;
+
+				//store the encoded return_url in the cookie, in order to allow the user to return to the 
+                //government service in case connector returns a 500 error code
+                req.frontend_state[createReturnUrlKey(chargeId)] = encodeURIComponent(connectorData.return_url);
 
                 response(req.headers.accept, res, CHARGE_VIEW, {
                     'charge_id': chargeId,
