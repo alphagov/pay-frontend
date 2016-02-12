@@ -115,7 +115,7 @@ portfinder.getPort(function(err, connectorPort) {
         .reply(200, {
             'amount': 2345,
             'description': "Payment Description",
-            'status': "",
+            'status': enteringCardDetailsState,
             'return_url': "http://www.example.com/service"
         });
 
@@ -366,7 +366,7 @@ portfinder.getPort(function(err, connectorPort) {
               var cookieValue = cookie.create(chargeId);
               nock(process.env.CONNECTOR_HOST)
                 .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
-                .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("","http://www.example.com/service"));
+                .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
 
               get_charge_request(app, cookieValue, chargeId)
                 .expect(200)

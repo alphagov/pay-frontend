@@ -113,14 +113,11 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         var chargeId = chargeParam.retrieve(req);
         if (!chargeId) return genericError(res);
+
         var views = {
             INVALID_STATE: {
                 code: 404,
                 view: notFound
-            },
-            GENERIC_ERROR: {
-                code: 500,
-                view: genericError
             },
             display: function(res,state){
                 res.status(this[state].code)
@@ -128,40 +125,22 @@ module.exports.bindRoutesTo = function (app) {
             }
         };
 
-        Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
-        .then(function(data){
+        var successful = function(data) {
+            var incorrect_state = data.status != ENTERING_CARD_DETAILS_STATUS;
+            if (incorrect_state) return views.display(res,"INVALID_STATE");
+
             res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
-        },
-        function(){
+        }
+
+        var fail = function(error){
             views.display(res,"INVALID_STATE");
-        })
+        }
+
+
+        Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
+        .then(successful,fail)
 
     });
-
-
-
-
-
-    function getChargeAndBuildResponse(chargeId, req, res, views) {
-
-
-        //now get the charge
-        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
-        client.get(connectorUrl, function (data, response) {
-            if (response.statusCode === 200) {
-                if (data.status != ENTERING_CARD_DETAILS_STATUS) {
-                    views.display(res,"INVALID_STATE");
-                }
-                res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
-                return;
-            }
-            views.display(res,"GENERIC_ERROR");
-
-        })
-        .on('error', function (err) {
-            views.display(res,"GENERIC_ERROR");
-        });
-    }
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
         logger.info('POST ' + CARD_DETAILS_PATH);
