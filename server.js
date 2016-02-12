@@ -5,22 +5,20 @@ var favicon = require('serve-favicon');
 var routes = require(__dirname + '/app/routes.js');
 var bodyParser = require('body-parser');
 var clientSessions = require("client-sessions");
+var frontendCookie = require(__dirname + '/app/utils/cookies.js').frontendCookie;
 var logger = require('winston');
 
 var port = (process.env.PORT || 3000);
 var app = express();
 
-app.use(clientSessions({
-  cookieName: 'frontend_state',
-  secret: process.env.SESSION_ENCRYPTION_KEY
-}));
+app.enable('trust proxy');
+app.use(clientSessions(frontendCookie()));
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
 app.set('vendorViews', __dirname + '/govuk_modules/govuk_template/views/layouts');
-app.set('views', __dirname + '/app/views');
 
-app.enable('trust proxy');
+app.set('views', __dirname + '/app/views');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

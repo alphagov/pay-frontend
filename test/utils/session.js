@@ -1,9 +1,5 @@
 var clientSessions = require("client-sessions");
-
-var sessionConfig = {
-    'cookieName': 'frontend_state',
-    'secret':     process.env.SESSION_ENCRYPTION_KEY
-};
+var frontendCookie = require(__dirname + '/../../app/utils/cookies.js').frontendCookie;
 
 function createSessionChargeKey(chargeId) {
   return 'ch_' + chargeId;
@@ -17,11 +13,11 @@ module.exports = {
         session[createSessionChargeKey(chargeId)] = chargeSession;
       }
 
-      return clientSessions.util.encode(sessionConfig, session);
+      return clientSessions.util.encode(frontendCookie(), session);
     },
 
     decrypt: function decryptCookie(res, chargeId) {
-      var content = clientSessions.util.decode(sessionConfig, res.headers['set-cookie'][0].split(";")[0].split("=")[1]).content;
+      var content = clientSessions.util.decode(frontendCookie(), res.headers['set-cookie'][0].split(";")[0].split("=")[1]).content;
       return chargeId ? content[createSessionChargeKey(chargeId)] : content;
     }
 
