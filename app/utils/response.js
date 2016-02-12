@@ -34,5 +34,11 @@ module.exports = {
 
   genericError: function(res){
     res.render(ERROR_VIEW, ERROR_MESSAGE);
+  },
+
+  pageNotFound: function(res){
+  res.render(ERROR_VIEW, {
+    'message': PAGE_NOT_FOUND_ERROR_MESSAGE
+  });
   }
 };

@@ -4,8 +4,13 @@ var luhn            = require('luhn');
 var Client          = require('node-rest-client').Client;
 var client          = new Client();
 var response        = require('../utils/response.js').response;
-var chargeParam     = require('../services/charge_param_retriever.js')
+var chargeParam     = require('../services/charge_param_retriever.js');
+var normalise       = require('../services/normalise.js');
+var Charge          = require('../models/charge.js');
+
+
 var genericError    = require('../utils/response.js').genericError
+var notFound        = require('../utils/response.js').pageNotFound
 
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
@@ -108,33 +113,55 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         var chargeId = chargeParam.retrieve(req);
         if (!chargeId) return genericError(res);
+        var views = {
+            INVALID_STATE: {
+                code: 404,
+                view: notFound
+            },
+            GENERIC_ERROR: {
+                code: 500,
+                view: genericError
+            },
+            display: function(res,state){
+                res.status(this[state].code)
+                this[state].view(res)
+            }
+        };
 
+        Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
+        .then(function(data){
+            res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
+        },
+        function(){
+            views.display(res,"INVALID_STATE");
+        })
+
+    });
+
+
+
+
+
+    function getChargeAndBuildResponse(chargeId, req, res, views) {
+
+
+        //now get the charge
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
-
-
-        //update charge status to 'ENTERING CARD DETAILS' {chargeId}/status/{newStatus}
-        client.put(connectorUrl + '/status', UPDATE_STATUS_PAYLOAD, function(data, putResponse) {
-            logger.debug('set charge status to: '+ ENTERING_CARD_DETAILS_STATUS);
-            logger.debug('response from the connector=' + putResponse.statusCode);
-
-            if (putResponse.statusCode === 204) {
-                getChargeAndBuildResponse(chargeId, req, res);
+        client.get(connectorUrl, function (data, response) {
+            if (response.statusCode === 200) {
+                if (data.status != ENTERING_CARD_DETAILS_STATUS) {
+                    views.display(res,"INVALID_STATE");
+                }
+                res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
                 return;
             }
-            logger.error('Failed to update charge status to ' +ENTERING_CARD_DETAILS_STATUS+ ', response code from connector=' + putResponse.statusCode);
-                res.status(404)
-                res.render(ERROR_VIEW, {
-                    'message': PAGE_NOT_FOUND_ERROR_MESSAGE
-                });
+            views.display(res,"GENERIC_ERROR");
 
         })
-        .on('error', function(err) {
-            logger.error('Exception raised calling connector for put' + err);
-            res.render(ERROR_VIEW, {
-              'message': ERROR_MESSAGE
-            });
+        .on('error', function (err) {
+            views.display(res,"GENERIC_ERROR");
         });
-    });
+    }
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
         logger.info('POST ' + CARD_DETAILS_PATH);
@@ -220,6 +247,7 @@ module.exports.bindRoutesTo = function (app) {
         }
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (connectorData, connectorResponse) {
+
             if (connectorResponse.statusCode === 200) {
                 if (connectorData.status != 'AUTHORISATION SUCCESS') {
                     res.status(404);
@@ -290,45 +318,7 @@ module.exports.bindRoutesTo = function (app) {
         });
     });
 
-    function getChargeAndBuildResponse(chargeId, req, res) {
-        //now get the charge
-        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
-        client.get(connectorUrl, function (connectorData, connectorResponse) {
-            if (connectorResponse.statusCode === 200) {
-                logger.info('connector data = ', connectorData);
-                if (connectorData.status != ENTERING_CARD_DETAILS_STATUS) {
-                    res.status(404)
-                    res.render(ERROR_VIEW, {
-                        'message': PAGE_NOT_FOUND_ERROR_MESSAGE
-                    });
-                    return;
-                }
-                var amountInPence = connectorData.amount;
-                var uiAmount = (amountInPence / 100).toFixed(2);
-                var chargeSession = chargeState(req, chargeId);
-                chargeSession.amount = amountInPence;
-                chargeSession.paymentDescription = connectorData.description;
-                //store the encoded return_url in the cookie, in order to allow the user to return to the
-                //government service in case connector returns a 500 error code
-                req.frontend_state[createReturnUrlKey(chargeId)] = encodeURIComponent(connectorData.return_url);
-                res.render(CHARGE_VIEW, {
-                    'charge_id': chargeId,
-                    'amount': uiAmount,
-                    'return_url': connectorData.return_url,
-                    'paymentDescription': chargeSession.paymentDescription,
-                    'post_card_action': CARD_DETAILS_PATH
-                });
-                return;
-            }
-            renderErrorView(req, res, ERROR_MESSAGE);
-        })
-        .on('error', function (err) {
-            logger.error('Exception raised calling connector for get: ' + err);
-            res.render(ERROR_VIEW, {
-                'message': ERROR_MESSAGE
-            });
-        });
-    }
+
 
     function findLinkForRelation(links, rel) {
         return links.find(function (link) {

@@ -2,6 +2,8 @@ var Client  = require('node-rest-client').Client;
 var client  = new Client();
 var _       = require('lodash');
 var q       = require('q');
+var logger  = require('winston');
+
 
 
 module.exports = function(){
@@ -29,10 +31,13 @@ module.exports = function(){
     var url = statusUrl(chargeId),
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
+    console.log('here');
     console.log(url);
     client.put(url, params, function(data, response){
+      console.log('we have an update');
       updateComplete(chargeId, data, response, defer);
     }).on('error',function(err){
+      console.log('we have an error');
       clientUnavailable(err, defer);
     });
     return defer.promise;
@@ -40,9 +45,11 @@ module.exports = function(){
 
   updateComplete = function(chargeId, data, response, defer){
     if (response.statusCode !== 204) {
+      logger.error('Failed to update charge status');
       defer.reject(new Error('UPDATE_FAILED'));
       return
     }
+
     // sure there is a better pattern than this
     find(chargeId).then(
       function(data){
@@ -61,8 +68,12 @@ module.exports = function(){
         defer.reject(new Error('GET_FAILED'));
         return
       }
+
+            console.log('this is the data');
+            console.log(data);
       defer.resolve(data);
     }).on('error',function(err){
+        logger.error('Exception raised calling connector for get: ' + err);
       clientUnavailable(err, defer);
     });
     return defer.promise;

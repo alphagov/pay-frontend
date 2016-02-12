@@ -105,11 +105,27 @@ portfinder.getPort(function(err, connectorPort) {
 
     describe('The /charge endpoint', function() {
       it('should include the data required for the frontend', function (done) {
+        nock(process.env.CONNECTOR_HOST)
+        .put("/v1/frontend/charges/23144323/status")
+        .reply(204);
+
+
+        nock(process.env.CONNECTOR_HOST)
+        .get("/v1/frontend/charges/23144323")
+        .reply(200, {
+            'amount': 2345,
+            'description': "Payment Description",
+            'status': "",
+            'return_url': "http://www.example.com/service"
+        });
 
         var cookieValue = cookie.create(chargeId);
         connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
         default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
+<<<<<<< 72efa872a2e45ff131f01c85419a9f2f757e9165
 
+=======
+>>>>>>> pp-520 replaced the conenctor client with the model way od retrieving
         get_charge_request(app, cookieValue, chargeId)
             .expect(200)
             .expect(function(res){
@@ -348,12 +364,14 @@ portfinder.getPort(function(err, connectorPort) {
 
           it('It should show card details page if charge status is in "ENTERING CARD DETAILS" state', function (done){
               var cookieValue = cookie.create(chargeId);
-              default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
-              connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
+              nock(process.env.CONNECTOR_HOST)
+                .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
+                .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("","http://www.example.com/service"));
 
               get_charge_request(app, cookieValue, chargeId)
                 .expect(200)
                 .expect(function(res){
+                  console.log(res.text);
                   helper.expectTemplateTohave(res,"charge_id",chargeId);
                   helper.expectTemplateTohave(res,"amount",'23.45');
                   helper.expectTemplateTohave(res,"return_url",'http://www.example.com/service');
