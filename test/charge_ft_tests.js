@@ -1,5 +1,4 @@
 process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
-process.env.SECURE_COOKIE_OFF="true"; // adding here to keep this property globally so that this affects all the ft tests
 
 var EMPTY_BODY='';
 
