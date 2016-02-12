@@ -18,12 +18,12 @@ module.exports = function () {
     };
   }
 
-  var fronendCookie = function () {
+  var frontendCookie = function () {
     return namedCookie('frontend_state');
   };
 
   return {
-    fronendCookie: fronendCookie
+    frontendCookie: frontendCookie
   }
 
 }();

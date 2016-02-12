@@ -5,14 +5,14 @@ var favicon = require('serve-favicon');
 var routes = require(__dirname + '/app/routes.js');
 var bodyParser = require('body-parser');
 var clientSessions = require("client-sessions");
-var fronendCookie = require(__dirname + '/app/utils/cookies.js').fronendCookie;
+var frontendCookie = require(__dirname + '/app/utils/cookies.js').frontendCookie;
 var logger = require('winston');
 
 var port = (process.env.PORT || 3000);
 var app = express();
 
 app.enable('trust proxy');
-app.use(clientSessions(fronendCookie()));
+app.use(clientSessions(frontendCookie()));
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
