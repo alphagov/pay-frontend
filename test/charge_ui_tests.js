@@ -28,21 +28,6 @@ describe('The charge view', function() {
         });
   });
 
-  it('should have a \'Back to service\' button.', function () {
-    var returnUrl = "http://example.com/service";
-    var templateData = {
-      'return_url' : returnUrl
-    };
-
-    var body = renderTemplate('charge', templateData);
-    body.should.containSelector('#back').withAttribute('href', returnUrl);
-  });
-
-  it('should not show the \'Back to service\' when no return_url passed.', function () {
-    var body = renderTemplate('charge', {});
-    body.should.not.containSelector('#back');
-  });
-
   it('should have a \'Make payment\' button.', function () {
     var body = renderTemplate('charge', {});
     body.should.containInputWithIdAndName('submit-card-details', 'submitCardDetails', 'submit');
@@ -82,11 +67,6 @@ describe('The confirm view', function () {
     body.should.containSelector('#payment-description').withText('Payment Description');
     body.should.containSelector('#cardholder-name').withText('Francisco Blaya-Gonzalvez');
     body.should.containSelector('#address').withText('1 street lane, avenue city, AB1 3DF');
-  });
-
-  it('should render a back link', function () {
-    var body = renderTemplate('confirm', {backUrl: 'some.url'});
-    body.should.containSelector('a#back').withText("Back").withAttribute("href", "some.url");
   });
 
   it('should render a confirm button', function () {
