@@ -3,8 +3,6 @@ var CARD_DETAILS_PATH = '/card_details';  // TODO PP-545 SHOULD MOVE TO VIEW
 
 module.exports = function(){
   var _charge = function(charge,chargeId){
-    console.log(charge);
-    console.log('normalise');
     return {
       'charge_id': chargeId,
       'amount': penceToPounds(charge.amount),

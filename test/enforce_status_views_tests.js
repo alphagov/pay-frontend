@@ -80,8 +80,6 @@ portfinder.getPort(function (err, connectorPort) {
       };
 
       it('should error when the payment status is ' + status, function (done) {
-        console.log("running test for ");
-        console.log(status);
         default_connector_response_for_get_charge(connectorPort, chargeId, status);
         request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')

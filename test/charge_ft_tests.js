@@ -371,7 +371,6 @@ portfinder.getPort(function(err, connectorPort) {
               get_charge_request(app, cookieValue, chargeId)
                 .expect(200)
                 .expect(function(res){
-                  console.log(res.text);
                   helper.expectTemplateTohave(res,"charge_id",chargeId);
                   helper.expectTemplateTohave(res,"amount",'23.45');
                   helper.expectTemplateTohave(res,"return_url",'http://www.example.com/service');

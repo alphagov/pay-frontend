@@ -96,8 +96,6 @@ module.exports.bindRoutesTo = function (app) {
 
     function validSession(chargeSession, req, res) {
         if (
-            !('amount' in chargeSession) ||
-            !('paymentDescription' in chargeSession) ||
             !('expiryDate' in chargeSession) ||
             !('cardNumber' in chargeSession) ||
             !('cardholderName' in chargeSession) ||
@@ -128,6 +126,11 @@ module.exports.bindRoutesTo = function (app) {
         var successful = function(data) {
             var incorrect_state = data.status != ENTERING_CARD_DETAILS_STATUS;
             if (incorrect_state) return views.display(res,"INVALID_STATE");
+            // TODO remove is possible
+            var chargeSession = chargeState(req, chargeId);
+            chargeSession.amount = data.amount;
+            chargeSession.paymentDescription = data.description;
+
 
             res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
         }

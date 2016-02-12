@@ -31,13 +31,9 @@ module.exports = function(){
     var url = statusUrl(chargeId),
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
-    console.log('here');
-    console.log(url);
     client.put(url, params, function(data, response){
-      console.log('we have an update');
       updateComplete(chargeId, data, response, defer);
     }).on('error',function(err){
-      console.log('we have an error');
       clientUnavailable(err, defer);
     });
     return defer.promise;
@@ -65,12 +61,8 @@ module.exports = function(){
     var defer = q.defer();
     client.get(findUrl(chargeId), function(data,response){
       if (response.statusCode !== 200) {
-        defer.reject(new Error('GET_FAILED'));
-        return
+        return defer.reject(new Error('GET_FAILED'));
       }
-
-            console.log('this is the data');
-            console.log(data);
       defer.resolve(data);
     }).on('error',function(err){
         logger.error('Exception raised calling connector for get: ' + err);
