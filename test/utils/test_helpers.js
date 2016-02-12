@@ -4,6 +4,7 @@ var should = require('chai').should();
 var frontendCardDetailsPath = '/card_details';
 
 var connectorChargePath = '/v1/frontend/charges/';
+var chai_expect = require('chai').expect;
 
 var nock = require('nock');
 
@@ -82,5 +83,8 @@ module.exports = {
                 'method': 'POST'
             }]
         });
+    },
+    expectTemplateTohave: function(res,key,value){
+        return chai_expect(JSON.parse(res.text)[key]).to.deep.equal(value);
     }
 };
