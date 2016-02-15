@@ -10,12 +10,12 @@ var wrongPromise = require(__dirname + '/../utils/test_helpers.js').unexpectedPr
 
 
 describe('when connector is unavailable', function () {
-  before(function() {
+  beforeEach(function() {
     nock.cleanAll();
     process.env.CONNECTOR_HOST = "http://unavailableServer:65535"
   });
 
-  after(function() {
+  afterEach(function() {
     process.env.CONNECTOR_HOST = originalHost;
   });
 

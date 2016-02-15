@@ -24,6 +24,7 @@ var default_connector_response_for_get_charge = require(__dirname + '/utils/test
 
 portfinder.getPort(function(err, connectorPort) {
   describe('chargeTests',function(){
+
     var localServer = 'http://localhost:' + connectorPort;
 
     var connectorChargePath = '/v1/frontend/charges/';
@@ -96,6 +97,11 @@ portfinder.getPort(function(err, connectorPort) {
 
     beforeEach(function() {
       nock.cleanAll();
+      process.env.CONNECTOR_HOST = "http://aServer:65535";
+    });
+
+    afterEach(function() {
+      process.env.CONNECTOR_HOST = undefined;
     });
 
     before(function () {

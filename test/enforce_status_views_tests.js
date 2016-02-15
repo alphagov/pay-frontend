@@ -20,8 +20,14 @@ portfinder.getPort(function (err, connectorPort) {
   var frontendCardDetailsPath = '/card_details';
 
   describe('The /card_details endpoint', function () {
+
     beforeEach(function() {
       nock.cleanAll();
+      process.env.CONNECTOR_HOST = "http://aServer:65535";
+    });
+
+    afterEach(function() {
+      process.env.CONNECTOR_HOST = undefined;
     });
     var card_details_not_allowed_statuses = [
       'AUTHORISATION SUBMITTED',
