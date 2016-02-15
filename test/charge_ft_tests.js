@@ -109,7 +109,6 @@ portfinder.getPort(function(err, connectorPort) {
         .put("/v1/frontend/charges/23144323/status")
         .reply(204);
 
-
         nock(process.env.CONNECTOR_HOST)
         .get("/v1/frontend/charges/23144323")
         .reply(200, {
@@ -120,12 +119,6 @@ portfinder.getPort(function(err, connectorPort) {
         });
 
         var cookieValue = cookie.create(chargeId);
-        connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
-        default_connector_response_for_get_charge(connectorPort, chargeId, enteringCardDetailsState);
-<<<<<<< 72efa872a2e45ff131f01c85419a9f2f757e9165
-
-=======
->>>>>>> pp-520 replaced the conenctor client with the model way od retrieving
         get_charge_request(app, cookieValue, chargeId)
             .expect(200)
             .expect(function(res){
@@ -480,7 +473,7 @@ portfinder.getPort(function(err, connectorPort) {
 
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-            .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+            .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
             .expect(200)
             .expect(function(res){
               helper.expectTemplateTohave(res,"message","There was a problem processing your payment. Please contact the service.");
@@ -490,7 +483,7 @@ portfinder.getPort(function(err, connectorPort) {
       });
 
       it('connector failure when trying to authorise payment should result in error page', function (done) {
-        var cookieValue = cookie.create(chargeId);
+        var cookieValue = cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service');
         default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
         var card_data = full_connector_card_data('5105105105105100');
         connector_expects(card_data).reply(500);
