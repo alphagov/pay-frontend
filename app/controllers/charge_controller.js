@@ -7,7 +7,7 @@ var response        = require('../utils/response.js').response;
 var chargeParam     = require('../services/charge_param_retriever.js');
 var normalise       = require('../services/normalise.js');
 var Charge          = require('../models/charge.js');
-
+var _               = require('lodash');
 
 var genericError    = require('../utils/response.js').genericError
 var notFound        = require('../utils/response.js').pageNotFound
@@ -20,7 +20,21 @@ var renderErrorView = require('../utils/response.js').renderErrorView;
 var renderErrorViewWithReturnUrl = require('../utils/response.js').renderErrorViewWithReturnUrl;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
+var CREATED_STATE = 'CREATED';
 var CARD_NUMBER_FIELD = 'cardNo';
+
+var views = {
+    NOT_FOUND: {
+        code: 404,
+        view: notFound
+    },
+    display: function(res,state){
+        console.log('display',this[state])
+        res.status(this[state].code);
+        res.render(this[state].view);
+    }
+};
+
 
 
 module.exports.bindRoutesTo = function (app) {
@@ -110,40 +124,62 @@ module.exports.bindRoutesTo = function (app) {
     }
 
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
-        var chargeId = chargeParam.retrieve(req);
-        if (!chargeId) return genericError(res);
-
-        var views = {
-            INVALID_STATE: {
-                code: 404,
-                view: notFound
-            },
-            display: function(res,state){
-                res.status(this[state].code)
-                this[state].view(res)
+        var _views = _.merge(views, {
+            BACK_BUTTON_AUTHORISATION_SUCCESS: {
+                code: 200,
+                view: "back_button_authorisation_success"
             }
-        };
+        });
 
-        var successful = function(data) {
-            var incorrect_state = data.status != ENTERING_CARD_DETAILS_STATUS;
-            if (incorrect_state) return views.display(res,"INVALID_STATE");
-            // TODO remove is possible
+
+        var chargeId = chargeParam.retrieve(req);
+        if (!chargeId) return _views.display(res,"NOT_FOUND");
+
+        var init = function(){
+            Charge.find(chargeId).then(function(data){
+                gotCharge(data);
+            },apiFail)
+
+
+        },
+
+        gotCharge = function(data) {
+            var incorrectState = !isChargeStateCorrect(data.status);
+
+            var stateName = data.status.toUpperCase().replace(" ", "_")
+            if (incorrectState) return _views.display(res,"BACK_BUTTON_AUTHORISATION_SUCCESS");
+
+            setChargeSession(req,chargeId,data);
+            Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
+            .then(function(){
+                statusUpdated(data,chargeId)
+            },apiFail)
+        },
+
+        // TODO remove is possible
+        setChargeSession = function(req,chargeId,data) {
             var chargeSession = chargeState(req, chargeId);
             chargeSession.amount = data.amount;
             chargeSession.paymentDescription = data.description;
+        },
+
+        isChargeStateCorrect = function(currentState){
+            if (currentState == ENTERING_CARD_DETAILS_STATUS) return true;
+            if (currentState == CREATED_STATE) return true
+            return false
+        },
 
 
+        apiFail = function(error){
+            console.log('fail');
+            _views.display(res,"NOT_FOUND");
+        },
+
+        statusUpdated = function(data,chargeId) {
             res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
-        }
+        };
 
-        var fail = function(error){
-            views.display(res,"INVALID_STATE");
-        }
-
-
-        Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
-        .then(successful,fail)
-
+        init();
     });
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
