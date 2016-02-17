@@ -19,44 +19,6 @@ portfinder.getPort(function (err, connectorPort) {
   var chargeId = '23144323';
   var frontendCardDetailsPath = '/card_details';
 
-  describe('The /card_details endpoint', function () {
-
-    beforeEach(function() {
-      nock.cleanAll();
-      process.env.CONNECTOR_HOST = "http://aServer:65535";
-    });
-
-    afterEach(function() {
-      process.env.CONNECTOR_HOST = undefined;
-    });
-    var card_details_not_allowed_statuses = [
-      'AUTHORISATION SUBMITTED',
-      'AUTHORISATION REJECTED',
-      'AUTHORISATION SUCCESS',
-      'READY_FOR_CAPTURE',
-      'AUTHORISATION SUBMITTED',
-      'SYSTEM ERROR',
-      'SYSTEM CANCELLED',
-      'CAPTURED'
-    ];
-
-
-    card_details_not_allowed_statuses.forEach(function (status) {
-      it('should error when the payment status is ' + status, function (done) {
-        var cookieValue = cookie.create(chargeId);
-        connector_response_for_put_charge(connectorPort, chargeId, 204 , {});
-        default_connector_response_for_get_charge(connectorPort, chargeId, status);
-
-        get_charge_request(app, cookieValue, chargeId)
-          .expect(404)
-          .expect(function(res){
-            helper.expectTemplateTohave(res,"message",'Page cannot be found');
-          })
-          .end(done);
-      });
-    });
-  });
-
   describe('The /confirm endpoint', function () {
     var confirm_not_allowed_statuses = [
       'AUTHORISATION SUBMITTED',

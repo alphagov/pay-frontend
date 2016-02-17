@@ -9,9 +9,6 @@ var normalise       = require('../services/normalise.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
 
-var genericError    = require('../utils/response.js').genericError
-var notFound        = require('../utils/response.js').pageNotFound
-
 var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
@@ -26,14 +23,34 @@ var CARD_NUMBER_FIELD = 'cardNo';
 var views = {
     NOT_FOUND: {
         code: 404,
-        view: notFound
+        view: 'error',
+        locals: {
+            message: "Page cannot be found"
+        },
     },
-    display: function(res,state){
-        console.log('display',this[state])
-        res.status(this[state].code);
-        res.render(this[state].view);
+    ERROR: {
+        code: 500,
+        view: 'error',
+        locals: {
+            message: 'There is a problem with the payments platform'
+        }
+    },
+    display: function(res,state,locals){
+
+        if (!this[state]) {
+            logger.error("VIEW " + state + " NOT FOUND");
+            locals = { message: "View " + state + " not found" };
+            state = "ERROR";
+        }
+        locals = (this[state].locals) ? _.merge(this[state].locals,locals) : locals;
+        locals = (locals == undefined) ? {} : locals;
+        status = (this[state].code) ? this[state].code : 200;
+        locals.viewName = this[state].view;
+
+        res.status(status);
+        res.render(this[state].view,locals);
     }
-};
+}
 
 
 
@@ -126,28 +143,25 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         var _views = _.merge(views, {
             BACK_BUTTON_AUTHORISATION_SUCCESS: {
-                code: 200,
-                view: "back_button_authorisation_success"
+                view: "errors/charge_new_state_auth_success"
             }
         });
-
-
         var chargeId = chargeParam.retrieve(req);
         if (!chargeId) return _views.display(res,"NOT_FOUND");
 
         var init = function(){
             Charge.find(chargeId).then(function(data){
-                gotCharge(data);
-            },apiFail)
-
-
+                gotCharge(data,chargeId);
+            },apiFail);
         },
 
-        gotCharge = function(data) {
+        gotCharge = function(data,chargeId) {
             var incorrectState = !isChargeStateCorrect(data.status);
-
             var stateName = data.status.toUpperCase().replace(" ", "_")
-            if (incorrectState) return _views.display(res,"BACK_BUTTON_AUTHORISATION_SUCCESS");
+            if (incorrectState) return _views.display(res,"BACK_BUTTON_" + stateName,{
+                chargeId: chargeId,
+                returnUrl: data.return_url
+            });
 
             setChargeSession(req,chargeId,data);
             Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
@@ -171,7 +185,6 @@ module.exports.bindRoutesTo = function (app) {
 
 
         apiFail = function(error){
-            console.log('fail');
             _views.display(res,"NOT_FOUND");
         },
 

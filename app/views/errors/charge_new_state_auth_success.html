@@ -1,0 +1,24 @@
+{{< layout}}
+
+{{$pageTitle}}
+Confirm your details.
+{{/pageTitle}}
+
+{{$content}}
+
+<main id="content" role="main" class="content-wrapper">
+
+<h1 class="page-title"> Your payment is in progress </h1>
+<p> You can either</p>
+<!-- TODO PP-545 -->
+<a href="/card_details/{{chargeId}}/confirm"> continue your payment </a>
+
+<p> or you can </p>
+
+<a href="{{returnUrl}}"> return to the service to amke a new payment </a>
+</main>
+
+{{/content}}
+
+{{/layout}}
+
