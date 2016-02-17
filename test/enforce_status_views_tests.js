@@ -5,6 +5,8 @@ var portfinder = require('portfinder');
 var app = require(__dirname + '/../server.js').getApp;
 var should = require('chai').should();
 var helper = require(__dirname + '/utils/test_helpers.js');
+var nock = require('nock');
+
 
 
 var cookie = require(__dirname + '/utils/session.js');
@@ -18,10 +20,19 @@ portfinder.getPort(function (err, connectorPort) {
   var frontendCardDetailsPath = '/card_details';
 
   describe('The /card_details endpoint', function () {
+
+    beforeEach(function() {
+      nock.cleanAll();
+      process.env.CONNECTOR_HOST = "http://aServer:65535";
+    });
+
+    afterEach(function() {
+      process.env.CONNECTOR_HOST = undefined;
+    });
     var card_details_not_allowed_statuses = [
       'AUTHORISATION SUBMITTED',
-      'AUTHORISATION SUCCESS',
       'AUTHORISATION REJECTED',
+      'AUTHORISATION SUCCESS',
       'READY_FOR_CAPTURE',
       'AUTHORISATION SUBMITTED',
       'SYSTEM ERROR',
@@ -57,10 +68,13 @@ portfinder.getPort(function (err, connectorPort) {
       'SYSTEM CANCELLED',
       'CAPTURED'
     ];
+    beforeEach(function() {
+      nock.cleanAll();
+    });
+
 
 
     confirm_not_allowed_statuses.forEach(function (status) {
-
       var fullSessionData = {
         'amount': 1000,
         'paymentDescription': 'Test Description',
@@ -72,7 +86,6 @@ portfinder.getPort(function (err, connectorPort) {
       };
 
       it('should error when the payment status is ' + status, function (done) {
-
         default_connector_response_for_get_charge(connectorPort, chargeId, status);
         request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
