@@ -4,6 +4,7 @@ var luhn            = require('luhn');
 var Client          = require('node-rest-client').Client;
 var client          = new Client();
 var response        = require('../utils/response.js').response;
+var views           = require('../utils/views.js');
 var chargeParam     = require('../services/charge_param_retriever.js');
 var normalise       = require('../services/normalise.js');
 var Charge          = require('../models/charge.js');
@@ -19,39 +20,6 @@ var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 var CREATED_STATE = 'CREATED';
 var CARD_NUMBER_FIELD = 'cardNo';
-
-var views = {
-    NOT_FOUND: {
-        code: 404,
-        view: 'error',
-        locals: {
-            message: "Page cannot be found"
-        },
-    },
-    ERROR: {
-        code: 500,
-        view: 'error',
-        locals: {
-            message: 'There is a problem with the payments platform'
-        }
-    },
-    display: function(res,state,locals){
-
-        if (!this[state]) {
-            logger.error("VIEW " + state + " NOT FOUND");
-            locals = { message: "View " + state + " not found" };
-            state = "ERROR";
-        }
-        locals = (this[state].locals) ? _.merge(this[state].locals,locals) : locals;
-        locals = (locals == undefined) ? {} : locals;
-        status = (this[state].code) ? this[state].code : 200;
-        locals.viewName = this[state].view;
-
-        res.status(status);
-        res.render(this[state].view,locals);
-    }
-}
-
 
 
 module.exports.bindRoutesTo = function (app) {
@@ -148,7 +116,6 @@ module.exports.bindRoutesTo = function (app) {
         });
         var chargeId = chargeParam.retrieve(req);
         if (!chargeId) return _views.display(res,"NOT_FOUND");
-
         var init = function(){
             Charge.find(chargeId).then(function(data){
                 gotCharge(data,chargeId);
