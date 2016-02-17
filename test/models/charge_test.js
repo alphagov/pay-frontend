@@ -1,11 +1,11 @@
-require(__dirname + '/../utils/html_assertions.js');
+require(__dirname + '/../test_helpers/html_assertions.js');
 var should    = require('chai').should();
 var assert    = require('assert');
 var Charge    = require(__dirname + '/../../app/models/charge.js');
 var nock      = require('nock');
 process.env.CONNECTOR_HOST = "http://nockStubbedServer:3000"
 var originalHost = process.env.CONNECTOR_HOST
-var wrongPromise = require(__dirname + '/../utils/test_helpers.js').unexpectedPromise;
+var wrongPromise = require(__dirname + '/../test_helpers/test_helpers.js').unexpectedPromise;
 
 
 

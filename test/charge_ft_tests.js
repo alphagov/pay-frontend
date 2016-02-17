@@ -6,21 +6,21 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
-var mock_templates = require(__dirname + '/utils/mock_templates.js');
+var mock_templates = require(__dirname + '/test_helpers/mock_templates.js');
 app.engine('html', mock_templates.__express);
 var chai_expect = require('chai').expect;
 
 
 var should = require('chai').should();
 
-var cookie = require(__dirname + '/utils/session.js');
-var helper = require(__dirname + '/utils/test_helpers.js');
+var cookie = require(__dirname + '/test_helpers/session.js');
+var helper = require(__dirname + '/test_helpers/test_helpers.js');
 
 var winston = require('winston');
 
-var get_charge_request = require(__dirname + '/utils/test_helpers.js').get_charge_request;
-var connector_response_for_put_charge = require(__dirname + '/utils/test_helpers.js').connector_response_for_put_charge;
-var default_connector_response_for_get_charge = require(__dirname + '/utils/test_helpers.js').default_connector_response_for_get_charge;
+var get_charge_request = require(__dirname + '/test_helpers/test_helpers.js').get_charge_request;
+var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_helpers.js').connector_response_for_put_charge;
+var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
 
 portfinder.getPort(function(err, connectorPort) {
   describe('chargeTests',function(){

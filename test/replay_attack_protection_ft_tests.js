@@ -3,7 +3,7 @@ var portfinder = require('portfinder');
 var nock = require('nock');
 var assert = require('chai').assert;
 var app = require(__dirname + '/../server.js').getApp;
-var cookie = require(__dirname + '/utils/session.js');
+var cookie = require(__dirname + '/test_helpers/session.js');
 
 describe('dummy feature - trigger', function() {
   portfinder.getPort(function(err, connectorPort) {

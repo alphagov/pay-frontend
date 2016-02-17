@@ -4,16 +4,16 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var app = require(__dirname + '/../server.js').getApp;
 var should = require('chai').should();
-var helper = require(__dirname + '/utils/test_helpers.js');
+var helper = require(__dirname + '/test_helpers/test_helpers.js');
 var nock = require('nock');
 
 
 
-var cookie = require(__dirname + '/utils/session.js');
+var cookie = require(__dirname + '/test_helpers/session.js');
 
-var get_charge_request = require(__dirname + '/utils/test_helpers.js').get_charge_request;
-var default_connector_response_for_get_charge = require(__dirname + '/utils/test_helpers.js').default_connector_response_for_get_charge;
-var connector_response_for_put_charge = require(__dirname + '/utils/test_helpers.js').connector_response_for_put_charge;
+var get_charge_request = require(__dirname + '/test_helpers/test_helpers.js').get_charge_request;
+var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
+var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_helpers.js').connector_response_for_put_charge;
 
 portfinder.getPort(function (err, connectorPort) {
   var chargeId = '23144323';
