@@ -96,6 +96,7 @@ module.exports.bindRoutesTo = function (app) {
     function validSession(chargeSession, req, res) {
         if (
             !('amount' in chargeSession) ||
+            !('paymentDescription' in chargeSession) ||
             !('expiryDate' in chargeSession) ||
             !('cardNumber' in chargeSession) ||
             !('cardholderName' in chargeSession) ||
