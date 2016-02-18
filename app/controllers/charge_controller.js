@@ -109,7 +109,7 @@ module.exports.bindRoutesTo = function (app) {
     }
 
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
-        var _views = _.merge(views, {
+        var _views = views.create({
             BACK_BUTTON_AUTHORISATION_SUCCESS: {
                 view: "errors/charge_new_state_auth_success"
             }
