@@ -14,32 +14,32 @@ Confirm your details.
     <table class="confirm-details">
         <tr>
             <td>Name on card:</td>
-            <td id="cardholder-name" class="details">{{cardholderName}}</td>
+            <td id="cardholder-name" class="details">{{session.cardholderName}}</td>
         </tr>
         <tr>
             <td>Card number:</td>
-            <td id="card-number" class="details">{{cardNumber}}</td>
+            <td id="card-number" class="details">{{session.cardNumber}}</td>
         </tr>
         <tr>
             <td>Expiry date:</td>
-            <td id="expiry-date" class="details">{{expiryDate}}</td>
+            <td id="expiry-date" class="details">{{session.expiryDate}}</td>
         </tr>
         <tr>
             <td>Billing address:</td>
-            <td id="address" class="details">{{address}}</td>
+            <td id="address" class="details">{{session.address}}</td>
         </tr>
         <tr>
             <td>Payment for:</td>
-            <td id="payment-description" class="details">{{paymentDescription}}</td>
+            <td id="payment-description" class="details">{{session.paymentDescription}}</td>
         </tr>
         <tr>
             <td>Payment amount:</td>
-            <td id="amount" class="details">£{{amount}}</td>
+            <td id="amount" class="details">£{{session.amount}}</td>
         </tr>
 
     </table>
 
-    <form id="confirmation" method="POST" action="{{confirmUrl}}">
+    <form id="confirmation" method="POST" action="{{confirmPath}}">
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
         <button id="confirm" class="button">Confirm</button>
     </form>

@@ -115,8 +115,10 @@ module.exports.bindRoutesTo = function (app) {
                 view: "errors/charge_new_state_auth_success"
             }
         });
+
         var chargeId = chargeParam.retrieve(req);
         if (!chargeId) return _views.display(res,"NOT_FOUND");
+
         var init = function(){
             Charge.find(chargeId).then(function(data){
                 gotCharge(data,chargeId);
@@ -141,7 +143,7 @@ module.exports.bindRoutesTo = function (app) {
         // TODO remove is possible
         setChargeSession = function(req,chargeId,data) {
             var chargeSession = chargeState(req, chargeId);
-            chargeSession.amount = data.amount;
+            chargeSession.amount = normalise.penceToPounds(data.amount);
             chargeSession.paymentDescription = data.description;
         },
 
@@ -150,7 +152,6 @@ module.exports.bindRoutesTo = function (app) {
             if (currentState == CREATED_STATE) return true
             return false
         },
-
 
         apiFail = function(error){
             _views.display(res,"NOT_FOUND");
@@ -164,11 +165,11 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.post(CARD_DETAILS_PATH, function (req, res) {
-        logger.info('POST ' + CARD_DETAILS_PATH);
-        var chargeId = req.body.chargeId;
-        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
-            return;
-        }
+        var _views = views.create();
+        var chargeId = chargeParam.retrieve(req);
+        if (!chargeId) return _views.display(res,"NOT_FOUND");
+
+
         var checkResult = validateNewCharge(normaliseAddress(req.body));
 
         var chargeSession = chargeState(req, chargeId);
@@ -206,7 +207,7 @@ module.exports.bindRoutesTo = function (app) {
                 switch (connectorResponse.statusCode) {
                     case 204:
                         logger.info('got response code 200 from connector');
-                        chargeSession.cardNumber = hashOutCardNumber(plainCardNumber);
+                        chargeSession.cardNumber =  hashOutCardNumber(plainCardNumber);
                         chargeSession.expiryDate = expiryDate;
                         chargeSession.cardholderName = req.body.cardholderName;
                         chargeSession.address = buildAddressLine(req.body);
@@ -235,19 +236,21 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-        logger.info('GET ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-        var chargeId = req.params.chargeId;
-        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
-            return;
-        }
+        var _views = views.create();
+        var chargeId = chargeParam.retrieve(req);
         var chargeSession = chargeState(req, chargeId);
+        // TODO PP-545
+        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        var confirmPath = CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
+
+        if (!chargeId) return _views.display(res,"NOT_FOUND");
+
+
 
         if (!validSession(chargeSession, req, res)) {
             return;
         }
-        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (connectorData, connectorResponse) {
-
             if (connectorResponse.statusCode === 200) {
                 if (connectorData.status != 'AUTHORISATION SUCCESS') {
                     res.status(404);
@@ -256,20 +259,11 @@ module.exports.bindRoutesTo = function (app) {
                     });
                     return;
                 }
-                var amountInPence = chargeSession.amount;
-                var uiAmount = (amountInPence / 100).toFixed(2);
 
                 res.render(CONFIRM_VIEW, {
                     'charge_id': chargeId,
-                    'amount': uiAmount,
-                    'expiryDate': chargeSession.expiryDate,
-                    'cardNumber': chargeSession.cardNumber,
-                    'cardholderName': chargeSession.cardholderName,
-                    'address': chargeSession.address,
-                    'serviceName': chargeSession.serviceName,
-                    'paymentDescription': chargeSession.paymentDescription,
-                    'backUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId,
-                    'confirmUrl': CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH
+                    'confirmPath': confirmPath,
+                    session: chargeSession
                 });
             }
         });
