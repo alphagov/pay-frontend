@@ -275,6 +275,7 @@ module.exports.bindRoutesTo = function (app) {
                 client.post(cardCaptureUrl, payload, function (data, connectorResponse) {
                     switch (connectorResponse.statusCode) {
                         case 204:
+                            console.info("Redirecting to ", returnUrl);
                             res.redirect(303, returnUrl);
                             return;
                         case 500:
@@ -300,8 +301,6 @@ module.exports.bindRoutesTo = function (app) {
             });
         });
     });
-
-
 
     function findLinkForRelation(links, rel) {
         return links.find(function (link) {
