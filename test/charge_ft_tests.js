@@ -436,6 +436,16 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     describe('The /card_details/charge_id/confirm endpoint', function () {
+    beforeEach(function() {
+      nock.cleanAll();
+      process.env.CONNECTOR_HOST = "http://aServer:65535";
+    });
+
+    afterEach(function() {
+      process.env.CONNECTOR_HOST = undefined;
+    });
+
+
       var fullSessionData = {
         'amount': "10.00",
         'paymentDescription': "Payment description",
@@ -448,12 +458,12 @@ portfinder.getPort(function(err, connectorPort) {
 
       it('should return the data needed for the UI', function (done) {
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, 'AUTHORISATION SUCCESS');
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("AUTHORISATION SUCCESS","http://www.example.com/service"));
 
         request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
-          .set('Accept', 'application/json')
           .expect(200)
           .expect(function(res){
             helper.expectTemplateTohave(res,"session",{

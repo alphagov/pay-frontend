@@ -32,7 +32,14 @@ portfinder.getPort(function (err, connectorPort) {
     ];
     beforeEach(function() {
       nock.cleanAll();
+      process.env.CONNECTOR_HOST = "http://aserver:9000";
     });
+
+    afterEach(function() {
+      nock.cleanAll();
+      process.env.CONNECTOR_HOST = undefined;
+    });
+
 
 
 
@@ -48,7 +55,11 @@ portfinder.getPort(function (err, connectorPort) {
       };
 
       it('should error when the payment status is ' + status, function (done) {
-        default_connector_response_for_get_charge(connectorPort, chargeId, status);
+        nock(process.env.CONNECTOR_HOST)
+        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
+          status,"http://www.example.com/service"
+        ));
+
         request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
