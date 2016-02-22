@@ -43,6 +43,7 @@ app.use(function (req, res, next) {
 
 app.use(function(req,res,next){
     noCache(res);
+    next();
 })
 
 if (process.env.NODE_ENV !== 'production') {
