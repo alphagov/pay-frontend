@@ -1,4 +1,4 @@
-require(__dirname + '/../utils/html_assertions.js');
+require(__dirname + '/../test_helpers/html_assertions.js');
 var should = require('chai').should();
 var assert = require('assert');
 var chargeParam  = require(__dirname + '/../../app/services/charge_param_retriever.js');

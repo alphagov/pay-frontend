@@ -31,11 +31,13 @@ module.exports = function(){
     var url = statusUrl(chargeId),
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
+
     client.put(url, params, function(data, response){
       updateComplete(chargeId, data, response, defer);
     }).on('error',function(err){
       clientUnavailable(err, defer);
     });
+
     return defer.promise;
   },
 
@@ -46,15 +48,7 @@ module.exports = function(){
       return
     }
 
-    // sure there is a better pattern than this
-    find(chargeId).then(
-      function(data){
-        defer.resolve(data);
-      },
-      function(error) {
-        defer.reject(error);
-      }
-    );
+    defer.resolve({success: "OK"});
   },
 
   find = function(chargeId){

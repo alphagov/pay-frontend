@@ -6,21 +6,21 @@ var request = require('supertest');
 var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
-var mock_templates = require(__dirname + '/utils/mock_templates.js');
+var mock_templates = require(__dirname + '/test_helpers/mock_templates.js');
 app.engine('html', mock_templates.__express);
 var chai_expect = require('chai').expect;
 
 
 var should = require('chai').should();
 
-var cookie = require(__dirname + '/utils/session.js');
-var helper = require(__dirname + '/utils/test_helpers.js');
+var cookie = require(__dirname + '/test_helpers/session.js');
+var helper = require(__dirname + '/test_helpers/test_helpers.js');
 
 var winston = require('winston');
 
-var get_charge_request = require(__dirname + '/utils/test_helpers.js').get_charge_request;
-var connector_response_for_put_charge = require(__dirname + '/utils/test_helpers.js').connector_response_for_put_charge;
-var default_connector_response_for_get_charge = require(__dirname + '/utils/test_helpers.js').default_connector_response_for_get_charge;
+var get_charge_request = require(__dirname + '/test_helpers/test_helpers.js').get_charge_request;
+var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_helpers.js').connector_response_for_put_charge;
+var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
 
 portfinder.getPort(function(err, connectorPort) {
   describe('chargeTests',function(){
@@ -110,22 +110,27 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     describe('The /charge endpoint', function() {
-      it('should include the data required for the frontend', function (done) {
-        nock(process.env.CONNECTOR_HOST)
-        .put("/v1/frontend/charges/23144323/status")
-        .reply(204);
+      describe('Different statuses',function(){
+        var get = function(status){
+            nock(process.env.CONNECTOR_HOST)
+            .get("/v1/frontend/charges/23144323")
+            .reply(200, {
+                'amount': 2345,
+                'description': "Payment Description",
+                'status': status,
+                'return_url': "http://www.example.com/service"
+            });
+            nock(process.env.CONNECTOR_HOST)
+            .put("/v1/frontend/charges/23144323/status")
+            .reply(204);
 
-        nock(process.env.CONNECTOR_HOST)
-        .get("/v1/frontend/charges/23144323")
-        .reply(200, {
-            'amount': 2345,
-            'description': "Payment Description",
-            'status': enteringCardDetailsState,
-            'return_url': "http://www.example.com/service"
-        });
+            var cookieValue = cookie.create(chargeId);
+            return get_charge_request(app, cookieValue, chargeId);
+        };
 
-        var cookieValue = cookie.create(chargeId);
-        get_charge_request(app, cookieValue, chargeId)
+
+        var GetAndCheckChargeRequest = function(status,done){
+          get(status)
             .expect(200)
             .expect(function(res){
               helper.expectTemplateTohave(res,"amount",'23.45');
@@ -135,7 +140,33 @@ portfinder.getPort(function(err, connectorPort) {
               helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
             })
             .end(done);
+        };
+        it('should include the data required for the frontend when enetering card details', function (done) {
+          GetAndCheckChargeRequest(enteringCardDetailsState,done);
+        });
+
+        it('should include the data required for the frontend when in created state', function (done) {
+          GetAndCheckChargeRequest("CREATED",done);
+        });
+
+        it('should show error page when the charge is not in a state we deal with', function (done) {
+          get("invalid")
+            .expect(500)
+            .expect(function(res){
+              helper.expectTemplateTohave(res,"message","View BACK_BUTTON_INVALID not found");
+            }).end(done);
+        });
+
+        it('should show appropriate error page when the charge is in a state we deal with', function (done) {
+          get("authorisation success")
+            .expect(200)
+            .expect(function(res){
+              helper.expectTemplateTohave(res,"viewName","errors/charge_new_state_auth_success");
+            }).end(done);
+        });
       });
+
+
 
       it('should send clean card data to connector', function(done) {
         var cookieValue = cookie.create(chargeId);
