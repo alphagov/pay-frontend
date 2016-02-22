@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var clientSessions = require("client-sessions");
 var frontendCookie = require(__dirname + '/app/utils/cookies.js').frontendCookie;
 var logger = require('winston');
+var noCache = require(__dirname + '/app/utils/no_cache.js');
 
 var port = (process.env.PORT || 3000);
 var app = express();
@@ -39,6 +40,11 @@ app.use(function (req, res, next) {
   }
   next();
 });
+
+app.use(function(req,res,next){
+    noCache(res);
+    next();
+})
 
 if (process.env.NODE_ENV !== 'production') {
   // Will return stack traces to the browser as well - only use in development!
