@@ -236,29 +236,41 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-        var _views      = views.create({
-            success: { view: CONFIRM_VIEW }
-        }),
-        chargeId        = chargeParam.retrieve(req),
+        var chargeId    = chargeParam.retrieve(req),
         chargeSession   = chargeState(req, chargeId),
         sessionValid    = validSession(chargeSession),
         connectorUrl    = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId),
         confirmPath     = CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH, // TODO PP-545
-        successParams   = {
+        stateErr        = "errors/charge_confirm_state_completed"
+        successLocals   = {
             'charge_id': chargeId,
             'confirmPath': confirmPath,
             session: chargeSession
-        };
+        },
+        stateErrorSuccessful = { view: stateErr, locals: { status: 'successful'} },
+        stateErrorFailed     = { view: stateErr, locals: { status: 'unsuccessful'} },
+
+        _views = views.create({
+            success: { view: CONFIRM_VIEW, locals: successLocals },
+            CAPTURE_SUBMITTED: stateErrorSuccessful,
+            CAPTURED: stateErrorSuccessful,
+            CAPTURE_FAILURE: stateErrorFailed
+        });
 
         var init = function(){
             if (!chargeId) return fail({message: "CHARGE NOT FOUND IN SESSION"});
             if (!sessionValid) return _views.display(res,'SESSION_EXPIRED');
             Charge.find(chargeId).then(gotCharge,fail);
         },
+
         gotCharge = function(data){
-            stateOK = isChargeStateOK(data.status);
-            if (!stateOK) return fail({message: `STATE INVALID ${data.status}`});
-            return _views.display(res,'success',successParams);
+            var stateOK = isChargeStateOK(data.status);
+            var stateName = data.status.toUpperCase().replace(" ", "_")
+            if (!stateOK) { return _views.display(res, stateName,{
+                chargeId: chargeId,
+                returnUrl: data.return_url
+            }); }
+            _views.display(res,'success');
         },
 
         isChargeStateOK = function(currentState){

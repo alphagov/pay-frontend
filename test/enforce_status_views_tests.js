@@ -19,16 +19,14 @@ portfinder.getPort(function (err, connectorPort) {
   var chargeId = '23144323';
   var frontendCardDetailsPath = '/card_details';
 
-  describe('The /confirm endpoint', function () {
+  describe('The /confirm endpoint undealt with states', function () {
     var confirm_not_allowed_statuses = [
       'AUTHORISATION SUBMITTED',
       'CREATED',
       'AUTHORISATION REJECTED',
       'READY_FOR_CAPTURE',
-      'AUTHORISATION SUBMITTED',
       'SYSTEM ERROR',
       'SYSTEM CANCELLED',
-      'CAPTURED'
     ];
     beforeEach(function() {
       nock.cleanAll();
@@ -64,7 +62,8 @@ portfinder.getPort(function (err, connectorPort) {
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message",'Page cannot be found');
+
+            helper.expectTemplateTohave(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
           })
           .end(done);
       });

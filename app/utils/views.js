@@ -27,6 +27,7 @@ module.exports = function(){
       }
     },
     display: function(res,resName,locals){
+
       if (!this[resName]) {
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
