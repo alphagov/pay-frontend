@@ -1,4 +1,5 @@
 var renderTemplate = require(__dirname + '/test_helpers/html_assertions.js').render;
+var cheerio = require('cheerio');
 var should = require('chai').should();
 
 describe('The charge view', function() {
@@ -54,13 +55,15 @@ describe('The confirm view', function () {
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'amount': "10.00",
-      'paymentDescription': "Payment Description",
+      'paymentDescription': "Payment Description & <xss attack> assessment",
       'cardholderName': 'Francisco Blaya-Gonzalvez',
       'address': '1 street lane, avenue city, AB1 3DF',
       'serviceName': 'Service 1'
     };
 
     var body = renderTemplate('confirm', templateData);
+    var $ = cheerio.load(body);
+    $('#payment-description').html().should.equal('Payment Description &amp; &lt;xss attack&gt; assessment');
     body.should.containSelector('#card-number').withText('************5100');
     body.should.containSelector('#expiry-date').withText('11/99');
     body.should.containSelector('#amount').withText('£10.00');
