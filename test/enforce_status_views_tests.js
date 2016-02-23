@@ -56,9 +56,72 @@ describe('The /confirm endpoint undealt with states', function () {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
+        .expect(500)
+        .expect(function(res){
+          helper.expectTemplateTohave(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
+        })
+        .end(done);
+    });
+  });
+});
+
+
+describe('The /confirm endpoint dealt with states', function () {
+  var confirm_not_allowed_statuses = [
+    {
+      name: 'capture submitted',
+      view: "errors/charge_confirm_state_completed",
+      viewState: 'successful'
+    },
+    {
+      name: 'captured',
+      view: "errors/charge_confirm_state_completed",
+      viewState: 'successful'
+    },
+    {
+      name: 'capture failure',
+      view: "errors/charge_confirm_state_completed",
+      viewState: 'unsuccessful'
+    }
+  ];
+  beforeEach(function() {
+    nock.cleanAll();
+    process.env.CONNECTOR_HOST = "http://aserver:9000";
+  });
+
+  afterEach(function() {
+    nock.cleanAll();
+    process.env.CONNECTOR_HOST = undefined;
+  });
+
+
+
+
+  confirm_not_allowed_statuses.forEach(function (state) {
+    var fullSessionData = {
+      'amount': 1000,
+      'paymentDescription': 'Test Description',
+      'cardNumber': "************5100",
+      'expiryDate': "11/99",
+      'cardholderName': 'T Eulenspiegel',
+      'address': 'Kneitlingen, Brunswick, Germany',
+      'serviceName': 'Pranks incorporated'
+    };
+
+    it('should error when the payment status is ' + state.name, function (done) {
+      nock(process.env.CONNECTOR_HOST)
+      .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
+        state.name,"http://www.example.com/service"
+      ));
+
+      request(app)
+        .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(function(res){
 
-          helper.expectTemplateTohave(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
+          helper.expectTemplateTohave(res,"viewName", state.view);
+          helper.expectTemplateTohave(res,"status", state.viewState);
+
         })
         .end(done);
     });

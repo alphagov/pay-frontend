@@ -239,7 +239,6 @@ module.exports.bindRoutesTo = function (app) {
         var chargeId    = chargeParam.retrieve(req),
         chargeSession   = chargeState(req, chargeId),
         sessionValid    = validSession(chargeSession),
-        connectorUrl    = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId),
         confirmPath     = CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH, // TODO PP-545
         stateErr        = "errors/charge_confirm_state_completed"
         successLocals   = {
@@ -266,10 +265,11 @@ module.exports.bindRoutesTo = function (app) {
         gotCharge = function(data){
             var stateOK = isChargeStateOK(data.status);
             var stateName = data.status.toUpperCase().replace(" ", "_")
-            if (!stateOK) { return _views.display(res, stateName,{
-                chargeId: chargeId,
-                returnUrl: data.return_url
-            }); }
+            if (!stateOK) {
+                return _views.display(res, stateName,{
+                    chargeId: chargeId,
+                    returnUrl: data.return_url});
+            }
             _views.display(res,'success');
         },
 
