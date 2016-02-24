@@ -260,9 +260,9 @@ portfinder.getPort(function(err, connectorPort) {
         form_data.addressCity = card_data.address.city;
 
         post_charge_request(cookieValue, form_data)
-          .expect(200)
+          .expect(404)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
+            helper.expectTemplateTohave(res,"message","Page cannot be found");
           })
           .end(done);
       });
@@ -381,9 +381,9 @@ portfinder.getPort(function(err, connectorPort) {
           .expect(function(res) {
             should.not.exist(res.headers['set-cookie']);
           })
-          .expect(200)
+          .expect(404)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
+            helper.expectTemplateTohave(res,"message","Page cannot be found");
           })
           .end(done);
       });
@@ -436,8 +436,18 @@ portfinder.getPort(function(err, connectorPort) {
     });
 
     describe('The /card_details/charge_id/confirm endpoint', function () {
+    beforeEach(function() {
+      nock.cleanAll();
+      process.env.CONNECTOR_HOST = "http://aServer:65535";
+    });
+
+    afterEach(function() {
+      process.env.CONNECTOR_HOST = undefined;
+    });
+
+
       var fullSessionData = {
-        'amount': 1000,
+        'amount': "10.00",
         'paymentDescription': "Payment description",
         'cardNumber': "************5100",
         'expiryDate': "11/99",
@@ -448,24 +458,23 @@ portfinder.getPort(function(err, connectorPort) {
 
       it('should return the data needed for the UI', function (done) {
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, 'AUTHORISATION SUCCESS');
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("AUTHORISATION SUCCESS","http://www.example.com/service"));
 
         request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
-          .set('Accept', 'application/json')
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"cardNumber","************5100");
-            helper.expectTemplateTohave(res,"expiryDate","11/99");
-            helper.expectTemplateTohave(res,"amount","10.00");
-            helper.expectTemplateTohave(res,"paymentDescription","Payment description");
-            helper.expectTemplateTohave(res,"cardholderName","T Eulenspiegel");
-            helper.expectTemplateTohave(res,"address","Kneitlingen, Brunswick, Germany");
-            helper.expectTemplateTohave(res,"serviceName","Pranks incorporated");
-            helper.expectTemplateTohave(res,"backUrl",frontendCardDetailsPath + '/' + chargeId);
-            helper.expectTemplateTohave(res,"confirmUrl",frontendCardDetailsPath + '/' + chargeId + '/confirm');
-            helper.expectTemplateTohave(res,"charge_id",chargeId);
+            helper.expectTemplateTohave(res,"session",{
+              'cardNumber': "************5100",
+              "expiryDate":"11/99",
+              "amount":"10.00",
+              "paymentDescription":"Payment description",
+              "cardholderName":"T Eulenspiegel",
+              "address":"Kneitlingen, Brunswick, Germany",
+              "serviceName":"Pranks incorporated",
+            });
           })
           .end(done);
       });

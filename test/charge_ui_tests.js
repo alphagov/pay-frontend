@@ -52,13 +52,14 @@ describe('The confirm view', function () {
 
   it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
     var templateData = {
-      'cardNumber': "************5100",
-      'expiryDate': "11/99",
-      'amount': "10.00",
-      'paymentDescription': "Payment Description & <xss attack> assessment",
-      'cardholderName': 'Francisco Blaya-Gonzalvez',
-      'address': '1 street lane, avenue city, AB1 3DF',
-      'serviceName': 'Service 1'
+      session: {
+        'cardNumber': "************5100",
+        'expiryDate': "11/99",
+        'amount': "10.00",
+        'paymentDescription': "Payment Description & <xss attack> assessment",
+        'cardholderName': 'Francisco Blaya-Gonzalvez',
+        'address': '1 street lane, avenue city, AB1 3DF'
+      }
     };
 
     var body = renderTemplate('confirm', templateData);
@@ -73,7 +74,7 @@ describe('The confirm view', function () {
   });
 
   it('should render a confirm button', function () {
-    var body = renderTemplate('confirm', {confirmUrl: '/card_details/123/confirm', 'charge_id': 1234});
+    var body = renderTemplate('confirm', {confirmPath: '/card_details/123/confirm', 'charge_id': 1234});
     body.should.containSelector('form#confirmation').withAttributes(
         {
           action: '/card_details/123/confirm',

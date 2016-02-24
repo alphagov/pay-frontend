@@ -17,7 +17,8 @@ module.exports = function(){
   };
 
   return {
-    charge: _charge
+    charge: _charge,
+    penceToPounds: penceToPounds
   }
 
 }();

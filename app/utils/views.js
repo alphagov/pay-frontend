@@ -19,7 +19,15 @@ module.exports = function(){
         message: 'There is a problem with the payments platform'
       }
     },
+    SESSION_EXPIRED: {
+      code: 200,
+      view: 'error',
+      locals: {
+        message: 'Session expired'
+      }
+    },
     display: function(res,resName,locals){
+
       if (!this[resName]) {
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
