@@ -222,7 +222,7 @@ module.exports.bindRoutesTo = function (app) {
                         renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
                         return;
                     default:
-                        renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
+                        res.redirect(303,`${CARD_DETAILS_PATH}/${chargeId}`);
                 }
             }).on('error', function (err) {
                 logger.error('Exception raised calling connector: ' + err);
@@ -290,11 +290,13 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-        logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-        var chargeId = req.params.chargeId;
-        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
-            return;
-        }
+       logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
+       var chargeId = req.params.chargeId;
+       if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
+           return;
+       }
+
+
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (chargeData, chargeResponse) {
             if (chargeResponse.statusCode === 200) {

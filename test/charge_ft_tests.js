@@ -238,9 +238,9 @@ portfinder.getPort(function(err, connectorPort) {
             .reply(400, {'message': 'This transaction was declined.'});
 
         post_charge_request(cookieValue, minimum_form_card_data('5105105105105100'))
-            .expect(200)
+            .expect(303)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"message","Payment could not be processed, please contact your issuing bank");
+              should.equal(res.headers.location, "/card_details/" + chargeId);
             })
             .end(done);
       });
