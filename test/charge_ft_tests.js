@@ -164,6 +164,15 @@ portfinder.getPort(function(err, connectorPort) {
               helper.expectTemplateTohave(res,"viewName","errors/charge_new_state_auth_success");
             }).end(done);
         });
+
+        it('should show auth failure page when the authorisation has been rejected', function (done) {
+          get("authorisation rejected")
+            .expect(200)
+            .expect(function(res){
+              helper.expectTemplateTohave(res,"viewName","errors/charge_new_state_auth_failure");
+            }).end(done);
+        });
+
       });
 
 
