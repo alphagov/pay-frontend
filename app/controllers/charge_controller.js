@@ -113,6 +113,9 @@ module.exports.bindRoutesTo = function (app) {
         var _views = views.create({
             BACK_BUTTON_AUTHORISATION_SUCCESS: {
                 view: "errors/charge_new_state_auth_success"
+            },
+            BACK_BUTTON_AUTHORISATION_REJECTED: {
+                view: "errors/charge_new_state_auth_failure"
             }
         });
 
