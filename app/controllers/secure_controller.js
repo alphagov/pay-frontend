@@ -7,8 +7,8 @@ var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
 var renderErrorView = require('../utils/response.js').renderErrorView;
 
-var Client = require('node-rest-client').Client;
-var client = new Client();
+var nodeClientInstance = require('../services/client_factory.js').nodeClientInstance;
+var client             = nodeClientInstance();
 
 module.exports.bindRoutesTo = function(app) {
   var CHARGE_PATH = '/charge';
