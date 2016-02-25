@@ -111,10 +111,10 @@ module.exports.bindRoutesTo = function (app) {
 
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         var _views = views.create({
-            BACK_BUTTON_AUTHORISATION_SUCCESS: {
+            AUTHORISATION_SUCCESS: {
                 view: "errors/charge_new_state_auth_success"
             },
-            BACK_BUTTON_AUTHORISATION_REJECTED: {
+            AUTHORISATION_REJECTED: {
                 view: "errors/charge_new_state_auth_failure"
             }
         });
@@ -130,8 +130,8 @@ module.exports.bindRoutesTo = function (app) {
 
         gotCharge = function(data,chargeId) {
             var incorrectState = !isChargeSessionOK(data.status);
-            var stateName = data.status.toUpperCase().replace(" ", "_")
-            if (incorrectState) return _views.display(res,"BACK_BUTTON_" + stateName,{
+            var stateName = data.status.toUpperCase().replace(" ", "_");
+            if (incorrectState) return _views.display(res, stateName,{
                 chargeId: chargeId,
                 returnUrl: data.return_url
             });

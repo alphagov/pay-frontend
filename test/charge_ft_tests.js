@@ -153,7 +153,7 @@ portfinder.getPort(function(err, connectorPort) {
           get("invalid")
             .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"message","View BACK_BUTTON_INVALID not found");
+              helper.expectTemplateTohave(res,"message","View INVALID not found");
             }).end(done);
         });
 
