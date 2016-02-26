@@ -125,13 +125,13 @@ module.exports.bindRoutesTo = function (app) {
         var init = function(){
             Charge.find(chargeId).then(function(data){
                 gotCharge(data,chargeId);
-            },apiFail);
+            }, apiFail);
         },
 
         gotCharge = function(data,chargeId) {
             var incorrectState = !isChargeSessionOK(data.status);
             var stateName = data.status.toUpperCase().replace(" ", "_");
-            if (incorrectState) return _views.display(res, stateName,{
+            if (incorrectState) return _views.display(res, stateName, {
                 chargeId: chargeId,
                 returnUrl: data.return_url
             });
@@ -140,7 +140,7 @@ module.exports.bindRoutesTo = function (app) {
             Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
             .then(function(){
                 statusUpdated(data,chargeId)
-            },apiFail)
+            }, apiFail);
         },
 
         // TODO remove is possible
