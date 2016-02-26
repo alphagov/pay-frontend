@@ -111,8 +111,11 @@ module.exports.bindRoutesTo = function (app) {
 
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         var _views = views.create({
-            BACK_BUTTON_AUTHORISATION_SUCCESS: {
+            AUTHORISATION_SUCCESS: {
                 view: "errors/charge_new_state_auth_success"
+            },
+            AUTHORISATION_REJECTED: {
+                view: "errors/charge_new_state_auth_failure"
             }
         });
 
@@ -127,8 +130,8 @@ module.exports.bindRoutesTo = function (app) {
 
         gotCharge = function(data,chargeId) {
             var incorrectState = !isChargeSessionOK(data.status);
-            var stateName = data.status.toUpperCase().replace(" ", "_")
-            if (incorrectState) return _views.display(res,"BACK_BUTTON_" + stateName,{
+            var stateName = data.status.toUpperCase().replace(" ", "_");
+            if (incorrectState) return _views.display(res, stateName,{
                 chargeId: chargeId,
                 returnUrl: data.return_url
             });
@@ -219,7 +222,7 @@ module.exports.bindRoutesTo = function (app) {
                         renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
                         return;
                     default:
-                        renderErrorView(req, res, 'Payment could not be processed, please contact your issuing bank');
+                        res.redirect(303,`${CARD_DETAILS_PATH}/${chargeId}`);
                 }
             }).on('error', function (err) {
                 logger.error('Exception raised calling connector: ' + err);
@@ -287,11 +290,13 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-        logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-        var chargeId = req.params.chargeId;
-        if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
-            return;
-        }
+       logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
+       var chargeId = req.params.chargeId;
+       if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
+           return;
+       }
+
+
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (chargeData, chargeResponse) {
             if (chargeResponse.statusCode === 200) {
