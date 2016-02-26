@@ -8,14 +8,14 @@ describe('frontend cookie', function () {
     process.env.SECURE_COOKIE_OFF = "true";
     assert.equal('frontend_state', cookies.frontendCookie().cookieName);
     assert.equal(true, cookies.frontendCookie().proxy);
-    assert.deepEqual({httpOnly: true, secureProxy: false}, cookies.frontendCookie().cookie);
+    assert.deepEqual({httpOnly: true, secureProxy: false, maxAge: 5400000}, cookies.frontendCookie().cookie);
   });
 
   it('should have secure proxy on in a secured https environment', function () {
     process.env.SECURE_COOKIE_OFF="false";
     assert.equal('frontend_state',cookies.frontendCookie().cookieName);
     assert.equal(true, cookies.frontendCookie().proxy);
-    assert.deepEqual({httpOnly: true, secureProxy: true}, cookies.frontendCookie().cookie);
+    assert.deepEqual({httpOnly: true, secureProxy: true, maxAge: 5400000}, cookies.frontendCookie().cookie);
   });
 
 });
