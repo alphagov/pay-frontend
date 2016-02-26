@@ -1,4 +1,5 @@
 process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
+process.env.DISABLE_INTERNAL_HTTPS = "true"; //for making sure tests use non HTTPS rest client requests
 
 var EMPTY_BODY='';
 
