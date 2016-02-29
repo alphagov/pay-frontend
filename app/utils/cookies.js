@@ -12,7 +12,7 @@ module.exports = function () {
       proxy: true,
       secret: process.env.SESSION_ENCRYPTION_KEY,
       cookie: {
-        maxAge: 90 * 60000, //expires after 90 minutes
+        maxAge: process.env.COOKIE_MAX_AGE, //expires after 90 minutes
         httpOnly: true,
         secureProxy: (process.env.SECURE_COOKIE_OFF !== "true") // default is true, only false if the env variable present
       }
@@ -20,6 +20,8 @@ module.exports = function () {
   }
 
   var frontendCookie = function () {
+    if (process.env.SESSION_ENCRYPTION_KEY === undefined) throw new Error('cookie encryption key is not set')
+    if (process.env.COOKIE_MAX_AGE === undefined) throw new Error('cookie max age is not set')
     return namedCookie('frontend_state');
   };
 
