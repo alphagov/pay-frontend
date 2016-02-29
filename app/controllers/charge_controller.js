@@ -10,12 +10,6 @@ var normalise       = require('../services/normalise.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
 
-var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
-var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
-var PAGE_NOT_FOUND_ERROR_MESSAGE = require('../utils/response.js').PAGE_NOT_FOUND_ERROR_MESSAGE;
-var PROCESSING_PROBLEM_MESSAGE = require('../utils/response.js').PROCESSING_PROBLEM_MESSAGE;
-var renderErrorView = require('../utils/response.js').renderErrorView;
-var renderErrorViewWithReturnUrl = require('../utils/response.js').renderErrorViewWithReturnUrl;
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 var AUTH_SUCCESS_STATE = 'AUTHORISATION SUCCESS';
@@ -68,30 +62,6 @@ module.exports.bindRoutesTo = function (app) {
 
     function chargeState(req, chargeId) {
         return req.frontend_state[createChargeIdSessionKey(chargeId)];
-    }
-
-    function validChargeIdInTheRequest(req, res, chargeId) {
-        if (!chargeId) {
-            logger.error('Unexpected: chargeId was not found in request.');
-            res.render(ERROR_VIEW, {
-                'message': ERROR_MESSAGE
-            });
-            return false;
-        }
-
-        return true;
-    }
-
-    function validChargeIdOnTheSession(req, res, chargeId) {
-        if (!req.frontend_state[createChargeIdSessionKey(chargeId)]) {
-            logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
-            res.render(ERROR_VIEW,{
-                'message': ERROR_MESSAGE
-            })
-            return false;
-        }
-
-        return true;
     }
 
     function validSession(chargeSession) {
@@ -219,22 +189,18 @@ module.exports.bindRoutesTo = function (app) {
                         return;
                     case 500:
                         logger.error('got response code 500 from connector');
-                        renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
-                        return;
+                        return _views.display(res,'SYSTEM_ERROR',{returnUrl: chargeData.return_url});
                     default:
                         res.redirect(303,`${CARD_DETAILS_PATH}/${chargeId}`);
                 }
             }).on('error', function (err) {
                 logger.error('Exception raised calling connector: ' + err);
-                res.render(ERROR_VIEW, {
-                    'message': ERROR_MESSAGE
-                });
+                _views.display(res,"ERROR");
+
             });
         }).on('error', function (err) {
             logger.error('Exception raised calling connector: ' + err);
-            res.render(ERROR_VIEW, {
-                'message': ERROR_MESSAGE
-            });
+            _views.display(res,"ERROR");
         });
     });
 
@@ -291,14 +257,14 @@ module.exports.bindRoutesTo = function (app) {
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
        logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-       var chargeId = req.params.chargeId;
-       if (!validChargeIdInTheRequest(req, res, chargeId) || !validChargeIdOnTheSession(req, res, chargeId)) {
-           return;
-       }
+       var _views = views.create();
+        var chargeId = chargeParam.retrieve(req);
+        if (!chargeId) return _views.display(res,"ERROR");
 
 
         var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
         client.get(connectorUrl, function (chargeData, chargeResponse) {
+
             if (chargeResponse.statusCode === 200) {
                 var captureLink = findLinkForRelation(chargeData.links, 'cardCapture');
                 var cardCaptureUrl = captureLink.href;
@@ -312,26 +278,20 @@ module.exports.bindRoutesTo = function (app) {
                             res.redirect(303, returnUrl);
                             return;
                         case 500:
-                            renderErrorViewWithReturnUrl(req, res, PROCESSING_PROBLEM_MESSAGE, chargeData.return_url);
-                            return;
+                            return _views.display(res,'SYSTEM_ERROR',{returnUrl: chargeData.return_url});
                         default:
-                            renderErrorView(req, res, ERROR_MESSAGE);
-                            return;
+                            return _views.display(res,'ERROR');
                     }
                 }).on('error', function (err) {
                     logger.error('Exception raised calling connector: ' + err);
-                    res.render( ERROR_VIEW, {
-                        'message': ERROR_MESSAGE
-                    });
+                    _views.display(res,"ERROR");
                 });
                 return;
             }
-            renderErrorView(req, res, ERROR_MESSAGE);
+            _views.display(res,"ERROR");
         }).on('error', function (err) {
             logger.error('Exception raised calling connector: ' + err);
-            response(req.headers.accept, res, ERROR_VIEW, {
-                'message': ERROR_MESSAGE
-            });
+            _views.display(res,"ERROR");
         });
     });
 

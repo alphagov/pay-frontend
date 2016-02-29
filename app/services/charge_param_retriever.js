@@ -18,7 +18,7 @@ module.exports = function(){
   },
 
   getChargeParam = function(req) {
-    return (req.method == "GET") ? req.params.chargeId : req.body.chargeId;
+    return (req.params.chargeId) ? req.params.chargeId : req.body.chargeId;
   },
 
   getChargeFromSession = function(req,chargeId) {
