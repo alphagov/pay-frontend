@@ -8,12 +8,17 @@ var clientSessions = require("client-sessions");
 var frontendCookie = require(__dirname + '/app/utils/cookies.js').frontendCookie;
 var logger = require('winston');
 var noCache = require(__dirname + '/app/utils/no_cache.js');
+var customCertificate = require(__dirname + '/app/utils/custom_certificate.js');
 
 var port = (process.env.PORT || 3000);
 var app = express();
 
 app.enable('trust proxy');
 app.use(clientSessions(frontendCookie()));
+
+if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
+  customCertificate.use();
+}
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
