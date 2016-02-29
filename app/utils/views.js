@@ -26,6 +26,10 @@ module.exports = function(){
         message: 'Session expired'
       }
     },
+    SYSTEM_ERROR: {
+      code: 500,
+      view: 'errors/system_error',
+    },
     display: function(res,resName,locals){
 
       if (!this[resName]) {

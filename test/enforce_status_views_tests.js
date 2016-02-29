@@ -20,7 +20,6 @@ describe('The /confirm endpoint undealt with states', function () {
     'CREATED',
     'AUTHORISATION REJECTED',
     'READY_FOR_CAPTURE',
-    'SYSTEM ERROR',
     'SYSTEM CANCELLED',
   ];
   beforeEach(function() {
@@ -82,6 +81,10 @@ describe('The /confirm endpoint dealt with states', function () {
       name: 'capture failure',
       view: "errors/charge_confirm_state_completed",
       viewState: 'unsuccessful'
+    },
+    {
+      name: 'system error',
+      view: "errors/system_error"
     }
   ];
   beforeEach(function() {
@@ -118,10 +121,8 @@ describe('The /confirm endpoint dealt with states', function () {
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(function(res){
-
           helper.expectTemplateTohave(res,"viewName", state.view);
-          helper.expectTemplateTohave(res,"status", state.viewState);
-
+          if (state.viewState) helper.expectTemplateTohave(res,"status", state.viewState);
         })
         .end(done);
     });
@@ -132,7 +133,6 @@ describe('The /confirm endpoint dealt with states', function () {
 describe('The /charge endpoint undealt with states', function () {
   var confirm_not_allowed_statuses = [
     'READY_FOR_CAPTURE',
-    'SYSTEM ERROR',
     'SYSTEM CANCELLED',
     'CAPTURED',
     'CAPTURE FAILURE',
@@ -192,6 +192,10 @@ describe('The /charge endpoint dealt with states', function () {
       name: 'authorisation rejected',
       view: "errors/charge_new_state_auth_failure",
       viewState: 'successful'
+    },
+    {
+      name: 'system error',
+      view: "errors/system_error"
     }
   ];
   beforeEach(function() {
