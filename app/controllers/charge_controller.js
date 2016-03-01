@@ -256,43 +256,36 @@ module.exports.bindRoutesTo = function (app) {
     });
 
     app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
-       logger.info('POST ' + CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH);
-       var _views = views.create();
-        var chargeId = chargeParam.retrieve(req);
-        if (!chargeId) return _views.display(res,"ERROR");
+        var _views  = views.create(),
+        chargeId    = chargeParam.retrieve(req);
 
+        var init = function(){
+            if (!chargeId) return _views.display(res,"ERROR");
+            Charge.find(chargeId).then(gotCharge,fail);
+        },
 
-        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
-        client.get(connectorUrl, function (chargeData, chargeResponse) {
+        gotCharge = function(data){
+            returnUrl = data.return_url;
+            Charge.capture(chargeId).
+            then(function(){
+                res.redirect(303, returnUrl);
+            }, function(err){
+                captureFail(err,returnUrl)
+            });
 
-            if (chargeResponse.statusCode === 200) {
-                var captureLink = findLinkForRelation(chargeData.links, 'cardCapture');
-                var cardCaptureUrl = captureLink.href;
-                var returnUrl = chargeData.return_url;
+        },
 
-                var payload = {headers: {"Content-Type": "application/json"}, data: {}};
-                client.post(cardCaptureUrl, payload, function (data, connectorResponse) {
-                    switch (connectorResponse.statusCode) {
-                        case 204:
-                            console.info("Redirecting to ", returnUrl);
-                            res.redirect(303, returnUrl);
-                            return;
-                        case 500:
-                            return _views.display(res,'SYSTEM_ERROR',{returnUrl: chargeData.return_url});
-                        default:
-                            return _views.display(res,'ERROR');
-                    }
-                }).on('error', function (err) {
-                    logger.error('Exception raised calling connector: ' + err);
-                    _views.display(res,"ERROR");
-                });
-                return;
-            }
-            _views.display(res,"ERROR");
-        }).on('error', function (err) {
-            logger.error('Exception raised calling connector: ' + err);
-            _views.display(res,"ERROR");
-        });
+        captureFail = function(err,returnUrl){
+            if (err.message == 'AUTH_FAILED') return _views.display(res,'ERROR');
+            _views.display(res,'SYSTEM_ERROR',{returnUrl: returnUrl});
+        },
+
+        fail = function(err){
+            console.log(err.message);
+            return _views.display(res,'ERROR');
+        };
+
+        init();
     });
 
     function findLinkForRelation(links, rel) {
