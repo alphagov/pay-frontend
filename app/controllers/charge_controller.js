@@ -237,7 +237,8 @@ module.exports.bindRoutesTo = function (app) {
             if (!stateOK) {
                 return _views.display(res, stateName,{
                     chargeId: chargeId,
-                    returnUrl: data.return_url});
+                    returnUrl: data.return_url
+                });
             }
             _views.display(res,'success');
         },
@@ -249,7 +250,7 @@ module.exports.bindRoutesTo = function (app) {
 
         fail = function(error){
             logger.error(error.message);
-            return _views.display(res,"NOT_FOUND");
+            return _views.display(res, "NOT_FOUND");
         };
 
         init();
@@ -260,8 +261,8 @@ module.exports.bindRoutesTo = function (app) {
         chargeId    = chargeParam.retrieve(req);
 
         var init = function(){
-            if (!chargeId) return _views.display(res,"ERROR");
-            Charge.find(chargeId).then(gotCharge,fail);
+            if (!chargeId) return _views.display(res, "ERROR");
+            Charge.find(chargeId).then(gotCharge ,fail);
         },
 
         gotCharge = function(data){
@@ -270,18 +271,20 @@ module.exports.bindRoutesTo = function (app) {
             then(function(){
                 res.redirect(303, returnUrl);
             }, function(err){
-                captureFail(err,returnUrl)
+                captureFail(err, returnUrl)
             });
 
         },
 
         captureFail = function(err,returnUrl){
-            if (err.message == 'AUTH_FAILED') return _views.display(res,'ERROR');
-            _views.display(res,'SYSTEM_ERROR',{returnUrl: returnUrl});
+            if (err.message == 'AUTH_FAILED') return _views.display(res, 'ERROR', {
+                message: "There was a problem processing your payment. Please contact the service."
+            });
+
+            _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
         },
 
         fail = function(err){
-            console.log(err.message);
             return _views.display(res,'ERROR');
         };
 

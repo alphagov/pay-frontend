@@ -4,8 +4,6 @@ var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
 
-
-
 module.exports = function(){
   // TODO PP-545
   statusUrl = function(chargeId){
