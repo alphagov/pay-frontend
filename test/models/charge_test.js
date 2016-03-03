@@ -121,7 +121,7 @@ describe('capture',function(){
 
 
 
-  describe('when connector returns with 204 it shoudl resolve the correct prmosie', function () {
+  describe('when connector returns with 204 it should resolve the correct promise', function () {
     before(function() {
       nock.cleanAll();
 
@@ -130,7 +130,7 @@ describe('capture',function(){
       .reply(204);
     });
 
-    it('should return AUTH_FAILED', function () {
+    it('should return into the correct promise', function () {
       return Charge.capture(1).then(function(){
         // correct promise returned so no need to check anything
       },wrongPromise);
@@ -152,7 +152,7 @@ describe('capture',function(){
   });
 
 
-  describe('when connector returns with auth failed shoudld return error AUTH_FAILED', function () {
+  describe('when connector returns with auth failed should return error AUTH_FAILED', function () {
     before(function() {
       nock.cleanAll();
 
@@ -169,7 +169,7 @@ describe('capture',function(){
     });
   });
 
-  describe('when connector returns with ! (204||400) shoudld return error POST_FAILED', function () {
+  describe('when connector returns with ! (204||400) should return error POST_FAILED', function () {
     before(function() {
       nock.cleanAll();
 
