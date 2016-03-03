@@ -3,7 +3,6 @@ var logger          = require('winston');
 var luhn            = require('luhn');
 var Client          = require('node-rest-client').Client;
 var client          = new Client();
-var response        = require('../utils/response.js').response;
 var views           = require('../utils/views.js');
 var chargeParam     = require('../services/charge_param_retriever.js');
 var normalise       = require('../services/normalise.js');
