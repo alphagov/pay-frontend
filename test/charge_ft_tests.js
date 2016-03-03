@@ -1,4 +1,5 @@
 process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
+process.env.DISABLE_INTERNAL_HTTPS = "true"; // to support other unit tests
 
 var EMPTY_BODY='';
 
