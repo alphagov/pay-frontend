@@ -232,7 +232,6 @@ describe('The /charge endpoint dealt with states', function () {
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(function(res){
-          console.log('this test');
           helper.expectTemplateTohave(res,"viewName", state.view);
           helper.expectTemplateTohave(res,"chargeId", chargeId);
 

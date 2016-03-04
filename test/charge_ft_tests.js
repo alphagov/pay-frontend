@@ -511,8 +511,10 @@ portfinder.getPort(function(err, connectorPort) {
       });
 
       it('should post to the connector capture url looked up from the connector when a post arrives', function (done) {
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
-        connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(204);
+              nock(process.env.CONNECTOR_HOST)
+                .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"))
+                .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
+
 
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
@@ -524,47 +526,45 @@ portfinder.getPort(function(err, connectorPort) {
       });
 
       it('connector failure when trying to capture should result in error page', function (done) {
-        default_connector_response_for_get_charge(connectorPort, chargeId, "AUTHORISATION SUCCESS");
-        connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(500);
+         nock(process.env.CONNECTOR_HOST)
+            .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"))
+            .post('/v1/frontend/charges/' + chargeId + "/capture").reply(500);
 
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-            .expect(200)
+            .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"message","There was a problem processing your payment. Please contact the service.");
-              helper.expectTemplateTohave(res,"return_url","http://www.example.com/service");
+              helper.expectTemplateTohave(res,"viewName","errors/system_error");
+              helper.expectTemplateTohave(res,"returnUrl","http://www.example.com/service");
             })
             .end(done);
       });
 
-      it('connector failure when trying to authorise payment should result in error page', function (done) {
-        var cookieValue = cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service');
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
-        var card_data = full_connector_card_data('5105105105105100');
-        connector_expects(card_data).reply(500);
+      it('connector could not authorise capture results in error page', function (done) {
 
-        var form_data = minimum_form_card_data('5105105105105100');
-        form_data.addressLine2 = card_data.address.line2;
-        form_data.addressCity = card_data.address.city;
+         nock(process.env.CONNECTOR_HOST)
+            .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"))
+            .post('/v1/frontend/charges/' + chargeId + "/capture").reply(400);
 
-        post_charge_request(cookieValue, form_data)
-            .expect(200)
+        request(app)
+            .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+            .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
+            .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"message","There was a problem processing your payment. Please contact the service.");
-              helper.expectTemplateTohave(res,"return_url","http://www.example.com/service");
+              helper.expectTemplateTohave(res,"viewName","error");
             })
             .end(done);
       });
 
-      it('should produce an error if the connector responds with a 404 for the charge', function (done) {
+      it('should produce an error if the connector responds with a non 200', function (done) {
         connectorMock.get(connectorChargePath + chargeId).reply(404);
 
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
             .set('Accept', 'application/json')
-            .expect(200)
+            .expect(500)
             .expect(function(res){
               helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
             })
@@ -579,7 +579,7 @@ portfinder.getPort(function(err, connectorPort) {
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-            .expect(200)
+            .expect(500)
             .expect(function(res){
               helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
             })
@@ -591,7 +591,7 @@ portfinder.getPort(function(err, connectorPort) {
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-            .expect(200)
+            .expect(500)
             .expect(function(res){
               helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
             })

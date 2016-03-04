@@ -4,8 +4,6 @@ var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
 
-
-
 module.exports = function(){
   // TODO PP-545
   statusUrl = function(chargeId){
@@ -15,10 +13,16 @@ module.exports = function(){
   findUrl = function(chargeId){
     var apiUrl = process.env.CONNECTOR_HOST
     return apiUrl + "/v1/frontend/charges/" + chargeId
-  }
+  },
+
+  captureUrl = function(chargeId){
+    var apiUrl = process.env.CONNECTOR_HOST
+    return apiUrl + "/v1/frontend/charges/" + chargeId + "/capture"
+  },
   // END TODO PP-545
 
   mergeApiParams = function(params){
+    params = (params) ? params: {};
     var _default = {
       headers: {"Content-Type": "application/json"},
       data: {}
@@ -41,16 +45,6 @@ module.exports = function(){
     return defer.promise;
   },
 
-  updateComplete = function(chargeId, data, response, defer){
-    if (response.statusCode !== 204) {
-      logger.error('Failed to update charge status');
-      defer.reject(new Error('UPDATE_FAILED'));
-      return
-    }
-
-    defer.resolve({success: "OK"});
-  },
-
   find = function(chargeId){
     var defer = q.defer();
     client.get(findUrl(chargeId), function(data,response){
@@ -65,12 +59,47 @@ module.exports = function(){
     return defer.promise;
   },
 
+  capture = function(chargeId){
+    var url = captureUrl(chargeId),
+    params  = mergeApiParams(),
+    defer   = q.defer();
+    client.post(url, params, function(data, response){
+      captureComplete(data, response, defer)
+    })
+    .on('error',function(err){ captureFail(err, defer); });
+
+    return defer.promise;
+  },
+
+  captureComplete = function(data, response, defer) {
+    var code = response.statusCode;
+    if (code == 204) return defer.resolve();
+    if (code == 400) return defer.reject(new Error('AUTH_FAILED'));
+    return defer.reject(new Error('POST_FAILED'));
+  },
+
+  captureFail = function(err, defer){
+    logger.error('Exception raised calling connector for POST CAPTURE: ' + err);
+    clientUnavailable(err, defer);
+  },
+
+  updateComplete = function(chargeId, data, response, defer){
+    if (response.statusCode !== 204) {
+      logger.error('Failed to update charge status');
+      defer.reject(new Error('UPDATE_FAILED'));
+      return
+    }
+
+    defer.resolve({success: "OK"});
+  },
+
   clientUnavailable = function(error, defer) {
     defer.reject(new Error('CLIENT_UNAVAILABLE'),error);
   };
 
   return {
     updateStatus: updateStatus,
-    find: find
+    find: find,
+    capture: capture
   }
 }();

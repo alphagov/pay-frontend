@@ -11,7 +11,9 @@ An error occurred
     <h3>
         An error occurred:
     </h3>
-
+    {{#returnUrl}}
+    <a id="return_url" href="{{returnUrl}}">Return to service</a>
+    {{/returnUrl}}
     <div id="errorMsg">{{message}}</div>
 
 </main>
