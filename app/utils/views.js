@@ -31,19 +31,20 @@ module.exports = function(){
       view: 'errors/system_error',
     },
     display: function(res,resName,locals){
+      var action = _.result(this, resName);
 
-      if (!this[resName]) {
+      if (!action) {
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
-        resName = "ERROR";
+        action = this['ERROR'];
       }
 
       locals = (locals == undefined) ? {} : locals;
-      locals = (this[resName].locals) ? _.merge(this[resName].locals,locals) : locals;
-      status = (this[resName].code) ? this[resName].code : 200;
-      locals.viewName = this[resName].view;
+      locals = (action.locals) ? _.merge(action.locals,locals) : locals;
+      status = (action.code) ? action.code : 200;
+      locals.viewName = action.view;
       res.status(status);
-      res.render(this[resName].view,locals);
+      res.render(action.view,locals);
     }
   },
 
