@@ -185,12 +185,12 @@ describe('The /charge endpoint dealt with states', function () {
   var confirm_not_allowed_statuses = [
     {
       name: 'authorisation success',
-      view: "errors/charge_new_state_auth_success",
+      view: "errors/incorrect_state/auth_success",
       viewState: 'successful'
     },
     {
       name: 'authorisation rejected',
-      view: "errors/charge_new_state_auth_failure",
+      view: "errors/incorrect_state/auth_failure",
       viewState: 'successful'
     },
     {

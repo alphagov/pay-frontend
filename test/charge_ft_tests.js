@@ -162,7 +162,7 @@ portfinder.getPort(function(err, connectorPort) {
           get("authorisation success")
             .expect(200)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"viewName","errors/charge_new_state_auth_success");
+              helper.expectTemplateTohave(res,"viewName","errors/incorrect_state/auth_success");
             }).end(done);
         });
 
@@ -170,7 +170,7 @@ portfinder.getPort(function(err, connectorPort) {
           get("authorisation rejected")
             .expect(200)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"viewName","errors/charge_new_state_auth_failure");
+              helper.expectTemplateTohave(res,"viewName","errors/incorrect_state/auth_failure");
             }).end(done);
         });
 

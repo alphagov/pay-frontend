@@ -81,10 +81,10 @@ module.exports.bindRoutesTo = function (app) {
     app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
         var _views = views.create({
             AUTHORISATION_SUCCESS: {
-                view: "errors/charge_new_state_auth_success"
+                view: "errors/incorrect_state/auth_success"
             },
             AUTHORISATION_REJECTED: {
-                view: "errors/charge_new_state_auth_failure"
+                view: "errors/incorrect_state/auth_failure"
             }
         });
 
