@@ -69,22 +69,22 @@ describe('The /confirm endpoint dealt with states', function () {
   var confirm_not_allowed_statuses = [
     {
       name: 'capture submitted',
-      view: "errors/charge_confirm_state_completed",
+      view: "CAPTURE_SUBMITTED",
       viewState: 'successful'
     },
     {
       name: 'captured',
-      view: "errors/charge_confirm_state_completed",
+      view: "CAPTURED",
       viewState: 'successful'
     },
     {
       name: 'capture failure',
-      view: "errors/charge_confirm_state_completed",
+      view: "CAPTURE_FAILURE",
       viewState: 'unsuccessful'
     },
     {
       name: 'system error',
-      view: "errors/system_error"
+      view: "SYSTEM_ERROR"
     }
   ];
   beforeEach(function() {
@@ -133,10 +133,7 @@ describe('The /confirm endpoint dealt with states', function () {
 describe('The /charge endpoint undealt with states', function () {
   var confirm_not_allowed_statuses = [
     'READY_FOR_CAPTURE',
-    'SYSTEM CANCELLED',
-    'CAPTURED',
-    'CAPTURE FAILURE',
-    'CAPTURE SUBMITTED'
+    'SYSTEM CANCELLED'
   ];
   beforeEach(function() {
     nock.cleanAll();
@@ -185,17 +182,27 @@ describe('The /charge endpoint dealt with states', function () {
   var confirm_not_allowed_statuses = [
     {
       name: 'authorisation success',
-      view: "errors/charge_new_state_auth_success",
-      viewState: 'successful'
+      view: "AUTHORISATION_SUCCESS"
     },
     {
       name: 'authorisation rejected',
-      view: "errors/charge_new_state_auth_failure",
-      viewState: 'successful'
+      view: "AUTHORISATION_REJECTED"
     },
     {
       name: 'system error',
-      view: "errors/system_error"
+      view: "SYSTEM_ERROR"
+    },
+    {
+      name: 'captured',
+      view: "CAPTURED"
+    },
+    {
+      name: 'capture failure',
+      view: "CAPTURE_FAILURE"
+    },
+    {
+      name: 'capture submitted',
+      view: "CAPTURE_SUBMITTED"
     }
   ];
   beforeEach(function() {
