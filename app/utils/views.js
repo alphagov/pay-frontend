@@ -32,17 +32,18 @@ module.exports = function(){
     },
     display: function(res,resName,locals){
       var action = _.result(this, resName);
+      locals = (locals == undefined) ? {} : locals;
 
       if (!action) {
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
+        locals.viewName = 'error';
         action = this['ERROR'];
       }
 
-      locals = (locals == undefined) ? {} : locals;
       locals = (action.locals) ? _.merge(action.locals,locals) : locals;
       status = (action.code) ? action.code : 200;
-      locals.viewName = action.view;
+      locals.viewName = locals.viewName ? locals.viewName : resName ;
       res.status(status);
       res.render(action.view,locals);
     }

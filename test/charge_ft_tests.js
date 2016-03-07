@@ -162,7 +162,7 @@ portfinder.getPort(function(err, connectorPort) {
           get("authorisation success")
             .expect(200)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"viewName","errors/incorrect_state/auth_success");
+              helper.expectTemplateTohave(res,"viewName","AUTHORISATION_SUCCESS");
             }).end(done);
         });
 
@@ -170,7 +170,7 @@ portfinder.getPort(function(err, connectorPort) {
           get("authorisation rejected")
             .expect(200)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"viewName","errors/incorrect_state/auth_failure");
+              helper.expectTemplateTohave(res,"viewName","AUTHORISATION_REJECTED");
             }).end(done);
         });
 
@@ -535,7 +535,7 @@ portfinder.getPort(function(err, connectorPort) {
             .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
             .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"viewName","errors/system_error");
+              helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
               helper.expectTemplateTohave(res,"returnUrl","http://www.example.com/service");
             })
             .end(done);
@@ -552,7 +552,7 @@ portfinder.getPort(function(err, connectorPort) {
             .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
             .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"viewName","error");
+              helper.expectTemplateTohave(res,"viewName","ERROR");
             })
             .end(done);
       });

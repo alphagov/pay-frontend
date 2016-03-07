@@ -85,13 +85,13 @@ describe('views helper', function () {
 
   _.forEach(defaultTemplates,
     function(values, name) {
-      it('should be able to render default ' + name + 'page', function () {
+      it('should be able to render default ' + name + ' page', function () {
         _views = views.create();
         _views.display(response,name);
         assert(status.calledWith(values.code));
         assert(render.calledWith(values.template,
           { message: values.message,
-          viewName: values.template }
+          viewName: name }
         ));
       });
 
@@ -101,7 +101,7 @@ describe('views helper', function () {
         assert(status.calledWith(values.code));
         assert(render.calledWith("error",
           { message: 'lol',
-          viewName: values.template }
+          viewName: name }
         ));
       });
 
@@ -113,7 +113,7 @@ describe('views helper', function () {
         assert(status.calledWith(333));
         assert(render.calledWith("foo",
           { message: 'lol',
-          viewName: 'foo' }
+          viewName: name }
         ));
       });
     }

@@ -69,22 +69,22 @@ describe('The /confirm endpoint dealt with states', function () {
   var confirm_not_allowed_statuses = [
     {
       name: 'capture submitted',
-      view: "errors/charge_confirm_state_completed",
+      view: "CAPTURE_SUBMITTED",
       viewState: 'successful'
     },
     {
       name: 'captured',
-      view: "errors/charge_confirm_state_completed",
+      view: "CAPTURED",
       viewState: 'successful'
     },
     {
       name: 'capture failure',
-      view: "errors/charge_confirm_state_completed",
+      view: "CAPTURE_FAILURE",
       viewState: 'unsuccessful'
     },
     {
       name: 'system error',
-      view: "errors/system_error"
+      view: "SYSTEM_ERROR"
     }
   ];
   beforeEach(function() {
@@ -185,17 +185,17 @@ describe('The /charge endpoint dealt with states', function () {
   var confirm_not_allowed_statuses = [
     {
       name: 'authorisation success',
-      view: "errors/incorrect_state/auth_success",
+      view: "AUTHORISATION_SUCCESS",
       viewState: 'successful'
     },
     {
       name: 'authorisation rejected',
-      view: "errors/incorrect_state/auth_failure",
+      view: "AUTHORISATION_REJECTED",
       viewState: 'successful'
     },
     {
       name: 'system error',
-      view: "errors/system_error"
+      view: "SYSTEM_ERROR"
     }
   ];
   beforeEach(function() {
