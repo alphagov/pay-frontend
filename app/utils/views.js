@@ -45,6 +45,7 @@ module.exports = function(){
     display: function(res,resName,locals){
       var action = _.result(this, resName);
       locals = (locals == undefined) ? {} : locals;
+      locals.viewName = resName;
 
       if (!action) {
         logger.error("VIEW " + resName + " NOT FOUND");
@@ -55,7 +56,6 @@ module.exports = function(){
 
       locals = (action.locals) ? _.merge(action.locals,locals) : locals;
       status = (action.code) ? action.code : 200;
-      locals.viewName = locals.viewName ? locals.viewName : resName ;
       res.status(status);
       res.render(action.view,locals);
     }
