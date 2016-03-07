@@ -30,6 +30,18 @@ module.exports = function(){
       code: 500,
       view: 'errors/system_error',
     },
+    CAPTURE_SUBMITTED: {
+      view: "errors/charge_confirm_state_completed",
+      locals: { status: 'successful' }
+    },
+    CAPTURED: {
+      view: "errors/charge_confirm_state_completed",
+      locals: { status: 'successful' }
+    },
+    CAPTURE_FAILURE: {
+      view: "errors/charge_confirm_state_completed",
+      locals: { status: 'unsuccessful' }
+    },
     display: function(res,resName,locals){
       var action = _.result(this, resName);
       locals = (locals == undefined) ? {} : locals;

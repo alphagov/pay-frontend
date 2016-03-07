@@ -208,20 +208,13 @@ module.exports.bindRoutesTo = function (app) {
         chargeSession   = chargeState(req, chargeId),
         sessionValid    = validSession(chargeSession),
         confirmPath     = CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH, // TODO PP-545
-        stateErr        = "errors/charge_confirm_state_completed"
         successLocals   = {
             'charge_id': chargeId,
             'confirmPath': confirmPath,
             session: chargeSession
         },
-        stateErrorSuccessful = { view: stateErr, locals: { status: 'successful'} },
-        stateErrorFailed     = { view: stateErr, locals: { status: 'unsuccessful'} },
-
         _views = views.create({
             success: { view: CONFIRM_VIEW, locals: successLocals },
-            CAPTURE_SUBMITTED: stateErrorSuccessful,
-            CAPTURED: stateErrorSuccessful,
-            CAPTURE_FAILURE: stateErrorFailed
         });
 
         var init = function(){
