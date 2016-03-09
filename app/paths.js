@@ -15,7 +15,7 @@ module.exports = {
         show: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId",
         updateStatus: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/status",
         capture: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/capture",
-        token: process.env.CONNECTOR_HOST + "/v1/api/tokens/:chargeTokenId"
+        token: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId"
       }
     },
     generateRoute: require(__dirname + '/utils/generate_route.js')
