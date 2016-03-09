@@ -24,12 +24,10 @@ describe('The /confirm endpoint undealt with states', function () {
   ];
   beforeEach(function() {
     nock.cleanAll();
-    process.env.CONNECTOR_HOST = "http://aserver:9000";
   });
 
   afterEach(function() {
     nock.cleanAll();
-    process.env.CONNECTOR_HOST = undefined;
   });
 
 
@@ -89,12 +87,10 @@ describe('The /confirm endpoint dealt with states', function () {
   ];
   beforeEach(function() {
     nock.cleanAll();
-    process.env.CONNECTOR_HOST = "http://aserver:9000";
   });
 
   afterEach(function() {
     nock.cleanAll();
-    process.env.CONNECTOR_HOST = undefined;
   });
 
 
@@ -137,12 +133,6 @@ describe('The /charge endpoint undealt with states', function () {
   ];
   beforeEach(function() {
     nock.cleanAll();
-    process.env.CONNECTOR_HOST = "http://aserver:9000";
-  });
-
-  afterEach(function() {
-    nock.cleanAll();
-    process.env.CONNECTOR_HOST = undefined;
   });
 
 
@@ -207,16 +197,7 @@ describe('The /charge endpoint dealt with states', function () {
   ];
   beforeEach(function() {
     nock.cleanAll();
-    process.env.CONNECTOR_HOST = "http://aserver:9000";
   });
-
-  afterEach(function() {
-    nock.cleanAll();
-    process.env.CONNECTOR_HOST = undefined;
-  });
-
-
-
 
   confirm_not_allowed_statuses.forEach(function (state) {
     var fullSessionData = {

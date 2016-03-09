@@ -170,7 +170,7 @@ module.exports.bindRoutesTo = function (app) {
             }
         };
 
-        var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', chargeId);
+        var connectorUrl = paths.generateRoute(paths.connector.charge.show,{chargeId: chargeId});
         client.get(connectorUrl, function (chargeData, chargeResponse) {
             var authLink = findLinkForRelation(chargeData.links, 'cardAuth');
             var cardAuthUrl = authLink.href;
