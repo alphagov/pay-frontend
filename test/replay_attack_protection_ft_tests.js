@@ -11,7 +11,7 @@ describe('dummy feature - trigger', function() {
       beforeEach(function() {
         nock.cleanAll();
       });
-      var localServer = 'http://localhost:' + connectorPort;
+      var localServer = "http://aServer:65535";
 
       var connectorTokenPath = '/v1/api/tokens/';
 

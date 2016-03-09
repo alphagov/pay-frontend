@@ -8,6 +8,7 @@ var chargeParam     = require('../services/charge_param_retriever.js');
 var normalise       = require('../services/normalise.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
+var paths           = require('../paths.js');
 
 var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
@@ -78,7 +79,7 @@ module.exports.bindRoutesTo = function (app) {
         return true;
     }
 
-    app.get(CARD_DETAILS_PATH + '/:chargeId', function (req, res) {
+    app.get(paths.card.new, function (req, res) {
         var _views = views.create({
             AUTHORISATION_SUCCESS: {
                 view: "errors/incorrect_state/auth_success"
@@ -136,7 +137,7 @@ module.exports.bindRoutesTo = function (app) {
         init();
     });
 
-    app.post(CARD_DETAILS_PATH, function (req, res) {
+    app.post(paths.card.create, function (req, res) {
         var _views = views.create();
         var chargeId = chargeParam.retrieve(req);
         if (!chargeId) return _views.display(res,"NOT_FOUND");
@@ -151,7 +152,7 @@ module.exports.bindRoutesTo = function (app) {
             checkResult.paymentDescription = chargeSession.paymentDescription;
             checkResult.amount = req.body.hiddenAmount;
             checkResult.return_url = req.body.returnUrl;
-            checkResult.post_card_action = CARD_DETAILS_PATH;
+            checkResult.post_card_action = paths.card.create;
             res.render(CHARGE_VIEW, checkResult);
             return;
         }

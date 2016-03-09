@@ -23,10 +23,9 @@ var get_charge_request = require(__dirname + '/test_helpers/test_helpers.js').ge
 var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_helpers.js').connector_response_for_put_charge;
 var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
 
-portfinder.getPort(function(err, connectorPort) {
   describe('chargeTests',function(){
 
-    var localServer = 'http://localhost:' + connectorPort;
+    var localServer = "http://aServer:65535";
 
     var connectorChargePath = '/v1/frontend/charges/';
     var chargeId = '23144323';
@@ -181,7 +180,7 @@ portfinder.getPort(function(err, connectorPort) {
       it('should send clean card data to connector', function(done) {
         var cookieValue = cookie.create(chargeId);
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
 
         connector_expects(minimum_connector_card_data('5105105105105100'))
             .reply(204);
@@ -195,7 +194,7 @@ portfinder.getPort(function(err, connectorPort) {
       it('should send card data including optional fields to connector', function (done) {
         var cookieValue = cookie.create(chargeId);
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
 
         var card_data = full_connector_card_data('5105105105105100');
 
@@ -214,7 +213,7 @@ portfinder.getPort(function(err, connectorPort) {
       it('should add card data including optional fields to the chargeIds session', function (done) {
         var cookieValue = cookie.create(chargeId);
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
 
         connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
 
@@ -242,7 +241,7 @@ portfinder.getPort(function(err, connectorPort) {
       it('show an error page when authorization was refused', function(done) {
         var cookieValue = cookie.create(chargeId);
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
 
         connector_expects(minimum_connector_card_data('5105105105105100'))
             .reply(400, {'message': 'This transaction was declined.'});
@@ -337,7 +336,7 @@ portfinder.getPort(function(err, connectorPort) {
         card_data.address.line1 = 'bla bla';
         delete card_data.address.line3;
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
         connector_expects(card_data).reply(204);
         var form_data = minimum_form_card_data('5105105105105100');
         form_data.addressLine1 = '';
@@ -356,7 +355,7 @@ portfinder.getPort(function(err, connectorPort) {
         card_data.address.line1 = 'bla bla';
         delete card_data.address.line2;
 
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
         connector_expects(card_data).reply(204);
         var form_data = minimum_form_card_data('5105105105105100');
         form_data.addressLine1 = '';
@@ -422,7 +421,7 @@ portfinder.getPort(function(err, connectorPort) {
 
           it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done){
               var cookieValue = cookie.create(chargeId);
-              connector_response_for_put_charge(connectorPort, chargeId, 400 , {'message':'some error'});
+              connector_response_for_put_charge(chargeId, 400 , {'message':'some error'});
 
               get_charge_request(app, cookieValue, chargeId)
                 .expect(404)
@@ -434,7 +433,7 @@ portfinder.getPort(function(err, connectorPort) {
 
           it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 500 connector response', function (done){
               var cookieValue = cookie.create(chargeId);
-              connector_response_for_put_charge(connectorPort, chargeId, 500 , {});
+              connector_response_for_put_charge(chargeId, 500 , {});
 
               get_charge_request(app, cookieValue, chargeId)
                 .expect(404)
@@ -573,30 +572,28 @@ portfinder.getPort(function(err, connectorPort) {
 
 
       it('should produce an error if the connector returns a non-204 status', function (done) {
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
         connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(1234);
-
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
             .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
+              helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
             })
             .end(done);
       });
 
       it('should produce an error if the connector is unreachable for the confirm', function (done) {
-        default_connector_response_for_get_charge(connectorPort, chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, aHappyState);
         request(app)
             .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
             .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
             .expect(500)
             .expect(function(res){
-              helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
+              helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
             })
             .end(done);
       });
     });
   });
-});
