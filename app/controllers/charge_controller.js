@@ -18,8 +18,6 @@ var CARD_NUMBER_FIELD = 'cardNo';
 
 
 module.exports.bindRoutesTo = function (app) {
-    var CONFIRM_PATH = '/confirm';
-    var CARD_DETAILS_PATH = '/card_details';
 
     var CHARGE_VIEW = 'charge';
     var CONFIRM_VIEW = 'confirm';
@@ -185,13 +183,13 @@ module.exports.bindRoutesTo = function (app) {
                         chargeSession.cardholderName = req.body.cardholderName;
                         chargeSession.address = buildAddressLine(req.body);
                         chargeSession.serviceName = "Demo Service";
-                        res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId + CONFIRM_PATH);
+                        res.redirect(303, paths.generateRoute(paths.card.confirm,{chargeId: chargeId}));
                         return;
                     case 500:
                         logger.error('got response code 500 from connector');
                         return _views.display(res,'SYSTEM_ERROR',{returnUrl: chargeData.return_url});
                     default:
-                        res.redirect(303,`${CARD_DETAILS_PATH}/${chargeId}`);
+                        res.redirect(303,paths.generateRoute(paths.card.new,{chargeId: chargeId}));
                 }
             }).on('error', function (err) {
                 logger.error('Exception raised calling connector: ' + err);
@@ -204,11 +202,11 @@ module.exports.bindRoutesTo = function (app) {
         });
     });
 
-    app.get(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
+    app.get(paths.card.confirm, function (req, res) {
         var chargeId    = chargeParam.retrieve(req),
         chargeSession   = chargeState(req, chargeId),
         sessionValid    = validSession(chargeSession),
-        confirmPath     = CARD_DETAILS_PATH + '/' + req.params.chargeId + CONFIRM_PATH, // TODO PP-545
+        confirmPath     = paths.generateRoute(paths.card.confirm,{chargeId: chargeId}),
         successLocals   = {
             'charge_id': chargeId,
             'confirmPath': confirmPath,
@@ -249,7 +247,7 @@ module.exports.bindRoutesTo = function (app) {
         init();
     });
 
-    app.post(CARD_DETAILS_PATH + '/:chargeId' + CONFIRM_PATH, function (req, res) {
+    app.post(paths.card.capture, function (req, res) {
         var _views  = views.create(),
         chargeId    = chargeParam.retrieve(req);
 

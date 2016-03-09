@@ -20,7 +20,6 @@ describe('dummy feature - trigger', function() {
       var chargeTokenId = 'asdnwnbwkk';
 
       it('should successfully verify the chargeTokenId', function(done) {
-        process.env.CONNECTOR_TOKEN_URL = localServer + connectorTokenPath + '{chargeTokenId}';
         var connectorMock = nock(localServer);
 
         connectorMock.get(connectorTokenPath + chargeTokenId).reply(200, {
@@ -44,7 +43,6 @@ describe('dummy feature - trigger', function() {
       });
 
       it('should continue normally on a refresh or browser back button when chargeId is on the session', function(done) {
-        process.env.CONNECTOR_TOKEN_URL = localServer + connectorTokenPath + '{chargeTokenId}';
         var connectorMock = nock(localServer);
 
         connectorMock.get(connectorTokenPath + chargeTokenId).reply(200, {
@@ -65,7 +63,6 @@ describe('dummy feature - trigger', function() {
       });
 
       it('should fail when there is an attempt to use a chargeTokenId that is not valid', function(done) {
-        process.env.CONNECTOR_TOKEN_URL = localServer + connectorTokenPath + '{chargeTokenId}';
 
         var connectorMock = nock(localServer);
 

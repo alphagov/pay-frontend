@@ -1,5 +1,7 @@
 {
   "CONNECTOR_HOST": "http://aServer:65535",
   "SECURE_COOKIE_OFF": "false",
-  "COOKIE_MAX_AGE": "5400000"
+  "COOKIE_MAX_AGE": "5400000",
+  "SESSION_ENCRYPTION_KEY": "naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk",
+  "DISABLE_INTERNAL_HTTPS": "true"
 }

@@ -1,21 +1,17 @@
 require('array.prototype.find');
-var logger = require('winston');
-
-var response = require('../utils/response.js').response;
-
-var ERROR_MESSAGE = require('../utils/response.js').ERROR_MESSAGE;
-var ERROR_VIEW = require('../utils/response.js').ERROR_VIEW;
+var logger          = require('winston');
+var response        = require('../utils/response.js').response;
+var ERROR_MESSAGE   = require('../utils/response.js').ERROR_MESSAGE;
+var ERROR_VIEW      = require('../utils/response.js').ERROR_VIEW;
 var renderErrorView = require('../utils/response.js').renderErrorView;
+var Client          = require('node-rest-client').Client;
+var client          = new Client();
+var paths           = require('../paths.js');
 
-var Client = require('node-rest-client').Client;
-var client = new Client();
 
 module.exports.bindRoutesTo = function(app) {
-  var CHARGE_PATH = '/charge';
-  var CARD_DETAILS_PATH = '/card_details';
 
-  app.get(CHARGE_PATH + '/:chargeId?', function(req, res) {
-    logger.info('GET ' + CHARGE_PATH + '/:chargeId');
+  app.get(paths.charge.show, function(req, res) {
 
     var chargeTokenId = req.query.chargeTokenId;
     logger.info('req.query.chargeTokenId=' + chargeTokenId);
@@ -26,8 +22,7 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey])
 
     if(!req.frontend_state[sessionChargeIdKey]) {
-      var connectorUrl = process.env.CONNECTOR_TOKEN_URL.replace('{chargeTokenId}', chargeTokenId);
-
+      var connectorUrl = paths.generateRoute(paths.connector.charge.token,{chargeTokenId: chargeTokenId});
       logger.info('trying to validate token=' + chargeTokenId);
       client
         .get(
@@ -107,6 +102,6 @@ module.exports.bindRoutesTo = function(app) {
   }
 
   function redirectToCardDetails(res, chargeId) {
-    res.redirect(303, CARD_DETAILS_PATH + '/' + chargeId);
+    res.redirect(303, paths.generateRoute(paths.card.new,{chargeId: chargeId}));
   }
 };

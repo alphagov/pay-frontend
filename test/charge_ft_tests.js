@@ -1,6 +1,3 @@
-process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
-process.env.DISABLE_INTERNAL_HTTPS = "true"; // to support other unit tests
-
 var EMPTY_BODY='';
 
 var request = require('supertest');
@@ -568,8 +565,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .expect(500)
           .expect(function(res){
-            console.log(res.text);
-            helper.expectTemplateTohave(res,"viewName","ERROR");
+            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
     });
@@ -581,8 +577,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .expect(500)
           .expect(function(res){
-            console.log(res.text);
-            helper.expectTemplateTohave(res,"viewName","ERROR");
+            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
     });
