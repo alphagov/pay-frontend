@@ -10,7 +10,7 @@ describe('The secure /charge endpoint', function() {
   beforeEach(function() {
     nock.cleanAll();
   });
-  var localServer = "http://aServer:65535";
+  var localServer = process.env.CONNECTOR_HOST;
 
   var connectorTokenPath = '/v1/frontend/tokens/';
 

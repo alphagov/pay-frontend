@@ -1,7 +1,6 @@
 var EMPTY_BODY='';
 
 var request = require('supertest');
-var portfinder = require('portfinder');
 var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
 var mock_templates = require(__dirname + '/test_helpers/mock_templates.js');
@@ -22,7 +21,7 @@ var default_connector_response_for_get_charge = require(__dirname + '/test_helpe
 
 describe('chargeTests',function(){
 
-  var localServer = "http://aServer:65535";
+  var localServer = process.env.CONNECTOR_HOST;
 
   var connectorChargePath = '/v1/frontend/charges/';
   var chargeId = '23144323';

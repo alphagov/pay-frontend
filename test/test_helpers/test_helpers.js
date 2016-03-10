@@ -9,7 +9,7 @@ var chai_expect = require('chai').expect;
 var nock = require('nock');
 
 function localServer() {
-    return "http://aServer:65535";
+    return process.env.CONNECTOR_HOST;
 }
 
 function connectorAuthUrl(chargeId) {
