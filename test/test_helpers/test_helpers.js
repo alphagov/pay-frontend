@@ -8,39 +8,39 @@ var chai_expect = require('chai').expect;
 
 var nock = require('nock');
 
-function localServer(connectorPort) {
-    return 'http://localhost:' + connectorPort;
+function localServer() {
+    return process.env.CONNECTOR_HOST;
 }
 
-function connectorAuthUrl(connectorPort, chargeId) {
-    return localServer(connectorPort) + connectorChargePath + chargeId + '/cards';
+function connectorAuthUrl(chargeId) {
+    return localServer() + connectorChargePath + chargeId + '/cards';
 }
-function connectorCaptureUrl(connectorPort, chargeId) {
-    return localServer(connectorPort) + connectorChargePath + chargeId + '/capture';
+function connectorCaptureUrl(chargeId) {
+    return localServer() + connectorChargePath + chargeId + '/capture';
 }
 
-function connector_responds_with(connectorPort, chargeId, charge) {
-    var connectorMock = nock(localServer(connectorPort));
+function connector_responds_with(chargeId, charge) {
+    var connectorMock = nock(localServer());
     connectorMock.get(connectorChargePath + chargeId).reply(200, charge);
 }
 
-function init_connector_url(connectorPort) {
-    process.env.CONNECTOR_URL = localServer(connectorPort) + connectorChargePath + '{chargeId}';
+function init_connector_url() {
+    process.env.CONNECTOR_URL = localServer() + connectorChargePath + '{chargeId}';
 }
 
 
-function raw_successful_get_charge(status, returnUrl, connectorPort, chargeId) {
+function raw_successful_get_charge(status, returnUrl, chargeId) {
     return {
         'amount': 2345,
         'description': "Payment Description",
         'status': status,
         'return_url': returnUrl,
         'links': [{
-            'href': connectorAuthUrl(connectorPort, chargeId),
+            'href': connectorAuthUrl(chargeId),
             'rel': 'cardAuth',
             'method': 'POST'
         }, {
-            'href': connectorCaptureUrl(connectorPort, chargeId),
+            'href': connectorCaptureUrl(chargeId),
             'rel': 'cardCapture',
             'method': 'POST'
         }]
@@ -76,20 +76,20 @@ module.exports = {
             .set('Accept', 'application/json');
     },
 
-    connector_response_for_put_charge: function (connectorPort, chargeId, statusCode , responseBody, override_url) {
-        init_connector_url(connectorPort);
-        url = (override_url) ? override_url : localServer(connectorPort);
-        var connectorMock = nock(localServer(connectorPort));
+    connector_response_for_put_charge: function (chargeId, statusCode , responseBody, override_url) {
+        init_connector_url();
+        url = (override_url) ? override_url : localServer();
+        var connectorMock = nock(localServer());
         var mockPath = connectorChargePath + chargeId + '/status';
         var payload = {'new_status':'ENTERING CARD DETAILS'};
         connectorMock.put(mockPath, payload).reply(statusCode, responseBody);
     },
 
-    default_connector_response_for_get_charge: function (connectorPort, chargeId, status) {
-        init_connector_url(connectorPort);
+    default_connector_response_for_get_charge: function (chargeId, status) {
+        init_connector_url();
         var returnUrl = 'http://www.example.com/service';
-        raw_response = raw_successful_get_charge(status, returnUrl, connectorPort, chargeId);
-        connector_responds_with(connectorPort, chargeId, raw_response);
+        raw_response = raw_successful_get_charge(status, returnUrl, chargeId);
+        connector_responds_with(chargeId, raw_response);
     },
 
     raw_successful_get_charge: raw_successful_get_charge,

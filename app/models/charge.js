@@ -3,23 +3,14 @@ var client  = new Client();
 var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
+var paths   = require('../paths.js');
+
 
 module.exports = function(){
-  // TODO PP-545
-  statusUrl = function(chargeId){
-    return  findUrl(chargeId) + "/status";
-  },
 
-  findUrl = function(chargeId){
-    var apiUrl = process.env.CONNECTOR_HOST
-    return apiUrl + "/v1/frontend/charges/" + chargeId
+  createUrl = function(resource,chargeId){
+    return paths.generateRoute(paths.connector.charge[resource],{chargeId: chargeId});
   },
-
-  captureUrl = function(chargeId){
-    var apiUrl = process.env.CONNECTOR_HOST
-    return apiUrl + "/v1/frontend/charges/" + chargeId + "/capture"
-  },
-  // END TODO PP-545
 
   mergeApiParams = function(params){
     params = (params) ? params: {};
@@ -32,7 +23,7 @@ module.exports = function(){
   },
 
   updateStatus = function(chargeId, status){
-    var url = statusUrl(chargeId),
+    var url = createUrl('updateStatus',chargeId),
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
 
@@ -47,7 +38,7 @@ module.exports = function(){
 
   find = function(chargeId){
     var defer = q.defer();
-    client.get(findUrl(chargeId), function(data,response){
+    client.get(createUrl('show',chargeId), function(data,response){
       if (response.statusCode !== 200) {
         return defer.reject(new Error('GET_FAILED'));
       }
@@ -60,7 +51,7 @@ module.exports = function(){
   },
 
   capture = function(chargeId){
-    var url = captureUrl(chargeId),
+    var url = createUrl('capture',chargeId),
     params  = mergeApiParams(),
     defer   = q.defer();
     client.post(url, params, function(data, response){

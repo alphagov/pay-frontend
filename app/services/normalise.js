@@ -1,5 +1,6 @@
 var logger = require('winston');
-var CARD_DETAILS_PATH = '/card_details';  // TODO PP-545 SHOULD MOVE TO VIEW
+var paths = require('../paths.js');
+
 
 module.exports = function(){
   var _charge = function(charge,chargeId){
@@ -8,7 +9,7 @@ module.exports = function(){
       'amount': penceToPounds(charge.amount),
       'return_url': charge.return_url,
       'paymentDescription': charge.description,
-      'post_card_action': CARD_DETAILS_PATH
+      'post_card_action': paths.card.create
     };
   },
 

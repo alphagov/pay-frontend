@@ -3,7 +3,6 @@ var should    = require('chai').should();
 var assert    = require('assert');
 var Charge    = require(__dirname + '/../../app/models/charge.js');
 var nock      = require('nock');
-process.env.CONNECTOR_HOST = "http://nockStubbedServer:3000"
 var originalHost = process.env.CONNECTOR_HOST
 var wrongPromise = require(__dirname + '/../test_helpers/test_helpers.js').unexpectedPromise;
 

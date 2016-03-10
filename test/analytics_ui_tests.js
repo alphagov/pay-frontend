@@ -1,9 +1,5 @@
 var renderTemplate = require(__dirname + '/test_helpers/html_assertions.js').render;
 var should = require('chai').should();
-// PUT IN DUE TO LACK OF PROPER ENV SETTING FOR TEST
-process.env.SECURE_COOKIE_OFF="false";
-process.env.COOKIE_MAX_AGE = "5400000";
-
 describe('Frontend analytics', function () {
 
     var googleAnalyticsScript = '//www.google-analytics.com/analytics.js';

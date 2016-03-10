@@ -2,7 +2,7 @@ if(process.env.ENABLE_NEWRELIC == 'yes') require('newrelic');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var routes = require(__dirname + '/app/routes.js');
+var router = require(__dirname + '/app/router.js');
 var bodyParser = require('body-parser');
 var clientSessions = require("client-sessions");
 var frontendCookie = require(__dirname + '/app/utils/cookies.js').frontendCookie;
@@ -57,7 +57,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(errorhandler())
 }
 
-routes.bind(app);
+router.bind(app);
 
 app.listen(port);
 console.log('Listening on port ' + port);
