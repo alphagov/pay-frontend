@@ -49,6 +49,12 @@ module.exports = function(){
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'unsuccessful' }
     },
+    AUTHORISATION_SUCCESS: {
+        view: "errors/incorrect_state/auth_success"
+    },
+    AUTHORISATION_REJECTED: {
+        view: "errors/incorrect_state/auth_failure"
+    },
     display: function(res,resName,locals){
       var action = _.result(this, resName);
       locals = (locals == undefined) ? {} : locals;

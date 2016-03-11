@@ -44,6 +44,7 @@ module.exports = function(){
       }
       defer.resolve(data);
     }).on('error',function(err){
+
         logger.error('Exception raised calling connector for get: ' + err);
       clientUnavailable(err, defer);
     });

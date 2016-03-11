@@ -269,6 +269,7 @@ describe('chargeTests',function(){
 
     it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
       var cookieValue = cookie.create(chargeId);
+      default_connector_response_for_get_charge(chargeId, aHappyState);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200)
@@ -289,7 +290,7 @@ describe('chargeTests',function(){
                 'paymentDescription': "Payment description"
       };
       var cookieValue = cookie.create(chargeId, sessionData);
-
+      default_connector_response_for_get_charge(chargeId, aHappyState);
       post_charge_request(cookieValue, missing_form_card_data())
           .expect(200)
           .expect(function(res){
@@ -475,6 +476,8 @@ describe('chargeTests',function(){
 
     function missing_field_test(missing_field) {
       return function (done) {
+        default_connector_response_for_get_charge(chargeId, aHappyState);
+
 
         var sessionData = JSON.parse(JSON.stringify(fullSessionData));
         delete sessionData[missing_field];
@@ -548,9 +551,9 @@ describe('chargeTests',function(){
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
-          .expect(500)
+          .expect(404)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message","There is a problem with the payments platform");
+            helper.expectTemplateTohave(res,"message","Page cannot be found");
           })
           .end(done);
     });

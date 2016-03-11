@@ -20,9 +20,6 @@ describe('The /charge endpoint undealt statuses', function () {
   var charge_not_allowed_statuses = [
     'READY_FOR_CAPTURE'
   ];
-  beforeEach(function() {
-    nock.cleanAll();
-  });
 
   charge_not_allowed_statuses.forEach(function (status) {
     var fullSessionData = {
@@ -34,13 +31,15 @@ describe('The /charge endpoint undealt statuses', function () {
       'address': 'Kneitlingen, Brunswick, Germany',
       'serviceName': 'Pranks incorporated'
     };
-
-    it('should error when the payment status is ' + status, function (done) {
+    beforeEach(function(){
+      nock.cleanAll();
       nock(process.env.CONNECTOR_HOST)
       .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
         status,"http://www.example.com/service"
       ));
+    });
 
+    it('should error when the payment status is ' + status, function (done) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
@@ -200,6 +199,14 @@ describe('The /confirm endpoint dealt statuses', function () {
     {
       name: 'system cancelled',
       view: 'SYSTEM_CANCELLED'
+    },
+    {
+      name: 'authorisation success',
+      view: "AUTHORISATION_SUCCESS"
+    },
+    {
+      name: 'authorisation rejected',
+      view: "AUTHORISATION_REJECTED"
     }
   ];
   beforeEach(function() {
