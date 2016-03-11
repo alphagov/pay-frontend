@@ -25,9 +25,6 @@ describe('The /charge endpoint undealt statuses', function () {
     nock.cleanAll();
   });
 
-
-
-
   charge_not_allowed_statuses.forEach(function (status) {
     var fullSessionData = {
       'amount': 1000,
@@ -56,7 +53,6 @@ describe('The /charge endpoint undealt statuses', function () {
     });
   });
 });
-
 
 describe('The /charge endpoint dealt statuses', function () {
   var charge_not_allowed_statuses = [
