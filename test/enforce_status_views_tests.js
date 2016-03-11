@@ -18,8 +18,7 @@ var frontendCardDetailsPath = paths.card.create;
 
 describe('The /charge endpoint undealt statuses', function () {
   var charge_not_allowed_statuses = [
-    'READY_FOR_CAPTURE',
-    'SYSTEM CANCELLED'
+    'READY_FOR_CAPTURE'
   ];
   beforeEach(function() {
     nock.cleanAll();
@@ -83,6 +82,10 @@ describe('The /charge endpoint dealt statuses', function () {
     {
       name: 'expired',
       view: 'EXPIRED'
+    },
+    {
+      name: 'system cancelled',
+      view: 'SYSTEM_CANCELLED'
     }
   ];
   beforeEach(function() {
@@ -193,6 +196,10 @@ describe('The /confirm endpoint dealt statuses', function () {
     {
       name: 'expired',
       view: 'EXPIRED'
+    },
+    {
+      name: 'system cancelled',
+      view: 'SYSTEM_CANCELLED'
     }
   ];
   beforeEach(function() {

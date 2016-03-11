@@ -37,6 +37,10 @@ module.exports = function(){
     EXPIRED: {
       view: "errors/incorrect_state/session_expired"
     },
+    SYSTEM_CANCELLED: {
+      view: "errors/incorrect_state/system_cancelled"
+    },
+
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
