@@ -218,7 +218,7 @@ module.exports.bindRoutesTo = function (app) {
 
         var init = function(){
             if (!chargeId) return fail({message: "CHARGE NOT FOUND IN SESSION"});
-            if (!sessionValid) return _views.display(res,'SESSION_EXPIRED');
+            if (!sessionValid) return _views.display(res,'SESSION_INCORRECT');
             Charge.find(chargeId).then(gotCharge,fail);
         },
 

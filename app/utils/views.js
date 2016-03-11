@@ -19,13 +19,15 @@ module.exports = function(){
         message: 'There is a problem with the payments platform'
       }
     },
-    SESSION_EXPIRED: {
+    SESSION_INCORRECT: {
       code: 200,
       view: 'error',
       locals: {
         message: 'Session expired'
       }
     },
+
+  
     SYSTEM_ERROR: {
       code: 500,
       view: 'errors/system_error',
