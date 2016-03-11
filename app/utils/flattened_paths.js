@@ -23,7 +23,6 @@ module.exports = function(paths){
   return toReturn;
 };
 
-
   return _.invert(flattenObject(paths))
 }
 

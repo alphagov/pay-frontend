@@ -23,7 +23,6 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
 app.set('vendorViews', __dirname + '/govuk_modules/govuk_template/views/layouts');
-
 app.set('views', __dirname + '/app/views');
 
 app.use(bodyParser.json());
@@ -58,6 +57,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 router.bind(app);
+
 
 app.listen(port);
 console.log('Listening on port ' + port);

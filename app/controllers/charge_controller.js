@@ -25,20 +25,6 @@ module.exports.new = function(req, res) {
     },
 
     gotCharge = function(data,chargeId) {
-        var stateCorrect = stateCheck(res,
-            {
-                correctStates:[ENTERING_CARD_DETAILS_STATUS,CREATED_STATE],
-                currentState:data.status,
-                views:_views,
-                locals: {
-                    chargeId: chargeId,
-                    returnUrl: data.return_url
-                }
-            }
-        );
-        if (!stateCorrect) return;
-
-
         setChargeSession(req,chargeId,data);
         Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
         .then(function(){

@@ -5,6 +5,7 @@ var charge        = require('./controllers/charge_controller.js');
 
 var paths         = require(__dirname + '/paths.js');
 var actionName    = require(__dirname + '/middleware/actionName.js');
+var stateEnforcer = require(__dirname + '/middleware/state_enforcer.js');
 
 var generateRoute = require(__dirname + '/utils/generate_route.js');
 var chargeParam   = require('./services/charge_param_retriever.js');
@@ -51,7 +52,7 @@ module.exports.bind = function (app) {
   controllers.bindRoutesTo(app);
 
   var card = paths.card;
-  app.get(card.new, actionName, retrieveCharge, charge.new);
+  app.get(card.new, actionName, retrieveCharge, stateEnforcer, charge.new);
   app.post(card.create, actionName, retrieveCharge, charge.create);
   app.get(card.confirm, actionName, retrieveCharge, charge.confirm);
   app.post(card.capture, actionName, retrieveCharge, charge.capture);
