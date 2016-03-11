@@ -26,8 +26,6 @@ module.exports = function(){
         message: 'Session expired'
       }
     },
-
-  
     SYSTEM_ERROR: {
       code: 500,
       view: 'errors/system_error',
@@ -35,6 +33,9 @@ module.exports = function(){
     CAPTURE_SUBMITTED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
+    },
+    EXPIRED: {
+      view: "errors/incorrect_state/session_expired"
     },
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
