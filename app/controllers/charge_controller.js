@@ -17,6 +17,7 @@ var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 var AUTH_SUCCESS_STATE = 'AUTHORISATION SUCCESS';
 var CREATED_STATE = 'CREATED';
 var CARD_NUMBER_FIELD = 'cardNo';
+
 module.exports.new = function(req, res) {
     var _views = views.create({});
 
@@ -63,7 +64,7 @@ module.exports.create = function(req, res) {
         checkResult.paymentDescription = chargeSession.paymentDescription;
         checkResult.amount = req.body.hiddenAmount;
         checkResult.return_url = req.body.returnUrl;
-        checkResult.post_card_action = paths.card.create;
+        checkResult.post_card_action = paths.card.create.path;
         res.render(CHARGE_VIEW, checkResult);
         return;
     }
@@ -83,7 +84,6 @@ module.exports.create = function(req, res) {
 
 
 
-    var connectorUrl = paths.generateRoute(paths.connector.charge.show,{chargeId: chargeId});
     var authLink = findLinkForRelation(chargeData.links, 'cardAuth');
     var cardAuthUrl = authLink.href;
 
@@ -97,13 +97,13 @@ module.exports.create = function(req, res) {
                 chargeSession.cardholderName = req.body.cardholderName;
                 chargeSession.address = buildAddressLine(req.body);
                 chargeSession.serviceName = "Demo Service";
-                res.redirect(303, paths.generateRoute(paths.card.confirm,{chargeId: chargeId}));
+                res.redirect(303, paths.generateRoute(paths.card.confirm.path,{chargeId: chargeId}));
                 return;
             case 500:
                 logger.error('got response code 500 from connector');
                 return _views.display(res,'SYSTEM_ERROR',{returnUrl: chargeData.return_url});
             default:
-                res.redirect(303,paths.generateRoute(paths.card.new,{chargeId: chargeId}))
+                res.redirect(303,paths.generateRoute(paths.card.new.path,{chargeId: chargeId}))
         }
     }).on('error', function (err) {
         logger.error('Exception raised calling connector: ' + err);
@@ -117,7 +117,7 @@ module.exports.confirm = function(req, res) {
     chargeData      = req.chargeData,
     chargeSession   = chargeState(req, chargeId),
     sessionValid    = validSession(chargeSession),
-    confirmPath     = paths.generateRoute(paths.card.confirm,{chargeId: chargeId}),
+    confirmPath     = paths.generateRoute(paths.card.confirm.path,{chargeId: chargeId}),
     successLocals   = {
         'charge_id': chargeId,
         'confirmPath': confirmPath,
@@ -129,30 +129,14 @@ module.exports.confirm = function(req, res) {
 
     var init = function(){
         if (!sessionValid) return _views.display(res,'SESSION_INCORRECT');
-        gotCharge(chargeData);
-    },
-
-    gotCharge = function(data){
-        var stateOK = isChargeStateOK(data.status);
-        var stateName = data.status.toUpperCase().replace(" ", "_")
-        if (!stateOK) {
-            return _views.display(res, stateName,{
-                chargeId: chargeId,
-                returnUrl: data.return_url
-            });
-        }
         _views.display(res,'success');
-    },
 
+    },
     isChargeStateOK = function(currentState){
         if (currentState == AUTH_SUCCESS_STATE) return true;
         return false;
-    },
-
-    fail = function(error){
-        logger.error(error.message);
-        return _views.display(res, "NOT_FOUND");
     };
+
 
     init();
 }

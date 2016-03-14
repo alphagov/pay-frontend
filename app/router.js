@@ -52,8 +52,8 @@ module.exports.bind = function (app) {
   controllers.bindRoutesTo(app);
 
   var card = paths.card;
-  app.get(card.new, actionName, retrieveCharge, stateEnforcer, charge.new);
-  app.post(card.create, actionName, retrieveCharge, charge.create);
-  app.get(card.confirm, actionName, retrieveCharge, charge.confirm);
-  app.post(card.capture, actionName, retrieveCharge, charge.capture);
+  app.get(card.new.path, actionName, retrieveCharge, stateEnforcer, charge.new);
+  app.post(card.create.path, actionName, retrieveCharge, charge.create);
+  app.get(card.confirm.path, actionName, retrieveCharge, stateEnforcer, charge.confirm);
+  app.post(card.capture.path, actionName, retrieveCharge, charge.capture);
 };

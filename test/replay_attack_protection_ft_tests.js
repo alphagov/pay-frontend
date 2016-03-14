@@ -18,7 +18,7 @@ describe('The secure /charge endpoint', function() {
   var chargeId = '23144323';
   var chargeTokenId = 'asdnwnbwkk';
   // external hosts have the full url, not too sure the best way to fix this
-  var tokenPath = paths.generateRoute(paths.connector.charge.token,
+  var tokenPath = paths.generateRoute(paths.connectorCharge.token.path,
     {chargeTokenId: chargeTokenId}).replace(localServer,"");
 
 

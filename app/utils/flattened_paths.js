@@ -3,27 +3,19 @@
 var _  = require('lodash');
 
 module.exports = function(paths){
-  // https://gist.github.com/penguinboy/762197
-  var flattenObject = function(ob) {
-  var toReturn = {};
-  for (var i in ob) {
-    if (!ob.hasOwnProperty(i)) continue;
-
-    if ((typeof ob[i]) == 'object') {
-      var flatObject = flattenObject(ob[i]);
-      for (var x in flatObject) {
-        if (!flatObject.hasOwnProperty(x)) continue;
-
-        toReturn[i + '.' + x] = flatObject[x];
+  var flattenObject = function(paths) {
+    flattenedPaths = {};
+    for (var controllerName in paths) {
+      var controller = paths[controllerName];
+      if (typeof controller !== 'object') continue;
+      for (var actionName in controller) {
+        var action = controller[actionName];
+        flattenedPaths[action.path + "_" + action.action] = `${controllerName}.${actionName}`
       }
-    } else {
-      toReturn[i] = ob[i];
     }
-  }
-  return toReturn;
-};
-
-  return _.invert(flattenObject(paths))
+    return flattenedPaths;
+  };
+  return flattenObject(paths);
 }
 
 

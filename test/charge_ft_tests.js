@@ -476,7 +476,7 @@ describe('chargeTests',function(){
 
     function missing_field_test(missing_field) {
       return function (done) {
-        default_connector_response_for_get_charge(chargeId, aHappyState);
+        default_connector_response_for_get_charge(chargeId, "AUTHORISATION SUCCESS");
 
 
         var sessionData = JSON.parse(JSON.stringify(fullSessionData));

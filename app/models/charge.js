@@ -9,7 +9,7 @@ var paths   = require('../paths.js');
 module.exports = function(){
 
   createUrl = function(resource,chargeId){
-    return paths.generateRoute(paths.connector.charge[resource],{chargeId: chargeId});
+    return paths.generateRoute(paths.connectorCharge[resource].path,{chargeId: chargeId});
   },
 
   mergeApiParams = function(params){
