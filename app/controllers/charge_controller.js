@@ -9,7 +9,6 @@ var normalise       = require('../services/normalise.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
 var paths           = require('../paths.js');
-var stateCheck      = require('../utils/state_check.js');
 var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
 
 module.exports.new = function(req, res) {

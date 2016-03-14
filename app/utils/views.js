@@ -56,7 +56,7 @@ module.exports = function(){
         view: "errors/incorrect_state/auth_failure"
     },
     display: function(res,resName,locals){
-      var action = _.result(this, resName);
+      var action = _.cloneDeep(_.result(this, resName));
       locals = (locals == undefined) ? {} : locals;
       locals.viewName = resName;
 
@@ -64,12 +64,13 @@ module.exports = function(){
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
         locals.viewName = 'error';
-        action = this['ERROR'];
+        action = _.cloneDeep(this['ERROR']);
       }
 
-      locals = (action.locals) ? _.merge(action.locals,locals) : locals;
+      locals = (action.locals) ? _.merge(_.cloneDeep(action.locals),locals) : locals;
       status = (action.code) ? action.code : 200;
       res.status(status);
+      console.log(action.view,locals);
       res.render(action.view,locals);
     }
   },
