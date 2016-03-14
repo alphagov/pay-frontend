@@ -10,42 +10,27 @@ var Charge          = require('../models/charge.js');
 var _               = require('lodash');
 var paths           = require('../paths.js');
 var stateCheck      = require('../utils/state_check.js');
-
-
-var hashOutCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
-var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
-var AUTH_SUCCESS_STATE = 'AUTHORISATION SUCCESS';
-var CREATED_STATE = 'CREATED';
-var CARD_NUMBER_FIELD = 'cardNo';
+var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
 
 module.exports.new = function(req, res) {
-    var _views = views.create({});
+    var _views  = views.create(),
+    chargeId    = req.chargeId,
+    chargeData  = req.chargeData;
 
-    var init = function(){
-        gotCharge(req.chargeData, req.chargeId);
-    },
-
-    gotCharge = function(data,chargeId) {
-        setChargeSession(req,chargeId,data);
-        Charge.updateStatus(chargeId, ENTERING_CARD_DETAILS_STATUS)
+    init = function() {
+        setChargeSession(req,chargeId,chargeData);
+        Charge.updateToEnterDetails(chargeId)
         .then(function(){
-            statusUpdated(data,chargeId)
-        }, apiFail);
+            res.render(CHARGE_VIEW, normalise.charge(chargeData,chargeId));
+        }, function(){
+            _views.display(res,"NOT_FOUND");
+        });
     },
 
-    // TODO remove is possible
     setChargeSession = function(req,chargeId,data) {
         var chargeSession = chargeState(req, chargeId);
         chargeSession.amount = normalise.penceToPounds(data.amount);
         chargeSession.paymentDescription = data.description;
-    },
-
-    apiFail = function(error){
-        _views.display(res,"NOT_FOUND");
-    },
-
-    statusUpdated = function(data,chargeId) {
-        res.render(CHARGE_VIEW, normalise.charge(data,chargeId));
     };
 
     init();
@@ -92,7 +77,7 @@ module.exports.create = function(req, res) {
         switch (connectorResponse.statusCode) {
             case 204:
                 logger.info('got response code 200 from connector');
-                chargeSession.cardNumber =  hashOutCardNumber(plainCardNumber);
+                chargeSession.cardNumber = hashCardNumber(plainCardNumber);
                 chargeSession.expiryDate = expiryDate;
                 chargeSession.cardholderName = req.body.cardholderName;
                 chargeSession.address = buildAddressLine(req.body);
@@ -118,61 +103,41 @@ module.exports.confirm = function(req, res) {
     chargeSession   = chargeState(req, chargeId),
     sessionValid    = validSession(chargeSession),
     confirmPath     = paths.generateRoute(paths.card.confirm.path,{chargeId: chargeId}),
-    successLocals   = {
-        'charge_id': chargeId,
-        'confirmPath': confirmPath,
-        session: chargeSession
-    },
-    _views = views.create({
-        success: { view: CONFIRM_VIEW, locals: successLocals },
-    });
+    _views = views.create({ success: {
+        view: CONFIRM_VIEW,
+            locals: {
+                'charge_id': chargeId,
+                'confirmPath': confirmPath,
+                session: chargeSession
+            }
+    }});
 
     var init = function(){
         if (!sessionValid) return _views.display(res,'SESSION_INCORRECT');
         _views.display(res,'success');
 
-    },
-    isChargeStateOK = function(currentState){
-        if (currentState == AUTH_SUCCESS_STATE) return true;
-        return false;
     };
-
 
     init();
 }
 
 module.exports.capture = function (req, res) {
     var _views  = views.create(),
-    chargeId    = req.chargeId,
-    chargeData  = req.chargeData;
+    returnUrl   = req.chargeData.return_url;
 
     var init = function(){
-        gotCharge(chargeData);
-    },
-
-    gotCharge = function(data){
-        returnUrl = data.return_url;
-        Charge.capture(chargeId).
+        Charge.capture(req.chargeId).
         then(function(){
             res.redirect(303, returnUrl);
-        }, function(err){
-            captureFail(err, returnUrl)
-        });
-
+        }, captureFail);
     },
 
-    captureFail = function(err,returnUrl){
+    captureFail = function(err){
         if (err.message == 'AUTH_FAILED') return _views.display(res, 'ERROR', {
             message: "There was a problem processing your payment. Please contact the service."
         });
-
         _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
-    },
-
-    fail = function(err){
-        return _views.display(res,'ERROR');
     };
-
     init();
 }
 
@@ -207,11 +172,6 @@ var REQUIRED_FORM_FIELDS = {
         id: 'address-postcode',
         name: 'Postcode',
         message: 'Please enter a valid postcode' }
-};
-
-var UPDATE_STATUS_PAYLOAD = {
-    headers: {"Content-Type": "application/json"},
-    data: {'new_status': ENTERING_CARD_DETAILS_STATUS}
 };
 
 function createChargeIdSessionKey(chargeId) {
@@ -253,7 +213,7 @@ function validateNewCharge(body) {
     };
     for (var field in REQUIRED_FORM_FIELDS) {
         var fieldInBody = body[field];
-        var cardNoInvalid = (field === CARD_NUMBER_FIELD && !luhn.validate(body[field]));
+        var cardNoInvalid = (field === 'cardNo' && !luhn.validate(body[field]));
 
         if (!fieldInBody || cardNoInvalid) {
             var errorType = !fieldInBody? ' is missing': ' is invalid';

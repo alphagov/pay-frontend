@@ -4,6 +4,8 @@ var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
+var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
+
 
 
 module.exports = function(){
@@ -20,6 +22,10 @@ module.exports = function(){
     }
     _default.data = _.merge(params,_default.data);
     return _default;
+  },
+
+  updateToEnterDetails = function(chargeId) {
+    return updateStatus(chargeId,ENTERING_CARD_DETAILS_STATUS)
   },
 
   updateStatus = function(chargeId, status){
@@ -91,6 +97,7 @@ module.exports = function(){
 
   return {
     updateStatus: updateStatus,
+    updateToEnterDetails: updateToEnterDetails,
     find: find,
     capture: capture
   }
