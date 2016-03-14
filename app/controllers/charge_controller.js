@@ -124,7 +124,6 @@ module.exports.confirm = function(req, res) {
 module.exports.capture = function (req, res) {
     var _views  = views.create(),
     returnUrl   = req.chargeData.return_url;
-
     var init = function(){
         Charge.capture(req.chargeId).
         then(function(){

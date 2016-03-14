@@ -53,7 +53,7 @@ module.exports.bind = function (app) {
 
   var card = paths.card;
   app.get(card.new.path, actionName, retrieveCharge, stateEnforcer, charge.new);
-  app.post(card.create.path, actionName, retrieveCharge, charge.create);
+  app.post(card.create.path, actionName, retrieveCharge, stateEnforcer, charge.create);
   app.get(card.confirm.path, actionName, retrieveCharge, stateEnforcer, charge.confirm);
-  app.post(card.capture.path, actionName, retrieveCharge, charge.capture);
+  app.post(card.capture.path, actionName, retrieveCharge, stateEnforcer, charge.capture);
 };

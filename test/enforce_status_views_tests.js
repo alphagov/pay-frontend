@@ -125,10 +125,8 @@ describe('The /confirm endpoint undealt statuses', function () {
   var confirm_not_allowed_statuses = [
     'CREATED',
     'AUTHORISATION SUBMITTED',
-    'AUTHORISATION REJECTED',
     'AUTHORISATION READY',
-    'READY_FOR_CAPTURE',
-    'SYSTEM CANCELLED'
+    'READY_FOR_CAPTURE'
   ];
   beforeEach(function() {
     nock.cleanAll();
