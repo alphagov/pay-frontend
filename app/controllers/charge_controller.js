@@ -19,64 +19,6 @@ var CARD_NUMBER_FIELD = 'cardNo';
 
 module.exports.bindRoutesTo = function (app) {
 
-    var CHARGE_VIEW = 'charge';
-    var CONFIRM_VIEW = 'confirm';
-
-    var REQUIRED_FORM_FIELDS = {
-        cardholderName: {
-            id: 'cardholder-name',
-            name: 'Name on card',
-            message: 'Please enter the name as it appears on the card' },
-        cardNo: {
-            id: 'card-no',
-            name: 'Card number',
-            message: 'Please enter the long number on the front of your card' },
-        cvc: {
-            id: 'cvc',
-            name: 'CVC',
-            message: 'Please enter your card security code' },
-        expiryDate: {
-            id: 'expiry-date',
-            name: 'Expiry date',
-            message: 'Please enter a valid expiry date' },
-        addressLine1: {
-            id: 'address-line1',
-            name: 'Building name/number and street',
-            message:'Please enter your address' },
-        addressPostcode: {
-            id: 'address-postcode',
-            name: 'Postcode',
-            message: 'Please enter a valid postcode' }
-    };
-
-    var UPDATE_STATUS_PAYLOAD = {
-        headers: {"Content-Type": "application/json"},
-        data: {'new_status': ENTERING_CARD_DETAILS_STATUS}
-    };
-
-    function createChargeIdSessionKey(chargeId) {
-        return 'ch_' + chargeId;
-    }
-
-    function chargeState(req, chargeId) {
-        return req.frontend_state[createChargeIdSessionKey(chargeId)];
-    }
-
-    function validSession(chargeSession) {
-        if (
-            !('amount' in chargeSession) ||
-            !('paymentDescription' in chargeSession) ||
-            !('expiryDate' in chargeSession) ||
-            !('cardNumber' in chargeSession) ||
-            !('cardholderName' in chargeSession) ||
-            !('address' in chargeSession) ||
-            !('serviceName' in chargeSession)
-        ) {
-            return false;
-        }
-        return true;
-    }
-
     app.get(paths.card.new, function (req, res) {
         var _views = views.create({
             AUTHORISATION_SUCCESS: {
@@ -218,7 +160,7 @@ module.exports.bindRoutesTo = function (app) {
 
         var init = function(){
             if (!chargeId) return fail({message: "CHARGE NOT FOUND IN SESSION"});
-            if (!sessionValid) return _views.display(res,'SESSION_EXPIRED');
+            if (!sessionValid) return _views.display(res,'SESSION_INCORRECT');
             Charge.find(chargeId).then(gotCharge,fail);
         },
 
@@ -281,6 +223,68 @@ module.exports.bindRoutesTo = function (app) {
 
         init();
     });
+
+
+    // none of the following really belongs in the controller
+
+    var CHARGE_VIEW = 'charge';
+    var CONFIRM_VIEW = 'confirm';
+
+    var REQUIRED_FORM_FIELDS = {
+        cardholderName: {
+            id: 'cardholder-name',
+            name: 'Name on card',
+            message: 'Please enter the name as it appears on the card' },
+        cardNo: {
+            id: 'card-no',
+            name: 'Card number',
+            message: 'Please enter the long number on the front of your card' },
+        cvc: {
+            id: 'cvc',
+            name: 'CVC',
+            message: 'Please enter your card security code' },
+        expiryDate: {
+            id: 'expiry-date',
+            name: 'Expiry date',
+            message: 'Please enter a valid expiry date' },
+        addressLine1: {
+            id: 'address-line1',
+            name: 'Building name/number and street',
+            message:'Please enter your address' },
+        addressPostcode: {
+            id: 'address-postcode',
+            name: 'Postcode',
+            message: 'Please enter a valid postcode' }
+    };
+
+    var UPDATE_STATUS_PAYLOAD = {
+        headers: {"Content-Type": "application/json"},
+        data: {'new_status': ENTERING_CARD_DETAILS_STATUS}
+    };
+
+    function createChargeIdSessionKey(chargeId) {
+        return 'ch_' + chargeId;
+    }
+
+    function chargeState(req, chargeId) {
+        return req.frontend_state[createChargeIdSessionKey(chargeId)];
+    }
+
+    function validSession(chargeSession) {
+        if (
+            !('amount' in chargeSession) ||
+            !('paymentDescription' in chargeSession) ||
+            !('expiryDate' in chargeSession) ||
+            !('cardNumber' in chargeSession) ||
+            !('cardholderName' in chargeSession) ||
+            !('address' in chargeSession) ||
+            !('serviceName' in chargeSession)
+        ) {
+            return false;
+        }
+        return true;
+    }
+
 
     function findLinkForRelation(links, rel) {
         return links.find(function (link) {

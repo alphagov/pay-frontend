@@ -19,7 +19,7 @@ module.exports = function(){
         message: 'There is a problem with the payments platform'
       }
     },
-    SESSION_EXPIRED: {
+    SESSION_INCORRECT: {
       code: 200,
       view: 'error',
       locals: {
@@ -33,6 +33,9 @@ module.exports = function(){
     CAPTURE_SUBMITTED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
+    },
+    EXPIRED: {
+      view: "errors/incorrect_state/session_expired"
     },
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
