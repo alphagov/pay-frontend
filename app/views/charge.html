@@ -21,8 +21,7 @@ Enter your card details.
   <h1 class="form-title">Pay by card</h1>
 
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
-      <input id="charge-id" name="chargeId" type="hidden" value="{{charge_id}}" />
-      <input id="hidden-amount" name="hiddenAmount" type="hidden" value="{{amount}}" />
+      <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}">
           <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
               Name on card
@@ -117,7 +116,7 @@ Enter your card details.
             <h2>Payment summary</h2>
             <p>
                 Description:
-                <span id="payment-description">{{paymentDescription}}</span></p>
+                <span id="payment-description">{{description}}</span></p>
             </p>
             <p>
                 Amount to pay:

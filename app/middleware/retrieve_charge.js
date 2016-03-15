@@ -1,6 +1,7 @@
 var views         = require('../utils/views.js');
 var Charge        = require('../models/charge.js');
 var chargeParam   = require('../services/charge_param_retriever.js');
+var normalise     = require('../services/normalise.js');
 var q             = require('q');
 
 module.exports = function(req, res, next){
