@@ -35,7 +35,7 @@ describe('The charge view', function() {
   });
 
   it('should show all input fields.', function () {
-     var body = renderTemplate('charge', {'charge_id' : '1234'});
+     var body = renderTemplate('charge', {'id' : '1234'});
      body.should.containInputWithIdAndName('card-no', 'cardNo', 'text').withAttribute('maxlength', '19').withLabel('card-no-lbl', 'Card number');
      body.should.containInputWithIdAndName('cvc', 'cvc', 'text').withAttribute('maxlength', '3').withLabel('cvc-lbl', 'Card security code');
      body.should.containInputWithIdAndName('expiry-date', 'expiryDate', 'text').withAttribute('maxlength', '5').withLabel('expiry-date-lbl', 'Expiry date');
@@ -55,11 +55,11 @@ describe('The confirm view', function () {
       session: {
         'cardNumber': "************5100",
         'expiryDate': "11/99",
-        'amount': "10.00",
-        'paymentDescription': "Payment Description & <xss attack> assessment",
         'cardholderName': 'Francisco Blaya-Gonzalvez',
         'address': '1 street lane, avenue city, AB1 3DF'
-      }
+      },
+      'amount': "10.00",
+      'description': "Payment Description & <xss attack> assessment"
     };
 
     var body = renderTemplate('confirm', templateData);

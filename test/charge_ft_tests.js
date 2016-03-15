@@ -73,7 +73,6 @@ describe('chargeTests',function(){
 
   function minimum_form_card_data(card_number) {
     return {
-      'hiddenAmount': '23.45',
       'returnUrl': RETURN_URL,
       'cardUrl': connectorAuthUrl,
       'chargeId': chargeId,
@@ -88,7 +87,6 @@ describe('chargeTests',function(){
 
   function missing_form_card_data() {
     return {
-      'hiddenAmount': '23.45',
       'chargeId': chargeId,
       'returnUrl': RETURN_URL
     };
@@ -128,9 +126,9 @@ describe('chargeTests',function(){
           .expect(200)
           .expect(function(res){
             helper.expectTemplateTohave(res,"amount",'23.45');
-            helper.expectTemplateTohave(res,"charge_id",chargeId);
+            helper.expectTemplateTohave(res,"id",chargeId);
             helper.expectTemplateTohave(res,"return_url",RETURN_URL);
-            helper.expectTemplateTohave(res,"paymentDescription","Payment Description");
+            helper.expectTemplateTohave(res,"description","Payment Description");
             helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
           })
           .end(done);
@@ -277,7 +275,7 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"charge_id",chargeId);
+            helper.expectTemplateTohave(res,"id",chargeId);
             helper.expectTemplateTohave(res,"return_url",RETURN_URL);
             helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
             helper.expectTemplateTohave(res,"hasError",true);
@@ -289,16 +287,13 @@ describe('chargeTests',function(){
     });
 
     it('shows an error when a card is submitted with missing fields', function (done) {
-      var sessionData = {
-                'paymentDescription': "Payment description"
-      };
-      var cookieValue = cookie.create(chargeId, sessionData);
+      var cookieValue = cookie.create(chargeId, {});
       default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
       post_charge_request(cookieValue, missing_form_card_data())
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"charge_id",chargeId);
-            helper.expectTemplateTohave(res,"paymentDescription",sessionData.paymentDescription);
+            helper.expectTemplateTohave(res,"id",chargeId);
+            helper.expectTemplateTohave(res,"description","Payment Description");
             helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
             helper.expectTemplateTohave(res,"hasError",true);
             helper.expectTemplateTohave(res,"amount","23.45");
@@ -405,10 +400,10 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId)
               .expect(200)
               .expect(function(res){
-                helper.expectTemplateTohave(res,"charge_id",chargeId);
+                helper.expectTemplateTohave(res,"id",chargeId);
                 helper.expectTemplateTohave(res,"amount",'23.45');
                 helper.expectTemplateTohave(res,"return_url",'http://www.example.com/service');
-                helper.expectTemplateTohave(res,"paymentDescription",'Payment Description');
+                helper.expectTemplateTohave(res,"description",'Payment Description');
                 helper.expectTemplateTohave(res,"post_card_action",'/card_details');
               })
               .end(done);
@@ -445,8 +440,7 @@ describe('chargeTests',function(){
   });
 
     var fullSessionData = {
-      'amount': "10.00",
-      'paymentDescription': "Payment description",
+
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'cardholderName': 'T Eulenspiegel',
@@ -467,12 +461,12 @@ describe('chargeTests',function(){
           helper.expectTemplateTohave(res,"session",{
             'cardNumber': "************5100",
             "expiryDate":"11/99",
-            "amount":"10.00",
-            "paymentDescription":"Payment description",
             "cardholderName":"T Eulenspiegel",
             "address":"Kneitlingen, Brunswick, Germany",
             "serviceName":"Pranks incorporated",
           });
+          helper.expectTemplateTohave(res,"amount","23.45");
+          helper.expectTemplateTohave(res,"description","Payment Description");
         })
         .end(done);
     });
@@ -496,7 +490,7 @@ describe('chargeTests',function(){
       };
     }
 
-    ['amount', 'expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'].map(function (missing_field) {
+    [ 'expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'].map(function (missing_field) {
       it('should display Session expired message if ' + missing_field + ' is not in the session', missing_field_test(missing_field));
     });
 
