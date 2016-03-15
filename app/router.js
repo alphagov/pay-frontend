@@ -6,42 +6,9 @@ var charge        = require('./controllers/charge_controller.js');
 var paths         = require(__dirname + '/paths.js');
 var actionName    = require(__dirname + '/middleware/actionName.js');
 var stateEnforcer = require(__dirname + '/middleware/state_enforcer.js');
+var retrieveCharge= require(__dirname + '/middleware/retrieve_charge.js');
 
-var generateRoute = require(__dirname + '/utils/generate_route.js');
-var chargeParam   = require('./services/charge_param_retriever.js');
-var views         = require('./utils/views.js');
-var Charge        = require('./models/charge.js');
-
-
-
-
-module.exports.generateRoute = generateRoute;
 module.exports.paths = paths;
-
-
-var retrieveCharge = function(req, res, next){
-  var _views  = views.create({}),
-  chargeId    = req.chargeId;
-
-  var init = function(){
-    var chargeId = chargeParam.retrieve(req);
-    if (!chargeId) return _views.display(res,"NOT_FOUND");
-    req.chargeId = chargeId;
-    Charge.find(chargeId).then(gotCharge, apiFail);
-  },
-
-  gotCharge = function(data){
-    req.chargeData = data;
-    next();
-  },
-
-  apiFail = function(error){
-    _views.display(res,"NOT_FOUND");
-  };
-
-  init();
-};
-
 
 module.exports.bind = function (app) {
     app.get('/greeting', function (req, res) {

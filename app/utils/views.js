@@ -70,7 +70,6 @@ module.exports = function(){
       locals = (action.locals) ? _.merge(_.cloneDeep(action.locals),locals) : locals;
       status = (action.code) ? action.code : 200;
       res.status(status);
-      console.log(action.view,locals);
       res.render(action.view,locals);
     }
   },

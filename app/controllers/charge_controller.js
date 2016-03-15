@@ -31,7 +31,6 @@ module.exports.new = function(req, res) {
         chargeSession.amount = normalise.penceToPounds(data.amount);
         chargeSession.paymentDescription = data.description;
     };
-
     init();
 }
 
@@ -114,15 +113,14 @@ module.exports.confirm = function(req, res) {
     var init = function(){
         if (!sessionValid) return _views.display(res,'SESSION_INCORRECT');
         _views.display(res,'success');
-
     };
-
     init();
 }
 
 module.exports.capture = function (req, res) {
     var _views  = views.create(),
     returnUrl   = req.chargeData.return_url;
+
     var init = function(){
         Charge.capture(req.chargeId).
         then(function(){
@@ -259,4 +257,3 @@ function buildAddressLine(body) {
 function notNullOrEmpty(str) {
     return str;
 }
-

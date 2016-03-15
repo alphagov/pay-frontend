@@ -45,6 +45,7 @@ module.exports = function(){
   find = function(chargeId){
     var defer = q.defer();
     client.get(createUrl('show',chargeId), function(data,response){
+
       if (response.statusCode !== 200) {
         return defer.reject(new Error('GET_FAILED'));
       }

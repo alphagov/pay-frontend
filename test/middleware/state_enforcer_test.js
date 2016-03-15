@@ -8,7 +8,7 @@ var sinon  = require('sinon');
 var _      = require('lodash');
 
 
-describe('views helper', function () {
+describe('state enforcer', function () {
 
   var response = {
     status: function(){},
@@ -65,7 +65,7 @@ describe('views helper', function () {
     ));
   });
 
-  it('should NOT call next when the object is in the wrong state is called and render the appropriate error view', function () {
+  it('should throw an error when a view is passed in without having a state', function () {
 
     expect(function() { stateEnforcer({
       actionName: "hellothere",
