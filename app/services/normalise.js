@@ -1,25 +1,54 @@
 var logger = require('winston');
-var paths = require('../paths.js');
-
 
 module.exports = function(){
   var _charge = function(charge,chargeId){
     return {
-      'charge_id': chargeId,
-      'amount': penceToPounds(charge.amount),
-      'return_url': charge.return_url,
-      'paymentDescription': charge.description,
-      'post_card_action': paths.card.create.path
+      id: chargeId,
+      amount: penceToPounds(charge.amount),
+      return_url: charge.return_url,
+      description: charge.description,
+      links: charge.links
     };
   },
 
   penceToPounds = function(pence){
     return (parseInt(pence) / 100).toFixed(2);
-  };
+  },
+
+  addressForApi = function(body) {
+    return {
+      line1: body.addressLine1,
+      line2: body.addressLine2,
+      city: body.addressCity,
+      postcode: body.addressPostcode,
+      country: 'GB'
+    };
+  },
+  // body is passed by reference
+  addressLines = function(body) {
+    if (!body.addressLine1 && body.addressLine2) {
+        body.addressLine1 = body.addressLine2;
+        delete body.addressLine2;
+    }
+  },
+  // an empty string is equal to false in soft equality used by filter
+  addressForView = function(body) {
+    return [body.addressLine1,
+        body.addressLine2,
+        body.addressCity,
+        body.addressPostcode].filter(function(str){return str}).join(", ");
+
+  },
+  creditCard = function(creditCardNo){
+    return creditCardNo.replace(/\D/g,'')
+  }
 
   return {
     charge: _charge,
-    penceToPounds: penceToPounds
+    addressForApi: addressForApi,
+    addressLines: addressLines,
+    addressForView: addressForView,
+    creditCard: creditCard
   }
 
 }();

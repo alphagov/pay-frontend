@@ -24,7 +24,7 @@ describe('The /charge endpoint undealt statuses', function () {
   charge_not_allowed_statuses.forEach(function (status) {
     var fullSessionData = {
       'amount': 1000,
-      'paymentDescription': 'Test Description',
+      'description': 'Test Description',
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'cardholderName': 'T Eulenspiegel',
@@ -94,7 +94,7 @@ describe('The /charge endpoint dealt statuses', function () {
   charge_not_allowed_statuses.forEach(function (state) {
     var fullSessionData = {
       'amount': 1000,
-      'paymentDescription': 'Test Description',
+      'description': 'Test Description',
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'cardholderName': 'T Eulenspiegel',
@@ -142,7 +142,7 @@ describe('The /confirm endpoint undealt statuses', function () {
   confirm_not_allowed_statuses.forEach(function (status) {
     var fullSessionData = {
       'amount': 1000,
-      'paymentDescription': 'Test Description',
+      'description': 'Test Description',
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'cardholderName': 'T Eulenspiegel',
@@ -221,7 +221,7 @@ describe('The /confirm endpoint dealt statuses', function () {
   confirm_not_allowed_statuses.forEach(function (state) {
     var fullSessionData = {
       'amount': 1000,
-      'paymentDescription': 'Test Description',
+      'description': 'Test Description',
       'cardNumber': "************5100",
       'expiryDate': "11/99",
       'cardholderName': 'T Eulenspiegel',

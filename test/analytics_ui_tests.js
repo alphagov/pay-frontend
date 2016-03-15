@@ -17,7 +17,7 @@ describe('Frontend analytics', function () {
             'cardNumber': "************5100",
             'expiryDate': "11/99",
             'amount': "10.00",
-            'paymentDescription': "Payment Description",
+            'description': "Payment Description",
             'cardholderName': 'Random dude',
             'address': '1 street lane, avenue city, AB1 3DF',
             'serviceName': 'Service 1'
