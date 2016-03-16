@@ -64,7 +64,7 @@ module.exports = function(){
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
         locals.viewName = 'error';
-        action = _.cloneDeep(this.error);
+        action = _.cloneDeep(this.ERROR);
       }
 
       locals = (action.locals) ? _.merge(_.cloneDeep(action.locals),locals) : locals;
