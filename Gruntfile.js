@@ -113,7 +113,8 @@ module.exports = function(grunt){
           'test/unit/*.js',
           'test/services/*.js',
           'test/models/*.js',
-          'test/utils/*.js'
+          'test/utils/*.js',
+          'test/middleware/*.js'
         ]
       }
     },

@@ -14,19 +14,12 @@ var paths = require(__dirname + '/../app/paths.js');
 var cookie = require(__dirname + '/test_helpers/session.js');
 
 var chargeId = '23144323';
-var frontendCardDetailsPath = paths.card.create;
+var frontendCardDetailsPath = paths.card.create.path;
 
 describe('The /charge endpoint undealt statuses', function () {
   var charge_not_allowed_statuses = [
-    'READY_FOR_CAPTURE',
-    'SYSTEM CANCELLED'
+    'READY_FOR_CAPTURE'
   ];
-  beforeEach(function() {
-    nock.cleanAll();
-  });
-
-
-
 
   charge_not_allowed_statuses.forEach(function (status) {
     var fullSessionData = {
@@ -38,13 +31,15 @@ describe('The /charge endpoint undealt statuses', function () {
       'address': 'Kneitlingen, Brunswick, Germany',
       'serviceName': 'Pranks incorporated'
     };
-
-    it('should error when the payment status is ' + status, function (done) {
+    beforeEach(function(){
+      nock.cleanAll();
       nock(process.env.CONNECTOR_HOST)
       .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
         status,"http://www.example.com/service"
       ));
+    });
 
+    it('should error when the payment status is ' + status, function (done) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
@@ -56,7 +51,6 @@ describe('The /charge endpoint undealt statuses', function () {
     });
   });
 });
-
 
 describe('The /charge endpoint dealt statuses', function () {
   var charge_not_allowed_statuses = [
@@ -87,6 +81,10 @@ describe('The /charge endpoint dealt statuses', function () {
     {
       name: 'expired',
       view: 'EXPIRED'
+    },
+    {
+      name: 'system cancelled',
+      view: 'SYSTEM_CANCELLED'
     }
   ];
   beforeEach(function() {
@@ -127,10 +125,8 @@ describe('The /confirm endpoint undealt statuses', function () {
   var confirm_not_allowed_statuses = [
     'CREATED',
     'AUTHORISATION SUBMITTED',
-    'AUTHORISATION REJECTED',
     'AUTHORISATION READY',
-    'READY_FOR_CAPTURE',
-    'SYSTEM CANCELLED'
+    'READY_FOR_CAPTURE'
   ];
   beforeEach(function() {
     nock.cleanAll();
@@ -197,6 +193,18 @@ describe('The /confirm endpoint dealt statuses', function () {
     {
       name: 'expired',
       view: 'EXPIRED'
+    },
+    {
+      name: 'system cancelled',
+      view: 'SYSTEM_CANCELLED'
+    },
+    {
+      name: 'authorisation success',
+      view: "AUTHORISATION_SUCCESS"
+    },
+    {
+      name: 'authorisation rejected',
+      view: "AUTHORISATION_REJECTED"
     }
   ];
   beforeEach(function() {

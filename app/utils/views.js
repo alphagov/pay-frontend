@@ -37,6 +37,10 @@ module.exports = function(){
     EXPIRED: {
       view: "errors/incorrect_state/session_expired"
     },
+    SYSTEM_CANCELLED: {
+      view: "errors/incorrect_state/system_cancelled"
+    },
+
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
@@ -45,8 +49,14 @@ module.exports = function(){
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'unsuccessful' }
     },
+    AUTHORISATION_SUCCESS: {
+        view: "errors/incorrect_state/auth_success"
+    },
+    AUTHORISATION_REJECTED: {
+        view: "errors/incorrect_state/auth_failure"
+    },
     display: function(res,resName,locals){
-      var action = _.result(this, resName);
+      var action = _.cloneDeep(_.result(this, resName));
       locals = (locals == undefined) ? {} : locals;
       locals.viewName = resName;
 
@@ -54,10 +64,10 @@ module.exports = function(){
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
         locals.viewName = 'error';
-        action = this['ERROR'];
+        action = _.cloneDeep(this['ERROR']);
       }
 
-      locals = (action.locals) ? _.merge(action.locals,locals) : locals;
+      locals = (action.locals) ? _.merge(_.cloneDeep(action.locals),locals) : locals;
       status = (action.code) ? action.code : 200;
       res.status(status);
       res.render(action.view,locals);

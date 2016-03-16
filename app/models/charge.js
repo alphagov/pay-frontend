@@ -4,12 +4,14 @@ var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
+var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
+
 
 
 module.exports = function(){
 
   createUrl = function(resource,chargeId){
-    return paths.generateRoute(paths.connector.charge[resource],{chargeId: chargeId});
+    return paths.generateRoute(paths.connectorCharge[resource].path,{chargeId: chargeId});
   },
 
   mergeApiParams = function(params){
@@ -20,6 +22,10 @@ module.exports = function(){
     }
     _default.data = _.merge(params,_default.data);
     return _default;
+  },
+
+  updateToEnterDetails = function(chargeId) {
+    return updateStatus(chargeId,ENTERING_CARD_DETAILS_STATUS)
   },
 
   updateStatus = function(chargeId, status){
@@ -39,11 +45,13 @@ module.exports = function(){
   find = function(chargeId){
     var defer = q.defer();
     client.get(createUrl('show',chargeId), function(data,response){
+
       if (response.statusCode !== 200) {
         return defer.reject(new Error('GET_FAILED'));
       }
       defer.resolve(data);
     }).on('error',function(err){
+
         logger.error('Exception raised calling connector for get: ' + err);
       clientUnavailable(err, defer);
     });
@@ -90,6 +98,7 @@ module.exports = function(){
 
   return {
     updateStatus: updateStatus,
+    updateToEnterDetails: updateToEnterDetails,
     find: find,
     capture: capture
   }

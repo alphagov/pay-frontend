@@ -11,7 +11,7 @@ var paths           = require('../paths.js');
 
 module.exports.bindRoutesTo = function(app) {
 
-  app.get(paths.charge.show, function(req, res) {
+  app.get(paths.charge.show.path, function(req, res) {
 
     var chargeTokenId = req.query.chargeTokenId;
     logger.info('req.query.chargeTokenId=' + chargeTokenId);
@@ -22,7 +22,7 @@ module.exports.bindRoutesTo = function(app) {
     logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey])
 
     if(!req.frontend_state[sessionChargeIdKey]) {
-      var connectorUrl = paths.generateRoute(paths.connector.charge.token,{chargeTokenId: chargeTokenId});
+      var connectorUrl = paths.generateRoute(paths.connectorCharge.token.path,{chargeTokenId: chargeTokenId});
       logger.info('trying to validate token=' + chargeTokenId);
       client
         .get(
@@ -102,6 +102,6 @@ module.exports.bindRoutesTo = function(app) {
   }
 
   function redirectToCardDetails(res, chargeId) {
-    res.redirect(303, paths.generateRoute(paths.card.new,{chargeId: chargeId}));
+    res.redirect(303, paths.generateRoute(paths.card.new.path,{chargeId: chargeId}));
   }
 };

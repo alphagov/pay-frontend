@@ -9,7 +9,7 @@ module.exports = function(){
       'amount': penceToPounds(charge.amount),
       'return_url': charge.return_url,
       'paymentDescription': charge.description,
-      'post_card_action': paths.card.create
+      'post_card_action': paths.card.create.path
     };
   },
 
