@@ -64,7 +64,7 @@ module.exports = function(){
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
         locals.viewName = 'error';
-        action = _.cloneDeep(this['ERROR']);
+        action = _.cloneDeep(this.error);
       }
 
       locals = (action.locals) ? _.merge(_.cloneDeep(action.locals),locals) : locals;
@@ -82,6 +82,6 @@ module.exports = function(){
 
   return {
     create: create
-  }
+  };
 
 }();

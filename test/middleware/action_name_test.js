@@ -16,10 +16,10 @@ describe('actionName', function () {
         methods: { post: true},
         path: "/card_details"
       }
-    }
+    };
     actionName(req,{},next);
     expect(next.calledOnce).to.be.true;
-    assert.equal(req.actionName,"card.create")
+    assert.equal(req.actionName,"card.create");
   });
 
   it('should not append the viewname to the request if it cannot match', function () {
@@ -29,9 +29,9 @@ describe('actionName', function () {
         methods: { post: true},
         path: "/invalid"
       }
-    }
+    };
     actionName(req,{},next);
     expect(next.calledOnce).to.be.true;
-    assert.equal(req.actionName,undefined)
+    assert.equal(req.actionName,undefined);
   });
 });

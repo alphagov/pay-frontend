@@ -3,7 +3,7 @@ var should    = require('chai').should();
 var assert    = require('assert');
 var Charge    = require(__dirname + '/../../app/models/charge.js');
 var nock      = require('nock');
-var originalHost = process.env.CONNECTOR_HOST
+var originalHost = process.env.CONNECTOR_HOST;
 var wrongPromise = require(__dirname + '/../test_helpers/test_helpers.js').unexpectedPromise;
 
 describe('updateStatus',function(){
@@ -11,7 +11,7 @@ describe('updateStatus',function(){
   describe('when connector is unavailable', function () {
     beforeEach(function() {
       nock.cleanAll();
-      process.env.CONNECTOR_HOST = "http://unavailableServer:65535"
+      process.env.CONNECTOR_HOST = "http://unavailableServer:65535";
     });
 
     afterEach(function() {
@@ -21,7 +21,7 @@ describe('updateStatus',function(){
     it('should return client unavailable', function () {
         return Charge.updateStatus(1,'ENTERING CARD DETAILS').then(wrongPromise,
           function rejected(error){
-            assert.equal(error.message,"CLIENT_UNAVAILABLE")
+            assert.equal(error.message,"CLIENT_UNAVAILABLE");
         });
     });
   });
@@ -31,14 +31,14 @@ describe('updateStatus',function(){
       nock.cleanAll();
       nock(originalHost)
       .put("/v1/frontend/charges/1/status")
-      .reply(422, '<html></html>')
+      .reply(422, '<html></html>');
     });
 
 
     it('should return update_failed', function () {
       return Charge.updateStatus(1,'ENTERING CARD DETAILS').then(wrongPromise,
         function rejected(error){
-          assert.equal(error.message,"UPDATE_FAILED")
+          assert.equal(error.message,"UPDATE_FAILED");
       });
     });
   });
@@ -75,7 +75,7 @@ describe('find',function(){
     it('should return get_failed', function () {
       return Charge.find(1).then(wrongPromise,
         function rejected(error){
-          assert.equal(error.message,"CLIENT_UNAVAILABLE")
+          assert.equal(error.message,"CLIENT_UNAVAILABLE");
       });
     });
   });
@@ -93,7 +93,7 @@ describe('find',function(){
     it('should return get_failed', function () {
       return Charge.find(1).then(wrongPromise,
         function rejected(error){
-          assert.equal(error.message,"GET_FAILED")
+          assert.equal(error.message,"GET_FAILED");
       });
     });
   });
@@ -163,7 +163,7 @@ describe('capture',function(){
     it('should return AUTH_FAILED', function () {
       return Charge.capture(1).then(wrongPromise,
         function rejected(error){
-          assert.equal(error.message,"AUTH_FAILED")
+          assert.equal(error.message,"AUTH_FAILED");
       });
     });
   });
@@ -180,7 +180,7 @@ describe('capture',function(){
     it('should return AUTH_FAILED', function () {
       return Charge.capture(1).then(wrongPromise,
         function rejected(error){
-          assert.equal(error.message,"POST_FAILED")
+          assert.equal(error.message,"POST_FAILED");
       });
     });
   });

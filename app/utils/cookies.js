@@ -20,13 +20,13 @@ module.exports = function () {
   }
 
   var frontendCookie = function () {
-    if (process.env.SESSION_ENCRYPTION_KEY === undefined) throw new Error('cookie encryption key is not set')
-    if (process.env.COOKIE_MAX_AGE === undefined) throw new Error('cookie max age is not set')
+    if (process.env.SESSION_ENCRYPTION_KEY === undefined) throw new Error('cookie encryption key is not set');
+    if (process.env.COOKIE_MAX_AGE === undefined) throw new Error('cookie max age is not set');
     return namedCookie('frontend_state');
   };
 
   return {
     frontendCookie: frontendCookie
-  }
+  };
 
 }();

@@ -19,13 +19,14 @@ module.exports = function(){
     var _default = {
       headers: {"Content-Type": "application/json"},
       data: {}
-    }
+    };
+
     _default.data = _.merge(params,_default.data);
     return _default;
   },
 
   updateToEnterDetails = function(chargeId) {
-    return updateStatus(chargeId,ENTERING_CARD_DETAILS_STATUS)
+    return updateStatus(chargeId,ENTERING_CARD_DETAILS_STATUS);
   },
 
   updateStatus = function(chargeId, status){
@@ -63,7 +64,7 @@ module.exports = function(){
     params  = mergeApiParams(),
     defer   = q.defer();
     client.post(url, params, function(data, response){
-      captureComplete(data, response, defer)
+      captureComplete(data, response, defer);
     })
     .on('error',function(err){ captureFail(err, defer); });
 
@@ -86,7 +87,7 @@ module.exports = function(){
     if (response.statusCode !== 204) {
       logger.error('Failed to update charge status');
       defer.reject(new Error('UPDATE_FAILED'));
-      return
+      return;
     }
 
     defer.resolve({success: "OK"});
@@ -101,5 +102,5 @@ module.exports = function(){
     updateToEnterDetails: updateToEnterDetails,
     find: find,
     capture: capture
-  }
+  };
 }();

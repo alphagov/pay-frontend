@@ -12,7 +12,7 @@ var states = {
   "card.create": [ENTERING_CARD_DETAILS_STATUS],
   "card.confirm":[AUTH_SUCCESS_STATE],
   "card.capture":[AUTH_SUCCESS_STATE],
-}
+};
 
 module.exports = function(req,res,next){
   var correctStates = states[req.actionName],
@@ -20,27 +20,27 @@ module.exports = function(req,res,next){
   locals            = {
     chargeId: req.chargeId,
     returnUrl: req.chargeData.return_url
-  }
+  };
 
   var init = function(){
-    if (!correctStates) throw new Error('Cannot find correct enforcable states for action')
+    if (!correctStates) throw new Error('Cannot find correct enforcable states for action');
     if (!stateCorrect()) return;
     next();
-  }
+  };
 
   var stateCorrect = function(){
     chargeOK = ischargeSessionOK();
     if (!chargeOK) {
       var stateName = currentState.toUpperCase().replace(" ", "_");
       _views.display(res, stateName, locals);
-      return false
+      return false;
     }
-    return true
+    return true;
   },
 
   ischargeSessionOK = function(){
-    return _.includes(correctStates,currentState)
+    return _.includes(correctStates,currentState);
   };
 
   return init();
-}
+};

@@ -22,7 +22,7 @@ function createSessionWithReturnUrl(chargeId, chargeSession, returnUrl) {
 
 module.exports = {
 	createWithReturnUrl : function (chargeId, chargeSession, returnUrl) {
-		return createSessionWithReturnUrl(chargeId, chargeSession, returnUrl)
+		return createSessionWithReturnUrl(chargeId, chargeSession, returnUrl);
 	},
 
 	create : function (chargeId, chargeSession) {

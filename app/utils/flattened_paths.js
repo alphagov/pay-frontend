@@ -10,7 +10,7 @@ module.exports = function(paths){
       if (typeof controller !== 'object') continue;
       for (var actionName in controller) {
         var action = controller[actionName];
-        flattenedPaths[action.path + "_" + action.action] = `${controllerName}.${actionName}`
+        flattenedPaths[action.path + "_" + action.action] = `${controllerName}.${actionName}`;
       }
     }
     return flattenedPaths;

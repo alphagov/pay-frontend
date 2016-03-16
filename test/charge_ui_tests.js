@@ -21,12 +21,11 @@ describe('The charge view', function() {
 
     var body = renderTemplate('charge', templateData);
 
-    body.should.containSelector('form#card-details').withAttributes(
-        {
-          action: postAction,
-          method: "POST",
-          name: "cardDetails"
-        });
+    body.should.containSelector('form#card-details').withAttributes({
+      action: postAction,
+      method: "POST",
+      name: "cardDetails"
+    });
   });
 
   it('should have a \'Make payment\' button.', function () {

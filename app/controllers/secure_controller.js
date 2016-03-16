@@ -19,7 +19,7 @@ module.exports.bindRoutesTo = function(app) {
     var chargeId = req.params.chargeId;
     var sessionChargeIdKey = 'ch_' + chargeId;
 
-    logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey])
+    logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey]);
 
     if(!req.frontend_state[sessionChargeIdKey]) {
       var connectorUrl = paths.generateRoute(paths.connectorCharge.token.path,{chargeTokenId: chargeTokenId});
@@ -54,7 +54,7 @@ module.exports.bindRoutesTo = function(app) {
 
       switch(tokenVerifyResponse.statusCode) {
         case 200: {
-          logger.info('valid token found chargeTokenId=' + chargeTokenId)
+          logger.info('valid token found chargeTokenId=' + chargeTokenId);
           logger.info('tokenVerifyData=', tokenVerifyData);
           if(chargeId != tokenVerifyData.chargeId) {
             logger.error('Unexpected: chargeId from connector=' + tokenVerifyData.chargeId + ' != chargeId from query=' + chargeId);

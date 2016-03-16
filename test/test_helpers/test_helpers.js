@@ -44,7 +44,7 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
             'rel': 'cardCapture',
             'method': 'POST'
         }]
-    }
+    };
 }
 
 module.exports = {
@@ -64,9 +64,9 @@ module.exports = {
                             });
                             done();
                         });
-                }
+                };
             }
-        }
+        };
     },
 
     get_charge_request: function (app, cookieValue, chargeId) {
@@ -97,7 +97,7 @@ module.exports = {
         return chai_expect(JSON.parse(res.text)[key]).to.deep.equal(value);
     },
     unexpectedPromise: function(data){
-        throw new Error('Promise was unexpectedly fulfilled.')
+        throw new Error('Promise was unexpectedly fulfilled.');
     }
 
 };
