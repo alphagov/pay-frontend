@@ -73,7 +73,7 @@ module.exports = function(){
   captureComplete = function(data, response, defer) {
     var code = response.statusCode;
     if (code == 204) return defer.resolve();
-    if (code == 400) return defer.reject(new Error('AUTH_FAILED'));
+    if (code == 400) return defer.reject(new Error('CAPTURE_FAILED'));
     return defer.reject(new Error('POST_FAILED'));
   },
 
@@ -86,7 +86,7 @@ module.exports = function(){
     if (response.statusCode !== 204) {
       logger.error('Failed to update charge status');
       defer.reject(new Error('UPDATE_FAILED'));
-      return
+      return;
     }
 
     defer.resolve({success: "OK"});

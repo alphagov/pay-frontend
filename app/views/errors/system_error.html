@@ -6,12 +6,17 @@ An error occurred
 
 {{$content}}
 
-<main id="content" role="main" class="content-wrapper">
-
-<h1 class="page-title">Sorry we are experiencing technical problems</h1>
-<p>No money has been taken from your account</p>
-
-<a href="{{returnUrl}}"  id="return_url">Return to service</a>
+<main id="content" role="main" class="content-wrapper error-pages grid-row">
+<div class="column-two-thirds">
+  <h1 class="heading-large">Sorry, we're experiencing technical problems</h1>
+  {{^returnUrl}}
+  <p class="lede">No money has been taken from your account, please try again later.</p>
+  {{/returnUrl}}
+  {{#returnUrl}}
+  <p class="lede">No money has been taken from your account</p>
+  <a href="{{returnUrl}}"  id="return_url" class="lede">Go back to start the payment again</a>
+  {{/returnUrl}}
+</div>
 </main>
 
 {{/content}}

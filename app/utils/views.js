@@ -16,15 +16,12 @@ module.exports = function(){
       code: 500,
       view: 'error',
       locals: {
-        message: 'There is a problem with the payments platform'
+        message: 'There is a problem, please try again later'
       }
     },
     SESSION_INCORRECT: {
-      code: 200,
-      view: 'error',
-      locals: {
-        message: 'Session expired'
-      }
+      code: 422,
+      view: "errors/incorrect_state/session_expired"
     },
     SYSTEM_ERROR: {
       code: 500,
@@ -45,13 +42,15 @@ module.exports = function(){
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
     },
+
     CAPTURE_FAILURE: {
-      view: "errors/charge_confirm_state_completed",
-      locals: { status: 'unsuccessful' }
+      view: "errors/incorrect_state/capture_failure"
     },
+
     AUTHORISATION_SUCCESS: {
         view: "errors/incorrect_state/auth_success"
     },
+
     AUTHORISATION_REJECTED: {
         view: "errors/incorrect_state/auth_failure"
     },

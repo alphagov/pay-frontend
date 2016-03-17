@@ -6,11 +6,12 @@ Your Payment expired
 
 {{$content}}
 
-<main id="content" role="main" class="content-wrapper">
-	<h1 class="page-title"> Your payment has expired</h1>
-	<p>No money has been taken from your account.</p>
-	<p><a href="{{returnUrl}}"> Go back to example name service</a></p>
-	<p>You can try to pay again.</p>
+<main id="content" role="main" class="content-wrapper error-pages grid-row">
+  <div class="column-two-thirds">
+  	<h1 class="heading-large"> Your payment session has expired</h1>
+  	<p class="lede">No money has been taken from your account.</p>
+  	<p class="lede"><a href="{{returnUrl}}"> Go back to start the payment again</a></p>
+  </div>
 </main>
 
 {{/content}}

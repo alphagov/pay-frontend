@@ -119,9 +119,7 @@ module.exports.capture = function (req, res) {
     },
 
     captureFail = function(err){
-        if (err.message == 'AUTH_FAILED') return _views.display(res, 'ERROR', {
-            message: "There was a problem processing your payment. Please contact the service."
-        });
+        if (err.message == 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE');
         _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
     };
     init();
