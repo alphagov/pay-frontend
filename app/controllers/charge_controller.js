@@ -5,13 +5,13 @@ var Client          = require('node-rest-client').Client;
 var client          = new Client();
 var views           = require('../utils/views.js');
 var chargeParam     = require('../services/charge_param_retriever.js');
-var normalise       = require('../services/normalise.js');
+var normalise       = require('../services/normalise_charg,.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
 var paths           = require('../paths.js');
 var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
-var CHARGE_VIEW = 'charge';
-var CONFIRM_VIEW = 'confirm';
+var CHARGE_VIEW = 'charge',
+CONFIRM_VIEW    = 'confirm';
 
 module.exports.new = function(req, res) {
     var _views  = views.create(),
@@ -27,7 +27,7 @@ module.exports.new = function(req, res) {
         });
     };
     init();
-}
+};
 
 module.exports.create = function(req, res) {
     var _views      = views.create(),

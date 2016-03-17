@@ -1,5 +1,4 @@
-var logger = require('winston');
-
+'use strict';
 module.exports = function(){
   var _charge = function(charge,chargeId){
     return {
@@ -40,8 +39,8 @@ module.exports = function(){
 
   },
   creditCard = function(creditCardNo){
-    return creditCardNo.replace(/\D/g,'')
-  }
+    return creditCardNo.replace(/\D/g,'');
+  };
 
   return {
     charge: _charge,
@@ -49,7 +48,7 @@ module.exports = function(){
     addressLines: addressLines,
     addressForView: addressForView,
     creditCard: creditCard
-  }
+  };
 
 }();
 
