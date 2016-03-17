@@ -1,7 +1,7 @@
 var should = require('chai').should();
 var assert = require('assert');
 var expect = require('chai').expect;
-var normalise= require(__dirname + '/../../app/services/normalise.js');
+var normalise= require(__dirname + '/../../app/services/normalise_charge.js');
 
 var _      = require('lodash');
 
