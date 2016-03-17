@@ -4,7 +4,6 @@ var luhn            = require('luhn');
 var Client          = require('node-rest-client').Client;
 var client          = new Client();
 var views           = require('../utils/views.js');
-var chargeParam     = require('../services/charge_param_retriever.js');
 var normalise       = require('../services/normalise_charge.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
