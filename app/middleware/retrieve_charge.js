@@ -11,7 +11,6 @@ module.exports = function(req, res, next){
 
   var init = function(){
     var chargeId = chargeParam.retrieve(req);
-    console.log(!chargeId);
     if (!chargeId) return _views.display(res,"SYSTEM_ERROR");
     req.chargeId = chargeId;
 
