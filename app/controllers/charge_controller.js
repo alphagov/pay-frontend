@@ -75,14 +75,14 @@ module.exports.create = function(req, res) {
                 logger.error('got response code 500 from connector');
                 return _views.display(res,'SYSTEM_ERROR',{returnUrl: charge.return_url});
             default:
-                res.redirect(303,paths.generateRoute(paths.card.new.path,{chargeId: charge.id}))
+                res.redirect(303,paths.generateRoute(paths.card.new.path,{chargeId: charge.id}));
         }
     }).on('error', function (err) {
         logger.error('Exception raised calling connector: ' + err);
         _views.display(res,"ERROR");
 
     });
-}
+};
 
 module.exports.confirm = function(req, res) {
     charge          = normalise.charge(req.chargeData,req.chargeId),
@@ -105,7 +105,7 @@ module.exports.confirm = function(req, res) {
         _views.display(res,'success');
     };
     init();
-}
+};
 
 module.exports.capture = function (req, res) {
     var _views  = views.create(),
@@ -123,7 +123,7 @@ module.exports.capture = function (req, res) {
         _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
     };
     init();
-}
+};
 
 
 // none of the following really belongs in the controller
