@@ -46,11 +46,8 @@ describe('retrieve param test', function () {
   // the charge param retriever tests
   it('should call not found view if charge param does not return an id', function () {
     retrieveCharge( { params: {}, body: {} },response,next)
-    assert(status.calledWith(404));
-    assert(render.calledWith('error',
-      { message: "Page cannot be found",
-        viewName: "NOT_FOUND" }
-      ));
+    assert(status.calledWith(500));
+    assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR' }));
     expect(next.notCalled).to.be.true;
 
   });
@@ -66,10 +63,8 @@ describe('retrieve param test', function () {
 
       testPromise.then((result) => {
         try {
-          assert(status.calledWith(404));
-          assert(render.calledWith('error',
-            { message: "Page cannot be found", viewName: "NOT_FOUND" }
-          ));
+          assert(status.calledWith(500));
+          assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR' }));
           expect(next.notCalled).to.be.true;
           done();
         }

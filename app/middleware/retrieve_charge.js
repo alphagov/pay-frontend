@@ -11,7 +11,7 @@ module.exports = function(req, res, next){
 
   var init = function(){
     var chargeId = chargeParam.retrieve(req);
-    if (!chargeId) return _views.display(res,"NOT_FOUND");
+    if (!chargeId) return _views.display(res,"SYSTEM_ERROR");
     req.chargeId = chargeId;
 
     Charge.find(chargeId).then(gotCharge, apiFail);
@@ -23,10 +23,10 @@ module.exports = function(req, res, next){
   },
 
   apiFail = function(error){
-    _views.display(res,"NOT_FOUND");
+    _views.display(res,"SYSTEM_ERROR");
   };
 
   init();
 
-  return defer.promise
+  return defer.promise;
 };

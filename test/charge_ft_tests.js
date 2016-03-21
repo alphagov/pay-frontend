@@ -261,9 +261,9 @@ describe('chargeTests',function(){
       form_data.addressCity = card_data.address.city;
 
       post_charge_request(cookieValue, form_data)
-        .expect(404)
+        .expect(500)
         .expect(function(res){
-          helper.expectTemplateTohave(res,"message","Page cannot be found");
+          helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
         })
         .end(done);
     });
@@ -380,9 +380,9 @@ describe('chargeTests',function(){
         .expect(function(res) {
           should.not.exist(res.headers['set-cookie']);
         })
-        .expect(404)
+        .expect(500)
         .expect(function(res){
-          helper.expectTemplateTohave(res,"message","Page cannot be found");
+          helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
         })
         .end(done);
     });
@@ -414,9 +414,9 @@ describe('chargeTests',function(){
             connector_response_for_put_charge(chargeId, 400 , {'message':'some error'});
 
             get_charge_request(app, cookieValue, chargeId)
-              .expect(404)
+              .expect(500)
               .expect(function(res){
-                helper.expectTemplateTohave(res,"message","Page cannot be found");
+                helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
               })
               .end(done);
         });
@@ -426,9 +426,9 @@ describe('chargeTests',function(){
             connector_response_for_put_charge(chargeId, 500 , {});
 
             get_charge_request(app, cookieValue, chargeId)
-              .expect(404)
+              .expect(500)
               .expect(function(res){
-                helper.expectTemplateTohave(res,"message","Page cannot be found");
+                helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
               })
               .end(done);
         });
@@ -482,9 +482,9 @@ describe('chargeTests',function(){
         request(app)
           .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId, sessionData)])
-          .expect(200)
+          .expect(422)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message","Session expired");
+            helper.expectTemplateTohave(res,"viewName","SESSION_INCORRECT");
           })
           .end(done);
       };
@@ -534,9 +534,9 @@ describe('chargeTests',function(){
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-          .expect(500)
+          .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","ERROR");
+            helper.expectTemplateTohave(res,"viewName","CAPTURE_FAILURE");
           })
           .end(done);
     });
@@ -548,9 +548,9 @@ describe('chargeTests',function(){
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
-          .expect(404)
+          .expect(500)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message","Page cannot be found");
+            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
     });

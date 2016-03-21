@@ -73,7 +73,7 @@ describe('views helper', function () {
     'ERROR': {
       template: 'error',
       code: 500,
-      message: 'There is a problem with the payments platform'
+      message: 'There is a problem, please try again later'
     },
     'NOT_FOUND':{
       template: 'error',
@@ -89,6 +89,7 @@ describe('views helper', function () {
         _views = views.create();
         _views.display(response,name);
         assert(status.calledWith(values.code));
+
         assert(render.calledWith(values.template,
           { message: values.message,
           viewName: name }

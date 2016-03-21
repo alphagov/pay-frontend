@@ -183,8 +183,7 @@ describe('The /confirm endpoint dealt statuses', function () {
     },
     {
       name: 'capture failure',
-      view: "CAPTURE_FAILURE",
-      viewState: 'unsuccessful'
+      view: "CAPTURE_FAILURE"
     },
     {
       name: 'system error',

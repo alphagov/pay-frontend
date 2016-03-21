@@ -6,16 +6,17 @@ Your payment is in progress
 
 {{$content}}
 
-<main id="content" role="main" class="content-wrapper">
+<main id="content" role="main" class="content-wrapper error-pages grid-row">
+<div class="column-two-thirds">
+  <h1 class="heading-large"> Your payment is in progress </h1>
+  <p class="lede"> You can either:</p>
+  <!-- TODO PP-545 -->
+  <a class="lede" href="/card_details/{{chargeId}}/confirm" id="confirm-link"> Continue with your payment </a>
 
-<h1 class="page-title"> Your payment is in progress </h1>
-<p> You can either</p>
-<!-- TODO PP-545 -->
-<a href="/card_details/{{chargeId}}/confirm" id="confirm-link"> continue your payment </a>
+  <p class="lede">or</p>
 
-<p> or you can </p>
-
-<a href="{{returnUrl}}"> return to the service to make a new payment </a>
+  <a href="{{returnUrl}}" class="lede">Go back to start the payment again</a>
+</div>
 </main>
 
 {{/content}}
