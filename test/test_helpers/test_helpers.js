@@ -94,10 +94,17 @@ module.exports = {
   },
 
   raw_successful_get_charge: raw_successful_get_charge,
-  expectTemplateTohave: function(res,key,value){
+
+  templateValue: function(res,key,value){
     var body = JSON.parse(res.text);
     return chai_expect(_.result(body,key)).to.deep.equal(value);
   },
+
+  templateValueNotUndefined: function(res,key){
+    var body = JSON.parse(res.text);
+    return chai_expect(_.result(body,key)).to.not.be.undefined;
+  },
+
   unexpectedPromise: function(data){
     throw new Error('Promise was unexpectedly fulfilled.');
   },

@@ -41,8 +41,12 @@ describe('chargeTests',function(){
     return connectorMock.post(connectorChargePath + chargeId + '/cards', data);
   }
 
-  function post_charge_request(cookieValue, data) {
-    data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET);
+  function post_charge_request(cookieValue, data,sendCSRF) {
+    sendCSRF = (sendCSRF === undefined) ? true : sendCSRF;
+    if (sendCSRF) {
+      data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET);
+    }
+
     return request(app)
         .post(frontendCardDetailsPath)
         .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -127,11 +131,12 @@ describe('chargeTests',function(){
         get(status)
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"amount",'23.45');
-            helper.expectTemplateTohave(res,"id",chargeId);
-            helper.expectTemplateTohave(res,"return_url",RETURN_URL);
-            helper.expectTemplateTohave(res,"description","Payment Description");
-            helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValueNotUndefined(res,"csrf");
+            helper.templateValue(res,"amount",'23.45');
+            helper.templateValue(res,"id",chargeId);
+            helper.templateValue(res,"return_url",RETURN_URL);
+            helper.templateValue(res,"description","Payment Description");
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
           })
           .end(done);
       };
@@ -147,7 +152,7 @@ describe('chargeTests',function(){
         get("invalid")
           .expect(500)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"message","View INVALID not found");
+            helper.templateValue(res,"message","View INVALID not found");
           }).end(done);
       });
 
@@ -155,7 +160,7 @@ describe('chargeTests',function(){
         get("authorisation success")
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","AUTHORISATION_SUCCESS");
+            helper.templateValue(res,"viewName","AUTHORISATION_SUCCESS");
           }).end(done);
       });
 
@@ -163,7 +168,7 @@ describe('chargeTests',function(){
         get("authorisation rejected")
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","AUTHORISATION_REJECTED");
+            helper.templateValue(res,"viewName","AUTHORISATION_REJECTED");
           }).end(done);
       });
 
@@ -182,6 +187,17 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'))
           .expect(303)
           .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .end(done);
+    });
+
+
+    it('should error without csrf', function(done) {
+      var cookieValue = cookie.create(chargeId);
+      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      connector_expects(minimum_connector_card_data('5105105105105100'))
+          .reply(204);
+      post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'),false)
+          .expect(404)
           .end(done);
     });
 
@@ -223,6 +239,7 @@ describe('chargeTests',function(){
           .expect(303, {})
           .expect(function(res) {
                     var session = cookie.decrypt(res, chargeId);
+
                     should.equal(session.cardNumber, "************5100");
                     should.equal(session.expiryDate, '11/99');
                     should.equal(session.cardholderName, 'Jimi Hendrix');
@@ -265,7 +282,11 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, form_data)
         .expect(500)
         .expect(function(res){
+<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
           helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+=======
+          helper.templateValue(res,"message","Page cannot be found");
+>>>>>>> PP-502 add integration tests
         })
         .end(done);
     });
@@ -277,13 +298,13 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"id",chargeId);
-            helper.expectTemplateTohave(res,"return_url",RETURN_URL);
-            helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
-            helper.expectTemplateTohave(res,"hasError",true);
-            helper.expectTemplateTohave(res,"amount",'23.45');
-            helper.expectTemplateTohave(res,"errorFields",[{"key": "card-no", "value": "Card number is invalid"}]);
-            helper.expectTemplateTohave(res,"highlightErrorFields",{"cardNo": "Please enter the long number on the front of your card"});
+            helper.templateValue(res,"id",chargeId);
+            helper.templateValue(res,"return_url",RETURN_URL);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"hasError",true);
+            helper.templateValue(res,"amount",'23.45');
+            helper.templateValue(res,"errorFields",[{"key": "card-no", "value": "Card number is invalid"}]);
+            helper.templateValue(res,"highlightErrorFields",{"cardNo": "Please enter the long number on the front of your card"});
           })
           .end(done);
     });
@@ -294,12 +315,12 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, missing_form_card_data())
           .expect(200)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"id",chargeId);
-            helper.expectTemplateTohave(res,"description","Payment Description");
-            helper.expectTemplateTohave(res,"post_card_action",frontendCardDetailsPath);
-            helper.expectTemplateTohave(res,"hasError",true);
-            helper.expectTemplateTohave(res,"amount","23.45");
-            helper.expectTemplateTohave(res,"errorFields", [
+            helper.templateValue(res,"id",chargeId);
+            helper.templateValue(res,"description","Payment Description");
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"hasError",true);
+            helper.templateValue(res,"amount","23.45");
+            helper.templateValue(res,"errorFields", [
               {"key": "cardholder-name", "value": "Name on card is missing"},
               {"key": "card-no", "value": "Card number is missing"},
               {"key": "cvc", "value": "CVC is missing"},
@@ -308,7 +329,7 @@ describe('chargeTests',function(){
               {"key": "address-postcode", "value": "Postcode is missing"}
             ]);
 
-            helper.expectTemplateTohave(res,"highlightErrorFields",{
+            helper.templateValue(res,"highlightErrorFields",{
               "cardholderName":"Please enter the name as it appears on the card",
               "cardNo":"Please enter the long number on the front of your card",
               "cvc":"Please enter your card security code",
@@ -384,7 +405,11 @@ describe('chargeTests',function(){
         })
         .expect(500)
         .expect(function(res){
+<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
           helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+=======
+          helper.templateValue(res,"message","Page cannot be found");
+>>>>>>> PP-502 add integration tests
         })
         .end(done);
     });
@@ -402,11 +427,13 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId)
               .expect(200)
               .expect(function(res){
-                helper.expectTemplateTohave(res,"id",chargeId);
-                helper.expectTemplateTohave(res,"amount",'23.45');
-                helper.expectTemplateTohave(res,"return_url",'http://www.example.com/service');
-                helper.expectTemplateTohave(res,"description",'Payment Description');
-                helper.expectTemplateTohave(res,"post_card_action",'/card_details');
+                helper.templateValue(res,"id",chargeId);
+                helper.templateValueNotUndefined(res,"csrf");
+                helper.templateValue(res,"id",chargeId);
+                helper.templateValue(res,"amount",'23.45');
+                helper.templateValue(res,"return_url",'http://www.example.com/service');
+                helper.templateValue(res,"description",'Payment Description');
+                helper.templateValue(res,"post_card_action",'/card_details');
               })
               .end(done);
         });
@@ -418,7 +445,11 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId)
               .expect(500)
               .expect(function(res){
+<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
                 helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+=======
+                helper.templateValue(res,"message","Page cannot be found");
+>>>>>>> PP-502 add integration tests
               })
               .end(done);
         });
@@ -430,16 +461,20 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId)
               .expect(500)
               .expect(function(res){
+<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
                 helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+=======
+                helper.templateValue(res,"message","Page cannot be found");
+>>>>>>> PP-502 add integration tests
               })
               .end(done);
         });
   });
 
   describe('The /card_details/charge_id/confirm endpoint', function () {
-  beforeEach(function() {
-    nock.cleanAll();
-  });
+    beforeEach(function() {
+      nock.cleanAll();
+    });
 
     var fullSessionData = {
 
@@ -460,13 +495,14 @@ describe('chargeTests',function(){
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(200)
         .expect(function(res){
-          helper.expectTemplateTohave(res,"session.cardNumber","************5100");
-          helper.expectTemplateTohave(res,"session.expiryDate","11/99");
-          helper.expectTemplateTohave(res,"session.cardholderName","T Eulenspiegel");
-          helper.expectTemplateTohave(res,"session.address","Kneitlingen, Brunswick, Germany");
-          helper.expectTemplateTohave(res,"session.serviceName","Pranks incorporated");
-          helper.expectTemplateTohave(res,"amount","23.45");
-          helper.expectTemplateTohave(res,"description","Payment Description");
+          helper.templateValueNotUndefined(res,"csrf");
+          helper.templateValue(res,"session.cardNumber","************5100");
+          helper.templateValue(res,"session.expiryDate","11/99");
+          helper.templateValue(res,"session.cardholderName","T Eulenspiegel");
+          helper.templateValue(res,"session.address","Kneitlingen, Brunswick, Germany");
+          helper.templateValue(res,"session.serviceName","Pranks incorporated");
+          helper.templateValue(res,"amount","23.45");
+          helper.templateValue(res,"description","Payment Description");
         })
         .end(done);
     });
@@ -495,9 +531,9 @@ describe('chargeTests',function(){
     });
 
     it('should post to the connector capture url looked up from the connector when a post arrives', function (done) {
-            nock(process.env.CONNECTOR_HOST)
-              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
-              .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
+      nock(process.env.CONNECTOR_HOST)
+        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
+        .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
@@ -508,6 +544,20 @@ describe('chargeTests',function(){
           .expect('Location', 'http://www.example.com/service')
           .end(done);
     });
+
+    it('should error if no csrf token', function (done) {
+      nock(process.env.CONNECTOR_HOST)
+        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
+        .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
+
+      request(app)
+          .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+          .set('Accept', 'application/json')
+          .expect(404)
+          .end(done);
+    });
+
 
     it('connector failure when trying to capture should result in error page', function (done) {
        nock(process.env.CONNECTOR_HOST)
@@ -520,8 +570,8 @@ describe('chargeTests',function(){
           .send({ csrfToken: helper.csrfToken() })
           .expect(500)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
-            helper.expectTemplateTohave(res,"returnUrl","http://www.example.com/service");
+            helper.templateValue(res,"viewName","SYSTEM_ERROR");
+            helper.templateValue(res,"returnUrl","http://www.example.com/service");
           })
           .end(done);
     });
@@ -567,7 +617,7 @@ describe('chargeTests',function(){
           .send({ csrfToken: helper.csrfToken() })
           .expect(500)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+            helper.templateValue(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
     });
@@ -580,7 +630,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .expect(500)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+            helper.templateValue(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
     });
