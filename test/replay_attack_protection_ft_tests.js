@@ -39,7 +39,7 @@ describe('The secure /charge endpoint', function() {
       .expect(303)
       .expect(function(res) {
         var decoded_session = cookie.decrypt(res, chargeId);
-        assert.deepEqual({}, decoded_session);
+        assert.equal(true, decoded_session !== undefined);
       })
       .end(done);
   });

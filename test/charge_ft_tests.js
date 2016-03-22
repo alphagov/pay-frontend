@@ -6,6 +6,7 @@ var app = require(__dirname + '/../server.js').getApp;
 var mock_templates = require(__dirname + '/test_helpers/mock_templates.js');
 app.engine('html', mock_templates.__express);
 var chai_expect = require('chai').expect;
+var csrf = require('csrf');
 
 
 var should = require('chai').should();
@@ -41,6 +42,7 @@ describe('chargeTests',function(){
   }
 
   function post_charge_request(cookieValue, data) {
+    data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET);
     return request(app)
         .post(frontendCardDetailsPath)
         .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -458,13 +460,11 @@ describe('chargeTests',function(){
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(200)
         .expect(function(res){
-          helper.expectTemplateTohave(res,"session",{
-            'cardNumber': "************5100",
-            "expiryDate":"11/99",
-            "cardholderName":"T Eulenspiegel",
-            "address":"Kneitlingen, Brunswick, Germany",
-            "serviceName":"Pranks incorporated",
-          });
+          helper.expectTemplateTohave(res,"session.cardNumber","************5100");
+          helper.expectTemplateTohave(res,"session.expiryDate","11/99");
+          helper.expectTemplateTohave(res,"session.cardholderName","T Eulenspiegel");
+          helper.expectTemplateTohave(res,"session.address","Kneitlingen, Brunswick, Germany");
+          helper.expectTemplateTohave(res,"session.serviceName","Pranks incorporated");
           helper.expectTemplateTohave(res,"amount","23.45");
           helper.expectTemplateTohave(res,"description","Payment Description");
         })
@@ -499,9 +499,9 @@ describe('chargeTests',function(){
               .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
               .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
 
-
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .send({ csrfToken: helper.csrfToken() })
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(303, {})
@@ -517,6 +517,7 @@ describe('chargeTests',function(){
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
+          .send({ csrfToken: helper.csrfToken() })
           .expect(500)
           .expect(function(res){
             helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
@@ -534,7 +535,7 @@ describe('chargeTests',function(){
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-          .expect(200)
+          .send({ csrfToken: helper.csrfToken() })
           .expect(function(res){
             helper.expectTemplateTohave(res,"viewName","CAPTURE_FAILURE");
           })
@@ -546,6 +547,7 @@ describe('chargeTests',function(){
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .send({ csrfToken: helper.csrfToken() })
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(500)
@@ -558,10 +560,11 @@ describe('chargeTests',function(){
 
     it('should produce an error if the connector returns a non-204 status', function (done) {
       default_connector_response_for_get_charge(chargeId, AUTH_SUCCESS_STATE);
-      connectorMock.post(connectorChargePath + chargeId + "/capture", {}).reply(1234);
+      connectorMock.post(connectorChargePath + chargeId + "/capture").reply(1234);
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+          .send({ csrfToken: helper.csrfToken() })
           .expect(500)
           .expect(function(res){
             helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
@@ -573,6 +576,7 @@ describe('chargeTests',function(){
       default_connector_response_for_get_charge(chargeId, AUTH_SUCCESS_STATE);
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .send({ csrfToken: helper.csrfToken() })
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .expect(500)
           .expect(function(res){

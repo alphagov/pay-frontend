@@ -4,6 +4,7 @@ var luhn            = require('luhn');
 var Client          = require('node-rest-client').Client;
 var client          = new Client();
 var views           = require('../utils/views.js');
+var session         = require('../utils/session.js');
 var normalise       = require('../services/normalise_charge.js');
 var Charge          = require('../models/charge.js');
 var _               = require('lodash');
@@ -31,7 +32,7 @@ module.exports.new = function(req, res) {
 module.exports.create = function(req, res) {
     var _views      = views.create(),
     charge          = normalise.charge(req.chargeData,req.chargeId),
-    chargeSession   = chargeState(req, charge.id);
+    chargeSession   = session(req, charge.id);
     normalise.addressLines(req.body);
     var checkResult = validateNewCharge(req.body);
 
@@ -86,7 +87,7 @@ module.exports.create = function(req, res) {
 
 module.exports.confirm = function(req, res) {
     charge          = normalise.charge(req.chargeData,req.chargeId),
-    chargeSession   = chargeState(req, charge.id),
+    chargeSession   = session(req, charge.id),
     sessionValid    = validSession(chargeSession),
     confirmPath     = paths.generateRoute(paths.card.confirm.path,{chargeId: charge.id}),
     _views = views.create({ success: {
@@ -156,21 +157,15 @@ var REQUIRED_FORM_FIELDS = {
         message: 'Please enter a valid postcode' }
 };
 
-function createChargeIdSessionKey(chargeId) {
-    return 'ch_' + chargeId;
-}
 
-function chargeState(req, chargeId) {
-    return req.frontend_state[createChargeIdSessionKey(chargeId)];
-}
 
 function validSession(chargeSession) {
-    var required = ['expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName']
+    var required = ['expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'];
 
     for (key = 0; key < required.length; key++) {
-        if (!_.has(chargeSession,required[key])) return false
+        if (!_.has(chargeSession,required[key])) return false;
     }
-    return true
+    return true;
 }
 
 
@@ -202,7 +197,7 @@ function validateNewCharge(body) {
         }
     }
     logger.info("Card details check result: "+JSON.stringify(checkResult));
-    return checkResult
+    return checkResult;
 }
 
 

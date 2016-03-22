@@ -1,5 +1,6 @@
 require('array.prototype.find');
 var logger          = require('winston');
+var csrf            = require('csrf');
 var response        = require('../utils/response.js').response;
 var ERROR_MESSAGE   = require('../utils/response.js').ERROR_MESSAGE;
 var ERROR_VIEW      = require('../utils/response.js').ERROR_VIEW;
@@ -54,7 +55,7 @@ module.exports.bindRoutesTo = function(app) {
 
       switch(tokenVerifyResponse.statusCode) {
         case 200: {
-          logger.info('valid token found chargeTokenId=' + chargeTokenId)
+          logger.info('valid token found chargeTokenId=' + chargeTokenId);
           logger.info('tokenVerifyData=', tokenVerifyData);
           if(chargeId != tokenVerifyData.chargeId) {
             logger.error('Unexpected: chargeId from connector=' + tokenVerifyData.chargeId + ' != chargeId from query=' + chargeId);
@@ -67,7 +68,9 @@ module.exports.bindRoutesTo = function(app) {
           client.delete(connectorUrl, function(tokenDeleteData, tokenDeleteResponse) {
             logger.info('response from the connector=' + tokenDeleteResponse.statusCode);
             if(tokenDeleteResponse.statusCode === 204) {
-              req.frontend_state[sessionChargeIdKey] = {};
+              req.frontend_state[sessionChargeIdKey] = {
+                csrfSecret: csrf().secretSync()
+              };
               redirectToCardDetails(res, chargeId);
               return;
             }
