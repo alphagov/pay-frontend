@@ -53,11 +53,8 @@ describe('retrieve param test', function () {
   var assertErrorRequest = function(next,resp,status,render) {
     expect(next.called).to.not.be.true;
     expect(resp.locals.csrf).to.be.undefined;
-    assert(status.calledWith(404));
-    assert(render.calledWith('error',
-      { message: "Page cannot be found",
-        viewName: "NOT_FOUND" }
-      ));
+    assert(status.calledWith(500));
+    assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR' }));
   },
 
   assertValidRequest = function(next,resp,status,render) {

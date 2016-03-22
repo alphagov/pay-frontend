@@ -197,7 +197,7 @@ describe('chargeTests',function(){
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
       post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'),false)
-          .expect(404)
+          .expect(500)
           .end(done);
     });
 
@@ -282,11 +282,7 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, form_data)
         .expect(500)
         .expect(function(res){
-<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
-          helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
-=======
-          helper.templateValue(res,"message","Page cannot be found");
->>>>>>> PP-502 add integration tests
+          helper.templateValue(res,"viewName","SYSTEM_ERROR");
         })
         .end(done);
     });
@@ -405,11 +401,7 @@ describe('chargeTests',function(){
         })
         .expect(500)
         .expect(function(res){
-<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
-          helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
-=======
-          helper.templateValue(res,"message","Page cannot be found");
->>>>>>> PP-502 add integration tests
+          helper.templateValue(res,"viewName","SYSTEM_ERROR");
         })
         .end(done);
     });
@@ -445,11 +437,7 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId)
               .expect(500)
               .expect(function(res){
-<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
-                helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
-=======
-                helper.templateValue(res,"message","Page cannot be found");
->>>>>>> PP-502 add integration tests
+                helper.templateValue(res,"viewName","SYSTEM_ERROR");
               })
               .end(done);
         });
@@ -461,11 +449,7 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId)
               .expect(500)
               .expect(function(res){
-<<<<<<< ef4b9d5fd2c05ea555fe937900dc42aba1a31e7f
-                helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
-=======
-                helper.templateValue(res,"message","Page cannot be found");
->>>>>>> PP-502 add integration tests
+                helper.templateValue(res,"viewName","SYSTEM_ERROR");
               })
               .end(done);
         });
@@ -520,7 +504,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId, sessionData)])
           .expect(422)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","SESSION_INCORRECT");
+            helper.templateValue(res,"viewName","SESSION_INCORRECT");
           })
           .end(done);
       };
@@ -554,7 +538,7 @@ describe('chargeTests',function(){
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
-          .expect(404)
+          .expect(500)
           .end(done);
     });
 
@@ -587,7 +571,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
           .send({ csrfToken: helper.csrfToken() })
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","CAPTURE_FAILURE");
+            helper.templateValue(res,"viewName","CAPTURE_FAILURE");
           })
           .end(done);
     });
@@ -602,7 +586,7 @@ describe('chargeTests',function(){
           .set('Accept', 'application/json')
           .expect(500)
           .expect(function(res){
-            helper.expectTemplateTohave(res,"viewName","SYSTEM_ERROR");
+            helper.templateValue(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
     });
