@@ -20,8 +20,14 @@ module.exports.bind = function (app) {
   controllers.bindRoutesTo(app);
 
   var card = paths.card;
-  app.get(card.new.path, csrf, actionName, retrieveCharge, stateEnforcer, charge.new);
-  app.post(card.create.path, csrf, actionName, retrieveCharge, stateEnforcer, charge.create);
-  app.get(card.confirm.path, csrf, actionName, retrieveCharge, stateEnforcer, charge.confirm);
-  app.post(card.capture.path, csrf, actionName, retrieveCharge, stateEnforcer, charge.capture);
+  var middlewareStack = [
+    csrf,
+    actionName,
+    retrieveCharge,
+    stateEnforcer
+  ];
+  app.get(card.new.path,      middlewareStack, charge.new);
+  app.post(card.create.path,  middlewareStack, charge.create);
+  app.get(card.confirm.path,  middlewareStack, charge.confirm);
+  app.post(card.capture.path, middlewareStack, charge.capture);
 };

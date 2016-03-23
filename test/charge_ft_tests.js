@@ -5,7 +5,6 @@ var nock = require('nock');
 var app = require(__dirname + '/../server.js').getApp;
 var mock_templates = require(__dirname + '/test_helpers/mock_templates.js');
 app.engine('html', mock_templates.__express);
-var chai_expect = require('chai').expect;
 var csrf = require('csrf');
 
 
@@ -21,7 +20,6 @@ var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_
 var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
 var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
 var AUTH_SUCCESS_STATE = 'AUTHORISATION SUCCESS';
-var CREATED_STATE = 'CREATED';
 
 describe('chargeTests',function(){
 
