@@ -35,9 +35,11 @@ module.exports = function(req, res, next){
       console.error('CSRF USED');
       return false;
     }
+    var verify = csrf().verify(chargeSession.csrfSecret, csrfToken);
+    if (verify === false) return false;
 
     chargeSession.csrfTokens.push(csrfToken);
-    return csrf().verify(chargeSession.csrfSecret, csrfToken);
+    return true;
   },
 
   csrfUsed = function(){
