@@ -36,6 +36,7 @@ describe('The charge view', function() {
 
   it('should show all input fields.', function () {
      var body = renderTemplate('charge', {'id' : '1234'});
+     body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden');
      body.should.containInputWithIdAndName('card-no', 'cardNo', 'text').withAttribute('maxlength', '19').withLabel('card-no-lbl', 'Card number');
      body.should.containInputWithIdAndName('cvc', 'cvc', 'text').withAttribute('maxlength', '3').withLabel('cvc-lbl', 'Card security code');
      body.should.containInputWithIdAndName('expiry-date', 'expiryDate', 'text').withAttribute('maxlength', '5').withLabel('expiry-date-lbl', 'Expiry date');
@@ -65,6 +66,7 @@ describe('The confirm view', function () {
     var body = renderTemplate('confirm', templateData);
     var $ = cheerio.load(body);
     $('#payment-description').html().should.equal('Payment Description &amp; &lt;xss attack&gt; assessment');
+    body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden');
     body.should.containSelector('#card-number').withText('************5100');
     body.should.containSelector('#expiry-date').withText('11/99');
     body.should.containSelector('#amount').withText('£10.00');

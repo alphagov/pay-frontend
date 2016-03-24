@@ -45,7 +45,7 @@ describe('The /charge endpoint undealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(500)
         .expect(function(res){
-          helper.expectTemplateTohave(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
+          helper.templateValue(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
         })
         .end(done);
     });
@@ -112,8 +112,8 @@ describe('The /charge endpoint dealt statuses', function () {
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(function(res){
-          helper.expectTemplateTohave(res,"viewName", state.view);
-          helper.expectTemplateTohave(res,"chargeId", chargeId);
+          helper.templateValue(res,"viewName", state.view);
+          helper.templateValue(res,"chargeId", chargeId);
         })
         .end(done);
     });
@@ -161,7 +161,7 @@ describe('The /confirm endpoint undealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(500)
         .expect(function(res){
-          helper.expectTemplateTohave(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
+          helper.templateValue(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
         })
         .end(done);
     });
@@ -238,8 +238,8 @@ describe('The /confirm endpoint dealt statuses', function () {
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(function(res){
-          helper.expectTemplateTohave(res,"viewName", state.view);
-          if (state.viewState) helper.expectTemplateTohave(res,"status", state.viewState);
+          helper.templateValue(res,"viewName", state.view);
+          if (state.viewState) helper.templateValue(res,"status", state.viewState);
         })
         .end(done);
     });

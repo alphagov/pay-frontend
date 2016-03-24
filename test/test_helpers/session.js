@@ -1,4 +1,5 @@
 var clientSessions = require("client-sessions");
+var csrf = require('csrf');
 var frontendCookie = require(__dirname + '/../../app/utils/cookies.js').frontendCookie;
 
 function createSessionChargeKey(chargeId) {
@@ -11,6 +12,7 @@ function createReturnUrlKey(chargeId) {
 
 function createSessionWithReturnUrl(chargeId, chargeSession, returnUrl) {
 	chargeSession = chargeSession || {};
+	chargeSession.csrfSecret = process.env.CSRF_USER_SECRET;
 	var session = {};
 	if (arguments.length > 0) {
 		session[createSessionChargeKey(chargeId)] = chargeSession;
@@ -22,7 +24,7 @@ function createSessionWithReturnUrl(chargeId, chargeSession, returnUrl) {
 
 module.exports = {
 	createWithReturnUrl : function (chargeId, chargeSession, returnUrl) {
-		return createSessionWithReturnUrl(chargeId, chargeSession, returnUrl)
+		return createSessionWithReturnUrl(chargeId, chargeSession, returnUrl);
 	},
 
 	create : function (chargeId, chargeSession) {

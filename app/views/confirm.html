@@ -40,6 +40,7 @@ Confirm your details.
     </table>
 
     <form id="confirmation" method="POST" action="{{confirmPath}}">
+        <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
         <button id="confirm" class="button">Confirm</button>
     </form>
