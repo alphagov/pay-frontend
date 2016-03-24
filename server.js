@@ -9,9 +9,17 @@ var frontendCookie = require(__dirname + '/app/utils/cookies.js').frontendCookie
 var logger = require('winston');
 var noCache = require(__dirname + '/app/utils/no_cache.js');
 var customCertificate = require(__dirname + '/app/utils/custom_certificate.js');
-
+var i18n = require('i18n');
 var port = (process.env.PORT || 3000);
 var app = express();
+i18n.configure({
+    locales:['en'],
+    directory: __dirname + '/locales',
+    objectNotation: true,
+    defaultLocale: 'en',
+    register: global
+});
+app.use(i18n.init);
 
 app.enable('trust proxy');
 app.use(clientSessions(frontendCookie()));
@@ -48,7 +56,9 @@ app.use(function (req, res, next) {
 app.use(function(req,res,next){
     noCache(res);
     next();
-})
+});
+
+
 
 if (process.env.NODE_ENV !== 'production') {
   // Will return stack traces to the browser as well - only use in development!

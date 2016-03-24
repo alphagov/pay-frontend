@@ -319,7 +319,7 @@ describe('chargeTests',function(){
               {"key": "card-no", "value": "Card number is missing"},
               {"key": "cvc", "value": "CVC is missing"},
               {"key": "expiry-date", "value": "Expiry date is missing"},
-              {"key": "address-line1", "value": "Building name/number and street is missing"},
+              {"key": "address-line-1", "value": "Building name/number and street is missing"},
               {"key": "address-postcode", "value": "Postcode is missing"}
             ]);
 

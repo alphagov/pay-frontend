@@ -3,11 +3,12 @@ var logger          = require('winston');
 var luhn            = require('luhn');
 var Client          = require('node-rest-client').Client;
 var client          = new Client();
+var _               = require('lodash');
 var views           = require('../utils/views.js');
 var session         = require('../utils/session.js');
 var normalise       = require('../services/normalise_charge.js');
+var validateCharge  = require('../utils/new_charge_validation.js');
 var Charge          = require('../models/charge.js');
-var _               = require('lodash');
 var paths           = require('../paths.js');
 var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
 var CHARGE_VIEW = 'charge',
@@ -32,9 +33,9 @@ module.exports.new = function(req, res) {
 module.exports.create = function(req, res) {
     var _views      = views.create(),
     charge          = normalise.charge(req.chargeData,req.chargeId),
-    chargeSession   = session(req, charge.id);
+    chargeSession   = session.retrieve(req, charge.id);
     normalise.addressLines(req.body);
-    var checkResult = validateNewCharge(req.body);
+    var checkResult = validateCharge(req.body);
 
     if (checkResult.hasError) {
          _.merge(checkResult, charge);
@@ -57,7 +58,7 @@ module.exports.create = function(req, res) {
     };
 
 
-    var authLink = findLinkForRelation(charge.links, 'cardAuth');
+    var authLink = charge.links.find((link)=> { return link.rel === 'cardAuth'; });
     var cardAuthUrl = authLink.href;
 
     client.post(cardAuthUrl, payload, function (data, connectorResponse) {
@@ -87,8 +88,9 @@ module.exports.create = function(req, res) {
 
 module.exports.confirm = function(req, res) {
     charge          = normalise.charge(req.chargeData,req.chargeId),
-    chargeSession   = session(req, charge.id),
-    sessionValid    = validSession(chargeSession),
+    chargeSession   = session.retrieve(req, charge.id),
+    // REMOVE ONCE THESE DETAILS COME FROM CONNECTOR
+    sessionValid    = session.validForConfirm(chargeSession),
     confirmPath     = paths.generateRoute(paths.card.confirm.path,{chargeId: charge.id}),
     _views = views.create({ success: {
         view: CONFIRM_VIEW,
@@ -125,80 +127,3 @@ module.exports.capture = function (req, res) {
     };
     init();
 };
-
-
-// none of the following really belongs in the controller
-
-
-var REQUIRED_FORM_FIELDS = {
-    cardholderName: {
-        id: 'cardholder-name',
-        name: 'Name on card',
-        message: 'Please enter the name as it appears on the card' },
-    cardNo: {
-        id: 'card-no',
-        name: 'Card number',
-        message: 'Please enter the long number on the front of your card' },
-    cvc: {
-        id: 'cvc',
-        name: 'CVC',
-        message: 'Please enter your card security code' },
-    expiryDate: {
-        id: 'expiry-date',
-        name: 'Expiry date',
-        message: 'Please enter a valid expiry date' },
-    addressLine1: {
-        id: 'address-line1',
-        name: 'Building name/number and street',
-        message:'Please enter your address' },
-    addressPostcode: {
-        id: 'address-postcode',
-        name: 'Postcode',
-        message: 'Please enter a valid postcode' }
-};
-
-
-
-function validSession(chargeSession) {
-    var required = ['expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'];
-
-    for (key = 0; key < required.length; key++) {
-        if (!_.has(chargeSession,required[key])) return false;
-    }
-    return true;
-}
-
-
-function findLinkForRelation(links, rel) {
-    return links.find(function (link) {
-        return link.rel === rel;
-    });
-}
-
-function validateNewCharge(body) {
-    var checkResult = {
-        hasError: false,
-        errorMessage: "The following fields are missing or contain errors",
-        errorFields: [],
-        highlightErrorFields: {}
-    };
-    for (var field in REQUIRED_FORM_FIELDS) {
-        var fieldInBody = body[field];
-        var cardNoInvalid = (field === 'cardNo' && !luhn.validate(body[field]));
-
-        if (!fieldInBody || cardNoInvalid) {
-            var errorType = !fieldInBody? ' is missing': ' is invalid';
-            checkResult.hasError = true;
-            checkResult.errorFields.push({
-                key: REQUIRED_FORM_FIELDS[field].id,
-                value: REQUIRED_FORM_FIELDS[field].name + errorType
-            });
-            checkResult.highlightErrorFields[field] = REQUIRED_FORM_FIELDS[field].message;
-        }
-    }
-    logger.info("Card details check result: "+JSON.stringify(checkResult));
-    return checkResult;
-}
-
-
-

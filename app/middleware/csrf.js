@@ -7,7 +7,7 @@ _views      = views.create();
 
 module.exports = function(req, res, next){
  var chargeId   = chargeParam.retrieve(req),
- chargeSession  = session(req, chargeId),
+ chargeSession  = session.retrieve(req, chargeId),
  csrfToken      = req.body.csrfToken;
 
   var init = function(){
