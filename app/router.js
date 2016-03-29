@@ -1,4 +1,5 @@
 var response = require(__dirname + '/utils/response.js').response;
+var i18n = require('i18n');
 
 var controllers   = require('./controllers');
 var charge        = require('./controllers/charge_controller.js');
@@ -21,6 +22,7 @@ module.exports.bind = function (app) {
 
   var card = paths.card;
   var middlewareStack = [
+    function(req,res,next) { i18n.setLocale('en'); next();},
     csrf,
     actionName,
     retrieveCharge,
