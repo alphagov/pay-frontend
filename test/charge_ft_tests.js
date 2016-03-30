@@ -82,7 +82,8 @@ describe('chargeTests',function(){
       'chargeId': chargeId,
       'cardNo': card_number,
       'cvc': '234',
-      'expiryDate': '11/99',
+      'expiryMonth': '11',
+      'expiryYear': '99',
       'cardholderName': 'Jimi Hendrix',
       'addressLine1': '32 Whip Ma Whop Ma Avenue',
       'addressPostcode': 'Y1 1YN'
@@ -318,7 +319,8 @@ describe('chargeTests',function(){
               {"key": "cardholder-name", "value": "Name on card is missing"},
               {"key": "card-no", "value": "Card number is missing"},
               {"key": "cvc", "value": "CVC is missing"},
-              {"key": "expiry-date", "value": "Expiry date is missing"},
+              {"key": "expiry-month", "value": "Expiry month is missing"},
+              {"key": "expiry-year", "value": "Expiry year is missing"},
               {"key": "address-line-1", "value": "Building name/number and street is missing"},
               {"key": "address-postcode", "value": "Postcode is missing"}
             ]);
@@ -327,7 +329,8 @@ describe('chargeTests',function(){
               "cardholderName":"Please enter the name as it appears on the card",
               "cardNo":"Please enter the long number on the front of your card",
               "cvc":"Please enter your card security code",
-              "expiryDate":"Please enter a valid expiry date",
+              "expiryMonth": "Please enter a valid expiry date",
+              "expiryYear": "Please enter a valid expiry date",
               "addressLine1":"Please enter your address",
               "addressPostcode":"Please enter a valid postcode"
             });
@@ -355,7 +358,7 @@ describe('chargeTests',function(){
                 .end(done);
     });
 
-    it('should ignore empty/null address lines when only third address line populated', function (done) {
+    it('should ignore empty/null address lines when only second address line populated', function (done) {
       var cookieValue = cookie.create(chargeId);
 
       var card_data = minimum_connector_card_data('5105105105105100');
