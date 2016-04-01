@@ -23,12 +23,12 @@ module.exports = {
       },
       capture: {
         path: '/card_details/:chargeId/confirm',
-        'action': 'post'
-      },
+        action: 'post'
+      }
     },
     charge: {
       show: {
-        path: "/charge/:chargeId?",
+        path: "/charge/:chargeId",
         action: 'get'
       }
     },
