@@ -12,6 +12,7 @@ var customCertificate = require(__dirname + '/app/utils/custom_certificate.js');
 var i18n = require('i18n');
 var port = (process.env.PORT || 3000);
 var app = express();
+
 i18n.configure({
     locales:['en'],
     directory: __dirname + '/locales',
@@ -26,6 +27,9 @@ app.use(clientSessions(frontendCookie()));
 
 if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
   customCertificate.use();
+}
+else {
+  logger.warn('DISABLE_INTERNAL_HTTPS is set.');
 }
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
