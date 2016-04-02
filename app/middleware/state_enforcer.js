@@ -1,9 +1,11 @@
 var views       = require('../utils/views.js');
 var _views      = views.create({});
 var _             = require('lodash');
-var stateService  = require('../services/state_service.js')
+var stateService  = require('../services/state_service.js');
 
 module.exports = function(req,res,next){
+  'use strict';
+
   var correctStates = stateService.resolveStates(req.actionName),
   currentState      = req.chargeData.status,
   locals            = {
@@ -17,7 +19,7 @@ module.exports = function(req,res,next){
   };
 
   var stateCorrect = function(){
-    chargeOK = ischargeSessionOK();
+    var chargeOK = ischargeSessionOK();
     if (!chargeOK) {
       var stateName = currentState.toUpperCase().replace(" ", "_");
       _views.display(res, stateName, locals);
@@ -31,4 +33,4 @@ module.exports = function(req,res,next){
   };
 
   return init();
-}
+};

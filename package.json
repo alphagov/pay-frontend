@@ -22,7 +22,7 @@
   "scripts": {
     "start": "node start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
-    "test": "npm run lint && npm run grunt-test",
+    "test": "grunt lint && npm run grunt-test",
     "lint": "node ./node_modules/.bin/jshint --verbose ./app/*.js ./test/*.js",
     "grunt-test": "node ./node_modules/.bin/grunt test"
   },
@@ -74,6 +74,7 @@
     "chokidar-cli": "latest",
     "errorhandler": "^1.4.2",
     "express-writer": "0.0.4",
+    "grunt-contrib-jshint": "^1.0.0",
     "grunt-mocha-test": "^0.12.7",
     "grunt-nightwatch-report": "^0.1.6",
     "jshint": "latest",

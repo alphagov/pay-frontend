@@ -34,6 +34,7 @@ module.exports.new = function (req, res) {
 
     apiFail = function (err) {
       views.create().display(res, 'SYSTEM_ERROR');
+
     };
 
   init();

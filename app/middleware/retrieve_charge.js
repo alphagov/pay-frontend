@@ -1,12 +1,11 @@
 var views         = require('../utils/views.js');
 var Charge        = require('../models/charge.js');
 var chargeParam   = require('../services/charge_param_retriever.js');
-var normalise     = require('../services/normalise_charge.js');
 var q             = require('q');
 
 module.exports = function(req, res, next){
+  "use strict";
   var _views  = views.create(),
-  chargeId    = req.chargeId,
   defer       = q.defer();
 
   var init = function(){
@@ -22,7 +21,7 @@ module.exports = function(req, res, next){
     next();
   },
 
-  apiFail = function(error){
+  apiFail = function(){
     _views.display(res,"SYSTEM_ERROR");
   };
 

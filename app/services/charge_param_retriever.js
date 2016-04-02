@@ -1,6 +1,7 @@
 var logger = require('winston');
 
 module.exports = function(){
+  "use strict";
 
   var retrieve = function(req) {
     var chargeId = getChargeParam(req);
@@ -28,10 +29,10 @@ module.exports = function(){
 
   createChargeIdSessionKey = function(chargeId) {
     return 'ch_' + chargeId;
-  }
+  };
 
   return {
     retrieve: retrieve
-  }
+  };
 
-}()
+}();

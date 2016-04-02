@@ -6,24 +6,28 @@ var logger  = require('winston');
 var paths   = require('../paths.js');
 var State   = require('./state.js');
 
+
 module.exports = function(){
+  'use strict';
 
   var createUrl = function(resource,params){
     return paths.generateRoute(`connectorCharge.${resource}`,params);
+
   },
 
-  mergeApiParams = function(params){
+  mergeApiParams = function(params) {
     params = (params) ? params: {};
     var _default = {
       headers: {"Content-Type": "application/json"},
       data: {}
-    }
+    };
     _default.data = _.merge(params,_default.data);
     return _default;
   },
 
   updateToEnterDetails = function(chargeId) {
     return updateStatus(chargeId, State.ENTERING_CARD_DETAILS);
+
   },
 
   updateStatus = function(chargeId, status){
@@ -59,7 +63,7 @@ module.exports = function(){
     params  = mergeApiParams(),
     defer   = q.defer();
     client.post(url, params, function(data, response){
-      captureComplete(data, response, defer)
+      captureComplete(data, response, defer);
     })
     .on('error',function(err){ captureFail(err, defer); });
 
@@ -83,8 +87,8 @@ module.exports = function(){
 
   captureComplete = function(data, response, defer) {
     var code = response.statusCode;
-    if (code == 204) return defer.resolve();
-    if (code == 400) return defer.reject(new Error('CAPTURE_FAILED'));
+    if (code === 204) return defer.resolve();
+    if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'));
     return defer.reject(new Error('POST_FAILED'));
   },
 
@@ -113,5 +117,5 @@ module.exports = function(){
     find: find,
     capture: capture,
     findByToken: findByToken
-  }
+  };
 }();
