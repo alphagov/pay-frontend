@@ -39,14 +39,38 @@ fieldset {
   @include media(tablet) {
     margin-bottom: $gutter;
   }
-  input[type="text"] {
+  input[type="text"],
+  input[type="number"] {
     display: block;
   }
 
   &.address {
-    input[type="text"] {
+    input[type="text"],
+    input[type="number"] {
       margin-bottom: $gutter-one-third;
     }
+  }
+}
+
+.date-container {
+  float: left;
+  input {
+    width:50px;
+    float: left;
+    display: none;
+  }
+
+  .seperator {
+    @include core-27();
+    margin: 0 17px 0 15px;
+    padding: 0;
+    color: $secondary-text-colour;
+    float: left;
+    line-height: 42px;
+  }
+  .form-hint {
+    color: $text-colour;
+    @include core-19();
   }
 }
 
@@ -103,6 +127,10 @@ fieldset {
   .form-hint {
     @include core-19;
   }
+}
+
+.form-hint-bold {
+  @include core-19;
 }
 
 // Used for paragraphs in-between form elements
@@ -263,7 +291,7 @@ fieldset {
   width: $one-third;
   @include media(tablet) {
     width: 12.5%;
-  }  
+  }
 }
 
 .cvc {

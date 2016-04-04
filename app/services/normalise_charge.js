@@ -40,6 +40,9 @@ module.exports = function(){
   },
   creditCard = function(creditCardNo){
     return creditCardNo.replace(/\D/g,'');
+  },
+  expiryDate = function(day, month){
+    return `${day}/${month}`;
   };
 
   return {
@@ -47,7 +50,8 @@ module.exports = function(){
     addressForApi: addressForApi,
     addressLines: addressLines,
     addressForView: addressForView,
-    creditCard: creditCard
+    creditCard: creditCard,
+    expiryDate: expiryDate
   };
 
 }();

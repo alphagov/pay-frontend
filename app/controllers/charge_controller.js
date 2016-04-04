@@ -45,7 +45,7 @@ module.exports.create = function(req, res) {
     }
 
     var plainCardNumber = normalise.creditCard(req.body.cardNo);
-    var expiryDate = req.body.expiryDate;
+    var expiryDate =  normalise.expiryDate(req.body.expiryMonth,req.body.expiryYear);
     var payload = {
         headers: {"Content-Type": "application/json"},
         data: {
@@ -60,7 +60,6 @@ module.exports.create = function(req, res) {
 
     var authLink = charge.links.find((link)=> { return link.rel === 'cardAuth'; });
     var cardAuthUrl = authLink.href;
-
     client.post(cardAuthUrl, payload, function (data, connectorResponse) {
         logger.info('posting card details');
         switch (connectorResponse.statusCode) {

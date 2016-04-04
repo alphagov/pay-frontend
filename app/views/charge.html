@@ -58,17 +58,27 @@ Enter your card details.
               <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
           </label>
       </div>
-      <div class="form-group{{#highlightErrorFields.expiryDate}} error{{/highlightErrorFields.expiryDate}}">
-          <label id="expiry-date-lbl" for="expiry-date" class="form-label-bold">
-              Expiry date
-              <p class="form-hint">For example, 07/17</p>
-              {{#highlightErrorFields.expiryDate}}
+      <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}}">
+          <p class="form-label-bold"> Expiry date</p>
+          <p class="form-hint-bold form-hint">For example, 07/17</p>
+              {{#highlightErrorFields.expiryMonth}}
                 <p class="error-message" id="error-expiry-date">
-                    {{highlightErrorFields.expiryDate}}
+                    {{highlightErrorFields.expiryMonth}}
                 </p>
-              {{/highlightErrorFields.expiryDate}}
-              <input id="expiry-date" type="text" name="expiryDate" maxlength="5" class="form-control-1-8 cvc">
-          </label>
+              {{/highlightErrorFields.expiryMonth}}
+              <div class="date-container">
+                <div class="form-hint"> Month </div>
+                <input id="expiry-month" type="number" name="expiryMonth" maxlength="2"
+                class="form-control" required="required"
+                min="1" max="12">
+                <p class="seperator"> / </p>
+              </div>
+              <div class="date-container">
+                <div class="form-hint"> Year </div>
+                <input id="expiry-year" type="number" name="expiryYear" maxlength="2"
+                class="form-control" required="required"
+                min="16" max="99">
+              </div>
       </div>
 
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
