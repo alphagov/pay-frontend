@@ -114,7 +114,8 @@ module.exports = function(grunt){
           'test/services/*.js',
           'test/models/*.js',
           'test/utils/*.js',
-          'test/middleware/*.js'
+          'test/middleware/*.js',
+          'test/controllers/*.js'
         ]
       }
     },
@@ -125,9 +126,6 @@ module.exports = function(grunt){
       }
     }
   });
-
-
-
   [
     'grunt-contrib-copy',
     'grunt-contrib-watch',

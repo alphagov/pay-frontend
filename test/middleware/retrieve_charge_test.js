@@ -25,7 +25,7 @@ describe('retrieve param test', function () {
     frontend_state: { ch_foo: true }
   },
   chargeId = 'foo',
-  connectorPath = paths.generateRoute(paths.connectorCharge.show.path,{chargeId: 'foo'});
+  connectorPath = paths.generateRoute('connectorCharge.show',{chargeId: 'foo'});
 
 
   beforeEach(function(){

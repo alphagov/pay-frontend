@@ -1,3 +1,6 @@
+var _ = require('lodash');
+var generateRoute = require(__dirname + '/utils/generate_route.js');
+
 if (process.env.CONNECTOR_HOST === undefined) throw new Error('connector host is not defined');
 // please structure each route as follows
 // name: {
@@ -7,7 +10,7 @@ if (process.env.CONNECTOR_HOST === undefined) throw new Error('connector host is
 // the action while not used directly here is used so we can match to the named
 // routes when we have duplicate paths on different actions
 
-module.exports = {
+var paths = {
     card: {
       new: {
         path: '/card_details/:chargeId',
@@ -26,8 +29,8 @@ module.exports = {
         action: 'post'
       }
     },
-    charge: {
-      show: {
+    secure: {
+      new: {
         path: "/charge/:chargeId",
         action: 'get'
       }
@@ -45,12 +48,17 @@ module.exports = {
         path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/capture",
         action: 'put'
       },
+      findByToken: {
+        path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId/charge",
+        action: 'get'
+      },
       token: {
         path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId",
-        action: 'get'
+        action: 'delete'
       }
-    },
-    generateRoute: require(__dirname + '/utils/generate_route.js')
+    }
 };
+
+module.exports = _.extend({}, paths, {generateRoute: generateRoute(paths)});
 
 
