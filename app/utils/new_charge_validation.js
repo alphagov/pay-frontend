@@ -23,6 +23,7 @@ var customValidations = {
 
   expiryMonth:  function(expiryMonth, allFields) {
     // month is zero indexed
+    expiryMonth = expiryMonth -1;
     var isValidMonth = /^\d+$/.test(expiryMonth) && expiryMonth >= 0 && expiryMonth <= 11;
     if (!isValidMonth) return "invalid_month";
 
