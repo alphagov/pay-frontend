@@ -29,6 +29,7 @@
   "dependencies": {
     "array.prototype.find": "1.0.0",
     "body-parser": "1.13.3",
+    "browserify": "^13.0.0",
     "change-case": "~2.3",
     "client-sessions": ">= 0.3.1",
     "csrf": "^3.0",
@@ -69,6 +70,7 @@
     "chokidar-cli": "latest",
     "errorhandler": "^1.4.2",
     "express-writer": "0.0.4",
+    "grunt-browserify": "^5.0.0",
     "grunt-mocha-test": "^0.12.7",
     "jshint": "latest",
     "mocha": "^2.2.5",

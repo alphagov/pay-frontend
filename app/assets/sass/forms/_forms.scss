@@ -34,6 +34,8 @@ fieldset {
 .form-group {
   float: left;
   width: 100%;
+  @include default-transition(short);
+
   @extend %contain-floats;
   margin-bottom: $gutter-half;
   @include media(tablet) {
@@ -121,6 +123,10 @@ fieldset {
   margin-bottom: 5px;
 }
 
+.form-group.error *[data-original-label] {
+  color: $red;
+}
+
 .form-label-bold {
   @include bold-19;
   margin-bottom: 0;
@@ -171,6 +177,7 @@ fieldset {
   padding: 4px;
   background-color: $white;
   border: 1px solid $border-colour;
+  border-width: 2px;
 
   // Disable webkit appearance and remove rounded corners
   -webkit-appearance: none;
@@ -251,7 +258,7 @@ fieldset {
   @include box-sizing(border-box);
   padding: 4px;
   background-color: $white;
-  border: 1px solid $border-colour;
+  border: 2px solid $border-colour;
 
   // Disable webkit appearance and remove rounded corners
   -webkit-appearance: none;

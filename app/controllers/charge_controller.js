@@ -7,7 +7,7 @@ var _               = require('lodash');
 var views           = require('../utils/views.js');
 var session         = require('../utils/session.js');
 var normalise       = require('../services/normalise_charge.js');
-var validateCharge  = require('../utils/new_charge_validation.js');
+var i18n            = require('i18n');
 var Charge          = require('../models/charge.js');
 var paths           = require('../paths.js');
 var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
@@ -34,8 +34,9 @@ module.exports.create = function(req, res) {
     var _views      = views.create(),
     charge          = normalise.charge(req.chargeData,req.chargeId),
     chargeSession   = session.retrieve(req, charge.id);
+    var validateCharge  = require('../utils/charge_validation.js')(i18n.__(`chargeController.fieldErrors`),logger);
     normalise.addressLines(req.body);
-    var checkResult = validateCharge(req.body);
+    var checkResult = validateCharge.verify(req.body);
 
     if (checkResult.hasError) {
          _.merge(checkResult, charge);

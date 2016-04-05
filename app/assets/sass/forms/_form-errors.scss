@@ -3,7 +3,7 @@
 
 // Using the classname .error as it's shorter than .validation and easier to type!
 .error {
-
+  @include default-transition(short);
   // Ensure the .error class is applied to .form-group, otherwide box-sizing(border-box) will need to be used
   // @include box-sizing(border-box);
   margin-right: 15px;
@@ -16,13 +16,8 @@
 
   // Form inputs should have a red border
   .form-control {
-    border: 4px solid $error-colour;
+    border-color:$error-colour;
   }
-
-  .form-hint {
-    margin-bottom: 0;
-  }
-
 }
 
 .error,

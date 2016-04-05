@@ -12,7 +12,7 @@ Enter your card details.
           <h1 class="heading-medium error-summary-heading" id="error-message">The following fields are missing or contain errors</h1>
           <ul class="error-summary-list">
             {{#errorFields}}
-              <li><a href="#{{key}}-lbl" id="{{key}}-error">{{value}}</a></li>
+              <li><a href="#{{cssKey}}-lbl" id="{{cssKey}}-error">{{value}}</a></li>
             {{/errorFields}}
           </ul>
       </div>
@@ -24,20 +24,29 @@ Enter your card details.
       <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
       <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
 
-      <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}">
+      <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
+      data-validation="cardholderName">
           <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
-              Name on card
+              <span
+                data-label-replace="cardholderName"
+                data-original-label="{{ i18n.chargeView.cardholderName }}">
+              {{ i18n.chargeView.cardholderName }}
+              </span>
               {{#highlightErrorFields.cardholderName}}
                   <p class="error-message" id="error-cardholder-name">
                     {{highlightErrorFields.cardholderName}}
                   </p>
               {{/highlightErrorFields.cardholderName}}
-              <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2">
+              <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2 form-control">
           </label>
       </div>
-      <div class="form-group{{#highlightErrorFields.cardNo}} error{{/highlightErrorFields.cardNo}}">
+      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}}" data-validation="cardNo">
           <label id="card-no-lbl" for="card-no" class="form-label-bold">
-              Card number
+              <span
+              data-label-replace="cardNo"
+              data-original-label="{{ i18n.chargeView.cardNo }}">
+              {{ i18n.chargeView.cardNo }}
+              </span>
               {{#highlightErrorFields.cardNo}}
                 <p class="error-message" id="error-card-no">
                     {{highlightErrorFields.cardNo}}
@@ -46,9 +55,13 @@ Enter your card details.
               <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
       </div>
-      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}">
+      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
           <label id="cvc-lbl" for="cvc" class="form-label-bold">
-              Card security code
+              <soan
+              data-label-replace="cvc"
+              data-original-label="{{ i18n.chargeView.cvc }}">
+              {{ i18n.chargeView.cvc }}
+              </soan>
               <p class="form-hint">This is the 3 digit code on the back of your card</p>
               {{#highlightErrorFields.cvc}}
                   <p class="error-message" id="error-cvc">
@@ -58,8 +71,12 @@ Enter your card details.
               <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
           </label>
       </div>
-      <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}}">
-          <p class="form-label-bold"> Expiry date</p>
+      <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}}" data-validation="expiryMonth">
+          <p class="form-label-bold"
+              data-label-replace="expiryMonth"
+              data-original-label="{{ i18n.chargeView.expiry }}">
+              {{ i18n.chargeView.expiry }}
+          </p>
           <p class="form-hint-bold form-hint">For example, 07/17</p>
               {{#highlightErrorFields.expiryMonth}}
                 <p class="error-message" id="error-expiry-date">
@@ -80,12 +97,17 @@ Enter your card details.
                 min="16" max="99">
               </div>
       </div>
-
-      <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
+      <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
+          data-validation="addressLine1">
           <h2>Billing address</h2>
           <p class="form-hint">This is the address associated with the card</p>
           <label id="address-line-1-lbl" for="address-line-1" class="form-label-bold">
-              Building name and/or number and street
+              <span
+                data-label-replace="addressLine1"
+                data-original-label="{{ i18n.chargeView.cardholderName }}">
+                {{ i18n.chargeView.building }}
+              </span>
+
               {{#highlightErrorFields.addressLine1}}
                 <p class="error-message" id="error-address-line-1">
                     {{highlightErrorFields.addressLine1}}
@@ -95,21 +117,29 @@ Enter your card details.
           </label>
           <input id="address-line-2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
       </div>
-
-      <div class="form-group{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}">
+      <div class="form-group{{#highlightErrorFields.addressCity}} error{{/highlightErrorFields.addressCity}}" data-validation="addressCity">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
-              Town or city
-              {{#highlightErrorFields.addressLine1}}
+              <span
+                data-label-replace="addressCity"
+                data-original-label="{{ i18n.chargeView.city }}">
+                {{ i18n.chargeView.city }}
+              </span>
+              {{#highlightErrorFields.addressCity}}
                 <p class="error-message" id="error-address-city">
-                    {{highlightErrorFields.addressLine1}}
+                    {{highlightErrorFields.addressCity}}
                 </p>
-              {{/highlightErrorFields.addressLine1}}
+              {{/highlightErrorFields.addressCity}}
               <input id="address-city" type="text" name="addressCity" maxlength="100" class="form-control-1-4">
           </label>
       </div>
-      <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}">
+      <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">
           <label id="address-postcode-lbl" for="address-postcode" class="form-label-bold">
-              Postcode
+              <span
+                data-label-replace="addressPostcode"
+                data-original-label="{{ i18n.chargeView.postcode }}">
+                {{ i18n.chargeView.postcode }}
+              </span>
+
               {{#highlightErrorFields.addressPostcode}}
                 <p class="error-message" id="error-address-postcode">
                     {{highlightErrorFields.addressPostcode}}
