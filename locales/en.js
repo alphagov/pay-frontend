@@ -10,7 +10,7 @@
        },
        "cardNo": {
          "name": "card number",
-         "message": "Enter a valid card number",
+         "message": "please enter a valid card number",
          "number_incorrect_length": "your Card number is not of the correct length",
          "luhn_invalid":"Card number is invalid"
        },

@@ -35,6 +35,9 @@ fieldset {
   float: left;
   width: 100%;
   @include default-transition(short);
+  position: relative;
+  overflow: visible;
+
 
   @extend %contain-floats;
   margin-bottom: $gutter-half;

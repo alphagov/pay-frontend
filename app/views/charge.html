@@ -7,16 +7,16 @@ Enter your card details.
 {{$content}}
 <main id="content" role="main" class="content-wrapper">
 
-    {{#hasError}}
-      <div class="error-summary" role="group" >
-          <h1 class="heading-medium error-summary-heading" id="error-message">The following fields are missing or contain errors</h1>
-          <ul class="error-summary-list">
-            {{#errorFields}}
-              <li><a href="#{{cssKey}}-lbl" id="{{cssKey}}-error">{{value}}</a></li>
-            {{/errorFields}}
-          </ul>
-      </div>
-    {{/hasError}}
+
+  <div class="error-summary {{^hasError}} hidden {{/hasError}}" role="group" id="error-summary" >
+      <h1 class="heading-medium error-summary-heading" id="error-message">The following fields are missing or contain errors</h1>
+      <ul class="error-summary-list">
+        {{#errorFields}}
+          <li><a href="#{{cssKey}}-lbl" id="{{cssKey}}-error">{{value}}</a></li>
+        {{/errorFields}}
+      </ul>
+  </div>
+
 
   <h1 class="form-title">Pay by card</h1>
 

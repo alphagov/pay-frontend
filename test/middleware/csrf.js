@@ -126,7 +126,7 @@ describe('retrieve param test', function () {
     assertErrorRequest(next,resp,status,render);
   });
 
-  it('should error if no csrfToken in post request', function () {
+  it('should error if no csrfToken in put request', function () {
     var resp = _.cloneDeep(response);
     csrf(invalidPut,resp,next);
     assertErrorRequest(next,resp,status,render);

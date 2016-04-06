@@ -23,15 +23,16 @@
 .error,
 .error-summary {
 
-  // Add a red border to the left of the field
-  border-left: 4px solid $error-colour;
-  padding-left: 10px;
+  @include media(mobile) {
+    &:after {
+      left: -10px;
+    }
+  }
 
   @include media(tablet) {
-    border-left: 5px solid $error-colour;
-    padding-left: $gutter-half;
-    width: $half;
+      width: $half;
   }
+
 }
 
 .error-message {
@@ -43,6 +44,17 @@
   margin: 0;
   padding: 5px 0 7px 0;
 }
+
+.error:after {
+  content: " ";
+  width: 4px;
+  background: $error-colour;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  left: -15px;
+}
+
 
 // Summary of multiple error messages
 .error-summary {
@@ -71,6 +83,10 @@
   // Use the GOV.UK outline focus style
   &:focus {
     outline: 3px solid $focus-colour;
+  }
+
+  &.hidden {
+    display: none;
   }
 
   .error-summary-heading {
