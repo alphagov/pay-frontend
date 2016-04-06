@@ -12,31 +12,36 @@ var formValidation = function(){
   },
 
   checkFormSubmission = function(e){
-    var validations = allValidations(),
-    fields = allFields();
+    var validations = allValidations();
     if (!validations.hasError) return;
 
     e.preventDefault();
+    addAllValidations();
+    generateHighlightBlock();
+  },
+
+  addAllValidations = function(){
+    var fields = allFields();
     for (var field in fields) {
       checkValidation(fields[field]);
     }
-
-    generateHighlightBlock();
   },
 
   generateHighlightBlock = function(){
     errorSummary.removeClass('hidden');
     $('.error-summary-list').empty();
-    var errors = allValidations().highlightErrorFields;
-    for (var key in errors) {
-      id= findInputByKey(key);
-      $('.error-summary-list').append("<li><a href='" + key + "-lbl' id='" + key + "-error'>" + errors[key] + "</a></li>");
-    }
+    appendHighlightErrors();
 
     location.hash = "";
-    setTimeout(function(){
-          location.hash = "#error-summary";
-    },10);
+    setTimeout(function(){ location.hash = "#error-summary"; },10);
+  },
+
+  appendHighlightErrors = function(){
+    var errors = allValidations().highlightErrorFields;
+    for (var key in errors) {
+      var id = findInputByKey(key).attr('id');
+      $('.error-summary-list').append("<li><a href='#" + id + "-lbl' id='" + id + "-error'>" + errors[key] + "</a></li>");
+    }
   },
 
   checkPreviousFocused = function(){
@@ -75,6 +80,15 @@ var formValidation = function(){
     }
   },
 
+
+  validationFor = function(name){
+     var validation =$.grep(allValidations().errorFields,function(validation){
+      return validation.key == name;
+    });
+     if (!validation[0]) return;
+     return validation[0].value;
+  },
+
   allFields = function(){
     var fields = {};
     $(required).each(function(index,requiredField){
@@ -91,16 +105,9 @@ var formValidation = function(){
     return values;
   },
 
+
   allValidations = function(){
     return chargeValidations.verify(allFieldValues());
-  },
-
-  validationFor = function(name){
-     var validation =$.grep(allValidations().errorFields,function(validation){
-      return validation.key == name;
-    });
-     if (!validation[0]) return;
-     return validation[0].value;
   },
 
   getFormGroup = function(input) {

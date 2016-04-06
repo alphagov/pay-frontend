@@ -302,7 +302,7 @@ describe('chargeTests',function(){
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount",'23.45');
             helper.templateValue(res,"errorFields",[{"cssKey": "card-no","key": "cardNo", "value": "Card number is invalid"}]);
-            helper.templateValue(res,"highlightErrorFields",{"cardNo": "Enter a valid card number"});
+            helper.templateValue(res,"highlightErrorFields",{"cardNo": "Please enter a valid card number"});
           })
           .end(done);
     });
@@ -331,7 +331,7 @@ describe('chargeTests',function(){
 
             helper.templateValue(res,"highlightErrorFields",{
               "cardholderName":"Please enter the name as it appears on the card",
-              "cardNo":"Enter a valid card number",
+              "cardNo":"Please enter a valid card number",
               "cvc":"Please enter your card security code",
               "expiryMonth": "Please enter a valid expiry date",
               "expiryYear": "Please enter a valid expiry date",
