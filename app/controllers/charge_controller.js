@@ -34,7 +34,7 @@ module.exports.create = function(req, res) {
     var _views      = views.create(),
     charge          = normalise.charge(req.chargeData,req.chargeId),
     chargeSession   = session.retrieve(req, charge.id);
-    var validateCharge  = require('../utils/charge_validation.js')(i18n.__(`chargeController.fieldErrors`),logger);
+    var validateCharge  = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"),logger);
     normalise.addressLines(req.body);
     var checkResult = validateCharge.verify(req.body);
 

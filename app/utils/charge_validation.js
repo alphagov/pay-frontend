@@ -40,7 +40,7 @@ module.exports = function(translations,logger) {
 
     missing = function(name){
       var translation = translations.fields[name];
-      return `Enter a valid ${translation.name}`;
+      return "Enter a valid " + translation.name;
     },
 
     pushToErrorFields = function(fieldName, problem, highlightMessage){
@@ -48,7 +48,7 @@ module.exports = function(translations,logger) {
       checkResult.errorFields.push({
         cssKey: changeCase.paramCase(fieldName),
         key: fieldName,
-        value: `${problem}`
+        value: problem
       });
     };
     return init();
