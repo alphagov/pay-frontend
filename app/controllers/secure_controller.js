@@ -8,7 +8,7 @@ var paths = require('../paths.js'),
 
 
 module.exports.new = function (req, res) {
-  var chargeTokenId = req.query.chargeTokenId || req.body.chargeTokenId,
+  var chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId,
 
     init = function () {
       Charge.findByToken(chargeTokenId)

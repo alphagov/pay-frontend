@@ -76,7 +76,7 @@ describe('secure controller', function () {
     before(function () {
       request = {
         frontend_state: {},
-        query: {chargeTokenId: 1}
+        params: {chargeTokenId: 1}
       };
 
       response = {

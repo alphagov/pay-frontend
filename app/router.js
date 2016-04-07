@@ -33,7 +33,8 @@ module.exports.bind = function (app) {
   app.post(card.capture.path, middlewareStack, charge.capture);
 
   // secure controller 
-  app.get(paths.secure.new.path, secure.new);
+  app.get(paths.secure.get.path, secure.new);
+  app.post(paths.secure.post.path, secure.new);
 
 
 };

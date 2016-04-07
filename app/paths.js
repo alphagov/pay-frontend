@@ -30,9 +30,13 @@ var paths = {
       }
     },
     secure: {
-      new: {
-        path: "/charge/:chargeId",
+      get: {
+        path: "/secure/:chargeTokenId",
         action: 'get'
+      },
+      post: {
+        path: "/secure/",
+        action: 'post'
       }
     },
     connectorCharge: {
