@@ -6,7 +6,8 @@ module.exports = function(){
       amount: penceToPounds(charge.amount),
       return_url: charge.return_url,
       description: charge.description,
-      links: charge.links
+      links: charge.links,
+      status: charge.status
     };
   },
 

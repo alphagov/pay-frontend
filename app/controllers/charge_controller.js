@@ -11,8 +11,9 @@ var i18n            = require('i18n');
 var Charge          = require('../models/charge.js');
 var paths           = require('../paths.js');
 var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
-var CHARGE_VIEW = 'charge',
-CONFIRM_VIEW    = 'confirm';
+var CHARGE_VIEW = 'charge';
+var CONFIRM_VIEW    = 'confirm';
+var AUTH_WAITING_VIEW    = 'auth_waiting';
 
 module.exports.new = function(req, res) {
     var _views  = views.create(),
@@ -64,14 +65,28 @@ module.exports.create = function(req, res) {
     client.post(cardAuthUrl, payload, function (data, connectorResponse) {
         logger.info('posting card details');
         switch (connectorResponse.statusCode) {
+            case 202:
+            case 409:
+                logger.info('got response code ' + connectorResponse.statusCode + ' from connector');
+                session.store(
+                    chargeSession,
+                    hashCardNumber(plainCardNumber),
+                    expiryDate,
+                    req.body.cardholderName,
+                    normalise.addressForView(req.body),
+                    "Demo Service");
+                res.redirect(303, paths.generateRoute(paths.card.authWaiting.path,{chargeId: charge.id}));
+                return;
             case 204:
-                logger.info('got response code 200 from connector');
-                chargeSession.cardNumber = hashCardNumber(plainCardNumber);
-                chargeSession.expiryDate = expiryDate;
-                chargeSession.cardholderName = req.body.cardholderName;
-                chargeSession.address = normalise.addressForView(req.body);
-                chargeSession.serviceName = "Demo Service";
-                res.redirect(303, paths.generateRoute("card.confirm",{chargeId: charge.id}));
+                logger.info('got response code 204 from connector');
+                session.store(
+                    chargeSession,
+                    hashCardNumber(plainCardNumber),
+                    expiryDate,
+                    req.body.cardholderName,
+                    normalise.addressForView(req.body),
+                    "Demo Service");
+                res.redirect(303, paths.generateRoute(paths.card.confirm.path,{chargeId: charge.id}));
                 return;
             case 500:
                 logger.error('got response code 500 from connector');
@@ -86,8 +101,21 @@ module.exports.create = function(req, res) {
     });
 };
 
+module.exports.authWaiting = function(req, res) {
+    var charge = normalise.charge(req.chargeData,req.chargeId);
+    if (charge.status == 'AUTHORISATION READY') {
+         _views = views.create({ success: {
+                view: AUTH_WAITING_VIEW,
+                locals: {}
+            }});
+         _views.display(res, "success");
+    } else {
+        res.redirect(303,paths.generateRoute(paths.card.confirm.path,{chargeId: charge.id}));
+    }
+}
+
 module.exports.confirm = function(req, res) {
-    charge          = normalise.charge(req.chargeData,req.chargeId),
+    var charge          = normalise.charge(req.chargeData,req.chargeId),
     chargeSession   = session.retrieve(req, charge.id),
     confirmPath     = paths.generateRoute("card.confirm",{chargeId: charge.id}),
     _views = views.create({ success: {

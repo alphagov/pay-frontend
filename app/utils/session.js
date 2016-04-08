@@ -8,10 +8,19 @@ module.exports = function() {
 
   retrieve = function(req, chargeId) {
     return req.frontend_state[createChargeIdSessionKey(chargeId)];
+  },
+
+  store = function(chargeSession, hashCardNumber, expiryDate, cardholderName, address, serviceName) {
+    chargeSession.cardNumber = hashCardNumber;
+    chargeSession.expiryDate = expiryDate;
+    chargeSession.cardholderName = cardholderName;
+    chargeSession.address = address;
+    chargeSession.serviceName = serviceName;
   };
 
   return {
     retrieve: retrieve,
-    createChargeIdSessionKey: createChargeIdSessionKey
+    createChargeIdSessionKey: createChargeIdSessionKey,
+    store: store
   };
 }();

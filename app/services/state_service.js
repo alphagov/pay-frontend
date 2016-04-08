@@ -7,6 +7,7 @@ module.exports = function () {
 
   var STATES = {
     "card.new": [State.ENTERING_CARD_DETAILS, State.CREATED],
+    "card.authWaiting": [State.AUTH_READY_STATE,State.AUTH_SUCCESS_STATE],
     "card.create": [State.ENTERING_CARD_DETAILS],
     "card.confirm": [State.AUTH_SUCCESS],
     "card.capture": [State.AUTH_SUCCESS],
