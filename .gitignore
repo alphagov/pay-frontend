@@ -19,3 +19,7 @@ reports
 *.iws
 
 public/javascripts/browsered.js
+
+# floobit, intellij plugin used for remote pairing
+.floo
+.flooignore
