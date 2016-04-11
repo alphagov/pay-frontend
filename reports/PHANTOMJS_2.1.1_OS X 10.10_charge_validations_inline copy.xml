@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="4">
+
+  <testsuite name="charge_validations_inline copy"
+    errors="0" failures="0" hostname="" id="" package="charge_validations_inline copy" skipped="0"
+    tests="4" time="13.43" timestamp="Mon, 11 Apr 2016 09:30:28 GMT">
+  
+    <testcase name="label gets replaced on invalid" time="3.983" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="label gets replaced back to valid after invalid" time="3.600" assertions="4">
+
+    
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="Label does not get replaced if the focused element is in the same form group" time="2.747" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="Label gets replaced if the focused element is outside the same form group" time="3.103" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+  
+  </testsuite>
+</testsuites>

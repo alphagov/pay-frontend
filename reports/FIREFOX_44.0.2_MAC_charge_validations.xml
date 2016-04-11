@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="2">
+
+  <testsuite name="charge_validations"
+    errors="0" failures="0" hostname="" id="" package="charge_validations" skipped="0"
+    tests="2" time="7.313" timestamp="Fri, 08 Apr 2016 13:29:33 GMT">
+  
+    <testcase name="Test label gets replaced on invalid" time="3.627" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="Test label gets replaced back to valid" time="3.686" assertions="4">
+
+    
+
+    
+
+    
+
+    
+    </testcase>
+  
+  
+  </testsuite>
+</testsuites>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="1">
+
+  <testsuite name="charge_validations_submit"
+    errors="0" failures="0" hostname="" id="" package="charge_validations_submit" skipped="0"
+    tests="1" time="2.397" timestamp="Mon, 11 Apr 2016 10:58:53 GMT">
+  
+    <testcase name="shows errors and highlightbox" time="2.397" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+  
+  </testsuite>
+</testsuites>

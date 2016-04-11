@@ -130,6 +130,25 @@ module.exports = function(grunt){
     }
   };
 
+  var nightwatch = {
+    options: {
+      src_folders: ['test/integration/tests'],
+      standalone: true,
+      "page_objects_path": 'test/integration/pages',
+      test_workers:  {"enabled" : false, "workers" : 5},
+      test_settings: {
+        default: {
+          "desiredCapabilities" : {
+            "browserName" : "phantomjs",
+            "javascriptEnabled" : true,
+            "acceptSslCerts" : true,
+            "phantomjs.binary.path" : "/usr/local/bin/phantomjs",
+          }
+        }
+
+      }
+    }
+  };
 
   grunt.initConfig({
     // Clean
@@ -147,11 +166,11 @@ module.exports = function(grunt){
     concurrent: concurrent,
     mochaTest: mochaTest,
     env: env,
-    browserify: browserify
+    browserify: browserify,
+    nightwatch: nightwatch
 
 
   });
-
 
 
   [
@@ -164,7 +183,8 @@ module.exports = function(grunt){
     'grunt-concurrent',
     'grunt-mocha-test',
     'grunt-env',
-    'grunt-browserify'
+    'grunt-browserify',
+    'grunt-nightwatch'
 
   ].forEach(function (task) {
     grunt.loadNpmTasks(task);

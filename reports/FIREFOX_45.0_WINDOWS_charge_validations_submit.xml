@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="3"
+            failures="1"
+            tests="1">
+
+  <testsuite name="charge_validations_submit"
+    errors="3" failures="1" hostname="" id="" package="charge_validations_submit" skipped="0"
+    tests="1" time="27.25" timestamp="Fri, 08 Apr 2016 16:03:53 GMT">
+  
+    <testcase name="shows errors and highlightbox" time="27.25" assertions="1">  <failure message="Testing if the page title equals &quot;Proceed to payment&quot;.">    at Object.title (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/page-object/command-wrapper.js:103:25)
+    at Object.commands.generateCharge (/Users/andrewhilton/Code/pay-frontend/test/integration/pages/demo_service.js:8:15)
+    at Object.module.exports.beforeEach (/Users/andrewhilton/Code/pay-frontend/test/integration/tests/charge_validations_submit.js:4:28)
+    at Object.&lt;anonymous&gt; (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/util/utils.js:34:8)
+    at TestSuite.&lt;anonymous&gt; (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testsuite.js:91:18)
+    at TestSuite.makePromise (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testsuite.js:482:8)
+    at Object.beforeEach (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testsuite.js:77:21)
+    at TestSuite.beforeEach (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testsuite.js:399:21)
+    at TestCase.run (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testcase.js:48:6)
+    at TestSuite.runTestCase (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testsuite.js:360:20)</failure>
+
+    
+    </testcase>
+      <system-err>
+         ERROR: Unable to locate element: &quot;#auth-token&quot; using: css selector
+ ERROR: Unable to locate element: &quot;.payment-summary form&quot; using: css selector
+      </system-err>
+  
+  
+  </testsuite>
+</testsuites>

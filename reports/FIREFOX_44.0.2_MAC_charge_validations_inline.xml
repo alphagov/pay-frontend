@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="1"
+            tests="3">
+
+  <testsuite name="charge_validations_inline"
+    errors="0" failures="1" hostname="" id="" package="charge_validations_inline" skipped="2"
+    tests="3" time="3.716" timestamp="Fri, 08 Apr 2016 14:31:53 GMT">
+  
+    <testcase name="label gets replaced back to valid after invalid" time="3.716" assertions="3">
+
+    
+
+      <failure message="Expected element &lt;#card-no-lbl span[data-label-replace]&gt; text to contain: &quot;your Card number is not of the correct length&quot; in 300ms">    at Object.element (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/page-object/command-wrapper.js:103:25)
+    at Object.module.exports.label gets replaced back to valid after invalid (/Users/andrewhilton/Code/pay-frontend/test/integration/tests/charge_validations_inline.js:28:15)
+    at Module.call (/Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/module.js:63:34)
+    at /Users/andrewhilton/Code/pay-frontend/node_modules/nightwatch/lib/runner/testcase.js:97:29
+    at _fulfilled (/Users/andrewhilton/Code/pay-frontend/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/Users/andrewhilton/Code/pay-frontend/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/Users/andrewhilton/Code/pay-frontend/node_modules/q/q.js:796:13)
+    at /Users/andrewhilton/Code/pay-frontend/node_modules/q/q.js:556:49
+    at runSingle (/Users/andrewhilton/Code/pay-frontend/node_modules/q/q.js:137:13)
+    at flush (/Users/andrewhilton/Code/pay-frontend/node_modules/q/q.js:125:13)</failure>
+
+    
+    </testcase>
+  
+  
+    
+    <testcase
+      name="Label does not get replaced if the focused element is in the same form group">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="Label gets replaced if the focused element is outside the same form group">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>
