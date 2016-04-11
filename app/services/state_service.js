@@ -5,11 +5,13 @@ paths = require('../paths.js');
 
 module.exports = function () {
 
+  // The logic will always resolve to the first successful match.
+  // Changing the order of the states might have side-effects
   var STATES = {
     "card.new": [State.ENTERING_CARD_DETAILS, State.CREATED],
-    "card.authWaiting": [State.AUTH_READY_STATE,State.AUTH_SUCCESS_STATE],
-    "card.create": [State.ENTERING_CARD_DETAILS],
     "card.confirm": [State.AUTH_SUCCESS],
+    "card.authWaiting": [State.AUTH_READY, State.AUTH_SUCCESS],
+    "card.create": [State.ENTERING_CARD_DETAILS],
     "card.capture": [State.AUTH_SUCCESS],
   };
 
@@ -33,7 +35,7 @@ module.exports = function () {
     });
 
     if (validActionNames.length < 1) throw new Error(`No actionName found for state: ${state} and verb: ${verb}`); 
-    if (validActionNames.length > 1) throw new Error(`Multiple actionNames found for state: ${state} and verb: ${verb}`); 
+//    if (validActionNames.length > 1) throw new Error(`Multiple actionNames found for state: ${state} and verb: ${verb}`);
 
     return validActionNames[0];
   }

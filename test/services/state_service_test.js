@@ -30,6 +30,7 @@ describe('state service', function () {
 
   describe('when action name can be resolved', function () {
     expect(stateService.resolveActionName(State.AUTH_SUCCESS, 'get')).to.eql('card.confirm');
+    expect(stateService.resolveActionName(State.AUTH_READY, 'get')).to.eql('card.authWaiting');
     expect(stateService.resolveActionName(State.AUTH_SUCCESS, 'post')).to.eql('card.capture');
     expect(stateService.resolveActionName(State.CREATED, 'get')).to.eql('card.new');
   });
