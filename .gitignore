@@ -10,6 +10,7 @@ govuk_modules
 node_modules/*
 *.txt
 *.log
+reports
 
 # IntelliJ gubbins
 .idea
