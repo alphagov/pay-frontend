@@ -12,42 +12,46 @@ var paths           = require('../paths.js');
 
 module.exports.bindRoutesTo = function(app) {
 
-  app.get(paths.charge.show.path, function(req, res) {
 
-    var chargeTokenId = req.query.chargeTokenId;
-    logger.info('req.query.chargeTokenId=' + chargeTokenId);
+  var show = function(req, res) {
 
-    var chargeId = req.params.chargeId;
-    var sessionChargeIdKey = 'ch_' + chargeId;
+      var chargeTokenId = req.query.chargeTokenId || req.body.chargeTokenId ;
+      logger.info('req chargeTokenId=' + chargeTokenId);
 
-    logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey])
+      var chargeId = req.params.chargeId;
+      var sessionChargeIdKey = 'ch_' + chargeId;
 
-    if(!req.frontend_state[sessionChargeIdKey]) {
-      var connectorUrl = paths.generateRoute(paths.connectorCharge.token.path,{chargeTokenId: chargeTokenId});
-      logger.info('trying to validate token=' + chargeTokenId);
-      client
-        .get(
-          connectorUrl,
-          secureRedirectHandler(
-            req,
-            res,
-            chargeTokenId,
-            chargeId,
-            connectorUrl,
-            sessionChargeIdKey
-          )
-        )
-        .on('error', function(err) {
-          logger.error('Exception raised calling connector: ' + err);
-          renderErrorView(req, res, ERROR_MESSAGE);
-        });
-      return;
-    }
+      logger.info('req.frontend_state[' + sessionChargeIdKey + ']=' + req.frontend_state[sessionChargeIdKey])
 
-    logger.info('token already verified chargeTokenId=' + req.query.chargeTokenId);
+      if(!req.frontend_state[sessionChargeIdKey]) {
+        var connectorUrl = paths.generateRoute(paths.connectorCharge.token.path,{chargeTokenId: chargeTokenId});
+        logger.info('trying to validate token=' + chargeTokenId);
+        client
+            .get(
+                connectorUrl,
+                secureRedirectHandler(
+                    req,
+                    res,
+                    chargeTokenId,
+                    chargeId,
+                    connectorUrl,
+                    sessionChargeIdKey
+                )
+            )
+            .on('error', function(err) {
+              logger.error('Exception raised calling connector: ' + err);
+              renderErrorView(req, res, ERROR_MESSAGE);
+            });
+        return;
+      }
 
-    redirectToCardDetails(res, chargeId);
-  });
+      logger.info('token already verified chargeTokenId=' + req.query.chargeTokenId);
+
+      redirectToCardDetails(res, chargeId);
+    };
+
+  app.get(paths.charge.show.path,show);
+  app.post(paths.charge.show.path,show);
 
   function secureRedirectHandler(req, res, chargeTokenId, chargeId, connectorUrl, sessionChargeIdKey) {
     return function(tokenVerifyData, tokenVerifyResponse) {

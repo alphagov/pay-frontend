@@ -11,9 +11,6 @@ describe('The secure /charge endpoint', function() {
     nock.cleanAll();
   });
   var localServer = process.env.CONNECTOR_HOST;
-
-  var connectorTokenPath = '/v1/frontend/tokens/';
-
   var frontendChargePath = '/charge';
   var chargeId = '23144323';
   var chargeTokenId = 'asdnwnbwkk';
@@ -21,8 +18,7 @@ describe('The secure /charge endpoint', function() {
   var tokenPath = paths.generateRoute(paths.connectorCharge.token.path,
     {chargeTokenId: chargeTokenId}).replace(localServer,"");
 
-
-  it('should successfully verify the chargeTokenId', function(done) {
+  it('should successfully verify the chargeTokenId when accessing to endpoint through a get', function(done) {
     var connectorMock = nock(localServer);
     connectorMock.get(tokenPath).reply(200, {
       'chargeId' : chargeId
@@ -42,6 +38,28 @@ describe('The secure /charge endpoint', function() {
         assert.equal(true, decoded_session !== undefined);
       })
       .end(done);
+  });
+
+  it('should successfully verify the chargeTokenId when accessing to endpoint through a post', function(done) {
+    var connectorMock = nock(localServer);
+    connectorMock.get(tokenPath).reply(200, {
+      'chargeId' : chargeId
+    });
+
+    connectorMock.delete(tokenPath).reply(204);
+
+    var frontendCardDetailsPath = '/card_details';
+
+    request(app)
+        .post(frontendChargePath + '/' + chargeId)
+        .send({ chargeTokenId: chargeTokenId })
+        .expect('Location', frontendCardDetailsPath + '/' + chargeId)
+        .expect(303)
+        .expect(function(res) {
+          var decoded_session = cookie.decrypt(res, chargeId);
+          assert.equal(true, decoded_session !== undefined);
+        })
+        .end(done);
   });
 
   it('should continue normally on a refresh or browser back button when chargeId is on the session', function(done) {
