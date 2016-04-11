@@ -87,8 +87,33 @@ describe('charge validation fields', function () {
       var result = fields.fieldValidations.cvc('');
       expect(result).to.equal("invalid_length");
     });
+  });
 
+  describe('postcode', function () {
 
+    it('should true if correct', function () {
+      var result = fields.fieldValidations.addressPostcode("N4 2BQ");
+      expect(result).to.equal(true);
+    });
 
+    it('should invalid length if too long', function () {
+      var result = fields.fieldValidations.addressPostcode("N4 2BQQ");
+      expect(result).to.equal("message");
+    });
+
+    it('should invalid length if too short', function () {
+      var result = fields.fieldValidations.addressPostcode("N4");
+      expect(result).to.equal("message");
+    });
+
+    it('should invalid length if undefined', function () {
+      var result = fields.fieldValidations.addressPostcode(undefined);
+      expect(result).to.equal("message");
+    });
+
+    it('should invalid length if empty', function () {
+      var result = fields.fieldValidations.addressPostcode('');
+      expect(result).to.equal("message");
+    });
   });
 });

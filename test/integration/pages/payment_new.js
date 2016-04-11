@@ -27,6 +27,7 @@ module.exports = {
    addressLine1: "#address-line-1",
    addressCity: "#address-city",
    addressPostcode: "#address-postcode",
+   addressPostcodeLabel: ".address-postcode-label",
    "error-summary": "#error-summary",
    "form": "form#card-details"
 
