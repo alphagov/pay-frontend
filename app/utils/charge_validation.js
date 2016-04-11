@@ -20,7 +20,7 @@ module.exports = function(translations,logger) {
       }
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true;
-      console.info("Card details check result: "+JSON.stringify(checkResult));
+      logger.info("Card details check result: "+JSON.stringify(checkResult));
       return checkResult;
     },
 

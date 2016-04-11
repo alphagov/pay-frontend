@@ -1,8 +1,9 @@
 module.exports = {
+  '@tags': ['chargeValidation', 'chargeValidationInline'],
   beforeEach: function(browser){
     var demoService = browser.page.demo_service();
     demoService.navigate().generateCharge({
-      token: '21584d6a-673e-449f-a6cb-ef4776d6b12e',
+      token: process.env.demo_token,
       description: "hello",
       amount: 1234,
       reference: "hi"
@@ -14,7 +15,7 @@ module.exports = {
     var cardDetails = browser.page.payment_new();
     cardDetails
       .setValue('@cardNo', '12')
-      .click('@paymentAmount');
+      .click('@expiryYear');
     browser.execute(function(){ $("#card-no").blur();});
 
     cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length').before(300);
@@ -26,12 +27,12 @@ module.exports = {
     var cardDetails = browser.page.payment_new();
     cardDetails
       .setValue('@cardNo', '12')
-      .click('@paymentAmount');
+      .click('@expiryYear');
     cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length').before(300);
 
     cardDetails
       .setValue('@cardNo', '4242424242424242')
-      .click('@paymentAmount');
+      .click('@expiryYear');
     cardDetails.expect.element('@cardNoLabel').text.to.contain('Card number').before(300);
 
     browser.end();
@@ -41,7 +42,7 @@ module.exports = {
     var cardDetails = browser.page.payment_new();
     cardDetails
       .setValue('@expiryMonth', '13')
-      .click('@paymentAmount');
+      .click('@expiryYear');
     cardDetails.expect.element('@expiryLabel').text.to.contain('Expiry Date').before(300);
     browser.end();
   },
@@ -51,7 +52,7 @@ module.exports = {
     cardDetails
       .setValue('@expiryMonth', '13')
       .setValue('@expiryYear', '13')
-      .click('@paymentAmount');
+      .click('@cardNo');
     cardDetails.expect.element('@expiryLabel').text.to.contain('Expiry is not a valid date').before(300);
     browser.end();
   }

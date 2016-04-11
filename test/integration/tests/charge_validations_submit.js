@@ -1,24 +1,26 @@
 module.exports = {
+  '@tags': ['chargeValidation', 'chargeValidationSubmit'],
   beforeEach: function(browser){
     var demoService = browser.page.demo_service();
     demoService.navigate().generateCharge({
-      token: '21584d6a-673e-449f-a6cb-ef4776d6b12e',
+      token: process.env.demo_token,
       description: "hello",
       amount: 1234,
       reference: "hi"
     });
   },
-  'shows errors and highlightbox': function (browser) {
+  'shows errors and highlightbox and lets submit on correct details': function (browser) {
     var cardDetails = browser.page.payment_new();
     cardDetails
       .setValue('@cardNo', '12')
-      .submitForm('@form')
-      .expect.element('@error-summary').to.be.visible;
+      .submitForm('@form');
 
-
-      // .click('@cvc')
-      // .expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length').before(150);
-
+    cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length');
+    cardDetails.expect.element('@expiryLabel').text.to.contain('Enter a valid expiry date');
+    cardDetails.clearValue("@cardNo");
+    cardDetails.EnterValidDetails();
+    cardDetails.submitForm('@form');
+    browser.assert.title("Confirm your details.");
     browser.end();
   }
 

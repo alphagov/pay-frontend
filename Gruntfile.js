@@ -133,9 +133,9 @@ module.exports = function(grunt){
   var nightwatch = {
     options: {
       src_folders: ['test/integration/tests'],
-      standalone: true,
+      standalone: false,
       "page_objects_path": 'test/integration/pages',
-      test_workers:  {"enabled" : false, "workers" : 5},
+      test_workers:  {"enabled" : true, "workers" : 8},
       test_settings: {
         default: {
           "desiredCapabilities" : {
@@ -145,7 +145,6 @@ module.exports = function(grunt){
             "phantomjs.binary.path" : "/usr/local/bin/phantomjs",
           }
         }
-
       }
     }
   };

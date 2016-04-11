@@ -23,7 +23,7 @@ module.exports.fieldValidations = {
   },
 
   expiryMonth:  function(expiryMonth, allFields) {
-    if (!expiryMonth) return "message";
+    if (expiryMonth === undefined || expiryMonth === "") return "message";
     // month is zero indexed
     expiryMonth = expiryMonth -1;
     var isValidMonth = /^\d+$/.test(expiryMonth) && expiryMonth >= 0 && expiryMonth <= 11;
