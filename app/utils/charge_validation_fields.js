@@ -38,8 +38,8 @@ module.exports.fieldValidations = {
     return true;
   },
   cvc: function(code,allFields) {
+    if(code === undefined) return "invalid_length";
     code = code.replace(/\D/g,'');
-    console.log(code,code.length);
     if (code.length === 3 || code.length === 4) {
         return true;
     }
