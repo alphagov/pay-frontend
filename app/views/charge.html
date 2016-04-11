@@ -29,7 +29,8 @@ Enter your card details.
           <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
               <span
                 data-label-replace="cardholderName"
-                data-original-label="{{ i18n.chargeView.cardholderName }}">
+                data-original-label="{{ i18n.chargeView.cardholderName }}"
+                class="card-holder-name-label">
               {{ i18n.chargeView.cardholderName }}
               </span>
               {{#highlightErrorFields.cardholderName}}
@@ -43,6 +44,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}}" data-validation="cardNo">
           <label id="card-no-lbl" for="card-no" class="form-label-bold">
               <span
+              class="card-no-label"
               data-label-replace="cardNo"
               data-original-label="{{ i18n.chargeView.cardNo }}">
               {{ i18n.chargeView.cardNo }}
@@ -57,11 +59,12 @@ Enter your card details.
       </div>
       <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
           <label id="cvc-lbl" for="cvc" class="form-label-bold">
-              <soan
+              <span
+              class="cvc-label"
               data-label-replace="cvc"
               data-original-label="{{ i18n.chargeView.cvc }}">
               {{ i18n.chargeView.cvc }}
-              </soan>
+              </span>
               <p class="form-hint">This is the 3 digit code on the back of your card</p>
               {{#highlightErrorFields.cvc}}
                   <p class="error-message" id="error-cvc">
@@ -72,7 +75,9 @@ Enter your card details.
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}} expiry-date" data-validation="expiryMonth">
-          <p class="form-label-bold"
+          <p
+              class="expiry-date-label"
+              class="form-label-bold"
               data-label-replace="expiryMonth"
               data-original-label="{{ i18n.chargeView.expiry }}">
               {{ i18n.chargeView.expiry }}
@@ -103,6 +108,7 @@ Enter your card details.
           <p class="form-hint">This is the address associated with the card</p>
           <label id="address-line-1-lbl" for="address-line-1" class="form-label-bold">
               <span
+                class="address-line-1-label"
                 data-label-replace="addressLine1"
                 data-original-label="{{ i18n.chargeView.cardholderName }}">
                 {{ i18n.chargeView.building }}
@@ -120,6 +126,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.addressCity}} error{{/highlightErrorFields.addressCity}}" data-validation="addressCity">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
               <span
+                class="address-city-label"
                 data-label-replace="addressCity"
                 data-original-label="{{ i18n.chargeView.city }}">
                 {{ i18n.chargeView.city }}
@@ -135,6 +142,7 @@ Enter your card details.
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">
           <label id="address-postcode-lbl" for="address-postcode" class="form-label-bold">
               <span
+                class="address-postcode-label"
                 data-label-replace="addressPostcode"
                 data-original-label="{{ i18n.chargeView.postcode }}">
                 {{ i18n.chargeView.postcode }}
