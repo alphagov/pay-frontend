@@ -16,7 +16,6 @@ module.exports = {
     cardDetails
       .setValue('@cardNo', '12')
       .click('@expiryYear');
-    browser.execute(function(){ $("#card-no").blur();});
 
     cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length').before(300);
 
