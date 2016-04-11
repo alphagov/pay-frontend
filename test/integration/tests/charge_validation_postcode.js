@@ -10,13 +10,13 @@ module.exports = {
     });
   },
 
-
   'label gets replaced on invalid': function (browser) {
     var cardDetails = browser.page.payment_new();
     cardDetails
-      .setValue('@cvc', '12')
+      .setValue('@addressPostcode', 'N4')
       .click('@expiryYear');
-    cardDetails.expect.element('@cvcLabel').text.to.contain('Card Security code is invalid').before(300);
+    cardDetails.expect.element('@addressPostcodeLabel')
+      .text.to.contain('Please enter a valid postcode').before(300);
     browser.end();
   },
 };
