@@ -36,6 +36,16 @@ module.exports.fieldValidations = {
         currentDate.getMonth() > cardDate.getMonth()) return "in_the_past";
 
     return true;
+  },
+  cvc: function(code,allFields) {
+    code = code.replace(/\D/g,'');
+    console.log(code,code.length);
+    if (code.length === 3 || code.length === 4) {
+        return true;
+    }
+    return "invalid_length";
   }
+
+
 };
 
