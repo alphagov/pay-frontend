@@ -62,6 +62,7 @@
     "serve-favicon": "~2.3.0",
     "sinon": "~1.17.3",
     "string": "~3.3",
+    "uk-postcode": "^0.1.1",
     "winston": "^1.0.1"
   },
   "devDependencies": {
