@@ -4,14 +4,12 @@ var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
-var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
-
-
+var State   = require('./state.js');
 
 module.exports = function(){
 
-  createUrl = function(resource,chargeId){
-    return paths.generateRoute(paths.connectorCharge[resource].path,{chargeId: chargeId});
+  var createUrl = function(resource,params){
+    return paths.generateRoute(`connectorCharge.${resource}`,params);
   },
 
   mergeApiParams = function(params){
@@ -25,11 +23,11 @@ module.exports = function(){
   },
 
   updateToEnterDetails = function(chargeId) {
-    return updateStatus(chargeId,ENTERING_CARD_DETAILS_STATUS)
+    return updateStatus(chargeId, State.ENTERING_CARD_DETAILS);
   },
 
   updateStatus = function(chargeId, status){
-    var url = createUrl('updateStatus',chargeId),
+    var url = createUrl('updateStatus',{chargeId: chargeId}),
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
 
@@ -44,14 +42,12 @@ module.exports = function(){
 
   find = function(chargeId){
     var defer = q.defer();
-    client.get(createUrl('show',chargeId), function(data,response){
-
+    client.get(createUrl('show',{chargeId: chargeId}), function(data,response){
       if (response.statusCode !== 200) {
         return defer.reject(new Error('GET_FAILED'));
       }
       defer.resolve(data);
     }).on('error',function(err){
-
         logger.error('Exception raised calling connector for get: ' + err);
       clientUnavailable(err, defer);
     });
@@ -59,7 +55,7 @@ module.exports = function(){
   },
 
   capture = function(chargeId){
-    var url = createUrl('capture',chargeId),
+    var url = createUrl('capture',{chargeId: chargeId}),
     params  = mergeApiParams(),
     defer   = q.defer();
     client.post(url, params, function(data, response){
@@ -67,6 +63,21 @@ module.exports = function(){
     })
     .on('error',function(err){ captureFail(err, defer); });
 
+    return defer.promise;
+  },
+
+  findByToken = function(tokenId){
+    var defer = q.defer();
+    client.get(createUrl('findByToken',{chargeTokenId: tokenId}), function(data,response){
+      if (response.statusCode !== 200) {
+        defer.reject(new Error('GET_FAILED'));
+        return;
+      }
+      defer.resolve(data);
+    }).on('error',function(err){
+      logger.error('Exception raised calling connector for get: ' + err);
+      clientUnavailable(err, defer);
+    });
     return defer.promise;
   },
 
@@ -100,6 +111,7 @@ module.exports = function(){
     updateStatus: updateStatus,
     updateToEnterDetails: updateToEnterDetails,
     find: find,
-    capture: capture
+    capture: capture,
+    findByToken: findByToken
   }
 }();

@@ -71,13 +71,13 @@ module.exports.create = function(req, res) {
                 chargeSession.cardholderName = req.body.cardholderName;
                 chargeSession.address = normalise.addressForView(req.body);
                 chargeSession.serviceName = "Demo Service";
-                res.redirect(303, paths.generateRoute(paths.card.confirm.path,{chargeId: charge.id}));
+                res.redirect(303, paths.generateRoute("card.confirm",{chargeId: charge.id}));
                 return;
             case 500:
                 logger.error('got response code 500 from connector');
                 return _views.display(res,'SYSTEM_ERROR',{returnUrl: charge.return_url});
             default:
-                res.redirect(303,paths.generateRoute(paths.card.new.path,{chargeId: charge.id}));
+                res.redirect(303,paths.generateRoute("card.new",{chargeId: charge.id}));
         }
     }).on('error', function (err) {
         logger.error('Exception raised calling connector: ' + err);
@@ -89,9 +89,7 @@ module.exports.create = function(req, res) {
 module.exports.confirm = function(req, res) {
     charge          = normalise.charge(req.chargeData,req.chargeId),
     chargeSession   = session.retrieve(req, charge.id),
-    // REMOVE ONCE THESE DETAILS COME FROM CONNECTOR
-    sessionValid    = session.validForConfirm(chargeSession),
-    confirmPath     = paths.generateRoute(paths.card.confirm.path,{chargeId: charge.id}),
+    confirmPath     = paths.generateRoute("card.confirm",{chargeId: charge.id}),
     _views = views.create({ success: {
         view: CONFIRM_VIEW,
             locals: {
@@ -104,7 +102,6 @@ module.exports.confirm = function(req, res) {
     }});
 
     var init = function(){
-        if (!sessionValid) return _views.display(res,'SESSION_INCORRECT');
         _views.display(res,'success');
     };
     init();

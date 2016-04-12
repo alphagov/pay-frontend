@@ -18,8 +18,8 @@ var winston = require('winston');
 var get_charge_request = require(__dirname + '/test_helpers/test_helpers.js').get_charge_request;
 var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_helpers.js').connector_response_for_put_charge;
 var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
-var ENTERING_CARD_DETAILS_STATUS = 'ENTERING CARD DETAILS';
-var AUTH_SUCCESS_STATE = 'AUTHORISATION SUCCESS';
+
+var State = require(__dirname + '/../app/models/state.js');
 
 describe('chargeTests',function(){
 
@@ -181,7 +181,7 @@ describe('chargeTests',function(){
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
@@ -195,7 +195,7 @@ describe('chargeTests',function(){
 
     it('should error without csrf', function(done) {
       var cookieValue = cookie.create(chargeId);
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(204);
       post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'),false)
@@ -206,7 +206,7 @@ describe('chargeTests',function(){
     it('should send card data including optional fields to connector', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       var card_data = full_connector_card_data('5105105105105100');
 
@@ -225,7 +225,7 @@ describe('chargeTests',function(){
     it('should add card data including optional fields to the chargeIds session', function (done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
 
@@ -254,7 +254,7 @@ describe('chargeTests',function(){
     it('show an error page when authorization was refused', function(done) {
       var cookieValue = cookie.create(chargeId);
 
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
@@ -291,7 +291,7 @@ describe('chargeTests',function(){
 
     it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
       var cookieValue = cookie.create(chargeId);
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200)
@@ -309,7 +309,7 @@ describe('chargeTests',function(){
 
     it('shows an error when a card is submitted with missing fields', function (done) {
       var cookieValue = cookie.create(chargeId, {});
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       post_charge_request(cookieValue, missing_form_card_data())
           .expect(200)
           .expect(function(res){
@@ -351,7 +351,7 @@ describe('chargeTests',function(){
       card_data.address.line1 = 'bla bla';
       delete card_data.address.line3;
 
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -370,7 +370,7 @@ describe('chargeTests',function(){
       card_data.address.line1 = 'bla bla';
       delete card_data.address.line2;
 
-      default_connector_response_for_get_charge(chargeId, ENTERING_CARD_DETAILS_STATUS);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
@@ -497,32 +497,9 @@ describe('chargeTests',function(){
         .end(done);
     });
 
-    function missing_field_test(missing_field) {
-      return function (done) {
-        default_connector_response_for_get_charge(chargeId, "AUTHORISATION SUCCESS");
-
-
-        var sessionData = JSON.parse(JSON.stringify(fullSessionData));
-        delete sessionData[missing_field];
-
-        request(app)
-          .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .set('Cookie', ['frontend_state=' + cookie.create(chargeId, sessionData)])
-          .expect(422)
-          .expect(function(res){
-            helper.templateValue(res,"viewName","SESSION_INCORRECT");
-          })
-          .end(done);
-      };
-    }
-
-    [ 'expiryDate', 'cardNumber', 'cardholderName', 'address', 'serviceName'].map(function (missing_field) {
-      it('should display Session expired message if ' + missing_field + ' is not in the session', missing_field_test(missing_field));
-    });
-
     it('should post to the connector capture url looked up from the connector when a post arrives', function (done) {
       nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
+        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(State.AUTH_SUCCESS,"http://www.example.com/service"))
         .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
 
       request(app)
@@ -537,7 +514,7 @@ describe('chargeTests',function(){
 
     it('should error if no csrf token', function (done) {
       nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
+        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(State.AUTH_SUCCESS,"http://www.example.com/service"))
         .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
 
       request(app)
@@ -551,7 +528,7 @@ describe('chargeTests',function(){
 
     it('connector failure when trying to capture should result in error page', function (done) {
        nock(process.env.CONNECTOR_HOST)
-          .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
+          .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(State.AUTH_SUCCESS,"http://www.example.com/service"))
           .post('/v1/frontend/charges/' + chargeId + "/capture").reply(500);
 
       request(app)
@@ -569,7 +546,7 @@ describe('chargeTests',function(){
     it('connector could not authorise capture results in error page', function (done) {
 
        nock(process.env.CONNECTOR_HOST)
-          .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(AUTH_SUCCESS_STATE,"http://www.example.com/service"))
+          .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(State.AUTH_SUCCESS,"http://www.example.com/service"))
           .post('/v1/frontend/charges/' + chargeId + "/capture").reply(400);
 
       request(app)
@@ -599,7 +576,7 @@ describe('chargeTests',function(){
 
 
     it('should produce an error if the connector returns a non-204 status', function (done) {
-      default_connector_response_for_get_charge(chargeId, AUTH_SUCCESS_STATE);
+      default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
       connectorMock.post(connectorChargePath + chargeId + "/capture").reply(1234);
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
@@ -613,7 +590,7 @@ describe('chargeTests',function(){
     });
 
     it('should produce an error if the connector is unreachable for the confirm', function (done) {
-      default_connector_response_for_get_charge(chargeId, AUTH_SUCCESS_STATE);
+      default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .send({ csrfToken: helper.csrfToken() })

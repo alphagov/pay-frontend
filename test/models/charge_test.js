@@ -72,7 +72,7 @@ describe('find',function(){
       nock.cleanAll();
     });
 
-    it('should return get_failed', function () {
+    it('should return client unavailable', function () {
       return Charge.find(1).then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"CLIENT_UNAVAILABLE")
@@ -87,7 +87,7 @@ describe('find',function(){
 
       nock(originalHost)
       .get("/v1/frontend/charges/1")
-      .reply(422, '<html></html>');
+      .reply(404, '<html></html>');
     });
 
     it('should return get_failed', function () {
@@ -99,7 +99,7 @@ describe('find',function(){
   });
 
 
-  describe('when connector returns CORRECTLY RETURN JSON', function () {
+  describe('when connector returns correctly', function () {
     before(function() {
       nock.cleanAll();
 
@@ -117,9 +117,6 @@ describe('find',function(){
 });
 
 describe('capture',function(){
-
-
-
   describe('when connector returns with 204 it should resolve the correct promise', function () {
     before(function() {
       nock.cleanAll();
@@ -182,6 +179,55 @@ describe('capture',function(){
         function rejected(error){
           assert.equal(error.message,"POST_FAILED")
       });
+    });
+  });
+});
+
+describe('findByToken',function(){
+
+  describe('when connector is unavailable', function () {
+    before(function() {
+      nock.cleanAll();
+    });
+
+    it('should return client unavailable', function () {
+      return Charge.findByToken(1).then(wrongPromise,
+          function rejected(error){
+            assert.equal(error.message,"CLIENT_UNAVAILABLE")
+          });
+    });
+  });
+
+  describe('when connector returns incorrect response code', function () {
+    before(function() {
+      nock.cleanAll();
+
+      nock(originalHost)
+          .get("/v1/frontend/tokens/1/charge")
+          .reply(404, '<html></html>');
+    });
+
+    it('should return get_failed', function () {
+      return Charge.findByToken(1).then(wrongPromise,
+          function rejected(error){
+            assert.equal(error.message,"GET_FAILED")
+          });
+    });
+  });
+
+  describe('when connector returns correctly', function () {
+    before(function() {
+      nock.cleanAll();
+
+      nock(originalHost)
+          .get("/v1/frontend/tokens/1/charge")
+          .reply(200, {foo: "bar"});
+    });
+
+    it('should return get_failed', function () {
+      return Charge.findByToken(1).then(function(data){
+        assert.equal(data.foo,'bar');
+      },wrongPromise);
     });
   });
 });

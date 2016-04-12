@@ -112,10 +112,13 @@ module.exports = function(grunt){
         'test/services/*.js',
         'test/models/*.js',
         'test/utils/*.js',
-        'test/middleware/*.js'
+        'test/middleware/*.js',
+        'test/controllers/*.js'
       ]
     }
   };
+
+
 
   var env = {
     test: {

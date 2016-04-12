@@ -71,7 +71,7 @@ describe('state enforcer', function () {
       actionName: "hellothere",
       chargeData: { status: 'AUTHORISATION_SUCCESS', return_url: "foo" },
       chargeId: 1
-    },response,next)}).to.throw(/Cannot find correct enforcable states for action/);
+    },response,next)}).to.throw(/Cannot find correct states for action/);
   });
 
 
