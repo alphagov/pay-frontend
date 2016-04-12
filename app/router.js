@@ -1,8 +1,8 @@
 var response = require(__dirname + '/utils/response.js').response;
 var i18n = require('i18n');
 
-var controllers   = require('./controllers');
 var charge        = require('./controllers/charge_controller.js');
+var secure        = require('./controllers/secure_controller.js');
 
 var paths         = require(__dirname + '/paths.js');
 var csrf          = require(__dirname + '/middleware/csrf.js');
@@ -18,8 +18,12 @@ module.exports.bind = function (app) {
       response(req.headers.accept, res, 'greeting', data);
     });
 
+  // ***** BACKWARD COMPATIBILITY CODE STARTS HERE *****
+  var controllers   = require('./controllers');
   controllers.bindRoutesTo(app);
+  // ***** BACKWARD COMPATIBILITY CODE FINISHES HERE *****
 
+  // charges
   var card = paths.card;
   var middlewareStack = [
     function(req,res,next) { i18n.setLocale('en'); next();},
@@ -32,4 +36,8 @@ module.exports.bind = function (app) {
   app.post(card.create.path,  middlewareStack, charge.create);
   app.get(card.confirm.path,  middlewareStack, charge.confirm);
   app.post(card.capture.path, middlewareStack, charge.capture);
+
+  // secure controller
+  app.get(paths.secure.get.path, secure.new);
+  app.post(paths.secure.post.path, secure.new);
 };
