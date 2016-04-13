@@ -39,22 +39,22 @@ Enter your card details.
               <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
           <ul class="accepted-cards field-empty">
-            <li class="visa">
+            <li class="visa" data-key="visa">
               <span class="visuallyhidden">visa</span>
             </li>
-            <li class="master-card">
+            <li class="master-card" data-key="master-card">
               <span class="visuallyhidden">mastercard</span>
             </li>
-            <li class="american-express">
+            <li class="american-express" data-key="american-express">
               <span class="visuallyhidden">Amex</span>
             </li>
-            <li class="jcb">
+            <li class="jcb" data-key="jcb">
               <span class="visuallyhidden">jcb</span>
             </li>
-            <li class="diners-club">
+            <li class="diners-club" data-key="diners-club">
               <span class="visuallyhidden">diners</span>
             </li>
-            <li class="discover">
+            <li class="discover" data-key="discover">
               <span class="visuallyhidden">discover</span>
             </li>
           </ul>
@@ -119,6 +119,7 @@ Enter your card details.
                   </p>
               {{/highlightErrorFields.cvc}}
               <input id="cvc" type="text" value="" name="cvc" maxlength="4" class="form-control-1-8 cvc">
+              <img src="/public/images/security-code.png" />
           </label>
       </div>
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
