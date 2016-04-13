@@ -37,7 +37,7 @@ describe('charge validator', function () {
     var cardNoVerification = _.filter(verification.errorFields, function(e) {
       return e.key == "cardNo";
     })[0];
-    expect(cardNoVerification.value).to.eq('your Card number is not of the correct length');
+    expect(cardNoVerification.value).to.eq('Card number is not the correct length');
   });
 
 

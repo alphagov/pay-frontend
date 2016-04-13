@@ -1,6 +1,7 @@
 var formValidation = function(){
   var form          = $('form#card-details'),
   formInputs        = form.find('input'),
+  cardInput         = form.find('input#card-no'),
   errorSummary      = $('.error-summary'),
   chargeValidations = module.chargeValidation(i18n.chargeController.fieldErrors,console),
   required          = chargeValidations.required;
@@ -79,7 +80,6 @@ var formValidation = function(){
       label.text(label.attr('data-original-label'));
     }
   },
-
 
   validationFor = function(name){
      var validation =$.grep(allValidations().errorFields,function(validation){

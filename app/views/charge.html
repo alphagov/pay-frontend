@@ -18,30 +18,12 @@ Enter your card details.
   </div>
 
 
-  <h1 class="form-title">Pay by card</h1>
+  <h1 class="form-title">Enter card details</h1>
 
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
       <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
-
-      <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
-      data-validation="cardholderName">
-          <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
-              <span
-                data-label-replace="cardholderName"
-                data-original-label="{{ i18n.chargeView.cardholderName }}"
-                class="card-holder-name-label">
-              {{ i18n.chargeView.cardholderName }}
-              </span>
-              {{#highlightErrorFields.cardholderName}}
-                  <p class="error-message" id="error-cardholder-name">
-                    {{highlightErrorFields.cardholderName}}
-                  </p>
-              {{/highlightErrorFields.cardholderName}}
-              <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2 form-control">
-          </label>
-      </div>
-      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}}" data-validation="cardNo">
+      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}} card-no-group" data-validation="cardNo">
           <label id="card-no-lbl" for="card-no" class="form-label-bold">
               <span
               class="card-no-label"
@@ -56,28 +38,31 @@ Enter your card details.
               {{/highlightErrorFields.cardNo}}
               <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
-      </div>
-      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
-          <label id="cvc-lbl" for="cvc" class="form-label-bold">
-              <span
-              class="cvc-label"
-              data-label-replace="cvc"
-              data-original-label="{{ i18n.chargeView.cvc }}">
-              {{ i18n.chargeView.cvc }}
-              </span>
-              <p class="form-hint">This is the 3 digit code on the back of your card</p>
-              {{#highlightErrorFields.cvc}}
-                  <p class="error-message" id="error-cvc">
-                        {{highlightErrorFields.cvc}}
-                  </p>
-              {{/highlightErrorFields.cvc}}
-              <input id="cvc" type="text" value="" name="cvc" maxlength="3" class="form-control-1-8 cvc">
-          </label>
+          <ul class="accepted-cards field-empty">
+            <li class="visa" data-key="visa">
+              <span class="visuallyhidden">visa</span>
+            </li>
+            <li class="master-card" data-key="master-card">
+              <span class="visuallyhidden">mastercard</span>
+            </li>
+            <li class="american-express" data-key="american-express">
+              <span class="visuallyhidden">Amex</span>
+            </li>
+            <li class="jcb" data-key="jcb">
+              <span class="visuallyhidden">jcb</span>
+            </li>
+            <li class="diners-club" data-key="diners-club">
+              <span class="visuallyhidden">diners</span>
+            </li>
+            <li class="discover" data-key="discover">
+              <span class="visuallyhidden">discover</span>
+            </li>
+          </ul>
+          <p> accepted credit and debit card types </p>
       </div>
       <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}} expiry-date" data-validation="expiryMonth">
           <p
-              class="expiry-date-label"
-              class="form-label-bold"
+              class="form-label-bold expiry-date-label"
               data-label-replace="expiryMonth"
               data-original-label="{{ i18n.chargeView.expiry }}">
               {{ i18n.chargeView.expiry }}
@@ -101,6 +86,41 @@ Enter your card details.
                 class="form-control" required="required"
                 min="16" max="99">
               </div>
+      </div>
+      <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
+      data-validation="cardholderName">
+          <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
+              <span
+                data-label-replace="cardholderName"
+                data-original-label="{{ i18n.chargeView.cardholderName }}"
+                class="card-holder-name-label">
+              {{ i18n.chargeView.cardholderName }}
+              </span>
+              {{#highlightErrorFields.cardholderName}}
+                  <p class="error-message" id="error-cardholder-name">
+                    {{highlightErrorFields.cardholderName}}
+                  </p>
+              {{/highlightErrorFields.cardholderName}}
+              <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2 form-control">
+          </label>
+      </div>
+      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
+          <label id="cvc-lbl" for="cvc" class="form-label-bold">
+              <span
+              class="cvc-label"
+              data-label-replace="cvc"
+              data-original-label="{{ i18n.chargeView.cvc }}">
+              {{ i18n.chargeView.cvc }}
+              </span>
+              <p class="form-hint">This is the 3 digit code on the back of your card</p>
+              {{#highlightErrorFields.cvc}}
+                  <p class="error-message" id="error-cvc">
+                        {{highlightErrorFields.cvc}}
+                  </p>
+              {{/highlightErrorFields.cvc}}
+              <input id="cvc" type="text" value="" name="cvc" maxlength="4" class="form-control-1-8 cvc">
+              <img src="/public/images/security-code.png" />
+          </label>
       </div>
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
           data-validation="addressLine1">
@@ -157,7 +177,7 @@ Enter your card details.
           </label>
       </div>
       <div>
-          <input id="submit-card-details" type="submit" class="button" value="Make payment" name="submitCardDetails">
+          <input id="submit-card-details" type="submit" class="button" value="Continue" name="submitCardDetails">
       </div>
   </form>
 

@@ -138,17 +138,17 @@ module.exports = function(grunt){
       src_folders: ['test/integration/tests'],
       standalone: false,
       "page_objects_path": 'test/integration/pages',
-      test_workers:  {"enabled" : true, "workers" : 8},
-      test_settings: {
-        default: {
-          "desiredCapabilities" : {
-            "browserName" : "phantomjs",
-            "javascriptEnabled" : true,
-            "acceptSslCerts" : true,
-            "phantomjs.binary.path" : "/usr/local/bin/phantomjs",
-          }
-        }
-      }
+      // test_workers:  {"enabled" : true, "workers" : 8},
+      // test_settings: {
+      //   default: {
+      //     "desiredCapabilities" : {
+      //       "browserName" : "phantomjs",
+      //       "javascriptEnabled" : true,
+      //       "acceptSslCerts" : true,
+      //       "phantomjs.binary.path" : "/usr/local/bin/phantomjs",
+      //     }
+      //   }
+      // }
     }
   };
 

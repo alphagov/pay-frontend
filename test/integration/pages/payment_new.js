@@ -20,15 +20,18 @@ module.exports = {
    cardNo: "#card-no",
    cardNoLabel: "#card-no-lbl span[data-label-replace]",
    cvc: "#cvc",
+   cvcLabel: ".cvc-label",
    expiryMonth: "input#expiry-month" ,
    expiryYear: "input#expiry-year" ,
-   expiryLabel: ".expiry-date .form-label-bold" ,
+   expiryLabel: ".expiry-date-label" ,
    addressLine1: "#address-line-1",
    addressCity: "#address-city",
    addressPostcode: "#address-postcode",
+   addressPostcodeLabel: ".address-postcode-label",
    "error-summary": "#error-summary",
-   "form": "form#card-details"
-
+   "form": "form#card-details",
+   "visaLabel": ".accepted-cards .visa",
+   "highlightedCardLabel": ".accepted-cards .selected"
   },
   commands: [commands],
 };
