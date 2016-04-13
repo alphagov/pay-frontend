@@ -16,7 +16,8 @@
        },
        "cvc": {
          "name": "card security code",
-         "message": "Please enter your card security code"
+         "message": "Please enter your card security code",
+         "invalid_length": "Card Security code is invalid"
        },
        "expiryDate": {
          "name": "expiry date",
