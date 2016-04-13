@@ -29,8 +29,9 @@ module.exports = {
    addressPostcode: "#address-postcode",
    addressPostcodeLabel: ".address-postcode-label",
    "error-summary": "#error-summary",
-   "form": "form#card-details"
-
+   "form": "form#card-details",
+   "visaLabel": ".accepted-cards .visa",
+   "highlightedCardLabel": ".accepted-cards .selected"
   },
   commands: [commands],
 };
