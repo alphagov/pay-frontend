@@ -12,7 +12,8 @@ var unNormalisedCharge = {
   links: [ {
     rel: "rar",
     href: "http://foo"
-  }]
+  }],
+  status: "status"
 };
 
 var normalisedCharge = {
@@ -23,7 +24,8 @@ var normalisedCharge = {
   links: [{
     rel: "rar",
     href: "http://foo"
-  }]
+  }],
+  status: "status"
 };
 
 var unNormalisedAddress = {

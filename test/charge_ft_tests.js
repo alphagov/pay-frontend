@@ -18,7 +18,6 @@ var winston = require('winston');
 var get_charge_request = require(__dirname + '/test_helpers/test_helpers.js').get_charge_request;
 var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_helpers.js').connector_response_for_put_charge;
 var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
-
 var State = require(__dirname + '/../app/models/state.js');
 
 describe('chargeTests',function(){
@@ -176,7 +175,48 @@ describe('chargeTests',function(){
 
     });
 
+    it('should redirect user to auth_waiting when connector returns 202', function(done) {
+      var cookieValue = cookie.create(chargeId);
 
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+
+      connector_expects(minimum_connector_card_data('5105105105105100'))
+          .reply(202);
+
+      post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'))
+          .expect(303)
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+          .end(done);
+    });
+
+    it('should redirect user from /auth_waiting to /confirm when connector returns a successful status', function(done) {
+      var cookieValue = cookie.create(chargeId);
+
+      default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
+
+      request(app)
+              .get(frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+              .set('Content-Type', 'application/x-www-form-urlencoded')
+              .set('Cookie', ['frontend_state=' + cookieValue])
+              .set('Accept', 'application/json')
+          .expect(303)
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .end(done);
+    });
+
+    it('should keep user in /auth_waiting when connector returns an authorisation ready state', function(done) {
+      var cookieValue = cookie.create(chargeId);
+
+      default_connector_response_for_get_charge(chargeId, State.AUTH_READY);
+
+      request(app)
+              .get(frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+              .set('Content-Type', 'application/x-www-form-urlencoded')
+              .set('Cookie', ['frontend_state=' + cookieValue])
+              .set('Accept', 'application/json')
+          .expect(200)
+          .end(done);
+    });
 
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);

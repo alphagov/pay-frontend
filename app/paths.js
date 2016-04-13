@@ -20,6 +20,10 @@ var paths = {
       path: '/card_details',
       action: 'post'
     },
+    authWaiting: {
+      path: '/card_details/:chargeId/auth_waiting',
+      action: 'get'
+    },
     confirm: {
       path: '/card_details/:chargeId/confirm',
       action: 'get'

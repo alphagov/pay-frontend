@@ -54,6 +54,11 @@ module.exports = function(){
     AUTHORISATION_REJECTED: {
         view: "errors/incorrect_state/auth_failure"
     },
+
+    AUTHORISATION_ERROR: {
+      view: "errors/system_error"
+    },
+
     display: function(res,resName,locals){
       var locals = locals || {};
       var action = _.result(this, resName);
