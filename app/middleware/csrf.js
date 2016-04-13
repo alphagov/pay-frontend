@@ -3,6 +3,7 @@ var csrf    = require('csrf'),
 session     = require('../utils/session.js'),
 views       = require('../utils/views.js'),
 chargeParam = require('../services/charge_param_retriever.js'),
+logger      = require('winston'),
 _views      = views.create();
 
 module.exports = function(req, res, next){
@@ -24,7 +25,7 @@ module.exports = function(req, res, next){
 
   showNoSession = function(){
     _views.display(res,'SYSTEM_ERROR');
-    return console.error('CSRF SECRET IS NOT DEFINED');
+    return logger.error('CSRF SECRET IS NOT DEFINED');
   },
 
   csrfValid = function(){
@@ -32,7 +33,7 @@ module.exports = function(req, res, next){
     if (!chargeSession.csrfTokens) chargeSession.csrfTokens = [];
 
     if(csrfUsed()) {
-      console.error('CSRF USED');
+      logger.error('CSRF USED');
       return false;
     }
     var verify = csrf().verify(chargeSession.csrfSecret, csrfToken);
@@ -48,7 +49,7 @@ module.exports = function(req, res, next){
 
   showCsrfInvalid = function(){
     _views.display(res,'SYSTEM_ERROR');
-    return console.error('CSRF INVALID');
+    return logger.error('CSRF INVALID');
   },
 
   appendCsrf = function(){

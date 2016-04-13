@@ -30,7 +30,7 @@ describe('chargeTests',function(){
   var frontendCardDetailsPath = '/card_details';
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
-  var connectorMock = nock(localServer);
+  var connectorMock;
   var enteringCardDetailsState = 'ENTERING CARD DETAILS';
   var RETURN_URL = 'http://www.example.com/service';
 
@@ -62,7 +62,8 @@ describe('chargeTests',function(){
       'address': {
         'line1': '32 Whip Ma Whop Ma Avenue',
         'postcode': 'Y1 1YN',
-        'country': 'GB'
+        'country': 'GB',
+        'city': 'Willy wonka'
       }
     };
   }
@@ -86,7 +87,8 @@ describe('chargeTests',function(){
       'expiryYear': '99',
       'cardholderName': 'Jimi Hendrix',
       'addressLine1': '32 Whip Ma Whop Ma Avenue',
-      'addressPostcode': 'Y1 1YN'
+      'addressPostcode': 'Y1 1YN',
+      'addressCity': 'Willy wonka'
     };
   }
 
@@ -99,6 +101,7 @@ describe('chargeTests',function(){
 
   beforeEach(function() {
     nock.cleanAll();
+    connectorMock = nock(localServer);
   });
 
   before(function () {
@@ -298,8 +301,8 @@ describe('chargeTests',function(){
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount",'23.45');
-            helper.templateValue(res,"errorFields",[{"key": "card-no", "value": "Card number is invalid"}]);
-            helper.templateValue(res,"highlightErrorFields",{"cardNo": "Please enter the long number on the front of your card"});
+            helper.templateValue(res,"errorFields",[{"cssKey": "card-no","key": "cardNo", "value": "Card number is invalid"}]);
+            helper.templateValue(res,"highlightErrorFields",{"cardNo": "Please enter a valid card number"});
           })
           .end(done);
     });
@@ -316,22 +319,24 @@ describe('chargeTests',function(){
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"errorFields", [
-              {"key": "cardholder-name", "value": "Name on card is missing"},
-              {"key": "card-no", "value": "Card number is missing"},
-              {"key": "cvc", "value": "CVC is missing"},
-              {"key": "expiry-month", "value": "Expiry month is missing"},
-              {"key": "expiry-year", "value": "Expiry year is missing"},
-              {"key": "address-line-1", "value": "Building name/number and street is missing"},
-              {"key": "address-postcode", "value": "Postcode is missing"}
+              {"key" : "cardholderName", "cssKey": "cardholder-name", "value": "Enter a valid name"},
+              {"key" : "cardNo", "cssKey": "card-no", "value": "Enter a valid card number"},
+              {"key" : "cvc", "cssKey": "cvc", "value": "Enter a valid card security code"},
+              {"key" : "expiryMonth", "cssKey": "expiry-month", "value": "Enter a valid expiry date"},
+              {"key" : "expiryYear", "cssKey": "expiry-year", "value": "Enter a valid expiry year"},
+              {"key" : "addressLine1", "cssKey": "address-line-1", "value": "Enter a valid building name/number and street"},
+              {"key" : "addressCity", "cssKey": "address-city", "value": "Enter a valid town/city"},
+              {"key" : "addressPostcode", "cssKey": "address-postcode", "value": "Enter a valid postcode"}
             ]);
 
             helper.templateValue(res,"highlightErrorFields",{
               "cardholderName":"Please enter the name as it appears on the card",
-              "cardNo":"Please enter the long number on the front of your card",
+              "cardNo":"Please enter a valid card number",
               "cvc":"Please enter your card security code",
               "expiryMonth": "Please enter a valid expiry date",
               "expiryYear": "Please enter a valid expiry date",
               "addressLine1":"Please enter your address",
+              "addressCity": "Please enter your Town/City",
               "addressPostcode":"Please enter a valid postcode"
             });
 

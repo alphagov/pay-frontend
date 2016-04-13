@@ -29,6 +29,7 @@
   "dependencies": {
     "array.prototype.find": "1.0.0",
     "body-parser": "1.13.3",
+    "browserify": "^13.0.0",
     "change-case": "~2.3",
     "client-sessions": ">= 0.3.1",
     "csrf": "^3.0",
@@ -42,6 +43,7 @@
     "grunt-contrib-copy": "0.5.0",
     "grunt-contrib-watch": "0.5.3",
     "grunt-env": "~0.4",
+    "grunt-nightwatch": "^0.5.2",
     "grunt-nodemon": "~0.4",
     "grunt-sass": "1.0.0",
     "grunt-text-replace": "0.3.12",
@@ -60,7 +62,8 @@
     "serve-favicon": "~2.3.0",
     "sinon": "~1.17.3",
     "string": "~3.3",
-    "winston": "^1.0.1"
+    "winston": "^1.0.1",
+    "grunt-browserify": "^5.0.0"
   },
   "devDependencies": {
     "chai": "^3.2.0",
@@ -70,6 +73,7 @@
     "errorhandler": "^1.4.2",
     "express-writer": "0.0.4",
     "grunt-mocha-test": "^0.12.7",
+    "grunt-nightwatch-report": "^0.1.6",
     "jshint": "latest",
     "mocha": "^2.2.5",
     "mockserver-client": "^1.0.6",

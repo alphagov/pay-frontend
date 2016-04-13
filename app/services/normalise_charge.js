@@ -42,7 +42,7 @@ module.exports = function(){
     return creditCardNo.replace(/\D/g,'');
   },
   expiryDate = function(day, month){
-    return `${day}/${month}`;
+    return day + "/" + month;
   };
 
   return {

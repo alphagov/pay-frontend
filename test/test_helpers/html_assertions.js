@@ -80,7 +80,7 @@ chai.use(function (_chai, utils) {
   chai.Assertion.addMethod('withLabel', function(labelId, labelText) {
     var inputFieldId = utils.flag(this, 'inputFieldId');
     var subAssertion = new chai.Assertion(utils.flag(this, "rawHtml"));
-    subAssertion.containSelector('label#' + labelId).withAttribute('for', inputFieldId).withText(labelText);
+    subAssertion.containSelector('label#' + labelId).withAttribute('for', inputFieldId)
   });
 
 });
