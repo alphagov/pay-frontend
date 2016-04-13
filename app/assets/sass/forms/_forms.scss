@@ -157,9 +157,8 @@ fieldset {
   display: block;
   color: $secondary-text-colour;
   margin-bottom: 5px;
-  @include media (tablet) {
-    margin-top: 8px;
-  }
+  margin-top: 5px;
+  @include core-19();
 }
 
 .hint {
@@ -179,7 +178,7 @@ fieldset {
   @include box-sizing(border-box);
   padding: 4px;
   background-color: $white;
-  border: 1px solid $border-colour;
+  border: 1px solid #6f777b;
   border-width: 2px;
 
   // Disable webkit appearance and remove rounded corners

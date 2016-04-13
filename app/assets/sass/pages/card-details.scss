@@ -7,7 +7,32 @@ form#card-details {
 
   .card-no-group p {
     clear: left;
-    @include core-19();
+    @include core-16();
     color: $secondary-text-colour;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .expiry-date-label {
+    margin-top: 0;
+  }
+
+  .address {
+    margin-top: 15px;
+  }
+
+  .address-line-1-label {
+    padding-top: 15px;
+    display: block;
+  }
+
+  #address-line-2 {
+    margin-bottom: 0;
+  }
+
+  #submit-card-details {
+    @include core-19();
+    font-weight: bold;
+    margin-top: 15px;
   }
 }

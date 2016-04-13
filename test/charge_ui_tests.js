@@ -29,7 +29,7 @@ describe('The charge view', function() {
         });
   });
 
-  it('should have a \'Make payment\' button.', function () {
+  it('should have a \'Continue\' button.', function () {
     var body = renderTemplate('charge', {});
     body.should.containInputWithIdAndName('submit-card-details', 'submitCardDetails', 'submit');
   });

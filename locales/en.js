@@ -12,7 +12,8 @@
          "name": "card number",
          "message": "Please enter a valid card number",
          "number_incorrect_length": "your Card number is not of the correct length",
-         "luhn_invalid":"Card number is invalid"
+         "luhn_invalid":"Card number is invalid",
+         "card_not_supported": "Your Card type is not supported"
        },
        "cvc": {
          "name": "card security code",

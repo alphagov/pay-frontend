@@ -18,7 +18,7 @@ Enter your card details.
   </div>
 
 
-  <h1 class="form-title">Pay by card</h1>
+  <h1 class="form-title">Enter card details</h1>
 
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
@@ -38,7 +38,7 @@ Enter your card details.
               {{/highlightErrorFields.cardNo}}
               <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
-          <ul class="accepted-cards">
+          <ul class="accepted-cards field-empty">
             <li class="visa">
               <span class="visuallyhidden">visa</span>
             </li>
@@ -59,6 +59,33 @@ Enter your card details.
             </li>
           </ul>
           <p> accepted credit and debit card types </p>
+      </div>
+      <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}} expiry-date" data-validation="expiryMonth">
+          <p
+              class="form-label-bold expiry-date-label"
+              data-label-replace="expiryMonth"
+              data-original-label="{{ i18n.chargeView.expiry }}">
+              {{ i18n.chargeView.expiry }}
+          </p>
+          <p class="form-hint-bold form-hint">For example, 07/17</p>
+              {{#highlightErrorFields.expiryMonth}}
+                <p class="error-message" id="error-expiry-date">
+                    {{highlightErrorFields.expiryMonth}}
+                </p>
+              {{/highlightErrorFields.expiryMonth}}
+              <div class="date-container">
+                <div class="form-hint"> Month </div>
+                <input id="expiry-month" type="number" name="expiryMonth" maxlength="2"
+                class="form-control" required="required"
+                min="1" max="12">
+                <p class="seperator"> / </p>
+              </div>
+              <div class="date-container">
+                <div class="form-hint"> Year </div>
+                <input id="expiry-year" type="number" name="expiryYear" maxlength="2"
+                class="form-control" required="required"
+                min="16" max="99">
+              </div>
       </div>
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
       data-validation="cardholderName">
@@ -93,34 +120,6 @@ Enter your card details.
               {{/highlightErrorFields.cvc}}
               <input id="cvc" type="text" value="" name="cvc" maxlength="4" class="form-control-1-8 cvc">
           </label>
-      </div>
-      <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}} expiry-date" data-validation="expiryMonth">
-          <p
-              class="expiry-date-label"
-              class="form-label-bold"
-              data-label-replace="expiryMonth"
-              data-original-label="{{ i18n.chargeView.expiry }}">
-              {{ i18n.chargeView.expiry }}
-          </p>
-          <p class="form-hint-bold form-hint">For example, 07/17</p>
-              {{#highlightErrorFields.expiryMonth}}
-                <p class="error-message" id="error-expiry-date">
-                    {{highlightErrorFields.expiryMonth}}
-                </p>
-              {{/highlightErrorFields.expiryMonth}}
-              <div class="date-container">
-                <div class="form-hint"> Month </div>
-                <input id="expiry-month" type="number" name="expiryMonth" maxlength="2"
-                class="form-control" required="required"
-                min="1" max="12">
-                <p class="seperator"> / </p>
-              </div>
-              <div class="date-container">
-                <div class="form-hint"> Year </div>
-                <input id="expiry-year" type="number" name="expiryYear" maxlength="2"
-                class="form-control" required="required"
-                min="16" max="99">
-              </div>
       </div>
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
           data-validation="addressLine1">
@@ -177,7 +176,7 @@ Enter your card details.
           </label>
       </div>
       <div>
-          <input id="submit-card-details" type="submit" class="button" value="Make payment" name="submitCardDetails">
+          <input id="submit-card-details" type="submit" class="button" value="Continue" name="submitCardDetails">
       </div>
   </form>
 
