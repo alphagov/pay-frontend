@@ -23,7 +23,42 @@ Enter your card details.
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
       <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
-
+      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}}" data-validation="cardNo">
+          <label id="card-no-lbl" for="card-no" class="form-label-bold">
+              <span
+              class="card-no-label"
+              data-label-replace="cardNo"
+              data-original-label="{{ i18n.chargeView.cardNo }}">
+              {{ i18n.chargeView.cardNo }}
+              </span>
+              {{#highlightErrorFields.cardNo}}
+                <p class="error-message" id="error-card-no">
+                    {{highlightErrorFields.cardNo}}
+                </p>
+              {{/highlightErrorFields.cardNo}}
+              <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
+          </label>
+          <ul class="accepted-cards">
+            <li class="american-express">
+              <span class="visuallyhidden">Amex</span>
+            </li>
+            <li class="diners-club">
+              <span class="visuallyhidden">diners</span>
+            </li>
+            <li class="discover">
+              <span class="visuallyhidden">discover</span>
+            </li>
+            <li class="jcb">
+              <span class="visuallyhidden">jcb</span>
+            </li>
+            <li class="master-card">
+              <span class="visuallyhidden">mastercard</span>
+            </li>
+            <li class="visa">
+              <span class="visuallyhidden">visa</span>
+            </li>
+          </ul>
+      </div>
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
       data-validation="cardholderName">
           <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
@@ -39,22 +74,6 @@ Enter your card details.
                   </p>
               {{/highlightErrorFields.cardholderName}}
               <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2 form-control">
-          </label>
-      </div>
-      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}}" data-validation="cardNo">
-          <label id="card-no-lbl" for="card-no" class="form-label-bold">
-              <span
-              class="card-no-label"
-              data-label-replace="cardNo"
-              data-original-label="{{ i18n.chargeView.cardNo }}">
-              {{ i18n.chargeView.cardNo }}
-              </span>
-              {{#highlightErrorFields.cardNo}}
-                <p class="error-message" id="error-card-no">
-                    {{highlightErrorFields.cardNo}}
-                </p>
-              {{/highlightErrorFields.cardNo}}
-              <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
