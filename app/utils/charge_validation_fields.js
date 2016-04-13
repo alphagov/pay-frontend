@@ -1,4 +1,6 @@
 var luhn = require('luhn');
+var ukPostcode = require("uk-postcode");
+
 
 module.exports.requiredFormFields = [
 "cardholderName",
@@ -36,6 +38,21 @@ module.exports.fieldValidations = {
         currentDate.getMonth() > cardDate.getMonth()) return "in_the_past";
 
     return true;
+  },
+
+  cvc: function(code, allFields) {
+    if(code === undefined) return "invalid_length";
+    var strippedCode = code.replace(/\D/g,'');
+    if (strippedCode.length === 3 || strippedCode.length === 4) {
+        return true;
+    }
+    return "invalid_length";
+  },
+
+  addressPostcode: function(AddressPostcode, allfields){
+    var postCode = ukPostcode.fromString(AddressPostcode);
+    if (postCode.isComplete()) { return true; }
+    return "message";
   }
 };
 
