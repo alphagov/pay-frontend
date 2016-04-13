@@ -42,8 +42,8 @@ module.exports.fieldValidations = {
 
   cvc: function(code, allFields) {
     if(code === undefined) return "invalid_length";
-    code = code.replace(/\D/g,'');
-    if (code.length === 3 || code.length === 4) {
+    var strippedCode = code.replace(/\D/g,'');
+    if (strippedCode.length === 3 || strippedCode.length === 4) {
         return true;
     }
     return "invalid_length";
