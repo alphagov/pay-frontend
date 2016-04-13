@@ -341,7 +341,7 @@ describe('chargeTests',function(){
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount",'23.45');
-            helper.templateValue(res,"errorFields",[{"cssKey": "card-no","key": "cardNo", "value": "Card number is invalid"}]);
+            helper.templateValue(res,"errorFields",[{"cssKey": "card-no","key": "cardNo", "value": "Enter a valid card number"}]);
             helper.templateValue(res,"highlightErrorFields",{"cardNo": "Please enter a valid card number"});
           })
           .end(done);
@@ -370,14 +370,14 @@ describe('chargeTests',function(){
             ]);
 
             helper.templateValue(res,"highlightErrorFields",{
-              "cardholderName":"Please enter the name as it appears on the card",
+              "cardholderName": "Enter the name on the card",
+              "cvc": "Enter a card security code",
+              "expiryMonth": "Enter a valid expiry date",
+              "expiryYear": "Enter a valid expiry date",
               "cardNo":"Please enter a valid card number",
-              "cvc":"Please enter your card security code",
-              "expiryMonth": "Please enter a valid expiry date",
-              "expiryYear": "Please enter a valid expiry date",
-              "addressLine1":"Please enter your address",
-              "addressCity": "Please enter your Town/City",
-              "addressPostcode":"Please enter a valid postcode"
+              "addressCity": "Enter a Town/City",
+              "addressLine1": "Enter a billing address",
+              "addressPostcode": "Enter a valid postcode"
             });
 
           })

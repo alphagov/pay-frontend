@@ -6,19 +6,19 @@
      "fields": {
        "cardholderName": {
          "name": "name",
-         "message": "Please enter the name as it appears on the card"
+         "message": "Enter the name on the card"
        },
        "cardNo": {
          "name": "card number",
          "message": "Please enter a valid card number",
-         "number_incorrect_length": "your Card number is not of the correct length",
-         "luhn_invalid":"Card number is invalid",
-         "card_not_supported": "Your Card type is not supported"
+         "number_incorrect_length": "Card number is not the correct length",
+         "luhn_invalid":"Enter a valid card number",
+         "card_not_supported": "This card type is not accepted"
        },
        "cvc": {
          "name": "card security code",
-         "message": "Please enter your card security code",
-         "invalid_length": "Card Security code is invalid"
+         "message": "Enter a card security code",
+         "invalid_length": "Enter a valid card security code"
        },
        "expiryDate": {
          "name": "expiry date",
@@ -26,26 +26,26 @@
        },
        "expiryMonth": {
          "name": "expiry date",
-         "message": "Please enter a valid expiry date",
-         "invalid_month":"Expiry is not a valid date",
+         "message": "Enter a valid expiry date",
+         "invalid_month":"Enter a valid expiry date",
          "in_the_past": "The expiry date is in the past"
        },
        "expiryYear": {
          "name": "expiry year",
-         "message": "Please enter a valid expiry date",
+         "message": "Enter a valid expiry date",
          "invalid_year":"Expiry year is not a valid year"
        },
        "addressLine1": {
          "name": "building name/number and street",
-         "message": "Please enter your address"
+         "message": "Enter a billing address"
        },
        "addressCity": {
          "name": "town/city",
-         "message": "Please enter your Town/City"
+         "message": "Enter a Town/City"
        },
        "addressPostcode": {
          "name": "postcode",
-         "message": "Please enter a valid postcode"
+         "message": "Enter a valid postcode"
        }
      }
    }
