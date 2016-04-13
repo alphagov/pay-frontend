@@ -62,7 +62,8 @@
     "serve-favicon": "~2.3.0",
     "sinon": "~1.17.3",
     "string": "~3.3",
-    "winston": "^1.0.1"
+    "winston": "^1.0.1",
+    "grunt-browserify": "^5.0.0"
   },
   "devDependencies": {
     "chai": "^3.2.0",
@@ -71,7 +72,6 @@
     "chokidar-cli": "latest",
     "errorhandler": "^1.4.2",
     "express-writer": "0.0.4",
-    "grunt-browserify": "^5.0.0",
     "grunt-mocha-test": "^0.12.7",
     "grunt-nightwatch-report": "^0.1.6",
     "jshint": "latest",
