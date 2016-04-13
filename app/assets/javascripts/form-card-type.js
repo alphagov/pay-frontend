@@ -7,13 +7,18 @@ var showCardType = function(){
     cardInput.on('keyup',showCardType);
   },
 
-
   showCardType = function(){
-    console.log(module.creditCardType($(this).val()));
-    var cardtype = module.creditCardType($(this).val());
+    var cardType = module.creditCardType($(this).val().replace(/\D/g,''));
+    unSelectAll();
+    if (cardType.length !== 1) return;
+    selectCard(cardType[0].type);
   },
+
   unSelectAll = function(){
-    cards.removeClass('.selected')
+    cards.removeClass('selected');
+  },
+  selectCard = function(name){
+    cards.filter('.' + name).addClass('selected');
   };
 
 

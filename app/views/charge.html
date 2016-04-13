@@ -23,7 +23,7 @@ Enter your card details.
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
       <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
-      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}}" data-validation="cardNo">
+      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}} card-no-group" data-validation="cardNo">
           <label id="card-no-lbl" for="card-no" class="form-label-bold">
               <span
               class="card-no-label"
@@ -39,8 +39,17 @@ Enter your card details.
               <input id="card-no" type="text" name="cardNo" maxlength="19" class="form-control-1-2">
           </label>
           <ul class="accepted-cards">
+            <li class="visa">
+              <span class="visuallyhidden">visa</span>
+            </li>
+            <li class="master-card">
+              <span class="visuallyhidden">mastercard</span>
+            </li>
             <li class="american-express">
               <span class="visuallyhidden">Amex</span>
+            </li>
+            <li class="jcb">
+              <span class="visuallyhidden">jcb</span>
             </li>
             <li class="diners-club">
               <span class="visuallyhidden">diners</span>
@@ -48,16 +57,8 @@ Enter your card details.
             <li class="discover">
               <span class="visuallyhidden">discover</span>
             </li>
-            <li class="jcb">
-              <span class="visuallyhidden">jcb</span>
-            </li>
-            <li class="master-card">
-              <span class="visuallyhidden">mastercard</span>
-            </li>
-            <li class="visa">
-              <span class="visuallyhidden">visa</span>
-            </li>
           </ul>
+          <p> accepted credit and debit card types </p>
       </div>
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
       data-validation="cardholderName">
