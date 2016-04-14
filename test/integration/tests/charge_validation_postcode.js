@@ -16,7 +16,7 @@ module.exports = {
       .setValue('@addressPostcode', 'N4')
       .click('@expiryYear');
     cardDetails.expect.element('@addressPostcodeLabel')
-      .text.to.contain('Please enter a valid postcode').before(300);
+      .text.to.contain('Enter a valid postcode').before(300);
     browser.end();
   },
 };

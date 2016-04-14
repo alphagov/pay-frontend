@@ -76,14 +76,16 @@ Enter your card details.
               <div class="date-container">
                 <div class="form-hint"> Month </div>
                 <input id="expiry-month" type="number" name="expiryMonth" maxlength="2"
-                class="form-control" required="required"
+                class="form-control"
                 min="1" max="12">
                 <p class="seperator"> / </p>
               </div>
               <div class="date-container">
                 <div class="form-hint"> Year </div>
                 <input id="expiry-year" type="number" name="expiryYear" maxlength="2"
-                class="form-control" required="required"
+                class="form-control"
+                data-last-of-form-group
+                data-required
                 min="16" max="99">
               </div>
       </div>
@@ -130,7 +132,7 @@ Enter your card details.
               <span
                 class="address-line-1-label"
                 data-label-replace="addressLine1"
-                data-original-label="{{ i18n.chargeView.cardholderName }}">
+                data-original-label="{{ i18n.chargeView.building }}">
                 {{ i18n.chargeView.building }}
               </span>
 
@@ -141,7 +143,7 @@ Enter your card details.
               {{/highlightErrorFields.addressLine1}}
               <input id="address-line-1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2">
           </label>
-          <input id="address-line-2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2">
+          <input id="address-line-2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2" data-last-of-form-group>
       </div>
       <div class="form-group{{#highlightErrorFields.addressCity}} error{{/highlightErrorFields.addressCity}}" data-validation="addressCity">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
