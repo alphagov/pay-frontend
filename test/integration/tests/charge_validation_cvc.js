@@ -16,7 +16,7 @@ module.exports = {
     cardDetails
       .setValue('@cvc', '12')
       .click('@expiryYear');
-    cardDetails.expect.element('@cvcLabel').text.to.contain('Card Security code is invalid').before(300);
+    cardDetails.expect.element('@cvcLabel').text.to.contain('Enter a valid card security code').before(300);
     browser.end();
   },
 };

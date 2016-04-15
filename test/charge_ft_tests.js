@@ -180,10 +180,10 @@ describe('chargeTests',function(){
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
-      connector_expects(minimum_connector_card_data('5105105105105100'))
+      connector_expects(minimum_connector_card_data('4242424242424242'))
           .reply(202);
 
-      post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'))
+      post_charge_request(cookieValue, minimum_form_card_data('4242 4242 4242 4242'))
           .expect(303)
           .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
           .end(done);
