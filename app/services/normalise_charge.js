@@ -36,14 +36,17 @@ module.exports = function(){
     return [body.addressLine1,
         body.addressLine2,
         body.addressCity,
-        body.addressPostcode].filter(function(str){return str}).join(", ");
+        body.addressPostcode].filter(function(str){return str;}).join(", ");
 
   },
+
   creditCard = function(creditCardNo){
     return creditCardNo.replace(/\D/g,'');
   },
-  expiryDate = function(day, month){
-    return day + "/" + month;
+
+  expiryDate = function(month, year){
+    month = (month.length == 1) ? "0" + month : month;
+    return month.slice(-2) + "/" + year.slice(-2);
   };
 
   return {

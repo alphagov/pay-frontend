@@ -2,6 +2,8 @@ var changeCase      = require('change-case');
 var validations     = require('./charge_validation_fields');
 var fieldValidations= validations.fieldValidations;
 var requiredFields  = validations.requiredFormFields;
+var creditCardType  = validations.creditCardType;
+var allowedCards    = validations.allowedCards;
 
 module.exports = function(translations,logger) {
 
@@ -56,7 +58,9 @@ module.exports = function(translations,logger) {
 
   return {
     verify: verify,
-    required: requiredFields
+    required: requiredFields,
+    creditCardType: creditCardType,
+    allowedCards: allowedCards
   };
 
 };

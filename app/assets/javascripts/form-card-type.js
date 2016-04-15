@@ -5,8 +5,10 @@ var showCardType = function(){
   cards             = form.find('.accepted-cards > li'),
   cardNoLabel       = form.find('.card-no-label'),
   cardNoFormGroup   = form.find('.card-no-group'),
-  cardTypes         = cards.map(function(){ return $(this).attr('data-key'); });
-  notSupportedString= i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported
+  notSupportedString= i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported,
+  validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console),
+  cardValidation    = validations.creditCardType,
+  cardTypes         = validations.allowedCards;
 
   var init = function(){
     cardInput.on('keyup',showCardType);
@@ -14,7 +16,7 @@ var showCardType = function(){
 
   showCardType = function(){
     var number = $(this).val().replace(/\D/g,'');
-    var cardType = module.creditCardType(number);
+    var cardType = cardValidation(number);
     unSelectAll();
     checkEmpty();
     checkAllowed(cardType);

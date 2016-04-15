@@ -1,7 +1,10 @@
 var luhn = require('luhn');
 var ukPostcode = require("uk-postcode");
+var creditCardType = require('credit-card-type');
+var cards = require('../models/card').allowed;
 
-
+module.exports.creditCardType = creditCardType;
+module.exports.allowedCards = cards;
 module.exports.requiredFormFields = [
 "cardholderName",
 "cardNo",
@@ -56,6 +59,7 @@ module.exports.fieldValidations = {
     var postCode = ukPostcode.fromString(AddressPostcode);
     if (postCode.isComplete()) { return true; }
     return "message";
-  }
+  },
+  creditCardType: creditCardType
 };
 
