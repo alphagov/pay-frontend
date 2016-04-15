@@ -53,12 +53,17 @@ var formValidation = function(){
   },
 
   checkValidationInline = function(input){
-    if ($(input).val().length === 0) return;
-    var formGroup = getFormGroup(input),
+    var blank     = $(input).val().length === 0,
+    group         = getFormGroup(input),
+    // validation happens on blur, check which input the user is on now
+    focusedGroup  = getFormGroup($(document.activeElement)),
+    inGroup       = focusedGroup.is(group),
+    groupHasError = getFormGroup(input).hasClass('error'),
+    lastOfgroup   = $(input).is('[data-last-of-form-group]'),
+    required      = $(input).is('[data-required]');
 
-    // validations can be combined e.g. expiry month and year
-    focusedFormGroup = getFormGroup($(document.activeElement));
-    if (focusedFormGroup.is(formGroup)) return;
+    if ((lastOfgroup && required) || groupHasError) return checkValidation(input);
+    if (inGroup || blank) return;
     checkValidation(input);
   },
 

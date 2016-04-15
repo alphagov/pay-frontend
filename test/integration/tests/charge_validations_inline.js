@@ -17,7 +17,7 @@ module.exports = {
       .setValue('@cardNo', '12')
       .click('@expiryYear');
 
-    cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length').before(300);
+    cardDetails.expect.element('@cardNoLabel').text.to.contain('Card number is not the correct length').before(300);
 
     browser.end();
   },
@@ -27,7 +27,7 @@ module.exports = {
     cardDetails
       .setValue('@cardNo', '12')
       .click('@expiryYear');
-    cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length').before(300);
+    cardDetails.expect.element('@cardNoLabel').text.to.contain('Card number is not the correct length').before(300);
 
     cardDetails
       .setValue('@cardNo', '4242424242424242')
@@ -52,7 +52,7 @@ module.exports = {
       .setValue('@expiryMonth', '13')
       .setValue('@expiryYear', '13')
       .click('@cardNo');
-    cardDetails.expect.element('@expiryLabel').text.to.contain('Expiry is not a valid date').before(300);
+    cardDetails.expect.element('@expiryLabel').text.to.contain('Enter a valid expiry date').before(300);
     browser.end();
   }
 

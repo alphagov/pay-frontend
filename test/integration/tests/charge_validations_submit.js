@@ -15,7 +15,7 @@ module.exports = {
       .setValue('@cardNo', '12')
       .submitForm('@form');
 
-    cardDetails.expect.element('@cardNoLabel').text.to.contain('your Card number is not of the correct length');
+    cardDetails.expect.element('@cardNoLabel').text.to.contain('Card number is not the correct length');
     cardDetails.expect.element('@expiryLabel').text.to.contain('Enter a valid expiry date');
     cardDetails.clearValue("@cardNo");
     cardDetails.EnterValidDetails();

@@ -58,6 +58,12 @@ describe('charge validation fields', function () {
       expect(month).to.equal("in_the_past");
       expect(year).to.equal("in_the_past");
     });
+
+      it('should fail year is not defined', function () {
+      var noYear = fields.fieldValidations.expiryMonth("12", {} );
+
+      expect(noYear).to.equal("message");
+    });
   });
 
 
