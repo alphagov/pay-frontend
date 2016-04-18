@@ -37,7 +37,7 @@ describe('The charge view', function() {
   it('should show all input fields.', function () {
      var body = renderTemplate('charge', {'id' : '1234'});
      body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden');
-     body.should.containInputWithIdAndName('card-no', 'cardNo', 'tel').withAttribute('maxlength', '25').withLabel('card-no-lbl', 'Card number');
+     body.should.containInputWithIdAndName('card-no', 'cardNo', 'tel').withAttribute('maxlength', '26').withLabel('card-no-lbl', 'Card number');
      body.should.containInputWithIdAndName('cvc', 'cvc', 'tel').withAttribute('maxlength', '4').withLabel('cvc-lbl', 'Card security code');
      body.should.containInputWithIdAndName('expiry-month', 'expiryMonth', 'number').withAttribute('maxlength', '2');
      body.should.containInputWithIdAndName('expiry-year', 'expiryYear', 'number').withAttribute('maxlength', '2');
