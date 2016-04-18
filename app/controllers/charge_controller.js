@@ -20,7 +20,9 @@ module.exports.new = function(req, res) {
 
     var _views  = views.create(),
     charge      = normalise.charge(req.chargeData,req.chargeId);
+
     charge.post_card_action = paths.card.create.path;
+    charge.post_cancel_action = paths.generateRoute("card.cancel",{chargeId: charge.id});
 
     var init = function() {
         Charge.updateToEnterDetails(charge.id)
@@ -63,8 +65,7 @@ module.exports.create = function(req, res) {
         }
     };
 
-
-    var authLink = charge.links.find((link) => { return link.rel === 'cardAuth';});
+    var authLink = charge.links.find((link)=> { return link.rel === 'cardAuth';});
     var cardAuthUrl = authLink.href;
     client.post(cardAuthUrl, payload, function (data, connectorResponse) {
         logger.info('posting card details');
@@ -131,7 +132,8 @@ module.exports.confirm = function(req, res) {
                 confirmPath: confirmPath,
                 session: chargeSession,
                 description: charge.description,
-                amount: charge.amount
+                amount: charge.amount,
+                post_cancel_action: paths.generateRoute("card.cancel",{chargeId: charge.id})
             }
     }});
 
@@ -159,4 +161,20 @@ module.exports.capture = function (req, res) {
         _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
     };
     init();
+};
+
+module.exports.cancel = function (req, res) {
+    var _views      = views.create(),
+      returnUrl   = req.chargeData.return_url,
+      cancelFail = function(err){
+          _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
+      };
+
+      Charge.cancel(req.chargeId).
+          then(function(){
+                logger.error('tada');
+              return _views.display(res, 'USER_CANCELLED', {
+                  returnUrl: returnUrl
+              });
+          }, cancelFail);
 };

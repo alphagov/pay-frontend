@@ -3,16 +3,17 @@ var _views      = views.create({});
 var _             = require('lodash');
 var stateService  = require('../services/state_service.js');
 
+
 module.exports = function(req,res,next){
   'use strict';
 
-  var correctStates = stateService.resolveStates(req.actionName),
-  currentState      = req.chargeData.status,
+  var correctStates = stateService.resolveStates(req.actionName);
+  var currentState      = req.chargeData.status,
   locals            = {
     chargeId: req.chargeId,
     returnUrl: req.chargeData.return_url
   };
-
+  
   var init = function(){
     if (!stateCorrect()) return;
     next();

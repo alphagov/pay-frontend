@@ -38,6 +38,11 @@ module.exports = function(){
       view: "errors/incorrect_state/system_cancelled"
     },
 
+      USER_CANCELLED: {
+        view: "user_cancelled",
+        locals: { status: 'successful' }
+      },
+
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }

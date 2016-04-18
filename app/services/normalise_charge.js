@@ -58,7 +58,6 @@ module.exports = function() {
     creditCard: creditCard,
     expiryDate: expiryDate
   };
-
 }();
 
 

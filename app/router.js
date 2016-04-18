@@ -27,12 +27,14 @@ module.exports.bind = function (app) {
     retrieveCharge,
     stateEnforcer
   ];
+
   app.get(card.new.path,      middlewareStack, charge.new);
   app.get(card.authWaiting.path,middlewareStack, charge.authWaiting);
   app.post(card.create.path,  middlewareStack, charge.create);
   app.get(card.confirm.path,  middlewareStack, charge.confirm);
   app.post(card.capture.path, middlewareStack, charge.capture);
-
+  app.post(card.cancel.path,  middlewareStack, charge.cancel);
+  
   // secure controller
   app.get(paths.secure.get.path, secure.new);
   app.post(paths.secure.post.path, secure.new);

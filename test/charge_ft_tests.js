@@ -110,7 +110,7 @@ describe('chargeTests',function(){
 
   describe('The /charge endpoint', function() {
     describe('Different statuses',function(){
-      var get = function(status){
+      function get(status) {
           nock(process.env.CONNECTOR_HOST)
           .get("/v1/frontend/charges/23144323")
           .reply(200, {
@@ -125,10 +125,10 @@ describe('chargeTests',function(){
 
           var cookieValue = cookie.create(chargeId);
           return get_charge_request(app, cookieValue, chargeId);
-      };
+      }
 
 
-      var GetAndCheckChargeRequest = function(status,done){
+      function getAndCheckChargeRequest (status,done){
         get(status)
           .expect(200)
           .expect(function(res){
@@ -140,13 +140,14 @@ describe('chargeTests',function(){
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
           })
           .end(done);
-      };
-      it('should include the data required for the frontend when enetering card details', function (done) {
-        GetAndCheckChargeRequest(enteringCardDetailsState,done);
+      }
+
+      it('should include the data required for the frontend when entering card details', function (done) {
+        getAndCheckChargeRequest(enteringCardDetailsState,done);
       });
 
       it('should include the data required for the frontend when in created state', function (done) {
-        GetAndCheckChargeRequest("CREATED",done);
+        getAndCheckChargeRequest("CREATED",done);
       });
 
       it('should show error page when the charge is not in a state we deal with', function (done) {
@@ -640,6 +641,24 @@ describe('chargeTests',function(){
             helper.templateValue(res,"viewName","SYSTEM_ERROR");
           })
           .end(done);
+    });
+  });
+
+  describe('The cancel endpoint', function () {
+    it('should take user to cancel page on successful cancel', function (done) {
+      var cookieValue = cookie.create(chargeId),
+        cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
+      default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
+
+      nock(process.env.CONNECTOR_HOST)
+        .post('/v1/frontend/charges/' + chargeId + '/cancel').reply(204);
+
+      request(app)
+        .post(cancelEndpoint)
+        .send({ csrfToken: helper.csrfToken() })
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+        .expect(200)
+        .end(done);
     });
   });
 });

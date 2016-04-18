@@ -44,6 +44,12 @@ Confirm your details.
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
         <button id="confirm" class="button">Confirm</button>
     </form>
+    <form id="cancel" name="cancel" method="POST" action="{{post_cancel_action}}" class="form">
+        <div>
+            <input id="cancel-payment" type="submit" class="link" value="Cancel" name="cancel">
+            <input id="csrf2" name="csrfToken" type="hidden" value="{{csrf}}" />
+        </div>
+    </form>
 
 </main>
 
