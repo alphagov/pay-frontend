@@ -1,3 +1,9 @@
+#payment-description {
+  clear: left;
+  display: block;
+  float: none;
+}
+
 form#card-details {
   overflow: visible;
 
@@ -35,4 +41,5 @@ form#card-details {
     font-weight: bold;
     margin-top: 15px;
   }
+
 }
