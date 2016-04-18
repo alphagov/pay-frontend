@@ -1,7 +1,10 @@
 var luhn = require('luhn');
 var ukPostcode = require("uk-postcode");
+var creditCardType = require('credit-card-type');
+var cards = require('../models/card').allowed;
 
-
+module.exports.creditCardType = creditCardType;
+module.exports.allowedCards = cards;
 module.exports.requiredFormFields = [
 "cardholderName",
 "cardNo",
@@ -18,11 +21,15 @@ module.exports.fieldValidations = {
     if (!cardNo) return "message"; // default message
 
     cardNo = cardNo.replace(/\D/g,'');
+    var cardType = creditCardType(cardNo);
     var valid = luhn.validate(cardNo);
     if (!cardNo ||  cardNo.length < 12 || cardNo.length > 16) return 'number_incorrect_length';
     if (!valid) return "luhn_invalid";
+    if(!cardType[0] || cards.indexOf(cardType[0].type) === -1) return "card_not_supported";
+
     return true;
   },
+
 
   expiryMonth:  function(expiryMonth, allFields) {
     var expiryYear = allFields.expiryYear;
@@ -56,6 +63,7 @@ module.exports.fieldValidations = {
     var postCode = ukPostcode.fromString(AddressPostcode);
     if (postCode.isComplete()) { return true; }
     return "message";
-  }
+  },
+  creditCardType: creditCardType
 };
 

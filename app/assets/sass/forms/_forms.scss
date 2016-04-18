@@ -45,7 +45,8 @@ fieldset {
     margin-bottom: $gutter;
   }
   input[type="text"],
-  input[type="number"] {
+  input[type="number"],
+  input[type="tel"] {
     display: block;
   }
 

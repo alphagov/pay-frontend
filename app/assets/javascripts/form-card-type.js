@@ -5,8 +5,11 @@ var showCardType = function(){
   cards             = form.find('.accepted-cards > li'),
   cardNoLabel       = form.find('.card-no-label'),
   cardNoFormGroup   = form.find('.card-no-group'),
-  cardTypes         = cards.map(function(){ return $(this).attr('data-key'); });
-  notSupportedString= i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported
+  notSupportedString= i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported,
+  nonNumberString   = i18n.chargeController.fieldErrors.fields.cardNo.non_numeric,
+  validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console),
+  cardValidation    = validations.creditCardType,
+  cardTypes         = validations.allowedCards;
 
   var init = function(){
     cardInput.on('keyup',showCardType);
@@ -14,10 +17,11 @@ var showCardType = function(){
 
   showCardType = function(){
     var number = $(this).val().replace(/\D/g,'');
-    var cardType = module.creditCardType(number);
+    var cardType = cardValidation(number);
     unSelectAll();
     checkEmpty();
     checkAllowed(cardType);
+    checkNumeric($(this).val(),number);
     if (cardType.length !== 1) return;
     selectCard(cardType[0].type);
   },
@@ -39,8 +43,18 @@ var showCardType = function(){
     var supported = $.inArray(cardType[0].type,cardTypes) !== -1;
 
     if (supported) return replaceCardLabelWithOriginal();
+    addErrorToCard(notSupportedString);
+  },
+
+  checkNumeric = function(fullNumber,strippedNumber) {
+    if (fullNumber.length - strippedNumber.length > 2 && strippedNumber.length < 4) {
+      addErrorToCard(nonNumberString);
+    }
+  },
+
+  addErrorToCard = function(str){
     cardNoFormGroup.addClass('error');
-    cardNoLabel.text(notSupportedString);
+    cardNoLabel.text(str);
   },
 
   replaceCardLabelWithOriginal = function(){

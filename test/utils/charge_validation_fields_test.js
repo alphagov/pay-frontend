@@ -33,6 +33,11 @@ describe('charge validation fields', function () {
       expect(result).to.equal("luhn_invalid");
     });
 
+    it('should return card_not_supported if the card is not supported', function () {
+      var result = fields.fieldValidations.cardNo("6759649826438453");
+      expect(result).to.equal("card_not_supported");
+    });
+
   });
 
   describe('expiry month', function () {

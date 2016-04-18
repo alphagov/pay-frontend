@@ -1,5 +1,5 @@
 module.exports = {
-  '@tags': ['chargeValidation', 'chargeValidationInline'],
+  'tags': ['chargeValidation', 'chargeValidationInline'],
   beforeEach: function(browser){
     var demoService = browser.page.demo_service();
     demoService.navigate().generateCharge({
@@ -53,6 +53,15 @@ module.exports = {
       .setValue('@expiryYear', '13')
       .click('@cardNo');
     cardDetails.expect.element('@expiryLabel').text.to.contain('Enter a valid expiry date').before(300);
+    browser.end();
+  },
+
+  'card number highlights when you try and enter a name': function (browser) {
+    var cardDetails = browser.page.payment_new();
+    cardDetails
+      .clearValue('@cardNo')
+      .setValue('@cardNo', 'Ste');
+    cardDetails.expect.element('@cardNoLabel').text.to.contain('Enter a valid card number').before(300);
     browser.end();
   }
 
