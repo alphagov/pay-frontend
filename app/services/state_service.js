@@ -5,6 +5,7 @@ paths = require('../paths.js'),
 
 
 module.exports = function () {
+  'use strict';
 
   // The logic will always resolve to the first successful match.
   // Changing the order of the states might have side-effects
@@ -40,11 +41,10 @@ module.exports = function () {
     if (validActionNames.length < 1) throw new Error(`No actionName found for state: ${state} and verb: ${verb}`);
 
     return validActionNames[0];
-  }
-
+  };
   return {
     resolveStates: resolveStates,
     resolveActionName: resolveActionName
-  }
+  };
 }();
 

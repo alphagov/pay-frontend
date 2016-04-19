@@ -6,8 +6,7 @@ var logger  = require('winston');
 var paths   = require('../paths.js');
 var State   = require('./state.js');
 
-
-module.exports = function(){
+module.exports = function() {
   'use strict';
 
   var createUrl = function(resource,params){
@@ -76,7 +75,7 @@ module.exports = function(){
         defer   = q.defer();
       console.log(url);
       client.post(url, params, function(data, response){
-          cancelComplete(data, response, defer)
+          cancelComplete(data, response, defer);
         })
         .on('error',function(err){ captureFail(err, defer); });
 
@@ -106,8 +105,8 @@ module.exports = function(){
 
     cancelComplete = function(data, response, defer) {
       var code = response.statusCode;
-      if (code == 204) return defer.resolve();
-      if (code == 400) return defer.reject(new Error('CANCEL_FAILED'));
+      if (code === 204) return defer.resolve();
+      if (code === 400) return defer.reject(new Error('CANCEL_FAILED'));
       return defer.reject(new Error('POST_FAILED'));
     },
 
@@ -137,5 +136,5 @@ module.exports = function(){
     capture: capture,
     findByToken: findByToken,
     cancel: cancel
-  }
+  };
 }();

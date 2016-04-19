@@ -1,7 +1,6 @@
-'use strict';
-var _ = require('lodash');
-
 module.exports = function() {
+  'use strict';
+
   var createChargeIdSessionKey = function(chargeId) {
     return 'ch_' + chargeId;
   },

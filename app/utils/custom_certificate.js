@@ -1,5 +1,3 @@
-'use strict';
-
 var path = require('path');
 var fs   = require('fs');
 var opts = require('https').globalAgent.options;
@@ -7,6 +5,8 @@ var opts = require('https').globalAgent.options;
 var logger = require('winston');
 
 module.exports = function () {
+  'use strict';
+  
   var use = function () {
     var certsPath = process.env.CERTS_PATH || __dirname + '/../../certs';
     

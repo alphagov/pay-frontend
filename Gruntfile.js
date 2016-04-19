@@ -123,13 +123,9 @@ module.exports = function(grunt){
       files: {
         src: [
           'app/**/*.js',
-          //remove files below once fixed
-          '!app/*.js',
-          '!app/middleware/**/*.js',
-          '!app/services/**/*.js',
-          '!app/utils/**/*.js',
-          '!app/controllers/**/*.js',
-          '!app/assets/**/*.js'
+          '!app/assets/**/*.js',
+          '!app/utils/custom_certificate.js'
+
         ]
       } ,
       options: {
@@ -195,9 +191,9 @@ module.exports = function(grunt){
     mochaTest: mochaTest,
     env: env,
     browserify: browserify,
-    nightwatch: nightwatch
+    nightwatch: nightwatch,
 
-
+    jshint: jshint
   });
 
 

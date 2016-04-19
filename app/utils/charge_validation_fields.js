@@ -26,6 +26,8 @@ module.exports.requiredFormFields = [
 
 module.exports.fieldValidations = {
   cardNo:  function(cardNo) {
+    'use strict';
+
     if (!cardNo) return "message"; // default message
     cardNo        = cardNo.replace(/\D/g,'');
     var cardType  = creditCardType(cardNo);
@@ -40,6 +42,8 @@ module.exports.fieldValidations = {
 
 
   expiryMonth:  function(expiryMonth, allFields) {
+    'use strict';
+
     var expiryYear = allFields.expiryYear;
     if (expiryMonth === undefined || expiryMonth === "") return "message";
     if (expiryYear  === undefined || expiryYear === "") return "message";
@@ -52,13 +56,15 @@ module.exports.fieldValidations = {
     var cardDate = new Date("20" + allFields.expiryYear,expiryMonth);
     var currentDate = new Date();
     if (currentDate.getFullYear() > cardDate.getFullYear()) return "in_the_past";
-    if (currentDate.getFullYear() == cardDate.getFullYear() &&
+    if (currentDate.getFullYear() === cardDate.getFullYear() &&
         currentDate.getMonth() > cardDate.getMonth()) return "in_the_past";
 
     return true;
   },
 
   cvc: function(code) {
+    'use strict';
+
     if(code === undefined) return "invalid_length";
     code = code.replace(/\D/g,'');
     if (code.length === 3 || code.length === 4) {
@@ -68,6 +74,8 @@ module.exports.fieldValidations = {
   },
 
   addressPostcode: function(AddressPostcode){
+    'use strict';
+
     var postCode = ukPostcode.fromString(AddressPostcode);
     if (postCode.isComplete()) { return true; }
     return "message";

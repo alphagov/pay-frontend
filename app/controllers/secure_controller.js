@@ -8,11 +8,13 @@ var paths = require('../paths.js'),
 
 
 module.exports.new = function (req, res) {
+  'use strict';
+
   var chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId,
 
     init = function () {
       Charge.findByToken(chargeTokenId)
-        .then(chargeRetrieved, apiFail)
+        .then(chargeRetrieved, apiFail);
     },
 
     chargeRetrieved = function (chargeData) {
@@ -32,11 +34,9 @@ module.exports.new = function (req, res) {
       res.redirect(303, paths.generateRoute(actionName, {chargeId: chargeId}));
     },
 
-    apiFail = function (err) {
+    apiFail = function () {
       views.create().display(res, 'SYSTEM_ERROR');
-
     };
-
   init();
 };
            

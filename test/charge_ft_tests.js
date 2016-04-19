@@ -646,8 +646,7 @@ describe('chargeTests',function(){
 
   describe('The cancel endpoint', function () {
     it('should take user to cancel page on successful cancel', function (done) {
-      var cookieValue = cookie.create(chargeId),
-        cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
+      var cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
       default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
 
       nock(process.env.CONNECTOR_HOST)

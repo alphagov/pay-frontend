@@ -107,17 +107,21 @@ module.exports.create = function(req, res) {
 };
 
 module.exports.authWaiting = function(req, res) {
+    "use strict";
+
     var charge = normalise.charge(req.chargeData,req.chargeId);
-    if (charge.status == State.AUTH_READY) {
+    var _views;
+
+    if (charge.status === State.AUTH_READY) {
          _views = views.create({ success: {
                 view: AUTH_WAITING_VIEW,
                 locals: {}
             }});
          _views.display(res, "success");
     } else {
-        res.redirect(303,paths.generateRoute('card.confirm', {chargeId: charge.id}));
+        res.redirect(303, paths.generateRoute('card.confirm', {chargeId: charge.id}));
     }
-}
+};
 
 module.exports.confirm = function(req, res) {
     "use strict";
@@ -164,9 +168,11 @@ module.exports.capture = function (req, res) {
 };
 
 module.exports.cancel = function (req, res) {
+    "use strict";
+
     var _views      = views.create(),
       returnUrl   = req.chargeData.return_url,
-      cancelFail = function(err){
+      cancelFail = function(){
           _views.display(res, 'SYSTEM_ERROR', { returnUrl: returnUrl });
       };
 

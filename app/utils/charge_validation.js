@@ -6,6 +6,7 @@ var creditCardType  = validations.creditCardType;
 var allowedCards    = validations.allowedCards;
 
 module.exports = function(translations,logger) {
+  'use strict';
 
   var verify = function(body){
     var checkResult = {
@@ -16,9 +17,11 @@ module.exports = function(translations,logger) {
 
     init = function(){
       for (var index in requiredFields) {
-        var name = requiredFields[index],
-        value    = body[name];
-        checkFormField(name,value);
+        if (requiredFields.hasOwnProperty(index)) {
+          var name = requiredFields[index],
+            value = body[name];
+          checkFormField(name, value);
+        }
       }
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true;

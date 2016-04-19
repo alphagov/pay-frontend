@@ -13,6 +13,8 @@ var retrieveCharge= require(__dirname + '/middleware/retrieve_charge.js');
 module.exports.paths = paths;
 
 module.exports.bind = function (app) {
+  'use strict';
+  
     app.get('/greeting', function (req, res) {
       var data = {'greeting': 'Hello', 'name': 'World'};
       response(req.headers.accept, res, 'greeting', data);

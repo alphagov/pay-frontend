@@ -3,7 +3,8 @@
     "require": false,
     "module": false,
     "__dirname": false,
-    "console"  : false
+    "console"  : false,
+    "process"  : true
   },
   "bitwise"       : true,     // true: Prohibit bitwise operators (&, |, ^, etc.)
   "curly"         : false,     // true: Require {} for every new block or scope

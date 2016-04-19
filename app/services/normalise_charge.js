@@ -46,7 +46,7 @@ module.exports = function() {
   },
 
   expiryDate = function(month, year){
-    month = (month.length == 1) ? "0" + month : month;
+    month = (month.length === 1) ? "0" + month : month;
     return month.slice(-2) + "/" + year.slice(-2);
   };
 

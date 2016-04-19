@@ -1,7 +1,8 @@
 var logger = require('winston');
 
 function response(accept, res, template, data) {
-    res.render(template, data);
+  'use strict';
+  res.render(template, data);
 }
 
 
@@ -19,12 +20,16 @@ module.exports = {
   response : response,
 
   renderErrorView : function (req, res, msg) {
+    'use strict';
+
     logger.error('An error occurred: ' + msg);
     response(req.headers.accept, res, 'error', {
       'message': msg
     });
   },
   renderErrorViewWithReturnUrl : function (req, res, msg, returnUrl) {
+    'use strict';
+
     logger.error('An error occurred: ' + msg);
     response(req.headers.accept, res, 'error_with_return_url', {
       'message': msg,
@@ -33,12 +38,16 @@ module.exports = {
   },
 
   genericError: function(res){
+    'use strict';
+
     res.render(ERROR_VIEW, ERROR_MESSAGE);
   },
 
   pageNotFound: function(res){
-  res.render(ERROR_VIEW, {
+    'use strict';
+
+    res.render(ERROR_VIEW, {
     'message': PAGE_NOT_FOUND_ERROR_MESSAGE
-  });
+    });
   }
 };
