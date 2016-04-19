@@ -3,7 +3,6 @@ var _views      = views.create({});
 var _             = require('lodash');
 var stateService  = require('../services/state_service.js');
 
-
 module.exports = function(req,res,next){
   'use strict';
 

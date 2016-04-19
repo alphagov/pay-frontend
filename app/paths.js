@@ -35,10 +35,6 @@ var paths = {
     cancel: {
       path: '/card_details/:chargeId/cancel',
       action: 'post'
-    },
-    cancel_confirmation: {
-      path: '/card_details/:chargeId/cancel',
-      action: 'get'
     }
   },
   secure: {

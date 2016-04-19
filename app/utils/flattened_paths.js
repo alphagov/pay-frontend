@@ -1,7 +1,7 @@
 // this is to get a one dimensional array of the routes,
 // so we can infer the pathname from the req route path
 
-module.exports = function(paths){
+  module.exports = function(paths){
   'use strict';
 
   var flattenObject = function(paths) {

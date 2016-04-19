@@ -1,8 +1,6 @@
 var _ = require('lodash'),
 State = require('../models/state.js'),
-paths = require('../paths.js'),
-  logger = require('winston');
-
+paths = require('../paths.js');
 
 module.exports = function () {
   'use strict';
@@ -31,8 +29,6 @@ module.exports = function () {
       if (hasState) result.push(key); 
       return result;
     }, []);
-
-    logger.error(possibleActionNames, state, verb);
 
     var validActionNames = _.filter(possibleActionNames, function(actionName) {
       return _.result(paths,actionName).action === verb;

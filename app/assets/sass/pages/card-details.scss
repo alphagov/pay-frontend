@@ -41,5 +41,20 @@ form#card-details {
     font-weight: bold;
     margin-top: 15px;
   }
+}
 
+#cancel-payment {
+  /* Remove all decorations to look like normal text */
+  background: none;
+  border: none;
+  display: inline;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  outline-offset: 0;
+  /* Additional styles to look like a link */
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
 }

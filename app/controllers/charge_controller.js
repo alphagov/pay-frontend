@@ -178,7 +178,6 @@ module.exports.cancel = function (req, res) {
 
       Charge.cancel(req.chargeId).
           then(function(){
-                logger.error('tada');
               return _views.display(res, 'USER_CANCELLED', {
                   returnUrl: returnUrl
               });
