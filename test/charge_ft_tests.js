@@ -645,7 +645,25 @@ describe('chargeTests',function(){
   });
 
   describe('The cancel endpoint', function () {
-    it('should take user to cancel page on successful cancel', function (done) {
+    it('should take user to cancel page on successful cancel when carge in entering card details state', function (done) {
+      var cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+
+      nock(process.env.CONNECTOR_HOST)
+        .post('/v1/frontend/charges/' + chargeId + '/cancel').reply(204);
+
+      request(app)
+        .post(cancelEndpoint)
+        .send({ csrfToken: helper.csrfToken() })
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+        .expect(200)
+        .expect(function(res){
+          helper.templateValue(res,"viewName","USER_CANCELLED");
+        })
+        .end(done);
+    });
+    
+    it('should take user to cancel page on successful cancel when charge in authorisation successful state', function (done) {
       var cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
       default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
 
@@ -657,6 +675,27 @@ describe('chargeTests',function(){
         .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
+        .expect(function(res){
+          helper.templateValue(res,"viewName","USER_CANCELLED");
+        })
+        .end(done);
+    });
+
+    it('should take user to error page on failed cancel', function (done) {
+      var cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
+      default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
+
+      nock(process.env.CONNECTOR_HOST)
+        .post('/v1/frontend/charges/' + chargeId + '/cancel').reply(400);
+
+      request(app)
+        .post(cancelEndpoint)
+        .send({ csrfToken: helper.csrfToken() })
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+        .expect(500)
+        .expect(function(res){
+          helper.templateValue(res,"viewName","SYSTEM_ERROR");
+        })
         .end(done);
     });
   });

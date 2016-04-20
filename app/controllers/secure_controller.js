@@ -6,7 +6,6 @@ var paths = require('../paths.js'),
   csrf = require('csrf'),
   stateService = require('../services/state_service.js');
 
-
 module.exports.new = function (req, res) {
   'use strict';
 

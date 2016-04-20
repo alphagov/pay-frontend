@@ -11,7 +11,6 @@ module.exports = function() {
 
   var createUrl = function(resource,params){
     return paths.generateRoute(`connectorCharge.${resource}`,params);
-
   },
 
   mergeApiParams = function(params) {
@@ -26,7 +25,6 @@ module.exports = function() {
 
   updateToEnterDetails = function(chargeId) {
     return updateStatus(chargeId, State.ENTERING_CARD_DETAILS);
-
   },
 
   updateStatus = function(chargeId, status){
@@ -69,18 +67,31 @@ module.exports = function() {
     return defer.promise;
   },
 
-    cancel = function(chargeId){
-      var url = createUrl('cancel',{chargeId: chargeId}),
-        params  = mergeApiParams(),
-        defer   = q.defer();
-      console.log(url);
-      client.post(url, params, function(data, response){
-          cancelComplete(data, response, defer);
-        })
-        .on('error',function(err){ captureFail(err, defer); });
+  cancel = function(chargeId){
+    var url = createUrl('cancel',{chargeId: chargeId}),
+      params  = mergeApiParams(),
+      defer   = q.defer();
 
-      return defer.promise;
-    },
+    client.post(url, params, function(data, response){
+        cancelComplete(data, response, defer);
+      })
+      .on('error',function(err){ cancelFail(err, defer); });
+
+    return defer.promise;
+  },
+
+  cancelComplete = function(data, response, defer) {
+    var code = response.statusCode;
+    if (code === 204) return defer.resolve();
+    if (code === 400) return defer.reject(new Error('CANCEL_FAILED'));
+    return defer.reject(new Error('POST_FAILED'));
+  },
+
+  cancelFail = function(err, defer){
+    logger.error('Exception raised calling connector for POST CANCEL: ' + err);
+    clientUnavailable(err, defer);
+  },
+
   findByToken = function(tokenId){
     var defer = q.defer();
     client.get(createUrl('findByToken',{chargeTokenId: tokenId}), function(data,response){
@@ -89,7 +100,7 @@ module.exports = function() {
         return;
       }
       defer.resolve(data);
-    }).on('error',function(err){
+    }).on('error', function(err){
       logger.error('Exception raised calling connector for get: ' + err);
       clientUnavailable(err, defer);
     });
@@ -102,13 +113,6 @@ module.exports = function() {
     if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'));
     return defer.reject(new Error('POST_FAILED'));
   },
-
-    cancelComplete = function(data, response, defer) {
-      var code = response.statusCode;
-      if (code === 204) return defer.resolve();
-      if (code === 400) return defer.reject(new Error('CANCEL_FAILED'));
-      return defer.reject(new Error('POST_FAILED'));
-    },
 
   captureFail = function(err, defer){
     logger.error('Exception raised calling connector for POST CAPTURE: ' + err);

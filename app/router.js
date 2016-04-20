@@ -6,7 +6,7 @@ var secure        = require('./controllers/secure_controller.js');
 
 var paths         = require(__dirname + '/paths.js');
 var csrf          = require(__dirname + '/middleware/csrf.js');
-var actionName    = require(__dirname + '/middleware/actionName.js');
+var actionName    = require(__dirname + '/middleware/action_name.js');
 var stateEnforcer = require(__dirname + '/middleware/state_enforcer.js');
 var retrieveCharge= require(__dirname + '/middleware/retrieve_charge.js');
 

@@ -2,7 +2,7 @@ var should = require('chai').should();
 var assert = require('assert');
 var expect = require('chai').expect;
 var views  = require(__dirname + '/../../app/utils/views.js');
-var actionName  = require(__dirname + '/../../app/middleware/actionName.js');
+var actionName  = require(__dirname + '/../../app/middleware/action_name.js');
 
 var sinon  = require('sinon');
 var _      = require('lodash');
