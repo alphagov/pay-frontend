@@ -19,10 +19,10 @@ module.exports.requiredFormFields = [
 module.exports.fieldValidations = {
   cardNo:  function(cardNo, allFields) {
     if (!cardNo) return "message"; // default message
+    cardNo        = cardNo.replace(/\D/g,'');
+    var cardType  = creditCardType(cardNo);
+    var valid     = luhn.validate(cardNo);
 
-    cardNo = cardNo.replace(/\D/g,'');
-    var cardType = creditCardType(cardNo);
-    var valid = luhn.validate(cardNo);
     if (!cardNo ||  cardNo.length < 12 || cardNo.length > 16) return 'number_incorrect_length';
     if (!valid) return "luhn_invalid";
     if(!cardType[0] || cards.indexOf(cardType[0].type) === -1) return "card_not_supported";
