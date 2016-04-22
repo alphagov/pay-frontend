@@ -63,16 +63,8 @@ var paths = {
     token: {
       path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId",
       action: 'delete'
-    },
-  },
-  // ***** BACKWARD COMPATIBILITY CODE STARTS HERE *****
-  charge: {
-    show: {
-      path: "/charge/:chargeId",
-      action: 'get'
     }
   }
-  // ***** BACKWARD COMPATIBILITY CODE FINISHES HERE *****
 };
 
 module.exports = _.extend({}, paths, {generateRoute: generateRoute(paths)});

@@ -18,11 +18,6 @@ module.exports.bind = function (app) {
       response(req.headers.accept, res, 'greeting', data);
     });
 
-  // ***** BACKWARD COMPATIBILITY CODE STARTS HERE *****
-  var controllers   = require('./controllers');
-  controllers.bindRoutesTo(app);
-  // ***** BACKWARD COMPATIBILITY CODE FINISHES HERE *****
-
   // charges
   var card = paths.card;
   var middlewareStack = [
