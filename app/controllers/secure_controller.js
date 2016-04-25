@@ -4,7 +4,8 @@ var paths = require('../paths.js'),
   views = require('../utils/views.js'),
   session = require('../utils/session.js'),
   csrf = require('csrf'),
-  stateService = require('../services/state_service.js');
+  stateService = require('../services/state_service.js'),
+  _ = require('lodash');
 
 module.exports.new = function (req, res) {
   'use strict';
@@ -26,7 +27,8 @@ module.exports.new = function (req, res) {
       var chargeId = chargeData.externalId;
 
       req.frontend_state[session.createChargeIdSessionKey(chargeId)] = {
-        csrfSecret: csrf().secretSync()
+        csrfSecret: csrf().secretSync(),
+        serviceName: _.get(chargeData, "gatewayAccount.service_name")
       };
 
       var actionName = stateService.resolveActionName(chargeData.status,'get');
@@ -38,4 +40,3 @@ module.exports.new = function (req, res) {
     };
   init();
 };
-           

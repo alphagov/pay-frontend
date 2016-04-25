@@ -87,7 +87,10 @@ describe('secure controller', function () {
 
       chargeObject = {
         "externalId": "dh6kpbb4k82oiibbe4b9haujjk",
-        "status": "CREATED"
+        "status": "CREATED",
+        "gatewayAccount": {
+          "service_name": "Service Name"
+        }
       };
     });
 
@@ -107,10 +110,13 @@ describe('secure controller', function () {
       });
 
       describe('then destroyed successfully', function () {
-        it('should redirect', function () {
+        it('should store the service name into the session and redirect', function () {
           requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess()).new(request, response);
           expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk');
-          expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({'csrfSecret': 'foo'});
+          expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
+            'csrfSecret': 'foo',
+            'serviceName': 'Service Name'
+          });
           expect(response.redirect.calledWith(303,paths.generateRoute("card.new", {chargeId: chargeObject.externalId}))).to.be.true;
         });
       });
