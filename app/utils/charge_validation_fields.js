@@ -16,8 +16,16 @@ module.exports.requiredFormFields = [
 "addressPostcode"
 ];
 
+
+/*
+ These are customs validaitons for each field,
+ fucntion should be named the same as the input name,
+ and will receive two arguments, one is the field,
+ second is allfields in case ti is needed for vlaidation.
+*/
+
 module.exports.fieldValidations = {
-  cardNo:  function(cardNo, allFields) {
+  cardNo:  function(cardNo) {
     if (!cardNo) return "message"; // default message
     cardNo        = cardNo.replace(/\D/g,'');
     var cardType  = creditCardType(cardNo);
@@ -50,7 +58,7 @@ module.exports.fieldValidations = {
     return true;
   },
 
-  cvc: function(code, allFields) {
+  cvc: function(code) {
     if(code === undefined) return "invalid_length";
     code = code.replace(/\D/g,'');
     if (code.length === 3 || code.length === 4) {
@@ -59,7 +67,7 @@ module.exports.fieldValidations = {
     return "invalid_length";
   },
 
-  addressPostcode: function(AddressPostcode, allfields){
+  addressPostcode: function(AddressPostcode){
     var postCode = ukPostcode.fromString(AddressPostcode);
     if (postCode.isComplete()) { return true; }
     return "message";
