@@ -9,12 +9,11 @@ module.exports = function() {
     return req.frontend_state[createChargeIdSessionKey(chargeId)];
   },
 
-  store = function(chargeSession, hashCardNumber, expiryDate, cardholderName, address, serviceName) {
+  store = function(chargeSession, hashCardNumber, expiryDate, cardholderName, address) {
     chargeSession.cardNumber = hashCardNumber;
     chargeSession.expiryDate = expiryDate;
     chargeSession.cardholderName = cardholderName;
     chargeSession.address = address;
-    chargeSession.serviceName = serviceName;
   };
 
   return {

@@ -79,8 +79,7 @@ module.exports = {
             hashCardNumber(plainCardNumber),
             expiryDate,
             req.body.cardholderName,
-            normalise.addressForView(req.body),
-            "Demo Service");
+            normalise.addressForView(req.body));
           res.redirect(303, paths.generateRoute('card.authWaiting', {chargeId: charge.id}));
           return;
         case 204:
@@ -90,8 +89,7 @@ module.exports = {
             hashCardNumber(plainCardNumber),
             expiryDate,
             req.body.cardholderName,
-            normalise.addressForView(req.body),
-            "Demo Service");
+            normalise.addressForView(req.body));
           res.redirect(303, paths.generateRoute('card.confirm', {chargeId: charge.id}));
           return;
         case 500:
