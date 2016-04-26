@@ -1,4 +1,3 @@
-"use strict";
 var csrf    = require('csrf'),
 session     = require('../utils/session.js'),
 views       = require('../utils/views.js'),
@@ -6,12 +5,14 @@ chargeParam = require('../services/charge_param_retriever.js'),
 logger      = require('winston'),
 _views      = views.create();
 
-module.exports = function(req, res, next){
- var chargeId   = chargeParam.retrieve(req),
- chargeSession  = session.retrieve(req, chargeId),
- csrfToken      = req.body.csrfToken;
+module.exports = function(req, res, next) {
+  "use strict";
 
-  var init = function(){
+  var chargeId   = chargeParam.retrieve(req),
+  chargeSession  = session.retrieve(req, chargeId),
+  csrfToken      = req.body.csrfToken;
+
+  var init = function() {
     if (!sessionAvailable()) return showNoSession();
     if (!csrfValid()) return showCsrfInvalid();
 

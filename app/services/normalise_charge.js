@@ -1,6 +1,7 @@
-'use strict';
-module.exports = function(){
-  var _charge = function(charge,chargeId){
+module.exports = function() {
+  "use strict";
+
+  var _charge = function(charge,chargeId) {
     return {
       id: chargeId,
       amount: penceToPounds(charge.amount),
@@ -11,7 +12,7 @@ module.exports = function(){
     };
   },
 
-  penceToPounds = function(pence){
+  penceToPounds = function(pence) {
     return (parseInt(pence) / 100).toFixed(2);
   },
 
@@ -40,12 +41,12 @@ module.exports = function(){
 
   },
 
-  creditCard = function(creditCardNo){
+  creditCard = function(creditCardNo) {
     return creditCardNo.replace(/\D/g,'');
   },
 
   expiryDate = function(month, year){
-    month = (month.length == 1) ? "0" + month : month;
+    month = (month.length === 1) ? "0" + month : month;
     return month.slice(-2) + "/" + year.slice(-2);
   };
 
@@ -57,7 +58,6 @@ module.exports = function(){
     creditCard: creditCard,
     expiryDate: expiryDate
   };
-
 }();
 
 

@@ -31,6 +31,10 @@ var paths = {
     capture: {
       path: '/card_details/:chargeId/confirm',
       action: 'post'
+    },
+    cancel: {
+      path: '/card_details/:chargeId/cancel',
+      action: 'post'
     }
   },
   secure: {
@@ -55,6 +59,10 @@ var paths = {
     capture: {
       path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/capture",
       action: 'put'
+    },
+    cancel: {
+      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/cancel",
+      action: 'post'
     },
     findByToken: {
       path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId/charge",

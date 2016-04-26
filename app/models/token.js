@@ -1,11 +1,11 @@
 var Client  = require('node-rest-client').Client;
 var client  = new Client();
-var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
 
-module.exports = function(){
+module.exports = function() {
+  'use strict';
 
   var createUrl = function(resource,params){
         return paths.generateRoute(`connectorCharge.${resource}`,params);
@@ -32,5 +32,5 @@ module.exports = function(){
 
   return {
     destroy: destroy
-  }
+  };
 }();

@@ -1,10 +1,11 @@
-'use strict';
+/** global 
 
 /**
  * Constructs the cookie structure required by client-sessions.js
  * The property 'secureProxy:true' makes the cookie to be secured if 'X-Forwarded-Proto: https' header is present in request
  */
 module.exports = function () {
+  'use strict';
 
   function namedCookie(name) {
     return {
@@ -20,13 +21,13 @@ module.exports = function () {
   }
 
   var frontendCookie = function () {
-    if (process.env.SESSION_ENCRYPTION_KEY === undefined) throw new Error('cookie encryption key is not set')
-    if (process.env.COOKIE_MAX_AGE === undefined) throw new Error('cookie max age is not set')
+    if (process.env.SESSION_ENCRYPTION_KEY === undefined) throw new Error('cookie encryption key is not set');
+    if (process.env.COOKIE_MAX_AGE === undefined) throw new Error('cookie max age is not set');
     return namedCookie('frontend_state');
   };
 
   return {
     frontendCookie: frontendCookie
-  }
+  };
 
 }();

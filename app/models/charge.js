@@ -6,18 +6,19 @@ var logger  = require('winston');
 var paths   = require('../paths.js');
 var State   = require('./state.js');
 
-module.exports = function(){
+module.exports = function() {
+  'use strict';
 
   var createUrl = function(resource,params){
     return paths.generateRoute(`connectorCharge.${resource}`,params);
   },
 
-  mergeApiParams = function(params){
+  mergeApiParams = function(params) {
     params = (params) ? params: {};
     var _default = {
       headers: {"Content-Type": "application/json"},
       data: {}
-    }
+    };
     _default.data = _.merge(params,_default.data);
     return _default;
   },
@@ -59,11 +60,36 @@ module.exports = function(){
     params  = mergeApiParams(),
     defer   = q.defer();
     client.post(url, params, function(data, response){
-      captureComplete(data, response, defer)
+      captureComplete(data, response, defer);
     })
     .on('error',function(err){ captureFail(err, defer); });
 
     return defer.promise;
+  },
+
+  cancel = function(chargeId){
+    var url = createUrl('cancel',{chargeId: chargeId}),
+      params  = mergeApiParams(),
+      defer   = q.defer();
+
+    client.post(url, params, function(data, response){
+        cancelComplete(data, response, defer);
+      })
+      .on('error',function(err){ cancelFail(err, defer); });
+
+    return defer.promise;
+  },
+
+  cancelComplete = function(data, response, defer) {
+    var code = response.statusCode;
+    if (code === 204) return defer.resolve();
+    if (code === 400) return defer.reject(new Error('CANCEL_FAILED'));
+    return defer.reject(new Error('POST_FAILED'));
+  },
+
+  cancelFail = function(err, defer){
+    logger.error('Exception raised calling connector for POST CANCEL: ' + err);
+    clientUnavailable(err, defer);
   },
 
   findByToken = function(tokenId){
@@ -74,7 +100,7 @@ module.exports = function(){
         return;
       }
       defer.resolve(data);
-    }).on('error',function(err){
+    }).on('error', function(err){
       logger.error('Exception raised calling connector for get: ' + err);
       clientUnavailable(err, defer);
     });
@@ -83,8 +109,8 @@ module.exports = function(){
 
   captureComplete = function(data, response, defer) {
     var code = response.statusCode;
-    if (code == 204) return defer.resolve();
-    if (code == 400) return defer.reject(new Error('CAPTURE_FAILED'));
+    if (code === 204) return defer.resolve();
+    if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'));
     return defer.reject(new Error('POST_FAILED'));
   },
 
@@ -112,6 +138,7 @@ module.exports = function(){
     updateToEnterDetails: updateToEnterDetails,
     find: find,
     capture: capture,
-    findByToken: findByToken
-  }
+    findByToken: findByToken,
+    cancel: cancel
+  };
 }();

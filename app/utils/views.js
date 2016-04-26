@@ -2,7 +2,8 @@ var logger  = require('winston');
 var _       = require('lodash');
 
 
-module.exports = function(){
+module.exports = function() {
+  'use strict';
 
   var _default = {
     NOT_FOUND: {
@@ -38,6 +39,11 @@ module.exports = function(){
       view: "errors/incorrect_state/system_cancelled"
     },
 
+      USER_CANCELLED: {
+        view: "user_cancelled",
+        locals: { status: 'successful' }
+      },
+
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
@@ -59,19 +65,21 @@ module.exports = function(){
       view: "errors/system_error"
     },
 
-    display: function(res,resName,locals){
-      var locals = locals || {};
+    display: function(res, resName, locals) {
       var action = _.result(this, resName);
+      var status;
+      
+      locals = locals || {};
       locals.viewName = resName;
 
       if (!action) {
         logger.error("VIEW " + resName + " NOT FOUND");
         locals = { message: "View " + resName + " not found" };
         locals.viewName = 'error';
-        action = this['ERROR'];
+        action = this.ERROR;
       }
 
-      locals = (action.locals) ? _.merge({},action.locals,locals) : locals;
+      locals = (action.locals) ? _.merge({}, action.locals, locals) : locals;
       status = (action.code) ? action.code : 200;
       res.status(status);
       res.render(action.view,locals);
@@ -84,6 +92,6 @@ module.exports = function(){
 
   return {
     create: create
-  }
+  };
 
 }();

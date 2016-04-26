@@ -36,13 +36,13 @@ module.exports = function(grunt){
         src: '**',
         dest: 'govuk_modules/govuk_frontend_toolkit/'
       },
-      {
-        expand: true,
-        cwd: 'node_modules/govuk_template_mustache/',
-        src: '**',
-        dest: 'govuk_modules/govuk_template/'
-      }]
-    },
+        {
+          expand: true,
+          cwd: 'node_modules/govuk_template_mustache/',
+          src: '**',
+          dest: 'govuk_modules/govuk_template/'
+        }]
+    }
   };
 
   var replace = {
@@ -117,7 +117,22 @@ module.exports = function(grunt){
       ]
     }
   };
+  
+  var jshint = {
+    main: {
+      files: {
+        src: [
+          'app/**/*.js',
+          '!app/assets/**/*.js',
+          '!app/utils/custom_certificate.js'
 
+        ]
+      } ,
+      options: {
+        jshintrc: './.jshintrc'
+      }
+    }
+  };
 
 
   var env = {
@@ -176,9 +191,9 @@ module.exports = function(grunt){
     mochaTest: mochaTest,
     env: env,
     browserify: browserify,
-    nightwatch: nightwatch
+    nightwatch: nightwatch,
 
-
+    jshint: jshint
   });
 
 
@@ -186,6 +201,7 @@ module.exports = function(grunt){
     'grunt-contrib-copy',
     'grunt-contrib-watch',
     'grunt-contrib-clean',
+    'grunt-contrib-jshint',
     'grunt-sass',
     'grunt-nodemon',
     'grunt-text-replace',
@@ -221,6 +237,8 @@ module.exports = function(grunt){
   ]);
 
   grunt.registerTask('test', ['env:test','generate-assets', 'mochaTest']);
+  grunt.registerTask('lint', ['jshint']);
+
 
   grunt.registerTask('default', [
     'generate-assets',

@@ -87,4 +87,24 @@ describe('The confirm view', function () {
     body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234');
   });
 
+  it('should have a cancel form.', function () {
+    var postAction = "/post_cancel_path";
+    var templateData = {
+      'post_cancel_action' : postAction
+    };
+
+    var body = renderTemplate('charge', templateData);
+
+    body.should.containSelector('form#cancel').withAttributes(
+      {
+        action: postAction,
+        method: "POST",
+        name: "cancel"
+      });
+  });
+
+  it('should have a \'Cancel\' button.', function () {
+    var body = renderTemplate('charge', {});
+    body.should.containInputWithIdAndName('cancel-payment', 'cancel', 'submit');
+  });
 });
