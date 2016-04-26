@@ -12,7 +12,18 @@ var showCardType = function(){
   cardTypes         = validations.allowedCards;
 
   var init = function(){
-    cardInput.on('keyup',showCardType);
+    cardInput
+      .on('blur',unselectIfInvalid)
+      .on('keyup',showCardType);
+
+  },
+
+  unselectIfInvalid = function(){
+    if (cardIsInvalid()) unSelectAll();
+  },
+
+  cardIsInvalid = function(){
+    return validations.cardNo(cardInput.val()) !== true;
   },
 
   showCardType = function(){
@@ -21,7 +32,7 @@ var showCardType = function(){
     unSelectAll();
     checkEmpty();
     checkAllowed(cardType);
-    checkNumeric($(this).val(),number);
+    checkNumeric($(this).val(), number);
     if (cardType.length !== 1) return;
     selectCard(cardType[0].type);
   },
@@ -48,16 +59,18 @@ var showCardType = function(){
 
   checkNumeric = function(fullNumber,strippedNumber) {
     if (fullNumber.length - strippedNumber.length > 2 && strippedNumber.length < 4) {
-      addErrorToCard(nonNumberString);
+      addErrorToCard(nonNumberString,true);
     }
   },
 
-  addErrorToCard = function(str){
+  addErrorToCard = function(str,force){
+    if (cardIsInvalid() && !force) return;
     cardNoFormGroup.addClass('error');
     cardNoLabel.text(str);
   },
 
   replaceCardLabelWithOriginal = function(){
+    if (cardIsInvalid()) return;
     cardNoFormGroup.removeClass('error');
     cardNoLabel.text(cardNoLabel.attr('data-original-label'));
   };

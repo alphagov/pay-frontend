@@ -60,7 +60,8 @@ module.exports = function(translations,logger) {
     verify: verify,
     required: requiredFields,
     creditCardType: creditCardType,
-    allowedCards: allowedCards
+    allowedCards: allowedCards,
+    cardNo: fieldValidations.cardNo
   };
 
 };
