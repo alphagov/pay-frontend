@@ -11,6 +11,7 @@ var noCache = require(__dirname + '/app/utils/no_cache.js');
 var customCertificate = require(__dirname + '/app/utils/custom_certificate.js');
 var i18n = require('i18n');
 var port = (process.env.PORT || 3000);
+var argv = require('minimist')(process.argv.slice(2));
 var app = express();
 var session = require('./app/utils/session.js');
 
@@ -67,8 +68,6 @@ app.use(function(req,res,next){
     next();
 });
 
-
-
 if (process.env.NODE_ENV !== 'production') {
   // Will return stack traces to the browser as well - only use in development!
   var errorhandler = require('errorhandler');
@@ -77,9 +76,23 @@ if (process.env.NODE_ENV !== 'production') {
 
 router.bind(app);
 
+/**
+ * Starts app
+ */
+function start() {
+  app.listen(port);
+  console.log('Listening on port ' + port);
+  console.log('');
+  
+  return app;
+}
 
-app.listen(port);
-console.log('Listening on port ' + port);
-console.log('');
+//immediately invoke start if -i flag set. Allows script to be run by task runner
+if (!!argv.i) {
+  start();
+}
 
-module.exports.getApp = app;
+module.exports = {
+  start: start,
+  getApp: app
+};
