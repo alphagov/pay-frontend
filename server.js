@@ -12,6 +12,7 @@ var customCertificate = require(__dirname + '/app/utils/custom_certificate.js');
 var i18n = require('i18n');
 var port = (process.env.PORT || 3000);
 var app = express();
+var session = require('./app/utils/session.js');
 
 i18n.configure({
     locales:['en'],
@@ -55,6 +56,9 @@ app.use(function (req, res, next) {
   } else {
     res.locals.analyticsTrackingId = process.env.ANALYTICS_TRACKING_ID;
   }
+  res.locals.session = function () {
+    return session.retrieve(req, req.chargeId);
+  };
   next();
 });
 
