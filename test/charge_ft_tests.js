@@ -282,12 +282,10 @@ describe('chargeTests',function(){
           .expect(303, {})
           .expect(function(res) {
                     var session = cookie.decrypt(res, chargeId);
-
                     should.equal(session.cardNumber, "************5100");
                     should.equal(session.expiryDate, '11/99');
                     should.equal(session.cardholderName, 'Jimi Hendrix');
                     should.equal(session.address, address);
-                    should.equal(session.serviceName, "Demo Service");
                   })
           .end(done);
     });
