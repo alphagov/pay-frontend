@@ -48,6 +48,25 @@ describe('The charge view', function() {
      body.should.containInputWithIdAndName('address-postcode', 'addressPostcode', 'text').withAttribute('maxlength', '10').withLabel('address-postcode-lbl', 'Postcode');
      body.should.containInputWithIdAndName('charge-id', 'chargeId', 'hidden').withAttribute('value', '1234');
   });
+
+  it('should populate form data if reserved in response', function(){
+    var responseData = {
+      'id' : '1234',
+      'cardholderName' : 'J. Vardy',
+      'addressLine1' : '1 High Street',
+      'addressLine2' : 'blah blah',
+      'addressCity' : 'Leicester City',
+      'addressPostcode' : 'CT16 1FB'
+    };
+    var body = renderTemplate('charge', responseData);
+
+    body.should.containInputWithIdAndName('cardholder-name', 'cardholderName', 'text').withAttribute('value', responseData.cardholderName);
+    body.should.containInputWithIdAndName('address-line-1', 'addressLine1', 'text').withAttribute('value', responseData.addressLine1);
+    body.should.containInputWithIdAndName('address-line-2', 'addressLine2', 'text').withAttribute('value', responseData.addressLine2);
+    body.should.containInputWithIdAndName('address-city', 'addressCity', 'text').withAttribute('value', responseData.addressCity);
+    body.should.containInputWithIdAndName('address-postcode', 'addressPostcode', 'text').withAttribute('value', responseData.addressPostcode);
+
+  });
 });
 
 describe('The confirm view', function () {

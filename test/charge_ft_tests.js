@@ -75,6 +75,12 @@ describe('chargeTests',function(){
     return card_data;
   }
 
+  function full_form_card_data(card_number) {
+    var card_data = minimum_form_card_data(card_number);
+    card_data.addressLine2 = 'bla bla';
+    return card_data;
+  }
+
   function minimum_form_card_data(card_number) {
     return {
       'returnUrl': RETURN_URL,
@@ -381,6 +387,24 @@ describe('chargeTests',function(){
 
           })
           .end(done);
+    });
+
+    it('preserve cardholder name, address lines when a card is submitted with validation errors', function (done) {
+      var cookieValue = cookie.create(chargeId, {});
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      var cardData = full_form_card_data('4242');
+      post_charge_request(cookieValue, cardData)
+        .expect(200)
+        .expect(function(res){
+          helper.templateValue(res,"cardholderName",cardData.cardholderName);
+          helper.templateValue(res,"addressLine1",cardData.addressLine1);
+          helper.templateValue(res,"addressLine2",cardData.addressLine2);
+          helper.templateValue(res,"addressCity",cardData.addressCity);
+          helper.templateValue(res,"addressPostcode",cardData.addressPostcode);
+          helper.templateValueUndefined(res,"cardNo");
+          helper.templateValueUndefined(res,"cvc");
+        })
+        .end(done);
     });
 
     it('should ignore empty/null address lines when second address line populated', function (done) {

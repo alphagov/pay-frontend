@@ -111,7 +111,12 @@ Enter your card details.
                     {{highlightErrorFields.cardholderName}}
                   </p>
               {{/highlightErrorFields.cardholderName}}
-              <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="form-control-1-2 form-control" />
+              <input id="cardholder-name"
+                      type="text"
+                      name="cardholderName"
+                      maxlength="200"
+                      class="form-control-1-2 form-control"
+                      value="{{ cardholderName }}" />
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
@@ -156,9 +161,20 @@ Enter your card details.
                     {{highlightErrorFields.addressLine1}}
                 </p>
               {{/highlightErrorFields.addressLine1}}
-              <input id="address-line-1" type="text" name="addressLine1" maxlength="100" class="form-control-1-2" />
+              <input id="address-line-1"
+                     type="text"
+                     name="addressLine1"
+                     maxlength="100"
+                     class="form-control-1-2"
+                     value ="{{ addressLine1 }}" />
           </label>
-          <input id="address-line-2" type="text" name="addressLine2" maxlength="100" class="form-control-1-2" data-last-of-form-group />
+          <input id="address-line-2"
+                 type="text"
+                 name="addressLine2"
+                 maxlength="100"
+                 class="form-control-1-2"
+                 data-last-of-form-group
+                 value ="{{ addressLine2 }}" />
       </div>
       <div class="form-group{{#highlightErrorFields.addressCity}} error{{/highlightErrorFields.addressCity}}" data-validation="addressCity">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
@@ -173,7 +189,12 @@ Enter your card details.
                     {{highlightErrorFields.addressCity}}
                 </p>
               {{/highlightErrorFields.addressCity}}
-              <input id="address-city" type="text" name="addressCity" maxlength="100" class="form-control-1-4" />
+              <input id="address-city"
+                     type="text"
+                     name="addressCity"
+                     maxlength="100"
+                     class="form-control-1-4"
+                     value="{{ addressCity }}"  />
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">
@@ -190,7 +211,12 @@ Enter your card details.
                     {{highlightErrorFields.addressPostcode}}
                 </p>
               {{/highlightErrorFields.addressPostcode}}
-              <input id="address-postcode" type="text" name="addressPostcode" maxlength="10" class="form-control-1-8" />
+              <input id="address-postcode"
+                     type="text"
+                     name="addressPostcode"
+                     maxlength="10"
+                     class="form-control-1-8"
+                     value = "{{ addressPostcode }}" />
           </label>
       </div>
       <div>
