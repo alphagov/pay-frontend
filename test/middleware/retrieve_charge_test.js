@@ -58,7 +58,7 @@ describe('retrieve param test', function () {
   it("should call not found view if the connector does not respond", function(done) {
       retrieveCharge( validRequest,response,next)
       var testPromise = new Promise((resolve, reject) => {
-          setTimeout(() => { resolve(); }, 1000);
+          setTimeout(() => { resolve(); }, 700);
       });
 
       testPromise.then((result) => {
