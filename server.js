@@ -14,6 +14,7 @@ var port = (process.env.PORT || 3000);
 var argv = require('minimist')(process.argv.slice(2));
 var app = express();
 var session = require('./app/utils/session.js');
+var environment = require('./app/services/environment.js');
 
 i18n.configure({
     locales:['en'],
@@ -68,7 +69,7 @@ app.use(function(req,res,next){
     next();
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (!environment.isProduction()) {
   // Will return stack traces to the browser as well - only use in development!
   var errorhandler = require('errorhandler');
   app.use(errorhandler())

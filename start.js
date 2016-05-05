@@ -4,12 +4,14 @@
   var fs = require('fs'),
     cluster = require('cluster'),
     logger = require('winston'),
-    chalk = require('chalk'),
     throng = require('throng'),
     server = require('./server'),
     grunt = require('grunt'),
     environment = require('./app/services/environment'),
-    gruntFilePath = __dirname + '/Gruntfile.js';
+    gruntFilePath = __dirname + '/Gruntfile.js',
+    pidFile = __dirname + '/.start.pid',
+    fileOptions = { encoding : 'utf-8' },
+    pid;
 
   /**
    * Use grunt to run app so that we can use watch, nodemon etc
@@ -36,7 +38,11 @@
    * Start master process
    */
   function startMaster() {
-    logger.info(chalk.green('Master started'));
+    logger.info(`Master started. PID: ${ process.pid }`);
+    process.on('SIGINT', () => {
+      logger.info(`Master exiting`);
+      process.exit()
+    });
   }
 
   /**
@@ -46,14 +52,34 @@
   function startWorker (workerId) {
     server.start();
 
-    logger.info(chalk.blue(`Started worker ${ workerId }`));
+    logger.info(`Started worker ${ workerId }, PID: ${ process.pid }`);
 
-    process.on('SIGTERM', () => {
-      logger.info(chalk.red(`Worker ${ workerId } exiting...`));
+    process.on('SIGINT', () => {
+      logger.info(`Worker ${ workerId } exiting...`);
       process.exit()
     });
   }
 
+  /**
+   * Make sure all child processes are cleaned up
+   */
+  function onInterrupt () {
+    pid = fs.readFileSync(pidFile, fileOptions);
+    fs.unlink(pidFile);
+    process.kill(pid, 'SIGTERM');
+    process.exit();
+  }
+
+  /**
+   * Keep track of processes, and clean up on SIGINT
+   */
+  function monitor () {
+    fs.writeFileSync(pidFile, process.pid, fileOptions);
+    process.on('SIGINT', onInterrupt);
+  }
+
+  monitor();
+  
   // Default to dev mode
   if (environment.isProduction()) {
     startInProductionMode();
