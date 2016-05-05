@@ -39,10 +39,10 @@ module.exports = function() {
       view: "errors/incorrect_state/system_cancelled"
     },
 
-      USER_CANCELLED: {
-        view: "user_cancelled",
-        locals: { status: 'successful' }
-      },
+    USER_CANCELLED: {
+      view: "user_cancelled",
+      locals: { status: 'successful' }
+    },
 
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
@@ -65,10 +65,18 @@ module.exports = function() {
       view: "errors/system_error"
     },
 
+    AUTHORISATION_READY: {
+      view: "errors/incorrect_state/auth_waiting"
+    },
+
+    ENTERING_CARD_DETAILS: {
+      view: "errors/system_error"
+    },
+
     display: function(res, resName, locals) {
       var action = _.result(this, resName);
       var status;
-      
+
       locals = locals || {};
       locals.viewName = resName;
 

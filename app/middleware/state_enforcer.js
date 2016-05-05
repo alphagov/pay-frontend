@@ -12,7 +12,7 @@ module.exports = function(req,res,next){
     chargeId: req.chargeId,
     returnUrl: req.chargeData.return_url
   };
-  
+
   var init = function(){
     if (!stateCorrect()) return;
     next();

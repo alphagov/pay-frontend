@@ -125,7 +125,6 @@ describe('The /confirm endpoint undealt statuses', function () {
   var confirm_not_allowed_statuses = [
     'CREATED',
     'AUTHORISATION SUBMITTED',
-    'AUTHORISATION READY',
     'READY_FOR_CAPTURE'
   ];
   beforeEach(function() {
@@ -204,7 +203,12 @@ describe('The /confirm endpoint dealt statuses', function () {
     {
       name: 'authorisation rejected',
       view: "AUTHORISATION_REJECTED"
+    },
+    {
+      name: 'authorisation ready',
+      view: "AUTHORISATION_READY"
     }
+
   ];
   beforeEach(function() {
     nock.cleanAll();

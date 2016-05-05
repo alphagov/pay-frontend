@@ -1,21 +1,19 @@
 {{< layout}}
 
 {{$pageTitle}}
-There was a problem with your payment
+Your payment is in progress
 {{/pageTitle}}
 
 {{$content}}
 
 <main id="content" role="main" class="content-wrapper error-pages grid-row">
 <div class="column-two-thirds">
+  <h1 class="heading-large"> Your payment is in progress </h1>
+  <p class="lede"> You can either:</p>
+  <a class="lede" href="/card_details/{{chargeId}}/auth_waiting" id="confirm-link"> Continue with your payment </a>
+  <p class="lede">or</p>
 
-
-  <h1 class="heading-large">Your payment cannot be authorised</h1>
-  <p class="lede">Contact your bank for more details. No money has been taken from your account.</p>
-
-
-  <a class="lede" href="{{returnUrl}}" id="return-url">Go back to start the payment again</a>
-  <br/>
+  <a href="{{returnUrl}}" class="lede">Go back to start the payment again</a>
 </div>
 </main>
 
