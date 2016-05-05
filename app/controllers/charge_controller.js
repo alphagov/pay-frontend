@@ -14,6 +14,7 @@ var hashCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
+var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
 
 module.exports = {
   new: function (req, res) {
@@ -47,7 +48,7 @@ module.exports = {
     var checkResult = validateCharge.verify(req.body);
 
     if (checkResult.hasError) {
-      _.merge(checkResult, charge);
+      _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
       checkResult.post_card_action = paths.card.create.path;
       res.render(CHARGE_VIEW, checkResult);
       return;

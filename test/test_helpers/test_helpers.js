@@ -105,6 +105,11 @@ module.exports = {
     return chai_expect(_.result(body,key)).to.not.be.undefined;
   },
 
+  templateValueUndefined: function(res,key){
+    var body = JSON.parse(res.text);
+    return chai_expect(_.result(body,key)).to.be.undefined;
+  },
+
   unexpectedPromise: function(data){
     throw new Error('Promise was unexpectedly fulfilled.');
   },
