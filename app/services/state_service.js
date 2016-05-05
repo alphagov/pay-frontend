@@ -11,7 +11,7 @@ module.exports = function () {
     "card.new": [State.ENTERING_CARD_DETAILS, State.CREATED],
     "card.confirm": [State.AUTH_SUCCESS],
     "card.authWaiting": [State.AUTH_READY, State.AUTH_SUCCESS],
-    "card.create": [State.ENTERING_CARD_DETAILS],
+    "card.create": [State.AUTH_READY, State.ENTERING_CARD_DETAILS],
     "card.capture": [State.AUTH_SUCCESS],
     "card.cancel": [State.ENTERING_CARD_DETAILS, State.AUTH_SUCCESS]
   };
@@ -26,7 +26,7 @@ module.exports = function () {
 
     var possibleActionNames = _.reduce(STATES, function(result, value, key) {
       var hasState = _.includes(value, state);
-      if (hasState) result.push(key); 
+      if (hasState) result.push(key);
       return result;
     }, []);
 

@@ -40,8 +40,13 @@ module.exports = {
   create: function (req, res) {
     "use strict";
 
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    if (charge.status === State.AUTH_READY) {
+      res.redirect(303, paths.generateRoute('card.authWaiting', {chargeId: charge.id}));
+      return;
+    }
+
     var _views = views.create(),
-      charge = normalise.charge(req.chargeData, req.chargeId),
       chargeSession = session.retrieve(req, charge.id);
     var validateCharge = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"), logger);
     normalise.addressLines(req.body);
@@ -108,7 +113,6 @@ module.exports = {
 
   authWaiting: function (req, res) {
     "use strict";
-
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views;
 

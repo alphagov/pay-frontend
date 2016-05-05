@@ -225,6 +225,20 @@ describe('chargeTests',function(){
           .end(done);
     });
 
+    it('should give an error page if user is in entering card details state', function(done) {
+      var cookieValue = cookie.create(chargeId);
+
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+
+      request(app)
+              .get(frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+              .set('Content-Type', 'application/x-www-form-urlencoded')
+              .set('Cookie', ['frontend_state=' + cookieValue])
+              .set('Accept', 'application/json')
+          .expect(500)
+          .end(done);
+    });
+
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
 
@@ -684,7 +698,7 @@ describe('chargeTests',function(){
         })
         .end(done);
     });
-    
+
     it('should take user to cancel page on successful cancel when charge in authorisation successful state', function (done) {
       var cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel';
       default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
