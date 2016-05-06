@@ -10,3 +10,4 @@ GOV.UK Pay Frontend application (Node.js)
 | CONNECTOR_TOKEN_URL         | X |      | The connector endpoint to use when validating the one time token. |
 | ANALYTICS_TRACKING_ID       | X |      | Tracking ID to be used by 'Google-Analytics'. |
 | SECURE_COOKIE_OFF           |   | false/undefined | To switch off generating secure cookies. Set this to `true` only if you are running self service in a `non HTTPS` environment. |
+| NODE_WORKER_COUNT           |   | 1 | The number of worker threads started by node cluster when run in production mode |
