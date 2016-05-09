@@ -1,3 +1,7 @@
+var path = require('path');
+
+var staticify = require("staticify")(path.join(__dirname, "public"));
+
 module.exports = function(grunt){
   var sass = {
     dev: {
@@ -117,7 +121,7 @@ module.exports = function(grunt){
       ]
     }
   };
-  
+
   var jshint = {
     main: {
       files: {
@@ -174,6 +178,26 @@ module.exports = function(grunt){
     }
   };
 
+  var concat =  {
+    options: {
+      separator: ';',
+    },
+    dist: {
+      src: ['public/javascripts/browsered.js','app/assets/javascripts/base/*.js',
+      'app/assets/javascripts/modules/*.js'],
+      dest: 'public/javascripts/application.js',
+    },
+  };
+
+  rewrite = {
+    oneFile: {
+      src: 'public/stylesheets/application.css',
+      editor: function(contents, filePath) {
+        return staticify.replacePaths(contents)
+      }
+    }
+  };
+
   grunt.initConfig({
     // Clean
     clean: ['public', 'govuk_modules'],
@@ -192,8 +216,10 @@ module.exports = function(grunt){
     env: env,
     browserify: browserify,
     nightwatch: nightwatch,
+    concat: concat,
 
-    jshint: jshint
+    jshint: jshint,
+    rewrite: rewrite
   });
 
 
@@ -209,7 +235,9 @@ module.exports = function(grunt){
     'grunt-mocha-test',
     'grunt-env',
     'grunt-browserify',
-    'grunt-nightwatch'
+    'grunt-nightwatch',
+    'grunt-contrib-concat',
+    'grunt-rewrite'
 
   ].forEach(function (task) {
     grunt.loadNpmTasks(task);
@@ -233,7 +261,9 @@ module.exports = function(grunt){
     'convert_template',
     'replace',
     'sass',
-    'browserify'
+    'browserify',
+    'concat',
+    'rewrite'
   ]);
 
   grunt.registerTask('test', ['env:test','generate-assets', 'mochaTest']);
