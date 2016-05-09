@@ -41,7 +41,7 @@ var formValidation = function(){
     var errors = allValidations().errorFields;
     for (var key in errors) {
       var error = errors[key]
-      $('.error-summary-list').append("<li><a href='#" + error.cssKey + "-lbl' id='" + error.key + "-error'>" + error.value + "</a></li>");
+      $('.error-summary-list').append("<li><a href='#" + error.cssKey + "-lbl' id='" + error.cssKey + "-error'>" + error.value + "</a></li>");
     }
   },
 
