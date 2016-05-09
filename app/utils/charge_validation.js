@@ -4,6 +4,14 @@ var fieldValidations= validations.fieldValidations;
 var requiredFields  = validations.requiredFormFields;
 var creditCardType  = validations.creditCardType;
 var allowedCards    = validations.allowedCards;
+var customError  = {
+  expiryYear:  {
+    skip: true
+  },
+  expiryMonth:  {
+    cssKey: "expiry-date"
+  }
+};
 
 module.exports = function(translations,logger) {
   'use strict';
@@ -18,8 +26,8 @@ module.exports = function(translations,logger) {
     init = function(){
       for (var index in requiredFields) {
         if (requiredFields.hasOwnProperty(index)) {
-          var name = requiredFields[index],
-            value = body[name];
+          var name  = requiredFields[index];
+          var value = body[name];
           checkFormField(name, value);
         }
       }
@@ -37,6 +45,8 @@ module.exports = function(translations,logger) {
       problem           = !value ?  missing(name) : translation[customValidation];
 
       pushToErrorFields(name, problem, highlightMessage);
+      pushToHighlightField(name, highlightMessage);
+
     },
 
     checkFieldValidation = function(name, value) {
@@ -48,14 +58,26 @@ module.exports = function(translations,logger) {
       return "Enter a valid " + translation.name;
     },
 
-    pushToErrorFields = function(fieldName, problem, highlightMessage){
-      checkResult.highlightErrorFields[fieldName] = highlightMessage;
+    pushToErrorFields = function(fieldName, problem){
+      var custom = customError[fieldName];
+      var cssKey = changeCase.paramCase(fieldName);
+      if (custom) {
+        if (custom.skip) return;
+        if (custom.cssKey) cssKey = custom.cssKey;
+      }
+
       checkResult.errorFields.push({
-        cssKey: changeCase.paramCase(fieldName),
+        cssKey: cssKey,
         key: fieldName,
         value: problem
       });
+    },
+
+    pushToHighlightField = function(fieldName, highlightMessage){
+      var fields = checkResult.highlightErrorFields;
+      fields[fieldName] = highlightMessage;
     };
+
     return init();
   };
 

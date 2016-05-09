@@ -38,10 +38,10 @@ var formValidation = function(){
   },
 
   appendHighlightErrors = function(){
-    var errors = allValidations().highlightErrorFields;
+    var errors = allValidations().errorFields;
     for (var key in errors) {
-      var id = findInputByKey(key).attr('id');
-      $('.error-summary-list').append("<li><a href='#" + id + "-lbl' id='" + id + "-error'>" + errors[key] + "</a></li>");
+      var error = errors[key]
+      $('.error-summary-list').append("<li><a href='#" + error.cssKey + "-lbl' id='" + error.cssKey + "-error'>" + error.value + "</a></li>");
     }
   },
 
