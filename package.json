@@ -20,6 +20,7 @@
     }
   },
   "scripts": {
+    "prestart": "grunt default",
     "start": "forever --minUptime 1000 --spinSleepTime 500 start.js",
     "stop": "forever stop start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",

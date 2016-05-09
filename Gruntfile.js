@@ -1,7 +1,4 @@
 var path = require('path');
-
-var staticify = require("staticify")(path.join(__dirname, "public"));
-
 module.exports = function(grunt){
   var sass = {
     dev: {
@@ -190,9 +187,11 @@ module.exports = function(grunt){
   };
 
   rewrite = {
-    oneFile: {
+    "application.css": {
       src: 'public/stylesheets/application.css',
       editor: function(contents, filePath) {
+        var staticify = require("staticify")(path.join(__dirname, "public"));
+
         return staticify.replacePaths(contents)
       }
     }
