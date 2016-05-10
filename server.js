@@ -29,8 +29,8 @@ i18n.configure({
 app.set('settings', { getVersionedPath: staticify.getVersionedPath });
 
 app.use(i18n.init);
-app.use(staticify.middleware);
 app.use(compression())
+app.use(staticify.middleware);
 
 app.enable('trust proxy');
 app.use(clientSessions(frontendCookie()));

@@ -25,9 +25,9 @@ module.exports = function(grunt){
     assets: {
       files: [{
         expand: true,
-        cwd: 'app/assets/',
-        src: ['**/*', '!sass/**'],
-        dest: 'public/'
+        cwd: 'app/assets/images',
+        src: ['*'],
+        dest: 'public/images/'
       }]
     },
     govuk: {
@@ -186,7 +186,7 @@ module.exports = function(grunt){
     },
   };
 
-  rewrite = {
+  var rewrite = {
     "application.css": {
       src: 'public/stylesheets/application.css',
       editor: function(contents, filePath) {
@@ -196,6 +196,22 @@ module.exports = function(grunt){
       }
     }
   };
+
+  var compress = {
+    main: {
+      options: {
+        mode: 'gzip'
+      },
+      files: [
+        {expand: true, src: ['public/images/*.jpg'], ext: '.gz.jpg'},
+        {expand: true, src: ['public/images/*.gif'], ext: '.gz.gif'},
+        {expand: true, src: ['public/images/*.png'], ext: '.gz.png'},
+        {expand: true, src: ['public/javascripts/*.js'], ext: '.gz.js'},
+        {expand: true, src: ['public/stylesheets/*.css'], ext: '.gz.css'}
+      ]
+    }
+  };
+
 
   grunt.initConfig({
     // Clean
@@ -216,14 +232,15 @@ module.exports = function(grunt){
     browserify: browserify,
     nightwatch: nightwatch,
     concat: concat,
-
     jshint: jshint,
-    rewrite: rewrite
+    rewrite: rewrite,
+    compress: compress
   });
 
 
   [
     'grunt-contrib-copy',
+    'grunt-contrib-compress',
     'grunt-contrib-watch',
     'grunt-contrib-clean',
     'grunt-contrib-jshint',
@@ -262,7 +279,8 @@ module.exports = function(grunt){
     'sass',
     'browserify',
     'concat',
-    'rewrite'
+    'rewrite',
+    'compress'
   ]);
 
   grunt.registerTask('test', ['env:test','generate-assets', 'mochaTest']);
