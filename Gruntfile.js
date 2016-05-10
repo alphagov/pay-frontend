@@ -149,31 +149,6 @@ module.exports = function(grunt){
     }
   };
 
-  var nightwatch = {
-    options: {
-      src_folders: ['test/integration/tests'],
-      standalone: false,
-      "page_objects_path": 'test/integration/pages',
-      test_workers:  {"enabled" : true, "workers" : 8},
-      test_settings: {
-        default: {
-          "desiredCapabilities" : {
-            "browserName" : "phantomjs",
-            "javascriptEnabled" : true,
-            "acceptSslCerts" : true,
-            "phantomjs.binary.path" : "/usr/local/bin/phantomjs",
-          }
-        },
-        "firefox" : {
-          "desiredCapabilities": {
-            "browserName": "firefox",
-            "javascriptEnabled": true,
-            "acceptSslCerts": true
-          }
-        }
-      }
-    }
-  };
 
   var concat =  {
     options: {
@@ -203,11 +178,11 @@ module.exports = function(grunt){
         mode: 'gzip'
       },
       files: [
-        {expand: true, src: ['public/images/*.jpg'], ext: '.gz.jpg'},
-        {expand: true, src: ['public/images/*.gif'], ext: '.gz.gif'},
-        {expand: true, src: ['public/images/*.png'], ext: '.gz.png'},
-        {expand: true, src: ['public/javascripts/*.js'], ext: '.gz.js'},
-        {expand: true, src: ['public/stylesheets/*.css'], ext: '.gz.css'}
+        {expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz'},
+        {expand: true, src: ['public/images/*.gif'], ext: '.gif.gz'},
+        {expand: true, src: ['public/images/*.png'], ext: '.png.gz'},
+        {expand: true, src: ['public/javascripts/*.js'], ext: '.js.gz'},
+        {expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz'}
       ]
     }
   };
@@ -230,7 +205,6 @@ module.exports = function(grunt){
     mochaTest: mochaTest,
     env: env,
     browserify: browserify,
-    nightwatch: nightwatch,
     concat: concat,
     jshint: jshint,
     rewrite: rewrite,
@@ -251,7 +225,6 @@ module.exports = function(grunt){
     'grunt-mocha-test',
     'grunt-env',
     'grunt-browserify',
-    'grunt-nightwatch',
     'grunt-contrib-concat',
     'grunt-rewrite'
 
