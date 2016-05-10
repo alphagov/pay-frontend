@@ -59,7 +59,11 @@
     "cardholderName": "Name on card",
     "building": "Building name and/or number and street",
     "city": "Town or city",
-    "postcode": "Postcode"
+    "postcode": "Postcode",
+    "cvcTip": "The last three digits on the back of the card",
+    "amexcvcTip": "The last four digits after the card number on the front",
+    "amexcvcNonjs": "For American Express"
+
   }
 
 }
