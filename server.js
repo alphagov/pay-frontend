@@ -15,7 +15,10 @@ var argv = require('minimist')(process.argv.slice(2));
 var app = express();
 var session = require('./app/utils/session.js');
 var environment = require('./app/services/environment.js');
-
+var staticify = require("staticify")(path.join(__dirname, "public"));
+var compression = require('compression')
+var oneYear = 86400000 * 365;
+var publicCaching =  { maxAge: oneYear }
 i18n.configure({
     locales:['en'],
     directory: __dirname + '/locales',
@@ -23,7 +26,11 @@ i18n.configure({
     defaultLocale: 'en',
     register: global
 });
+app.set('settings', { getVersionedPath: staticify.getVersionedPath });
+
 app.use(i18n.init);
+app.use(compression())
+app.use(staticify.middleware);
 
 app.enable('trust proxy');
 app.use(clientSessions(frontendCookie()));
@@ -43,12 +50,17 @@ app.set('views', __dirname + '/app/views');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/public/javascripts', express.static(__dirname + '/public/assets/javascripts'));
-app.use('/public/images', express.static(__dirname + '/public/images'));
 
-app.use('/public', express.static(__dirname + '/public'));
-app.use('/public', express.static(__dirname + '/govuk_modules/govuk_template/assets'));
-app.use('/public', express.static(__dirname + '/govuk_modules/govuk_frontend_toolkit'));
+app.use('/javascripts', express.static(__dirname + '/public/assets/javascripts',publicCaching));
+app.use('/images', express.static(__dirname + '/public/images',publicCaching));
+app.use('/stylesheets', express.static(__dirname + '/public/assets/stylesheets',publicCaching));
+
+app.use('/public', express.static(__dirname + '/public',publicCaching));
+app.use('/public', express.static(__dirname + '/govuk_modules/govuk_template/assets',publicCaching));
+app.use('/public', express.static(__dirname + '/govuk_modules/govuk_frontend_toolkit',publicCaching));
+
+
+
 app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images','favicon.ico')));
 app.use(function (req, res, next) {
   res.locals.assetPath = '/public/';
@@ -84,7 +96,7 @@ function start() {
   app.listen(port);
   console.log('Listening on port ' + port);
   console.log('');
-  
+
   return app;
 }
 

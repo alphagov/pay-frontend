@@ -1,3 +1,4 @@
+var path = require('path');
 module.exports = function(grunt){
   var sass = {
     dev: {
@@ -24,9 +25,9 @@ module.exports = function(grunt){
     assets: {
       files: [{
         expand: true,
-        cwd: 'app/assets/',
-        src: ['**/*', '!sass/**'],
-        dest: 'public/'
+        cwd: 'app/assets/images',
+        src: ['*'],
+        dest: 'public/images/'
       }]
     },
     govuk: {
@@ -117,7 +118,7 @@ module.exports = function(grunt){
       ]
     }
   };
-  
+
   var jshint = {
     main: {
       files: {
@@ -148,31 +149,44 @@ module.exports = function(grunt){
     }
   };
 
-  var nightwatch = {
+
+  var concat =  {
     options: {
-      src_folders: ['test/integration/tests'],
-      standalone: false,
-      "page_objects_path": 'test/integration/pages',
-      test_workers:  {"enabled" : true, "workers" : 8},
-      test_settings: {
-        default: {
-          "desiredCapabilities" : {
-            "browserName" : "phantomjs",
-            "javascriptEnabled" : true,
-            "acceptSslCerts" : true,
-            "phantomjs.binary.path" : "/usr/local/bin/phantomjs",
-          }
-        },
-        "firefox" : {
-          "desiredCapabilities": {
-            "browserName": "firefox",
-            "javascriptEnabled": true,
-            "acceptSslCerts": true
-          }
-        }
+      separator: ';',
+    },
+    dist: {
+      src: ['public/javascripts/browsered.js','app/assets/javascripts/base/*.js',
+      'app/assets/javascripts/modules/*.js'],
+      dest: 'public/javascripts/application.js',
+    },
+  };
+
+  var rewrite = {
+    "application.css": {
+      src: 'public/stylesheets/application.css',
+      editor: function(contents, filePath) {
+        var staticify = require("staticify")(path.join(__dirname, "public"));
+
+        return staticify.replacePaths(contents)
       }
     }
   };
+
+  var compress = {
+    main: {
+      options: {
+        mode: 'gzip'
+      },
+      files: [
+        {expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz'},
+        {expand: true, src: ['public/images/*.gif'], ext: '.gif.gz'},
+        {expand: true, src: ['public/images/*.png'], ext: '.png.gz'},
+        {expand: true, src: ['public/javascripts/*.js'], ext: '.js.gz'},
+        {expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz'}
+      ]
+    }
+  };
+
 
   grunt.initConfig({
     // Clean
@@ -191,14 +205,16 @@ module.exports = function(grunt){
     mochaTest: mochaTest,
     env: env,
     browserify: browserify,
-    nightwatch: nightwatch,
-
-    jshint: jshint
+    concat: concat,
+    jshint: jshint,
+    rewrite: rewrite,
+    compress: compress
   });
 
 
   [
     'grunt-contrib-copy',
+    'grunt-contrib-compress',
     'grunt-contrib-watch',
     'grunt-contrib-clean',
     'grunt-contrib-jshint',
@@ -209,7 +225,8 @@ module.exports = function(grunt){
     'grunt-mocha-test',
     'grunt-env',
     'grunt-browserify',
-    'grunt-nightwatch'
+    'grunt-contrib-concat',
+    'grunt-rewrite'
 
   ].forEach(function (task) {
     grunt.loadNpmTasks(task);
@@ -233,7 +250,10 @@ module.exports = function(grunt){
     'convert_template',
     'replace',
     'sass',
-    'browserify'
+    'browserify',
+    'concat',
+    'rewrite',
+    'compress'
   ]);
 
   grunt.registerTask('test', ['env:test','generate-assets', 'mochaTest']);

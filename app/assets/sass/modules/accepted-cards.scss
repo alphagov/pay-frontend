@@ -16,11 +16,11 @@
    $cards: american-express diners-club discover jcb master-card visa;
     @for $i from 1 through length($cards) {
       li.#{nth($cards, $i)} {
-        background-image: url("/public/images/#{nth($cards, $i)}-bw.png")
+        background-image: url("/images/#{nth($cards, $i)}-bw.png")
       }
       &.field-empty li.#{nth($cards, $i)},
       li.#{nth($cards, $i)}.selected {
-        background-image: url("/public/images/#{nth($cards, $i)}-color.png")
+        background-image: url("/images/#{nth($cards, $i)}-color.png")
       }
     }
 
