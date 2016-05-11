@@ -120,7 +120,7 @@ Enter your card details.
                       value="{{ cardholderName }}" />
           </label>
       </div>
-      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}}" data-validation="cvc">
+      <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}} cvc" data-validation="cvc">
           <label id="cvc-lbl" for="cvc" class="form-label-bold">
               <span
               class="cvc-label"
@@ -128,7 +128,17 @@ Enter your card details.
               data-original-label="{{ i18n.chargeView.cvc }}">
               {{ i18n.chargeView.cvc }}
               </span>
-              <p class="form-hint">This is the 3 digit code on the back of your card</p>
+              <p class="form-hint">
+                <span class="generic-cvc">
+                  {{ i18n.chargeView.cvcTip }}
+                </span>
+                <span class="hidden">
+                  {{ i18n.chargeView.amexcvcNonjs }}
+                </span>
+                <span class="amex-cvc hidden">
+                  {{ i18n.chargeView.amexcvcTip }}
+                </span>
+              </p>
               {{#highlightErrorFields.cvc}}
                   <p class="error-message" id="error-cvc">
                         {{highlightErrorFields.cvc}}
@@ -142,7 +152,11 @@ Enter your card details.
                 class="form-control-1-8 cvc"
                 autocomplete="off"
                 pattern="[0-9]*" />
-              <img src="/images/security-code.png" />
+              <img src="/images/security-code.png" class="generic-cvc" />
+              <span class="either hidden">
+                or
+              </span>
+              <img src="/images/amex-security-code.png" class="amex-cvc hidden" />
           </label>
       </div>
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
