@@ -9,7 +9,9 @@ var showCardType = function(){
   nonNumberString   = i18n.chargeController.fieldErrors.fields.cardNo.non_numeric,
   validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console),
   cardValidation    = validations.creditCardType,
-  cardTypes         = validations.allowedCards;
+  cardTypes         = validations.allowedCards,
+  amexCvcTip        = form.find('.amex-cvc'),
+  genericCvcTip     = form.find('.generic-cvc');
 
   var init = function(){
     cardInput
@@ -33,7 +35,9 @@ var showCardType = function(){
     checkEmpty();
     checkAllowed(cardType);
     checkNumeric($(this).val(), number);
+    cvcHighlight(); // to reset
     if (cardType.length !== 1) return;
+    cvcHighlight(cardType[0].type);
     selectCard(cardType[0].type);
   },
 
@@ -73,6 +77,12 @@ var showCardType = function(){
     if (cardIsInvalid()) return;
     cardNoFormGroup.removeClass('error');
     cardNoLabel.text(cardNoLabel.attr('data-original-label'));
+  },
+
+  cvcHighlight = function(type){
+    var isAmex = type === 'american-express';
+    amexCvcTip.toggleClass('hidden',!isAmex);
+    genericCvcTip.toggleClass('hidden',isAmex);
   };
 
 
