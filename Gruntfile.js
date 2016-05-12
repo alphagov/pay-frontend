@@ -58,16 +58,9 @@ module.exports = function(grunt){
   };
 
   var watch = {
-    css: {
-      files: ['app/assets/sass/**/*.scss'],
-      tasks: ['sass'],
-      options: {
-        spawn: false,
-      }
-    },
     assets:{
-      files: ['app/assets/**/*', '!app/assets/sass/**'],
-      tasks: ['copy:assets'],
+      files: ['app/assets/**/*'],
+      tasks: ['generate-assets'],
       options: {
         spawn: false,
       }
@@ -265,12 +258,5 @@ module.exports = function(grunt){
     'concurrent:target'
   ]);
 
-  grunt.event.on('watch', function(action, filepath, target) {
-
-    // just copy the asset that was changed, not all of them
-    if (target == "assets"){
-      grunt.config('copy.assets.files.0.src', filepath.replace("app/assets/",""));
-    }
-  });
 
 };
