@@ -63,6 +63,7 @@
     "luhn": "2.1.x",
     "minimist": "0.0.x",
     "moment": "2.11.x",
+    "morgan": "1.7.x",
     "newrelic": "1.25.x",
     "node-rest-client": "1.8.x",
     "node-sass": "3.4.x",
@@ -73,7 +74,7 @@
     "string": "3.3.x",
     "throng": "4.0.x",
     "uk-postcode": "0.1.x",
-    "winston": "1.1.x"
+    "winston": "2.2.x"
   },
   "devDependencies": {
     "chai": "^3.2.0",
