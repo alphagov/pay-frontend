@@ -1,4 +1,3 @@
-var response = require(__dirname + '/utils/response.js').response;
 var i18n = require('i18n');
 
 var charge        = require('./controllers/charge_controller.js');
@@ -15,16 +14,11 @@ module.exports.paths = paths;
 module.exports.bind = function (app) {
   'use strict';
 
-    app.get('/greeting', function (req, res) {
-      var data = {'greeting': 'Hello', 'name': 'World'};
-      response(req.headers.accept, res, 'greeting', data);
-    });
-
-    app.get('/healthcheck', function (req, res) {
-      var data = {'ping': {'healthy': true}};
-      res.writeHead(200, {"Content-Type": "application/json"});
-      res.end(JSON.stringify(data));
-    });
+  app.get('/healthcheck', function (req, res) {
+    var data = {'ping': {'healthy': true}};
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(data));
+  });
 
   // charges
   var card = paths.card;
