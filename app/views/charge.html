@@ -47,24 +47,11 @@ Enter your card details.
               />
           </label>
           <ul class="accepted-cards field-empty">
-            <li class="visa" data-key="visa">
-              <span class="visuallyhidden">visa</span>
+            {{#allowedCards}}
+            <li class="{{type}}" data-key="{{type}}">
+              <span class="visuallyhidden">{{type}}</span>
             </li>
-            <li class="master-card" data-key="master-card">
-              <span class="visuallyhidden">mastercard</span>
-            </li>
-            <li class="american-express" data-key="american-express">
-              <span class="visuallyhidden">Amex</span>
-            </li>
-            <li class="jcb" data-key="jcb">
-              <span class="visuallyhidden">jcb</span>
-            </li>
-            <li class="diners-club" data-key="diners-club">
-              <span class="visuallyhidden">diners</span>
-            </li>
-            <li class="discover" data-key="discover">
-              <span class="visuallyhidden">discover</span>
-            </li>
+            {{/allowedCards}}
           </ul>
           <p> accepted credit and debit card types </p>
       </div>

@@ -67,7 +67,7 @@ module.exports = function(grunt){
     },
     forBrowsifier:{
       files: ['app/*','app/**/*'],
-      tasks: ['browserify'],
+      tasks: ['generate-assets'],
       options: {
         spawn: false
       }

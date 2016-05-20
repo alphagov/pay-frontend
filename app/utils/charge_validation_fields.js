@@ -27,7 +27,6 @@ module.exports.requiredFormFields = [
 module.exports.fieldValidations = {
   cardNo:  function(cardNo) {
     'use strict';
-
     if (!cardNo) return "message"; // default message
     cardNo        = cardNo.replace(/\D/g,'');
     var cardType  = creditCardType(cardNo);
@@ -35,9 +34,11 @@ module.exports.fieldValidations = {
 
     if (!cardNo ||  cardNo.length < 12 || cardNo.length > 16) return 'number_incorrect_length';
     if (!valid) return "luhn_invalid";
-    if(!cardType[0] || cards.indexOf(cardType[0].type) === -1) return "card_not_supported";
-
-    return true;
+    if(!cardType[0]) return "card_not_supported";
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].type === cardType[0].type) return true;
+    }
+    return "card_not_supported";
   },
 
 
