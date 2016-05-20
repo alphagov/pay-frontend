@@ -1,9 +1,4 @@
 var changeCase      = require('change-case');
-var validations     = require('./charge_validation_fields');
-var fieldValidations= validations.fieldValidations;
-var requiredFields  = validations.requiredFormFields;
-var creditCardType  = validations.creditCardType;
-var allowedCards    = validations.allowedCards;
 var customError  = {
   expiryYear:  {
     skip: true
@@ -14,8 +9,12 @@ var customError  = {
 };
 
 
-module.exports = function(translations,logger) {
+module.exports = function(translations,logger,Card) {
   'use strict';
+  var validations     = require('./charge_validation_fields')(Card);
+  var fieldValidations= validations.fieldValidations;
+  var requiredFields  = validations.requiredFormFields;
+  var creditCardType  = validations.creditCardType;
 
   var verify = function(body){
     var checkResult = {
@@ -51,7 +50,7 @@ module.exports = function(translations,logger) {
     },
 
     checkFieldValidation = function(name, value) {
-      return (fieldValidations[name]) ? fieldValidations[name](value,body) : true;
+      return (fieldValidations[name]) ? fieldValidations[name].bind(fieldValidations)(value,body) : true;
     },
 
     missing = function(name){
@@ -86,7 +85,7 @@ module.exports = function(translations,logger) {
     verify: verify,
     required: requiredFields,
     creditCardType: creditCardType,
-    allowedCards: allowedCards,
+    allowedCards: Card.allowed,
     cardNo: fieldValidations.cardNo
   };
 

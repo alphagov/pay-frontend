@@ -4,9 +4,11 @@ var expect = require('chai').expect;
 var charge = require(__dirname + '/../../app/utils/charge_validation.js');
 var i18n   = require('i18n');
 var _      = require('lodash');
+var Card  = require(__dirname + '/../../app/models/card.js');
+
 
 i18n.setLocale('en');
-var validator = charge(i18n.__("chargeController.fieldErrors"),{info: ()=>{}});
+var validator = charge(i18n.__("chargeController.fieldErrors"),{info: ()=>{}},Card);
 
 describe('charge validator', function () {
 

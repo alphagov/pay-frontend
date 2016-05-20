@@ -1,4 +1,4 @@
-module.exports.allowed = [
+var allowed = [
   {
     type: "visa",
     debit: true,
@@ -30,3 +30,4 @@ module.exports.allowed = [
     credit: true  
   }
 ];
+module.exports.allowed = allowed;

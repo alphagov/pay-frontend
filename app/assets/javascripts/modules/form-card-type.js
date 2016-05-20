@@ -7,7 +7,8 @@ var showCardType = function(){
   cardNoFormGroup   = form.find('.card-no-group'),
   notSupportedString= i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported,
   nonNumberString   = i18n.chargeController.fieldErrors.fields.cardNo.non_numeric,
-  validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console);
+  // window.card comes from the view
+  validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console,window.Card);
   var cardValidation    = validations.creditCardType,
   cardTypes         = validations.allowedCards,
   amexCvcTip        = form.find('.amex-cvc'),

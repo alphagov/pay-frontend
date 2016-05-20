@@ -3,7 +3,9 @@ var formValidation = function(){
   formInputs        = form.find('input'),
   cardInput         = form.find('input#card-no'),
   errorSummary      = $('.error-summary'),
-  chargeValidations = module.chargeValidation(i18n.chargeController.fieldErrors,console),
+  logger            = {info: function(){}}, // replace with console to see output
+  // window.card comes from the view
+  chargeValidations = module.chargeValidation(i18n.chargeController.fieldErrors,logger,$.extend({},window.Card)),
   required          = chargeValidations.required;
 
 
@@ -61,7 +63,6 @@ var formValidation = function(){
     groupHasError = getFormGroup(input).hasClass('error'),
     lastOfgroup   = $(input).is('[data-last-of-form-group]'),
     required      = $(input).is('[data-required]');
-
     if ((lastOfgroup && required) || groupHasError) return checkValidation(input);
     if (inGroup || blank) return;
     checkValidation(input);
