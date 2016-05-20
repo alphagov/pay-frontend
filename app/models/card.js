@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var allowed = [
   {
     type: "visa",
@@ -30,4 +32,10 @@ var allowed = [
     credit: true  
   }
 ];
+
 module.exports.allowed = allowed;
+
+module.exports.withdrawalTypes = {
+  credit: _.filter(allowed,{credit: true}).length != 0,
+  debit: _.filter(allowed,{debit: true}).length != 0
+};
