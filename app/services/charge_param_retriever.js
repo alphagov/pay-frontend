@@ -7,12 +7,16 @@ module.exports = function(){
     var chargeId = getChargeParam(req);
 
     if (!chargeId) {
-      logger.error('Unexpected: chargeId was not found in request.');
+      logger.error('ChargeId was not found in request -', {
+        chargeId: 'undefined'
+      });
       return false;
     }
 
     if (!getChargeFromSession(req, chargeId)) {
-      logger.error('Unexpected: chargeId=' + chargeId + ' could not be found on the session');
+      logger.error('ChargeId was not found on the session -', {
+        chargeId: chargeId
+      });
       return false;
     }
     return chargeId;

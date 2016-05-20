@@ -74,12 +74,21 @@ module.exports = {
 
     var authLink = charge.links.find((link) => {return link.rel === 'cardAuth';});
     var cardAuthUrl = authLink.href;
+    logger.debug('Calling connector to authorize a charge (post card details) -', {
+      service: 'connector',
+      method: 'POST',
+      url: cardAuthUrl
+    });
     client.post(cardAuthUrl, payload, function (data, connectorResponse) {
-      logger.info('posting card details');
       switch (connectorResponse.statusCode) {
         case 202:
         case 409:
-          logger.info('got response code ' + connectorResponse.statusCode + ' from connector');
+          logger.warn('Calling connector to authorize a charge (post card details) failed -', {
+            service: 'connector',
+            method: 'POST',
+            status: 409,
+            url: cardAuthUrl
+          });
           session.store(
             chargeSession,
             hashCardNumber(plainCardNumber),
@@ -89,7 +98,6 @@ module.exports = {
           res.redirect(303, paths.generateRoute('card.authWaiting', {chargeId: charge.id}));
           return;
         case 204:
-          logger.info('got response code 204 from connector');
           session.store(
             chargeSession,
             hashCardNumber(plainCardNumber),
@@ -99,13 +107,22 @@ module.exports = {
           res.redirect(303, paths.generateRoute('card.confirm', {chargeId: charge.id}));
           return;
         case 500:
-          logger.error('got response code 500 from connector');
+          logger.error('Calling connector to authorize a charge (post card details) failed -', {
+            service: 'connector',
+            method: 'POST',
+            status: 500,
+            url: cardAuthUrl
+          });
           return _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
         default:
           res.redirect(303, paths.generateRoute('card.new', {chargeId: charge.id}));
       }
     }).on('error', function (err) {
-      logger.error('Exception raised calling connector: ' + err);
+      logger.error('Calling connector to authorize a charge (post card details) threw exception -', {
+        service: 'connector',
+        method: 'POST',
+        error: err
+      });
       _views.display(res, "ERROR");
 
     });

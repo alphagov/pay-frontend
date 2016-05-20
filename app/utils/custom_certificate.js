@@ -12,12 +12,16 @@ module.exports = function () {
     
     try {
       if (!fs.lstatSync(certsPath).isDirectory()) {
-        logger.warn('Provided CERTS_PATH ' + certsPath + ' is not a directory');
+        logger.error('Provided CERTS_PATH is not a directory', {
+          certsPath: certsPath
+        });
         return;
       }
     }
     catch (e) {
-      logger.warn('Provided CERTS_PATH ' + certsPath + ' could not be read');
+      logger.error('Provided CERTS_PATH could not be read', {
+        certsPath: certsPath
+      });
       return;
     }
     

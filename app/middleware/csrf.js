@@ -26,7 +26,7 @@ module.exports = function(req, res, next) {
 
   showNoSession = function(){
     _views.display(res,'SYSTEM_ERROR');
-    return logger.error('CSRF SECRET IS NOT DEFINED');
+    return logger.error('CSRF secret is not defined');
   },
 
   csrfValid = function(){
@@ -34,7 +34,7 @@ module.exports = function(req, res, next) {
     if (!chargeSession.csrfTokens) chargeSession.csrfTokens = [];
 
     if(csrfUsed()) {
-      logger.error('CSRF USED');
+      logger.error('CSRF token was already used');
       return false;
     }
     var verify = csrf().verify(chargeSession.csrfSecret, csrfToken);
@@ -50,7 +50,7 @@ module.exports = function(req, res, next) {
 
   showCsrfInvalid = function(){
     _views.display(res,'SYSTEM_ERROR');
-    return logger.error('CSRF INVALID');
+    return logger.error('CSRF is invalid');
   },
 
   appendCsrf = function(){
