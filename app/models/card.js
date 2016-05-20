@@ -35,7 +35,9 @@ var allowed = [
 
 module.exports.allowed = allowed;
 
-module.exports.withdrawalTypes = {
-  credit: _.filter(allowed,{credit: true}).length != 0,
-  debit: _.filter(allowed,{debit: true}).length != 0
-};
+var withdrawalTypes = []
+
+if (_.filter(allowed,{debit: true}).length != 0) withdrawalTypes.push('debit');
+if (_.filter(allowed,{credit: true}).length != 0) withdrawalTypes.push('credit');
+
+module.exports.withdrawalTypes = withdrawalTypes;
