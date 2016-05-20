@@ -1,7 +1,7 @@
 var should = require('chai').should();
 var assert = require('assert');
 var expect = require('chai').expect;
-var Card  = require(__dirname + '/../../app/models/card.js');
+var Card  = require(__dirname + '/../../app/models/card.js')();
 var fields= require(__dirname + '/../../app/utils/charge_validation_fields.js')(Card);
 
 

@@ -1,5 +1,4 @@
 var _ = require('lodash');
-
 var allowed = [
   {
     type: "visa",
@@ -33,11 +32,27 @@ var allowed = [
   }
 ];
 
-module.exports.allowed = allowed;
 
-var withdrawalTypes = []
 
-if (_.filter(allowed,{debit: true}).length != 0) withdrawalTypes.push('debit');
-if (_.filter(allowed,{credit: true}).length != 0) withdrawalTypes.push('credit');
+module.exports = function(params){
+  "use strict";
+  var withdrawalTypes = [],
+  cards = _.clone(allowed);
+  
+  if (params && params.debitOnly) {
+    cards = _.map(allowed, function(o) { return _.omit(o, 'credit'); });
+  }
 
-module.exports.withdrawalTypes = withdrawalTypes;
+  if (params && params.removeAmex) {
+    cards =  _.remove(allowed, function(o) { return o.type !== "american-express"; });
+  }
+
+
+  if (_.filter(cards,{debit: true}).length !== 0) withdrawalTypes.push('debit');
+  if (_.filter(cards,{credit: true}).length !== 0) withdrawalTypes.push('credit');
+
+  return {
+    withdrawalTypes: withdrawalTypes,
+    allowed: cards
+  };
+};

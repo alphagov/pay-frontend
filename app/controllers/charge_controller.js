@@ -23,9 +23,13 @@ module.exports = {
 
     var _views = views.create(),
     charge     = normalise.charge(req.chargeData, req.chargeId);
-    
-    charge.allowedCards = Card.allowed;
-    charge.allowedCardsAsString = JSON.stringify(Card.allowed);
+    var cardModel = Card({
+      debitOnly: req.query.debitOnly,
+      removeAmex: req.query.removeAmex
+    });
+    charge.allowedCards = cardModel.allowed;
+    charge.withdrawalText = i18n.__("chargeController.withdrawalText")[cardModel.withdrawalTypes.join("_")];
+    charge.allowedCardsAsString = JSON.stringify(cardModel.allowed);
     charge.post_card_action = paths.card.create.path;
     charge.post_cancel_action = paths.generateRoute("card.cancel", {chargeId: charge.id});
 
@@ -51,7 +55,11 @@ module.exports = {
 
     var _views = views.create(),
       chargeSession = session.retrieve(req, charge.id);
-    var validateCharge = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"), logger,Card);
+    var cardModel = Card({
+      debitOnly: req.query.debitOnly,
+      removeAmex: req.query.removeAmex
+    });
+    var validateCharge = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"), logger,cardModel);
     normalise.addressLines(req.body);
     var checkResult = validateCharge.verify(req.body);
 

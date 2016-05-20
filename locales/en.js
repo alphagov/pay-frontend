@@ -1,5 +1,9 @@
 {
 	"chargeController": {
+    "withdrawalText": {
+     "debit_credit" : "accepted credit and debit card types",
+     "debit" : "Credit card payments are not accepted for this service. Please use a Debit card."
+   },
    "fieldErrors": {
      "missing": "is missing",
      "invalid": "is invalid",

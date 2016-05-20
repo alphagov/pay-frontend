@@ -15,7 +15,6 @@ module.exports = function(translations,logger,Card) {
   var fieldValidations= validations.fieldValidations;
   var requiredFields  = validations.requiredFormFields;
   var creditCardType  = validations.creditCardType;
-
   var verify = function(body){
     var checkResult = {
       hasError: false,
