@@ -40,11 +40,11 @@ module.exports = function(params){
   cards = _.clone(allowed);
   
   if (params && params.debitOnly) {
-    cards = _.map(allowed, function(o) { return _.omit(o, 'credit'); });
+    cards = _.map(cards, function(o) { return _.omit(o, 'credit'); });
   }
 
   if (params && params.removeAmex) {
-    cards =  _.remove(allowed, function(o) { return o.type !== "american-express"; });
+    cards =  _.remove(cards, function(o) { return o.type !== "american-express"; });
   }
 
 
