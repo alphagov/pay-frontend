@@ -13,14 +13,28 @@ module.exports = function() {
 
   destroy = function(tokenId){
     var defer = q.defer();
+    logger.info('Calling connector to delete a token -', {
+      service: 'connector',
+      method: 'DELETE',
+      url: createUrl('token', {chargeTokenId: '{tokenId}'})
+    });
     client.delete(createUrl('token', {chargeTokenId: tokenId}), function(data,response){
       if (response.statusCode !== 204) {
+        logger.warn('Calling connector to delete a token failed -', {
+          service: 'connector',
+          method: 'DELETE',
+          url: createUrl('token', {chargeTokenId: '{tokenId}'})
+        });
         return defer.reject(new Error('DELETE_FAILED'));
       }
       defer.resolve(data);
     }).on('error',function(err){
-
-      logger.error('Exception raised calling connector for del: ' + err);
+      logger.error('Calling connector to delete a token threw exception -', {
+        service: 'connector',
+        method: 'DELETE',
+        url: createUrl('token', {chargeTokenId: '{tokenId}'}),
+        error: err
+      });
       clientUnavailable(err, defer);
     });
     return defer.promise;
