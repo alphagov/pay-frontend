@@ -48,20 +48,29 @@ Enter your card details.
           </label>
           <ul class="accepted-cards field-empty">
             {{#allowedCards}}
-            <li class="{{type}}" data-key="{{type}}">
-              <span class="visuallyhidden">{{type}}</span>
+            <li
+              class="{{type}}"
+              data-key="{{type}}"
+              data-credit="{{credit}}"
+              data-debit="{{debit}}"
+            >
+              <span class="visuallyhidden">
+                {{type}}
+              </span>
             </li>
             {{/allowedCards}}
           </ul>
-          <p> {{withdrawalText}} </p>
+          <p>
+            {{withdrawalText}}
+          </p>
       </div>
       <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}} expiry-date" data-validation="expiryMonth">
           <p
-              id="expiry-date-lbl"
-              class="form-label-bold expiry-date-label"
-              data-label-replace="expiryMonth"
-              data-original-label="{{ i18n.chargeView.expiry }}">
-              {{ i18n.chargeView.expiry }}
+            id="expiry-date-lbl"
+            class="form-label-bold expiry-date-label"
+            data-label-replace="expiryMonth"
+            data-original-label="{{ i18n.chargeView.expiry }}">
+            {{ i18n.chargeView.expiry }}
           </p>
           <p class="form-hint-bold form-hint">For example, 07/17</p>
               {{#highlightErrorFields.expiryMonth}}

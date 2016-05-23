@@ -1,5 +1,6 @@
 require('array.prototype.find');
 var logger = require('winston');
+var logging = require('../utils/logging.js');
 var Client = require('node-rest-client').Client;
 var client = new Client();
 var _ = require('lodash');
@@ -88,45 +89,31 @@ module.exports = {
 
     var authLink = charge.links.find((link) => {return link.rel === 'cardAuth';});
     var cardAuthUrl = authLink.href;
-    logger.debug('Calling connector to authorize a charge (post card details) -', {
-      service: 'connector',
-      method: 'POST',
-      url: cardAuthUrl
-    });
+    logging.authChargePost(cardAuthUrl);
+
+    var storeSession = function(){
+      session.store(
+        chargeSession,
+        hashCardNumber(plainCardNumber),
+        expiryDate,
+        req.body.cardholderName,
+        normalise.addressForView(req.body));
+    };
+
     client.post(cardAuthUrl, payload, function (data, connectorResponse) {
       switch (connectorResponse.statusCode) {
         case 202:
         case 409:
-          logger.warn('Calling connector to authorize a charge (post card details) failed -', {
-            service: 'connector',
-            method: 'POST',
-            status: 409,
-            url: cardAuthUrl
-          });
-          session.store(
-            chargeSession,
-            hashCardNumber(plainCardNumber),
-            expiryDate,
-            req.body.cardholderName,
-            normalise.addressForView(req.body));
+          logging.failedChargePost(409,cardAuthUrl);
+          storeSession();
           res.redirect(303, paths.generateRoute('card.authWaiting', {chargeId: charge.id}));
           return;
         case 204:
-          session.store(
-            chargeSession,
-            hashCardNumber(plainCardNumber),
-            expiryDate,
-            req.body.cardholderName,
-            normalise.addressForView(req.body));
+          storeSession();
           res.redirect(303, paths.generateRoute('card.confirm', {chargeId: charge.id}));
           return;
         case 500:
-          logger.error('Calling connector to authorize a charge (post card details) failed -', {
-            service: 'connector',
-            method: 'POST',
-            status: 500,
-            url: cardAuthUrl
-          });
+          logging.failedChargePost(409,cardAuthUrl);
           return _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
         default:
           res.redirect(303, paths.generateRoute('card.new', {chargeId: charge.id}));
