@@ -6,6 +6,8 @@ var app = require(__dirname + '/../server.js').getApp;
 var mock_templates = require(__dirname + '/test_helpers/mock_templates.js');
 app.engine('html', mock_templates.__express);
 var csrf = require('csrf');
+var expect = require('chai').expect;
+
 
 
 var should = require('chai').should();
@@ -508,6 +510,34 @@ describe('chargeTests',function(){
                 helper.templateValue(res,"return_url",'http://www.example.com/service');
                 helper.templateValue(res,"description",'Payment Description');
                 helper.templateValue(res,"post_card_action",'/card_details');
+                helper.templateValue(res,"withdrawalText",'accepted credit and debit card types');
+              })
+              .end(done);
+        });
+        it('It should show card details page with correct text for credit card only', function (done){
+            var cookieValue = cookie.create(chargeId);
+            nock(process.env.CONNECTOR_HOST)
+              .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
+              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
+
+            get_charge_request(app, cookieValue, chargeId,"?debitOnly=true")
+              .expect(200)
+              .expect(function(res){
+                helper.templateValue(res,"withdrawalText",'Credit card payments are not accepted for this service. Please use a Debit card.');
+              })
+              .end(done);
+        });
+
+        it('It should not show amex if it is excluded', function (done){
+            var cookieValue = cookie.create(chargeId);
+            nock(process.env.CONNECTOR_HOST)
+              .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
+              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
+
+            get_charge_request(app, cookieValue, chargeId,"?removeAmex=true")
+              .expect(200)
+              .expect(function(res){
+                expect(res.text).to.not.contain('american-express');
               })
               .end(done);
         });

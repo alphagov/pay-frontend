@@ -70,9 +70,11 @@ module.exports = {
     }
   },
 
-  get_charge_request: function (app, cookieValue, chargeId) {
+  get_charge_request: function (app, cookieValue, chargeId, query) {
+    query = (query === undefined) ? "" : query;  
+    console.log(frontendCardDetailsPath + '/' + chargeId + query);
     return request(app)
-      .get(frontendCardDetailsPath + '/' + chargeId)
+      .get(frontendCardDetailsPath + '/' + chargeId + query)
       .set('Cookie', ['frontend_state=' + cookieValue])
       .set('Accept', 'application/json');
   },

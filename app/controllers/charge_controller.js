@@ -8,6 +8,7 @@ var session = require('../utils/session.js');
 var normalise = require('../services/normalise_charge.js');
 var i18n = require('i18n');
 var Charge = require('../models/charge.js');
+var Card  = require('../models/card.js');
 var State = require('../models/state.js');
 var paths = require('../paths.js');
 var hashCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
@@ -21,8 +22,14 @@ module.exports = {
     "use strict";
 
     var _views = views.create(),
-      charge = normalise.charge(req.chargeData, req.chargeId);
-
+    charge     = normalise.charge(req.chargeData, req.chargeId);
+    var cardModel = Card({
+      debitOnly: req.query.debitOnly,
+      removeAmex: req.query.removeAmex
+    });
+    charge.allowedCards = cardModel.allowed;
+    charge.withdrawalText = i18n.__("chargeController.withdrawalText")[cardModel.withdrawalTypes.join("_")];
+    charge.allowedCardsAsString = JSON.stringify(cardModel.allowed);
     charge.post_card_action = paths.card.create.path;
     charge.post_cancel_action = paths.generateRoute("card.cancel", {chargeId: charge.id});
 
@@ -48,7 +55,11 @@ module.exports = {
 
     var _views = views.create(),
       chargeSession = session.retrieve(req, charge.id);
-    var validateCharge = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"), logger);
+    var cardModel = Card({
+      debitOnly: req.query.debitOnly,
+      removeAmex: req.query.removeAmex
+    });
+    var validateCharge = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"), logger,cardModel);
     normalise.addressLines(req.body);
     var checkResult = validateCharge.verify(req.body);
 

@@ -7,8 +7,9 @@ var showCardType = function(){
   cardNoFormGroup   = form.find('.card-no-group'),
   notSupportedString= i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported,
   nonNumberString   = i18n.chargeController.fieldErrors.fields.cardNo.non_numeric,
-  validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console),
-  cardValidation    = validations.creditCardType,
+  // window.card comes from the view
+  validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console,window.Card);
+  var cardValidation    = validations.creditCardType,
   cardTypes         = validations.allowedCards,
   amexCvcTip        = form.find('.amex-cvc'),
   genericCvcTip     = form.find('.generic-cvc');
@@ -55,7 +56,11 @@ var showCardType = function(){
 
   checkAllowed = function(cardType){
     if (cardType.length !== 1) return replaceCardLabelWithOriginal();
-    var supported = $.inArray(cardType[0].type,cardTypes) !== -1;
+    var supported = false;
+    for (var i = 0; i < cardTypes.length; i++) {
+      if (supported) continue;
+      if (cardTypes[i].type == cardType[0].type) supported = true;
+    }
 
     if (supported) return replaceCardLabelWithOriginal();
     addErrorToCard(notSupportedString);
