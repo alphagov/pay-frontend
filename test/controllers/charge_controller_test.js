@@ -63,6 +63,7 @@ describe('card details endpoint', function () {
   before(function () {
 
     request = {
+      query: {debitOnly : false},
       frontend_state: {},
       params: {chargeTokenId: 1}
     };
