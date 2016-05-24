@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 var logger = require('winston');
 module.exports = {
@@ -15,6 +16,14 @@ module.exports = {
       method: 'POST',
       status: status,
       url: url
+    });
+  },
+
+  failedChargePostException: function(err){
+    logger.error('Calling connector to authorize a charge (post card details) threw exception -', {
+      service: 'connector',
+      method: 'POST',
+      error: err
     });
   }
 

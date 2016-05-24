@@ -1,3 +1,6 @@
+var hashCardNumber  = require('../utils/charge_utils.js').hashOutCardNumber;
+var normalise       = require('../services/normalise_charge.js');
+
 module.exports = function() {
   'use strict';
 
@@ -9,11 +12,15 @@ module.exports = function() {
     return req.frontend_state[createChargeIdSessionKey(chargeId)];
   },
 
-  store = function(chargeSession, hashCardNumber, expiryDate, cardholderName, address) {
-    chargeSession.cardNumber = hashCardNumber;
+  store = function(req) {
+    var chargeSession  = retrieve(req, req.chargeId);
+    var plainCardNumber = normalise.creditCard(req.body.cardNo);
+    var expiryDate = normalise.expiryDate(req.body.expiryMonth, req.body.expiryYear);
+
+    chargeSession.cardNumber = hashCardNumber(plainCardNumber);
     chargeSession.expiryDate = expiryDate;
-    chargeSession.cardholderName = cardholderName;
-    chargeSession.address = address;
+    chargeSession.cardholderName = req.body.cardholderName;
+    chargeSession.address = normalise.addressForView(req.body);
   };
 
   return {

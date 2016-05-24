@@ -48,6 +48,23 @@ module.exports = function() {
   expiryDate = function(month, year){
     month = (month.length === 1) ? "0" + month : month;
     return month.slice(-2) + "/" + year.slice(-2);
+  },
+  apiPayload = function(req){
+    return {
+      headers: {"Content-Type": "application/json"},
+      data: {
+        'card_number': creditCard(req.body.cardNo),
+        'cvc': req.body.cvc,
+        'expiry_date': expiryDate(req.body.expiryMonth, req.body.expiryYear),
+        'cardholder_name': req.body.cardholderName,
+        'address': addressForApi(req.body)
+      }
+    };
+  },
+
+  authUrl = function(charge){
+    var authLink = charge.links.find((link) => {return link.rel === 'cardAuth';});
+    return authLink.href;
   };
 
   return {
@@ -56,7 +73,9 @@ module.exports = function() {
     addressLines: addressLines,
     addressForView: addressForView,
     creditCard: creditCard,
-    expiryDate: expiryDate
+    expiryDate: expiryDate,
+    apiPayload: apiPayload,
+    authUrl: authUrl
   };
 }();
 

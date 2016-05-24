@@ -16,12 +16,11 @@ var showCardType = function(){
 
   var init = function(){
     cardInput
-      .on('blur',unselectIfInvalid)
+      .on('blur',unselectIfNotAvailable)
       .on('keyup',showCardType);
-
   },
 
-  unselectIfInvalid = function(){
+  unselectIfNotAvailable = function(){
     if (cardIsInvalid()) unSelectAll();
   },
 
@@ -30,8 +29,8 @@ var showCardType = function(){
   },
 
   showCardType = function(){
-    var number = $(this).val().replace(/\D/g,'');
-    var cardType = cardValidation(number);
+    var cardType  = getCardType();
+    var number = cardInput.val().replace(/\D/g,'');
     unSelectAll();
     checkEmpty();
     checkAllowed(cardType);
@@ -40,6 +39,11 @@ var showCardType = function(){
     if (cardType.length !== 1) return;
     cvcHighlight(cardType[0].type);
     selectCard(cardType[0].type);
+  },
+
+  getCardType = function(){
+    var number = cardInput.val().replace(/\D/g,'');
+    return cardValidation(number);
   },
 
   unSelectAll = function(){
@@ -88,8 +92,43 @@ var showCardType = function(){
     var isAmex = type === 'american-express';
     amexCvcTip.toggleClass('hidden',!isAmex);
     genericCvcTip.toggleClass('hidden',isAmex);
+  },
+
+  getSupportedChargeType = function(name){
+    var card =  cards.filter('.' + name).first();
+    return {
+      debit: card.attr('data-debit'),
+      credit: card.attr('data-credit')
+    };
+  },
+  checkCardtypeIsAllowed = function(){
+    var defer = $.Deferred();
+    // this should all be replaced by an ajax call once we have the api for this
+    // use getSupportedChargeType(cardName) to get the debit/credit for each
+    // card type
+
+    setTimeout(function(){
+      var card = getCardType();
+      // this should already be picked up by the other validations
+      if (card.length !== 1) return defer.resolve();
+
+      var cardName = card[0].type;
+      if (cardName === "jcb" && location.search.indexOf('debitOnly=true') >= 0) {
+        return defer.reject({text: "jcb credit cards are"});
+      }
+      return defer.resolve();
+    }, 500);
+    // end of replace
+
+    return defer.promise();
   };
 
 
-  init();
-}();
+  return {
+    init: init,
+    checkCardtypeIsAllowed: checkCardtypeIsAllowed
+  };
+};
+
+
+showCardType().init();

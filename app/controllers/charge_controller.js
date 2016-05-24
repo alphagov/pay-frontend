@@ -1,3 +1,5 @@
+/*jslint node: true */
+"use strict";
 require('array.prototype.find');
 var logger = require('winston');
 var logging = require('../utils/logging.js');
@@ -7,27 +9,24 @@ var _ = require('lodash');
 var views = require('../utils/views.js');
 var session = require('../utils/session.js');
 var normalise = require('../services/normalise_charge.js');
+var chargeValidator = require('../utils/charge_validation.js');
 var i18n = require('i18n');
 var Charge = require('../models/charge.js');
 var Card  = require('../models/card.js');
 var State = require('../models/state.js');
 var paths = require('../paths.js');
-var hashCardNumber = require('../utils/charge_utils.js').hashOutCardNumber;
 var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
+var cardModelStubMethods = function(req){ return { debitOnly: req.query.debitOnly, removeAmex: req.query.removeAmex}; };
 
 module.exports = {
   new: function (req, res) {
-    "use strict";
 
     var _views = views.create(),
     charge     = normalise.charge(req.chargeData, req.chargeId);
-    var cardModel = Card({
-      debitOnly: req.query.debitOnly,
-      removeAmex: req.query.removeAmex
-    });
+    var cardModel = Card(cardModelStubMethods(req));
     charge.allowedCards = cardModel.allowed;
     charge.withdrawalText = i18n.__("chargeController.withdrawalText")[cardModel.withdrawalTypes.join("_")];
     charge.allowedCardsAsString = JSON.stringify(cardModel.allowed);
@@ -49,88 +48,73 @@ module.exports = {
   },
 
   create: function (req, res) {
-    "use strict";
 
-    var charge = normalise.charge(req.chargeData, req.chargeId);
-    if (charge.status === State.AUTH_READY) {
-      res.redirect(303, paths.generateRoute('card.authWaiting', {chargeId: charge.id}));
-      return;
+    var charge    = normalise.charge(req.chargeData, req.chargeId);
+    var _views    = views.create();
+    var cardModel = Card(cardModelStubMethods(req));
+    var submitted = charge.status === State.AUTH_READY;
+    var authUrl   = normalise.authUrl(charge);
+    var validator = chargeValidator(
+      i18n.__("chargeController.fieldErrors"),
+      logger,
+      cardModel
+    );
+    normalise.addressLines(req.body);
+
+    if (submitted) {
+      return res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
     }
 
-    var _views = views.create(),
-      chargeSession = session.retrieve(req, charge.id);
-    var cardModel = Card({
-      debitOnly: req.query.debitOnly,
-      removeAmex: req.query.removeAmex
-    });
-    var validateCharge = require('../utils/charge_validation.js')(i18n.__("chargeController.fieldErrors"), logger,cardModel);
-    normalise.addressLines(req.body);
-    var checkResult = validateCharge.verify(req.body);
+    var awaitingAuth = function() {
+      logging.failedChargePost(409,authUrl);
+      session.store(req);
+      res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
+    },
 
-    if (checkResult.hasError) {
+    successfulAuth = function() {
+      session.store(req);
+      res.redirect(303, Charge.urlFor('confirm', req.chargeId));
+    },
+
+    connectorFailure = function() {
+      logging.failedChargePost(409,authUrl);
+      _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
+    },
+
+    unknownFailure = function() {
+      res.redirect(303, Charge.urlFor('new', req.chargeId));
+    },
+
+    connectorNonResponsive = function (err) {
+      logging.failedChargePostException(err);
+      _views.display(res, "ERROR");
+    },
+
+    hasValidationError = function(){
       _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
       checkResult.post_card_action = paths.card.create.path;
-      res.render(CHARGE_VIEW, checkResult);
-      return;
-    }
-
-    var plainCardNumber = normalise.creditCard(req.body.cardNo);
-    var expiryDate = normalise.expiryDate(req.body.expiryMonth, req.body.expiryYear);
-    var payload = {
-      headers: {"Content-Type": "application/json"},
-      data: {
-        'card_number': plainCardNumber,
-        'cvc': req.body.cvc,
-        'expiry_date': expiryDate,
-        'cardholder_name': req.body.cardholderName,
-        'address': normalise.addressForApi(req.body)
-      }
+      return res.render(CHARGE_VIEW, checkResult);
     };
 
-    var authLink = charge.links.find((link) => {return link.rel === 'cardAuth';});
-    var cardAuthUrl = authLink.href;
-    logging.authChargePost(cardAuthUrl);
+    var checkResult = validator.verify(req.body);
+    if (checkResult.hasError) return hasValidationError();
 
-    var storeSession = function(){
-      session.store(
-        chargeSession,
-        hashCardNumber(plainCardNumber),
-        expiryDate,
-        req.body.cardholderName,
-        normalise.addressForView(req.body));
-    };
+    logging.authChargePost(authUrl);
 
-    client.post(cardAuthUrl, payload, function (data, connectorResponse) {
-      switch (connectorResponse.statusCode) {
-        case 202:
-        case 409:
-          logging.failedChargePost(409,cardAuthUrl);
-          storeSession();
-          res.redirect(303, paths.generateRoute('card.authWaiting', {chargeId: charge.id}));
-          return;
-        case 204:
-          storeSession();
-          res.redirect(303, paths.generateRoute('card.confirm', {chargeId: charge.id}));
-          return;
-        case 500:
-          logging.failedChargePost(409,cardAuthUrl);
-          return _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
-        default:
-          res.redirect(303, paths.generateRoute('card.new', {chargeId: charge.id}));
-      }
-    }).on('error', function (err) {
-      logger.error('Calling connector to authorize a charge (post card details) threw exception -', {
-        service: 'connector',
-        method: 'POST',
-        error: err
-      });
-      _views.display(res, "ERROR");
-
-    });
+    client.post(authUrl, normalise.apiPayload(req), function (data, json) {
+      var responses = {
+        202: awaitingAuth,
+        409: awaitingAuth,
+        204: successfulAuth,
+        500: connectorFailure
+      };
+      var response = responses[json.statusCode];
+      if (!response) return unknownFailure();
+      response();
+    }).on('error', connectorNonResponsive);
   },
 
   authWaiting: function (req, res) {
-    "use strict";
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views;
 
@@ -148,7 +132,6 @@ module.exports = {
   },
 
   confirm: function (req, res) {
-    "use strict";
 
     var charge = normalise.charge(req.chargeData, req.chargeId),
       chargeSession = session.retrieve(req, charge.id),
@@ -174,7 +157,6 @@ module.exports = {
   },
 
   capture: function (req, res) {
-    "use strict";
 
     var _views = views.create(),
       returnUrl = req.chargeData.return_url;
@@ -193,7 +175,6 @@ module.exports = {
   },
 
   cancel: function (req, res) {
-    "use strict";
 
     var _views = views.create(),
       returnUrl = req.chargeData.return_url,
