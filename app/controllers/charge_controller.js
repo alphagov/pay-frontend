@@ -34,6 +34,9 @@ module.exports = {
     charge.post_cancel_action = paths.generateRoute("card.cancel", {chargeId: charge.id});
 
     var init = function () {
+      if (charge.status === State.ENTERING_CARD_DETAILS) {
+        return res.render(CHARGE_VIEW, charge);
+      }
       Charge.updateToEnterDetails(charge.id)
         .then(function () {
           res.render(CHARGE_VIEW, charge);
