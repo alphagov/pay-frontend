@@ -9,7 +9,7 @@ var _ = require('lodash');
 var views = require('../utils/views.js');
 var session = require('../utils/session.js');
 var normalise = require('../services/normalise_charge.js');
-var chargeValidator = require('../utils/charge_validation.js');
+var chargeValidator = require('../utils/charge_validation_backend.js');
 var i18n = require('i18n');
 var Charge = require('../models/charge.js');
 var Card  = require('../models/card.js');
@@ -59,7 +59,9 @@ module.exports = {
       logger,
       cardModel
     );
-    normalise.addressLines(req.body);
+    normalise.addressLines(req);
+    var checkResult;
+
 
     if (submitted) {
       return res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
@@ -95,23 +97,25 @@ module.exports = {
       checkResult.post_card_action = paths.card.create.path;
       return res.render(CHARGE_VIEW, checkResult);
     };
+    var responses = {
+      202: awaitingAuth,
+      409: awaitingAuth,
+      204: successfulAuth,
+      500: connectorFailure
+    };
 
-    var checkResult = validator.verify(req.body);
-    if (checkResult.hasError) return hasValidationError();
+    validator.verify(req).then(function(check){
+      checkResult = check;
+      if (checkResult.hasError) return hasValidationError();
+      logging.authChargePost(authUrl);
 
-    logging.authChargePost(authUrl);
+      client.post(authUrl, normalise.apiPayload(req), function (data, json) {
+        var response = responses[json.statusCode];
+        if (!response) return unknownFailure();
+        response();
+      }).on('error', connectorNonResponsive);
+    },unknownFailure);
 
-    client.post(authUrl, normalise.apiPayload(req), function (data, json) {
-      var responses = {
-        202: awaitingAuth,
-        409: awaitingAuth,
-        204: successfulAuth,
-        500: connectorFailure
-      };
-      var response = responses[json.statusCode];
-      if (!response) return unknownFailure();
-      response();
-    }).on('error', connectorNonResponsive);
   },
 
   authWaiting: function (req, res) {

@@ -24,7 +24,7 @@ Enter your card details.
   <form id="card-details" name="cardDetails" method="POST" action="{{post_card_action}}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{id}}" />
       <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
-      <div class="form-group{{#highlightErrorFields.cardNo}}error{{/highlightErrorFields.cardNo}} card-no-group" data-validation="cardNo">
+      <div class="form-group{{#highlightErrorFields.cardNo}} error{{/highlightErrorFields.cardNo}} card-no-group" data-validation="cardNo">
           <label id="card-no-lbl" for="card-no" class="form-label-bold">
               <span
               class="card-no-label"

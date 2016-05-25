@@ -106,13 +106,14 @@ var showCardType = function(){
     // this should all be replaced by an ajax call once we have the api for this
     // use getSupportedChargeType(cardName) to get the debit/credit for each
     // card type
-
     setTimeout(function(){
       var card = getCardType();
       // this should already be picked up by the other validations
       if (card.length !== 1) return defer.resolve();
 
       var cardName = card[0].type;
+      console.log(cardName,getSupportedChargeType(cardName));
+
       if (cardName === "jcb" && location.search.indexOf('debitOnly=true') >= 0) {
         return defer.reject({text: "jcb credit cards are"});
       }
