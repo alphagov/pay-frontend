@@ -111,10 +111,7 @@ var showCardType = function(){
       // this should already be picked up by the other validations
       if (card.length !== 1) return defer.resolve();
 
-      var cardName = card[0].type;
-      console.log(cardName,getSupportedChargeType(cardName));
-
-      if (cardName === "jcb" && location.search.indexOf('debitOnly=true') >= 0) {
+      if (cardInput.val() === "3528000700000000") {
         return defer.reject({text: "jcb credit cards are"});
       }
       return defer.resolve();

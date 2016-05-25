@@ -21,7 +21,6 @@ module.exports = function(translations, logger, cardModel) {
       if (validation.hasError) defer.resolve(validation);
 
       if (isMockJcb) addCardnotSupportedError(validation);
-      console.log(validation);
       defer.resolve(validation);
     },50);
     return defer.promise;
@@ -30,13 +29,12 @@ module.exports = function(translations, logger, cardModel) {
   addCardnotSupportedError = function(validation){
     var validationString = "jcb credit cards are not supported";
     validation.hasError  = true;
-    validation.errorFields.push({
+    validation.errorFields.unshift({
       "cssKey":"card-no",
       "key":"cardNo",
       "value": validationString
     });
     validation.highlightErrorFields.cardNo = validationString;
-    console.log(validation);
   };
 
   return {
