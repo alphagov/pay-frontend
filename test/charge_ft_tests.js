@@ -404,6 +404,29 @@ describe('chargeTests',function(){
           .end(done);
     });
 
+
+   it('shows an error when a card is submitted that is not supported', function (done) {
+      var cookieValue = cookie.create(chargeId, {});
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
+          .expect(200)
+          .expect(function(res){
+            helper.templateValue(res,"id",chargeId);
+            helper.templateValue(res,"description","Payment Description");
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"hasError",true);
+            helper.templateValue(res,"amount","23.45");
+            helper.templateValue(res,"errorFields", [
+              {"key" : "cardNo", "cssKey": "card-no", "value": "jcb credit cards are not supported"},
+            ]);
+            helper.templateValue(res,"highlightErrorFields",{
+              "cardNo":"jcb credit cards are not supported",
+            });
+
+          })
+          .end(done);
+    });
+
     it('preserve cardholder name, address lines when a card is submitted with validation errors', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);

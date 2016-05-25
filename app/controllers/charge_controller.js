@@ -21,17 +21,24 @@ var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
 var cardModelStubMethods = function(req){ return { debitOnly: req.query.debitOnly, removeAmex: req.query.removeAmex}; };
 
+var appendChargeForNewView = function(charge, req, chargeId){
+    var cardModel             = Card(cardModelStubMethods(req));
+    var translation           = i18n.__("chargeController.withdrawalText");
+    charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
+    charge.allowedCards       = cardModel.allowed;
+    charge.cardsAsStrings     = JSON.stringify(cardModel.allowed);
+    charge.post_card_action   = paths.card.create.path;
+    charge.post_cancel_action = paths.generateRoute("card.cancel", {
+      chargeId: chargeId
+    });
+};
+
 module.exports = {
   new: function (req, res) {
 
     var _views = views.create(),
     charge     = normalise.charge(req.chargeData, req.chargeId);
-    var cardModel = Card(cardModelStubMethods(req));
-    charge.allowedCards = cardModel.allowed;
-    charge.withdrawalText = i18n.__("chargeController.withdrawalText")[cardModel.withdrawalTypes.join("_")];
-    charge.allowedCardsAsString = JSON.stringify(cardModel.allowed);
-    charge.post_card_action = paths.card.create.path;
-    charge.post_cancel_action = paths.generateRoute("card.cancel", {chargeId: charge.id});
+    appendChargeForNewView(charge, req, charge.id);
 
     var init = function () {
       if (charge.status === State.ENTERING_CARD_DETAILS) {
@@ -59,8 +66,9 @@ module.exports = {
       logger,
       cardModel
     );
-    normalise.addressLines(req);
     var checkResult;
+    normalise.addressLines(req.body);
+
 
 
     if (submitted) {
@@ -93,10 +101,11 @@ module.exports = {
     },
 
     hasValidationError = function(){
+      appendChargeForNewView(charge, req, charge.id);
       _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
-      checkResult.post_card_action = paths.card.create.path;
       return res.render(CHARGE_VIEW, checkResult);
     };
+
     var responses = {
       202: awaitingAuth,
       409: awaitingAuth,

@@ -115,7 +115,7 @@ var showCardType = function(){
         return defer.reject({text: "jcb credit cards are"});
       }
       return defer.resolve();
-    }, 500);
+    }, 100);
     // end of replace
 
     return defer.promise();

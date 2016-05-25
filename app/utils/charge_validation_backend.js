@@ -1,8 +1,9 @@
+/*jslint node: true */
+"use strict";
+
 var chargeValidator = require('./charge_validation.js');
 var q = require('q');
-
 module.exports = function(translations, logger, cardModel) {
-  'use strict';
   var validator = chargeValidator(
     translations,
     logger,

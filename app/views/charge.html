@@ -60,7 +60,7 @@ Enter your card details.
             </li>
             {{/allowedCards}}
           </ul>
-          <p>
+          <p class="withdrawal-text">
             {{withdrawalText}}
           </p>
       </div>
@@ -259,7 +259,7 @@ Enter your card details.
 </main>
 
 <script>
-var Card = { allowed: {{{ allowedCardsAsString }}} } ;
+var Card = { allowed: {{{ cardsAsStrings }}} } ;
 </script>
 
 {{/content}}
