@@ -49,8 +49,8 @@ module.exports = function() {
       locals: { status: 'successful' }
     },
 
-    CAPTURE_FAILURE: {
-      view: "errors/incorrect_state/capture_failure"
+    CAPTURE_ERROR: {
+      view: "errors/incorrect_state/capture_error"
     },
 
     AUTHORISATION_SUCCESS: {

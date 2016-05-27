@@ -199,7 +199,7 @@ module.exports = {
       },
 
       captureFail = function (err) {
-        if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE');
+        if (err.message === 'CAPTURE_ERROR') return _views.display(res, 'CAPTURE_ERROR');
         _views.display(res, 'SYSTEM_ERROR', {returnUrl: returnUrl});
       };
     init();

@@ -148,7 +148,7 @@ describe('capture',function(){
   });
 
 
-  describe('when connector returns with auth failed should return error CAPTURE_FAILED', function () {
+  describe('when connector returns with auth failed should return error CAPTURE_ERROR', function () {
     before(function() {
       nock.cleanAll();
 
@@ -160,7 +160,7 @@ describe('capture',function(){
     it('should return AUTH_FAILED', function () {
       return Charge.capture(1).then(wrongPromise,
         function rejected(error){
-          assert.equal(error.message,"CAPTURE_FAILED")
+          assert.equal(error.message,"CAPTURE_ERROR")
       });
     });
   });

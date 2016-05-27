@@ -660,7 +660,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
           .send({ csrfToken: helper.csrfToken() })
           .expect(function(res){
-            helper.templateValue(res,"viewName","CAPTURE_FAILURE");
+            helper.templateValue(res,"viewName","CAPTURE_ERROR");
           })
           .end(done);
     });
