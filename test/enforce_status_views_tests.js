@@ -71,8 +71,8 @@ describe('The /charge endpoint dealt statuses', function () {
       view: "CAPTURED"
     },
     {
-      name: 'capture failure',
-      view: "CAPTURE_FAILURE"
+      name: 'capture error',
+      view: "CAPTURE_ERROR"
     },
     {
       name: 'capture submitted',
@@ -181,8 +181,8 @@ describe('The /confirm endpoint dealt statuses', function () {
       viewState: 'successful'
     },
     {
-      name: 'capture failure',
-      view: "CAPTURE_FAILURE"
+      name: 'capture error',
+      view: "CAPTURE_ERROR"
     },
     {
       name: 'system error',

@@ -120,6 +120,17 @@ module.exports = function() {
     return defer.promise;
   },
 
+  captureComplete = function(data, response, defer) {
+    var code = response.statusCode;
+    if (code === 204) return defer.resolve();
+    if (code === 400) return defer.reject(new Error('CAPTURE_ERROR'));
+    return defer.reject(new Error('POST_FAILED'));
+  },
+
+  captureFail = function(err, defer){
+    clientUnavailable(err, defer);
+  },
+
   cancel = function(chargeId){
     var url = createUrl('cancel',{chargeId: chargeId}),
       params  = mergeApiParams(),
@@ -191,16 +202,6 @@ module.exports = function() {
     return defer.promise;
   },
 
-  captureComplete = function(data, response, defer) {
-    var code = response.statusCode;
-    if (code === 204) return defer.resolve();
-    if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'));
-    return defer.reject(new Error('POST_FAILED'));
-  },
-
-  captureFail = function(err, defer){
-    clientUnavailable(err, defer);
-  },
 
   updateComplete = function(chargeId, data, response, defer){
     if (response.statusCode !== 204) {
