@@ -6,7 +6,7 @@ Enter your card details.
 {{/pageTitle}}
 
 {{$content}}
-<main id="content" role="main" class="content-wrapper">
+<main id="content" role="main" class="content-wrapper charge-new">
 
 
   <div class="error-summary {{^hasError}} hidden {{/hasError}}" role="group" id="error-summary" >
@@ -257,16 +257,6 @@ Enter your card details.
     </aside>
 
 </main>
-{{#yield-script}}
-<script>
-$( document ).ready(function() {
-  var Card = { allowed: {{{ cardsAsStrings }}} };
-  formValidation();
-  showCardType().init();
-});
-</script>
-{{/yield-script}}
-
 {{/content}}
 
 {{/layout}}
