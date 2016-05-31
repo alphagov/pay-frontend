@@ -257,10 +257,15 @@ Enter your card details.
     </aside>
 
 </main>
-
+{{#yield-script}}
 <script>
-var Card = { allowed: {{{ cardsAsStrings }}} } ;
+$( document ).ready(function() {
+  var Card = { allowed: {{{ cardsAsStrings }}} };
+  formValidation();
+  showCardType().init();
+});
 </script>
+{{/yield-script}}
 
 {{/content}}
 

@@ -127,6 +127,3 @@ var showCardType = function(){
     checkCardtypeIsAllowed: checkCardtypeIsAllowed
   };
 };
-
-
-showCardType().init();

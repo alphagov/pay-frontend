@@ -1,4 +1,3 @@
-/*jslint node: true */
 "use strict";
 var formValidation = function(){
   var form          = $('form#card-details'),
@@ -167,5 +166,3 @@ var formValidation = function(){
 
   init();
 };
-
-formValidation();
