@@ -9,13 +9,13 @@ var customError  = {
 };
 
 
-module.exports = function(translations,logger,Card) {
+module.exports = function(translations, logger, Card) {
   'use strict';
   var validations     = require('./charge_validation_fields')(Card);
   var fieldValidations= validations.fieldValidations;
   var requiredFields  = validations.requiredFormFields;
   var creditCardType  = validations.creditCardType;
-  var verify = function(body){
+  var verify = function(body) {
     var checkResult = {
       hasError: false,
       errorFields: [],
@@ -32,11 +32,11 @@ module.exports = function(translations,logger,Card) {
       }
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true;
-      logger.info("Card details check result: "+JSON.stringify(checkResult));
+      logger.info("Card details check result: " + JSON.stringify(checkResult));
       return checkResult;
     },
 
-    checkFormField = function(name, value){
+    checkFormField = function(name, value) {
       var customValidation = checkFieldValidation(name, value);
       if (value && customValidation === true) return;
       var translation   = translations.fields[name],
@@ -57,7 +57,7 @@ module.exports = function(translations,logger,Card) {
       return "Enter a valid " + translation.name;
     },
 
-    pushToErrorFields = function(fieldName, problem){
+    pushToErrorFields = function(fieldName, problem) {
       var custom = customError[fieldName];
       var cssKey = changeCase.paramCase(fieldName);
       if (custom) {
@@ -72,7 +72,7 @@ module.exports = function(translations,logger,Card) {
       });
     },
 
-    pushToHighlightField = function(fieldName, highlightMessage){
+    pushToHighlightField = function(fieldName, highlightMessage) {
       var fields = checkResult.highlightErrorFields;
       fields[fieldName] = highlightMessage;
     };

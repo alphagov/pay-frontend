@@ -1,3 +1,4 @@
+"use strict";
 var formValidation = function(){
   var form          = $('form#card-details'),
   formInputs        = form.find('input'),
@@ -16,11 +17,28 @@ var formValidation = function(){
 
   checkFormSubmission = function(e){
     var validations = allValidations();
-    if (!validations.hasError) return;
-
+    var form = this;
     e.preventDefault();
+
+    showCardType().checkCardtypeIsAllowed().then(function(){
+      if (!validations.hasError) return form.submit();
+      addValidationsErrors();
+    },function(error){
+      addValidationsErrors();
+      addCardError(error);
+    });
+  },
+
+  addValidationsErrors = function(){
     addAllValidations();
     generateHighlightBlock();
+  },
+
+  addCardError = function(error){
+    var formGroup = getFormGroup(cardInput);
+    replaceLabel( error.text + " not supported", formGroup);
+    prependHighlightError({cssKey: 'card-no', value: error.text + ' not supported'});
+    $(formGroup).addClass('error');
   },
 
   addAllValidations = function(){
@@ -36,16 +54,27 @@ var formValidation = function(){
     appendHighlightErrors();
 
     location.hash = "";
-    setTimeout(function(){ location.hash = "#error-summary"; },10);
+    setTimeout(function(){ location.hash = "#error-summary"; }, 10);
   },
 
   appendHighlightErrors = function(){
     var errors = allValidations().errorFields;
     for (var key in errors) {
-      var error = errors[key]
-      $('.error-summary-list').append("<li><a href='#" + error.cssKey + "-lbl' id='" + error.cssKey + "-error'>" + error.value + "</a></li>");
+      var error = errors[key];
+      appendHighlightError(error);
     }
   },
+  appendHighlightError = function(error){
+    addHighlightError('append',error);
+  },
+
+  prependHighlightError= function(error) {
+    addHighlightError('prepend',error);
+  },
+  addHighlightError = function(addType,error){
+    $('.error-summary-list')[addType]("<li><a href='#" + error.cssKey + "-lbl' id='" + error.cssKey + "-error'>" + error.value + "</a></li>");
+  },
+
 
   checkPreviousFocused = function(){
     var input = this;
@@ -71,10 +100,17 @@ var formValidation = function(){
   checkValidation = function(input){
     var formGroup = getFormGroup(input),
     validationName= getFormGroupValidation(formGroup),
-    validation    = validationFor(validationName);
+    validation    = validationFor(validationName),
+    validated     = validation === undefined;
 
     replaceLabel(validation, formGroup);
-    $(formGroup).toggleClass('error',validation !== undefined);
+    $(formGroup).toggleClass('error',!validated);
+    if ($(input).is(cardInput) && validated) {
+      showCardType().checkCardtypeIsAllowed()
+      .then(function(){},function(error){
+        addCardError(error);
+      });
+    }
   },
 
   replaceLabel = function(validation, formGroup){
@@ -129,4 +165,4 @@ var formValidation = function(){
 
 
   init();
-}();
+};

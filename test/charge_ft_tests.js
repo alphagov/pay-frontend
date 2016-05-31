@@ -379,6 +379,9 @@ describe('chargeTests',function(){
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
+            helper.templateValue(res,"withdrawalText","accepted credit and debit card types");
+            helper.templateValue(res,"post_cancel_action","/card_details/23144323/cancel");
+
             helper.templateValue(res,"errorFields", [
               {"key" : "cardholderName", "cssKey": "cardholder-name", "value": "Enter a valid name"},
               {"key" : "cardNo", "cssKey": "card-no", "value": "Enter a valid card number"},
@@ -398,6 +401,29 @@ describe('chargeTests',function(){
               "addressCity": "Enter a Town/City",
               "addressLine1": "Enter a billing address",
               "addressPostcode": "Enter a valid postcode"
+            });
+
+          })
+          .end(done);
+    });
+
+
+   it('shows an error when a card is submitted that is not supported', function (done) {
+      var cookieValue = cookie.create(chargeId, {});
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
+          .expect(200)
+          .expect(function(res){
+            helper.templateValue(res,"id",chargeId);
+            helper.templateValue(res,"description","Payment Description");
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"hasError",true);
+            helper.templateValue(res,"amount","23.45");
+            helper.templateValue(res,"errorFields", [
+              {"key" : "cardNo", "cssKey": "card-no", "value": "jcb credit cards are not supported"},
+            ]);
+            helper.templateValue(res,"highlightErrorFields",{
+              "cardNo":"jcb credit cards are not supported",
             });
 
           })

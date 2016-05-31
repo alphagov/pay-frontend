@@ -9,8 +9,12 @@ var State   = require('./state.js');
 module.exports = function() {
   'use strict';
 
-  var createUrl = function(resource,params){
+  var connectorurl = function(resource,params){
     return paths.generateRoute(`connectorCharge.${resource}`,params);
+  },
+
+  urlFor =  function(resource, chargeId){
+    return paths.generateRoute(`card.${resource}`,{chargeId: chargeId });
   },
 
   mergeApiParams = function(params) {
@@ -28,7 +32,7 @@ module.exports = function() {
   },
 
   updateStatus = function(chargeId, status){
-    var url = createUrl('updateStatus',{chargeId: chargeId}),
+    var url = connectorurl('updateStatus',{chargeId: chargeId}),
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
 
@@ -39,7 +43,7 @@ module.exports = function() {
       newStatus: status,
       url: url
     });
-    
+
     client.put(url, params, function(data, response){
       updateComplete(chargeId, data, response, defer);
     }).on('error',function(err){
@@ -58,15 +62,15 @@ module.exports = function() {
 
   find = function(chargeId){
     var defer = q.defer();
-    var url = createUrl('show',{chargeId: chargeId});
-    
+    var url = connectorurl('show',{chargeId: chargeId});
+
     logger.debug('Calling connector to get charge -', {
       service: 'connector',
       method: 'GET',
       chargeId: chargeId,
       url: url
     });
-    
+
     client.get(url, function(data, response){
       if (response.statusCode !== 200) {
         logger.warn('Calling connector to get charge failed -', {
@@ -93,10 +97,10 @@ module.exports = function() {
   },
 
   capture = function(chargeId){
-    var url = createUrl('capture',{chargeId: chargeId}),
+    var url = connectorurl('capture',{chargeId: chargeId}),
     params  = mergeApiParams(),
     defer   = q.defer();
-    
+
     logger.debug('Calling connector to do capture -', {
       service: 'connector',
       method: 'POST',
@@ -114,14 +118,14 @@ module.exports = function() {
         url: url,
         error:err
       });
-      captureFail(err, defer); 
+      captureFail(err, defer);
     });
 
     return defer.promise;
   },
 
   cancel = function(chargeId){
-    var url = createUrl('cancel',{chargeId: chargeId}),
+    var url = connectorurl('cancel',{chargeId: chargeId}),
       params  = mergeApiParams(),
       defer   = q.defer();
 
@@ -141,7 +145,7 @@ module.exports = function() {
           url: url,
           error: err
         });
-        cancelFail(err, defer); 
+        cancelFail(err, defer);
       });
 
     return defer.promise;
@@ -169,7 +173,7 @@ module.exports = function() {
       service: 'connector',
       method: 'GET'
     });
-    client.get(createUrl('findByToken',{chargeTokenId: tokenId}), function(data, response){
+    client.get(connectorurl('findByToken',{chargeTokenId: tokenId}), function(data, response){
       if (response.statusCode !== 200) {
         logger.warn('Calling connector to find a charge by token failed -', {
           service: 'connector',
@@ -206,7 +210,7 @@ module.exports = function() {
     if (response.statusCode !== 204) {
       logger.error('Calling connector to update charge status failed -', {
         chargeId: chargeId,
-        status: response.statusCode 
+        status: response.statusCode
       });
       defer.reject(new Error('UPDATE_FAILED'));
       return;
@@ -225,6 +229,7 @@ module.exports = function() {
     find: find,
     capture: capture,
     findByToken: findByToken,
-    cancel: cancel
+    cancel: cancel,
+    urlFor: urlFor
   };
 }();

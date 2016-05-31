@@ -28,7 +28,7 @@ var allowed = [
   {
     type: "discover",
     debit: true,
-    credit: true  
+    credit: true
   }
 ];
 
@@ -38,9 +38,9 @@ module.exports = function(params){
   "use strict";
   var withdrawalTypes = [],
   cards = _.clone(allowed);
-  
+
   if (params && params.debitOnly) {
-    cards = _.map(cards, function(o) { return _.omit(o, 'credit'); });
+    cards = _.map(cards, function(o) { o.credit = false; return o; });
   }
 
   if (params && params.removeAmex) {
