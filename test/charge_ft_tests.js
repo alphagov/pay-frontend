@@ -95,7 +95,8 @@ describe('chargeTests',function(){
       'cardholderName': 'Jimi Hendrix',
       'addressLine1': '32 Whip Ma Whop Ma Avenue',
       'addressPostcode': 'Y1 1YN',
-      'addressCity': 'Willy wonka'
+      'addressCity': 'Willy wonka',
+      'email': 'willy@wonka.com'
     };
   }
 
@@ -389,12 +390,14 @@ describe('chargeTests',function(){
               {"key" : "expiryMonth", "cssKey": "expiry-date", "value": "Enter a valid expiry date"},
               {"key" : "addressLine1", "cssKey": "address-line-1", "value": "Enter a valid building name/number and street"},
               {"key" : "addressCity", "cssKey": "address-city", "value": "Enter a valid town/city"},
-              {"key" : "addressPostcode", "cssKey": "address-postcode", "value": "Enter a valid postcode"}
+              {"key" : "addressPostcode", "cssKey": "address-postcode", "value": "Enter a valid postcode"},
+              {"key" : "email", "cssKey": "email", "value": "Enter a valid email"},
             ]);
 
             helper.templateValue(res,"highlightErrorFields",{
               "cardholderName": "Enter the name on the card",
               "cvc": "Enter a card security code",
+              "email": "Enter a valid email",
               "expiryMonth": "Enter a valid expiry date",
               "expiryYear": "Enter a valid expiry date",
               "cardNo":"Please enter a valid card number",
