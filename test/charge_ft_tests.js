@@ -128,17 +128,17 @@ describe('chargeTests',function(){
   describe('The /charge endpoint', function() {
     describe('Different statuses',function(){
       function get(status) {
-          nock(process.env.CONNECTOR_HOST)
-          .get("/v1/frontend/charges/23144323")
-          .reply(200, {
-              'amount': 2345,
-              'description': "Payment Description",
-              'status': status,
-              'return_url': "http://www.example.com/service"
-          });
-          nock(process.env.CONNECTOR_HOST)
-          .put("/v1/frontend/charges/23144323/status")
-          .reply(204);
+        nock(process.env.CONNECTOR_HOST)
+        .get("/v1/frontend/charges/23144323")
+        .reply(200, {
+          'amount': 2345,
+          'description': "Payment Description",
+          'status': status,
+          'return_url': "http://www.example.com/service"
+        });
+        nock(process.env.CONNECTOR_HOST)
+        .put("/v1/frontend/charges/23144323/status")
+        .reply(204);
 
           var cookieValue = cookie.create(chargeId);
           return get_charge_request(app, cookieValue, chargeId);
@@ -195,7 +195,9 @@ describe('chargeTests',function(){
 
     it('should redirect user to auth_waiting when connector returns 202', function(done) {
       var cookieValue = cookie.create(chargeId);
-
+      nock(process.env.CONNECTOR_HOST)
+          .patch("/v1/frontend/charges/23144323")
+          .reply(200);
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       defaultCardID('4242424242424242');
 
@@ -254,6 +256,9 @@ describe('chargeTests',function(){
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
       defaultCardID('4242424242424242');
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
@@ -279,7 +284,9 @@ describe('chargeTests',function(){
     it('should send card data including optional fields to connector', function (done) {
       var cookieValue = cookie.create(chargeId);
       defaultCardID('4242424242424242');
-
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       var card_data = full_connector_card_data('5105105105105100');
@@ -300,6 +307,9 @@ describe('chargeTests',function(){
       var cookieValue = cookie.create(chargeId);
       defaultCardID('4242424242424242');
 
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
@@ -326,6 +336,10 @@ describe('chargeTests',function(){
 
     it('show an error page when authorization was refused', function(done) {
       var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       defaultCardID('4242424242424242');
@@ -506,6 +520,10 @@ describe('chargeTests',function(){
       card_data.address.line1 = 'bla bla';
       delete card_data.address.line3;
 
+      nock(process.env.CONNECTOR_HOST)
+          .patch("/v1/frontend/charges/23144323")
+          .reply(200);
+
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       connector_expects(card_data).reply(204);
       var form_data = minimum_form_card_data('5105105105105100');
@@ -527,6 +545,9 @@ describe('chargeTests',function(){
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       connector_expects(card_data).reply(204);
+      nock(process.env.CONNECTOR_HOST)
+                .patch("/v1/frontend/charges/23144323")
+                .reply(200);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
       form_data.addressLine2 = card_data.address.line1;
@@ -631,16 +652,30 @@ describe('chargeTests',function(){
               .end(done);
         });
 
-        it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 500 connector response', function (done){
-            var cookieValue = cookie.create(chargeId);
-            connector_response_for_put_charge(chargeId, 500 , {});
+        it('should fail to authorise when email patch fails', function(done) {
+          var cookieValue = cookie.create(chargeId);
+          nock(process.env.CONNECTOR_HOST)
+            .patch("/v1/frontend/charges/23144323")
+            .reply(500);
+          default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
-            get_charge_request(app, cookieValue, chargeId)
+          connector_expects(minimum_connector_card_data('5105105105105100'))
+              .reply(204);
+
+          post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'))
               .expect(500)
-              .expect(function(res){
-                helper.templateValue(res,"viewName","SYSTEM_ERROR");
-              })
               .end(done);
+        });
+
+        it('It should show 500 when email patch fails', function (done){
+          var cookieValue = cookie.create(chargeId);
+          nock(process.env.CONNECTOR_HOST)
+            .patch("/v1/frontend/charges/23144323")
+            .reply(500);
+
+          get_charge_request(app, cookieValue, chargeId)
+            .expect(500)
+            .end(done);
         });
   });
 

@@ -69,6 +69,7 @@
     "node-sass": "3.4.x",
     "q": "1.4.x",
     "readdir": "0.0.x",
+    "rfc822-validate": "1.0.x",
     "serve-favicon": "2.3.x",
     "staticify": "0.0.x",
     "string": "3.3.x",

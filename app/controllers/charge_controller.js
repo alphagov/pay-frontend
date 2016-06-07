@@ -20,6 +20,7 @@ var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
 
+
 var appendChargeForNewView = function(charge, req, chargeId){
     var cardModel             = Card(session.retrieve(req,chargeId).cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
@@ -32,6 +33,8 @@ var appendChargeForNewView = function(charge, req, chargeId){
       chargeId: chargeId
     });
 };
+
+
 
 module.exports = {
   new: function (req, res) {
@@ -60,6 +63,7 @@ module.exports = {
     var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
+
     var validator = chargeValidator(
       i18n.__("chargeController.fieldErrors"),
       logger,
@@ -98,7 +102,6 @@ module.exports = {
       _views.display(res, "ERROR");
 
     },
-
     hasValidationError = function(){
       appendChargeForNewView(charge, req, charge.id);
       _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
@@ -111,19 +114,29 @@ module.exports = {
       204: successfulAuth,
       500: connectorFailure
     };
-
-    validator.verify(req).then(function(check){
-      checkResult = check;
-      console.error("AUTHING",checkResult);
-      if (checkResult.hasError) return hasValidationError();
-      logging.authChargePost(authUrl);
+    function postAuth(authUrl, req) {
       client.post(authUrl, normalise.apiPayload(req), function (data, json) {
-        console.error("AUTHING",json.statusCode);
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();
       }).on('error', connectorNonResponsive);
-    },unknownFailure);
+    }
+
+
+    validator.verify(req).then(function(check){
+      checkResult = check;
+      if (checkResult.hasError) return hasValidationError();
+
+      logging.authChargePost(authUrl);
+      Charge.patch(req.chargeId, "replace", "email", req.body.email)
+        .then(function () {
+            postAuth(authUrl, req);
+          }, function(err) {
+            logging.failedChargePatch(err);
+            _views.display(res, "ERROR");
+          }
+      );
+    }, unknownFailure);
 
   },
 
@@ -168,6 +181,7 @@ module.exports = {
             session: chargeSession,
             description: charge.description,
             amount: charge.amount,
+            email: charge.email,
             post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id})
           }
         }

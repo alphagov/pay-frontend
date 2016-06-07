@@ -219,6 +219,29 @@ module.exports = function() {
     defer.resolve({success: "OK"});
   },
 
+  patch = function(chargeId, op, path, value) {
+    var defer   = q.defer();
+    client.patch(process.env.CONNECTOR_HOST + "/v1/frontend/charges/" + chargeId, {
+        headers: {"Content-Type": "application/json"},
+        data: {
+          op: op,
+          path: path,
+          value: value
+        }
+      }, function(data, response) {
+        var code = response.statusCode;
+        if (code === 200) {
+          defer.resolve();
+        } else {
+          defer.reject();
+        }
+      }).on('error', function(){
+          defer.reject();
+      });
+
+      return defer.promise;
+  },
+
   clientUnavailable = function(error, defer) {
     defer.reject(new Error('CLIENT_UNAVAILABLE'),error);
   };
@@ -230,6 +253,7 @@ module.exports = function() {
     capture: capture,
     findByToken: findByToken,
     cancel: cancel,
+    patch: patch,
     urlFor: urlFor
   };
 }();

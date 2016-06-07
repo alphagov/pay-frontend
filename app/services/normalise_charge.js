@@ -8,7 +8,8 @@ module.exports = function() {
       return_url: charge.return_url,
       description: charge.description,
       links: charge.links,
-      status: charge.status
+      status: charge.status,
+      email: charge.email
     };
   },
 
@@ -66,6 +67,11 @@ module.exports = function() {
   authUrl = function(charge){
     var authLink = charge.links.find((link) => {return link.rel === 'cardAuth';});
     return authLink.href;
+  },
+
+  chargeUrl = function(charge){
+    var selfLink = charge.links.find((link) => {return link.rel === 'self';});
+    return selfLink.href;
   };
 
   return {
@@ -76,7 +82,8 @@ module.exports = function() {
     creditCard: creditCard,
     expiryDate: expiryDate,
     apiPayload: apiPayload,
-    authUrl: authUrl
+    authUrl: authUrl,
+    chargeUrl: chargeUrl
   };
 }();
 
