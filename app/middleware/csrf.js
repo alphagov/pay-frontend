@@ -25,7 +25,7 @@ module.exports = function(req, res, next) {
   },
 
   showNoSession = function(){
-    _views.display(res,'SYSTEM_ERROR');
+    _views.display(res,'UNAUTHORISED');
     return logger.error('CSRF secret is not defined');
   },
 
