@@ -57,6 +57,13 @@ describe('retrieve param test', function () {
     assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR' }));
   },
 
+  assertUnauthorisedRequest = function(next,resp,status,render) {
+    expect(next.called).to.not.be.true;
+    expect(resp.locals.csrf).to.be.undefined;
+    assert(status.calledWith(403));
+    assert(render.calledWith("errors/system_error", { viewName: 'UNAUTHORISED' }));
+  },
+
   assertValidRequest = function(next,resp,status,render) {
     expect(next.called).to.be.true;
     expect(resp.locals.csrf).to.not.be.undefined;
@@ -85,14 +92,14 @@ describe('retrieve param test', function () {
   it('should error if no charge in session', function () {
     var resp = _.cloneDeep(response);
     csrf(noSession,resp,next);
-    assertErrorRequest(next,resp,status,render);
+    assertUnauthorisedRequest(next,resp,status,render);
 
   });
 
   it('should error if no secret in session', function () {
     var resp = _.cloneDeep(response);
     csrf(noSecret,resp,next);
-    assertErrorRequest(next,resp,status,render);
+    assertUnauthorisedRequest(next,resp,status,render);
   });
 
   it('should be successful on post if valid post and append token to used tokens', function () {
