@@ -46,8 +46,8 @@ describe('retrieve param test', function () {
   // the charge param retriever tests
   it('should call not found view if charge param does not return an id', function () {
     retrieveCharge( { params: {}, body: {} },response,next)
-    assert(status.calledWith(500));
-    assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR' }));
+    assert(status.calledWith(403));
+    assert(render.calledWith("errors/system_error", { viewName: 'UNAUTHORISED' }));
     expect(next.notCalled).to.be.true;
 
   });

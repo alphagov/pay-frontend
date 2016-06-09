@@ -343,9 +343,9 @@ describe('chargeTests',function(){
       form_data.addressCity = card_data.address.city;
 
       post_charge_request(cookieValue, form_data)
-        .expect(500)
+        .expect(403)
         .expect(function(res){
-          helper.templateValue(res,"viewName","SYSTEM_ERROR");
+          helper.templateValue(res,"viewName","UNAUTHORISED");
         })
         .end(done);
     });
@@ -509,9 +509,9 @@ describe('chargeTests',function(){
         .expect(function(res) {
           should.not.exist(res.headers['set-cookie']);
         })
-        .expect(500)
+        .expect(403)
         .expect(function(res){
-          helper.templateValue(res,"viewName","SYSTEM_ERROR");
+          helper.templateValue(res,"viewName","UNAUTHORISED");
         })
         .end(done);
     });

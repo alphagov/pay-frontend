@@ -10,7 +10,7 @@ module.exports = function(req, res, next){
 
   var init = function(){
     var chargeId = chargeParam.retrieve(req);
-    if (!chargeId) return _views.display(res,"SYSTEM_ERROR");
+    if (!chargeId) return _views.display(res,"UNAUTHORISED");
     req.chargeId = chargeId;
     Charge.find(chargeId).then(gotCharge, apiFail);
   },
