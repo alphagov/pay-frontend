@@ -109,6 +109,7 @@ describe('chargeTests',function(){
   beforeEach(function() {
     nock.cleanAll();
     connectorMock = nock(localServer);
+
   });
 
   before(function () {
@@ -410,6 +411,10 @@ describe('chargeTests',function(){
 
    it('shows an error when a card is submitted that is not supported', function (done) {
       var cookieValue = cookie.create(chargeId, {});
+      nock.cleanAll();
+      nock('https://cardid.pymnt.localdomain')
+        .get("/v1/api/card/3528000700000000")
+        .reply(200, {brand: "foobar", label: "foobar", type: "E"});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
           .expect(200)
@@ -420,10 +425,37 @@ describe('chargeTests',function(){
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"errorFields", [
-              {"key" : "cardNo", "cssKey": "card-no", "value": "jcb credit cards are not supported"},
+              {"key" : "cardNo", "cssKey": "card-no", "value": "Foobar is not supported"},
             ]);
             helper.templateValue(res,"highlightErrorFields",{
-              "cardNo":"jcb credit cards are not supported",
+              "cardNo":"Foobar is not supported",
+            });
+
+          })
+          .end(done);
+    });
+
+
+   it('shows an error when a card is submitted that is not supported withrawal type', function (done) {
+      var cookieValue = cookie.create(chargeId, {});
+      nock.cleanAll();
+      nock('https://cardid.pymnt.localdomain')
+        .get("/v1/api/card/3528000700000000")
+        .reply(200, {brand: "american express", label: "american express", type: "D"});
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
+          .expect(200)
+          .expect(function(res){
+            helper.templateValue(res,"id",chargeId);
+            helper.templateValue(res,"description","Payment Description");
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"hasError",true);
+            helper.templateValue(res,"amount","23.45");
+            helper.templateValue(res,"errorFields", [
+              {"key" : "cardNo", "cssKey": "card-no", "value": "American Express debit cards are not supported"},
+            ]);
+            helper.templateValue(res,"highlightErrorFields",{
+              "cardNo":"American Express debit cards are not supported",
             });
 
           })

@@ -69,8 +69,6 @@ module.exports = {
     var checkResult;
     normalise.addressLines(req.body);
 
-
-
     if (submitted) {
       return res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
     }
