@@ -45,13 +45,14 @@ var checkCard = function(cardNo) {
     var CARDID_HOST = process.env.CARDID_HOST;
     client.get(CARDID_HOST + "/v1/api/card/" + cardNo, function(data, response) {
       var card = data;
-      if (response.statusCode === "404") {
+      if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
       }
+      // if the server is down, or returns non 500, just continue
+      if (response.statusCode !== 200) { return defer.resolve(); }
 
       var normalisedName = changeCase.paramCase(data.label);
       var cardObject = _.find(allowed, ["type",normalisedName]);
-
       if (!cardObject) return defer.reject(changeCase.titleCase(normalisedName) + " is not supported");
 
       if (card.type === "D") {
