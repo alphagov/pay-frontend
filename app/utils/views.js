@@ -28,6 +28,10 @@ module.exports = function() {
       code: 500,
       view: 'errors/system_error',
     },
+    UNAUTHORISED: {
+      code: 403,
+      view: 'errors/system_error',
+    },
     CAPTURE_SUBMITTED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
