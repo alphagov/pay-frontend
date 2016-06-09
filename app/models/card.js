@@ -42,7 +42,7 @@ var allowed = [
 
 var checkCard = function(cardNo) {
     var defer = q.defer();
-    var CARDID_HOST = "https://cardid.pymnt.localdomain";
+    var CARDID_HOST = process.env.CARDID_HOST;
     client.get(CARDID_HOST + "/v1/api/card/" + cardNo, function(data, response) {
       var card = data;
       if (response.statusCode === "404") {

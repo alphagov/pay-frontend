@@ -412,7 +412,7 @@ describe('chargeTests',function(){
    it('shows an error when a card is submitted that is not supported', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
-      nock('https://cardid.pymnt.localdomain')
+      nock(process.env.CARDID_HOST)
         .get("/v1/api/card/3528000700000000")
         .reply(200, {brand: "foobar", label: "foobar", type: "E"});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
@@ -439,7 +439,7 @@ describe('chargeTests',function(){
    it('shows an error when a card is submitted that is not supported withrawal type', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
-      nock('https://cardid.pymnt.localdomain')
+      nock(process.env.CARDID_HOST)
         .get("/v1/api/card/3528000700000000")
         .reply(200, {brand: "american express", label: "american express", type: "D"});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
