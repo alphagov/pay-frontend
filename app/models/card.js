@@ -51,18 +51,20 @@ var checkCard = function(cardNo) {
       // if the server is down, or returns non 500, just continue
       if (response.statusCode !== 200) { return defer.resolve(); }
 
-      var normalisedName = changeCase.paramCase(data.label);
-      var cardObject = _.find(allowed, ["type",normalisedName]);
-      if (!cardObject) return defer.reject(changeCase.titleCase(normalisedName) + " is not supported");
+      var computerName = changeCase.paramCase(data.label);
+      var humanName    = changeCase.titleCase(computerName);
+      var cardObject   = _.find(allowed, ["type",computerName]);
+
+      if (!cardObject) return defer.reject(humanName + " is not supported");
 
       if (card.type === "D") {
         if (cardObject.debit) defer.resolve();
-        return defer.reject(changeCase.titleCase(normalisedName) + " debit cards are not supported");
+        return defer.reject(humanName + " debit cards are not supported");
       }
 
       if (card.type === "C") {
         if (cardObject.credit) defer.resolve();
-        return defer.reject(changeCase.titleCase(normalisedName) + " credit cards are not supported");
+        return defer.reject(humanName + " credit cards are not supported");
       }
 
       defer.resolve();
