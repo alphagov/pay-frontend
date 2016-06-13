@@ -71,6 +71,10 @@ var paths = {
     token: {
       path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId",
       action: 'delete'
+    },
+    allCards: {
+      path: process.env.CONNECTOR_HOST + "/v1/api/card-types",
+      action: 'get'
     }
   }
 };

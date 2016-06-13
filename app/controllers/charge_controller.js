@@ -19,10 +19,9 @@ var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
-var cardModelStubMethods = function(req){ return { debitOnly: req.query.debitOnly, removeAmex: req.query.removeAmex}; };
 
 var appendChargeForNewView = function(charge, req, chargeId){
-    var cardModel             = Card(cardModelStubMethods(req));
+    var cardModel             = Card(session.retrieve(req,chargeId).cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
     charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
     charge.allowedCards       = cardModel.allowed;
@@ -35,7 +34,6 @@ var appendChargeForNewView = function(charge, req, chargeId){
 
 module.exports = {
   new: function (req, res) {
-
     var _views = views.create(),
     charge     = normalise.charge(req.chargeData, req.chargeId);
     appendChargeForNewView(charge, req, charge.id);
@@ -58,7 +56,7 @@ module.exports = {
 
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
-    var cardModel = Card(cardModelStubMethods(req));
+    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
     var validator = chargeValidator(
@@ -96,6 +94,7 @@ module.exports = {
     connectorNonResponsive = function (err) {
       logging.failedChargePostException(err);
       _views.display(res, "ERROR");
+
     },
 
     hasValidationError = function(){
@@ -115,7 +114,6 @@ module.exports = {
       checkResult = check;
       if (checkResult.hasError) return hasValidationError();
       logging.authChargePost(authUrl);
-
       client.post(authUrl, normalise.apiPayload(req), function (data, json) {
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();

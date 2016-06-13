@@ -1,10 +1,13 @@
 var paths = require('../paths.js'),
   Token = require('../models/token.js'),
   Charge = require('../models/charge.js'),
+  Card = require('../models/card.js')(),
   views = require('../utils/views.js'),
   session = require('../utils/session.js'),
   csrf = require('csrf'),
   stateService = require('../services/state_service.js'),
+  normaliseCards = require('../services/normalise_cards.js'),
+  q = require('q'),
   _ = require('lodash');
 
 module.exports.new = function (req, res) {
@@ -18,17 +21,27 @@ module.exports.new = function (req, res) {
     },
 
     chargeRetrieved = function (chargeData) {
-      Token.destroy(chargeTokenId).then(function () {
-        tokenDeleted(chargeData);
-      }, apiFail);
+      console.error('HI');
+      q.all([
+        Card.allConnectorCardTypes(),
+        Token.destroy(chargeTokenId),
+      ]).then(function(values){
+        var selfServiceCards = chargeData.gatewayAccount.cardTypes;
+        if (selfServiceCards.length !== 0) {
+          apiSuccess(chargeData,normaliseCards(selfServiceCards));
+          return;
+        }
+        apiSuccess(chargeData,normaliseCards(values[0]));
+      },apiFail);
+
     },
 
-    tokenDeleted = function (chargeData) {
+    apiSuccess = function (chargeData, cardTypes) {
       var chargeId = chargeData.externalId;
-
       req.frontend_state[session.createChargeIdSessionKey(chargeId)] = {
         csrfSecret: csrf().secretSync(),
-        serviceName: _.get(chargeData, "gatewayAccount.service_name")
+        serviceName: _.get(chargeData, "gatewayAccount.service_name"),
+        cardTypes: cardTypes
       };
 
       var actionName = stateService.resolveActionName(chargeData.status,'get');

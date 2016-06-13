@@ -419,6 +419,7 @@ describe('chargeTests',function(){
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
           .expect(200)
           .expect(function(res){
+
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
@@ -441,7 +442,8 @@ describe('chargeTests',function(){
       nock.cleanAll();
       nock(process.env.CARDID_HOST)
         .get("/v1/api/card/3528000700000000")
-        .reply(200, {brand: "american express", label: "american express", type: "D"});
+        .reply(200, { brand: "american express", label: "american express", type: "D" });
+
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
           .expect(200)
@@ -573,7 +575,7 @@ describe('chargeTests',function(){
               .end(done);
         });
         it('It should show card details page with correct text for credit card only', function (done){
-            var cookieValue = cookie.create(chargeId);
+            var cookieValue = cookie.createWithDebitOnly(chargeId);
             nock(process.env.CONNECTOR_HOST)
               .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
               .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
@@ -587,7 +589,7 @@ describe('chargeTests',function(){
         });
 
         it('It should not show amex if it is excluded', function (done){
-            var cookieValue = cookie.create(chargeId);
+            var cookieValue = cookie.createWithDebitOnly(chargeId);
             nock(process.env.CONNECTOR_HOST)
               .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
               .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));

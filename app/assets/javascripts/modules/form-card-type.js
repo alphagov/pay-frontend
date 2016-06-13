@@ -63,7 +63,7 @@ var showCardType = function(){
     var supported = false;
     for (var i = 0; i < cardTypes.length; i++) {
       if (supported) continue;
-      if (cardTypes[i].type == cardType[0].type) supported = true;
+      if (cardTypes[i].brand == cardType[0].type) supported = true;
     }
 
     if (supported) return replaceCardLabelWithOriginal();

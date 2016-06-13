@@ -1,7 +1,7 @@
+/*jslint node: true */
+"use strict";
 require(__dirname + '/../test_helpers/html_assertions.js');
-var proxyquire = require('proxyquire')
-var should = require('chai').should();
-var assert = require('assert');
+var proxyquire = require('proxyquire');
 var q = require('q');
 var sinon = require('sinon');
 var expect = require('chai').expect;
@@ -28,7 +28,7 @@ var mockCharge = function () {
     withFailure: function() {
       return mock(false);
     }
-  }
+  };
 }();
 
 var mockToken = function () {
@@ -54,10 +54,29 @@ var mockToken = function () {
   }
 }();
 
+
+var mockedCard = function(){
+
+  var allConnectorCardTypes = function(){
+    return {
+      then: function(success){
+        success([{brand: "foo"}]);
+      }
+    };
+
+  };
+
+  return {
+    allConnectorCardTypes: allConnectorCardTypes
+  };
+
+};
 var requireSecureController = function (mockedCharge, mockedToken) {
   return proxyquire(__dirname + '/../../app/controllers/secure_controller.js', {
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
+    '../models/card.js': mockedCard,
+
     'csrf': function () {
       return {
         secretSync: function () {
@@ -89,7 +108,13 @@ describe('secure controller', function () {
         "externalId": "dh6kpbb4k82oiibbe4b9haujjk",
         "status": "CREATED",
         "gatewayAccount": {
-          "service_name": "Service Name"
+          "service_name": "Service Name",
+          cardTypes:[
+    {
+      brand: "visa",
+      debit: true,
+      credit: true
+    }]
         }
       };
     });
@@ -111,11 +136,17 @@ describe('secure controller', function () {
 
       describe('then destroyed successfully', function () {
         it('should store the service name into the session and redirect', function () {
-          requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess()).new(request, response);
+          requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess(),mockedCard).new(request, response);
+
           expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk');
           expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
             'csrfSecret': 'foo',
-            'serviceName': 'Service Name'
+            'serviceName': 'Service Name',
+            'cardTypes': [{
+              "brand": 'visa',
+              "credit": false,
+              "debit": false
+            }]
           });
           expect(response.redirect.calledWith(303,paths.generateRoute("card.new", {chargeId: chargeObject.externalId}))).to.be.true;
         });
