@@ -21,16 +21,17 @@ module.exports.new = function (req, res) {
     },
 
     chargeRetrieved = function (chargeData) {
-      console.error('HI');
       q.all([
         Card.allConnectorCardTypes(),
         Token.destroy(chargeTokenId),
       ]).then(function(values){
         var selfServiceCards = chargeData.gatewayAccount.cardTypes;
-        if (selfServiceCards.length !== 0) {
+
+        if (selfServiceCards && selfServiceCards.length !== 0) {
           apiSuccess(chargeData,normaliseCards(selfServiceCards));
           return;
         }
+
         apiSuccess(chargeData,normaliseCards(values[0]));
       },apiFail);
 
@@ -38,6 +39,7 @@ module.exports.new = function (req, res) {
 
     apiSuccess = function (chargeData, cardTypes) {
       var chargeId = chargeData.externalId;
+
       req.frontend_state[session.createChargeIdSessionKey(chargeId)] = {
         csrfSecret: csrf().secretSync(),
         serviceName: _.get(chargeData, "gatewayAccount.service_name"),
