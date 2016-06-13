@@ -61,14 +61,14 @@ var allConnectorCardTypes = function(){
 
 module.exports = function(allowedCards){
   var withdrawalTypes = [];
-  allowed = allowedCards;
+  allowed = _.clone(allowedCards);
 
   if (_.filter(allowedCards,{debit: true}).length !== 0) withdrawalTypes.push('debit');
   if (_.filter(allowedCards,{credit: true}).length !== 0) withdrawalTypes.push('credit');
 
   return {
     withdrawalTypes: withdrawalTypes,
-    allowed: allowedCards,
+    allowed: _.clone(allowed),
     checkCard: checkCard,
     allConnectorCardTypes: allConnectorCardTypes
   };
