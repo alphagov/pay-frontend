@@ -131,7 +131,7 @@ module.exports = {
     .then(
       ()=>      { res.json({"accepted": true}); },
       (data)=>  { res.json({"accepted": false, "message": data }); }
-    )
+    );
   },
 
   authWaiting: function (req, res) {
