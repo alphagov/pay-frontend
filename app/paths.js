@@ -35,6 +35,10 @@ var paths = {
     cancel: {
       path: '/card_details/:chargeId/cancel',
       action: 'post'
+    },
+    checkCard: {
+      path: '/check_card/:chargeId',
+      action: 'post'
     }
   },
   secure: {

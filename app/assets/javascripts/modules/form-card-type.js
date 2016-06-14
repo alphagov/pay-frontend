@@ -103,20 +103,15 @@ var showCardType = function(){
   },
   checkCardtypeIsAllowed = function(){
     var defer = $.Deferred();
-    // this should all be replaced by an ajax call once we have the api for this
-    // use getSupportedChargeType(cardName) to get the debit/credit for each
-    // card type
-    setTimeout(function(){
       var card = getCardType();
       // this should already be picked up by the other validations
       if (card.length !== 1) return defer.resolve();
-
-      if (cardInput.val() === "3528000700000000") {
-        return defer.reject({text: "jcb credit cards are"});
-      }
-      return defer.resolve();
-    }, 100);
-    // end of replace
+      $.post('/check_card/' + chargeId,
+        {cardNo: cardInput.val() }
+      ).success(function(data){
+        if (data.accepted) return defer.resolve();
+        return defer.reject({text: data.message});
+      })
 
     return defer.promise();
   };

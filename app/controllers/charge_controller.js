@@ -27,6 +27,7 @@ var appendChargeForNewView = function(charge, req, chargeId){
     charge.allowedCards       = cardModel.allowed;
     charge.cardsAsStrings     = JSON.stringify(cardModel.allowed);
     charge.post_card_action   = paths.card.create.path;
+    charge.id                 = chargeId;
     charge.post_cancel_action = paths.generateRoute("card.cancel", {
       chargeId: chargeId
     });
@@ -121,6 +122,16 @@ module.exports = {
       }).on('error', connectorNonResponsive);
     },unknownFailure);
 
+  },
+
+  checkCard: function(req, res) {
+    var charge    = normalise.charge(req.chargeData, req.chargeId);
+    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
+    cardModel.checkCard(normalise.creditCard(req.body.cardNo))
+    .then(
+      ()=>      { res.json({"accepted": true}); },
+      (data)=>  { res.json({"accepted": false, "message": data }); }
+    )
   },
 
   authWaiting: function (req, res) {
