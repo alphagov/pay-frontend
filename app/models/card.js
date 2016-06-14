@@ -13,7 +13,7 @@ var logger  = require('winston');
 var checkCard = function(cardNo) {
     var defer = q.defer();
     var CARDID_HOST = process.env.CARDID_HOST;
-    client.get(CARDID_HOST + "/v1/api/card/" + cardNo, function(data, response) {
+    client.post(CARDID_HOST + "/v1/api/card/" ,{cardNumber: cardNo}, function(data, response) {
       var card = data;
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
