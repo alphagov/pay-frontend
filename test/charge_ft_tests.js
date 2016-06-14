@@ -413,7 +413,7 @@ describe('chargeTests',function(){
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
       nock(process.env.CARDID_HOST)
-        .get("/v1/api/card/3528000700000000")
+        .post("/v1/api/card/")
         .reply(200, {brand: "foobar", label: "foobar", type: "E"});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
@@ -441,7 +441,7 @@ describe('chargeTests',function(){
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
       nock(process.env.CARDID_HOST)
-        .get("/v1/api/card/3528000700000000")
+        .post("/v1/api/card/")
         .reply(200, { brand: "american express", label: "american express", type: "D" });
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
