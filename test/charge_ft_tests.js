@@ -22,6 +22,13 @@ var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_
 var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
 var State = require(__dirname + '/../app/models/state.js');
 
+var defaultCardID = function(cardNumber){
+        nock(process.env.CARDID_HOST)
+        .post("/v1/api/card",()=> { return true; })
+        .reply(200, {brand: "visa", label: "visa", type: "E"});
+
+}
+
 describe('chargeTests',function(){
 
   var localServer = process.env.CONNECTOR_HOST;
@@ -189,6 +196,7 @@ describe('chargeTests',function(){
       var cookieValue = cookie.create(chargeId);
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      defaultCardID('4242424242424242');
 
       connector_expects(minimum_connector_card_data('4242424242424242'))
           .reply(202);
@@ -244,7 +252,7 @@ describe('chargeTests',function(){
 
     it('should send clean card data to connector', function(done) {
       var cookieValue = cookie.create(chargeId);
-
+      defaultCardID('4242424242424242');
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
@@ -269,6 +277,7 @@ describe('chargeTests',function(){
 
     it('should send card data including optional fields to connector', function (done) {
       var cookieValue = cookie.create(chargeId);
+      defaultCardID('4242424242424242');
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
@@ -288,6 +297,7 @@ describe('chargeTests',function(){
 
     it('should add card data including optional fields to the chargeIds session', function (done) {
       var cookieValue = cookie.create(chargeId);
+      defaultCardID('4242424242424242');
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
@@ -317,6 +327,7 @@ describe('chargeTests',function(){
       var cookieValue = cookie.create(chargeId);
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      defaultCardID('4242424242424242');
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'});
@@ -354,7 +365,7 @@ describe('chargeTests',function(){
     it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
       var cookieValue = cookie.create(chargeId);
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
-
+      defaultCardID('1111111111111111');
       post_charge_request(cookieValue, minimum_form_card_data('1111111111111111'))
           .expect(200)
           .expect(function(res){
@@ -371,6 +382,7 @@ describe('chargeTests',function(){
 
     it('shows an error when a card is submitted with missing fields', function (done) {
       var cookieValue = cookie.create(chargeId, {});
+      defaultCardID('4242424242424242');
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       post_charge_request(cookieValue, missing_form_card_data())
           .expect(200)
@@ -412,10 +424,10 @@ describe('chargeTests',function(){
    it('shows an error when a card is submitted that is not supported', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
-      nock(process.env.CARDID_HOST)
-        .post("/v1/api/card/")
-        .reply(200, {brand: "foobar", label: "foobar", type: "E"});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      nock(process.env.CARDID_HOST)
+        .post("/v1/api/card",()=> { return true; })
+        .reply(200, {brand: "foobar", label: "foobar", type: "E"});
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
           .expect(200)
           .expect(function(res){
@@ -440,10 +452,9 @@ describe('chargeTests',function(){
    it('shows an error when a card is submitted that is not supported withrawal type', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
-      nock(process.env.CARDID_HOST)
-        .post("/v1/api/card/")
-        .reply(200, { brand: "american express", label: "american express", type: "D" });
-
+        nock(process.env.CARDID_HOST)
+        .post("/v1/api/card",()=> { return true; })
+        .reply(200, {brand: "american-express", label: "american express", type: "D"});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
           .expect(200)
@@ -467,6 +478,9 @@ describe('chargeTests',function(){
     it('preserve cardholder name, address lines when a card is submitted with validation errors', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      nock(process.env.CARDID_HOST)
+        .post("/v1/api/card",()=> { return true; })
+        .reply(200, {brand: "visa", label: "visa", type: "E"});
       var cardData = full_form_card_data('4242');
       post_charge_request(cookieValue, cardData)
         .expect(200)
@@ -484,7 +498,7 @@ describe('chargeTests',function(){
 
     it('should ignore empty/null address lines when second address line populated', function (done) {
       var cookieValue = cookie.create(chargeId);
-
+      defaultCardID('5105105105105100');
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
       delete card_data.address.line3;
@@ -503,7 +517,7 @@ describe('chargeTests',function(){
 
     it('should ignore empty/null address lines when only second address line populated', function (done) {
       var cookieValue = cookie.create(chargeId);
-
+      defaultCardID('5105105105105100');
       var card_data = minimum_connector_card_data('5105105105105100');
       card_data.address.line1 = 'bla bla';
       delete card_data.address.line2;
@@ -522,7 +536,7 @@ describe('chargeTests',function(){
 
     it('show an error page when the chargeId is not found on the session', function(done) {
       var cookieValue = cookie.create();
-
+      defaultCardID('5105105105105100');
       connectorMock.post(connectorChargePath + chargeId + '/cards', {
         'card_number' : '5105105105105100',
         'cvc' : '234',

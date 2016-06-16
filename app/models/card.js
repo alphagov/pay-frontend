@@ -18,7 +18,6 @@ var checkCard = function(cardNo) {
       headers: { "Content-Type": "application/json" }
     }, function(data, response) {
       var card = data;
-      console.log(String(card));
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
       }

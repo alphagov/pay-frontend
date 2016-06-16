@@ -13,7 +13,7 @@ describe('card', function () {
         nock.cleanAll();
 
         nock(process.env.CARDID_HOST)
-            .post("/v1/api/card/")
+            .post("/v1/api/card")
             .reply(404);
       });
 
@@ -29,7 +29,7 @@ describe('card', function () {
         nock.cleanAll();
 
         nock(process.env.CARDID_HOST)
-            .post("/v1/api/card/")
+            .post("/v1/api/card")
             .reply(201);
       });
 
@@ -43,7 +43,7 @@ describe('card', function () {
         nock.cleanAll();
 
         nock(process.env.CARDID_HOST)
-            .post("/v1/api/card/")
+            .post("/v1/api/card")
             .reply(201);
       });
 
@@ -56,7 +56,7 @@ describe('card', function () {
       before(function() {
         nock.cleanAll();
         nock(process.env.CARDID_HOST)
-          .post("/v1/api/card/")
+          .post("/v1/api/card")
           .reply(200,{brand: "bar", label: "bar"});
       });
 
@@ -72,7 +72,7 @@ describe('card', function () {
       before(function() {
         nock.cleanAll();
         nock(process.env.CARDID_HOST)
-          .post("/v1/api/card/")
+          .post("/v1/api/card")
           .reply(200,{brand: "bar", label: "bar", type: 'D'});
       });
 
@@ -89,7 +89,7 @@ describe('card', function () {
       before(function() {
         nock.cleanAll();
         nock(process.env.CARDID_HOST)
-          .post("/v1/api/card/")
+          .post("/v1/api/card")
           .reply(200,{brand: "bar", label: "bar", type: 'C'});
       });
 
@@ -106,7 +106,7 @@ describe('card', function () {
       before(function() {
         nock.cleanAll();
         nock(process.env.CARDID_HOST)
-          .post("/v1/api/card/")
+          .post("/v1/api/card")
           .reply(200,{brand: "bar", label: "bar", type: 'C'});
       });
 
