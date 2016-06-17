@@ -88,7 +88,8 @@ module.exports = {
       _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
     },
 
-    unknownFailure = function() {
+    unknownFailure = function(err) {
+      console.log('UNKOWN ERROR',err);
       res.redirect(303, Charge.urlFor('new', req.chargeId));
     },
 
@@ -113,9 +114,11 @@ module.exports = {
 
     validator.verify(req).then(function(check){
       checkResult = check;
+      console.error("AUTHING",checkResult);
       if (checkResult.hasError) return hasValidationError();
       logging.authChargePost(authUrl);
       client.post(authUrl, normalise.apiPayload(req), function (data, json) {
+        console.error("AUTHING",json.statusCode);
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();

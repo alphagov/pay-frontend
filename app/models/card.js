@@ -17,14 +17,16 @@ var checkCard = function(cardNo) {
       data: {"cardNumber": parseInt(cardNo) },
       headers: { "Content-Type": "application/json" }
     }, function(data, response) {
+      console.error("PREFIX",data,response.statusCode);
       var card = data;
+
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
       }
       // if the server is down, or returns non 500, just continue
       if (response.statusCode !== 200) { return defer.resolve(); }
 
-      var computerName = changeCase.paramCase(data.label);
+      var computerName = changeCase.paramCase(data.brand);
       var humanName    = changeCase.titleCase(computerName);
       var cardObject   = _.find(allowed, ["brand",computerName]);
       if (!cardObject) return defer.reject(humanName + " is not supported");
@@ -42,6 +44,7 @@ var checkCard = function(cardNo) {
       defer.resolve();
 
     }).on('error',function(error){
+      console.error("PREFIX_ERROR");
       console.log(error);
       defer.resolve();
     });
