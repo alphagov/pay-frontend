@@ -51,6 +51,10 @@
        "addressPostcode": {
          "name": "postcode",
          "message": "Enter a valid postcode"
+       },
+       "email": {
+         "name": "email",
+         "message": "Enter a valid email"
        }
      }
    }
@@ -66,7 +70,8 @@
     "postcode": "Postcode",
     "cvcTip": "The last three digits on the back of the card",
     "amexcvcTip": "The last four digits after the card number on the front",
-    "amexcvcNonjs": "For American Express"
+    "amexcvcNonjs": "For American Express",
+    "email": "Email"
 
   }
 

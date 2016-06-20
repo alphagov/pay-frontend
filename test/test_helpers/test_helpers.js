@@ -13,6 +13,10 @@ function localServer() {
   return process.env.CONNECTOR_HOST;
 }
 
+function connectorChargeUrl(chargeId) {
+  return localServer() + connectorChargePath + chargeId;
+}
+
 function connectorAuthUrl(chargeId) {
   return localServer() + connectorChargePath + chargeId + '/cards';
 }
@@ -36,7 +40,12 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
     'description': "Payment Description",
     'status': status,
     'return_url': returnUrl,
+    'email': "bob@bob.bob",
     'links': [{
+      'href': connectorChargeUrl(chargeId),
+      'rel': 'self',
+      'method': 'POST'
+    }, {
       'href': connectorAuthUrl(chargeId),
       'rel': 'cardAuth',
       'method': 'POST'

@@ -13,7 +13,8 @@ var unNormalisedCharge = {
     rel: "rar",
     href: "http://foo"
   }],
-  status: "status"
+  status: "status",
+  email: "bobbybobby@bobby.bob"
 };
 
 var normalisedCharge = {
@@ -25,7 +26,8 @@ var normalisedCharge = {
     rel: "rar",
     href: "http://foo"
   }],
-  status: "status"
+  status: "status",
+  email: "bobbybobby@bobby.bob"
 };
 
 var unNormalisedAddress = {

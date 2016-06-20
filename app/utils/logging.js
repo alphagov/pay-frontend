@@ -25,8 +25,12 @@ module.exports = {
       method: 'POST',
       error: err
     });
+  },
+  failedChargePatch: function(err){
+    logger.warn('Calling connector to patch a charge failed -', {
+      service: 'connector',
+      method: 'POST',
+      err: err
+    });
   }
-
-
-
 };

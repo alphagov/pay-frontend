@@ -1,6 +1,7 @@
 var luhn = require('luhn');
 var ukPostcode = require("uk-postcode");
 var creditCardType = require('credit-card-type');
+var validateEmail = require('rfc822-validate');
 
 module.exports = function(Card){
   "use strict";
@@ -12,7 +13,8 @@ module.exports = function(Card){
     "expiryYear",
     "addressLine1",
     "addressCity",
-    "addressPostcode"
+    "addressPostcode",
+    "email"
   ];
 
   /*
@@ -71,6 +73,13 @@ module.exports = function(Card){
       if (postCode.isComplete()) { return true; }
       return "message";
     },
+
+    email: function(email){
+      var valid = validateEmail(email);
+      if (valid) return true;
+      return "message";
+    },
+
     creditCardType: creditCardType,
     allowedCards: Card.allowed
   };
