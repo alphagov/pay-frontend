@@ -8,14 +8,10 @@ Confirm your details.
 
 <main id="content" role="main" class="content-wrapper">
 
-    <h1 class="form-title">Check your details are correct before confirming</h1>
+    <h1 class="form-title">Confirm your payment</h1>
 
 
     <table class="confirm-details">
-        <tr>
-            <td>Name on card:</td>
-            <td id="cardholder-name" class="details">{{session.cardholderName}}</td>
-        </tr>
         <tr>
             <td>Card number:</td>
             <td id="card-number" class="details">{{session.cardNumber}}</td>
@@ -23,6 +19,10 @@ Confirm your details.
         <tr>
             <td>Expiry date:</td>
             <td id="expiry-date" class="details">{{session.expiryDate}}</td>
+        </tr>
+        <tr>
+            <td>Name on card:</td>
+            <td id="cardholder-name" class="details">{{session.cardholderName}}</td>
         </tr>
         <tr>
             <td>Billing address:</td>
@@ -33,7 +33,7 @@ Confirm your details.
             <td id="payment-description" class="details">{{description}}</td>
         </tr>
         <tr>
-            <td>Payment amount:</td>
+            <td>Total amount:</td>
             <td id="amount" class="details">£{{amount}}</td>
         </tr>
         <tr>
@@ -42,14 +42,14 @@ Confirm your details.
         </tr>
     </table>
 
-    <form id="confirmation" method="POST" action="{{confirmPath}}">
+    <form id="confirmation" method="POST" action="{{confirmPath}}" class="form">
         <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
-        <button id="confirm" class="button">Confirm</button>
+        <button id="confirm" class="button">Confirm payment</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{post_cancel_action}}" class="form">
         <div>
-            <input id="cancel-payment" type="submit" class="link" value="Cancel" name="cancel">
+            <input id="cancel-payment" type="submit" class="link" value="Cancel payment" name="cancel">
             <input id="csrf2" name="csrfToken" type="hidden" value="{{csrf}}" />
         </div>
     </form>

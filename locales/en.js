@@ -33,7 +33,7 @@
          "name": "expiry date",
          "message": "Enter a valid expiry date",
          "invalid_month":"Enter a valid expiry date",
-         "in_the_past": "The expiry date is in the past"
+         "in_the_past": "Enter an expiry date in the future"
        },
        "expiryYear": {
          "name": "expiry year",
@@ -61,18 +61,17 @@
  },
 
   "chargeView": {
-    "expiry" : "Expiry Date",
+    "expiry" : "Expiry date",
     "cvc": "Card security code",
     "cardNo": "Card number",
     "cardholderName": "Name on card",
-    "building": "Building name and/or number and street",
+    "building": "Building number or name and street",
     "city": "Town or city",
     "postcode": "Postcode",
-    "cvcTip": "The last three digits on the back of the card",
-    "amexcvcTip": "The last four digits after the card number on the front",
-    "amexcvcNonjs": "For American Express",
-    "email": "Email"
-
+    "email": "Email",
+    "cvcTip": "The last 3 digits on the back of the card.",
+    "amexcvcTip": "The last 4 digits after the card number on the front",
+    "amexcvcNonjs": "For American Express,"
   }
 
 }
