@@ -121,7 +121,6 @@ module.exports = {
       }).on('error', connectorNonResponsive);
     }
 
-
     validator.verify(req).then(function(check){
       checkResult = check;
       if (checkResult.hasError) return hasValidationError();
@@ -136,7 +135,6 @@ module.exports = {
           }
       );
     }, unknownFailure);
-
   },
 
   checkCard: function(req, res) {
