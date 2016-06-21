@@ -709,8 +709,8 @@ describe('chargeTests',function(){
           helper.templateValue(res,"session.cardholderName","T Eulenspiegel");
           helper.templateValue(res,"session.address","Kneitlingen, Brunswick, Germany");
           helper.templateValue(res,"session.serviceName","Pranks incorporated");
-          helper.templateValue(res,"amount","23.45");
-          helper.templateValue(res,"description","Payment Description");
+          helper.templateValue(res,"charge.amount","23.45");
+          helper.templateValue(res,"charge.description","Payment Description");
         })
         .end(done);
     });

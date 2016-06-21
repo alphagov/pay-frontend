@@ -92,8 +92,7 @@ module.exports = {
       _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
     },
 
-    unknownFailure = function(err) {
-      console.log('UNKOWN ERROR',err);
+    unknownFailure = function() {
       res.redirect(303, Charge.urlFor('new', req.chargeId));
     },
 
@@ -168,7 +167,6 @@ module.exports = {
   },
 
   confirm: function (req, res) {
-
     var charge = normalise.charge(req.chargeData, req.chargeId),
       chargeSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
@@ -176,13 +174,10 @@ module.exports = {
         success: {
           view: CONFIRM_VIEW,
           locals: {
-            charge_id: charge.id,
+            charge: charge,
             confirmPath: confirmPath,
             session: chargeSession,
-            description: charge.description,
-            amount: charge.amount,
-            email: charge.email,
-            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id})
+            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id}),
           }
         }
       });

@@ -79,8 +79,10 @@ describe('The confirm view', function () {
         'cardholderName': 'Francisco Blaya-Gonzalvez',
         'address': '1 street lane, avenue city, AB1 3DF'
       },
-      'amount': "10.00",
-      'description': "Payment Description & <xss attack> assessment"
+      charge: {
+        'amount': "10.00",
+        'description': "Payment Description & <xss attack> assessment"
+      }
     };
 
     var body = renderTemplate('confirm', templateData);
@@ -96,7 +98,7 @@ describe('The confirm view', function () {
   });
 
   it('should render a confirm button', function () {
-    var body = renderTemplate('confirm', {confirmPath: '/card_details/123/confirm', 'charge_id': 1234});
+    var body = renderTemplate('confirm', {confirmPath: '/card_details/123/confirm', 'charge': {id: 1234 }});
     body.should.containSelector('form#confirmation').withAttributes(
         {
           action: '/card_details/123/confirm',

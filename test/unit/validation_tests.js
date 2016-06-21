@@ -8,7 +8,6 @@ var expect = chai.expect;
 
 describe('form validations', function () {
   it('should allow a correctly formatted email', function(){
-    console.log(fieldValidators);
     expect(fieldValidators.email("bob@bobbington.cbobbjb")).to.equal(true);
     expect(fieldValidators.email("b@bobbington.cbobbjb.dwf")).to.equal(true);
     expect(fieldValidators.email("customer/department=shipping@example.com")).to.equal(true);

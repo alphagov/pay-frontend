@@ -17,7 +17,6 @@ var checkCard = function(cardNo) {
       data: {"cardNumber": parseInt(cardNo) },
       headers: { "Content-Type": "application/json" }
     }, function(data, response) {
-      console.error("PREFIX",data,response.statusCode);
       var card = data;
 
       if (response.statusCode === 404) {
@@ -44,7 +43,6 @@ var checkCard = function(cardNo) {
       defer.resolve();
 
     }).on('error',function(error){
-      console.error("PREFIX_ERROR");
       console.log(error);
       defer.resolve();
     });
