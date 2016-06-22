@@ -91,7 +91,7 @@ Enter your card details.
                 class="form-control"
                 data-last-of-form-group
                 data-required
-                min="16" max="99" pattern="[0-9]*" />
+                min="0" max="99" pattern="[0-9]*" />
               </div>
       </div>
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
@@ -268,12 +268,11 @@ Enter your card details.
         <div class="inner js-stick-at-top-when-scrolling">
             <h2>Payment summary</h2>
             <p>
-                Description:
-                <span id="payment-description">{{description}}</span></p>
+                <span id="payment-description">{{description}}</span>
             </p>
             <p>
-                Amount to pay:
-                <span id="amount" class="amount">£{{amount}}</span></p>
+                Total amount:
+                <span id="amount" class="amount">£{{amount}}</span>
             </p>
         </div>
     </aside>

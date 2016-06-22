@@ -1,7 +1,10 @@
+@import "colours";
+
 #payment-description {
   clear: left;
   display: block;
   float: none;
+  font-weight: bold;
 }
 
 form#card-details {
@@ -38,7 +41,7 @@ form#card-details {
 
   #submit-card-details {
     @include core-19();
-    font-weight: bold;
+    font-weight: normal;
     margin-top: 15px;
   }
 }
@@ -49,12 +52,12 @@ form#card-details {
   border: none;
   display: inline;
   font: inherit;
-  margin: 0;
+  margin: 10px 0 0 2px;
   padding: 0;
   outline: none;
   outline-offset: 0;
   /* Additional styles to look like a link */
-  color: blue;
+  color: $link-colour;
   cursor: pointer;
   text-decoration: underline;
 }

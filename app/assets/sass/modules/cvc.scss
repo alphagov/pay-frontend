@@ -1,7 +1,18 @@
 body:not(.js-enabled) .form-group.cvc .hidden {
   display: block;
   visibility: visible;
+  float: left;
+  margin-right: 3px;
 }
+
+body:not(.js-enabled) .form-group.cvc .amex-cvc {
+  text-transform: lowercase;
+}
+
+body:not(.js-enabled) .form-group.cvc img.amex-cvc {
+  margin-left: 10px;
+}
+
 
 .form-group.cvc {
   .cvc {
@@ -23,5 +34,12 @@ body:not(.js-enabled) .form-group.cvc .hidden {
     line-height: 38px;
     margin-right: 15px;
     color: $secondary-text-colour;
+  }
+  .form-hint {
+    overflow: hidden;
+  }
+
+  span.generic-cvc {
+    display: block;
   }
 }

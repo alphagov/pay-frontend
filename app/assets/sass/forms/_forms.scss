@@ -239,6 +239,8 @@ fieldset {
 
 // Buttons
 .form .button {
+  @include core-19;
+
   @include media(mobile) {
     width: 100%;
   }

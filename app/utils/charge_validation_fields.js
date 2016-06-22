@@ -6,11 +6,11 @@ var validateEmail = require('rfc822-validate');
 module.exports = function(Card){
   "use strict";
   var requiredFormFields = [
-    "cardholderName",
     "cardNo",
-    "cvc",
     "expiryMonth",
     "expiryYear",
+    "cardholderName",
+    "cvc",
     "addressLine1",
     "addressCity",
     "addressPostcode",
