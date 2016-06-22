@@ -21,6 +21,7 @@ var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
 
 
+
 var appendChargeForNewView = function(charge, req, chargeId){
     var cardModel             = Card(session.retrieve(req,chargeId).cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
@@ -101,18 +102,20 @@ module.exports = {
       _views.display(res, "ERROR");
 
     },
+
     hasValidationError = function(){
       appendChargeForNewView(charge, req, charge.id);
       _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
       return res.render(CHARGE_VIEW, checkResult);
-    };
+    },
 
-    var responses = {
+    responses = {
       202: awaitingAuth,
       409: awaitingAuth,
       204: successfulAuth,
       500: connectorFailure
     };
+
     function postAuth(authUrl, req) {
       client.post(authUrl, normalise.apiPayload(req), function (data, json) {
         var response = responses[json.statusCode];
