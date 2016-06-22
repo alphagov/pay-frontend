@@ -30,22 +30,22 @@ Confirm your details.
         </tr>
         <tr>
             <td>Payment for:</td>
-            <td id="payment-description" class="details">{{description}}</td>
+            <td id="payment-description" class="details">{{charge.description}}</td>
         </tr>
         <tr>
             <td>Total amount:</td>
-            <td id="amount" class="details">£{{amount}}</td>
+            <td id="amount" class="details">£{{charge.amount}}</td>
         </tr>
         <tr>
             <td>Confirmation email:</td>
-            <td id="email" class="details">{{email}}</td>
+            <td id="email" class="details">{{charge.email}}</td>
         </tr>
     </table>
 
     <form id="confirmation" method="POST" action="{{confirmPath}}" class="form">
         <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
-        <input id="chargeId" name="chargeId" type="hidden" value="{{charge_id}}" />
-        <button id="confirm" class="button">Confirm payment</button>
+        <input id="chargeId" name="chargeId" type="hidden" value="{{charge.id}}" />
+        <button id="confirm" class="button">Confirm</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{post_cancel_action}}" class="form">
         <div>

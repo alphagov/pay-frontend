@@ -12,11 +12,9 @@ var mockCharge = function () {
   var mock = function (withSuccess, chargeObject) {
     return {
       findByToken: function () {
-        return {
-          then: function (success, fail) {
-            return withSuccess ? success(chargeObject) : fail();
-          }
-        };
+        var defer = q.defer();
+        (withSuccess) ? defer.resolve(chargeObject) : defer.reject();
+        return defer.promise;
       }
     };
   };
@@ -35,11 +33,9 @@ var mockToken = function () {
   var mock = function (withSuccess) {
     return {
       destroy: function () {
-        return {
-          then: function (success, fail) {
-            return withSuccess ? success() : fail();
-          }
-        };
+        var defer = q.defer();
+        (withSuccess) ? defer.resolve() : defer.reject();
+        return defer.promise;
       }
     };
   };
@@ -54,10 +50,26 @@ var mockToken = function () {
   }
 }();
 
+var mockedCard = function(){
+
+  var allConnectorCardTypes = function(){
+     var defer = q.defer();
+    defer.resolve([{brand: "foo"}]);
+    return defer.promise;
+
+  };
+
+  return {
+    allConnectorCardTypes: allConnectorCardTypes
+  };
+
+};
+
 var requireSecureController = function (mockedCharge, mockedToken) {
   return proxyquire(__dirname + '/../../app/controllers/secure_controller.js', {
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
+    '../models/card.js': mockedCard,
     'csrf': function () {
       return {
         secretSync: function () {
@@ -95,9 +107,12 @@ describe('secure controller', function () {
     });
 
     describe('when the token is invalid', function () {
-      it('should display the generic error page', function () {
+      it('should display the generic error page', function (done) {
         requireSecureController(mockCharge.withFailure(), mockToken.withSuccess()).new(request, response);
-        expect(response.render.calledWith('errors/system_error', {viewName: 'SYSTEM_ERROR'})).to.be.true;
+        setTimeout(function(){
+          expect(response.render.calledWith('errors/system_error', {viewName: 'SYSTEM_ERROR'})).to.be.true;
+          done()
+        },0);
       });
     });
 
@@ -110,14 +125,26 @@ describe('secure controller', function () {
       });
 
       describe('then destroyed successfully', function () {
-        it('should store the service name into the session and redirect', function () {
+        it('should store the service name into the session and redirect', function (done) {
           requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess()).new(request, response);
-          expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk');
-          expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
-            'csrfSecret': 'foo',
-            'serviceName': 'Service Name'
-          });
-          expect(response.redirect.calledWith(303,paths.generateRoute("card.new", {chargeId: chargeObject.externalId}))).to.be.true;
+
+          setTimeout(function(){
+            expect(response.redirect.calledWith(303,paths.generateRoute("card.new", {chargeId: chargeObject.externalId}))).to.be.true;
+
+            expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk');
+            expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
+              'csrfSecret': 'foo',
+              'serviceName': 'Service Name',
+              "cardTypes": [{
+                "brand": "foo",
+                "credit": false,
+                "debit": false
+              }]
+            });
+
+            done();
+          },0);
+
         });
       });
     });

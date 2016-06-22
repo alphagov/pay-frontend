@@ -34,7 +34,7 @@ module.exports = function(Card){
       if (!valid) return "luhn_invalid";
       if(!cardType[0]) return "card_not_supported";
       for (var i = 0; i < this.allowedCards.length; i++) {
-        if (this.allowedCards[i].type === cardType[0].type) return true;
+        if (this.allowedCards[i].brand === cardType[0].type) return true;
       }
       return "card_not_supported";
     },

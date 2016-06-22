@@ -43,6 +43,7 @@ module.exports = function() {
   },
 
   creditCard = function(creditCardNo) {
+    creditCardNo = (creditCardNo) ? creditCardNo : "";
     return creditCardNo.replace(/\D/g,'');
   },
 

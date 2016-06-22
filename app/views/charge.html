@@ -49,8 +49,8 @@ Enter your card details.
           <ul class="accepted-cards field-empty">
             {{#allowedCards}}
             <li
-              class="{{type}}"
-              data-key="{{type}}"
+              class="{{brand}}"
+              data-key="{{brand}}"
               data-credit="{{credit}}"
               data-debit="{{debit}}"
             >
@@ -278,6 +278,9 @@ Enter your card details.
     </aside>
 
 </main>
+<script>
+window.chargeId = "{{id}}";
+</script>
 {{/content}}
 
 {{/layout}}

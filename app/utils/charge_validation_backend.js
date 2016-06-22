@@ -3,6 +3,10 @@
 
 var chargeValidator = require('./charge_validation.js');
 var q = require('q');
+var Card = require('../models/card')();
+var _ = require('lodash');
+var normalise = require('../services/normalise_charge.js');
+
 module.exports = function(translations, logger, cardModel) {
   var validator = chargeValidator(
     translations,
@@ -11,31 +15,30 @@ module.exports = function(translations, logger, cardModel) {
   );
 
   var verify = function(req) {
-    //  this should be replaced with the ajax call for checking out the cards
-    // PP-682
 
     var defer = q.defer();
-    setTimeout(function(){
-      var validation = validator.verify(req.body);
-      var isMockJcb = req.body.cardNo === "3528000700000000";
-
-      if (validation.hasError) defer.resolve(validation);
-
-      if (isMockJcb) addCardnotSupportedError(validation);
+    var validation = validator.verify(req.body);
+    Card.checkCard(normalise.creditCard(req.body.cardNo)).then(function(){
       defer.resolve(validation);
-    },50);
+    },function(err){
+      addCardnotSupportedError(validation, err);
+      defer.resolve(validation);
+    });
+
     return defer.promise;
   },
 
-  addCardnotSupportedError = function(validation){
-    var validationString = "jcb credit cards are not supported";
+  addCardnotSupportedError = function(validation,cardErrors){
     validation.hasError  = true;
+    _.remove(validation.errorFields, (errorField) => {
+      return errorField.cssKey === "card-no";
+    });
     validation.errorFields.unshift({
       "cssKey":"card-no",
       "key":"cardNo",
-      "value": validationString
+      "value": cardErrors
     });
-    validation.highlightErrorFields.cardNo = validationString;
+    validation.highlightErrorFields.cardNo = cardErrors;
   };
 
   return {

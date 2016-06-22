@@ -14,6 +14,7 @@ module.exports = function(req,res,next){
   };
 
   var init = function(){
+
     if (!stateCorrect()) return;
     next();
   };

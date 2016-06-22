@@ -39,11 +39,27 @@ var mockNormalise = function () {
 
 }();
 
+var mockSession = function () {
+  var retrieve = function () {
+    return [{
+      brand: "visa",
+      debit: true,
+      credit: false
+    }];
+  };
+
+  return {
+    retrieve: retrieve
+  };
+
+}();
+
 var requireChargeController = function (mockedCharge, mockedNormalise) {
   return proxyquire(__dirname + '/../../app/controllers/charge_controller.js', {
     '../models/charge.js': mockedCharge,
-    '../services/normalise_charge.js': mockedNormalise
-  })
+    '../services/normalise_charge.js': mockedNormalise,
+    '../utils/session.js': mockSession
+  });
 };
 
 describe('card details endpoint', function () {

@@ -19,13 +19,11 @@ var formValidation = function(){
     var validations = allValidations();
     var form = this;
     e.preventDefault();
-
     showCardType().checkCardtypeIsAllowed().then(function(){
       if (!validations.hasError) return form.submit();
       addValidationsErrors();
     },function(error){
       addValidationsErrors();
-      addCardError(error);
     });
   },
 
@@ -36,8 +34,8 @@ var formValidation = function(){
 
   addCardError = function(error){
     var formGroup = getFormGroup(cardInput);
-    replaceLabel( error.text + " not supported", formGroup);
-    prependHighlightError({cssKey: 'card-no', value: error.text + ' not supported'});
+    replaceLabel( error.text, formGroup);
+    prependHighlightError({cssKey: 'card-no', value: error.text});
     $(formGroup).addClass('error');
   },
 
@@ -100,17 +98,30 @@ var formValidation = function(){
   checkValidation = function(input){
     var formGroup = getFormGroup(input),
     validationName= getFormGroupValidation(formGroup),
-    validation    = validationFor(validationName),
-    validated     = validation === undefined;
+    validation    = validationFor(validationName);
 
+    if ($(input).is(cardInput)) {
+      checkCardType(validation, formGroup);
+      return;
+    }
+
+    replaceOnError(validation, formGroup);
+  },
+
+  checkCardType = function(validation, formGroup){
+    showCardType().checkCardtypeIsAllowed()
+    .then(function(){
+      replaceOnError(validation, formGroup);
+
+    },function(error){
+      addCardError(error);
+    });
+  },
+
+  replaceOnError = function(validation, formGroup){
+    var validated = validation === undefined;
     replaceLabel(validation, formGroup);
     $(formGroup).toggleClass('error',!validated);
-    if ($(input).is(cardInput) && validated) {
-      showCardType().checkCardtypeIsAllowed()
-      .then(function(){},function(error){
-        addCardError(error);
-      });
-    }
   },
 
   replaceLabel = function(validation, formGroup){

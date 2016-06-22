@@ -35,6 +35,10 @@ var paths = {
     cancel: {
       path: '/card_details/:chargeId/cancel',
       action: 'post'
+    },
+    checkCard: {
+      path: '/check_card/:chargeId',
+      action: 'post'
     }
   },
   secure: {
@@ -71,6 +75,10 @@ var paths = {
     token: {
       path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId",
       action: 'delete'
+    },
+    allCards: {
+      path: process.env.CONNECTOR_HOST + "/v1/api/card-types",
+      action: 'get'
     }
   }
 };

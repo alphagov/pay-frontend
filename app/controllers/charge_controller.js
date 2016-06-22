@@ -19,16 +19,17 @@ var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
-var cardModelStubMethods = function(req){ return { debitOnly: req.query.debitOnly, removeAmex: req.query.removeAmex}; };
+
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
-    var cardModel             = Card(cardModelStubMethods(req));
+    var cardModel             = Card(session.retrieve(req,chargeId).cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
     charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
     charge.allowedCards       = cardModel.allowed;
     charge.cardsAsStrings     = JSON.stringify(cardModel.allowed);
     charge.post_card_action   = paths.card.create.path;
+    charge.id                 = chargeId;
     charge.post_cancel_action = paths.generateRoute("card.cancel", {
       chargeId: chargeId
     });
@@ -38,7 +39,6 @@ var appendChargeForNewView = function(charge, req, chargeId){
 
 module.exports = {
   new: function (req, res) {
-
     var _views = views.create(),
     charge     = normalise.charge(req.chargeData, req.chargeId);
     appendChargeForNewView(charge, req, charge.id);
@@ -61,7 +61,7 @@ module.exports = {
 
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
-    var cardModel = Card(cardModelStubMethods(req));
+    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
 
@@ -72,8 +72,6 @@ module.exports = {
     );
     var checkResult;
     normalise.addressLines(req.body);
-
-
 
     if (submitted) {
       return res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
@@ -99,6 +97,12 @@ module.exports = {
       res.redirect(303, Charge.urlFor('new', req.chargeId));
     },
 
+    connectorNonResponsive = function (err) {
+      logging.failedChargePostException(err);
+      _views.display(res, "ERROR");
+
+    },
+
     hasValidationError = function(){
       appendChargeForNewView(charge, req, charge.id);
       _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
@@ -120,11 +124,6 @@ module.exports = {
       }).on('error', connectorNonResponsive);
     }
 
-    function connectorNonResponsive(err) {
-      logging.failedChargePostException(err);
-      _views.display(res, "ERROR");
-    }
-
     validator.verify(req).then(function(check){
       checkResult = check;
       if (checkResult.hasError) return hasValidationError();
@@ -139,7 +138,16 @@ module.exports = {
           }
       );
     }, unknownFailure);
+  },
 
+  checkCard: function(req, res) {
+    var charge    = normalise.charge(req.chargeData, req.chargeId);
+    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
+    cardModel.checkCard(normalise.creditCard(req.body.cardNo))
+    .then(
+      ()=>      { res.json({"accepted": true}); },
+      (data)=>  { res.json({"accepted": false, "message": data }); }
+    );
   },
 
   authWaiting: function (req, res) {
@@ -160,7 +168,6 @@ module.exports = {
   },
 
   confirm: function (req, res) {
-
     var charge = normalise.charge(req.chargeData, req.chargeId),
       chargeSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
@@ -168,13 +175,10 @@ module.exports = {
         success: {
           view: CONFIRM_VIEW,
           locals: {
-            charge_id: charge.id,
+            charge: charge,
             confirmPath: confirmPath,
             session: chargeSession,
-            description: charge.description,
-            amount: charge.amount,
-            email: charge.email,
-            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id})
+            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id}),
           }
         }
       });
