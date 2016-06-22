@@ -250,7 +250,7 @@ describe('chargeTests',function(){
       nock(process.env.CONNECTOR_HOST)
         .patch("/v1/frontend/charges/23144323")
         .reply(200);
-        
+
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
       connector_expects(minimum_connector_card_data('5105105105105100'))
@@ -399,10 +399,10 @@ describe('chargeTests',function(){
             helper.templateValue(res,"post_cancel_action","/card_details/23144323/cancel");
 
             helper.templateValue(res,"errorFields", [
-              {"key" : "cardholderName", "cssKey": "cardholder-name", "value": "Enter a valid name"},
               {"key" : "cardNo", "cssKey": "card-no", "value": "Enter a valid card number"},
-              {"key" : "cvc", "cssKey": "cvc", "value": "Enter a valid card security code"},
               {"key" : "expiryMonth", "cssKey": "expiry-date", "value": "Enter a valid expiry date"},
+              {"key" : "cardholderName", "cssKey": "cardholder-name", "value": "Enter a valid name"},
+              {"key" : "cvc", "cssKey": "cvc", "value": "Enter a valid card security code"},
               {"key" : "addressLine1", "cssKey": "address-line-1", "value": "Enter a valid building name/number and street"},
               {"key" : "addressCity", "cssKey": "address-city", "value": "Enter a valid town/city"},
               {"key" : "addressPostcode", "cssKey": "address-postcode", "value": "Enter a valid postcode"},
