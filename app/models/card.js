@@ -43,7 +43,7 @@ var checkCard = function(cardNo) {
       defer.resolve();
 
     }).on('error',function(error){
-      console.log(error);
+      console.log("ERROR CALLING CARD SERVICE", error);
       defer.resolve();
     });
     return defer.promise;
