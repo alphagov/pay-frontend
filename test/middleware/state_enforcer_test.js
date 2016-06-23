@@ -45,7 +45,7 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true;
     assert(status.calledWith(500));
     assert(render.calledWith("error",
-      { message: 'View INVALID_STATE not found',
+      { message: 'There is a problem, please try again later',
       viewName: 'error' }
     ));
   });

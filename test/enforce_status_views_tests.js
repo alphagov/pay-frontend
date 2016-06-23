@@ -45,7 +45,7 @@ describe('The /charge endpoint undealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(500)
         .expect(function(res){
-          helper.templateValue(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
+          helper.templateValue(res,"message", "There is a problem, please try again later");
         })
         .end(done);
     });
@@ -160,7 +160,7 @@ describe('The /confirm endpoint undealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
         .expect(500)
         .expect(function(res){
-          helper.templateValue(res,"message", "View " +  status.toUpperCase().replace(" ", "_") + " not found");
+          helper.templateValue(res,"message", "There is a problem, please try again later");
         })
         .end(done);
     });
