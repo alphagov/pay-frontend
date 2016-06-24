@@ -171,7 +171,7 @@ describe('chargeTests',function(){
         get("invalid")
           .expect(500)
           .expect(function(res){
-            helper.templateValue(res,"message","View INVALID not found");
+            helper.templateValue(res,"message","There is a problem, please try again later");
           }).end(done);
       });
 

@@ -86,8 +86,7 @@ module.exports = function() {
 
       if (!action) {
         logger.error("VIEW " + resName + " NOT FOUND");
-        locals = { message: "View " + resName + " not found" };
-        locals.viewName = 'error';
+        locals = { viewName: 'error' };
         action = this.ERROR;
       }
 

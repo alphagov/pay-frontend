@@ -64,7 +64,7 @@ describe('views helper', function () {
     _views.display(response,"AINT_NO_VIEW_HERE");
     assert(status.calledWith(500));
     assert(render.calledWith("error",
-      { message: 'View AINT_NO_VIEW_HERE not found',
+      { message: 'There is a problem, please try again later',
       viewName: 'error' }
     ));
   });
