@@ -51,6 +51,12 @@ var paths = {
       action: 'post'
     }
   },
+  static: {
+    privacy: {
+      path:"/privacy",
+      action: 'get'
+    }
+  },
   connectorCharge: {
     show: {
       path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId",
