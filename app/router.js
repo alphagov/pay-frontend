@@ -2,12 +2,14 @@ var i18n = require('i18n');
 
 var charge        = require('./controllers/charge_controller.js');
 var secure        = require('./controllers/secure_controller.js');
+var statik        = require('./controllers/static_controller.js');
 
 var paths         = require(__dirname + '/paths.js');
 var csrf          = require(__dirname + '/middleware/csrf.js');
 var actionName    = require(__dirname + '/middleware/action_name.js');
 var stateEnforcer = require(__dirname + '/middleware/state_enforcer.js');
 var retrieveCharge= require(__dirname + '/middleware/retrieve_charge.js');
+
 
 module.exports.paths = paths;
 
@@ -42,4 +44,8 @@ module.exports.bind = function (app) {
   // secure controller
   app.get(paths.secure.get.path, secure.new);
   app.post(paths.secure.post.path, secure.new);
+
+  // static controller
+  app.get(paths.static.privacy.path, statik.privacy);
+
 };
