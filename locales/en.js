@@ -55,6 +55,10 @@
        "email": {
          "name": "email",
          "message": "Enter a valid email"
+       },
+       "addressCountry": {
+           "name": "country",
+           "message": "Enter a valid country"
        }
      }
    }
@@ -68,6 +72,7 @@
     "building": "Building number or name and street",
     "city": "Town or city",
     "postcode": "Postcode",
+    "country": "Country",
     "email": "Email",
     "cvcTip": "The last 3 digits on the back of the card.",
     "amexcvcTip": "The last 4 digits after the card number on the front",
@@ -75,4 +80,3 @@
   }
 
 }
-

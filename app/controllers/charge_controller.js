@@ -18,8 +18,8 @@ var paths = require('../paths.js');
 var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
-var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode'];
-
+var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
+var countries = require("../services/countries");
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
@@ -44,6 +44,7 @@ module.exports = {
     appendChargeForNewView(charge, req, charge.id);
 
     var init = function () {
+      charge.countries = countries().countries;
       if (charge.status === State.ENTERING_CARD_DETAILS) {
         return res.render(CHARGE_VIEW, charge);
       }

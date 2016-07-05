@@ -103,7 +103,8 @@ describe('chargeTests',function(){
       'addressLine1': '32 Whip Ma Whop Ma Avenue',
       'addressPostcode': 'Y1 1YN',
       'addressCity': 'Willy wonka',
-      'email': 'willy@wonka.com'
+      'email': 'willy@wonka.com',
+      'addressCountry': 'GB'
     };
   }
 
@@ -419,6 +420,7 @@ describe('chargeTests',function(){
               {"key" : "addressCity", "cssKey": "address-city", "value": "Enter a valid town/city"},
               {"key" : "addressPostcode", "cssKey": "address-postcode", "value": "Enter a valid postcode"},
               {"key" : "email", "cssKey": "email", "value": "Enter a valid email"},
+              {"key" : "addressCountry", "cssKey": "address-country", "value": "Enter a valid country"}
             ]);
 
             helper.templateValue(res,"highlightErrorFields",{
@@ -430,7 +432,8 @@ describe('chargeTests',function(){
               "cardNo":"Please enter a valid card number",
               "addressCity": "Enter a Town/City",
               "addressLine1": "Enter a billing address",
-              "addressPostcode": "Enter a valid postcode"
+              "addressPostcode": "Enter a valid postcode",
+              "addressCountry": "Enter a valid country"
             });
 
           })

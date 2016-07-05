@@ -45,7 +45,6 @@ module.exports = function(translations, logger, Card) {
 
       pushToErrorFields(name, problem, highlightMessage);
       pushToHighlightField(name, highlightMessage);
-
     },
 
     checkFieldValidation = function(name, value) {

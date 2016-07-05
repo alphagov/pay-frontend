@@ -145,7 +145,7 @@ var formValidation = function(){
   allFields = function(){
     var fields = {};
     $(required).each(function(index,requiredField){
-      fields[requiredField] = $("input[name=" + requiredField + "]");
+      fields[requiredField] = findInputByKey(requiredField);
     });
     return fields;
   },
@@ -171,7 +171,7 @@ var formValidation = function(){
     return $(formGroup).attr('data-validation');
   },
   findInputByKey = function(key){
-    return $("input[name=" + key + "]");
+    return $("input[name=" + key + "], select[name=" + key + "]").first();
   };
 
 
