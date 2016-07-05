@@ -3,21 +3,21 @@
 var fs = require('fs');
 var _ = require('lodash');
 
-var data = {};
+var countries = {};
 
-data.countries = JSON.parse(fs.readFileSync(__dirname + '/../data/countries.json', 'utf8'));
+countries = JSON.parse(fs.readFileSync(__dirname + '/../data/countries.json', 'utf8'));
 // Load additional country data from JSON file
 var extensions = JSON.parse(fs.readFileSync(__dirname + '/../data/country-record-extension.json', 'utf8'));
 
 
 // Merge the additional data into the register data
-_.each(data.countries,function(countryList, i){
-    var country = data.countries[i].entry;
+_.each(countries,function(countryList, i){
+    var country = countries[i].entry;
     if (country.country === "GB") country.selected = true;
 
     //delete east germany etc
     if (country["end-date"]) {
-        delete data.countries[i];
+        delete countries[i];
         return;
     }
 
@@ -30,11 +30,26 @@ _.each(data.countries,function(countryList, i){
 });
 
 
-data.countries  = _.compact(data.countries);
-data.countries  = _.sortBy(data.countries,function(country){
+countries  = _.compact(countries);
+countries  = _.sortBy(countries,function(country){
     country.entry.name.toLowerCase();
 }).reverse();
 
-module.exports = function () {
-    return _.clone(data);
+
+var retrieveCountries = function(){
+    return _.clone(countries);
 };
+
+
+var translateAlpha2 = function(alhpa2Code){
+    var country = _.filter(countries,function(country){
+        return country.entry.country === alhpa2Code;
+    })[0];
+    return country.entry.name;
+};
+
+module.exports = 
+    {
+        retrieveCountries: retrieveCountries,
+        translateAlpha2: translateAlpha2
+    };

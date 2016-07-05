@@ -19,7 +19,7 @@ var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
-var countries = require("../services/countries");
+var countries = require("../services/countries.js");
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
@@ -44,7 +44,7 @@ module.exports = {
     appendChargeForNewView(charge, req, charge.id);
 
     var init = function () {
-      charge.countries = countries().countries;
+      charge.countries = countries.retrieveCountries();
       if (charge.status === State.ENTERING_CARD_DETAILS) {
         return res.render(CHARGE_VIEW, charge);
       }
@@ -169,6 +169,7 @@ module.exports = {
   },
 
   confirm: function (req, res) {
+    console.log(req.body);
     var charge = normalise.charge(req.chargeData, req.chargeId),
       chargeSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),

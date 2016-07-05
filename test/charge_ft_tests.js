@@ -321,7 +321,7 @@ describe('chargeTests',function(){
       form_data.addressLine2 = card_data.address.line2;
       form_data.addressCity = card_data.address.city;
 
-      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Y1 1YN';
+      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Y1 1YN, United Kingdom';
 
       post_charge_request(cookieValue, form_data)
           .expect(303, {})
