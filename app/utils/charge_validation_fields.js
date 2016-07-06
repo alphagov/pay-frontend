@@ -30,7 +30,7 @@ module.exports = function(Card){
       cardNo        = cardNo.replace(/\D/g,'');
       var cardType  = creditCardType(cardNo);
       var valid     = luhn.validate(cardNo);
-      if (!cardNo ||  cardNo.length < 12 || cardNo.length > 16) return 'number_incorrect_length';
+      if (!cardNo ||  cardNo.length < 12 || cardNo.length > 19) return 'number_incorrect_length';
       if (!valid) return "luhn_invalid";
       if(!cardType[0]) return "card_not_supported";
       for (var i = 0; i < this.allowedCards.length; i++) {
