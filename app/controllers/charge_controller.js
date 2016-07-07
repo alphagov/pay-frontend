@@ -169,7 +169,6 @@ module.exports = {
   },
 
   confirm: function (req, res) {
-    console.log(req.body);
     var charge = normalise.charge(req.chargeData, req.chargeId),
       chargeSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
