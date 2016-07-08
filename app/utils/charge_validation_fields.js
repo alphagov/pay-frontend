@@ -1,4 +1,4 @@
-var luhn = require('luhn');
+var luhn = require('./luhn');
 var ukPostcode = require("uk-postcode");
 var creditCardType = require('credit-card-type');
 var validateEmail = require('rfc822-validate');
