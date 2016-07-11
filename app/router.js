@@ -47,7 +47,7 @@ module.exports.bind = function (app) {
 
   // static controller
   app.get(paths.static.privacy.path, statik.privacy);
-  app.get(paths.static.naxsi_error.path, statik.naxsi_error);
+  app.all(paths.static.naxsi_error.path, statik.naxsi_error);
 
 
 };
