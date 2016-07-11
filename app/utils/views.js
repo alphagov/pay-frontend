@@ -28,6 +28,10 @@ module.exports = function() {
       code: 500,
       view: 'errors/system_error',
     },
+    NAXSI_SYSTEM_ERROR: {
+      code: 400,
+      view: 'errors/system_error',
+    },
     UNAUTHORISED: {
       code: 403,
       view: 'errors/system_error',
