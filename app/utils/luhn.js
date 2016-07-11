@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 // COPIED OVER FROM NODE_LUHN
 // https://github.com/JamesEggers1/node-luhn/issues/12
 "use strict";
@@ -45,3 +46,4 @@ module.exports = (function(){
             validate: validate
         };
 } ());
+/* jshint ignore:end */
