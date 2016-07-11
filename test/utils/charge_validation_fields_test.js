@@ -22,9 +22,12 @@ describe('charge validation fields', function () {
 
     it('should return incorrect length', function () {
       var short = fields.fieldValidations.cardNo("4242");
+      var correct = fields.fieldValidations.cardNo("4917610000000000003");
+
       var long = fields.fieldValidations.cardNo("42424242424242424242");
 
       expect(short).to.equal("number_incorrect_length");
+      expect(correct).to.equal(true);
       expect(long).to.equal("number_incorrect_length");
 
     });

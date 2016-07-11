@@ -1,4 +1,4 @@
-var luhn = require('luhn');
+var luhn = require('./luhn');
 var ukPostcode = require("uk-postcode");
 var creditCardType = require('credit-card-type');
 var validateEmail = require('rfc822-validate');
@@ -30,7 +30,7 @@ module.exports = function(Card){
       cardNo        = cardNo.replace(/\D/g,'');
       var cardType  = creditCardType(cardNo);
       var valid     = luhn.validate(cardNo);
-      if (!cardNo ||  cardNo.length < 12 || cardNo.length > 16) return 'number_incorrect_length';
+      if (!cardNo ||  cardNo.length < 12 || cardNo.length > 19) return 'number_incorrect_length';
       if (!valid) return "luhn_invalid";
       if(!cardType[0]) return "card_not_supported";
       for (var i = 0; i < this.allowedCards.length; i++) {
