@@ -1,3 +1,5 @@
+var countries = require("../services/countries");
+
 module.exports = function() {
   "use strict";
 
@@ -23,7 +25,7 @@ module.exports = function() {
       line2: body.addressLine2,
       city: body.addressCity,
       postcode: body.addressPostcode,
-      country: 'GB'
+      country: body.addressCountry
     };
   },
   // body is passed by reference
@@ -33,13 +35,14 @@ module.exports = function() {
         delete body.addressLine2;
     }
   },
+
   // an empty string is equal to false in soft equality used by filter
   addressForView = function(body) {
     return [body.addressLine1,
         body.addressLine2,
         body.addressCity,
-        body.addressPostcode].filter(function(str){return str;}).join(", ");
-
+        body.addressPostcode,
+        countries.translateAlpha2(body.addressCountry)].filter(function(str){return str;}).join(", ");
   },
 
   creditCard = function(creditCardNo) {

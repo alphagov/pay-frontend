@@ -34,7 +34,8 @@ var unNormalisedAddress = {
   addressLine1: "a",
   addressLine2: "b",
   addressCity: "c",
-  addressPostcode: "d"
+  addressPostcode: "d",
+  addressCountry: "GB"
 };
 
 var normalisedApiAddress = {
@@ -56,7 +57,7 @@ describe('normalise', function () {
   });
 
   describe('api address', function () {
-    it('should return a refined adress for the api', function () {
+    it('should return a refined address for the api', function () {
       var result = normalise.addressForApi(unNormalisedAddress);
       expect(result).to.deep.equal(normalisedApiAddress);
     });
@@ -80,14 +81,14 @@ describe('normalise', function () {
   describe('address for view', function () {
     it('should return a comma seperated address', function () {
       var address = normalise.addressForView(unNormalisedAddress);
-      expect(address).to.deep.equal("a, b, c, d");
+      expect(address).to.deep.equal("a, b, c, d, United Kingdom");
     });
 
     it('should return a comma seperated address even with something missing', function () {
       var unNormalised = _.cloneDeep(unNormalisedAddress);
       delete unNormalised.addressCity;
       var address = normalise.addressForView(unNormalised);
-      expect(address).to.deep.equal("a, b, d");
+      expect(address).to.deep.equal("a, b, d, United Kingdom");
     });
 
   });

@@ -107,27 +107,37 @@ describe('charge validation fields', function () {
   describe('postcode', function () {
 
     it('should true if correct', function () {
-      var result = fields.fieldValidations.addressPostcode("N4 2BQ");
+      var result = fields.fieldValidations.addressPostcode("N4 2BQ", { addressCountry: "GB" });
       expect(result).to.equal(true);
     });
 
     it('should invalid length if too long', function () {
-      var result = fields.fieldValidations.addressPostcode("N4 2BQQ");
+      var result = fields.fieldValidations.addressPostcode("N4 2BQQ", { addressCountry: "GB" });
       expect(result).to.equal("message");
     });
 
+    it('should always validate if foreign country - undefined', function () {
+      var result = fields.fieldValidations.addressPostcode(undefined,{ addressCountry: "FOO"});
+      expect(result).to.equal(true);
+    });
+
+    it('should always validate if foreign country - bad format', function () {
+      var result = fields.fieldValidations.addressPostcode("asdf",{ addressCountry: "FOO"});
+      expect(result).to.equal(true);
+    });
+
     it('should invalid length if too short', function () {
-      var result = fields.fieldValidations.addressPostcode("N4");
+      var result = fields.fieldValidations.addressPostcode("N4", { addressCountry: "GB" });
       expect(result).to.equal("message");
     });
 
     it('should invalid length if undefined', function () {
-      var result = fields.fieldValidations.addressPostcode(undefined);
+      var result = fields.fieldValidations.addressPostcode(undefined, { addressCountry: "GB" });
       expect(result).to.equal("message");
     });
 
     it('should invalid length if empty', function () {
-      var result = fields.fieldValidations.addressPostcode('');
+      var result = fields.fieldValidations.addressPostcode('', { addressCountry: "GB" });
       expect(result).to.equal("message");
     });
   });

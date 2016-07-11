@@ -208,6 +208,38 @@ Enter your card details.
                      value="{{ addressCity }}"  />
           </label>
       </div>
+      <div class="form-group{{#highlightErrorFields.addressCountry}} error{{/highlightErrorFields.addressCountry}}" data-validation="addressCountry">
+          <label id="address-country-lbl" for="address-country" class="form-label-bold">
+              <span
+                      class="address-country-label"
+                      data-label-replace="addressCountry"
+                      data-original-label="{{ i18n.chargeView.country }}">
+                {{ i18n.chargeView.country }}
+              </span>
+
+              {{#highlightErrorFields.addressCountry}}
+              <p class="error-message" id="error-address-country">
+                  {{highlightErrorFields.addressCountry}}
+              </p>
+              {{/highlightErrorFields.addressCountry}}
+
+              <div class="ui-front">
+                  <!--<label for="#address-country" class="form-label">Country of birth</label>-->
+                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocorrect="off" autocomplete="off">
+                      {{#countries}}
+
+                      <option
+                              value="{{ entry.country }}"
+                              data-aliases="{{ entry.aliases }}"
+                              data-weighting="{{ entry.weighting }}"
+                              {{#entry.selected }} selected="selected" {{/entry.selected }}
+                      >{{ entry.name }}</option>
+                      {{/countries}}
+
+                  </select>
+              </div>
+          </label>
+      </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">
           <label id="address-postcode-lbl" for="address-postcode" class="form-label-bold">
               <span

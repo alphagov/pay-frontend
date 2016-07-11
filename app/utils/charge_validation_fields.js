@@ -14,7 +14,8 @@ module.exports = function(Card){
     "addressLine1",
     "addressCity",
     "addressPostcode",
-    "email"
+    "email",
+    "addressCountry"
   ];
 
   /*
@@ -68,7 +69,8 @@ module.exports = function(Card){
       return "invalid_length";
     },
 
-    addressPostcode: function(AddressPostcode){
+    addressPostcode: function(AddressPostcode, allFields){
+      if (allFields.addressCountry !== "GB") return true;
       var postCode = ukPostcode.fromString(AddressPostcode);
       if (postCode.isComplete()) { return true; }
       return "message";
@@ -88,12 +90,7 @@ module.exports = function(Card){
     creditCardType: creditCardType,
     allowedCards: Card.allowed,
     requiredFormFields: requiredFormFields,
-    fieldValidations: fieldValidations,
+    fieldValidations: fieldValidations
   };
 
 };
-
-
-
-
-
