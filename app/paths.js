@@ -55,6 +55,12 @@ var paths = {
     privacy: {
       path:"/privacy",
       action: 'get'
+    },
+
+    naxsi_error: {
+      path:"/400",
+      action: 'get',
+      message: "Please try again later"
     }
   },
   connectorCharge: {

@@ -52,7 +52,7 @@ describe('static controller', function () {
 
     it('should render ok', function () {
       requireStaticController().naxsi_error(request, response);
-      expect(response.render.calledWith('errors/system_error')).to.be.true;
+      expect(response.render.calledWith('error')).to.be.true;
       expect(response.status.calledWith(400)).to.be.true;
 
     });
