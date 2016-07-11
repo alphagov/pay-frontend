@@ -107,7 +107,7 @@ var showCardType = function(){
       // this should already be picked up by the other validations
       if (card.length !== 1) return defer.resolve();
       $.post('/check_card/' + chargeId,
-        {cardNo: cardInput.val() }
+        {cardNo: cardInput.val().replace(/\D/g,'') }
       ).success(function(data){
         if (data.accepted) return defer.resolve();
         return defer.reject({text: data.message});
