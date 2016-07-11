@@ -40,6 +40,7 @@ describe('static controller', function () {
     before(function () {
 
       request = {
+        headers: {}
       };
 
       response = {
