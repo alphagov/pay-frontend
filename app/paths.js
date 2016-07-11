@@ -58,9 +58,9 @@ var paths = {
     },
 
     naxsi_error: {
-      path:"/400",
+      path:"/request-denied",
       action: 'get',
-      message: "Please try again later"
+      message: "An invalid character was entered, please try again"
     }
   },
   connectorCharge: {
