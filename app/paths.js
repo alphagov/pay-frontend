@@ -55,6 +55,12 @@ var paths = {
     privacy: {
       path:"/privacy",
       action: 'get'
+    },
+
+    naxsi_error: {
+      path:"/request-denied",
+      action: 'get',
+      message: "An invalid character was entered, please try again"
     }
   },
   connectorCharge: {
