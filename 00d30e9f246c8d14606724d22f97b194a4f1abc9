@@ -15,3 +15,5 @@ stage.tag=alpha_staging-10
 stage.alpha_staging-10.date=2016-07-12:10:16:34
 
 stage.alpha_staging-10.status=success
+
+alpha_staging-10.approver=imran.bohoran@digital.cabinet-office.gov.uk
