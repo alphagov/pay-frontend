@@ -21,3 +21,5 @@ alpha_staging-10.approver=imran.bohoran@digital.cabinet-office.gov.uk
 alpha_staging-10.approve-date=2016-07-12:15:58:21
 
 production.tag=alpha_production-10
+
+production.alpha_production-10.date=2016-07-12:14:59:37
