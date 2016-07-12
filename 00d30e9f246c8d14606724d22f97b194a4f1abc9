@@ -9,3 +9,5 @@ release.alpha_release-10.date=2016-07-12:08:50:27
 alpha_release-10.approver=imran.bohoran@digital.cabinet-office.gov.uk
 
 alpha_release-10.approve-date=2016-07-12:11:00:32
+
+stage.tag=alpha_staging-10
