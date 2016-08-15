@@ -47,7 +47,7 @@ var formValidation = function(){
   },
 
   generateHighlightBlock = function(){
-    errorSummary.removeClass('hidden');
+    errorSummary.removeClass('hidden').attr('aria-hidden','false');
     $('.error-summary-list').empty();
     appendHighlightErrors();
 
@@ -128,9 +128,9 @@ var formValidation = function(){
     var label = formGroup.find('[data-label-replace]');
     if (label.length === 0) return;
     if (validation) {
-      label.text(validation);
+      label.text(validation).attr('role','alert');
     } else {
-      label.text(label.attr('data-original-label'));
+      label.text(label.attr('data-original-label')).removeAttr('role');
     }
   },
 
