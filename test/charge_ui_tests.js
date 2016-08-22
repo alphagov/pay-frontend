@@ -73,13 +73,13 @@ describe('The confirm view', function () {
 
   it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
     var templateData = {
-      session: {
-        'cardNumber': "************5100",
-        'expiryDate': "11/99",
-        'cardholderName': 'Francisco Blaya-Gonzalvez',
-        'address': '1 street lane, avenue city, AB1 3DF'
-      },
       charge: {
+        'confirmationDetails': {
+          'cardNumber': "************5100",
+          'expiryDate': "11/99",
+          'cardholderName': 'Francisco Blaya-Gonzalvez',
+          'billingAddress': '1 street lane, avenue city, AB1 3DF'
+        },
         'amount': "10.00",
         'description': "Payment Description & <xss attack> assessment"
       }

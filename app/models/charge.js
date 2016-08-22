@@ -64,6 +64,7 @@ module.exports = function() {
     var defer = q.defer();
     var url = connectorurl('show',{chargeId: chargeId});
 
+    //todo here we call connector to get the charge
     logger.debug('Calling connector to get charge -', {
       service: 'connector',
       method: 'GET',
