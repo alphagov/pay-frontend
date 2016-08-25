@@ -133,13 +133,7 @@ describe('secure controller', function () {
 
             expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk');
             expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
-              'csrfSecret': 'foo',
-              'serviceName': 'Service Name',
-              "cardTypes": [{
-                "brand": "foo",
-                "credit": false,
-                "debit": false
-              }]
+              'csrfSecret': 'foo'
             });
 
             done();
