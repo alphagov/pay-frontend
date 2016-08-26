@@ -135,7 +135,15 @@ describe('chargeTests',function(){
           'amount': 2345,
           'description': "Payment Description",
           'status': status,
-          'return_url': "http://www.example.com/service"
+          'return_url': "http://www.example.com/service",
+          'gateway_account': {
+            'service_name': 'Pranks incorporated',
+            'card_types': [{
+              'type': 'CREDIT',
+              'brand': 'VISA',
+              'label': 'Visa'
+            }]
+          }
         });
         nock(process.env.CONNECTOR_HOST)
         .put("/v1/frontend/charges/23144323/status")
@@ -585,10 +593,10 @@ describe('chargeTests',function(){
               .end(done);
         });
         it('It should show card details page with correct text for credit card only', function (done){
-            var cookieValue = cookie.createWithDebitOnly(chargeId);
+            var cookieValue = cookie.create(chargeId);
             nock(process.env.CONNECTOR_HOST)
               .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
-              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
+              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge_debit_card_only(enteringCardDetailsState,"http://www.example.com/service"));
 
             get_charge_request(app, cookieValue, chargeId,"?debitOnly=true")
               .expect(200)
@@ -599,10 +607,10 @@ describe('chargeTests',function(){
         });
 
         it('It should not show amex if it is excluded', function (done){
-            var cookieValue = cookie.createWithDebitOnly(chargeId);
+            var cookieValue = cookie.create(chargeId);
             nock(process.env.CONNECTOR_HOST)
               .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
-              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
+              .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge_debit_card_only(enteringCardDetailsState,"http://www.example.com/service"));
 
             get_charge_request(app, cookieValue, chargeId,"?removeAmex=true")
               .expect(200)

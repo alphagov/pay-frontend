@@ -1,5 +1,4 @@
 var request = require('supertest');
-var should = require('chai').should();
 var _       = require('lodash');
 
 var frontendCardDetailsPath = '/card_details';
@@ -33,6 +32,52 @@ function init_connector_url() {
   process.env.CONNECTOR_URL = localServer() + connectorChargePath + '{chargeId}';
 }
 
+function cardTypes(){
+  return [
+    {
+      brand: "visa",
+      debit: true,
+      credit: true
+    },
+    {
+      brand: "master-card",
+      debit: true,
+      credit: true
+    },
+    {
+      brand: "american-express",
+      debit: false,
+      credit: true
+    },
+    {
+      brand: "jcb",
+      debit: true,
+      credit: true
+    },
+    {
+      brand: "diners-club",
+      debit: true,
+      credit: true
+    },
+    {
+      brand: "discover",
+      debit: true,
+      credit: true
+    }
+  ];
+}
+
+function raw_successful_get_charge_debit_card_only(status, returnUrl, chargeId) {
+  var charge = raw_successful_get_charge(status, returnUrl, chargeId);
+  charge.gateway_account.card_types = [
+    {
+      'type': 'DEBIT',
+      'brand': 'visa',
+      'label': 'visa'
+    }
+  ];
+  return charge;
+}
 
 
 function raw_successful_get_charge(status, returnUrl, chargeId) {
@@ -54,7 +99,42 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
       'href': connectorCaptureUrl(chargeId),
       'rel': 'cardCapture',
       'method': 'POST'
-    }]
+    }],
+    'gateway_account': {
+      'service_name': 'Pranks incorporated',
+      'card_types': [
+        {
+          'type': 'DEBIT',
+          'brand': 'visa',
+          'label': 'visa'
+        },
+        {
+          'type': 'DEBIT',
+          'brand': 'master-card',
+          'label': 'master-card'
+        },
+        {
+          'type': 'CREDIT',
+          'brand': 'american-express',
+          'label': 'american-express'
+        },
+        {
+          'type': 'DEBIT',
+          'brand': 'jcb',
+          'label': 'jcb'
+        },
+        {
+          'type': 'DEBIT',
+          'brand': 'diners-club',
+          'label': 'diners-club'
+        },
+        {
+          'type': 'DEBIT',
+          'brand': 'discover',
+          'label': 'discover'
+        }
+      ]
+    }
   };
   if (status == "AUTHORISATION SUCCESS") {
     charge.confirmation_details = {
@@ -121,6 +201,7 @@ module.exports = {
   },
 
   raw_successful_get_charge: raw_successful_get_charge,
+  raw_successful_get_charge_debit_card_only: raw_successful_get_charge_debit_card_only,
 
   templateValue: function(res,key,value){
     var body = JSON.parse(res.text);
@@ -143,6 +224,8 @@ module.exports = {
 
   csrfToken: function(){
     return csrf().create(process.env.CSRF_USER_SECRET);
-  }
+  },
+
+  cardTypes: cardTypes
 
 };

@@ -23,7 +23,7 @@ var countries = require("../services/countries.js");
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
-    var cardModel             = Card(session.retrieve(req,chargeId).cardTypes);
+    var cardModel             = Card(charge.gatewayAccount.cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
     charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
     charge.allowedCards       = cardModel.allowed;
@@ -62,7 +62,7 @@ module.exports = {
 
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
-    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
+    var cardModel = Card(charge.gatewayAccount.cardTypes);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
 
@@ -141,7 +141,7 @@ module.exports = {
 
   checkCard: function(req, res) {
     var charge    = normalise.charge(req.chargeData, req.chargeId);
-    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
+    var cardModel = Card(charge.gatewayAccount.cardTypes);
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
     .then(
       ()=>      { res.json({"accepted": true}); },

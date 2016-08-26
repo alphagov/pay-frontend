@@ -1,5 +1,6 @@
 var countries = require("../services/countries");
 var humps = require("humps");
+var normaliseCards = require('../services/normalise_cards.js');
 
 module.exports = function() {
   "use strict";
@@ -12,7 +13,8 @@ module.exports = function() {
       description: charge.description,
       links: charge.links,
       status: charge.status,
-      email: charge.email
+      email: charge.email,
+      gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     };
      if (charge.confirmation_details) {
        chargeObj.confirmationDetails = _normaliseConfirmationDetails(charge.confirmation_details);
@@ -55,6 +57,12 @@ module.exports = function() {
       address.city,
       address.postcode,
       countries.translateAlpha2(address.country)].filter(function(str){return str;}).join(", ");
+  },
+
+  _normaliseGatewayAccountDetails = function (accountDetails) {
+    var gatewayAccountDetails = humps.camelizeKeys(accountDetails);
+    gatewayAccountDetails.cardTypes = normaliseCards(gatewayAccountDetails.cardTypes);
+    return gatewayAccountDetails;
   },
 
   // an empty string is equal to false in soft equality used by filter

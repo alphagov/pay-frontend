@@ -1,10 +1,9 @@
 var should = require('chai').should();
 var assert = require('assert');
 var expect = require('chai').expect;
-var cardTypes = require(__dirname + '/../test_helpers/session.js').cardTypes();
+var cardTypes = require(__dirname + '/../test_helpers/test_helpers.js').cardTypes();
 var Card  = require(__dirname + '/../../app/models/card.js')(cardTypes);
 var fields= require(__dirname + '/../../app/utils/charge_validation_fields.js')(Card);
-
 
 describe('charge validation fields', function () {
 
