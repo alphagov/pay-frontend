@@ -7,7 +7,6 @@ var Client = require('node-rest-client').Client;
 var client = new Client();
 var _ = require('lodash');
 var views = require('../utils/views.js');
-var session = require('../utils/session.js');
 var normalise = require('../services/normalise_charge.js');
 var chargeValidator = require('../utils/charge_validation_backend.js');
 var i18n = require('i18n');
@@ -168,7 +167,6 @@ module.exports = {
 
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId),
-      serviceSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
       _views = views.create({
         success: {
@@ -176,11 +174,10 @@ module.exports = {
           locals: {
             charge: charge,
             confirmPath: confirmPath,
-            session: serviceSession,
+            gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
             post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id}),
           }
         }
-
       });
 
     var init = function () {

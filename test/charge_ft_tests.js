@@ -664,16 +664,12 @@ describe('chargeTests',function(){
       nock.cleanAll();
     });
 
-    var fullSessionData = {
-      'serviceName': 'Pranks incorporated'
-    };
-
     it('should return the data needed for the UI', function (done) {
 
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("AUTHORISATION SUCCESS","http://www.example.com/service"));
 
-      var cookieValue = cookie.create(chargeId, fullSessionData);
+      var cookieValue = cookie.create(chargeId);
 
       get_charge_request(app, cookieValue, chargeId, '/confirm')
         .expect(200)
@@ -683,7 +679,7 @@ describe('chargeTests',function(){
           helper.templateValue(res,"charge.confirmationDetails.expiryDate","11/99");
           helper.templateValue(res,"charge.confirmationDetails.cardholderName","Test User");
           helper.templateValue(res,"charge.confirmationDetails.billingAddress","line1, line2, city, postcode, United Kingdom");
-          helper.templateValue(res,"session.serviceName","Pranks incorporated");
+          helper.templateValue(res,"charge.gatewayAccount.serviceName","Pranks incorporated");
           helper.templateValue(res,"charge.amount","23.45");
           helper.templateValue(res,"charge.description","Payment Description");
         })
