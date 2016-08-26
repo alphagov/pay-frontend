@@ -14,19 +14,19 @@ Confirm your details.
     <table class="confirm-details">
         <tr>
             <td>Card number:</td>
-            <td id="card-number" class="details">{{session.cardNumber}}</td>
+            <td id="card-number" class="details">{{charge.confirmationDetails.cardNumber}}</td>
         </tr>
         <tr>
             <td>Expiry date:</td>
-            <td id="expiry-date" class="details">{{session.expiryDate}}</td>
+            <td id="expiry-date" class="details">{{charge.confirmationDetails.expiryDate}}</td>
         </tr>
         <tr>
             <td>Name on card:</td>
-            <td id="cardholder-name" class="details">{{session.cardholderName}}</td>
+            <td id="cardholder-name" class="details">{{charge.confirmationDetails.cardholderName}}</td>
         </tr>
         <tr>
             <td>Billing address:</td>
-            <td id="address" class="details">{{session.address}}</td>
+            <td id="address" class="details">{{charge.confirmationDetails.billingAddress}}</td>
         </tr>
         <tr>
             <td>Payment for:</td>

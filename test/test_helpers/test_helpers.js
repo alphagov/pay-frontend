@@ -34,8 +34,9 @@ function init_connector_url() {
 }
 
 
+
 function raw_successful_get_charge(status, returnUrl, chargeId) {
-  return {
+  var charge = {
     'amount': 2345,
     'description': "Payment Description",
     'status': status,
@@ -54,7 +55,23 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
       'rel': 'cardCapture',
       'method': 'POST'
     }]
+  };
+  if (status == "AUTHORISATION SUCCESS") {
+    charge.confirmation_details = {
+      'cardholder_name': 'Test User',
+      'last_digits_card_number': '1234',
+      'expiry_date': '11/99',
+      'billing_address': {
+        'line1': 'line1',
+        'line2': 'line2',
+        'city': 'city',
+        'postcode': 'postcode',
+        'county': 'county',
+        'country': 'GB'
+      }
+    }
   }
+  return charge;
 }
 
 module.exports = {

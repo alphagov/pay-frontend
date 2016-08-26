@@ -80,12 +80,10 @@ module.exports = {
 
     var awaitingAuth = function() {
       logging.failedChargePost(409,authUrl);
-      session.store(req);
       res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
     },
 
     successfulAuth = function() {
-      session.store(req);
       res.redirect(303, Charge.urlFor('confirm', req.chargeId));
     },
 
@@ -170,7 +168,7 @@ module.exports = {
 
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId),
-      chargeSession = session.retrieve(req, charge.id),
+      serviceSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
       _views = views.create({
         success: {
@@ -178,10 +176,11 @@ module.exports = {
           locals: {
             charge: charge,
             confirmPath: confirmPath,
-            session: chargeSession,
+            session: serviceSession,
             post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id}),
           }
         }
+
       });
 
     var init = function () {

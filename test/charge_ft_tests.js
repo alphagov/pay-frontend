@@ -304,37 +304,6 @@ describe('chargeTests',function(){
           .end(done);
     });
 
-    it('should add card data including optional fields to the chargeIds session', function (done) {
-      var cookieValue = cookie.create(chargeId);
-      defaultCardID('4242424242424242');
-
-      nock(process.env.CONNECTOR_HOST)
-        .patch("/v1/frontend/charges/23144323")
-        .reply(200);
-      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
-
-      connectorMock.post(connectorChargePath + chargeId + '/cards').reply(204);
-
-      var card_data = full_connector_card_data('5105105105105100');
-      var form_data = minimum_form_card_data('5105105105105100');
-
-      form_data.addressLine2 = card_data.address.line2;
-      form_data.addressCity = card_data.address.city;
-
-      var address = '32 Whip Ma Whop Ma Avenue, bla bla, London, Y1 1YN, United Kingdom';
-
-      post_charge_request(cookieValue, form_data)
-          .expect(303, {})
-          .expect(function(res) {
-                    var session = cookie.decrypt(res, chargeId);
-                    should.equal(session.cardNumber, "************5100");
-                    should.equal(session.expiryDate, '11/99');
-                    should.equal(session.cardholderName, 'Jimi Hendrix');
-                    should.equal(session.address, address);
-                  })
-          .end(done);
-    });
-
     it('show an error page when authorization was refused', function(done) {
       var cookieValue = cookie.create(chargeId);
 
@@ -688,11 +657,6 @@ describe('chargeTests',function(){
     });
 
     var fullSessionData = {
-
-      'cardNumber': "************5100",
-      'expiryDate': "11/99",
-      'cardholderName': 'T Eulenspiegel',
-      'address': 'Kneitlingen, Brunswick, Germany',
       'serviceName': 'Pranks incorporated'
     };
 
@@ -701,16 +665,16 @@ describe('chargeTests',function(){
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("AUTHORISATION SUCCESS","http://www.example.com/service"));
 
-      request(app)
-        .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
+      var cookieValue = cookie.create(chargeId, fullSessionData);
+
+      get_charge_request(app, cookieValue, chargeId, '/confirm')
         .expect(200)
         .expect(function(res){
           helper.templateValueNotUndefined(res,"csrf");
-          helper.templateValue(res,"session.cardNumber","************5100");
-          helper.templateValue(res,"session.expiryDate","11/99");
-          helper.templateValue(res,"session.cardholderName","T Eulenspiegel");
-          helper.templateValue(res,"session.address","Kneitlingen, Brunswick, Germany");
+          helper.templateValue(res,"charge.confirmationDetails.cardNumber","************1234");
+          helper.templateValue(res,"charge.confirmationDetails.expiryDate","11/99");
+          helper.templateValue(res,"charge.confirmationDetails.cardholderName","Test User");
+          helper.templateValue(res,"charge.confirmationDetails.billingAddress","line1, line2, city, postcode, United Kingdom");
           helper.templateValue(res,"session.serviceName","Pranks incorporated");
           helper.templateValue(res,"charge.amount","23.45");
           helper.templateValue(res,"charge.description","Payment Description");

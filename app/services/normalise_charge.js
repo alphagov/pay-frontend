@@ -1,10 +1,11 @@
 var countries = require("../services/countries");
+var humps = require("humps");
 
 module.exports = function() {
   "use strict";
 
   var _charge = function(charge,chargeId) {
-    return {
+    var chargeObj = {
       id: chargeId,
       amount: penceToPounds(charge.amount),
       return_url: charge.return_url,
@@ -13,6 +14,10 @@ module.exports = function() {
       status: charge.status,
       email: charge.email
     };
+     if (charge.confirmation_details) {
+       chargeObj.confirmationDetails = _normaliseConfirmationDetails(charge.confirmation_details);
+     }
+     return chargeObj;
   },
 
   penceToPounds = function(pence) {
@@ -34,6 +39,22 @@ module.exports = function() {
         body.addressLine1 = body.addressLine2;
         delete body.addressLine2;
     }
+  },
+
+  _normaliseConfirmationDetails = function(confirmationDetails){
+    confirmationDetails.cardNumber = '************' + confirmationDetails.last_digits_card_number;
+    delete confirmationDetails.last_digits_card_number;
+    var normalisedDetails = humps.camelizeKeys(confirmationDetails);
+    normalisedDetails.billingAddress = _normaliseAddress(confirmationDetails.billing_address);
+    return normalisedDetails;
+  },
+
+  _normaliseAddress = function(address) {
+    return [address.line1,
+      address.line2,
+      address.city,
+      address.postcode,
+      countries.translateAlpha2(address.country)].filter(function(str){return str;}).join(", ");
   },
 
   // an empty string is equal to false in soft equality used by filter
