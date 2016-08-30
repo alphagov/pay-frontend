@@ -274,6 +274,10 @@ fieldset {
   }
 }
 
+select.form-control {
+  -webkit-appearance: menulist;
+}
+
 .form-control-3-4 {
   @extend .form-control;
   width: 100%;
@@ -309,9 +313,10 @@ fieldset {
 
 
 .confirm-details {
-  td {
+  th {
     &:first-child {
       width: $one-third;
+      text-align: left;
     }
   }
 

@@ -6,10 +6,10 @@ Enter your card details.
 {{/pageTitle}}
 
 {{$content}}
-<main id="content" role="main" class="content-wrapper charge-new">
+<main id="content" class="content-wrapper charge-new">
 
 
-  <div class="error-summary {{^hasError}} hidden {{/hasError}}" role="group" id="error-summary" >
+  <div class="error-summary {{^hasError}} hidden {{/hasError}}" role="group" id="error-summary" aria-hidden="true">
       <h1 class="heading-medium error-summary-heading" id="error-message">The following fields are missing or contain errors</h1>
       <ul class="error-summary-list">
         {{#errorFields}}
@@ -65,13 +65,15 @@ Enter your card details.
           </p>
       </div>
       <div class="form-group{{#highlightErrorFields.expiryMonth}} error{{/highlightErrorFields.expiryMonth}} expiry-date" data-validation="expiryMonth">
-          <p
+          <label
             id="expiry-date-lbl"
             class="form-label-bold expiry-date-label"
             data-label-replace="expiryMonth"
-            data-original-label="{{ i18n.chargeView.expiry }}">
+            data-original-label="{{ i18n.chargeView.expiry }}"
+            for="expiry-month"
+            >
             {{ i18n.chargeView.expiry }}
-          </p>
+          </label>
           <p class="form-hint-bold form-hint">For example, 07/17</p>
               {{#highlightErrorFields.expiryMonth}}
                 <p class="error-message" id="error-expiry-date">
@@ -79,19 +81,19 @@ Enter your card details.
                 </p>
               {{/highlightErrorFields.expiryMonth}}
               <div class="date-container">
-                <div class="form-hint"> Month </div>
-                <input id="expiry-month" type="number" name="expiryMonth" maxlength="2"
+                <label class="form-hint" for="expiry-month"> Month </label>
+                <input id="expiry-month" type="number" name="expiryMonth"
                 class="form-control"
-                min="1" max="12" pattern="[0-9]*" />
+                min="1" max="12" />
                 <p class="seperator"> / </p>
               </div>
               <div class="date-container">
                 <div class="form-hint"> Year </div>
-                <input id="expiry-year" type="number" name="expiryYear" maxlength="2"
+                <input id="expiry-year" type="number" name="expiryYear"
                 class="form-control"
                 data-last-of-form-group
                 data-required
-                min="0" max="99" pattern="[0-9]*" />
+                min="0" max="99" />
               </div>
       </div>
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
@@ -124,7 +126,7 @@ Enter your card details.
               data-original-label="{{ i18n.chargeView.cvc }}">
               {{ i18n.chargeView.cvc }}
               </span>
-              <p class="form-hint">
+              <span class="form-hint">
                 <span class="generic-cvc">
                   {{ i18n.chargeView.cvcTip }}
                 </span>
@@ -134,7 +136,7 @@ Enter your card details.
                 <span class="amex-cvc hidden">
                   {{ i18n.chargeView.amexcvcTip }}
                 </span>
-              </p>
+              </span>
               {{#highlightErrorFields.cvc}}
                   <p class="error-message" id="error-cvc">
                         {{highlightErrorFields.cvc}}
@@ -144,15 +146,13 @@ Enter your card details.
                 type="number"
                 value=""
                 name="cvc"
-                maxlength="4"
                 class="form-control-1-8 cvc"
-                autocomplete="off"
-                pattern="[0-9]*" />
-              <img src="/images/security-code.png" class="generic-cvc" />
+                autocomplete="off" />
+              <img src="/images/security-code.png" class="generic-cvc" alt="Please enter either a 3 or 4 digit card security code"/>
               <span class="either hidden">
                 or
               </span>
-              <img src="/images/amex-security-code.png" class="amex-cvc hidden" />
+              <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="Please enter either a 3 or 4 digit card security code" />
           </label>
       </div>
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
@@ -185,7 +185,8 @@ Enter your card details.
                  maxlength="100"
                  class="form-control-1-2"
                  data-last-of-form-group
-                 value ="{{ addressLine2 }}" />
+                 value ="{{ addressLine2 }}"
+                 aria-label="Enter address line 2" />
       </div>
       <div class="form-group{{#highlightErrorFields.addressCity}} error{{/highlightErrorFields.addressCity}}" data-validation="addressCity">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
@@ -223,9 +224,9 @@ Enter your card details.
               </p>
               {{/highlightErrorFields.addressCountry}}
 
-              <div class="ui-front">
+              <span class="ui-front form-label-bold">
                   <!--<label for="#address-country" class="form-label">Country of birth</label>-->
-                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocorrect="off" autocomplete="off">
+                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocomplete="off">
                       {{#countries}}
 
                       <option
@@ -237,7 +238,7 @@ Enter your card details.
                       {{/countries}}
 
                   </select>
-              </div>
+              </span>
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">
@@ -270,7 +271,7 @@ Enter your card details.
                 data-original-label="{{ i18n.chargeView.email }}">
                 {{ i18n.chargeView.email }}
               </span>
-              <p class="form-hint">We'll send your payment confirmation here</p>
+              <span class="form-hint">We'll send your payment confirmation here</span>
 
               {{#highlightErrorFields.email}}
                 <p class="error-message" id="error-email">
@@ -292,7 +293,7 @@ Enter your card details.
   </form>
   <form id="cancel" name="cancel" method="POST" action="{{post_cancel_action}}" class="form">
       <div>
-          <input id="cancel-payment" type="submit" class="link" value="Cancel" name="cancel">
+          <input id="cancel-payment" type="submit" class="link" value="Cancel payment" name="cancel">
           <input id="csrf2" name="csrfToken" type="hidden" value="{{csrf}}" />
       </div>
   </form>

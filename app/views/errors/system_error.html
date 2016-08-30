@@ -6,7 +6,7 @@ An error occurred
 
 {{$content}}
 
-<main id="content" role="main" class="content-wrapper error-pages grid-row">
+<main id="content" class="content-wrapper error-pages grid-row">
 <div class="column-two-thirds">
   <h1 class="heading-large">Sorry, we're experiencing technical problems</h1>
   {{^returnUrl}}
@@ -14,7 +14,7 @@ An error occurred
   {{/returnUrl}}
   {{#returnUrl}}
   <p class="lede">No money has been taken from your account.</p>
-  <a href="{{returnUrl}}"  id="return_url" class="lede">Go back to try the payment again</a>
+  <a href="{{returnUrl}}"  id="return-url" class="lede">Go back to try the payment again</a>
   {{/returnUrl}}
 </div>
 </main>

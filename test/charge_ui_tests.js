@@ -38,9 +38,9 @@ describe('The charge view', function() {
      var body = renderTemplate('charge', {'id' : '1234'});
      body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden');
      body.should.containInputWithIdAndName('card-no', 'cardNo', 'tel').withAttribute('maxlength', '26').withLabel('card-no-lbl', 'Card number');
-     body.should.containInputWithIdAndName('cvc', 'cvc', 'number').withAttribute('maxlength', '4').withLabel('cvc-lbl', 'Card security code');
-     body.should.containInputWithIdAndName('expiry-month', 'expiryMonth', 'number').withAttribute('maxlength', '2');
-     body.should.containInputWithIdAndName('expiry-year', 'expiryYear', 'number').withAttribute('maxlength', '2');
+     body.should.containInputWithIdAndName('cvc', 'cvc', 'number').withLabel('cvc-lbl', 'Card security code');
+     body.should.containInputWithIdAndName('expiry-month', 'expiryMonth', 'number');
+     body.should.containInputWithIdAndName('expiry-year', 'expiryYear', 'number');
      body.should.containInputWithIdAndName('cardholder-name', 'cardholderName', 'text').withAttribute('maxlength', '200').withLabel('cardholder-name-lbl', 'Name on card');
      body.should.containInputWithIdAndName('address-line-1', 'addressLine1', 'text').withAttribute('maxlength', '100').withLabel('address-line-1-lbl', 'Building name and/or number and street');
      body.should.containInputWithIdAndName('address-line-2', 'addressLine2', 'text').withAttribute('maxlength', '100');
