@@ -61,6 +61,12 @@ var paths = {
       path:"/request-denied",
       action: 'get',
       message: "An invalid character was entered, please try again"
+    },
+
+    humans: {
+      path:"/humans.txt",
+      action: 'get',
+      message: "GOV.UK Payments is built by a team at the Government Digital Service in London. If you'd like to join us, see https://gds.blog.gov.uk/jobs"
     }
   },
   connectorCharge: {
