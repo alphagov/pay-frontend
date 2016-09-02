@@ -61,6 +61,11 @@ var paths = {
       path:"/request-denied",
       action: 'get',
       message: "An invalid character was entered, please try again"
+    },
+
+    humans: {
+      path:"/humans.txt",
+      action: 'get'
     }
   },
   connectorCharge: {

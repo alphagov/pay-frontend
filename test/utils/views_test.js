@@ -79,6 +79,11 @@ describe('views helper', function () {
       template: 'error',
       code: 404,
       message:  "Page cannot be found"
+    },
+    'HUMANS': {
+      template: 'plain_message',
+      code: 200,
+      message: "GOV.UK Payments is built by a team at the Government Digital Service in London. If you'd like to join us, see https://gds.blog.gov.uk/jobs"
     }
   }
 
@@ -100,7 +105,7 @@ describe('views helper', function () {
         _views = views.create();
         _views.display(response,name,{message : "lol"});
         assert(status.calledWith(values.code));
-        assert(render.calledWith("error",
+        assert(render.calledWith(values.template,
           { message: 'lol',
           viewName: name }
         ));
