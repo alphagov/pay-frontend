@@ -22,7 +22,7 @@ module.exports = function(req,res,next){
   var stateCorrect = function(){
     var chargeOK = ischargeSessionOK();
     if (!chargeOK) {
-      var stateName = currentState.toUpperCase().replace(" ", "_");
+      var stateName = currentState.toUpperCase().replace(/\s/g, "_");
       _views.display(res, stateName, locals);
       return false;
     }
