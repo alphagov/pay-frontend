@@ -24,6 +24,10 @@ var paths = {
       path: '/card_details/:chargeId/auth_waiting',
       action: 'get'
     },
+    captureWaiting: {
+      path: '/card_details/:chargeId/capture_waiting',
+      action: 'get'
+    },
     confirm: {
       path: '/card_details/:chargeId/confirm',
       action: 'get'

@@ -13,6 +13,7 @@ module.exports = function () {
     "card.authWaiting": [State.AUTH_READY, State.AUTH_SUCCESS],
     "card.create": [State.AUTH_READY, State.ENTERING_CARD_DETAILS],
     "card.capture": [State.AUTH_SUCCESS],
+    "card.captureWaiting": [State.CAPTURE_READY, State.CAPTURE_SUBMITTED],
     "card.cancel": [State.ENTERING_CARD_DETAILS, State.AUTH_SUCCESS]
   };
 

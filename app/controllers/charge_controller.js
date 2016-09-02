@@ -17,6 +17,7 @@ var paths = require('../paths.js');
 var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
+var CAPTURE_WAITING_VIEW = 'capture_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
 var countries = require("../services/countries.js");
 
@@ -202,6 +203,27 @@ module.exports = {
         _views.display(res, 'SYSTEM_ERROR', {returnUrl: returnUrl});
       };
     init();
+  },
+
+  captureWaiting: function (req, res) {
+
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var _views = views.create();
+    var returnUrl = req.chargeData.return_url;
+
+    console.log(charge.status);
+
+    if (charge.status === State.CAPTURE_READY) {
+      _views = views.create({
+        success: {
+          view: CAPTURE_WAITING_VIEW,
+          locals: {}
+        }
+      });
+      _views.display(res, "success");
+    } else {
+      _views.display(res, 'CAPTURE_SUBMITTED', {returnUrl: returnUrl});
+    }
   },
 
   cancel: function (req, res) {
