@@ -7,7 +7,6 @@ var Client = require('node-rest-client').Client;
 var client = new Client();
 var _ = require('lodash');
 var views = require('../utils/views.js');
-var session = require('../utils/session.js');
 var normalise = require('../services/normalise_charge.js');
 var chargeValidator = require('../utils/charge_validation_backend.js');
 var i18n = require('i18n');
@@ -23,7 +22,7 @@ var countries = require("../services/countries.js");
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
-    var cardModel             = Card(session.retrieve(req,chargeId).cardTypes);
+    var cardModel             = Card(charge.gatewayAccount.cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
     charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
     charge.allowedCards       = cardModel.allowed;
@@ -62,7 +61,7 @@ module.exports = {
 
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
-    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
+    var cardModel = Card(charge.gatewayAccount.cardTypes);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
 
@@ -141,7 +140,7 @@ module.exports = {
 
   checkCard: function(req, res) {
     var charge    = normalise.charge(req.chargeData, req.chargeId);
-    var cardModel = Card(session.retrieve(req,charge.id).cardTypes);
+    var cardModel = Card(charge.gatewayAccount.cardTypes);
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
     .then(
       ()=>      { res.json({"accepted": true}); },
@@ -168,7 +167,6 @@ module.exports = {
 
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId),
-      serviceSession = session.retrieve(req, charge.id),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
       _views = views.create({
         success: {
@@ -176,11 +174,10 @@ module.exports = {
           locals: {
             charge: charge,
             confirmPath: confirmPath,
-            session: serviceSession,
+            gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
             post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id}),
           }
         }
-
       });
 
     var init = function () {

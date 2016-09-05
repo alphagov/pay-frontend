@@ -22,15 +22,6 @@ describe('The /charge endpoint undealt statuses', function () {
   ];
 
   charge_not_allowed_statuses.forEach(function (status) {
-    var fullSessionData = {
-      'amount': 1000,
-      'description': 'Test Description',
-      'cardNumber': "************5100",
-      'expiryDate': "11/99",
-      'cardholderName': 'T Eulenspiegel',
-      'address': 'Kneitlingen, Brunswick, Germany',
-      'serviceName': 'Pranks incorporated'
-    };
     beforeEach(function(){
       nock.cleanAll();
       nock(process.env.CONNECTOR_HOST)
@@ -42,7 +33,7 @@ describe('The /charge endpoint undealt statuses', function () {
     it('should error when the payment status is ' + status, function (done) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
-        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .expect(function(res){
           helper.templateValue(res,"message", "There is a problem, please try again later");
@@ -92,16 +83,6 @@ describe('The /charge endpoint dealt statuses', function () {
   });
 
   charge_not_allowed_statuses.forEach(function (state) {
-    var fullSessionData = {
-      'amount': 1000,
-      'description': 'Test Description',
-      'cardNumber': "************5100",
-      'expiryDate': "11/99",
-      'cardholderName': 'T Eulenspiegel',
-      'address': 'Kneitlingen, Brunswick, Germany',
-      'serviceName': 'Pranks incorporated'
-    };
-
     it('should error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
       .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
@@ -110,7 +91,7 @@ describe('The /charge endpoint dealt statuses', function () {
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
-        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(function(res){
           helper.templateValue(res,"viewName", state.view);
           helper.templateValue(res,"chargeId", chargeId);
@@ -139,16 +120,6 @@ describe('The /confirm endpoint undealt statuses', function () {
 
 
   confirm_not_allowed_statuses.forEach(function (status) {
-    var fullSessionData = {
-      'amount': 1000,
-      'description': 'Test Description',
-      'cardNumber': "************5100",
-      'expiryDate': "11/99",
-      'cardholderName': 'T Eulenspiegel',
-      'address': 'Kneitlingen, Brunswick, Germany',
-      'serviceName': 'Pranks incorporated'
-    };
-
     it('should error when the payment status is ' + status, function (done) {
       nock(process.env.CONNECTOR_HOST)
       .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
@@ -157,7 +128,7 @@ describe('The /confirm endpoint undealt statuses', function () {
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .expect(function(res){
           helper.templateValue(res,"message", "There is a problem, please try again later");
@@ -222,16 +193,6 @@ describe('The /confirm endpoint dealt statuses', function () {
 
 
   confirm_not_allowed_statuses.forEach(function (state) {
-    var fullSessionData = {
-      'amount': 1000,
-      'description': 'Test Description',
-      'cardNumber': "************5100",
-      'expiryDate': "11/99",
-      'cardholderName': 'T Eulenspiegel',
-      'address': 'Kneitlingen, Brunswick, Germany',
-      'serviceName': 'Pranks incorporated'
-    };
-
     it('should error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
       .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
@@ -240,7 +201,7 @@ describe('The /confirm endpoint dealt statuses', function () {
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .set('Cookie', ['frontend_state=' + cookie.create(chargeId, fullSessionData)])
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(function(res){
           helper.templateValue(res,"viewName", state.view);
           if (state.viewState) helper.templateValue(res,"status", state.viewState);
