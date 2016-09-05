@@ -5,7 +5,33 @@ var _       = require('lodash');
 module.exports = function() {
   'use strict';
 
-  var _default = {
+  var expired = {
+    view: "errors/incorrect_state/session_expired"
+  },
+
+  systemCancelled = {
+    view: "errors/incorrect_state/system_cancelled"
+  },
+
+  userCancelled = {
+    view: "user_cancelled",
+    locals: { status: 'successful' }
+  },
+
+  systemError = {
+    code: 500,
+    view: 'errors/system_error'
+  },
+
+  error = {
+    code: 500,
+       view: 'error',
+       locals: {
+         message: 'There is a problem, please try again later'
+       }
+     },
+
+  _default = {
     NOT_FOUND: {
       code: 404,
       view: 'error',
@@ -13,6 +39,7 @@ module.exports = function() {
         message: "Page cannot be found"
       }
     },
+
     ERROR: {
       code: 500,
       view: 'error',
@@ -20,14 +47,14 @@ module.exports = function() {
         message: 'There is a problem, please try again later'
       }
     },
+
     SESSION_INCORRECT: {
       code: 422,
       view: "errors/incorrect_state/session_expired"
     },
-    SYSTEM_ERROR: {
-      code: 500,
-      view: 'errors/system_error',
-    },
+
+    SYSTEM_ERROR: systemError,
+
     NAXSI_SYSTEM_ERROR: {
       code: 400,
       view: 'error',
@@ -35,6 +62,7 @@ module.exports = function() {
         message: "Please try again later"
       }
     },
+
     HUMANS: {
       code: 200,
       view: 'plain_message',
@@ -47,21 +75,31 @@ module.exports = function() {
       code: 403,
       view: 'errors/system_error',
     },
+
     CAPTURE_SUBMITTED: {
       view: "errors/charge_confirm_state_completed",
       locals: { status: 'successful' }
     },
-    EXPIRED: {
-      view: "errors/incorrect_state/session_expired"
-    },
-    SYSTEM_CANCELLED: {
-      view: "errors/incorrect_state/system_cancelled"
-    },
 
-    USER_CANCELLED: {
-      view: "user_cancelled",
-      locals: { status: 'successful' }
-    },
+    CREATED: error,
+
+    EXPIRED: expired,
+    
+    EXPIRE_CANCEL_READY: expired,
+    
+    EXPIRE_CANCEL_FAILED: expired,
+
+    SYSTEM_CANCELLED: systemCancelled,
+
+    SYSTEM_CANCEL_READY: systemCancelled,
+
+    SYSTEM_CANCEL_ERROR: systemCancelled,
+
+    USER_CANCELLED: userCancelled,
+    
+    USER_CANCEL_READY: userCancelled,
+    
+    USER_CANCEL_ERROR: userCancelled,
 
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
@@ -69,6 +107,10 @@ module.exports = function() {
     },
 
     CAPTURE_FAILURE: {
+      view: "errors/incorrect_state/capture_failure"
+    },
+
+    CAPTURE_ERROR: {
       view: "errors/incorrect_state/capture_failure"
     },
 
@@ -88,9 +130,11 @@ module.exports = function() {
       view: "errors/incorrect_state/auth_waiting"
     },
 
-    ENTERING_CARD_DETAILS: {
-      view: "errors/system_error"
+    CAPTURE_READY: {
+      view: "errors/incorrect_state/capture_waiting"
     },
+
+    ENTERING_CARD_DETAILS: systemError,
 
     display: function(res, resName, locals) {
       var action = _.result(this, resName);

@@ -634,6 +634,12 @@ describe('chargeTests',function(){
 
         it('should fail to authorise when email patch fails', function(done) {
           var cookieValue = cookie.create(chargeId);
+                nock.cleanAll();
+
+          nock(process.env.CARDID_HOST)
+                  .post("/v1/api/card",()=> { return true; })
+                  .reply(200, {brand: "visa", label: "visa", type: "E"});
+
           nock(process.env.CONNECTOR_HOST)
             .patch("/v1/frontend/charges/23144323")
             .reply(500);
@@ -787,6 +793,42 @@ describe('chargeTests',function(){
           .expect(500)
           .expect(function(res){
             helper.templateValue(res,"viewName","SYSTEM_ERROR");
+          })
+          .end(done);
+    });
+  });
+
+  describe('capture waiting endpoint', function() {
+    it('should keep user in /capture_waiting when connector returns a capture ready state', function(done) {
+      var cookieValue = cookie.create(chargeId);
+
+      default_connector_response_for_get_charge(chargeId, State.CAPTURE_READY);
+
+      request(app)
+              .get(frontendCardDetailsPath + '/' + chargeId + '/capture_waiting')
+              .set('Content-Type', 'application/x-www-form-urlencoded')
+              .set('Cookie', ['frontend_state=' + cookieValue])
+              .set('Accept', 'application/json')
+          .expect(200)
+          .expect(function(res){
+            helper.templateValue(res,"viewName","success");
+          })
+          .end(done);
+    });
+
+    it('should take user to capture submitted view when charge in CAPTURE_SUBMITTED state', function(done) {
+      var cookieValue = cookie.create(chargeId);
+
+      default_connector_response_for_get_charge(chargeId, State.CAPTURE_SUBMITTED);
+
+      request(app)
+              .get(frontendCardDetailsPath + '/' + chargeId + '/capture_waiting')
+              .set('Content-Type', 'application/x-www-form-urlencoded')
+              .set('Cookie', ['frontend_state=' + cookieValue])
+              .set('Accept', 'application/json')
+          .expect(200)
+          .expect(function(res){
+            helper.templateValue(res,"viewName","CAPTURE_SUBMITTED");
           })
           .end(done);
     });

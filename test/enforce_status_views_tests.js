@@ -44,7 +44,7 @@ describe('The /charge endpoint undealt statuses', function () {
 });
 
 describe('The /charge endpoint dealt statuses', function () {
-  var charge_not_allowed_statuses = [
+  var charge_allowed_statuses = [
     {
       name: 'authorisation success',
       view: "AUTHORISATION_SUCCESS"
@@ -76,16 +76,49 @@ describe('The /charge endpoint dealt statuses', function () {
     {
       name: 'system cancelled',
       view: 'SYSTEM_CANCELLED'
+    },
+    {
+      name: 'created',
+      view: 'CREATED'
+    },
+    {
+      name: 'capture error',
+      view: 'CAPTURE_ERROR'
+    },
+    {
+      name: 'expire cancel ready',
+      view: 'EXPIRE_CANCEL_READY'
+    },
+    {
+      name: 'expire cancel failed',
+      view: 'EXPIRE_CANCEL_FAILED'
+    },
+    {
+      name: 'system cancel ready',
+      view: "SYSTEM_CANCEL_READY"
+    },
+    {
+      name: 'system cancel error',
+      view: "SYSTEM_CANCEL_ERROR"
+    },
+    {
+      name: 'user cancel ready',
+      view: "USER_CANCEL_READY"
+    },
+    {
+      name: 'user cancel error',
+      view: "USER_CANCEL_ERROR"
     }
   ];
   beforeEach(function() {
     nock.cleanAll();
   });
 
-  charge_not_allowed_statuses.forEach(function (state) {
-    it('should error when the payment status is ' + state.name, function (done) {
+  charge_allowed_statuses.forEach(function (state) {
+
+    it('should not error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
+      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.raw_successful_get_charge(
         state.name,"http://www.example.com/service"
       ));
 
@@ -140,7 +173,7 @@ describe('The /confirm endpoint undealt statuses', function () {
 
 
 describe('The /confirm endpoint dealt statuses', function () {
-  var confirm_not_allowed_statuses = [
+  var confirm_allowed_statuses = [
     {
       name: 'capture submitted',
       view: "CAPTURE_SUBMITTED",
@@ -178,8 +211,35 @@ describe('The /confirm endpoint dealt statuses', function () {
     {
       name: 'authorisation ready',
       view: "AUTHORISATION_READY"
+    },
+    {
+      name: 'capture error',
+      view: 'CAPTURE_ERROR'
+    },
+    {
+      name: 'expire cancel ready',
+      view: 'EXPIRE_CANCEL_READY'
+    },
+    {
+      name: 'expire cancel failed',
+      view: 'EXPIRE_CANCEL_FAILED'
+    },
+    {
+      name: 'system cancel ready',
+      view: "SYSTEM_CANCEL_READY"
+    },
+    {
+      name: 'system cancel error',
+      view: "SYSTEM_CANCEL_ERROR"
+    },
+    {
+      name: 'user cancel ready',
+      view: "USER_CANCEL_READY"
+    },
+    {
+      name: 'user cancel error',
+      view: "USER_CANCEL_ERROR"
     }
-
   ];
   beforeEach(function() {
     nock.cleanAll();
@@ -192,8 +252,8 @@ describe('The /confirm endpoint dealt statuses', function () {
 
 
 
-  confirm_not_allowed_statuses.forEach(function (state) {
-    it('should error when the payment status is ' + state.name, function (done) {
+  confirm_allowed_statuses.forEach(function (state) {
+    it('should not error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
       .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
         state.name,"http://www.example.com/service"

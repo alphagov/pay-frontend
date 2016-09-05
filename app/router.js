@@ -34,6 +34,7 @@ module.exports.bind = function (app) {
 
   app.get(card.new.path,      middlewareStack, charge.new);
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting);
+  app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting);
   app.post(card.create.path,  middlewareStack, charge.create);
   app.get(card.confirm.path,  middlewareStack, charge.confirm);
   app.post(card.capture.path, middlewareStack, charge.capture);

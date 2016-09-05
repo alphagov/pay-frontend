@@ -1,0 +1,11 @@
+{{< layout}}
+
+{{$pageTitle}}
+Your payment is in progress
+{{/pageTitle}}
+{{$head}}
+{{>includes/head}}
+<meta http-equiv="refresh" content="0;URL='/card_details/{{chargeId}}/capture_waiting'" />
+{{/head}}
+
+{{/layout}}
