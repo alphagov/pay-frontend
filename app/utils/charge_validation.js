@@ -32,7 +32,6 @@ module.exports = function(translations, logger, Card) {
       }
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true;
-      logger.info("Card details check result: " + JSON.stringify(checkResult));
       return checkResult;
     },
 

@@ -13,7 +13,7 @@ module.exports = function() {
 
   destroy = function(tokenId){
     var defer = q.defer();
-    logger.info('Calling connector to delete a token -', {
+    logger.debug('Calling connector to delete a token -', {
       service: 'connector',
       method: 'DELETE',
       url: createUrl('token', {chargeTokenId: '{tokenId}'})

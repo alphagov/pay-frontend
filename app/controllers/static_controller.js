@@ -13,7 +13,7 @@ module.exports = {
 
   },
   naxsi_error: function(req,res){
-    logger.info('NAXSI ERROR:- ' + req.headers["x-naxsi_sig"]);
+    logger.error('NAXSI ERROR:- ' + req.headers["x-naxsi_sig"]);
     var _views = views.create();
     _views.display(res, "NAXSI_SYSTEM_ERROR");
   }
