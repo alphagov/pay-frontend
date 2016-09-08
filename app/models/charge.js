@@ -5,7 +5,6 @@ var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
 var State   = require('./state.js');
-var humps   = require("humps");
 
 module.exports = function() {
   'use strict';
@@ -186,11 +185,6 @@ module.exports = function() {
         return;
       }
 
-      // TODO: the conditional statement will need to be removed once PP-839 pay-connector is merged to master
-      if (data.gatewayAccount && data.gatewayAccount.card_types) {
-        data.gatewayAccount.cardTypes = humps.camelizeKeys(data.gatewayAccount.card_types);
-        delete data.gatewayAccount.card_types;
-      }
       defer.resolve(data);
     }).on('error', function(err){
       logger.error('Calling connector to find a charge by token threw exception -', {
