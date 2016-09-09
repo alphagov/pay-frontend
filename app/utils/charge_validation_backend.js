@@ -18,11 +18,11 @@ module.exports = function(translations, logger, cardModel) {
 
     var defer = q.defer();
     var validation = validator.verify(req.body);
-    Card.checkCard(normalise.creditCard(req.body.cardNo)).then(function(){
-      defer.resolve(validation);
+    Card.checkCard(normalise.creditCard(req.body.cardNo)).then(function(cardTypeId){
+      defer.resolve({validation: validation, cardTypeId: cardTypeId});
     },function(err){
       addCardnotSupportedError(validation, err);
-      defer.resolve(validation);
+      defer.resolve({validation: validation});
     });
 
     return defer.promise;
