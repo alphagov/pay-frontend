@@ -62,7 +62,8 @@ module.exports = {
 
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
-    var cardModel = Card(charge.gatewayAccount.cardTypes);
+
+    var cardModel = Card(req.chargeData.gateway_account.card_types);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
 
@@ -71,7 +72,7 @@ module.exports = {
       logger,
       cardModel
     );
-    var checkResult;
+    var validation;
     normalise.addressLines(req.body);
 
     if (submitted) {
@@ -104,8 +105,8 @@ module.exports = {
 
     hasValidationError = function(){
       appendChargeForNewView(charge, req, charge.id);
-      _.merge(checkResult, charge, _.pick(req.body, preserveProperties));
-      return res.render(CHARGE_VIEW, checkResult);
+      _.merge(validation, charge, _.pick(req.body, preserveProperties));
+      return res.render(CHARGE_VIEW, validation);
     },
 
     responses = {
@@ -115,22 +116,25 @@ module.exports = {
       500: connectorFailure
     };
 
-    function postAuth(authUrl, req) {
-      client.post(authUrl, normalise.apiPayload(req), function (data, json) {
+    function postAuth(authUrl, req, cardTypeId) {
+      client.post(authUrl, normalise.apiPayload(req, cardTypeId), function (data, json) {
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();
       }).on('error', connectorNonResponsive);
     }
 
-    validator.verify(req).then(function(check){
-      checkResult = check;
-      if (checkResult.hasError) return hasValidationError();
+    validator.verify(req).then(function(data){
+
+      validation = data.validation;
+      if (validation.hasError) return hasValidationError();
+
+      var cardTypeId = data.cardTypeId;
 
       logging.authChargePost(authUrl);
       Charge.patch(req.chargeId, "replace", "email", req.body.email)
         .then(function () {
-            postAuth(authUrl, req);
+            postAuth(authUrl, req, cardTypeId);
           }, function(err) {
             logging.failedChargePatch(err);
             _views.display(res, "ERROR");
@@ -140,8 +144,7 @@ module.exports = {
   },
 
   checkCard: function(req, res) {
-    var charge    = normalise.charge(req.chargeData, req.chargeId);
-    var cardModel = Card(charge.gatewayAccount.cardTypes);
+    var cardModel = Card(req.chargeData.gateway_account.card_types);
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
     .then(
       ()=>      { res.json({"accepted": true}); },
@@ -167,6 +170,7 @@ module.exports = {
   },
 
   confirm: function (req, res) {
+    console.log("req.chargeData>>", JSON.stringify(req.chargeData));
     var charge = normalise.charge(req.chargeData, req.chargeId),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
       _views = views.create({
@@ -210,8 +214,6 @@ module.exports = {
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views = views.create();
     var returnUrl = req.chargeData.return_url;
-
-    console.log(charge.status);
 
     if (charge.status === State.CAPTURE_READY) {
       _views = views.create({

@@ -61,7 +61,7 @@ describe('card', function () {
       });
 
       it('should reject with appropriate message', function () {
-        return CardModel([{brand: "foo", label: "foo"}])
+        return CardModel([{brand: "foo", label: "foo", type: "CREDIT", id: "id-0"}])
         .checkCard(1234).then(wrongPromise,function(message){
           assert.equal(message,"Bar is not supported");
         });
@@ -77,7 +77,7 @@ describe('card', function () {
       });
 
       it('should reject with appropriate message', function () {
-        return CardModel([{brand: "bar", label: "bar", debit: false}])
+        return CardModel([{brand: "bar", label: "bar", type: "CREDIT", id: "id-0"}])
         .checkCard(1234).then(wrongPromise,function(message){
           assert.equal(message,"Bar debit cards are not supported");
         });
@@ -94,7 +94,7 @@ describe('card', function () {
       });
 
       it('should reject with appropriate message', function () {
-        return CardModel([{brand: "bar", label: "bar", credit: false}])
+        return CardModel([{brand: "bar", label: "bar", type: "DEBIT", id: "id-0"}])
         .checkCard(1234).then(wrongPromise,function(message){
           assert.equal(message,"Bar credit cards are not supported");
         });
@@ -111,8 +111,10 @@ describe('card', function () {
       });
 
       it('should reject with appropriate message', function () {
-        return CardModel([{brand: "bar", label: "bar", credit: true }])
-        .checkCard(1234).then(()=>{},wrongPromise);
+        return CardModel([{brand: "bar", label: "bar", type: "CREDIT", id: "id-0"}])
+        .checkCard(1234).then((cardTypeId)=>{
+            assert.equal(cardTypeId, "id-0");
+          },wrongPromise);
       });
     });
   });

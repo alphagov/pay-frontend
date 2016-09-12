@@ -85,6 +85,7 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
     'amount': 2345,
     'description': "Payment Description",
     'status': status,
+    'card_brand': 'Visa',
     'return_url': returnUrl,
     'email': "bob@bob.bob",
     'links': [{
@@ -106,32 +107,38 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
         {
           'type': 'DEBIT',
           'brand': 'visa',
-          'label': 'visa'
+          'label': 'visa',
+          'id': 'id-0'
         },
         {
           'type': 'DEBIT',
           'brand': 'master-card',
-          'label': 'master-card'
+          'label': 'master-card',
+          'id': 'id-0'
         },
         {
           'type': 'CREDIT',
           'brand': 'american-express',
-          'label': 'american-express'
+          'label': 'american-express',
+          'id': 'id-0'
         },
         {
           'type': 'DEBIT',
           'brand': 'jcb',
-          'label': 'jcb'
+          'label': 'jcb',
+          'id': 'id-0'
         },
         {
           'type': 'DEBIT',
           'brand': 'diners-club',
-          'label': 'diners-club'
+          'label': 'diners-club',
+          'id': 'id-0'
         },
         {
           'type': 'DEBIT',
           'brand': 'discover',
-          'label': 'discover'
+          'label': 'discover',
+          'id': 'id-0'
         }
       ]
     }

@@ -14,6 +14,7 @@ var unNormalisedCharge = {
     href: "http://foo"
   }],
   status: "status",
+  card_brand: "Visa",
   email: "bobbybobby@bobby.bob",
   gateway_account: {
   service_name: 'Pranks incorporated',
@@ -34,6 +35,7 @@ var normalisedCharge = {
     href: "http://foo"
   }],
   status: "status",
+  cardBrand: "Visa",
   email: "bobbybobby@bobby.bob",
   gatewayAccount: {
     serviceName: 'Pranks incorporated',

@@ -13,6 +13,7 @@ module.exports = function() {
       description: charge.description,
       links: charge.links,
       status: charge.status,
+      cardBrand: charge.card_brand,
       email: charge.email,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     };
@@ -83,12 +84,13 @@ module.exports = function() {
     month = (month.length === 1) ? "0" + month : month;
     return month.slice(-2) + "/" + year.slice(-2);
   },
-  apiPayload = function(req){
+  apiPayload = function(req, cardTypeId){
     return {
       headers: {"Content-Type": "application/json"},
       data: {
         'card_number': creditCard(req.body.cardNo),
         'cvc': req.body.cvc,
+        'card_type_id': cardTypeId,
         'expiry_date': expiryDate(req.body.expiryMonth, req.body.expiryYear),
         'cardholder_name': req.body.cardholderName,
         'address': addressForApi(req.body)
