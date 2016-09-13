@@ -11,3 +11,5 @@ staging-1.tag=alpha_staging-1-17
 staging-1.alpha_staging-1-17.date=2016-09-13:09:42:54
 
 staging-1.alpha_staging-1-17.status=success
+
+alpha_staging-1-17.approver=david.illsley@digital.cabinet-office.gov.uk
