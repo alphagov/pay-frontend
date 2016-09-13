@@ -27,10 +27,12 @@ var checkCard = function(cardNo) {
       var cardBrand = changeCase.paramCase(data.brand);
       var cardType = normaliseCardType(data.type);
 
+      console.info("Checking card brand - ", {'cardBrand': cardBrand, 'cardType': cardType});
+
       var brandExists = _.filter(allowed, {brand: cardBrand}).length > 0;
       if (!brandExists) defer.reject(changeCase.titleCase(cardBrand) + " is not supported");
 
-      var cardObject   = _.find(allowed, {brand: cardBrand, type: cardType});
+      var cardObject = _.find(allowed, {brand: cardBrand, type: cardType});
 
       if (!cardObject) {
         switch (cardType) {
@@ -39,9 +41,8 @@ var checkCard = function(cardNo) {
           case "CREDIT":
             return defer.reject(changeCase.titleCase(cardBrand) + " credit cards are not supported");
         }
-        return defer.reject(changeCase.titleCase(cardBrand) + " is not supported");
       }
-      return defer.resolve(cardObject.id);
+      return defer.resolve(cardBrand);
     }).on('error',function(error){
       console.log("ERROR CALLING CARD SERVICE", error);
       defer.resolve();
@@ -56,8 +57,6 @@ var normaliseCardType = function(cardType) {
     case "C":
       return "CREDIT";
   }
-
-  console.error("Unable to normalise card type: ", cardType);
   return undefined;
 };
 

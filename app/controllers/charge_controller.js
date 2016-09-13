@@ -116,8 +116,8 @@ module.exports = {
       500: connectorFailure
     };
 
-    function postAuth(authUrl, req, cardTypeId) {
-      client.post(authUrl, normalise.apiPayload(req, cardTypeId), function (data, json) {
+    function postAuth(authUrl, req, cardBrand) {
+      client.post(authUrl, normalise.apiPayload(req, cardBrand), function (data, json) {
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();
@@ -129,12 +129,12 @@ module.exports = {
       validation = data.validation;
       if (validation.hasError) return hasValidationError();
 
-      var cardTypeId = data.cardTypeId;
+      var cardBrand = data.cardBrand;
 
       logging.authChargePost(authUrl);
       Charge.patch(req.chargeId, "replace", "email", req.body.email)
         .then(function () {
-            postAuth(authUrl, req, cardTypeId);
+            postAuth(authUrl, req, cardBrand);
           }, function(err) {
             logging.failedChargePatch(err);
             _views.display(res, "ERROR");
@@ -170,7 +170,6 @@ module.exports = {
   },
 
   confirm: function (req, res) {
-    console.log("req.chargeData>>", JSON.stringify(req.chargeData));
     var charge = normalise.charge(req.chargeData, req.chargeId),
       confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
       _views = views.create({

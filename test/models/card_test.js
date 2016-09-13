@@ -110,10 +110,26 @@ describe('card', function () {
           .reply(200,{brand: "bar", label: "bar", type: 'C'});
       });
 
-      it('should reject with appropriate message', function () {
+      it('should resolve with correct card brand', function () {
         return CardModel([{brand: "bar", label: "bar", type: "CREDIT", id: "id-0"}])
-        .checkCard(1234).then((cardTypeId)=>{
-            assert.equal(cardTypeId, "id-0");
+          .checkCard(1234).then((cardBrand)=>{
+            assert.equal(cardBrand, "bar");
+          },wrongPromise);
+      });
+    });
+
+    describe('a card that is allowed but of unknown type', function () {
+      before(function() {
+        nock.cleanAll();
+        nock(process.env.CARDID_HOST)
+          .post("/v1/api/card")
+          .reply(200,{brand: "bar", label: "bar", type: 'CD'});
+      });
+
+      it('should resolve with correct card brand', function () {
+        return CardModel([{brand: "bar", label: "bar", type: "CREDIT", id: "id-0"}])
+          .checkCard(1234).then((cardBrand)=>{
+            assert.equal(cardBrand, "bar");
           },wrongPromise);
       });
     });

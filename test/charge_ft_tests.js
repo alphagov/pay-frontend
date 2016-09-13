@@ -66,7 +66,7 @@ describe('chargeTests',function(){
       'card_number': card_number,
       'cvc': '234',
       'expiry_date': '11/99',
-      'card_type_id': 'id-0',
+      'card_brand': 'visa',
       'cardholder_name': 'Jimi Hendrix',
       'address': {
         'line1': '32 Whip Ma Whop Ma Avenue',
