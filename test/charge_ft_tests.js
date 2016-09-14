@@ -25,7 +25,7 @@ var State = require(__dirname + '/../app/models/state.js');
 var defaultCardID = function(cardNumber){
         nock(process.env.CARDID_HOST)
         .post("/v1/api/card",()=> { return true; })
-        .reply(200, {brand: "visa", label: "visa", type: "E"});
+        .reply(200, {brand: "visa", label: "visa", type: "D"});
 
 }
 
@@ -66,6 +66,7 @@ describe('chargeTests',function(){
       'card_number': card_number,
       'cvc': '234',
       'expiry_date': '11/99',
+      'card_brand': 'visa',
       'cardholder_name': 'Jimi Hendrix',
       'address': {
         'line1': '32 Whip Ma Whop Ma Avenue',
@@ -424,7 +425,7 @@ describe('chargeTests',function(){
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       nock(process.env.CARDID_HOST)
         .post("/v1/api/card",()=> { return true; })
-        .reply(200, {brand: "foobar", label: "foobar", type: "E"});
+        .reply(200, {brand: "foobar", label: "foobar", type: "D"});
       post_charge_request(cookieValue, minimum_form_card_data('3528000700000000'))
           .expect(200)
           .expect(function(res){
@@ -446,7 +447,7 @@ describe('chargeTests',function(){
     });
 
 
-   it('shows an error when a card is submitted that is not supported withrawal type', function (done) {
+   it('shows an error when a card is submitted that is not supported withdrawal type', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       nock.cleanAll();
         nock(process.env.CARDID_HOST)
@@ -477,7 +478,7 @@ describe('chargeTests',function(){
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       nock(process.env.CARDID_HOST)
         .post("/v1/api/card",()=> { return true; })
-        .reply(200, {brand: "visa", label: "visa", type: "E"});
+        .reply(200, {brand: "visa", label: "visa", type: "D"});
       var cardData = full_form_card_data('4242');
       post_charge_request(cookieValue, cardData)
         .expect(200)
@@ -638,7 +639,7 @@ describe('chargeTests',function(){
 
           nock(process.env.CARDID_HOST)
                   .post("/v1/api/card",()=> { return true; })
-                  .reply(200, {brand: "visa", label: "visa", type: "E"});
+                  .reply(200, {brand: "visa", label: "visa", type: "D"});
 
           nock(process.env.CONNECTOR_HOST)
             .patch("/v1/frontend/charges/23144323")
@@ -682,6 +683,7 @@ describe('chargeTests',function(){
         .expect(function(res){
           helper.templateValueNotUndefined(res,"csrf");
           helper.templateValue(res,"charge.confirmationDetails.cardNumber","************1234");
+          helper.templateValue(res,"charge.cardBrand","Visa");
           helper.templateValue(res,"charge.confirmationDetails.expiryDate","11/99");
           helper.templateValue(res,"charge.confirmationDetails.cardholderName","Test User");
           helper.templateValue(res,"charge.confirmationDetails.billingAddress","line1, line2, city, postcode, United Kingdom");

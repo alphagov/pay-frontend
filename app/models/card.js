@@ -17,7 +17,6 @@ var checkCard = function(cardNo) {
       data: {"cardNumber": parseInt(cardNo) },
       headers: { "Content-Type": "application/json" }
     }, function(data, response) {
-      var card = data;
 
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
@@ -25,28 +24,40 @@ var checkCard = function(cardNo) {
       // if the server is down, or returns non 500, just continue
       if (response.statusCode !== 200) { return defer.resolve(); }
 
-      var computerName = changeCase.paramCase(data.brand);
-      var humanName    = changeCase.titleCase(computerName);
-      var cardObject   = _.find(allowed, ["brand",computerName]);
-      if (!cardObject) return defer.reject(humanName + " is not supported");
+      var cardBrand = changeCase.paramCase(data.brand);
+      var cardType = normaliseCardType(data.type);
 
-      if (card.type === "D") {
-        if (cardObject.debit) defer.resolve();
-        return defer.reject(humanName + " debit cards are not supported");
+      console.info("Checking card brand - ", {'cardBrand': cardBrand, 'cardType': cardType});
+
+      var brandExists = _.filter(allowed, {brand: cardBrand}).length > 0;
+      if (!brandExists) defer.reject(changeCase.titleCase(cardBrand) + " is not supported");
+
+      var cardObject = _.find(allowed, {brand: cardBrand, type: cardType});
+
+      if (!cardObject) {
+        switch (cardType) {
+          case "DEBIT":
+            return defer.reject(changeCase.titleCase(cardBrand) + " debit cards are not supported");
+          case "CREDIT":
+            return defer.reject(changeCase.titleCase(cardBrand) + " credit cards are not supported");
+        }
       }
-
-      if (card.type === "C") {
-        if (cardObject.credit) defer.resolve();
-        return defer.reject(humanName + " credit cards are not supported");
-      }
-
-      defer.resolve();
-
+      return defer.resolve(cardBrand);
     }).on('error',function(error){
       console.log("ERROR CALLING CARD SERVICE", error);
       defer.resolve();
     });
     return defer.promise;
+};
+
+var normaliseCardType = function(cardType) {
+  switch (cardType) {
+    case "D":
+      return "DEBIT";
+    case "C":
+      return "CREDIT";
+  }
+  return undefined;
 };
 
 var allConnectorCardTypes = function(){
@@ -61,8 +72,6 @@ var allConnectorCardTypes = function(){
   return defer.promise;
 
 };
-
-
 
 module.exports = function(allowedCards){
   var withdrawalTypes = [];
