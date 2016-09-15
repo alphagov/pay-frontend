@@ -25,3 +25,5 @@ staging-1.alpha_staging-1-19.status=success
 alpha_staging-1-19.approver=till.wirth@digital.cabinet-office.gov.uk
 
 alpha_staging-1-19.approve-date=2016-09-14:19:16:39
+
+production-1.tag=alpha_production-1-19
