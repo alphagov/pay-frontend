@@ -27,7 +27,7 @@ var checkCard = function(cardNo) {
       var cardBrand = changeCase.paramCase(data.brand);
       var cardType = normaliseCardType(data.type);
 
-      console.info("Checking card brand - ", {'cardBrand': cardBrand, 'cardType': cardType});
+      logger.debug("Checking card brand - ", {'cardBrand': cardBrand, 'cardType': cardType});
 
       var brandExists = _.filter(allowed, {brand: cardBrand}).length > 0;
       if (!brandExists) defer.reject(changeCase.titleCase(cardBrand) + " is not supported");
@@ -44,7 +44,7 @@ var checkCard = function(cardNo) {
       }
       return defer.resolve(cardBrand);
     }).on('error',function(error){
-      console.log("ERROR CALLING CARD SERVICE", error);
+      logger.error("ERROR CALLING CARD SERVICE", error);
       defer.resolve();
     });
     return defer.promise;

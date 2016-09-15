@@ -34,7 +34,7 @@ logger.stream = {
     logger.info(message);
   }
 };
-app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware('combined', {'stream': logger.stream}));
+app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware('combined'));
 
 app.use(i18n.init);
 app.use(compression());
@@ -100,9 +100,7 @@ router.bind(app);
  */
 function start() {
   app.listen(port);
-  console.log('Listening on port ' + port);
-  console.log('');
-
+  logger.info('Listening on port ' + port);
   return app;
 }
 

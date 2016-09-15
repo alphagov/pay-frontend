@@ -2,10 +2,10 @@
 "use strict";
 
 var chargeValidator = require('./charge_validation.js');
-var q = require('q');
-var Card = require('../models/card')();
-var _ = require('lodash');
-var normalise = require('../services/normalise_charge.js');
+var q               = require('q');
+var Card            = require('../models/card')();
+var _               = require('lodash');
+var normalise       = require('../services/normalise_charge.js');
 
 module.exports = function(translations, logger, cardModel) {
   var validator = chargeValidator(
@@ -16,13 +16,14 @@ module.exports = function(translations, logger, cardModel) {
 
   var verify = function(req) {
 
+    var logger = require('winston');
     var defer = q.defer();
     var validation = validator.verify(req.body);
     Card.checkCard(normalise.creditCard(req.body.cardNo)).then(function(cardBrand){
-      console.info("Card supported - ", {'cardBrand': cardBrand});
+      logger.debug("Card supported - ", {'cardBrand': cardBrand});
       defer.resolve({validation: validation, cardBrand: cardBrand});
     },function(err){
-      console.error("Card not supported - ", {'err': err});
+      logger.error("Card not supported - ", {'err': err});
       addCardnotSupportedError(validation, err);
       defer.resolve({validation: validation});
     });
