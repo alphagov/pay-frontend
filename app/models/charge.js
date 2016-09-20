@@ -44,9 +44,13 @@ module.exports = function() {
       url: url
     });
 
+    var startTime = new Date();
     client.put(url, params, function(data, response){
+      logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime);
       updateComplete(chargeId, data, response, defer);
+
     }).on('error',function(err){
+      logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime);
       logger.error('Calling connector to update charge status threw exception -', {
         service: 'connector',
         method: 'PUT',
@@ -72,8 +76,10 @@ module.exports = function() {
       url: url
     });
 
+    var startTime = new Date();
     client.get(url, function(data, response){
       if (response.statusCode !== 200) {
+        logger.info('[] - %s to %s ended - total time %dms', 'GET', url, new Date() - startTime);
         logger.warn('Calling connector to get charge failed -', {
           service: 'connector',
           method: 'GET',
@@ -85,6 +91,7 @@ module.exports = function() {
       }
       defer.resolve(data);
     }).on('error',function(err){
+      logger.info('[] - %s to %s ended - total time %dms', 'GET', url, new Date() - startTime);
       logger.error('Calling connector to get charge threw exception -', {
         service: 'connector',
         method: 'GET',
@@ -108,10 +115,13 @@ module.exports = function() {
       chargeId: chargeId,
       url: url
     });
+    var startTime = new Date();
     client.post(url, params, function(data, response){
+      logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
       captureComplete(data, response, defer);
     })
     .on('error',function(err) {
+      logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
       logger.error('Calling connector to do capture failed -', {
         service:'connector',
         method:'POST',
@@ -136,10 +146,14 @@ module.exports = function() {
       chargeId: chargeId,
       url: url
     });
+
+    var startTime = new Date();
     client.post(url, params, function(data, response){
+        logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
         cancelComplete(data, response, defer);
       })
       .on('error',function(err){
+        logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
         logger.error('Calling connector cancel a charge threw exception -', {
           service:'connector',
           method:'POST',
@@ -174,7 +188,11 @@ module.exports = function() {
       service: 'connector',
       method: 'GET'
     });
-    client.get(connectorurl('findByToken',{chargeTokenId: tokenId}), function(data, response){
+
+    var startTime = new Date();
+    var findByUrl = connectorurl('findByToken',{chargeTokenId: tokenId});
+    client.get(findByUrl, function(data, response){
+      logger.info('[] - %s to %s ended - total time %dms', 'GET', findByUrl, new Date() - startTime);
       if (response.statusCode !== 200) {
         logger.warn('Calling connector to find a charge by token failed -', {
           service: 'connector',
@@ -187,6 +205,7 @@ module.exports = function() {
 
       defer.resolve(data);
     }).on('error', function(err){
+      logger.info('[] - %s to %s ended - total time %dms', 'GET', findByUrl, new Date() - startTime);
       logger.error('Calling connector to find a charge by token threw exception -', {
         service:'connector',
         method:'GET',
@@ -223,7 +242,10 @@ module.exports = function() {
 
   patch = function(chargeId, op, path, value) {
     var defer   = q.defer();
-    client.patch(process.env.CONNECTOR_HOST + "/v1/frontend/charges/" + chargeId, {
+
+    var startTime = new Date();
+    var chargesUrl = process.env.CONNECTOR_HOST + "/v1/frontend/charges/";
+    client.patch(chargesUrl + chargeId, {
         headers: {"Content-Type": "application/json"},
         data: {
           op: op,
@@ -231,6 +253,7 @@ module.exports = function() {
           value: value
         }
       }, function(data, response) {
+         logger.info('[] - %s to %s ended - total time %dms', 'PATCH', chargesUrl, new Date() - startTime);
         var code = response.statusCode;
         if (code === 200) {
           defer.resolve();
@@ -238,6 +261,7 @@ module.exports = function() {
           defer.reject();
         }
       }).on('error', function(){
+          logger.info('[] - %s to %s ended - total time %dms', 'PATCH', chargesUrl, new Date() - startTime);
           defer.reject();
       });
 

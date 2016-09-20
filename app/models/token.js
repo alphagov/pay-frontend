@@ -18,7 +18,13 @@ module.exports = function() {
       method: 'DELETE',
       url: createUrl('token', {chargeTokenId: '{tokenId}'})
     });
-    client.delete(createUrl('token', {chargeTokenId: tokenId}), function(data,response){
+
+    var startTime = new Date();
+    var deleteUrl = createUrl('token', {chargeTokenId: tokenId});
+
+    client.delete(deleteUrl, function(data, response){
+      logger.info('[] - %s to %s ended - total time %dms', 'DELETE', deleteUrl, new Date() - startTime);
+
       if (response.statusCode !== 204) {
         logger.warn('Calling connector to delete a token failed -', {
           service: 'connector',
@@ -29,6 +35,7 @@ module.exports = function() {
       }
       defer.resolve(data);
     }).on('error',function(err){
+      logger.info('[] - %s to %s ended - total time %dms', 'DELETE', deleteUrl, new Date() - startTime);
       logger.error('Calling connector to delete a token threw exception -', {
         service: 'connector',
         method: 'DELETE',
