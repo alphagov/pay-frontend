@@ -117,7 +117,9 @@ module.exports = {
     };
 
     function postAuth(authUrl, req, cardBrand) {
+      var startTime = new Date();
       client.post(authUrl, normalise.apiPayload(req, cardBrand), function (data, json) {
+        logger.info('[] - %s to %s ended - total time %dms', 'GET', authUrl, new Date() - startTime);
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();

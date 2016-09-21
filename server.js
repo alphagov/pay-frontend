@@ -34,7 +34,8 @@ logger.stream = {
     logger.info(message);
   }
 };
-app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware('combined'));
+app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
+      ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'));
 
 app.use(i18n.init);
 app.use(compression());
@@ -65,7 +66,6 @@ app.use('/stylesheets', express.static(__dirname + '/public/assets/stylesheets',
 app.use('/public', express.static(__dirname + '/public', publicCaching));
 app.use('/public', express.static(__dirname + '/govuk_modules/govuk_template/assets', publicCaching));
 app.use('/public', express.static(__dirname + '/govuk_modules/govuk_frontend_toolkit', publicCaching));
-
 
 app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images', 'favicon.ico')));
 app.use(function (req, res, next) {

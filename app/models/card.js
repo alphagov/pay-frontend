@@ -11,12 +11,16 @@ var logger  = require('winston');
 
 
 var checkCard = function(cardNo) {
-    var defer = q.defer();
-    var CARDID_HOST = process.env.CARDID_HOST;
-    client.post(CARDID_HOST + "/v1/api/card" , {
+  var defer = q.defer();
+  var CARDID_HOST = process.env.CARDID_HOST;
+
+  var startTime = new Date();
+  var cardUrl = CARDID_HOST + "/v1/api/card";
+  client.post(cardUrl , {
       data: {"cardNumber": parseInt(cardNo) },
       headers: { "Content-Type": "application/json" }
     }, function(data, response) {
+      logger.info('[] - %s to %s ended - total time %dms', 'POST', cardUrl, new Date() - startTime);
 
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
@@ -45,6 +49,7 @@ var checkCard = function(cardNo) {
       return defer.resolve(cardBrand);
     }).on('error',function(error){
       logger.error("ERROR CALLING CARD SERVICE", error);
+      logger.info('[] - %s to %s ended - total time %dms', 'POST', cardUrl, new Date() - startTime);
       defer.resolve();
     });
     return defer.promise;
