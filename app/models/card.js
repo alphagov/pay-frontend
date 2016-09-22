@@ -6,11 +6,10 @@ var client      = new Client();
 var q           = require('q');
 var changeCase  = require('change-case');
 var paths       = require('../paths.js');
-var allowed;
 var logger  = require('winston');
 
 
-var checkCard = function(cardNo) {
+var checkCard = function(cardNo,allowed) {
   var defer = q.defer();
   var CARDID_HOST = process.env.CARDID_HOST;
 
@@ -79,8 +78,8 @@ var allConnectorCardTypes = function(){
 };
 
 module.exports = function(allowedCards){
-  var withdrawalTypes = [];
-  allowed = _.clone(allowedCards);
+  var withdrawalTypes = [],
+  allowed             = _.clone(allowedCards);
 
   if (_.filter(allowedCards,{debit: true}).length !== 0) withdrawalTypes.push('debit');
   if (_.filter(allowedCards,{credit: true}).length !== 0) withdrawalTypes.push('credit');
@@ -88,7 +87,7 @@ module.exports = function(allowedCards){
   return {
     withdrawalTypes: withdrawalTypes,
     allowed: _.clone(allowed),
-    checkCard: checkCard,
+    checkCard: (cardNo)=> { return checkCard(cardNo, allowed); },
     allConnectorCardTypes: allConnectorCardTypes
   };
 };
