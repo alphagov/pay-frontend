@@ -3,7 +3,6 @@
 
 var chargeValidator = require('./charge_validation.js');
 var q               = require('q');
-var Card            = require('../models/card')();
 var _               = require('lodash');
 var normalise       = require('../services/normalise_charge.js');
 
@@ -19,7 +18,7 @@ module.exports = function(translations, logger, cardModel) {
     var logger = require('winston');
     var defer = q.defer();
     var validation = validator.verify(req.body);
-    Card.checkCard(normalise.creditCard(req.body.cardNo)).then(function(cardBrand){
+    cardModel.checkCard(normalise.creditCard(req.body.cardNo)).then(function(cardBrand){
       logger.debug("Card supported - ", {'cardBrand': cardBrand});
       defer.resolve({validation: validation, cardBrand: cardBrand});
     },function(err){
