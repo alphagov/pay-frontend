@@ -69,6 +69,7 @@
     "node-rest-client": "2.0.x",
     "node-sass": "3.10.x",
     "q": "1.4.x",
+    "randomstring": "^1.1.5",
     "readdir": "0.0.x",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.3.x",

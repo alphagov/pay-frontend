@@ -2,6 +2,7 @@ var luhn = require('./luhn');
 var ukPostcode = require("uk-postcode");
 var creditCardType = require('credit-card-type');
 var validateEmail = require('rfc822-validate');
+var EMAIL_MAX_LENGTH = 254;
 
 module.exports = function(Card){
   "use strict";
@@ -77,9 +78,9 @@ module.exports = function(Card){
     },
 
     email: function(email){
-      var valid = validateEmail(email);
-      if (valid) return true;
-      return "message";
+      if (email && email.length > EMAIL_MAX_LENGTH) return "invalid_length";
+      if (!validateEmail(email)) return "message";
+      return true;
     },
 
     creditCardType: creditCardType,
