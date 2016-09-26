@@ -4,6 +4,7 @@ var paths = require('../paths.js'),
   views = require('../utils/views.js'),
   session = require('../utils/session.js'),
   csrf = require('csrf'),
+  CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER,
   stateService = require('../services/state_service.js');
 
 module.exports.new = function (req, res) {
@@ -17,8 +18,8 @@ module.exports.new = function (req, res) {
     },
 
     chargeRetrieved = function (chargeData) {
-      Token
-          .destroy(chargeTokenId)
+      var token = new Token(req.headers[CORRELATION_HEADER]);
+      token.destroy(chargeTokenId)
           .then(apiSuccess(chargeData),apiFail);
     },
 

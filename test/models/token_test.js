@@ -15,7 +15,8 @@ describe('token model', function() {
       });
 
       it('should return client unavailable', function () {
-        return Token.destroy(1).then(wrongPromise,
+        var token = new Token('blah');
+        return token.destroy(1).then(wrongPromise,
             function rejected(error){
               assert.equal(error.message,"CLIENT_UNAVAILABLE")
             });
@@ -25,14 +26,18 @@ describe('token model', function() {
     describe('when connector returns incorrect response code', function () {
       before(function() {
         nock.cleanAll();
-
-        nock(originalHost)
-            .delete("/v1/frontend/tokens/1")
-            .reply(404, '<html></html>');
+        nock(originalHost, {
+          reqheaders: {
+            'X-Request-Id': 'blah'
+          }
+        })
+          .delete("/v1/frontend/tokens/1")
+          .reply(404, '<html></html>');
       });
 
       it('should return delete_failed', function () {
-        return Token.destroy(1).then(wrongPromise,
+        var token = new Token('blah');
+        return token.destroy(1).then(wrongPromise,
             function rejected(error){
               assert.equal(error.message,"DELETE_FAILED")
             });
@@ -42,14 +47,18 @@ describe('token model', function() {
     describe('when connector returns correctly', function () {
       before(function() {
         nock.cleanAll();
-
-        nock(originalHost)
-            .delete("/v1/frontend/tokens/1")
-            .reply(204);
+        nock(originalHost, {
+          reqheaders: {
+            'X-Request-Id': 'unique-request-id'
+          }
+        })
+          .delete("/v1/frontend/tokens/1")
+          .reply(204);
       });
 
       it('should return delete_failed', function () {
-        return Token.destroy(1).then(function(data){
+        var token = new Token('unique-request-id');
+        return token.destroy(1).then(function(data){
           //
           //assert.equal(data.foo,'bar');
         },wrongPromise);
