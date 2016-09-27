@@ -8,6 +8,8 @@ var withCorrelationHeader = require(__dirname + '/../utils/correlation_header.js
 module.exports = function(correlationId) {
   'use strict';
 
+  correlationId = correlationId || "";
+
   var createUrl = function(resource,params){
         return paths.generateRoute(`connectorCharge.${resource}`,params);
       },
