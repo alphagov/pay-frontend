@@ -13,7 +13,7 @@ module.exports = function(req, res, next){
     var chargeId = chargeParam.retrieve(req);
     if (!chargeId) return _views.display(res,"UNAUTHORISED");
     req.chargeId = chargeId;
-    var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+    var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
     chargeModel.find(chargeId).then(gotCharge, apiFail);
   },
 

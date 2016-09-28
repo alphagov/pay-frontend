@@ -14,13 +14,13 @@ module.exports.new = function (req, res) {
       correlationId = req.headers[CORRELATION_HEADER] || '',
 
     init = function () {
-      var charge  = new Charge(correlationId);
+      var charge  = Charge(correlationId);
       charge.findByToken(chargeTokenId)
         .then(chargeRetrieved, apiFail);
     },
 
     chargeRetrieved = function (chargeData) {
-      var token = new Token(correlationId);
+      var token = Token(correlationId);
       token.destroy(chargeTokenId)
           .then(apiSuccess(chargeData),apiFail);
     },

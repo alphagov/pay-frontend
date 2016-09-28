@@ -1,9 +1,15 @@
 const CORRELATION_HEADER = 'x-request-id';
+var logger = require('winston');
 
 module.exports = function () {
   'use strict';
 
   var withCorrelationHeader = function (args, correlationId) {
+
+    if (!correlationId || correlationId === '') {
+      logger.warn('Missing correlation ID header [X-Request-Id] in request.');
+    }
+
     args = args || {};
     args.headers = args.headers || {};
     args.headers[CORRELATION_HEADER] = correlationId;

@@ -49,7 +49,7 @@ module.exports = {
       if (charge.status === State.ENTERING_CARD_DETAILS) {
         return res.render(CHARGE_VIEW, charge);
       }
-      var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+      var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
       chargeModel.updateToEnterDetails(charge.id)
         .then(function () {
           res.render(CHARGE_VIEW, charge);
@@ -68,7 +68,7 @@ module.exports = {
     var cardModel = Card(req.chargeData.gateway_account.card_types);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
-    var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+    var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
 
     var validator = chargeValidator(
       i18n.__("chargeController.fieldErrors"),
@@ -121,7 +121,6 @@ module.exports = {
 
     function postAuth(authUrl, req, cardBrand) {
       var startTime = new Date();
-      //TODO
       var args = normalise.apiPayload(req, cardBrand);
       var correlationId = req.headers[CORRELATION_HEADER];
       client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
@@ -139,9 +138,8 @@ module.exports = {
 
       var cardBrand = data.cardBrand;
 
-      //TODO
       logging.authChargePost(authUrl);
-      var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+      var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
       chargeModel.patch(req.chargeId, "replace", "email", req.body.email)
         .then(function () {
             postAuth(authUrl, req, cardBrand);
@@ -206,7 +204,7 @@ module.exports = {
       returnUrl = req.chargeData.return_url;
 
     var init = function () {
-        var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+        var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
         chargeModel.capture(req.chargeId).then(function () {
           res.redirect(303, returnUrl);
         }, captureFail);
@@ -246,7 +244,7 @@ module.exports = {
         _views.display(res, 'SYSTEM_ERROR', {returnUrl: returnUrl});
       };
 
-    var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+    var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
     chargeModel.cancel(req.chargeId)
       .then(function () {
         return _views.display(res, 'USER_CANCELLED', {
