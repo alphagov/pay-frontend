@@ -3,9 +3,12 @@ var client  = new Client();
 var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
+var withCorrelationHeader = require(__dirname + '/../utils/correlation_header.js').withCorrelationHeader;
 
-module.exports = function() {
+module.exports = function(correlationId) {
   'use strict';
+
+  correlationId = correlationId || "";
 
   var createUrl = function(resource,params){
         return paths.generateRoute(`connectorCharge.${resource}`,params);
@@ -13,7 +16,7 @@ module.exports = function() {
 
   destroy = function(tokenId){
     var defer = q.defer();
-    logger.debug('Calling connector to delete a token -', {
+    logger.debug('[%s] Calling connector to delete a token -', correlationId, {
       service: 'connector',
       method: 'DELETE',
       url: createUrl('token', {chargeTokenId: '{tokenId}'})
@@ -21,9 +24,11 @@ module.exports = function() {
 
     var startTime = new Date();
     var deleteUrl = createUrl('token', {chargeTokenId: tokenId});
+    var args = {};
 
-    client.delete(deleteUrl, function(data, response){
-      logger.info('[] - %s to %s ended - total time %dms', 'DELETE', deleteUrl, new Date() - startTime);
+    client.delete(deleteUrl, withCorrelationHeader(args, correlationId), function(data, response){
+      logger.info('[%s] - %s to %s ended - total time %dms', 'DELETE',
+        correlationId, deleteUrl, new Date() - startTime);
 
       if (response.statusCode !== 204) {
         logger.warn('Calling connector to delete a token failed -', {
@@ -35,8 +40,8 @@ module.exports = function() {
       }
       defer.resolve(data);
     }).on('error',function(err){
-      logger.info('[] - %s to %s ended - total time %dms', 'DELETE', deleteUrl, new Date() - startTime);
-      logger.error('Calling connector to delete a token threw exception -', {
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'DELETE', deleteUrl, new Date() - startTime);
+      logger.error('[%s] Calling connector to delete a token threw exception -', correlationId, {
         service: 'connector',
         method: 'DELETE',
         url: createUrl('token', {chargeTokenId: '{tokenId}'}),
@@ -54,4 +59,4 @@ module.exports = function() {
   return {
     destroy: destroy
   };
-}();
+};

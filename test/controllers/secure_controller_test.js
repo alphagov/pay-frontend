@@ -7,7 +7,6 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 var paths = require('../../app/paths.js');
 
-
 var mockCharge = function () {
   var mock = function (withSuccess, chargeObject) {
     return {
@@ -31,11 +30,13 @@ var mockCharge = function () {
 
 var mockToken = function () {
   var mock = function (withSuccess) {
-    return {
-      destroy: function () {
-        var defer = q.defer();
-        (withSuccess) ? defer.resolve() : defer.reject();
-        return defer.promise;
+    return function () {
+      return {
+        destroy: function () {
+          var defer = q.defer();
+          (withSuccess) ? defer.resolve() : defer.reject();
+          return defer.promise;
+        }
       }
     };
   };
@@ -78,7 +79,7 @@ var requireSecureController = function (mockedCharge, mockedToken) {
       }
     }
   })
-}
+};
 
 describe('secure controller', function () {
   describe('get method', function () {
@@ -88,7 +89,8 @@ describe('secure controller', function () {
     before(function () {
       request = {
         frontend_state: {},
-        params: {chargeTokenId: 1}
+        params: {chargeTokenId: 1},
+        headers:{'X-Request-Id': 'unique-id'}
       };
 
       response = {
