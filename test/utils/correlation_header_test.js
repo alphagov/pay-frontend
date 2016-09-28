@@ -15,7 +15,7 @@ describe('correlation header', function () {
         parameters: {foo: 'bar'},
         headers: {
           'Content-Type': 'application/json',
-          'X-Request-Id': 'some-unique-id'
+          'x-request-id': 'some-unique-id'
         }
       });
   });
@@ -30,7 +30,7 @@ describe('correlation header', function () {
     assert.deepEqual(argsWithCorrelationHeader,
       {
         parameters: {foo: 'bar'},
-        headers: {'X-Request-Id': 'some-unique-id'}
+        headers: {'x-request-id': 'some-unique-id'}
       });
   });
 
@@ -39,7 +39,7 @@ describe('correlation header', function () {
 
     assert.deepEqual(argsWithCorrelationHeader,
       {
-        headers: {'X-Request-Id': 'some-unique-id'}
+        headers: {'x-request-id': 'some-unique-id'}
       });
   });
 });

@@ -19,7 +19,8 @@ describe('updateStatus',function(){
     });
 
     it('should return client unavailable', function () {
-        return Charge.updateStatus(1,'ENTERING CARD DETAILS').then(wrongPromise,
+        var chargeModel = new Charge('');
+        return chargeModel.updateStatus(1,'ENTERING CARD DETAILS').then(wrongPromise,
           function rejected(error){
             assert.equal(error.message,"CLIENT_UNAVAILABLE")
         });
@@ -36,7 +37,8 @@ describe('updateStatus',function(){
 
 
     it('should return update_failed', function () {
-      return Charge.updateStatus(1,'ENTERING CARD DETAILS').then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.updateStatus(1,'ENTERING CARD DETAILS').then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"UPDATE_FAILED")
       });
@@ -56,7 +58,8 @@ describe('updateStatus',function(){
 
 
     it('should return the correct json', function () {
-      return Charge.updateStatus(1,'ENTERING CARD DETAILS')
+      var chargeModel = new Charge('');
+      return chargeModel.updateStatus(1,'ENTERING CARD DETAILS')
       .then(function(data,response){
         assert.equal(data.success,'OK');
       },wrongPromise);
@@ -73,7 +76,8 @@ describe('find',function(){
     });
 
     it('should return client unavailable', function () {
-      return Charge.find(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.find(1).then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"CLIENT_UNAVAILABLE")
       });
@@ -91,7 +95,8 @@ describe('find',function(){
     });
 
     it('should return get_failed', function () {
-      return Charge.find(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.find(1).then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"GET_FAILED")
       });
@@ -109,7 +114,8 @@ describe('find',function(){
     });
 
     it('should return get_failed', function () {
-      return Charge.find(1).then(function(data){
+      var chargeModel = new Charge('');
+      return chargeModel.find(1).then(function(data){
         assert.equal(data.foo,'bar');
       },wrongPromise);
     });
@@ -127,7 +133,8 @@ describe('capture',function(){
     });
 
     it('should return into the correct promise', function () {
-      return Charge.capture(1).then(function(){
+      var chargeModel = new Charge('');
+      return chargeModel.capture(1).then(function(){
         // correct promise returned so no need to check anything
       },wrongPromise);
     });
@@ -140,7 +147,8 @@ describe('capture',function(){
     });
 
     it('should return CLIENT_UNAVAILABLE when post fails', function () {
-      return Charge.capture(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.capture(1).then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"CLIENT_UNAVAILABLE");
       });
@@ -158,7 +166,8 @@ describe('capture',function(){
     });
 
     it('should return AUTH_FAILED', function () {
-      return Charge.capture(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.capture(1).then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"CAPTURE_FAILED")
       });
@@ -175,7 +184,8 @@ describe('capture',function(){
     });
 
     it('should return AUTH_FAILED', function () {
-      return Charge.capture(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.capture(1).then(wrongPromise,
         function rejected(error){
           assert.equal(error.message,"POST_FAILED")
       });
@@ -191,7 +201,8 @@ describe('findByToken',function(){
     });
 
     it('should return client unavailable', function () {
-      return Charge.findByToken(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.findByToken(1).then(wrongPromise,
           function rejected(error){
             assert.equal(error.message,"CLIENT_UNAVAILABLE")
           });
@@ -208,7 +219,8 @@ describe('findByToken',function(){
     });
 
     it('should return get_failed', function () {
-      return Charge.findByToken(1).then(wrongPromise,
+      var chargeModel = new Charge('');
+      return chargeModel.findByToken(1).then(wrongPromise,
           function rejected(error){
             assert.equal(error.message,"GET_FAILED")
           });
@@ -225,7 +237,8 @@ describe('findByToken',function(){
     });
 
     it('should return get_failed', function () {
-      return Charge.findByToken(1).then(function(data){
+      var chargeModel = new Charge('');
+      return chargeModel.findByToken(1).then(function(data){
         assert.equal(data.foo,'bar');
       },wrongPromise);
     });

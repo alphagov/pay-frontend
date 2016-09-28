@@ -9,11 +9,13 @@ var paths = require('../../app/paths.js');
 
 var mockCharge = function () {
   var mock = function (withSuccess, chargeObject) {
-    return {
-      findByToken: function () {
-        var defer = q.defer();
-        (withSuccess) ? defer.resolve(chargeObject) : defer.reject();
-        return defer.promise;
+    return function () {
+      return {
+        findByToken: function () {
+          var defer = q.defer();
+          (withSuccess) ? defer.resolve(chargeObject) : defer.reject();
+          return defer.promise;
+        }
       }
     };
   };
@@ -90,14 +92,14 @@ describe('secure controller', function () {
       request = {
         frontend_state: {},
         params: {chargeTokenId: 1},
-        headers:{'X-Request-Id': 'unique-id'}
+        headers:{'x-Request-id': 'unique-id'}
       };
 
       response = {
         redirect: sinon.spy(),
         render: sinon.spy(),
         status: sinon.spy()
-      }
+      };
 
       chargeObject = {
         "externalId": "dh6kpbb4k82oiibbe4b9haujjk",

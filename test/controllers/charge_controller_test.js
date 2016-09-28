@@ -1,21 +1,24 @@
 require(__dirname + '/../test_helpers/html_assertions.js');
 var proxyquire = require('proxyquire')
 var sinon = require('sinon');
+var expect = require('chai').expect;
 
 var mockCharge = function () {
 
-  var mock = function () {
-    var updateToEnterDetails = function () {
-      return {
-        then: function (success, fail) {
-          return success();
-        }
+  var mock = function (shouldSuccess) {
+    return function () {
+      var updateToEnterDetails = function () {
+        return {
+          then: function (success, fail) {
+            return shouldSuccess ? success() : fail();
+          }
+        };
       };
-    };
 
-    return {
-      updateToEnterDetails: updateToEnterDetails
-    }
+      return {
+        updateToEnterDetails: updateToEnterDetails
+      }
+    };
   };
 
   return {
@@ -81,7 +84,8 @@ describe('card details endpoint', function () {
     request = {
       query: {debitOnly : false},
       frontend_state: {},
-      params: {chargeTokenId: 1}
+      params: {chargeTokenId: 1},
+      headers:{'x-request-id': 'unique-id'}
     };
 
     response = {
@@ -93,21 +97,37 @@ describe('card details endpoint', function () {
 
   it('should not call update to enter card details if charge is already in ENTERING CARD DETAILS', function () {
 
-    var charge = mockCharge.mock();
-    var spyUpdateChargeCall = sinon.spy(charge, "updateToEnterDetails");
+    var mockedNormalisedCharge = aChargeWithStatus('ENTERING CARD DETAILS');
+    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
+    // To make sure this test does not proceed to chargeModel.updateToEnterDetails.
+    // That is to differentiate from next test.
+    var emptyChargeModel = {};
 
-    requireChargeController(charge, mockNormalise.withCharge(aChargeWithStatus('ENTERING CARD DETAILS'))).new(request, response);
-    sinon.assert.notCalled(spyUpdateChargeCall);
+    requireChargeController(emptyChargeModel, mockedNormalise).new(request, response);
+    expect(response.render.calledWith('charge', mockedNormalisedCharge)).to.be.true;
   });
 
   it('should update to enter card details if charge is in CREATED', function () {
 
-    var charge = mockCharge.mock();
-    var spyUpdateChargeCall = sinon.spy(charge, "updateToEnterDetails");
+    var charge = mockCharge.mock(true);
 
-    requireChargeController(charge, mockNormalise.withCharge(aChargeWithStatus('CREATED'))).new(request, response);
-    sinon.assert.calledOnce(spyUpdateChargeCall)
+    var mockedNormalisedCharge = aChargeWithStatus('CREATED');
+    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
+
+    requireChargeController(charge, mockedNormalise).new(request, response);
+    expect(response.render.calledWith('charge', mockedNormalisedCharge)).to.be.true;
 
   });
 
+  it('should display NOT FOUND if updateToEnterDetails returns error', function () {
+
+    var charge = mockCharge.mock(false);
+
+    var mockedNormalisedCharge = aChargeWithStatus('CREATED');
+    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
+
+    requireChargeController(charge, mockedNormalise).new(request, response);
+    expect(response.render.calledWith('error', {"message":"Page cannot be found","viewName":"NOT_FOUND"})).to.be.true;
+
+  });
 });

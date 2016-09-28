@@ -22,7 +22,8 @@ describe('retrieve param test', function () {
     params: { chargeId: "foo" },
     body: {},
     method: 'GET',
-    frontend_state: { ch_foo: true }
+    frontend_state: { ch_foo: true },
+    headers:{}
   },
   chargeId = 'foo',
   connectorPath = paths.generateRoute('connectorCharge.show',{chargeId: 'foo'});

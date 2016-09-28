@@ -1,4 +1,4 @@
-const CORRELATION_HEADER = 'X-Request-Id';
+const CORRELATION_HEADER = 'x-request-id';
 
 module.exports = function () {
   'use strict';

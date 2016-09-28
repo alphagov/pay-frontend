@@ -28,7 +28,7 @@ describe('token model', function() {
         nock.cleanAll();
         nock(originalHost, {
           reqheaders: {
-            'X-Request-Id': 'blah'
+            'x-request-id': 'blah'
           }
         })
           .delete("/v1/frontend/tokens/1")
@@ -49,7 +49,7 @@ describe('token model', function() {
         nock.cleanAll();
         nock(originalHost, {
           reqheaders: {
-            'X-Request-Id': 'unique-request-id'
+            'x-request-id': 'unique-request-id'
           }
         })
           .delete("/v1/frontend/tokens/1")

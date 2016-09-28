@@ -8,6 +8,8 @@ var chai_expect         = require('chai').expect;
 var csrf                = require('csrf');
 var nock                = require('nock');
 
+var defaultCorrelationId = 'some-unique-id';
+
 function localServer() {
   return process.env.CONNECTOR_HOST;
 }
@@ -188,7 +190,8 @@ module.exports = {
     return request(app)
       .get(frontendCardDetailsPath + '/' + chargeId + query)
       .set('Cookie', ['frontend_state=' + cookieValue])
-      .set('Accept', 'application/json');
+      .set('Accept', 'application/json')
+      .set('x-request-id',defaultCorrelationId);
   },
 
   connector_response_for_put_charge: function (chargeId, statusCode , responseBody, override_url) {

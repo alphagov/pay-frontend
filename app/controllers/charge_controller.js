@@ -20,7 +20,8 @@ var AUTH_WAITING_VIEW = 'auth_waiting';
 var CAPTURE_WAITING_VIEW = 'capture_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
 var countries = require("../services/countries.js");
-
+var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
+var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
 var appendChargeForNewView = function(charge, req, chargeId){
     var cardModel             = Card(charge.gatewayAccount.cardTypes);
@@ -48,7 +49,8 @@ module.exports = {
       if (charge.status === State.ENTERING_CARD_DETAILS) {
         return res.render(CHARGE_VIEW, charge);
       }
-      Charge.updateToEnterDetails(charge.id)
+      var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+      chargeModel.updateToEnterDetails(charge.id)
         .then(function () {
           res.render(CHARGE_VIEW, charge);
         }, function () {
@@ -66,6 +68,7 @@ module.exports = {
     var cardModel = Card(req.chargeData.gateway_account.card_types);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
+    var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
 
     var validator = chargeValidator(
       i18n.__("chargeController.fieldErrors"),
@@ -76,16 +79,16 @@ module.exports = {
     normalise.addressLines(req.body);
 
     if (submitted) {
-      return res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
+      return res.redirect(303, chargeModel.urlFor('authWaiting', req.chargeId));
     }
 
     var awaitingAuth = function() {
       logging.failedChargePost(409,authUrl);
-      res.redirect(303, Charge.urlFor('authWaiting', req.chargeId));
+      res.redirect(303, chargeModel.urlFor('authWaiting', req.chargeId));
     },
 
     successfulAuth = function() {
-      res.redirect(303, Charge.urlFor('confirm', req.chargeId));
+      res.redirect(303, chargeModel.urlFor('confirm', req.chargeId));
     },
 
     connectorFailure = function() {
@@ -94,7 +97,7 @@ module.exports = {
     },
 
     unknownFailure = function() {
-      res.redirect(303, Charge.urlFor('new', req.chargeId));
+      res.redirect(303, chargeModel.urlFor('new', req.chargeId));
     },
 
     connectorNonResponsive = function (err) {
@@ -118,8 +121,11 @@ module.exports = {
 
     function postAuth(authUrl, req, cardBrand) {
       var startTime = new Date();
-      client.post(authUrl, normalise.apiPayload(req, cardBrand), function (data, json) {
-        logger.info('[] - %s to %s ended - total time %dms', 'GET', authUrl, new Date() - startTime);
+      //TODO
+      var args = normalise.apiPayload(req, cardBrand);
+      var correlationId = req.headers[CORRELATION_HEADER];
+      client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'GET', authUrl, new Date() - startTime);
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();
@@ -133,8 +139,10 @@ module.exports = {
 
       var cardBrand = data.cardBrand;
 
+      //TODO
       logging.authChargePost(authUrl);
-      Charge.patch(req.chargeId, "replace", "email", req.body.email)
+      var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+      chargeModel.patch(req.chargeId, "replace", "email", req.body.email)
         .then(function () {
             postAuth(authUrl, req, cardBrand);
           }, function(err) {
@@ -198,7 +206,8 @@ module.exports = {
       returnUrl = req.chargeData.return_url;
 
     var init = function () {
-        Charge.capture(req.chargeId).then(function () {
+        var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+        chargeModel.capture(req.chargeId).then(function () {
           res.redirect(303, returnUrl);
         }, captureFail);
       },
@@ -237,7 +246,8 @@ module.exports = {
         _views.display(res, 'SYSTEM_ERROR', {returnUrl: returnUrl});
       };
 
-    Charge.cancel(req.chargeId)
+    var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+    chargeModel.cancel(req.chargeId)
       .then(function () {
         return _views.display(res, 'USER_CANCELLED', {
           returnUrl: returnUrl

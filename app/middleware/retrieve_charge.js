@@ -2,6 +2,7 @@ var views         = require('../utils/views.js');
 var Charge        = require('../models/charge.js');
 var chargeParam   = require('../services/charge_param_retriever.js');
 var q             = require('q');
+var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
 
 module.exports = function(req, res, next){
   "use strict";
@@ -12,7 +13,8 @@ module.exports = function(req, res, next){
     var chargeId = chargeParam.retrieve(req);
     if (!chargeId) return _views.display(res,"UNAUTHORISED");
     req.chargeId = chargeId;
-    Charge.find(chargeId).then(gotCharge, apiFail);
+    var chargeModel = new Charge(req.headers[CORRELATION_HEADER]);
+    chargeModel.find(chargeId).then(gotCharge, apiFail);
   },
 
   gotCharge = function(data){
