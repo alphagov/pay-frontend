@@ -5,21 +5,22 @@ var Client      = require('node-rest-client').Client;
 var client      = new Client();
 var q           = require('q');
 var changeCase  = require('change-case');
-var paths       = require('../paths.js');
 var logger  = require('winston');
+var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
-
-var checkCard = function(cardNo,allowed) {
+var checkCard = function(cardNo,allowed, correlationId) {
   var defer = q.defer();
   var CARDID_HOST = process.env.CARDID_HOST;
 
   var startTime = new Date();
   var cardUrl = CARDID_HOST + "/v1/api/card";
-  client.post(cardUrl , {
-      data: {"cardNumber": parseInt(cardNo) },
-      headers: { "Content-Type": "application/json" }
-    }, function(data, response) {
-      logger.info('[] - %s to %s ended - total time %dms', 'POST', cardUrl, new Date() - startTime);
+  var clientArgs = {
+    data: {"cardNumber": parseInt(cardNo) },
+    headers: { "Content-Type": "application/json" }
+  };
+
+  client.post(cardUrl ,withCorrelationHeader(clientArgs, correlationId), function(data, response) {
+      logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardUrl, new Date() - startTime);
 
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
@@ -30,7 +31,7 @@ var checkCard = function(cardNo,allowed) {
       var cardBrand = changeCase.paramCase(data.brand);
       var cardType = normaliseCardType(data.type);
 
-      logger.debug("Checking card brand - ", {'cardBrand': cardBrand, 'cardType': cardType});
+      logger.debug(`[${correlationId}] Checking card brand - `, {'cardBrand': cardBrand, 'cardType': cardType});
 
       var brandExists = _.filter(allowed, {brand: cardBrand}).length > 0;
       if (!brandExists) defer.reject(changeCase.titleCase(cardBrand) + " is not supported");
@@ -47,8 +48,8 @@ var checkCard = function(cardNo,allowed) {
       }
       return defer.resolve(cardBrand);
     }).on('error',function(error){
-      logger.error("ERROR CALLING CARD SERVICE", error);
-      logger.info('[] - %s to %s ended - total time %dms', 'POST', cardUrl, new Date() - startTime);
+      logger.error(`[${correlationId}] ERROR CALLING CARD SERVICE`, error);
+      logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardUrl, new Date() - startTime);
       defer.resolve();
     });
     return defer.promise;
@@ -64,22 +65,10 @@ var normaliseCardType = function(cardType) {
   return undefined;
 };
 
-var allConnectorCardTypes = function(){
-  logger.debug('Calling connector get card types');
-  var defer = q.defer();
-  client.get(paths.connectorCharge.allCards.path, function(data) {
-    defer.resolve(data.card_types);
-  }).on('error',function(){
-    defer.reject();
-  });
-
-  return defer.promise;
-
-};
-
-module.exports = function(allowedCards){
+module.exports = function(allowedCards, correlationId){
   var withdrawalTypes = [],
   allowed             = _.clone(allowedCards);
+  correlationId = correlationId || '';
 
   if (_.filter(allowedCards,{debit: true}).length !== 0) withdrawalTypes.push('debit');
   if (_.filter(allowedCards,{credit: true}).length !== 0) withdrawalTypes.push('credit');
@@ -87,7 +76,6 @@ module.exports = function(allowedCards){
   return {
     withdrawalTypes: withdrawalTypes,
     allowed: _.clone(allowed),
-    checkCard: (cardNo)=> { return checkCard(cardNo, allowed); },
-    allConnectorCardTypes: allConnectorCardTypes
+    checkCard: (cardNo)=> { return checkCard(cardNo, allowed, correlationId); }
   };
 };

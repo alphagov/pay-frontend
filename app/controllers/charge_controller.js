@@ -154,7 +154,8 @@ module.exports = {
   },
 
   checkCard: function(req, res) {
-    var cardModel = Card(req.chargeData.gateway_account.card_types);
+
+    var cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER]);
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
     .then(
       ()=>      { res.json({"accepted": true}); },

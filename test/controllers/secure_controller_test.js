@@ -53,26 +53,10 @@ var mockToken = function () {
   }
 }();
 
-var mockedCard = function(){
-
-  var allConnectorCardTypes = function(){
-     var defer = q.defer();
-    defer.resolve([{brand: "foo"}]);
-    return defer.promise;
-
-  };
-
-  return {
-    allConnectorCardTypes: allConnectorCardTypes
-  };
-
-};
-
 var requireSecureController = function (mockedCharge, mockedToken) {
   return proxyquire(__dirname + '/../../app/controllers/secure_controller.js', {
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
-    '../models/card.js': mockedCard,
     'csrf': function () {
       return {
         secretSync: function () {
