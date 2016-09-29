@@ -11,14 +11,16 @@ module.exports.new = function (req, res) {
   'use strict';
 
   var chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId,
+      correlationId = req.headers[CORRELATION_HEADER] || '',
 
     init = function () {
-      Charge.findByToken(chargeTokenId)
+      var charge  = Charge(correlationId);
+      charge.findByToken(chargeTokenId)
         .then(chargeRetrieved, apiFail);
     },
 
     chargeRetrieved = function (chargeData) {
-      var token = new Token(req.headers[CORRELATION_HEADER]);
+      var token = Token(correlationId);
       token.destroy(chargeTokenId)
           .then(apiSuccess(chargeData),apiFail);
     },

@@ -5,9 +5,12 @@ var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
 var State   = require('./state.js');
+var withCorrelationHeader = require(__dirname + '/../utils/correlation_header.js').withCorrelationHeader;
 
-module.exports = function() {
+module.exports = function(correlationId) {
   'use strict';
+
+  correlationId = correlationId || '';
 
   var connectorurl = function(resource,params){
     return paths.generateRoute(`connectorCharge.${resource}`,params);
@@ -36,7 +39,7 @@ module.exports = function() {
     params  = mergeApiParams({new_status: status}),
     defer   = q.defer();
 
-    logger.debug('Calling connector to update charge status -', {
+    logger.debug('[%s] Calling connector to update charge status -', correlationId, {
       service: 'connector',
       method: 'PUT',
       chargeId: chargeId,
@@ -45,8 +48,8 @@ module.exports = function() {
     });
 
     var startTime = new Date();
-    client.put(url, params, function(data, response){
-      logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime);
+    client.put(url, withCorrelationHeader(params, correlationId), function (data, response) {
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime);
       updateComplete(chargeId, data, response, defer);
 
     }).on('error',function(err){
@@ -68,8 +71,7 @@ module.exports = function() {
     var defer = q.defer();
     var url = connectorurl('show',{chargeId: chargeId});
 
-    //todo here we call connector to get the charge
-    logger.debug('Calling connector to get charge -', {
+    logger.debug('[%s] Calling connector to get charge -', correlationId, {
       service: 'connector',
       method: 'GET',
       chargeId: chargeId,
@@ -77,10 +79,11 @@ module.exports = function() {
     });
 
     var startTime = new Date();
-    client.get(url, function(data, response){
+    var params = {};
+    client.get(url, withCorrelationHeader(params, correlationId), function(data, response){
       if (response.statusCode !== 200) {
-        logger.info('[] - %s to %s ended - total time %dms', 'GET', url, new Date() - startTime);
-        logger.warn('Calling connector to get charge failed -', {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime);
+        logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
           service: 'connector',
           method: 'GET',
           chargeId: chargeId,
@@ -91,8 +94,8 @@ module.exports = function() {
       }
       defer.resolve(data);
     }).on('error',function(err){
-      logger.info('[] - %s to %s ended - total time %dms', 'GET', url, new Date() - startTime);
-      logger.error('Calling connector to get charge threw exception -', {
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime);
+      logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
         service: 'connector',
         method: 'GET',
         chargeId: chargeId,
@@ -109,20 +112,20 @@ module.exports = function() {
     params  = mergeApiParams(),
     defer   = q.defer();
 
-    logger.debug('Calling connector to do capture -', {
+    logger.debug('[%s] Calling connector to do capture -', correlationId, {
       service: 'connector',
       method: 'POST',
       chargeId: chargeId,
       url: url
     });
     var startTime = new Date();
-    client.post(url, params, function(data, response){
-      logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
+    client.post(url, withCorrelationHeader(params, correlationId), function(data, response){
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
       captureComplete(data, response, defer);
     })
     .on('error',function(err) {
-      logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
-      logger.error('Calling connector to do capture failed -', {
+      logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime);
+      logger.error('[%s] Calling connector to do capture failed -', correlationId, {
         service:'connector',
         method:'POST',
         chargeId: chargeId,
@@ -140,7 +143,7 @@ module.exports = function() {
       params  = mergeApiParams(),
       defer   = q.defer();
 
-    logger.debug('Calling connector to cancel a charge -', {
+    logger.debug('[%s] Calling connector to cancel a charge -', correlationId, {
       service: 'connector',
       method: 'POST',
       chargeId: chargeId,
@@ -148,13 +151,13 @@ module.exports = function() {
     });
 
     var startTime = new Date();
-    client.post(url, params, function(data, response){
-        logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
+    client.post(url, withCorrelationHeader(params, correlationId), function(data, response){
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
         cancelComplete(data, response, defer);
       })
       .on('error',function(err){
-        logger.info('[] - %s to %s ended - total time %dms', 'POST', url, new Date() - startTime);
-        logger.error('Calling connector cancel a charge threw exception -', {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
+        logger.error('[%s] Calling connector cancel a charge threw exception -', correlationId, {
           service:'connector',
           method:'POST',
           url: url,
@@ -169,7 +172,7 @@ module.exports = function() {
   cancelComplete = function(data, response, defer) {
     var code = response.statusCode;
     if (code === 204) return defer.resolve();
-    logger.error('Calling connector cancel a charge failed -', {
+    logger.error('[%s] Calling connector cancel a charge failed -', correlationId, {
       service:'connector',
       method:'POST',
       status: code
@@ -184,17 +187,18 @@ module.exports = function() {
 
   findByToken = function(tokenId){
     var defer = q.defer();
-    logger.debug('Calling connector to find a charge by token -', {
+    logger.debug('[%s] Calling connector to find a charge by token -', correlationId, {
       service: 'connector',
       method: 'GET'
     });
 
     var startTime = new Date();
     var findByUrl = connectorurl('findByToken',{chargeTokenId: tokenId});
-    client.get(findByUrl, function(data, response){
-      logger.info('[] - %s to %s ended - total time %dms', 'GET', findByUrl, new Date() - startTime);
+    var params = {};
+    client.get(findByUrl, withCorrelationHeader(params, correlationId),function(data, response){
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime);
       if (response.statusCode !== 200) {
-        logger.warn('Calling connector to find a charge by token failed -', {
+        logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
           service: 'connector',
           method: 'GET',
           status: response.statusCode
@@ -205,8 +209,8 @@ module.exports = function() {
 
       defer.resolve(data);
     }).on('error', function(err){
-      logger.info('[] - %s to %s ended - total time %dms', 'GET', findByUrl, new Date() - startTime);
-      logger.error('Calling connector to find a charge by token threw exception -', {
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime);
+      logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
         service:'connector',
         method:'GET',
         error:err
@@ -229,7 +233,7 @@ module.exports = function() {
 
   updateComplete = function(chargeId, data, response, defer){
     if (response.statusCode !== 204) {
-      logger.error('Calling connector to update charge status failed -', {
+      logger.error('[%s] Calling connector to update charge status failed -', correlationId, {
         chargeId: chargeId,
         status: response.statusCode
       });
@@ -245,24 +249,37 @@ module.exports = function() {
 
     var startTime = new Date();
     var chargesUrl = process.env.CONNECTOR_HOST + "/v1/frontend/charges/";
-    client.patch(chargesUrl + chargeId, {
-        headers: {"Content-Type": "application/json"},
-        data: {
-          op: op,
-          path: path,
-          value: value
-        }
-      }, function(data, response) {
-         logger.info('[] - %s to %s ended - total time %dms', 'PATCH', chargesUrl, new Date() - startTime);
+
+    logger.debug('[%s] Calling connector to patch charge -', correlationId, {
+      service: 'connector',
+      method: 'PATCH'
+    });
+
+    var params = {
+      headers: {"Content-Type": "application/json"},
+      data: {
+        op: op,
+        path: path,
+        value: value
+      }
+    };
+
+    client.patch(chargesUrl + chargeId, withCorrelationHeader(params, correlationId), function (data, response) {
+         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime);
         var code = response.statusCode;
         if (code === 200) {
           defer.resolve();
         } else {
           defer.reject();
         }
-      }).on('error', function(){
-          logger.info('[] - %s to %s ended - total time %dms', 'PATCH', chargesUrl, new Date() - startTime);
-          defer.reject();
+      }).on('error', function(err){
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime);
+        logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
+          service:'connector',
+          method:'PATCH',
+          error:err
+        });
+        defer.reject();
       });
 
       return defer.promise;
@@ -282,4 +299,4 @@ module.exports = function() {
     patch: patch,
     urlFor: urlFor
   };
-}();
+};

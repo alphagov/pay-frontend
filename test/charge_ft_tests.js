@@ -8,8 +8,6 @@ app.engine('html', mock_templates.__express);
 var csrf = require('csrf');
 var expect = require('chai').expect;
 
-
-
 var should = require('chai').should();
 
 var cookie = require(__dirname + '/test_helpers/session.js');
@@ -27,7 +25,11 @@ var defaultCardID = function(cardNumber){
         .post("/v1/api/card",()=> { return true; })
         .reply(200, {brand: "visa", label: "visa", type: "D"});
 
-}
+};
+
+var defaultCorrelationHeader = {
+  reqheaders: {'x-request-id': 'some-unique-id'}
+};
 
 describe('chargeTests',function(){
 
@@ -58,6 +60,7 @@ describe('chargeTests',function(){
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
+        .set('x-request-id','some-unique-id')
         .send(data);
   }
 
@@ -130,7 +133,7 @@ describe('chargeTests',function(){
   describe('The /charge endpoint', function() {
     describe('Different statuses',function(){
       function get(status) {
-        nock(process.env.CONNECTOR_HOST)
+        nock(process.env.CONNECTOR_HOST, defaultCorrelationHeader)
         .get("/v1/frontend/charges/23144323")
         .reply(200, {
           'amount': 2345,
@@ -146,7 +149,7 @@ describe('chargeTests',function(){
             }]
           }
         });
-        nock(process.env.CONNECTOR_HOST)
+        nock(process.env.CONNECTOR_HOST, defaultCorrelationHeader)
         .put("/v1/frontend/charges/23144323/status")
         .reply(204);
 
