@@ -6,7 +6,9 @@ module.exports = function () {
 
   var withCorrelationHeader = function (args, correlationId) {
 
-    if (!correlationId || correlationId === '') {
+    correlationId = correlationId || '';
+
+    if (correlationId === '') {
       logger.warn('Missing correlation ID header [X-Request-Id] in request.');
     }
 

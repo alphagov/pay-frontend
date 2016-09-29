@@ -123,6 +123,8 @@ module.exports = {
       var startTime = new Date();
       var args = normalise.apiPayload(req, cardBrand);
       var correlationId = req.headers[CORRELATION_HEADER];
+      logger.info('begin %s to %s', 'GET', authUrl);
+
       client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'GET', authUrl, new Date() - startTime);
         var response = responses[json.statusCode];
