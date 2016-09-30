@@ -122,7 +122,7 @@ module.exports = {
     function postAuth(authUrl, req, cardBrand) {
       var startTime = new Date();
       var args = normalise.apiPayload(req, cardBrand);
-      var correlationId = req.headers[CORRELATION_HEADER];
+      var correlationId = req.headers[CORRELATION_HEADER] || '';
       logger.info('begin %s to %s', 'GET', authUrl);
 
       client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
