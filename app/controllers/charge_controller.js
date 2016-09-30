@@ -123,7 +123,6 @@ module.exports = {
       var startTime = new Date();
       var args = normalise.apiPayload(req, cardBrand);
       var correlationId = req.headers[CORRELATION_HEADER] || '';
-      logger.info('begin %s to %s', 'GET', authUrl);
 
       client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'GET', authUrl, new Date() - startTime);
@@ -154,7 +153,8 @@ module.exports = {
   },
 
   checkCard: function(req, res) {
-    var cardModel = Card(req.chargeData.gateway_account.card_types);
+
+    var cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER]);
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
     .then(
       ()=>      { res.json({"accepted": true}); },

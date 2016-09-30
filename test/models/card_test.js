@@ -6,19 +6,26 @@ var nock      = require('nock');
 var originalHost = process.env.CONNECTOR_HOST
 var wrongPromise = require(__dirname + '/../test_helpers/test_helpers.js').unexpectedPromise;
 
+var aRequestId = 'unique-request-id';
+var aCorrelationHeader = {
+  reqheaders: {
+    'x-request-id': aRequestId
+  }
+};
+
 describe('card', function () {
   describe('check card', function() {
     describe('when card is not found', function () {
       before(function() {
-        nock.cleanAll();
 
-        nock(process.env.CARDID_HOST)
+        nock.cleanAll();
+        nock(process.env.CARDID_HOST, aCorrelationHeader)
             .post("/v1/api/card")
             .reply(404);
       });
 
       it('should return the correct message', function () {
-        return CardModel().checkCard(1234).then(wrongPromise,function(message){
+        return CardModel({}, aRequestId).checkCard(1234).then(wrongPromise,function(message){
           assert.equal(message,"Your card is not supported");
         });
       });
@@ -28,13 +35,13 @@ describe('card', function () {
       before(function() {
         nock.cleanAll();
 
-        nock(process.env.CARDID_HOST)
+        nock(process.env.CARDID_HOST, aCorrelationHeader)
             .post("/v1/api/card")
             .reply(201);
       });
 
       it('should resolve', function () {
-        return CardModel().checkCard(1234).then(()=>{},wrongPromise);
+        return CardModel({}, aRequestId).checkCard(1234).then(()=>{},wrongPromise);
       });
     });
 
@@ -71,13 +78,13 @@ describe('card', function () {
     describe('a card that is not allowed debit withrawal type', function () {
       before(function() {
         nock.cleanAll();
-        nock(process.env.CARDID_HOST)
+        nock(process.env.CARDID_HOST, aCorrelationHeader)
           .post("/v1/api/card")
           .reply(200,{brand: "bar", label: "bar", type: 'D'});
       });
 
       it('should reject with appropriate message', function () {
-        return CardModel([{brand: "bar", label: "bar", type: "CREDIT", id: "id-0"}])
+        return CardModel([{brand: "bar", label: "bar", type: "CREDIT", id: "id-0"}], aRequestId)
         .checkCard(1234).then(wrongPromise,function(message){
           assert.equal(message,"Bar debit cards are not supported");
         });
