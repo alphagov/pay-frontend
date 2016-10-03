@@ -17,3 +17,5 @@ alpha_staging-1-34.approver=rory.smith@digital.cabinet-office.gov.uk
 alpha_staging-1-34.approve-date=2016-10-03:10:31:17
 
 production-1.tag=alpha_production-1-34
+
+production-1.alpha_production-1-34.date=2016-10-03:09:42:51
