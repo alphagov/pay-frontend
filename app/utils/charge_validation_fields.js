@@ -47,12 +47,22 @@ module.exports = function(Card){
       if (expiryMonth === undefined || expiryMonth === "") return "message";
       if (expiryYear  === undefined || expiryYear === "") return "message";
 
+
+
       // month is zero indexed
       expiryMonth = expiryMonth -1;
       var isValidMonth = /^\d+$/.test(expiryMonth) && expiryMonth >= 0 && expiryMonth <= 11;
       if (!isValidMonth) return "invalid_month";
+      // validations are grouped for expiry month and year,
+      // this is why both validations are happening in expiry month
+      // can;t be renamed as it all runs off meta programming further up the stack
+      var isValidYear = (String(allFields.expiryYear).length === 2 || String(allFields.expiryYear).length === 4);     
+      if (!isValidYear) return "invalid_year";
 
-      var cardDate = new Date("20" + allFields.expiryYear,expiryMonth);
+      var cardDate = allFields.expiryYear;
+      if (String(allFields.expiryYear).length === 2) cardDate = "20" + cardDate;
+      cardDate = new Date(cardDate,expiryMonth);
+
       var currentDate = new Date();
       if (currentDate.getFullYear() > cardDate.getFullYear()) return "in_the_past";
       if (currentDate.getFullYear() === cardDate.getFullYear() &&
