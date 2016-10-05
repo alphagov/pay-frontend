@@ -165,7 +165,8 @@ describe('chargeTests',function(){
             helper.templateValueNotUndefined(res,"csrf");
             helper.templateValue(res,"amount",'23.45');
             helper.templateValue(res,"id",chargeId);
-            helper.templateValue(res,"return_url",RETURN_URL);
+            helper.templateValue(res,"return_url","/return");
+            helper.templateValue(res,"service_return_url",RETURN_URL);
             helper.templateValue(res,"description","Payment Description");
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
           })
@@ -367,7 +368,8 @@ describe('chargeTests',function(){
           .expect(200)
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
-            helper.templateValue(res,"return_url",RETURN_URL);
+            helper.templateValue(res,"return_url","/return");
+            helper.templateValue(res,"service_return_url",RETURN_URL);
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount",'23.45');
@@ -589,7 +591,8 @@ describe('chargeTests',function(){
                 helper.templateValueNotUndefined(res,"csrf");
                 helper.templateValue(res,"id",chargeId);
                 helper.templateValue(res,"amount",'23.45');
-                helper.templateValue(res,"return_url",'http://www.example.com/service');
+                helper.templateValue(res,"return_url",'/return');
+                helper.templateValue(res,"service_return_url",'http://www.example.com/service');
                 helper.templateValue(res,"description",'Payment Description');
                 helper.templateValue(res,"post_card_action",'/card_details');
                 helper.templateValue(res,"withdrawalText",'accepted credit and debit card types');

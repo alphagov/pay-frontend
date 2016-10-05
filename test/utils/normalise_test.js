@@ -28,7 +28,8 @@ var unNormalisedCharge = {
 var normalisedCharge = {
   id: 1,
   amount: "12.34",
-  return_url: "foo",
+  return_url: "/return",
+  service_return_url: "foo",
   description: "bar",
   links: [{
     rel: "rar",

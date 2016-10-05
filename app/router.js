@@ -3,6 +3,7 @@ var i18n = require('i18n');
 var charge        = require('./controllers/charge_controller.js');
 var secure        = require('./controllers/secure_controller.js');
 var statik        = require('./controllers/static_controller.js');
+var returnCont    = require('./controllers/return_controller.js');
 
 var paths         = require(__dirname + '/paths.js');
 var csrf          = require(__dirname + '/middleware/csrf.js');
@@ -40,6 +41,7 @@ module.exports.bind = function (app) {
   app.post(card.capture.path, middlewareStack, charge.capture);
   app.post(card.cancel.path,  middlewareStack, charge.cancel);
   app.post(card.checkCard.path, retrieveCharge, charge.checkCard);
+  app.get(card.return.path, retrieveCharge, returnCont.return);
 
 
   // secure controller
