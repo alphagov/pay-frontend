@@ -33,6 +33,7 @@
          "name": "expiry date",
          "message": "Enter a valid expiry date",
          "invalid_month":"Enter a valid expiry date",
+         "invalid_year":"Enter a valid expiry date",
          "in_the_past": "Enter an expiry date in the future"
        },
        "expiryYear": {

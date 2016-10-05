@@ -47,7 +47,11 @@ describe('charge validation fields', function () {
 
     it('should true if correct', function () {
       var result = fields.fieldValidations.expiryMonth(12, {expiryYear: 16} );
+      var longYear = fields.fieldValidations.expiryMonth(12, {expiryYear: "2016"} );
+
       expect(result).to.equal(true);
+      expect(longYear).to.equal(true);
+
     });
 
     it('should fails if month is too large or small', function () {
@@ -60,11 +64,24 @@ describe('charge validation fields', function () {
       expect(chars).to.equal("invalid_month");
     });
 
+    it('should fails if year is not 2 or 4 digits', function () {
+      var two = fields.fieldValidations.expiryMonth(12, {expiryYear: "16"});
+      var three = fields.fieldValidations.expiryMonth(12, {expiryYear: "016"} );
+      var four = fields.fieldValidations.expiryMonth(12, {expiryYear: "2016"} );
+
+      expect(two).to.equal(true);
+      expect(three).to.equal("invalid_year");
+      expect(four).to.equal(true);
+    });
+
     it('should fail is date is in past', function () {
       var month = fields.fieldValidations.expiryMonth(1, {expiryYear: 16} );
       var year = fields.fieldValidations.expiryMonth(1, {expiryYear: 15} );
+      var longYear = fields.fieldValidations.expiryMonth(1, {expiryYear: "2015"} );
+
       expect(month).to.equal("in_the_past");
       expect(year).to.equal("in_the_past");
+      expect(longYear).to.equal("in_the_past");
     });
 
       it('should fail year is not defined', function () {
