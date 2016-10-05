@@ -43,7 +43,11 @@ var paths = {
     checkCard: {
       path: '/check_card/:chargeId',
       action: 'post'
-    }
+    },
+    return: {
+      path: '/return',
+      action: 'get'
+    },
   },
   secure: {
     get: {
