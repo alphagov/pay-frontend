@@ -23,6 +23,7 @@ var countries = require("../services/countries.js");
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
 var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
+
 var appendChargeForNewView = function(charge, req, chargeId){
     var cardModel             = Card(charge.gatewayAccount.cardTypes);
     var translation           = i18n.__("chargeController.withdrawalText");
@@ -93,7 +94,7 @@ module.exports = {
 
     connectorFailure = function() {
       logging.failedChargePost(409,authUrl);
-      _views.display(res, 'SYSTEM_ERROR', {returnUrl: charge.return_url});
+      _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
     },
 
     unknownFailure = function() {
@@ -201,20 +202,20 @@ module.exports = {
   },
 
   capture: function (req, res) {
-
-    var _views = views.create(),
-      returnUrl = req.chargeData.return_url;
+    
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var _views = views.create();
 
     var init = function () {
         var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
         chargeModel.capture(req.chargeId).then(function () {
-          res.redirect(303, returnUrl);
+          res.redirect(303, paths.generateRoute('card.return', {chargeId: charge.id}));
         }, captureFail);
       },
 
       captureFail = function (err) {
         if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE');
-        _views.display(res, 'SYSTEM_ERROR', {returnUrl: returnUrl});
+        _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
       };
     init();
   },
@@ -223,7 +224,6 @@ module.exports = {
 
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views = views.create();
-    var returnUrl = req.chargeData.return_url;
 
     if (charge.status === State.CAPTURE_READY) {
       _views = views.create({
@@ -234,23 +234,23 @@ module.exports = {
       });
       _views.display(res, "success");
     } else {
-      _views.display(res, 'CAPTURE_SUBMITTED', {returnUrl: returnUrl});
+      _views.display(res, 'CAPTURE_SUBMITTED', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
     }
   },
 
   cancel: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
 
     var _views = views.create(),
-      returnUrl = req.chargeData.return_url,
       cancelFail = function () {
-        _views.display(res, 'SYSTEM_ERROR', {returnUrl: returnUrl});
+        _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
       };
 
     var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
     chargeModel.cancel(req.chargeId)
       .then(function () {
         return _views.display(res, 'USER_CANCELLED', {
-          returnUrl: returnUrl
+          returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})
         });
       }, cancelFail);
   }

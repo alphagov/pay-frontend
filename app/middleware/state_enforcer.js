@@ -1,7 +1,9 @@
-var views       = require('../utils/views.js');
-var _views      = views.create({});
+var views         = require('../utils/views.js');
+var _views        = views.create({});
 var _             = require('lodash');
 var stateService  = require('../services/state_service.js');
+var paths         = require('../paths.js');
+
 
 module.exports = function(req,res,next){
   'use strict';
@@ -10,7 +12,7 @@ module.exports = function(req,res,next){
   var currentState      = req.chargeData.status,
   locals            = {
     chargeId: req.chargeId,
-    returnUrl: req.chargeData.return_url
+    returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId})
   };
 
   var init = function(){

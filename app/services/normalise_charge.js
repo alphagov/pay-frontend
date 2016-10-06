@@ -1,7 +1,6 @@
 var countries = require("../services/countries");
 var humps = require("humps");
 var normaliseCards = require('../services/normalise_cards.js');
-var paths = require("../paths.js");
 
 module.exports = function() {
   "use strict";
@@ -10,7 +9,6 @@ module.exports = function() {
     var chargeObj = {
       id: chargeId,
       amount: penceToPounds(charge.amount),
-      return_url: paths.card.return.path,
       service_return_url: charge.return_url,
       description: charge.description,
       links: charge.links,
