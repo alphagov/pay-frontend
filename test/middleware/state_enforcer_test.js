@@ -60,7 +60,7 @@ describe('state enforcer', function () {
     assert(status.calledWith(200));
     assert(render.calledWith("errors/incorrect_state/auth_success",
       { chargeId: 1,
-        returnUrl: '/return',
+        returnUrl: '/return/1',
         viewName: 'AUTHORISATION_SUCCESS' }
     ));
   });

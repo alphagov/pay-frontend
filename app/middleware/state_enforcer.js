@@ -12,7 +12,7 @@ module.exports = function(req,res,next){
   var currentState      = req.chargeData.status,
   locals            = {
     chargeId: req.chargeId,
-    returnUrl: paths.card.return.path
+    returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId})
   };
 
   var init = function(){

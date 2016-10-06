@@ -705,7 +705,7 @@ describe('chargeTests',function(){
           .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
           .set('Accept', 'application/json')
           .expect(303, {})
-          .expect('Location', '/return')
+          .expect('Location', '/return/' + chargeId)
           .end(done);
     });
 
@@ -735,7 +735,7 @@ describe('chargeTests',function(){
           .expect(500)
           .expect(function(res){
             helper.templateValue(res,"viewName","SYSTEM_ERROR");
-            helper.templateValue(res,"returnUrl","/return");
+            helper.templateValue(res,"returnUrl","/return/" + chargeId);
           })
           .end(done);
     });

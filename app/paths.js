@@ -45,7 +45,7 @@ var paths = {
       action: 'post'
     },
     return: {
-      path: '/return',
+      path: '/return/:chargeId',
       action: 'get'
     },
   },

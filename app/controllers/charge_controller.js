@@ -23,7 +23,6 @@ var countries = require("../services/countries.js");
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
 var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
-const RETURN_URL = paths.card.return.path; 
 
 var appendChargeForNewView = function(charge, req, chargeId){
     var cardModel             = Card(charge.gatewayAccount.cardTypes);
@@ -95,7 +94,7 @@ module.exports = {
 
     connectorFailure = function() {
       logging.failedChargePost(409,authUrl);
-      _views.display(res, 'SYSTEM_ERROR', {returnUrl: RETURN_URL});
+      _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
     },
 
     unknownFailure = function() {
@@ -203,19 +202,20 @@ module.exports = {
   },
 
   capture: function (req, res) {
-
+    
+    var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views = views.create();
 
     var init = function () {
         var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
         chargeModel.capture(req.chargeId).then(function () {
-          res.redirect(303, RETURN_URL);
+          res.redirect(303, paths.generateRoute('card.return', {chargeId: charge.id}));
         }, captureFail);
       },
 
       captureFail = function (err) {
         if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE');
-        _views.display(res, 'SYSTEM_ERROR', {returnUrl: RETURN_URL});
+        _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
       };
     init();
   },
@@ -234,22 +234,23 @@ module.exports = {
       });
       _views.display(res, "success");
     } else {
-      _views.display(res, 'CAPTURE_SUBMITTED', {returnUrl: RETURN_URL});
+      _views.display(res, 'CAPTURE_SUBMITTED', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
     }
   },
 
   cancel: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
 
     var _views = views.create(),
       cancelFail = function () {
-        _views.display(res, 'SYSTEM_ERROR', {returnUrl: RETURN_URL});
+        _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
       };
 
     var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
     chargeModel.cancel(req.chargeId)
       .then(function () {
         return _views.display(res, 'USER_CANCELLED', {
-          returnUrl: RETURN_URL
+          returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})
         });
       }, cancelFail);
   }
