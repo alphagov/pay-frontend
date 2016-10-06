@@ -8,7 +8,7 @@ module.exports.return = function (req, res) {
 
   var correlationId = req.headers[CORRELATION_HEADER] || '',
    _views = views.create({}),
-  doRedirect = () => res.redirect(req.chargeData.service_return_url),
+  doRedirect = () => res.redirect(req.chargeData.return_url),
   chargeModel = Charge(correlationId),
   cancelStates = [
     StateModel.CREATED, 
