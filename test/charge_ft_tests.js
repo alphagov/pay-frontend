@@ -602,7 +602,7 @@ describe('chargeTests',function(){
             get_charge_request(app, cookieValue, chargeId,"?debitOnly=true")
               .expect(200)
               .expect(function(res){
-                helper.templateValue(res,"withdrawalText",'Credit card payments are not accepted for this service. Please use a Debit card.');
+                helper.templateValue(res,"withdrawalText",'Credit card payments are not accepted. Please use a debit card.');
               })
               .end(done);
         });

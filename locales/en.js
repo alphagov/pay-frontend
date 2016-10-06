@@ -2,7 +2,7 @@
 	"chargeController": {
     "withdrawalText": {
      "debit_credit" : "accepted credit and debit card types",
-     "debit" : "Credit card payments are not accepted for this service. Please use a Debit card."
+     "debit" : "Credit card payments are not accepted. Please use a debit card."
    },
    "fieldErrors": {
      "missing": "is missing",
@@ -75,7 +75,7 @@
     "postcode": "Postcode",
     "country": "Country",
     "email": "Email",
-    "cvcTip": "The last 3 digits on the back of the card.",
+    "cvcTip": "The last 3 digits on the back of the card",
     "amexcvcTip": "The last 4 digits after the card number on the front",
     "amexcvcNonjs": "For American Express,"
   }
