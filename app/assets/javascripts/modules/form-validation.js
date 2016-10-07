@@ -2,7 +2,9 @@
 var formValidation = function(){
   var form          = $('form#card-details'),
   formInputs        = form.find('input'),
-  cardInput         = form.find('input#card-no'),
+  countrySelect     = form.find('select#address-country'),
+    postcodeInput   = form.find('input#address-postcode'),
+    cardInput       = form.find('input#card-no'),
   errorSummary      = $('.error-summary'),
   logger            = {info: function(){}}, // replace with console to see output
   // window.card comes from the view
@@ -11,8 +13,11 @@ var formValidation = function(){
 
 
   var init = function(){
-    form.on('submit',checkFormSubmission);
-    formInputs.on('blur',checkPreviousFocused);
+    form.on('submit', checkFormSubmission);
+    formInputs.on('blur', checkPreviousFocused);
+    countrySelect.on('change', function() {
+      checkValidation(postcodeInput);
+    });
   },
 
   checkFormSubmission = function(e){
@@ -117,7 +122,6 @@ var formValidation = function(){
       addCardError(error);
     });
   },
-
   replaceOnError = function(validation, formGroup){
     var validated = validation === undefined;
     replaceLabel(validation, formGroup);
