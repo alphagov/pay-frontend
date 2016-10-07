@@ -93,7 +93,7 @@ Enter your card details.
                 class="form-control"
                 data-last-of-form-group
                 data-required
-                min="0" max="99" />
+                />
               </div>
       </div>
       <div class="form-group{{#highlightErrorFields.cardholderName}} error{{/highlightErrorFields.cardholderName}}"
@@ -155,10 +155,43 @@ Enter your card details.
               <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="Please enter either a 3 or 4 digit card security code" />
           </label>
       </div>
+      <div class="form-group pull-bottom{{#highlightErrorFields.addressCountry}} error{{/highlightErrorFields.addressCountry}}" data-validation="addressCountry">
+          <h2 class="push-top">Billing address</h2>
+          <p class="form-hint">This is the address associated with the card</p>
+
+          <label id="address-country-lbl" for="address-country" class="form-label-bold">
+              <span
+                      class="address-country-label push-top-sml"
+                      data-label-replace="addressCountry"
+                      data-original-label="{{ i18n.chargeView.country }}">
+                {{ i18n.chargeView.country }}
+              </span>
+
+              {{#highlightErrorFields.addressCountry}}
+              <p class="error-message" id="error-address-country">
+                  {{highlightErrorFields.addressCountry}}
+              </p>
+              {{/highlightErrorFields.addressCountry}}
+
+              <span class="ui-front form-label-bold">
+                  <!--<label for="#address-country" class="form-label">Country of birth</label>-->
+                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocomplete="off">
+                      {{#countries}}
+
+                      <option
+                              value="{{ entry.country }}"
+                              data-aliases="{{ entry.aliases }}"
+                              data-weighting="{{ entry.weighting }}"
+                              {{#entry.selected }} selected="selected" {{/entry.selected }}
+                      >{{ entry.name }}</option>
+                      {{/countries}}
+
+                  </select>
+              </span>
+          </label>
+      </div>
       <div class="form-group address{{#highlightErrorFields.addressLine1}} error{{/highlightErrorFields.addressLine1}}"
           data-validation="addressLine1">
-          <h2>Billing address</h2>
-          <p class="form-hint">This is the address associated with the card</p>
           <label id="address-line-1-lbl" for="address-line-1" class="form-label-bold">
               <span
                 class="address-line-1-label"
@@ -207,38 +240,6 @@ Enter your card details.
                      maxlength="100"
                      class="form-control-1-4"
                      value="{{ addressCity }}"  />
-          </label>
-      </div>
-      <div class="form-group{{#highlightErrorFields.addressCountry}} error{{/highlightErrorFields.addressCountry}}" data-validation="addressCountry">
-          <label id="address-country-lbl" for="address-country" class="form-label-bold">
-              <span
-                      class="address-country-label"
-                      data-label-replace="addressCountry"
-                      data-original-label="{{ i18n.chargeView.country }}">
-                {{ i18n.chargeView.country }}
-              </span>
-
-              {{#highlightErrorFields.addressCountry}}
-              <p class="error-message" id="error-address-country">
-                  {{highlightErrorFields.addressCountry}}
-              </p>
-              {{/highlightErrorFields.addressCountry}}
-
-              <span class="ui-front form-label-bold">
-                  <!--<label for="#address-country" class="form-label">Country of birth</label>-->
-                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocomplete="off">
-                      {{#countries}}
-
-                      <option
-                              value="{{ entry.country }}"
-                              data-aliases="{{ entry.aliases }}"
-                              data-weighting="{{ entry.weighting }}"
-                              {{#entry.selected }} selected="selected" {{/entry.selected }}
-                      >{{ entry.name }}</option>
-                      {{/countries}}
-
-                  </select>
-              </span>
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">

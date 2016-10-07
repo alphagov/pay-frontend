@@ -49,7 +49,7 @@ Confirm your details.
     <form id="confirmation" method="POST" action="{{confirmPath}}" class="form">
         <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}" />
         <input id="chargeId" name="chargeId" type="hidden" value="{{charge.id}}" />
-        <button id="confirm" class="button">Confirm</button>
+        <button id="confirm" class="button">Confirm payment</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{post_cancel_action}}" class="form">
         <div>
