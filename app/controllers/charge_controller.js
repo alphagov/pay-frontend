@@ -21,6 +21,7 @@ var CAPTURE_WAITING_VIEW = 'capture_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
 var countries = require("../services/countries.js");
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
+var {ANALYTICS_ERROR, withAnalytics} = require('../utils/analytics.js');
 var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
 
@@ -48,21 +49,20 @@ module.exports = {
     var init = function () {
       charge.countries = countries.retrieveCountries();
       if (charge.status === State.ENTERING_CARD_DETAILS) {
-        return res.render(CHARGE_VIEW, charge);
+        return res.render(CHARGE_VIEW, withAnalytics(charge, charge));
       }
       var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
       chargeModel.updateToEnterDetails(charge.id)
         .then(function () {
-          res.render(CHARGE_VIEW, charge);
+          res.render(CHARGE_VIEW, withAnalytics(charge, charge));
         }, function () {
-          _views.display(res, "NOT_FOUND");
+          _views.display(res, "NOT_FOUND", ANALYTICS_ERROR);
         });
     };
     init();
   },
 
   create: function (req, res) {
-
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
 
@@ -76,7 +76,7 @@ module.exports = {
       logger,
       cardModel
     );
-    var validation;
+
     normalise.addressLines(req.body);
 
     if (submitted) {
@@ -94,7 +94,10 @@ module.exports = {
 
     connectorFailure = function() {
       logging.failedChargePost(409,authUrl);
-      _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
+      _views.display(res, 'SYSTEM_ERROR', withAnalytics(
+          charge,
+          {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+      ));
     },
 
     unknownFailure = function() {
@@ -103,13 +106,12 @@ module.exports = {
 
     connectorNonResponsive = function (err) {
       logging.failedChargePostException(err);
-      _views.display(res, "ERROR");
-
+      _views.display(res, "ERROR", withAnalytics(charge));
     },
 
-    hasValidationError = function(){
+    hasValidationError = function(validation){
       appendChargeForNewView(charge, req, charge.id);
-      _.merge(validation, charge, _.pick(req.body, preserveProperties));
+      _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties));
       return res.render(CHARGE_VIEW, validation);
     },
 
@@ -135,8 +137,7 @@ module.exports = {
 
     validator.verify(req).then(function(data){
 
-      validation = data.validation;
-      if (validation.hasError) return hasValidationError();
+      if (data.validation.hasError) return hasValidationError(data.validation);
 
       var cardBrand = data.cardBrand;
 
@@ -147,7 +148,7 @@ module.exports = {
             postAuth(authUrl, req, cardBrand);
           }, function(err) {
             logging.failedChargePatch(err);
-            _views.display(res, "ERROR");
+            _views.display(res, "ERROR", ANALYTICS_ERROR);
           }
       );
     }, unknownFailure);
@@ -171,7 +172,7 @@ module.exports = {
       _views = views.create({
         success: {
           view: AUTH_WAITING_VIEW,
-          locals: {}
+          locals: withAnalytics(charge)
         }
       });
       _views.display(res, "success");
@@ -186,12 +187,12 @@ module.exports = {
       _views = views.create({
         success: {
           view: CONFIRM_VIEW,
-          locals: {
+          locals: withAnalytics(charge, {
             charge: charge,
             confirmPath: confirmPath,
             gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
-            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id}),
-          }
+            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id})
+          })
         }
       });
 
@@ -214,8 +215,11 @@ module.exports = {
       },
 
       captureFail = function (err) {
-        if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE');
-        _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
+        if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge));
+        _views.display(res, 'SYSTEM_ERROR', withAnalytics(
+            charge,
+            {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+        ));
       };
     init();
   },
@@ -229,12 +233,15 @@ module.exports = {
       _views = views.create({
         success: {
           view: CAPTURE_WAITING_VIEW,
-          locals: {}
+          locals: withAnalytics(charge)
         }
       });
       _views.display(res, "success");
     } else {
-      _views.display(res, 'CAPTURE_SUBMITTED', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
+      _views.display(res, 'CAPTURE_SUBMITTED', withAnalytics(
+          charge,
+          {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+      ));
     }
   },
 
@@ -243,15 +250,19 @@ module.exports = {
 
     var _views = views.create(),
       cancelFail = function () {
-        _views.display(res, 'SYSTEM_ERROR', {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})});
+        _views.display(res, 'SYSTEM_ERROR', withAnalytics(
+            charge,
+            {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+        ));
       };
 
     var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
     chargeModel.cancel(req.chargeId)
       .then(function () {
-        return _views.display(res, 'USER_CANCELLED', {
-          returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})
-        });
+        return _views.display(res, 'USER_CANCELLED', withAnalytics(
+            charge,
+            {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+        ));
       }, cancelFail);
   }
 };

@@ -89,7 +89,10 @@ describe('secure controller', function () {
         "externalId": "dh6kpbb4k82oiibbe4b9haujjk",
         "status": "CREATED",
         "gatewayAccount": {
-          "service_name": "Service Name"
+          "service_name": "Service Name",
+          "analytics_id": "bla-1234",
+          "type": "live",
+          "payment_provider": "worldpay"
         }
       };
     });
@@ -98,7 +101,15 @@ describe('secure controller', function () {
       it('should display the generic error page', function (done) {
         requireSecureController(mockCharge.withFailure(), mockToken.withSuccess()).new(request, response);
         setTimeout(function(){
-          expect(response.render.calledWith('errors/system_error', {viewName: 'SYSTEM_ERROR'})).to.be.true;
+          expect(response.render.calledWith('errors/system_error',
+              {
+                viewName: 'SYSTEM_ERROR',
+                analytics : {
+                  "analyticsId": "Service unavailable",
+                  "type": "Service unavailable",
+                  "paymentProvider": "Service unavailable"
+                }
+              })).to.be.true;
           done()
         },0);
       });
@@ -108,7 +119,15 @@ describe('secure controller', function () {
       describe('and not destroyed successfully', function () {
         it('should display the generic error page', function () {
           requireSecureController(mockCharge.withSuccess(), mockToken.withFailure()).new(request, response);
-          expect(response.render.calledWith('errors/system_error', {viewName: 'SYSTEM_ERROR'})).to.be.true;
+          expect(response.render.calledWith('errors/system_error',
+              {
+                viewName: 'SYSTEM_ERROR',
+                analytics : {
+                  "analyticsId": "Service unavailable",
+                  "type": "Service unavailable",
+                  "paymentProvider": "Service unavailable"
+                }
+              })).to.be.true;
         });
       });
 

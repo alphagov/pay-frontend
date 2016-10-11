@@ -141,6 +141,9 @@ describe('chargeTests',function(){
           'status': status,
           'return_url': "http://www.example.com/service",
           'gateway_account': {
+            'analytics_id': 'test-1234',
+            'type': 'test',
+            'payment_provider': 'sandbox',
             'service_name': 'Pranks incorporated',
             'card_types': [{
               'type': 'CREDIT',
@@ -166,6 +169,9 @@ describe('chargeTests',function(){
             helper.templateValue(res,"amount",'23.45');
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
+            helper.templateValue(res,"gatewayAccount.paymentProvider", "sandbox");
+            helper.templateValue(res,"gatewayAccount.analyticsId", "test-1234");
+            helper.templateValue(res,"gatewayAccount.type", "test");
             helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
           })
           .end(done);

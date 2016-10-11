@@ -74,11 +74,31 @@ describe('card details endpoint', function () {
       "externalId": "dh6kpbb4k82oiibbe4b9haujjk",
       "status": status,
       "gatewayAccount": {
-        "service_name": "Service Name"
+        "serviceName": "Service Name",
+        "analyticsId": "test-1234",
+        "type": "test",
+        "paymentProvider": "sandbox"
       }
     };
   };
 
+  var aResponseWithStatus = function (status) {
+    return {
+      "externalId": "dh6kpbb4k82oiibbe4b9haujjk",
+      "status": status,
+      "gatewayAccount": {
+        "serviceName": "Service Name",
+        "analyticsId": "test-1234",
+        "type": "test",
+        "paymentProvider": "sandbox"
+      },
+      "analytics": {
+        "analyticsId": "test-1234",
+        "type": "test",
+        "paymentProvider": "sandbox"
+      }
+    };
+  };
   before(function () {
 
     request = {
@@ -103,8 +123,9 @@ describe('card details endpoint', function () {
     // That is to differentiate from next test.
     var emptyChargeModel = {};
 
+    var expectedCharge = aResponseWithStatus('ENTERING CARD DETAILS');
     requireChargeController(emptyChargeModel, mockedNormalise).new(request, response);
-    expect(response.render.calledWith('charge', mockedNormalisedCharge)).to.be.true;
+    expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true;
   });
 
   it('should update to enter card details if charge is in CREATED', function () {
@@ -114,8 +135,9 @@ describe('card details endpoint', function () {
     var mockedNormalisedCharge = aChargeWithStatus('CREATED');
     var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
 
+    var expectedCharge = aResponseWithStatus('CREATED');
     requireChargeController(charge, mockedNormalise).new(request, response);
-    expect(response.render.calledWith('charge', mockedNormalisedCharge)).to.be.true;
+    expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true;
 
   });
 
@@ -127,7 +149,14 @@ describe('card details endpoint', function () {
     var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
 
     requireChargeController(charge, mockedNormalise).new(request, response);
-    expect(response.render.calledWith('error', {"message":"Page cannot be found","viewName":"NOT_FOUND"})).to.be.true;
+    expect(response.render.calledWith('error', {"message":"Page cannot be found",
+        "viewName":"NOT_FOUND",
+        "analytics" : {
+          "analyticsId": "Service unavailable",
+          "type": "Service unavailable",
+          "paymentProvider": "Service unavailable"
+        }
+    })).to.be.true;
 
   });
 });

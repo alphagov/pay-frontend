@@ -104,6 +104,9 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
       'method': 'POST'
     }],
     'gateway_account': {
+      'analytics_id': 'test-1234',
+      'type': 'test',
+      'payment_provider': 'sandbox',
       'service_name': 'Pranks incorporated',
       'card_types': [
         {
@@ -186,7 +189,7 @@ module.exports = {
   },
 
   get_charge_request: function (app, cookieValue, chargeId, query) {
-    query = (query === undefined) ? "" : query;
+    query = query || "";
     return request(app)
       .get(frontendCardDetailsPath + '/' + chargeId + query)
       .set('Cookie', ['frontend_state=' + cookieValue])
