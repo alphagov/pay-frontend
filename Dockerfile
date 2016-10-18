@@ -1,5 +1,8 @@
 FROM node:6.7.0
 
+RUN apt-get update
+RUN apt-get --assume-yes upgrade
+
 ENV PORT 9000
 ENV ENABLE_NEWRELIC no
 ENV NEW_RELIC_HOME /app/newrelic
