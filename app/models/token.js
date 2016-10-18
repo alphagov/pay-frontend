@@ -53,7 +53,7 @@ module.exports = function(correlationId) {
   },
 
   clientUnavailable = function(error, defer) {
-    defer.reject(new Error('CLIENT_UNAVAILABLE'),error);
+    defer.reject(new Error('CLIENT_UNAVAILABLE'), error);
   };
 
   return {

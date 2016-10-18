@@ -1,7 +1,8 @@
 var Charge = require('../models/charge.js'),
   StateModel = require('../models/state.js'),
   views = require('../utils/views.js'),
-  CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
+  CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER,
+  ANALYTICS_ERROR = require('../utils/analytics.js').ANALYTICS_ERROR;
 
 var logger = require('winston');
 
@@ -24,5 +25,5 @@ module.exports.return = function (req, res) {
   if (cancelStates.indexOf(req.chargeData.status) === -1) return doRedirect();
   
   logger.warn('Return controller cancelling payment', {'chargeId': req.chargeId});
-  chargeModel.cancel(req.chargeId).then(doRedirect, ()=> _views.display(res, 'SYSTEM_ERROR'));
+  chargeModel.cancel(req.chargeId).then(doRedirect, ()=> _views.display(res, 'SYSTEM_ERROR', ANALYTICS_ERROR));
 };
