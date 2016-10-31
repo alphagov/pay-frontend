@@ -55,7 +55,7 @@ describe('Frontend analytics', function () {
     it('should be enabled in error with return url view', function() {
         var msg = 'error processing your payment!';
         var return_url = 'http://some.return.url';
-        var body = renderTemplate('error', {
+        var body = renderTemplate('error_with_return_url', {
             'message' : msg,
             'return_url': return_url,
             'analytics': googleAnalyticsCustomDimensions
@@ -63,4 +63,29 @@ describe('Frontend analytics', function () {
         body.should.containSelector('script').withText(googleAnalyticsScript);
         checkGACustomDimensions(body);
     });
+
+    it('should be enabled when waiting for auth', function() {
+        var body = renderTemplate('auth_waiting', {
+            'analytics': googleAnalyticsCustomDimensions
+        });
+        body.should.containSelector('script').withText(googleAnalyticsScript);
+        checkGACustomDimensions(body);
+    });
+
+    it('should be enabled when waiting for capture', function() {
+        var body = renderTemplate('capture_waiting', {
+            'analytics': googleAnalyticsCustomDimensions
+        });
+        body.should.containSelector('script').withText(googleAnalyticsScript);
+        checkGACustomDimensions(body);
+    });
+
+    it('should be enabled when user cancels a payment', function() {
+        var body = renderTemplate('user_cancelled', {
+            'analytics': googleAnalyticsCustomDimensions
+        });
+        body.should.containSelector('script').withText(googleAnalyticsScript);
+        checkGACustomDimensions(body);
+    });
+
 });

@@ -203,7 +203,6 @@ module.exports = {
   },
 
   capture: function (req, res) {
-    
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views = views.create();
 
@@ -225,7 +224,6 @@ module.exports = {
   },
 
   captureWaiting: function (req, res) {
-
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views = views.create();
 

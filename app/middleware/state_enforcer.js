@@ -4,7 +4,7 @@ var _             = require('lodash');
 var stateService  = require('../services/state_service.js');
 var paths         = require('../paths.js');
 
-
+var ANALYTICS_ERROR = require('../utils/analytics.js').ANALYTICS_ERROR;
 module.exports = function(req,res,next){
   'use strict';
 
@@ -12,7 +12,8 @@ module.exports = function(req,res,next){
   var currentState      = req.chargeData.status,
   locals            = {
     chargeId: req.chargeId,
-    returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId})
+    returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
+    analytics: ANALYTICS_ERROR.analytics
   };
 
   var init = function(){
