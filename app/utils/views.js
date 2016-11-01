@@ -139,7 +139,6 @@ module.exports = function() {
     display: function(res, resName, locals) {
       var action = _.result(this, resName);
       var status;
-
       locals = locals || {};
       locals.viewName = resName;
 

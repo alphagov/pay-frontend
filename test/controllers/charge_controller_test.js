@@ -149,7 +149,7 @@ describe('card details endpoint', function () {
     var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
 
     requireChargeController(charge, mockedNormalise).new(request, response);
-    expect(response.render.calledWith('error', {"message":"Page cannot be found",
+    expect(response.render.calledWithMatch('error', {"message":"Page cannot be found",
         "viewName":"NOT_FOUND",
         "analytics" : {
           "analyticsId": "Service unavailable",
@@ -157,6 +157,6 @@ describe('card details endpoint', function () {
           "paymentProvider": "Service unavailable"
         }
     })).to.be.true;
-
   });
+
 });
