@@ -34,7 +34,7 @@ describe('retrieve param test', function () {
   },
   chargeId = 'foo';
 
-    
+
   beforeEach(function(){
     status = sinon.stub(response,"status");
     render = sinon.stub(response,"render");
@@ -54,7 +54,7 @@ describe('retrieve param test', function () {
   it('should call not found view if charge param does not return an id', function () {
     retrieveCharge( { params: {}, body: {} },response,next)
     assert(status.calledWith(403));
-    assert(render.calledWithMatch("errors/system_error", { viewName: 'UNAUTHORISED', analytics: ANALYTICS_ERROR.analytics}));
+    assert(render.calledWith("errors/system_error", { viewName: 'UNAUTHORISED', analytics: ANALYTICS_ERROR.analytics}));
     expect(next.notCalled).to.be.true;
 
   });
@@ -68,7 +68,7 @@ describe('retrieve param test', function () {
       testPromise.then((result) => {
         try {
           assert(status.calledWith(500));
-          assert(render.calledWithMatch("errors/system_error", { viewName: 'SYSTEM_ERROR', analytics: ANALYTICS_ERROR.analytics}));
+          assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR', analytics: ANALYTICS_ERROR.analytics}));
           expect(next.notCalled).to.be.true;
           done();
         }

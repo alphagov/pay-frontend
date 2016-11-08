@@ -5,7 +5,7 @@ var paths = require('../paths.js'),
   session = require('../utils/session.js'),
   csrf = require('csrf'),
   CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER,
-  ANALYTICS_ERROR = require('../utils/analytics.js').ANALYTICS_ERROR,
+    withAnalyticsError = require('../utils/analytics.js').withAnalyticsError,
   stateService = require('../services/state_service.js');
 
 module.exports.new = function (req, res) {
@@ -38,7 +38,7 @@ module.exports.new = function (req, res) {
     },
 
     apiFail = function () {
-      views.create().display(res, 'SYSTEM_ERROR', ANALYTICS_ERROR);
+      views.create().display(res, 'SYSTEM_ERROR', withAnalyticsError());
     };
   init();
 };

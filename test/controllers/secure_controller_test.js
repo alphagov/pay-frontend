@@ -101,7 +101,7 @@ describe('secure controller', function () {
       it('should display the generic error page', function (done) {
         requireSecureController(mockCharge.withFailure(), mockToken.withSuccess()).new(request, response);
         setTimeout(function(){
-          expect(response.render.calledWithMatch('errors/system_error',
+          expect(response.render.calledWith('errors/system_error',
               {
                 viewName: 'SYSTEM_ERROR',
                 analytics : {
@@ -119,7 +119,7 @@ describe('secure controller', function () {
       describe('and not destroyed successfully', function () {
         it('should display the generic error page', function () {
           requireSecureController(mockCharge.withSuccess(), mockToken.withFailure()).new(request, response);
-          expect(response.render.calledWithMatch('errors/system_error',
+          expect(response.render.calledWith('errors/system_error',
               {
                 viewName: 'SYSTEM_ERROR',
                 analytics : {

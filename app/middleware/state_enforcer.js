@@ -4,7 +4,7 @@ var _             = require('lodash');
 var stateService  = require('../services/state_service.js');
 var paths         = require('../paths.js');
 
-var ANALYTICS_ERROR = require('../utils/analytics.js').ANALYTICS_ERROR;
+var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError;
 module.exports = function(req,res,next){
   'use strict';
 
@@ -17,7 +17,7 @@ module.exports = function(req,res,next){
         'paymentProvider': gatewayAccount.payment_provider
       };
     }
-    return ANALYTICS_ERROR.analytics;
+    return withAnalyticsError().analytics;
   }
 
   var correctStates = stateService.resolveStates(req.actionName);

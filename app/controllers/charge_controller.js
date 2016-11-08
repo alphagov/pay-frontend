@@ -21,7 +21,7 @@ var CAPTURE_WAITING_VIEW = 'capture_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
 var countries = require("../services/countries.js");
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
-var {ANALYTICS_ERROR, withAnalytics} = require('../utils/analytics.js');
+var {withAnalyticsError, withAnalytics} = require('../utils/analytics.js');
 var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
 
@@ -56,7 +56,7 @@ module.exports = {
         .then(function () {
           res.render(CHARGE_VIEW, withAnalytics(charge, charge));
         }, function () {
-          _views.display(res, "NOT_FOUND", ANALYTICS_ERROR);
+          _views.display(res, "NOT_FOUND", withAnalyticsError());
         });
     };
     init();
@@ -148,7 +148,7 @@ module.exports = {
             postAuth(authUrl, req, cardBrand);
           }, function(err) {
             logging.failedChargePatch(err);
-            _views.display(res, "ERROR", ANALYTICS_ERROR);
+            _views.display(res, "ERROR", withAnalyticsError());
           }
       );
     }, unknownFailure);
