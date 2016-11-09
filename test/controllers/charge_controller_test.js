@@ -157,6 +157,6 @@ describe('card details endpoint', function () {
           "paymentProvider": "Service unavailable"
         }
     })).to.be.true;
-
   });
+
 });

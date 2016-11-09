@@ -4,16 +4,28 @@ var _             = require('lodash');
 var stateService  = require('../services/state_service.js');
 var paths         = require('../paths.js');
 
-var ANALYTICS_ERROR = require('../utils/analytics.js').ANALYTICS_ERROR;
+var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError;
 module.exports = function(req,res,next){
   'use strict';
+
+  function getGoogleAnalytics() {
+    var gatewayAccount = _.get(req, 'chargeData.gateway_account');
+    if (gatewayAccount) {
+      return {
+        'analyticsId': gatewayAccount.analytics_id,
+        'type': gatewayAccount.type,
+        'paymentProvider': gatewayAccount.payment_provider
+      };
+    }
+    return withAnalyticsError().analytics;
+  }
 
   var correctStates = stateService.resolveStates(req.actionName);
   var currentState      = req.chargeData.status,
   locals            = {
     chargeId: req.chargeId,
     returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
-    analytics: ANALYTICS_ERROR.analytics
+    analytics: getGoogleAnalytics()
   };
 
   var init = function(){

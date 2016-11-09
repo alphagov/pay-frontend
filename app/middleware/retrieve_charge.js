@@ -1,8 +1,9 @@
-var views         = require('../utils/views.js');
-var Charge        = require('../models/charge.js');
-var chargeParam   = require('../services/charge_param_retriever.js');
-var q             = require('q');
+var views              = require('../utils/views.js');
+var Charge             = require('../models/charge.js');
+var chargeParam        = require('../services/charge_param_retriever.js');
+var q                  = require('q');
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
+var withAnalyticsError    = require('../utils/analytics.js').withAnalyticsError;
 
 module.exports = function(req, res, next){
   "use strict";
@@ -11,7 +12,7 @@ module.exports = function(req, res, next){
 
   var init = function(){
     var chargeId = chargeParam.retrieve(req);
-    if (!chargeId) return _views.display(res,"UNAUTHORISED");
+    if (!chargeId) return _views.display(res,"UNAUTHORISED", withAnalyticsError());
     req.chargeId = chargeId;
     var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
     chargeModel.find(chargeId).then(gotCharge, apiFail);
@@ -23,7 +24,7 @@ module.exports = function(req, res, next){
   },
 
   apiFail = function(){
-    _views.display(res,"SYSTEM_ERROR");
+    _views.display(res,"SYSTEM_ERROR", withAnalyticsError());
   };
 
   init();

@@ -8,6 +8,13 @@ var paths  = require('../../app/paths.js');
 
 var retrieveCharge = require(__dirname + '/../../app/middleware/retrieve_charge.js');
 
+const ANALYTICS_ERROR = {
+    analytics: {
+        analyticsId: "Service unavailable",
+        type: "Service unavailable",
+        paymentProvider: "Service unavailable"
+    }
+};
 
 describe('retrieve param test', function () {
 
@@ -25,8 +32,7 @@ describe('retrieve param test', function () {
     frontend_state: { ch_foo: true },
     headers:{}
   },
-  chargeId = 'foo',
-  connectorPath = paths.generateRoute('connectorCharge.show',{chargeId: 'foo'});
+  chargeId = 'foo';
 
 
   beforeEach(function(){
@@ -48,14 +54,11 @@ describe('retrieve param test', function () {
   it('should call not found view if charge param does not return an id', function () {
     retrieveCharge( { params: {}, body: {} },response,next)
     assert(status.calledWith(403));
-    assert(render.calledWith("errors/system_error", { viewName: 'UNAUTHORISED' }));
+    assert(render.calledWith("errors/system_error", { viewName: 'UNAUTHORISED', analytics: ANALYTICS_ERROR.analytics}));
     expect(next.notCalled).to.be.true;
 
   });
 
-
-  // test that apiFail gets charged, other states that call this are tested
-  // by the charge model
   it("should call not found view if the connector does not respond", function(done) {
       retrieveCharge( validRequest,response,next)
       var testPromise = new Promise((resolve, reject) => {
@@ -65,15 +68,13 @@ describe('retrieve param test', function () {
       testPromise.then((result) => {
         try {
           assert(status.calledWith(500));
-          assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR' }));
+          assert(render.calledWith("errors/system_error", { viewName: 'SYSTEM_ERROR', analytics: ANALYTICS_ERROR.analytics}));
           expect(next.notCalled).to.be.true;
           done();
         }
         catch(err) { done(err); }
       }, done);
   });
-
-
 
   it("should set chargeData chargeID and call next on success", function(done) {
       var chargeData = {foo:"bar"};
@@ -97,9 +98,5 @@ describe('retrieve param test', function () {
         catch(err) { done(err); }
       }, done);
   });
-
-
-
-
 
 })

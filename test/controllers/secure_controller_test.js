@@ -145,7 +145,6 @@ describe('secure controller', function () {
 
             done();
           },0);
-
         });
       });
     });

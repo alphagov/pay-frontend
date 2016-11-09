@@ -19,9 +19,12 @@ module.exports = function () {
             type: charge.gatewayAccount.type,
             paymentProvider: charge.gatewayAccount.paymentProvider
           }}, param);
-  };
+  },
+      withError = function() {
+        return _.clone(ANALYTICS_ERROR);
+      };
   return {
-    ANALYTICS_ERROR: ANALYTICS_ERROR,
+    withAnalyticsError: withError,
     withAnalytics: withAnalytics
   };
 }();

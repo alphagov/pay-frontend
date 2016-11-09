@@ -53,7 +53,7 @@ describe('state enforcer', function () {
   it('should NOT call next when the object is in the wrong state is called and render the appropriate error view', function () {
     stateEnforcer({
       actionName: "card.new",
-      chargeData: { status: 'AUTHORISATION_SUCCESS', return_url: "foo" },
+      chargeData: { status: 'AUTHORISATION_SUCCESS', return_url: "foo" , gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
       chargeId: 1
     },response,next)
     expect(next.notCalled).to.be.true;
@@ -61,9 +61,9 @@ describe('state enforcer', function () {
     assert(render.calledWith("errors/incorrect_state/auth_success",
       { chargeId: 1,
         analytics: {
-          analyticsId: "Service unavailable",
-          type: "Service unavailable",
-          paymentProvider: "Service unavailable"
+          analyticsId: "Test AnalyticsID",
+          type: "Test Type",
+          paymentProvider: "Test Provider"
         },
         returnUrl: '/return/1',
         viewName: 'AUTHORISATION_SUCCESS' }
