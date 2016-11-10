@@ -16,7 +16,10 @@ var checkCard = function(cardNo,allowed, correlationId) {
   var cardUrl = CARDID_HOST + "/v1/api/card";
   var clientArgs = {
     data: {"cardNumber": parseInt(cardNo) },
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
+    requestConfig: {
+      keepAlive: true
+    }
   };
 
   client.post(cardUrl ,withCorrelationHeader(clientArgs, correlationId), function(data, response) {
