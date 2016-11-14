@@ -688,11 +688,11 @@ describe('chargeTests',function(){
         .expect(200)
         .expect(function(res){
           helper.templateValueNotUndefined(res,"csrf");
-          helper.templateValue(res,"charge.confirmationDetails.cardNumber","************1234");
-          helper.templateValue(res,"charge.cardBrand","Visa");
-          helper.templateValue(res,"charge.confirmationDetails.expiryDate","11/99");
-          helper.templateValue(res,"charge.confirmationDetails.cardholderName","Test User");
-          helper.templateValue(res,"charge.confirmationDetails.billingAddress","line1, line2, city, postcode, United Kingdom");
+          helper.templateValue(res,"charge.cardDetails.cardNumber","************1234");
+          helper.templateValue(res,"charge.cardDetails.cardBrand","Visa");
+          helper.templateValue(res,"charge.cardDetails.expiryDate","11/99");
+          helper.templateValue(res,"charge.cardDetails.cardholderName","Test User");
+          helper.templateValue(res,"charge.cardDetails.billingAddress","line1, line2, city, postcode, United Kingdom");
           helper.templateValue(res,"charge.gatewayAccount.serviceName","Pranks incorporated");
           helper.templateValue(res,"charge.amount","23.45");
           helper.templateValue(res,"charge.description","Payment Description");

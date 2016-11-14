@@ -87,7 +87,6 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
     'amount': 2345,
     'description': "Payment Description",
     'status': status,
-    'card_brand': 'Visa',
     'return_url': returnUrl,
     'email': "bob@bob.bob",
     'links': [{
@@ -149,7 +148,8 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
     }
   };
   if (status == "AUTHORISATION SUCCESS") {
-    charge.confirmation_details = {
+    charge.card_details = {
+      'card_brand': 'Visa',
       'cardholder_name': 'Test User',
       'last_digits_card_number': '1234',
       'expiry_date': '11/99',

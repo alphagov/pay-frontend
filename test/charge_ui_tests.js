@@ -74,7 +74,7 @@ describe('The confirm view', function () {
   it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
     var templateData = {
       charge: {
-        'confirmationDetails': {
+        "cardDetails": {
           'cardNumber': "************5100",
           'expiryDate': "11/99",
           'cardholderName': 'Francisco Blaya-Gonzalvez',
