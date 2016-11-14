@@ -1,4 +1,5 @@
 if (process.env.ENABLE_NEWRELIC == 'yes') require('newrelic');
+
 var express           = require('express');
 var path              = require('path');
 var favicon           = require('serve-favicon');
@@ -50,6 +51,10 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
 else {
   logger.warn('DISABLE_INTERNAL_HTTPS is set.');
 }
+
+//100 looks like a sensible number based on initial tests.
+require('https').globalAgent.maxSockets = 100;
+
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');

@@ -1,29 +1,20 @@
 /*jslint node: true */
 "use strict";
 var _           = require('lodash');
-var Client      = require('node-rest-client').Client;
-var client      = new Client();
+
 var q           = require('q');
 var changeCase  = require('change-case');
+var cardIdClient = require('../utils/cardid_client');
 var logger  = require('winston');
-var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
 var checkCard = function(cardNo,allowed, correlationId) {
   var defer = q.defer();
-  var CARDID_HOST = process.env.CARDID_HOST;
 
   var startTime = new Date();
-  var cardUrl = CARDID_HOST + "/v1/api/card";
-  var clientArgs = {
-    data: {"cardNumber": parseInt(cardNo) },
-    headers: { "Content-Type": "application/json" },
-    requestConfig: {
-      keepAlive: true
-    }
-  };
+  var data = {"cardNumber": parseInt(cardNo) };
 
-  client.post(cardUrl ,withCorrelationHeader(clientArgs, correlationId), function(data, response) {
-      logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardUrl, new Date() - startTime);
+  cardIdClient.post({data: data, correlationId: correlationId}, function(data, response) {
+      logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime);
 
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
@@ -52,7 +43,7 @@ var checkCard = function(cardNo,allowed, correlationId) {
       return defer.resolve(cardBrand);
     }).on('error',function(error){
       logger.error(`[${correlationId}] ERROR CALLING CARD SERVICE`, error);
-      logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardUrl, new Date() - startTime);
+      logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime);
       defer.resolve();
     });
     return defer.promise;
