@@ -1,4 +1,3 @@
-var _       = require('lodash');
 var logger  = require('winston');
 var q       = require('q');
 
@@ -19,23 +18,13 @@ module.exports = function(correlationId) {
     return paths.generateRoute(`card.${resource}`,{chargeId: chargeId });
   },
 
-  mergeApiParams = function(params) {
-    params = (params) ? params: {};
-    var _default = {
-      headers: {"Content-Type": "application/json"},
-      data: {}
-    };
-    _default.data = _.merge(params,_default.data);
-    return _default;
-  },
-
   updateToEnterDetails = function(chargeId) {
     return updateStatus(chargeId, State.ENTERING_CARD_DETAILS);
   },
 
   updateStatus = function(chargeId, status){
     var url = connectorurl('updateStatus',{chargeId: chargeId}),
-    params  = mergeApiParams({new_status: status}),
+    data = {new_status: status},
     defer   = q.defer();
 
     logger.debug('[%s] Calling connector to update charge status -', correlationId, {
@@ -48,9 +37,7 @@ module.exports = function(correlationId) {
 
     var startTime = new Date();
 
-    params.correlationId = correlationId;
-
-    baseClient.put(url, params, function (data, response) {
+    baseClient.put(url, { data: data, correlationId: correlationId }, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime);
       updateComplete(chargeId, data, response, defer);
 
@@ -110,7 +97,6 @@ module.exports = function(correlationId) {
 
   capture = function(chargeId){
     var url = connectorurl('capture',{chargeId: chargeId}),
-    params  = mergeApiParams(),
     defer   = q.defer();
 
     logger.debug('[%s] Calling connector to do capture -', correlationId, {
@@ -120,10 +106,8 @@ module.exports = function(correlationId) {
       url: url
     });
 
-    params.correlationId = correlationId;
-
     var startTime = new Date();
-    baseClient.post(url, params, function(data, response) {
+    baseClient.post(url, { correlationId: correlationId }, function(data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
       captureComplete(data, response, defer);
     })
@@ -144,7 +128,6 @@ module.exports = function(correlationId) {
 
   cancel = function(chargeId){
     var url = connectorurl('cancel',{chargeId: chargeId}),
-      params  = mergeApiParams(),
       defer   = q.defer();
 
     logger.debug('[%s] Calling connector to cancel a charge -', correlationId, {
@@ -154,10 +137,8 @@ module.exports = function(correlationId) {
       url: url
     });
 
-    params.correlationId = correlationId;
-
     var startTime = new Date();
-    baseClient.post(url, params, function(data, response) {
+    baseClient.post(url, { correlationId: correlationId }, function(data, response) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
         cancelComplete(data, response, defer);
       })
