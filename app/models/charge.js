@@ -1,5 +1,7 @@
 var Client  = require('node-rest-client').Client;
 var client  = new Client();
+var baseClient = require('../utils/base_client');
+
 var _       = require('lodash');
 var q       = require('q');
 var logger  = require('winston');
@@ -118,8 +120,11 @@ module.exports = function(correlationId) {
       chargeId: chargeId,
       url: url
     });
+
+    params.correlationId = correlationId;
+
     var startTime = new Date();
-    client.post(url, withCorrelationHeader(params, correlationId), function(data, response){
+    baseClient.post(url, params, function(data, response){
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
       captureComplete(data, response, defer);
     })
@@ -150,8 +155,10 @@ module.exports = function(correlationId) {
       url: url
     });
 
+    params.correlationId = correlationId;
+
     var startTime = new Date();
-    client.post(url, withCorrelationHeader(params, correlationId), function(data, response){
+    baseClient.post(url, params, function(data, response){
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
         cancelComplete(data, response, defer);
       })

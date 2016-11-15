@@ -3,8 +3,8 @@
 require('array.prototype.find');
 var logger = require('winston');
 var logging = require('../utils/logging.js');
-var Client = require('node-rest-client').Client;
-var client = new Client();
+var baseClient = require('../utils/base_client');
+
 var _ = require('lodash');
 var views = require('../utils/views.js');
 var normalise = require('../services/normalise_charge.js');
@@ -22,7 +22,6 @@ var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addr
 var countries = require("../services/countries.js");
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
 var {withAnalyticsError, withAnalytics} = require('../utils/analytics.js');
-var withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
@@ -126,8 +125,9 @@ module.exports = {
       var startTime = new Date();
       var args = normalise.apiPayload(req, cardBrand);
       var correlationId = req.headers[CORRELATION_HEADER] || '';
+      args.correlationId = correlationId;
 
-      client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
+      baseClient.post(authUrl, args, function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', authUrl, new Date() - startTime);
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
