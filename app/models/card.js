@@ -14,7 +14,7 @@ var checkCard = function(cardNo,allowed, correlationId) {
   var data = {"cardNumber": parseInt(cardNo) };
 
   cardIdClient.post({data: data, correlationId: correlationId}, function(data, response) {
-      logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime);
+      logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime);
 
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
