@@ -1,13 +1,10 @@
-var Client  = require('node-rest-client').Client;
-var client  = new Client();
-var baseClient = require('../utils/base_client');
-
 var _       = require('lodash');
-var q       = require('q');
 var logger  = require('winston');
+var q       = require('q');
+
+var baseClient = require('../utils/base_client');
 var paths   = require('../paths.js');
 var State   = require('./state.js');
-var withCorrelationHeader = require(__dirname + '/../utils/correlation_header.js').withCorrelationHeader;
 
 module.exports = function(correlationId) {
   'use strict';
@@ -50,7 +47,10 @@ module.exports = function(correlationId) {
     });
 
     var startTime = new Date();
-    client.put(url, withCorrelationHeader(params, correlationId), function (data, response) {
+
+    params.correlationId = correlationId;
+
+    baseClient.put(url, params, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime);
       updateComplete(chargeId, data, response, defer);
 
@@ -81,8 +81,7 @@ module.exports = function(correlationId) {
     });
 
     var startTime = new Date();
-    var params = {};
-    client.get(url, withCorrelationHeader(params, correlationId), function(data, response){
+    baseClient.get(url, {correlationId: correlationId}, function(data, response){
       if (response.statusCode !== 200) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime);
         logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
@@ -124,7 +123,7 @@ module.exports = function(correlationId) {
     params.correlationId = correlationId;
 
     var startTime = new Date();
-    baseClient.post(url, params, function(data, response){
+    baseClient.post(url, params, function(data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
       captureComplete(data, response, defer);
     })
@@ -158,7 +157,7 @@ module.exports = function(correlationId) {
     params.correlationId = correlationId;
 
     var startTime = new Date();
-    baseClient.post(url, params, function(data, response){
+    baseClient.post(url, params, function(data, response) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime);
         cancelComplete(data, response, defer);
       })
@@ -201,8 +200,8 @@ module.exports = function(correlationId) {
 
     var startTime = new Date();
     var findByUrl = connectorurl('findByToken',{chargeTokenId: tokenId});
-    var params = {};
-    client.get(findByUrl, withCorrelationHeader(params, correlationId),function(data, response){
+
+    baseClient.get(findByUrl, {correlationId: correlationId}, function(data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime);
       if (response.statusCode !== 200) {
         logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
@@ -268,10 +267,11 @@ module.exports = function(correlationId) {
         op: op,
         path: path,
         value: value
-      }
+      },
+      correlationId: correlationId
     };
 
-    client.patch(chargesUrl + chargeId, withCorrelationHeader(params, correlationId), function (data, response) {
+    baseClient.patch(chargesUrl + chargeId, params, function (data, response) {
          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime);
         var code = response.statusCode;
         if (code === 200) {

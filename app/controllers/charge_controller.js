@@ -123,9 +123,7 @@ module.exports = {
 
     function postAuth(authUrl, req, cardBrand) {
       var startTime = new Date();
-      var args = normalise.apiPayload(req, cardBrand);
       var correlationId = req.headers[CORRELATION_HEADER] || '';
-      args.correlationId = correlationId;
 
       baseClient.post(authUrl, args, function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', authUrl, new Date() - startTime);

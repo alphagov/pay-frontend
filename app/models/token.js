@@ -1,9 +1,8 @@
-var Client  = require('node-rest-client').Client;
-var client  = new Client();
+var baseClient = require('../utils/base_client');
+
 var q       = require('q');
 var logger  = require('winston');
 var paths   = require('../paths.js');
-var withCorrelationHeader = require(__dirname + '/../utils/correlation_header.js').withCorrelationHeader;
 
 module.exports = function(correlationId) {
   'use strict';
@@ -24,9 +23,8 @@ module.exports = function(correlationId) {
 
     var startTime = new Date();
     var deleteUrl = createUrl('token', {chargeTokenId: tokenId});
-    var args = {};
 
-    client.delete(deleteUrl, withCorrelationHeader(args, correlationId), function(data, response){
+    baseClient.delete(deleteUrl, { correlationId: correlationId }, function(data, response){
       logger.info('[%s] - %s to %s ended - total time %dms', 'DELETE',
         correlationId, deleteUrl, new Date() - startTime);
 
