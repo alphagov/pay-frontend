@@ -128,7 +128,7 @@ module.exports = {
       var correlationId = req.headers[CORRELATION_HEADER] || '';
 
       client.post(authUrl, withCorrelationHeader(args, correlationId), function (data, json) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'GET', authUrl, new Date() - startTime);
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', authUrl, new Date() - startTime);
         var response = responses[json.statusCode];
         if (!response) return unknownFailure();
         response();
