@@ -125,11 +125,13 @@ module.exports = {
       var startTime = new Date();
       var correlationId = req.headers[CORRELATION_HEADER] || '';
 
-      baseClient.post(authUrl, args, function (data, json) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', authUrl, new Date() - startTime);
-        var response = responses[json.statusCode];
-        if (!response) return unknownFailure();
-        response();
+
+      baseClient.post(authUrl, { data: normalise.apiPayload(req, cardBrand), correlationId: correlationId },
+        function (data, json) {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', authUrl, new Date() - startTime);
+          var response = responses[json.statusCode];
+          if (!response) return unknownFailure();
+          response();
       }).on('error', connectorNonResponsive);
     }
 
