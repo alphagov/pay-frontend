@@ -1,13 +1,70 @@
+const urlParse = require('url');
+const https = require('https');
+
+const agentOptions = {
+  keepAlive: true,
+  maxSockets: process.env.MAX_SOCKETS || 100
+};
+
 /**
- * @typedef {Object} NodeRestClient
+ * @type {https.Agent}
  */
-const Client      = require('node-rest-client').Client;
-const withCorrelationHeader = require('../utils/correlation_header.js').withCorrelationHeader;
+var agent = new https.Agent(agentOptions);
 
-var client      = new Client();
+/**
+ *
+ * @param {string} methodName
+ * @param {string} url
+ * @param {Object} args
+ * @param {Function} callback
+ *
+ * @returns {OutgoingMessage}
+ *
+ * @private
+ */
+var _request = function request(methodName, url, args, callback) {
+  const parsedUrl = urlParse.parse(url);
 
-const headers = { "Content-Type": "application/json" };
-const config  = { "keepAlive": true };
+  const postHeaders =  {
+    "Content-Type": "application/json",
+    "x-request-id": args.correlationId
+  };
+
+  const httpsOptions = {
+    hostname: parsedUrl.hostname,
+    port: parsedUrl.port,
+    path: parsedUrl.pathname,
+    method: methodName,
+    agent: agent,
+    headers: postHeaders
+  };
+
+  let req = https.request(httpsOptions, (res) => {
+    let data = '';
+    res.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    res.on('end', () => {
+      data = data ? JSON.parse(data) : null;
+      callback(data, res);
+    });
+  });
+
+  if (args.data) {
+    req.write(JSON.stringify(args.data));
+  }
+
+  req.on('response', function(response) {
+    response.on('readable', function() {
+      response.read();
+    });
+  });
+
+  req.end();
+  return req;
+};
+
 
 /*
  * @module baseClient
@@ -17,74 +74,59 @@ module.exports = {
    *
    * @param {string} url
    * @param {Object} args
-   * @param {function} callBack
+   * @param {function} callback
    *
-   * @returns {NodeRestClient}
+   * @returns {OutgoingMessage}
    */
-  post : function (url, args, callBack) {
-    return client.post(
-      url,
-      withCorrelationHeader({data: args.data, headers: headers, requestConfig: config}, args.correlationId),
-      callBack);
+  post : function (url, args, callback) {
+    return _request('POST', url, args, callback);
   },
 
   /**
    *
    * @param {string} url
    * @param {Object} args
-   * @param {function} callBack
+   * @param {function} callback
    *
-   * @returns {NodeRestClient}
+   * @returns {OutgoingMessage}
    */
-  get: function(url, args, callBack) {
-    return client.get(
-      url,
-      withCorrelationHeader({ data: args.data, requestConfig: config }, args.correlationId),
-      callBack);
+  get: function(url, args, callback) {
+    return _request('GET', url, args, callback);
   },
 
   /**
    *
    * @param {string} url
    * @param {Object} args
-   * @param {function} callBack
+   * @param {function} callback
    *
-   * @returns {NodeRestClient}
+   * @returns {OutgoingMessage}
    */
-  put: function(url, args, callBack) {
-    return client.put(
-      url,
-      withCorrelationHeader({ data: args.data, headers: headers, requestConfig: config }, args.correlationId),
-      callBack);
+  put: function(url, args, callback) {
+    return _request('PUT', url, args, callback);
   },
 
   /**
    *
    * @param {string} url
    * @param {Object} args
-   * @param {function} callBack
+   * @param {function} callback
    *
-   * @returns {NodeRestClient}
+   * @returns {OutgoingMessage}
    */
-  patch: function(url, args, callBack) {
-    return client.patch(
-      url,
-      withCorrelationHeader({ data: args.data, headers: headers, requestConfig: config }, args.correlationId),
-      callBack);
+  patch: function(url, args, callback) {
+    return _request('PATCH', url, args, callback);
   },
 
   /**
    *
    * @param {string} url
    * @param {Object} args
-   * @param {function} callBack
+   * @param {function} callback
    *
-   * @returns {NodeRestClient}
+   * @returns {OutgoingMessage}
    */
-  delete: function(url, args, callBack) {
-    return client.delete(
-      url,
-      withCorrelationHeader({ data: args.data, requestConfig: config }, args.correlationId),
-      callBack);
+  delete: function(url, args, callback) {
+    return _request('DELETE', url, args, callback);
   }
 };

@@ -19,7 +19,7 @@ describe('card', function () {
       before(function() {
 
         nock.cleanAll();
-        nock(process.env.CARDID_HOST, aCorrelationHeader)
+        nock(process.env.CARDID_HOST)
             .post("/v1/api/card")
             .reply(404);
       });
@@ -78,7 +78,7 @@ describe('card', function () {
     describe('a card that is not allowed debit withrawal type', function () {
       before(function() {
         nock.cleanAll();
-        nock(process.env.CARDID_HOST, aCorrelationHeader)
+        nock(process.env.CARDID_HOST)
           .post("/v1/api/card")
           .reply(200,{brand: "bar", label: "bar", type: 'D'});
       });

@@ -32,7 +32,7 @@ describe('updateStatus',function(){
       nock.cleanAll();
       nock(originalHost)
       .put("/v1/frontend/charges/1/status")
-      .reply(422, '<html></html>')
+      .reply(422, '{}')
     });
 
 
@@ -91,7 +91,7 @@ describe('find',function(){
 
       nock(originalHost)
       .get("/v1/frontend/charges/1")
-      .reply(404, '<html></html>');
+      .reply(404, '{}');
     });
 
     it('should return get_failed', function () {
@@ -215,7 +215,7 @@ describe('findByToken',function(){
 
       nock(originalHost)
           .get("/v1/frontend/tokens/1/charge")
-          .reply(404, '<html></html>');
+          .reply(404, '{}');
     });
 
     it('should return get_failed', function () {

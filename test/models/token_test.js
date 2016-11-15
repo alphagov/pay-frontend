@@ -32,7 +32,7 @@ describe('token model', function() {
           }
         })
           .delete("/v1/frontend/tokens/1")
-          .reply(404, '<html></html>');
+          .reply(404, '{}');
       });
 
       it('should return delete_failed', function () {
