@@ -10,7 +10,6 @@ var frontendCookie    = require(__dirname + '/app/utils/cookies.js').frontendCoo
 var logger            = require('winston');
 var loggingMiddleware = require('morgan');
 var noCache           = require(__dirname + '/app/utils/no_cache.js');
-var customCertificate = require(__dirname + '/app/utils/custom_certificate.js');
 var i18n              = require('i18n');
 var port              = (process.env.PORT || 3000);
 var argv              = require('minimist')(process.argv.slice(2));
@@ -44,17 +43,6 @@ app.use(staticify.middleware);
 
 app.enable('trust proxy');
 app.use(clientSessions(frontendCookie()));
-
-if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
-  customCertificate.use();
-}
-else {
-  logger.warn('DISABLE_INTERNAL_HTTPS is set.');
-}
-
-//100 looks like a sensible number based on initial tests.
-require('https').globalAgent.maxSockets = 100;
-
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');

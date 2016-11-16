@@ -1,15 +1,25 @@
 const urlParse = require('url');
 const https = require('https');
 
-const agentOptions = {
+const logger = require('winston');
+
+const customCertificate = require(__dirname + '/custom_certificate.js');
+
+var agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
 };
 
+if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
+  agentOptions.ca = customCertificate.getCertOptions();
+} else {
+  logger.warn('DISABLE_INTERNAL_HTTPS is set.');
+}
+
 /**
  * @type {https.Agent}
  */
-var agent = new https.Agent(agentOptions);
+const agent = new https.Agent(agentOptions);
 
 /**
  *
@@ -55,8 +65,8 @@ var _request = function request(methodName, url, args, callback) {
     req.write(JSON.stringify(args.data));
   }
 
-  req.on('response', function(response) {
-    response.on('readable', function() {
+  req.on('response', (response) => {
+    response.on('readable', () => {
       response.read();
     });
   });

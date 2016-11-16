@@ -1,15 +1,12 @@
 var path = require('path');
 var fs   = require('fs');
-var opts = require('https').globalAgent.options;
 
 var logger = require('winston');
 
-module.exports = function () {
-  'use strict';
-  
-  var use = function () {
+module.exports = {
+  getCertOptions: function () {
     var certsPath = process.env.CERTS_PATH || __dirname + '/../../certs';
-    
+
     try {
       if (!fs.lstatSync(certsPath).isDirectory()) {
         logger.error('Provided CERTS_PATH is not a directory', {
@@ -24,16 +21,14 @@ module.exports = function () {
       });
       return;
     }
-    
-    opts.ca = opts.ca || [];
-    var certs = fs.readdirSync(certsPath).forEach( 
-      (certPath) => opts.ca.push(
+
+    var ca = [];
+    var certs = fs.readdirSync(certsPath).forEach(
+      (certPath) => ca.push(
         fs.readFileSync(path.join(certsPath, certPath))
       )
     );
-  };
-  
-  return {
-    use: use
-  };
-}();
+
+    return ca;
+  }
+};
