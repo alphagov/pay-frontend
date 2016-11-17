@@ -13,12 +13,11 @@ module.exports = function() {
       description: charge.description,
       links: charge.links,
       status: charge.status,
-      cardBrand: charge.card_brand,
       email: charge.email,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     };
-     if (charge.confirmation_details) {
-       chargeObj.confirmationDetails = _normaliseConfirmationDetails(charge.confirmation_details);
+     if (charge.card_details) {
+       chargeObj.cardDetails = _normaliseConfirmationDetails(charge.card_details);
      }
      return chargeObj;
   },
@@ -44,11 +43,11 @@ module.exports = function() {
     }
   },
 
-  _normaliseConfirmationDetails = function(confirmationDetails){
-    confirmationDetails.cardNumber = '************' + confirmationDetails.last_digits_card_number;
-    delete confirmationDetails.last_digits_card_number;
-    var normalisedDetails = humps.camelizeKeys(confirmationDetails);
-    normalisedDetails.billingAddress = _normaliseAddress(confirmationDetails.billing_address);
+  _normaliseConfirmationDetails = function(cardDetails){
+    cardDetails.cardNumber = '************' + cardDetails.last_digits_card_number;
+    delete cardDetails.last_digits_card_number;
+    var normalisedDetails = humps.camelizeKeys(cardDetails);
+    normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address);
     return normalisedDetails;
   },
 

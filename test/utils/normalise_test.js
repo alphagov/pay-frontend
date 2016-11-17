@@ -14,7 +14,6 @@ var unNormalisedCharge = {
     href: "http://foo"
   }],
   status: "status",
-  card_brand: "Visa",
   email: "bobbybobby@bobby.bob",
   gateway_account: {
     analytics_id: 'bla-1234',
@@ -38,7 +37,6 @@ var normalisedCharge = {
     href: "http://foo"
   }],
   status: "status",
-  cardBrand: "Visa",
   email: "bobbybobby@bobby.bob",
   gatewayAccount: {
     analyticsId: 'bla-1234',
