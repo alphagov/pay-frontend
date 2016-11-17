@@ -56,7 +56,15 @@ var _request = function request(methodName, url, args, callback) {
     });
 
     res.on('end', () => {
-      data = data ? JSON.parse(data) : null;
+      try {
+        data = JSON.parse(data);
+      } catch(e) {
+        //if response exists but is not parsable, log it and carry on
+        if (data) {
+          logger.info('Response from %s in unexpected format: %s', url, data);
+        }
+        data = null;
+      }
       callback(data, res);
     });
   });
