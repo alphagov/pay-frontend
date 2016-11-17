@@ -83,17 +83,15 @@ module.exports = function() {
     month = (month.length === 1) ? "0" + month : month;
     return month.slice(-2) + "/" + year.slice(-2);
   },
+
   apiPayload = function(req, cardBrand){
     return {
-      headers: {"Content-Type": "application/json"},
-      data: {
-        'card_number': creditCard(req.body.cardNo),
-        'cvc': req.body.cvc,
-        'card_brand': cardBrand,
-        'expiry_date': expiryDate(req.body.expiryMonth, req.body.expiryYear),
-        'cardholder_name': req.body.cardholderName,
-        'address': addressForApi(req.body)
-      }
+      'card_number': creditCard(req.body.cardNo),
+      'cvc': req.body.cvc,
+      'card_brand': cardBrand,
+      'expiry_date': expiryDate(req.body.expiryMonth, req.body.expiryYear),
+      'cardholder_name': req.body.cardholderName,
+      'address': addressForApi(req.body)
     };
   },
 
