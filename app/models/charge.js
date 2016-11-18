@@ -243,7 +243,6 @@ module.exports = function(correlationId) {
     });
 
     var params = {
-      headers: {"Content-Type": "application/json"},
       data: {
         op: op,
         path: path,

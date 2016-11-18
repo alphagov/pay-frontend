@@ -3,7 +3,8 @@ const https = require('https');
 
 const logger = require('winston');
 
-const customCertificate = require(__dirname + '/custom_certificate.js');
+const customCertificate = require(__dirname + '/custom_certificate');
+const CORRELATION_HEADER_NAME = require(__dirname + '/correlation_header').CORRELATION_HEADER;
 
 var agentOptions = {
   keepAlive: true,
@@ -34,11 +35,10 @@ const agent = new https.Agent(agentOptions);
  */
 var _request = function request(methodName, url, args, callback) {
   const parsedUrl = urlParse.parse(url);
+  let headers = {};
 
-  const postHeaders =  {
-    "Content-Type": "application/json",
-    "x-request-id": args.correlationId
-  };
+  headers["Content-Type"] = "application/json";
+  headers[CORRELATION_HEADER_NAME] = args.correlationId;
 
   const httpsOptions = {
     hostname: parsedUrl.hostname,
@@ -46,7 +46,7 @@ var _request = function request(methodName, url, args, callback) {
     path: parsedUrl.pathname,
     method: methodName,
     agent: agent,
-    headers: postHeaders
+    headers: headers
   };
 
   let req = https.request(httpsOptions, (res) => {
@@ -65,7 +65,7 @@ var _request = function request(methodName, url, args, callback) {
         }
         data = null;
       }
-      callback(data, res);
+      callback(data, {statusCode: res.statusCode});
     });
   });
 
@@ -80,6 +80,7 @@ var _request = function request(methodName, url, args, callback) {
   });
 
   req.end();
+
   return req;
 };
 
@@ -96,8 +97,8 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  post : function (url, args, callback) {
-    return _request('POST', url, args, callback);
+  get: function(url, args, callback) {
+    return _request('GET', url, args, callback);
   },
 
   /**
@@ -108,8 +109,8 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  get: function(url, args, callback) {
-    return _request('GET', url, args, callback);
+  post : function (url, args, callback) {
+    return _request('POST', url, args, callback);
   },
 
   /**
