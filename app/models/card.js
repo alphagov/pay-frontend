@@ -16,13 +16,11 @@ var checkCard = function(cardNo,allowed, correlationId) {
   cardIdClient.post({data: data, correlationId: correlationId}, function(data, response) {
       logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime);
 
-      console.log(response.statusCode);
       if (response.statusCode === 404) {
         return defer.reject("Your card is not supported");
       }
       // if the server is down, or returns non 500, just continue
       if (response.statusCode !== 200) {
-        console.log('uhoh');
         return defer.resolve(); }
 
       var cardBrand = changeCase.paramCase(data.brand);
