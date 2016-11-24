@@ -111,6 +111,7 @@ module.exports = {
     },
 
     hasValidationError = function(validation){
+      charge.countries = countries.retrieveCountries();
       appendChargeForNewView(charge, req, charge.id);
       _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties));
       return res.render(CHARGE_VIEW, validation);

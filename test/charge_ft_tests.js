@@ -382,6 +382,18 @@ describe('chargeTests',function(){
           .end(done);
     });
 
+    it("should return country list when invalid fields submitted", (done) => {
+      var cookieValue = cookie.create(chargeId, {});
+      defaultCardID('4242424242424242');
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      post_charge_request(cookieValue, missing_form_card_data())
+        .expect((res) => {
+          var body = JSON.parse(res.text);
+          expect(body.countries.length > 0).to.equal(true);
+        })
+        .end(done);
+    });
+
     it('shows an error when a card is submitted with missing fields', function (done) {
       var cookieValue = cookie.create(chargeId, {});
       defaultCardID('4242424242424242');
@@ -396,7 +408,6 @@ describe('chargeTests',function(){
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"withdrawalText","accepted credit and debit card types");
             helper.templateValue(res,"post_cancel_action","/card_details/23144323/cancel");
-
             helper.templateValue(res,"errorFields", [
               {"key" : "cardNo", "cssKey": "card-no", "value": "Enter a valid card number"},
               {"key" : "expiryMonth", "cssKey": "expiry-date", "value": "Enter a valid expiry date"},
