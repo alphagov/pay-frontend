@@ -14,7 +14,7 @@ var paths = require(__dirname + '/../app/paths.js');
 var cookie = require(__dirname + '/test_helpers/session.js');
 
 var chargeId = '23144323';
-var frontendCardDetailsPath = paths.card.create.path;
+var frontendCardDetailsPath = '/card_details';
 
 describe('The /charge endpoint undealt statuses', function () {
   var charge_not_allowed_statuses = [

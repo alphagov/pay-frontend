@@ -17,7 +17,7 @@ var paths = {
       action: 'get'
     },
     create: {
-      path: '/card_details',
+      path: '/card_details/:chargeId',
       action: 'post'
     },
     authWaiting: {

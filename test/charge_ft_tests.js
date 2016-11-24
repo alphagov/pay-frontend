@@ -38,6 +38,7 @@ describe('chargeTests',function(){
   var connectorChargePath = '/v1/frontend/charges/';
   var chargeId = '23144323';
   var frontendCardDetailsPath = '/card_details';
+  var frontendCardDetailsPostPath = '/card_details/' + chargeId;
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
   var connectorMock;
@@ -56,7 +57,7 @@ describe('chargeTests',function(){
     }
 
     return request(app)
-        .post(frontendCardDetailsPath)
+        .post(frontendCardDetailsPath + "/" + chargeId)
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
@@ -172,7 +173,7 @@ describe('chargeTests',function(){
             helper.templateValue(res,"gatewayAccount.paymentProvider", "sandbox");
             helper.templateValue(res,"gatewayAccount.analyticsId", "test-1234");
             helper.templateValue(res,"gatewayAccount.type", "test");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
           })
           .end(done);
       }
@@ -372,7 +373,7 @@ describe('chargeTests',function(){
           .expect(200)
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount",'23.45');
             helper.templateValue(res,"errorFields",[{"cssKey": "card-no","key": "cardNo", "value": "Enter a valid card number"}]);
@@ -390,7 +391,7 @@ describe('chargeTests',function(){
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"withdrawalText","accepted credit and debit card types");
@@ -439,7 +440,7 @@ describe('chargeTests',function(){
 
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"errorFields", [
@@ -466,7 +467,7 @@ describe('chargeTests',function(){
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"errorFields", [
@@ -556,7 +557,7 @@ describe('chargeTests',function(){
       }).reply(400, { 'message': 'This transaction was declined.' });
 
       request(app)
-        .post(frontendCardDetailsPath)
+        .post(frontendCardDetailsPostPath)
         .set('Cookie', ['frontend_state=' + cookieValue])
         .send({
           'chargeId'  : chargeId,
@@ -594,7 +595,7 @@ describe('chargeTests',function(){
                 helper.templateValue(res,"id",chargeId);
                 helper.templateValue(res,"amount",'23.45');
                 helper.templateValue(res,"description",'Payment Description');
-                helper.templateValue(res,"post_card_action",'/card_details');
+                helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
                 helper.templateValue(res,"withdrawalText",'accepted credit and debit card types');
               })
               .end(done);
