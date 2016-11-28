@@ -20,6 +20,7 @@ var staticify         = require("staticify")(path.join(__dirname, "public"));
 var compression       = require('compression');
 var oneYear           = 86400000 * 365;
 var publicCaching     = {maxAge: oneYear};
+var applicationMetrics= require('./app/utils/metrics.js').metrics;
 
 i18n.configure({
   locales: ['en'],
