@@ -249,7 +249,7 @@ module.exports = function(grunt){
     'compress'
   ]);
 
-  grunt.registerTask('test', ['env:test','generate-assets', 'mochaTest']);
+  grunt.registerTask('test', ['env:test', 'mochaTest']);
   grunt.registerTask('lint', ['jshint']);
 
 

@@ -18,6 +18,6 @@ WORKDIR /app
 # copy cached node_modules to /app/node_modules
 RUN mkdir -p /app && cp -a /tmp/node_modules /app/
 
-RUN npm install && npm test && npm prune --production
+RUN npm install && npm run compile && npm test && npm prune --production
 
 CMD NODE_ENV=production npm start
