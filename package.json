@@ -77,7 +77,9 @@
     "string": "3.3.x",
     "throng": "4.0.x",
     "uk-postcode": "0.1.x",
-    "winston": "2.2.x"
+    "winston": "2.2.x",
+    "appmetrics": "1.1.2",
+    "appmetrics-statsd": "1.0.1"
   },
   "devDependencies": {
     "chai": "^3.2.0",
