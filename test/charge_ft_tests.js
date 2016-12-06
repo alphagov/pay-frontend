@@ -38,6 +38,7 @@ describe('chargeTests',function(){
   var connectorChargePath = '/v1/frontend/charges/';
   var chargeId = '23144323';
   var frontendCardDetailsPath = '/card_details';
+  var frontendCardDetailsPostPath = '/card_details/' + chargeId;
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
   var connectorMock;
@@ -56,7 +57,7 @@ describe('chargeTests',function(){
     }
 
     return request(app)
-        .post(frontendCardDetailsPath)
+        .post(frontendCardDetailsPath + "/" + chargeId)
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
@@ -172,7 +173,7 @@ describe('chargeTests',function(){
             helper.templateValue(res,"gatewayAccount.paymentProvider", "sandbox");
             helper.templateValue(res,"gatewayAccount.analyticsId", "test-1234");
             helper.templateValue(res,"gatewayAccount.type", "test");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
           })
           .end(done);
       }
@@ -372,13 +373,25 @@ describe('chargeTests',function(){
           .expect(200)
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount",'23.45');
             helper.templateValue(res,"errorFields",[{"cssKey": "card-no","key": "cardNo", "value": "Enter a valid card number"}]);
             helper.templateValue(res,"highlightErrorFields",{"cardNo": "Please enter a valid card number"});
           })
           .end(done);
+    });
+
+    it("should return country list when invalid fields submitted", (done) => {
+      var cookieValue = cookie.create(chargeId, {});
+      defaultCardID('4242424242424242');
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      post_charge_request(cookieValue, missing_form_card_data())
+        .expect((res) => {
+          var body = JSON.parse(res.text);
+          expect(body.countries.length > 0).to.equal(true);
+        })
+        .end(done);
     });
 
     it('shows an error when a card is submitted with missing fields', function (done) {
@@ -390,12 +403,11 @@ describe('chargeTests',function(){
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"withdrawalText","accepted credit and debit card types");
             helper.templateValue(res,"post_cancel_action","/card_details/23144323/cancel");
-
             helper.templateValue(res,"errorFields", [
               {"key" : "cardNo", "cssKey": "card-no", "value": "Enter a valid card number"},
               {"key" : "expiryMonth", "cssKey": "expiry-date", "value": "Enter a valid expiry date"},
@@ -439,7 +451,7 @@ describe('chargeTests',function(){
 
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"errorFields", [
@@ -466,7 +478,7 @@ describe('chargeTests',function(){
           .expect(function(res){
             helper.templateValue(res,"id",chargeId);
             helper.templateValue(res,"description","Payment Description");
-            helper.templateValue(res,"post_card_action",frontendCardDetailsPath);
+            helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
             helper.templateValue(res,"hasError",true);
             helper.templateValue(res,"amount","23.45");
             helper.templateValue(res,"errorFields", [
@@ -556,7 +568,7 @@ describe('chargeTests',function(){
       }).reply(400, { 'message': 'This transaction was declined.' });
 
       request(app)
-        .post(frontendCardDetailsPath)
+        .post(frontendCardDetailsPostPath)
         .set('Cookie', ['frontend_state=' + cookieValue])
         .send({
           'chargeId'  : chargeId,
@@ -594,7 +606,7 @@ describe('chargeTests',function(){
                 helper.templateValue(res,"id",chargeId);
                 helper.templateValue(res,"amount",'23.45');
                 helper.templateValue(res,"description",'Payment Description');
-                helper.templateValue(res,"post_card_action",'/card_details');
+                helper.templateValue(res,"post_card_action",frontendCardDetailsPostPath);
                 helper.templateValue(res,"withdrawalText",'accepted credit and debit card types');
               })
               .end(done);

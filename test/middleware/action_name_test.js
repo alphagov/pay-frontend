@@ -14,7 +14,7 @@ describe('actionName', function () {
     req = {
       route: {
         methods: { post: true},
-        path: "/card_details"
+        path: "/card_details/:chargeId"
       }
     }
     actionName(req,{},next);

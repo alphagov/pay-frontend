@@ -30,7 +30,9 @@ var appendChargeForNewView = function(charge, req, chargeId){
     charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
     charge.allowedCards       = cardModel.allowed;
     charge.cardsAsStrings     = JSON.stringify(cardModel.allowed);
-    charge.post_card_action   = paths.card.create.path;
+    charge.post_card_action   = paths.generateRoute("card.create", {
+      chargeId: chargeId
+    });
     charge.id                 = chargeId;
     charge.post_cancel_action = paths.generateRoute("card.cancel", {
       chargeId: chargeId
@@ -109,6 +111,7 @@ module.exports = {
     },
 
     hasValidationError = function(validation){
+      charge.countries = countries.retrieveCountries();
       appendChargeForNewView(charge, req, charge.id);
       _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties));
       return res.render(CHARGE_VIEW, validation);
