@@ -46,8 +46,12 @@ describe('charge validation fields', function () {
   describe('expiry month', function () {
 
     it('should true if correct', function () {
-      var result = fields.fieldValidations.expiryMonth(12, {expiryYear: 16} );
-      var longYear = fields.fieldValidations.expiryMonth(12, {expiryYear: "2016"} );
+      var future = new Date();
+      future.setDate(future.getDate() + 30);
+      var fullYear = future.getFullYear().toString();
+
+      var result = fields.fieldValidations.expiryMonth(12, {expiryYear: fullYear.substr(2,2)} );
+      var longYear = fields.fieldValidations.expiryMonth(12, {expiryYear: fullYear} );
 
       expect(result).to.equal(true);
       expect(longYear).to.equal(true);
@@ -65,9 +69,13 @@ describe('charge validation fields', function () {
     });
 
     it('should fails if year is not 2 or 4 digits', function () {
-      var two = fields.fieldValidations.expiryMonth(12, {expiryYear: "16"});
+      var future = new Date();
+      future.setDate(future.getDate() + 30);
+      var fullYear = future.getFullYear().toString();
+
+      var two = fields.fieldValidations.expiryMonth(12, {expiryYear: fullYear.substr(2,2)});
       var three = fields.fieldValidations.expiryMonth(12, {expiryYear: "016"} );
-      var four = fields.fieldValidations.expiryMonth(12, {expiryYear: "2016"} );
+      var four = fields.fieldValidations.expiryMonth(12, {expiryYear: fullYear} );
 
       expect(two).to.equal(true);
       expect(three).to.equal("invalid_year");
