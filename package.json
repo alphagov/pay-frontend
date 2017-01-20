@@ -79,7 +79,8 @@
     "uk-postcode": "0.1.x",
     "winston": "2.2.x",
     "appmetrics": "1.1.2",
-    "appmetrics-statsd": "1.0.1"
+    "appmetrics-statsd": "1.0.1",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.0.0/pay-product-page.tgz"
   },
   "devDependencies": {
     "chai": "^3.2.0",
