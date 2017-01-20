@@ -43,6 +43,14 @@ module.exports = function(grunt){
           src: '**',
           dest: 'govuk_modules/govuk_template/'
         }]
+    },
+    payProductPage: {
+      files: [{
+        expand: true,
+        cwd: 'node_modules/pay-product-page',
+        src: ['**', '!package.json'],
+        dest: 'public',
+      }]
     }
   };
 
