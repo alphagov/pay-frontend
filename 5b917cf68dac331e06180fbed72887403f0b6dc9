@@ -19,3 +19,5 @@ production-1.alpha_production-1-59.date=2017-01-23:12:46:29
 production-1.alpha_production-1-59.status=success
 
 staging-1.tag=FAILED-59
+
+staging-1.FAILED-59.date=
