@@ -27,3 +27,5 @@ staging-1.FAILED-59.status=failed
 staging-1.tag=alpha_staging-1-59
 
 staging-1.alpha_staging-1-59.date=2017-01-30:10:45:40
+
+staging-1.alpha_staging-1-59.status=success
