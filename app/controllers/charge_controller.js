@@ -121,6 +121,7 @@ module.exports = {
       202: awaitingAuth,
       409: awaitingAuth,
       204: successfulAuth,
+      200: successfulAuth,
       500: connectorFailure
     };
 
