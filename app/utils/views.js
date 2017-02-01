@@ -18,6 +18,10 @@ module.exports = function() {
     locals: { status: 'successful' }
   },
 
+  authorisation3dsRequired = {
+      view: "auth_3ds_required"
+    },
+
   systemError = {
     code: 500,
     view: 'errors/system_error'
@@ -82,6 +86,8 @@ module.exports = function() {
     },
 
     CREATED: error,
+
+    AUTHORISATION_3DS_REQUIRED: authorisation3dsRequired,
 
     EXPIRED: expired,
     
@@ -150,6 +156,7 @@ module.exports = function() {
 
       locals = (action.locals) ? _.merge({}, action.locals, locals) : locals;
       status = (action.code) ? action.code : 200;
+
       res.status(status);
       res.render(action.view,locals);
     }

@@ -229,6 +229,57 @@ describe('chargeTests',function(){
           .end(done);
     });
 
+    it('should redirect user to auth_waiting when connector returns 409', function(done) {
+      var cookieValue = cookie.create(chargeId);
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      defaultCardID('4242424242424242');
+
+      connector_expects(minimum_connector_card_data('4242424242424242'))
+        .reply(409);
+
+      post_charge_request(cookieValue, minimum_form_card_data('4242 4242 4242 4242'))
+        .expect(303)
+        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+        .end(done);
+    });
+
+    it('should redirect user to confirm when connector returns 200 for authorisation success', function(done) {
+      var cookieValue = cookie.create(chargeId);
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      defaultCardID('4242424242424242');
+
+      connector_expects(minimum_connector_card_data('4242424242424242'))
+        .reply(200, {status: State.AUTH_SUCCESS});
+
+      post_charge_request(cookieValue, minimum_form_card_data('4242 4242 4242 4242'))
+        .expect(303)
+        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+        .end(done);
+    });
+
+    it('should redirect user to confirm when connector returns 200 for authorisation and 3DS is required', function(done) {
+      var cookieValue = cookie.create(chargeId);
+      nock(process.env.CONNECTOR_HOST)
+        .patch("/v1/frontend/charges/23144323")
+        .reply(200);
+      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+      defaultCardID('4242424242424242');
+
+      connector_expects(minimum_connector_card_data('4242424242424242'))
+        .reply(200, {status: State.AUTH_3DS_REQUIRED});
+
+      post_charge_request(cookieValue, minimum_form_card_data('4242 4242 4242 4242'))
+        .expect(303)
+        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/3ds_required')
+        .end(done);
+    });
+
     it('should redirect user from /auth_waiting to /confirm when connector returns a successful status', function(done) {
       var cookieValue = cookie.create(chargeId);
 
@@ -242,6 +293,21 @@ describe('chargeTests',function(){
           .expect(303)
           .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
           .end(done);
+    });
+
+    it('should redirect user from /auth_waiting to /3ds_required when connector returns that 3DS is required for authorisation', function(done) {
+      var cookieValue = cookie.create(chargeId);
+
+      default_connector_response_for_get_charge(chargeId, State.AUTH_3DS_REQUIRED);
+
+      request(app)
+        .get(frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .set('Cookie', ['frontend_state=' + cookieValue])
+        .set('Accept', 'application/json')
+        .expect(303)
+        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/3ds_required')
+        .end(done);
     });
 
     it('should keep user in /auth_waiting when connector returns an authorisation ready state', function(done) {
@@ -272,24 +338,6 @@ describe('chargeTests',function(){
           .end(done);
     });
 
-    it('should send clean card data to connector', function(done) {
-      var cookieValue = cookie.create(chargeId);
-      defaultCardID('4242424242424242');
-      nock(process.env.CONNECTOR_HOST)
-        .patch("/v1/frontend/charges/23144323")
-        .reply(200);
-      default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
-
-      connector_expects(minimum_connector_card_data('5105105105105100'))
-          .reply(204);
-
-      post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'))
-          .expect(303)
-          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
-          .end(done);
-    });
-
-
     it('should error without csrf', function(done) {
       var cookieValue = cookie.create(chargeId);
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
@@ -310,7 +358,7 @@ describe('chargeTests',function(){
 
       var card_data = full_connector_card_data('5105105105105100');
 
-      connector_expects(card_data).reply(204);
+      connector_expects(card_data).reply(200);
 
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
@@ -351,7 +399,7 @@ describe('chargeTests',function(){
       card_data.address.city = 'London';
       card_data.address.country = 'GB';
 
-      connector_expects(card_data).reply(204);
+      connector_expects(card_data).reply(200);
 
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine2 = card_data.address.line2;
@@ -525,7 +573,7 @@ describe('chargeTests',function(){
           .reply(200);
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
-      connector_expects(card_data).reply(204);
+      connector_expects(card_data).reply(200);
       var form_data = minimum_form_card_data('5105105105105100');
       form_data.addressLine1 = '';
       form_data.addressLine2 = card_data.address.line1;
@@ -544,7 +592,7 @@ describe('chargeTests',function(){
       delete card_data.address.line2;
 
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
-      connector_expects(card_data).reply(204);
+      connector_expects(card_data).reply(200);
       nock(process.env.CONNECTOR_HOST)
                 .patch("/v1/frontend/charges/23144323")
                 .reply(200);
@@ -595,7 +643,7 @@ describe('chargeTests',function(){
         it('It should show card details page if charge status is in "ENTERING CARD DETAILS" state', function (done){
             var cookieValue = cookie.create(chargeId);
             nock(process.env.CONNECTOR_HOST)
-              .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
+              .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
               .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(enteringCardDetailsState,"http://www.example.com/service"));
 
             get_charge_request(app, cookieValue, chargeId)
@@ -614,7 +662,7 @@ describe('chargeTests',function(){
         it('It should show card details page with correct text for credit card only', function (done){
             var cookieValue = cookie.create(chargeId);
             nock(process.env.CONNECTOR_HOST)
-              .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
+              .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
               .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge_debit_card_only(enteringCardDetailsState,"http://www.example.com/service"));
 
             get_charge_request(app, cookieValue, chargeId,"?debitOnly=true")
@@ -628,7 +676,7 @@ describe('chargeTests',function(){
         it('It should not show amex if it is excluded', function (done){
             var cookieValue = cookie.create(chargeId);
             nock(process.env.CONNECTOR_HOST)
-              .put('/v1/frontend/charges/' + chargeId + '/status').reply(204)
+              .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
               .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge_debit_card_only(enteringCardDetailsState,"http://www.example.com/service"));
 
             get_charge_request(app, cookieValue, chargeId,"?removeAmex=true")
@@ -665,7 +713,7 @@ describe('chargeTests',function(){
           default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
 
           connector_expects(minimum_connector_card_data('5105105105105100'))
-              .reply(204);
+              .reply(200);
 
           post_charge_request(cookieValue, minimum_form_card_data('5105 1051 0510 5100'))
               .expect(500)
@@ -730,7 +778,7 @@ describe('chargeTests',function(){
     it('should error if no csrf token', function (done) {
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(State.AUTH_SUCCESS,"http://www.example.com/service"))
-        .post('/v1/frontend/charges/' + chargeId + "/capture").reply(204);
+        .post('/v1/frontend/charges/' + chargeId + "/capture").reply(200);
 
       request(app)
           .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
@@ -790,7 +838,7 @@ describe('chargeTests',function(){
     });
 
 
-    it('should produce an error if the connector returns a non-204 status', function (done) {
+    it('should produce an error if the connector returns a non-200 status', function (done) {
       default_connector_response_for_get_charge(chargeId, State.AUTH_SUCCESS);
       connectorMock.post(connectorChargePath + chargeId + "/capture").reply(1234);
       request(app)
@@ -905,6 +953,28 @@ describe('chargeTests',function(){
         .expect(500)
         .expect(function(res){
           helper.templateValue(res,"viewName","SYSTEM_ERROR");
+        })
+        .end(done);
+    });
+  });
+
+  describe('The /card_details/charge_id/3ds_required', function () {
+    beforeEach(function() {
+      nock.cleanAll();
+    });
+
+    it('should return the data needed for the UI', function (done) {
+
+      nock(process.env.CONNECTOR_HOST)
+        .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge("AUTHORISATION 3DS REQUIRED","http://www.example.com/service"));
+
+      var cookieValue = cookie.create(chargeId);
+
+      get_charge_request(app, cookieValue, chargeId, '/3ds_required')
+        .expect(200)
+        .expect(function(res){
+          //helper.templateValue(res,"charge.cardDetails.cardNumber","************1234");
+          console.log(">>", JSON.parse(res.text));
         })
         .end(done);
     });

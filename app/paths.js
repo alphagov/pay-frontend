@@ -24,6 +24,10 @@ var paths = {
       path: '/card_details/:chargeId/auth_waiting',
       action: 'get'
     },
+    auth3dsRequired: {
+      path: '/card_details/:chargeId/3ds_required',
+      action: 'get'
+    },
     captureWaiting: {
       path: '/card_details/:chargeId/capture_waiting',
       action: 'get'
