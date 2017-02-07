@@ -208,7 +208,28 @@ module.exports = {
   auth3dsRequired: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var _views = views.create();
-      _views.display(res, 'AUTHORISATION_3DS_REQUIRED', withAnalytics(charge));
+    _views.display(res, 'AUTHORISATION_3DS_REQUIRED', withAnalytics(charge));
+  },
+
+  auth3dsRequiredOut: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var templateData = {
+      issuerUrl: _.get(charge, 'auth3dsData.issuerUrl'),
+      paRequest: _.get(charge, 'auth3dsData.paRequest'),
+      termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
+    };
+    var _views = views.create();
+    _views.display(res, 'AUTHORISATION_3DS_REQUIRED_OUT', templateData);
+  },
+
+  auth3dsRequiredIn: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var _views = views.create();
+    var templateData = {
+      threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
+      paResponse: _.get(req, 'body.PaRes')
+    };
+    _views.display(res, 'AUTHORISATION_3DS_REQUIRED_IN', templateData);
   },
 
   confirm: function (req, res) {

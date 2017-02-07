@@ -1,7 +1,8 @@
 var _ = require('lodash');
 var generateRoute = require(__dirname + '/utils/generate_route.js');
 
-if (process.env.CONNECTOR_HOST === undefined) throw new Error('connector host is not defined');
+if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined');
+//if (process.env.FRONTEND_HOST === undefined) throw new Error('FRONTEND_HOST environment variable is not defined');
 // please structure each route as follows
 // name: {
 //    path: "/foo"
@@ -26,6 +27,18 @@ var paths = {
     },
     auth3dsRequired: {
       path: '/card_details/:chargeId/3ds_required',
+      action: 'get'
+    },
+    auth3dsRequiredIn: {
+      path: '/card_details/:chargeId/3ds_required_in',
+      action: 'post'
+    },
+    auth3dsRequiredOut: {
+      path: '/card_details/:chargeId/3ds_required_out',
+      action: 'get'
+    },
+    auth3dsHandler: {
+      path: '/card_details/:chargeId/3ds_handler',
       action: 'get'
     },
     captureWaiting: {
@@ -112,6 +125,17 @@ var paths = {
   }
 };
 
-module.exports = _.extend({}, paths, {generateRoute: generateRoute(paths)});
+var extendedPaths = _.extend({}, paths, {
+  external: {
+    card: {
+      auth3dsRequiredIn: {
+        path: process.env.FRONTEND_HOST + paths.card.auth3dsRequiredIn.path,
+        action: 'post'
+      }
+    }
+  },
+});
+
+module.exports = _.extend({}, extendedPaths, {generateRoute: generateRoute(extendedPaths)});
 
 

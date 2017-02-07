@@ -1,23 +1,21 @@
 {{< layout}}
 
 {{$pageTitle}}
-DSFDSF DSG GS
+Payment in progress
 {{/pageTitle}}
 
 {{$head}}
 {{>includes/head}}
 {{>includes/analytics}}
-<meta http-equiv="refresh" content="2">
 {{/head}}
 
 {{$content}}
 
-<main id="content" ="content-wrapper">
-<h1 class="form-title">Submit stuff to 3ds</h1>
-<p class="lede">Your payment is being processed.</p>
-<div id="spinner">
-    <img src="/images/spinner.gif" alt="waiting" />
-</div>
+<main id="content" class="content-wrapper">
+    <h1 class="form-title">Payment in progress</h1>
+    <p class="lede">Follow the steps below.</p>
+    <iframe class="iframe-3ds" src="3ds_required_out">
+    </iframe>
 </main>
 
 {{/content}}

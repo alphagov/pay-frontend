@@ -1,15 +1,15 @@
 var i18n = require('i18n');
 
-var charge        = require('./controllers/charge_controller.js');
-var secure        = require('./controllers/secure_controller.js');
-var statik        = require('./controllers/static_controller.js');
-var returnCont    = require('./controllers/return_controller.js');
+var charge = require('./controllers/charge_controller.js');
+var secure = require('./controllers/secure_controller.js');
+var statik = require('./controllers/static_controller.js');
+var returnCont = require('./controllers/return_controller.js');
 
-var paths         = require(__dirname + '/paths.js');
-var csrf          = require(__dirname + '/middleware/csrf.js');
-var actionName    = require(__dirname + '/middleware/action_name.js');
+var paths = require(__dirname + '/paths.js');
+var {csrfCheck, csrfTokenGeneration} = require(__dirname + '/middleware/csrf.js');
+var actionName = require(__dirname + '/middleware/action_name.js');
 var stateEnforcer = require(__dirname + '/middleware/state_enforcer.js');
-var retrieveCharge= require(__dirname + '/middleware/retrieve_charge.js');
+var retrieveCharge = require(__dirname + '/middleware/retrieve_charge.js');
 
 
 module.exports.paths = paths;
@@ -25,22 +25,29 @@ module.exports.bind = function (app) {
 
   // charges
   var card = paths.card;
+
   var middlewareStack = [
-    function(req,res,next) { i18n.setLocale('en'); next();},
-    csrf,
+    function (req, res, next) {
+      i18n.setLocale('en');
+      next();
+    },
+    csrfCheck,
+    csrfTokenGeneration,
     actionName,
     retrieveCharge,
     stateEnforcer
   ];
 
-  app.get(card.new.path,      middlewareStack, charge.new);
+  app.get(card.new.path, middlewareStack, charge.new);
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting);
   app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired);
+  app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut);
+  app.post(card.auth3dsRequiredIn.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn);
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting);
-  app.post(card.create.path,  middlewareStack, charge.create);
-  app.get(card.confirm.path,  middlewareStack, charge.confirm);
+  app.post(card.create.path, middlewareStack, charge.create);
+  app.get(card.confirm.path, middlewareStack, charge.confirm);
   app.post(card.capture.path, middlewareStack, charge.capture);
-  app.post(card.cancel.path,  middlewareStack, charge.cancel);
+  app.post(card.cancel.path, middlewareStack, charge.cancel);
   app.post(card.checkCard.path, retrieveCharge, charge.checkCard);
   app.get(card.return.path, retrieveCharge, returnCont.return);
 

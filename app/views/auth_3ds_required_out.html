@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+{{$head}}
+{{>includes/iframe_head}}
+{{/head}}
+
+<body OnLoad="OnLoadEvent();">
+<noscript>
+    <p class="lede">To continue with your payment, we need your bank’s approval.</p>
+</noscript>
+<form name="three_ds_required" method="post" action="{{issuerUrl}}">
+    <input type="hidden" name="PaReq" value="{{paRequest}}"/>
+    <input type="hidden" name="TermUrl" value="{{termUrl}}"/>
+
+    <noscript>
+        <button id="confirm" class="button">Continue</button>
+    </noscript>
+</form>
+
+
+<script>
+    function OnLoadEvent() {
+        document.three_ds_required.submit();
+    }
+</script>
+</body>
+</html>
