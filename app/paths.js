@@ -39,7 +39,7 @@ var paths = {
     },
     auth3dsHandler: {
       path: '/card_details/:chargeId/3ds_handler',
-      action: 'get'
+      action: 'post'
     },
     captureWaiting: {
       path: '/card_details/:chargeId/capture_waiting',
@@ -121,7 +121,11 @@ var paths = {
     allCards: {
       path: process.env.CONNECTOR_HOST + "/v1/api/card-types",
       action: 'get'
-    }
+    },
+    threeDs: {
+      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/3ds",
+      action: 'post'
+    },
   }
 };
 
@@ -133,7 +137,7 @@ var extendedPaths = _.extend({}, paths, {
         action: 'post'
       }
     }
-  },
+  }
 });
 
 module.exports = _.extend({}, extendedPaths, {generateRoute: generateRoute(extendedPaths)});

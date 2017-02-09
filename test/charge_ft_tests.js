@@ -21,6 +21,8 @@ var connector_response_for_put_charge = require(__dirname + '/test_helpers/test_
 var default_connector_response_for_get_charge = require(__dirname + '/test_helpers/test_helpers.js').default_connector_response_for_get_charge;
 var State = require(__dirname + '/../app/models/state.js');
 
+
+
 var defaultCardID = function (cardNumber) {
   nock(process.env.CARDID_HOST)
     .post("/v1/api/card", ()=> {
@@ -44,7 +46,6 @@ describe('chargeTests', function () {
   var frontendCardDetailsPostPath = '/card_details/' + chargeId;
 
   var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards';
-  var connectorMock;
   var enteringCardDetailsState = 'ENTERING CARD DETAILS';
   var RETURN_URL = 'http://www.example.com/service';
 
@@ -331,7 +332,7 @@ describe('chargeTests', function () {
       default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
       connector_expects(minimum_connector_card_data('5105105105105100'))
         .reply(204);
-      post_charge_request(app, cookieValue, minimum_form_card_data('5105 1051 0510 5100'), chargeId)
+      post_charge_request(app, cookieValue, minimum_form_card_data('5105 1051 0510 5100'), chargeId, false)
         .expect(500)
         .end(done);
     });
@@ -963,7 +964,7 @@ describe('chargeTests', function () {
   });
 
   describe('The /card_details/charge_id/3ds_required', function () {
-    var FRONTEND_HOST = "https://frontend.pymnt.localdomain";
+
     var testAuth3ds = {
       auth3dsData: {
         paRequest: "aPaRequest",
@@ -973,12 +974,11 @@ describe('chargeTests', function () {
 
     beforeEach(function () {
       nock.cleanAll();
-      process.env.FRONTEND_HOST = FRONTEND_HOST;
     });
 
     it('should return the data needed for the parent UI', function (done) {
       var chargeResponse = _.extend(
-        helper.raw_successful_get_charge("AUTHORISATION 3DS REQUIRED", "http://www.example.com/service"),
+        helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"),
         testAuth3ds);
 
       nock(process.env.CONNECTOR_HOST)
@@ -996,7 +996,7 @@ describe('chargeTests', function () {
 
     it('should return the data needed for the iframe UI', function (done) {
       var chargeResponse = _.extend(
-        helper.raw_successful_get_charge("AUTHORISATION 3DS REQUIRED", "http://www.example.com/service"),
+        helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"),
         testAuth3ds);
 
       nock(process.env.CONNECTOR_HOST)
@@ -1010,7 +1010,7 @@ describe('chargeTests', function () {
           helper.templateValue(res, "viewName", 'AUTHORISATION_3DS_REQUIRED_OUT');
           helper.templateValue(res, "paRequest", testAuth3ds.auth3dsData.paRequest);
           helper.templateValue(res, "issuerUrl", testAuth3ds.auth3dsData.issuerUrl);
-          helper.templateValue(res, "termUrl", `${FRONTEND_HOST}/card_details/${chargeId}/3ds_required_in`);
+          helper.templateValue(res, "termUrl", `${process.env.FRONTEND_HOST}/card_details/${chargeId}/3ds_required_in`);
         })
         .end(done);
     })
@@ -1030,7 +1030,7 @@ describe('chargeTests', function () {
 
     it('should return the data needed for the UI', function (done) {
       var chargeResponse = _.extend(
-        helper.raw_successful_get_charge("AUTHORISATION 3DS REQUIRED", "http://www.example.com/service"),
+        helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"),
         testAuth3ds);
 
       nock(process.env.CONNECTOR_HOST)
@@ -1049,6 +1049,97 @@ describe('chargeTests', function () {
           helper.templateValue(res, "threeDsHandlerUrl", `/card_details/${chargeId}/3ds_handler`);
         })
         .end(done);
+    });
+  });
+
+  describe('The /card_details/charge_id/3ds_handler', function () {
+    var chargeResponse = _.extend(
+      helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"));
+
+
+    beforeEach(function () {
+      nock.cleanAll();
+    });
+
+    it('should send 3ds data to connector and redirect to confirm', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(200);
+
+      post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
+        .expect(303)
+        .expect('Location', `${frontendCardDetailsPath}/${chargeId}/confirm`)
+        .end(done);
+    });
+
+    it('should send 3ds data to connector and redirect to auth_waiting if connector returns a 202', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(202);
+
+      post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
+        .expect(303)
+        .expect('Location', `${frontendCardDetailsPath}/${chargeId}/auth_waiting`)
+        .end(done);
+    });
+
+    it('should send 3ds data to connector and redirect to auth_waiting if connector returns a 409', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(409);
+
+      post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
+        .expect(303)
+        .expect('Location', `${frontendCardDetailsPath}/${chargeId}/auth_waiting`)
+        .end(done);
+    });
+
+    it('should send 3ds data to connector and render an error if connector returns an 500', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(500);
+
+      post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
+        .expect(500)
+        .expect(function (res) {
+          helper.templateValue(res, "viewName", "SYSTEM_ERROR");
+        }).end(done);
+    });
+
+    it('should send 3ds data to connector and render an error if connector returns an invalid status code', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(404);
+
+      post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
+        .expect(500)
+        .expect(function (res) {
+          helper.templateValue(res, "viewName", "ERROR");
+        }).end(done);
+    });
+
+    it('should send 3ds data to connector and render an error if connector post failed', function (done) {
+      var cookieValue = cookie.create(chargeId);
+
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).replyWithError(404);
+
+      post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
+        .expect(500)
+        .expect(function (res) {
+          helper.templateValue(res, "viewName", "ERROR");
+        }).end(done);
     });
   });
 });
