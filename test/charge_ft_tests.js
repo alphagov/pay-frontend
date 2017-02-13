@@ -976,28 +976,8 @@ describe('chargeTests', function () {
       nock.cleanAll();
     });
 
-    it('should return the data needed for the parent UI', function (done) {
-      var chargeResponse = _.extend(
-        helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"),
-        testAuth3ds);
-
-      nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse);
-
-      var cookieValue = cookie.create(chargeId);
-
-      get_charge_request(app, cookieValue, chargeId, '/3ds_required')
-        .expect(200)
-        .expect(function (res) {
-          helper.templateValue(res, "viewName", 'AUTHORISATION_3DS_REQUIRED');
-        })
-        .end(done);
-    });
-
     it('should return the data needed for the iframe UI', function (done) {
-      var chargeResponse = _.extend(
-        helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"),
-        testAuth3ds);
+      var chargeResponse = helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service");
 
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse);
@@ -1007,31 +987,21 @@ describe('chargeTests', function () {
       get_charge_request(app, cookieValue, chargeId, '/3ds_required_out')
         .expect(200)
         .expect(function (res) {
-          helper.templateValue(res, "viewName", 'AUTHORISATION_3DS_REQUIRED_OUT');
-          helper.templateValue(res, "paRequest", testAuth3ds.auth3dsData.paRequest);
-          helper.templateValue(res, "issuerUrl", testAuth3ds.auth3dsData.issuerUrl);
-          helper.templateValue(res, "termUrl", `${process.env.FRONTEND_HOST}/card_details/${chargeId}/3ds_required_in`);
+          var body = JSON.parse(res.text);
+          expect(body.paRequest).to.equal('aPaRequest');
+          expect(body.issuerUrl).to.equal('http://issuerUrl.com');
         })
         .end(done);
     })
   });
 
   describe('The /card_details/charge_id/3ds_required_in', function () {
-    var testAuth3ds = {
-      auth3dsData: {
-        paRequest: "aPaRequest",
-        issuerUrl: "https://test.com"
-      }
-    };
-
     beforeEach(function () {
       nock.cleanAll();
     });
 
     it('should return the data needed for the UI', function (done) {
-      var chargeResponse = _.extend(
-        helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service"),
-        testAuth3ds);
+      var chargeResponse = helper.raw_successful_get_charge(State.AUTH_3DS_REQUIRED, "http://www.example.com/service");
 
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse);
@@ -1044,9 +1014,9 @@ describe('chargeTests', function () {
       post_charge_request(app, cookieValue, data, chargeId, false, '/3ds_required_in')
         .expect(200)
         .expect(function (res) {
-          helper.templateValue(res, "viewName", 'AUTHORISATION_3DS_REQUIRED_IN');
-          helper.templateValue(res, "paResponse", "aPaRes");
-          helper.templateValue(res, "threeDsHandlerUrl", `/card_details/${chargeId}/3ds_handler`);
+          var body = JSON.parse(res.text);
+          expect(body.paResponse).to.equal('aPaRes');
+          expect(body.threeDsHandlerUrl).to.equal(`/card_details/${chargeId}/3ds_handler`);
         })
         .end(done);
     });
@@ -1066,7 +1036,7 @@ describe('chargeTests', function () {
 
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(200);
+        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: "aPaResponse"}).reply(200);
 
       post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
         .expect(303)
@@ -1079,7 +1049,7 @@ describe('chargeTests', function () {
 
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(202);
+        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: "aPaResponse"}).reply(202);
 
       post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
         .expect(303)
@@ -1092,7 +1062,7 @@ describe('chargeTests', function () {
 
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(409);
+        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: "aPaResponse"}).reply(409);
 
       post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
         .expect(303)
@@ -1105,7 +1075,7 @@ describe('chargeTests', function () {
 
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(500);
+        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: "aPaResponse"}).reply(500);
 
       post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
         .expect(500)
@@ -1119,7 +1089,7 @@ describe('chargeTests', function () {
 
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).reply(404);
+        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: "aPaResponse"}).reply(404);
 
       post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
         .expect(500)
@@ -1133,7 +1103,7 @@ describe('chargeTests', function () {
 
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {paResponse: "aPaResponse"}).replyWithError(404);
+        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: "aPaResponse"}).replyWithError(404);
 
       post_charge_request(app, cookieValue, {PaRes: "aPaResponse"}, chargeId, true, '/3ds_handler')
         .expect(500)

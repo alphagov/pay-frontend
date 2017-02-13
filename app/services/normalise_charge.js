@@ -16,8 +16,8 @@ module.exports = function() {
       email: charge.email,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     };
-    if (charge.auth3dsData) {
-       chargeObj.auth3dsData = _normaliseAuth3dsData(charge.auth3dsData);
+    if (charge.auth_3ds_data) {
+       chargeObj.auth3dsData = _normaliseAuth3dsData(charge.auth_3ds_data);
     }
     if (charge.card_details) {
        chargeObj.cardDetails = _normaliseConfirmationDetails(charge.card_details);

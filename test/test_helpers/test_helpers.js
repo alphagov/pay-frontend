@@ -163,6 +163,12 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
       }
     }
   }
+  if (status == "AUTHORISATION 3DS REQUIRED") {
+    charge.auth_3ds_data = {
+      'paRequest': 'aPaRequest',
+      'issuerUrl': 'http://issuerUrl.com'
+      }
+    }
   return charge;
 }
 

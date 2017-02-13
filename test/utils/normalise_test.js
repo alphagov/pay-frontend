@@ -15,6 +15,10 @@ var unNormalisedCharge = {
   }],
   status: "status",
   email: "bobbybobby@bobby.bob",
+  auth_3ds_data: {
+    paRequest: 'paRequest',
+    issuerUrl: 'issuerUrl'
+  },
   gateway_account: {
     analytics_id: 'bla-1234',
     type: 'live',
@@ -39,6 +43,10 @@ var normalisedCharge = {
   }],
   status: "status",
   email: "bobbybobby@bobby.bob",
+  auth3dsData: {
+    paRequest: 'paRequest',
+    issuerUrl: 'issuerUrl'
+  },
   gatewayAccount: {
     analyticsId: 'bla-1234',
     type: 'live',
@@ -75,16 +83,6 @@ describe('normalise', function () {
     it('should return a refined state', function () {
       var result = normalise.charge(unNormalisedCharge, 1);
       expect(result).to.deep.equal(normalisedCharge);
-    });
-    it('should return a refined state with auth3d data', function () {
-      var auth3dsData = {
-        auth3dsData: {
-          paRequest: 'xyz',
-          issuerUrl: 'http://3ds-required.com'
-        }
-      };
-      var result = normalise.charge(_.extend({}, unNormalisedCharge, auth3dsData), 1);
-      expect(result).to.deep.equal(_.extend({}, normalisedCharge, auth3dsData));
     });
   });
 
