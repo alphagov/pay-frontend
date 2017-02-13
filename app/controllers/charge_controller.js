@@ -17,6 +17,9 @@ var paths = require('../paths.js');
 var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
+var AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required';
+var AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out';
+var AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in';
 var CAPTURE_WAITING_VIEW = 'capture_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
 var countries = require("../services/countries.js");
@@ -209,15 +212,16 @@ module.exports = {
     var correlationId = req.headers[CORRELATION_HEADER] || '';
     var _views = views.create();
     var templateData = {
-      paResponse: _.get(req, 'body.PaRes')
+      pa_response: _.get(req, 'body.PaRes')
     };
     var connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id});
 
-    baseClient.post(connector3dsUrl, { data: templateData },
+    baseClient.post(connector3dsUrl, { data: templateData, correlationId: correlationId },
       function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', connector3dsUrl, new Date() - startTime);
         switch(json.statusCode){
           case 200:
+          case 400:
             redirect(res).toConfirm(charge.id);
             break;
           case 202:
@@ -236,29 +240,26 @@ module.exports = {
   },
   auth3dsRequired: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId);
-    var _views = views.create();
-    _views.display(res, 'AUTHORISATION_3DS_REQUIRED', withAnalytics(charge));
+    res.render(AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge));
   },
 
   auth3dsRequiredOut: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId);
     var templateData = {
-      issuerUrl: _.get(charge, 'auth3dsData.issuerUrl'),
-      paRequest: _.get(charge, 'auth3dsData.paRequest'),
+      issuerUrl: _.get(charge, 'auth_3ds_data.issuerUrl'),
+      paRequest: _.get(charge, 'auth_3ds_data.paRequest'),
       termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
     };
-    var _views = views.create();
-    _views.display(res, 'AUTHORISATION_3DS_REQUIRED_OUT', templateData);
+    res.render(AUTH_3DS_REQUIRED_OUT_VIEW, templateData);
   },
 
   auth3dsRequiredIn: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId);
-    var _views = views.create();
     var templateData = {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes')
     };
-    _views.display(res, 'AUTHORISATION_3DS_REQUIRED_IN', templateData);
+    res.render(AUTH_3DS_REQUIRED_IN_VIEW, templateData);
   },
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId),

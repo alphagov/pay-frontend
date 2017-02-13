@@ -18,18 +18,6 @@ module.exports = function() {
       locals: { status: 'successful' }
     },
 
-    authorisation3dsRequired = {
-      view: "auth_3ds_required"
-    },
-
-    authorisation3dsRequiredOut = {
-      view: "auth_3ds_required_out"
-    },
-
-    authorisation3dsRequiredIn = {
-      view: "auth_3ds_required_in"
-    },
-
     systemError = {
       code: 500,
       view: 'errors/system_error'
@@ -95,12 +83,6 @@ module.exports = function() {
 
       CREATED: error,
 
-      AUTHORISATION_3DS_REQUIRED: authorisation3dsRequired,
-
-      AUTHORISATION_3DS_REQUIRED_IN: authorisation3dsRequiredIn,
-
-      AUTHORISATION_3DS_REQUIRED_OUT: authorisation3dsRequiredOut,
-
       EXPIRED: expired,
 
       EXPIRE_CANCEL_READY: expired,
@@ -130,6 +112,10 @@ module.exports = function() {
 
       CAPTURE_ERROR: {
         view: "errors/incorrect_state/capture_failure"
+      },
+
+      AUTHORISATION_3DS_REQUIRED: {
+        view: "errors/incorrect_state/auth_3ds_required"
       },
 
       AUTHORISATION_SUCCESS: {

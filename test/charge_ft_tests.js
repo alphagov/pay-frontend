@@ -193,7 +193,7 @@ describe('chargeTests', function () {
 
       it('should show auth failure page when the authorisation has been rejected', function (done) {
         get("authorisation rejected")
-          .expect(200)
+          .expect(400)
           .expect(function (res) {
             helper.templateValue(res, "viewName", "AUTHORISATION_REJECTED");
           }).end(done);
