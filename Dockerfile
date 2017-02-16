@@ -3,7 +3,7 @@ FROM node:6.9.5-alpine
 RUN apk update
 RUN apk upgrade
 
-RUN apk add python
+RUN apk add python make
 
 ENV PORT 9000
 ENV ENABLE_NEWRELIC no
