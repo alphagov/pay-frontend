@@ -54,6 +54,10 @@ describe('The /charge endpoint dealt statuses', function () {
       view: "AUTHORISATION_REJECTED"
     },
     {
+      name: 'authorisation cancelled',
+      view: "AUTHORISATION_CANCELLED"
+    },
+    {
       name: 'authorisation 3ds required',
       view: "AUTHORISATION_3DS_REQUIRED"
     },

@@ -199,6 +199,14 @@ describe('chargeTests', function () {
           }).end(done);
       });
 
+      it('should show auth failure page when the authorisation has been cancelled', function (done) {
+        get("authorisation cancelled")
+          .expect(200)
+          .expect(function(res){
+            helper.templateValue(res,"viewName","AUTHORISATION_CANCELLED");
+          }).end(done);
+      });
+
     });
 
     it('should redirect user to auth_waiting when connector returns 202', function (done) {
