@@ -54,6 +54,14 @@ describe('The /charge endpoint dealt statuses', function () {
       view: "AUTHORISATION_REJECTED"
     },
     {
+      name: 'authorisation cancelled',
+      view: "AUTHORISATION_CANCELLED"
+    },
+    {
+      name: 'authorisation 3ds required',
+      view: "AUTHORISATION_3DS_REQUIRED"
+    },
+    {
       name: 'system error',
       view: "SYSTEM_ERROR"
     },
@@ -213,6 +221,10 @@ describe('The /confirm endpoint dealt statuses', function () {
       view: "AUTHORISATION_READY"
     },
     {
+      name: 'authorisation 3ds required',
+      view: "AUTHORISATION_3DS_REQUIRED"
+    },
+    {
       name: 'capture error',
       view: 'CAPTURE_ERROR'
     },
@@ -248,9 +260,6 @@ describe('The /confirm endpoint dealt statuses', function () {
   afterEach(function() {
     nock.cleanAll();
   });
-
-
-
 
   confirm_allowed_statuses.forEach(function (state) {
     it('should not error when the payment status is ' + state.name, function (done) {

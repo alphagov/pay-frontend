@@ -58,7 +58,7 @@ module.exports = function() {
     NAXSI_SYSTEM_ERROR: {
       code: 400,
       view: 'error',
-      locals : {
+      locals: {
         message: "Please try again later"
       }
     },
@@ -66,7 +66,7 @@ module.exports = function() {
     HUMANS: {
       code: 200,
       view: 'plain_message',
-      locals : {
+      locals: {
         message: "GOV.UK Payments is built by a team at the Government Digital Service in London. If you'd like to join us, see https://gds.blog.gov.uk/jobs"
       }
     },
@@ -78,15 +78,15 @@ module.exports = function() {
 
     CAPTURE_SUBMITTED: {
       view: "errors/charge_confirm_state_completed",
-      locals: { status: 'successful' }
+      locals: {status: 'successful'}
     },
 
     CREATED: error,
 
     EXPIRED: expired,
-    
+
     EXPIRE_CANCEL_READY: expired,
-    
+
     EXPIRE_CANCEL_FAILED: expired,
 
     SYSTEM_CANCELLED: systemCancelled,
@@ -96,14 +96,14 @@ module.exports = function() {
     SYSTEM_CANCEL_ERROR: systemCancelled,
 
     USER_CANCELLED: userCancelled,
-    
+
     USER_CANCEL_READY: userCancelled,
-    
+
     USER_CANCEL_ERROR: userCancelled,
 
     CAPTURED: {
       view: "errors/charge_confirm_state_completed",
-      locals: { status: 'successful' }
+      locals: {status: 'successful'}
     },
 
     CAPTURE_FAILURE: {
@@ -114,12 +114,20 @@ module.exports = function() {
       view: "errors/incorrect_state/capture_failure"
     },
 
-    AUTHORISATION_SUCCESS: {
+      AUTHORISATION_3DS_REQUIRED: {
+        view: "errors/incorrect_state/auth_3ds_required"
+      },
+
+      AUTHORISATION_SUCCESS: {
         view: "errors/incorrect_state/auth_success"
-    },
+      },
 
     AUTHORISATION_REJECTED: {
-        view: "errors/incorrect_state/auth_failure"
+      view: "errors/incorrect_state/auth_failure"
+    },
+
+    AUTHORISATION_CANCELLED: {
+      view: "errors/incorrect_state/auth_failure"
     },
 
     AUTHORISATION_ERROR: {

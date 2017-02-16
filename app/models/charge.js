@@ -14,10 +14,6 @@ module.exports = function(correlationId) {
     return paths.generateRoute(`connectorCharge.${resource}`,params);
   },
 
-  urlFor =  function(resource, chargeId){
-    return paths.generateRoute(`card.${resource}`,{chargeId: chargeId });
-  },
-
   updateToEnterDetails = function(chargeId) {
     return updateStatus(chargeId, State.ENTERING_CARD_DETAILS);
   },
@@ -283,7 +279,6 @@ module.exports = function(correlationId) {
     capture: capture,
     findByToken: findByToken,
     cancel: cancel,
-    patch: patch,
-    urlFor: urlFor
+    patch: patch
   };
 };
