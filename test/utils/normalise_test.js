@@ -1,30 +1,35 @@
 var should = require('chai').should();
 var assert = require('assert');
 var expect = require('chai').expect;
-var normalise= require(__dirname + '/../../app/services/normalise_charge.js');
+var normalise = require(__dirname + '/../../app/services/normalise_charge.js');
 
-var _      = require('lodash');
+var _ = require('lodash');
 
 var unNormalisedCharge = {
   amount: 1234,
   return_url: "foo",
   description: "bar",
-  links: [ {
+  links: [{
     rel: "rar",
     href: "http://foo"
   }],
   status: "status",
   email: "bobbybobby@bobby.bob",
+  auth_3ds_data: {
+    paRequest: 'paRequest',
+    issuerUrl: 'issuerUrl'
+  },
   gateway_account: {
     analytics_id: 'bla-1234',
     type: 'live',
     payment_provider: 'worldpay',
-  service_name: 'Pranks incorporated',
-      card_types: [{
-    type: 'CREDIT',
-    brand: 'VISA',
-    lavel: 'Visa'
-  }]}
+    service_name: 'Pranks incorporated',
+    card_types: [{
+      type: 'CREDIT',
+      brand: 'VISA',
+      label: 'Visa'
+    }]
+  }
 };
 
 var normalisedCharge = {
@@ -38,6 +43,10 @@ var normalisedCharge = {
   }],
   status: "status",
   email: "bobbybobby@bobby.bob",
+  auth3dsData: {
+    paRequest: 'paRequest',
+    issuerUrl: 'issuerUrl'
+  },
   gatewayAccount: {
     analyticsId: 'bla-1234',
     type: 'live',
@@ -47,7 +56,8 @@ var normalisedCharge = {
       brand: 'VISA',
       debit: false,
       credit: true
-  }]}
+    }]
+  }
 };
 
 var unNormalisedAddress = {
@@ -71,7 +81,7 @@ describe('normalise', function () {
 
   describe('charge', function () {
     it('should return a refined state', function () {
-      var result = normalise.charge(unNormalisedCharge,1);
+      var result = normalise.charge(unNormalisedCharge, 1);
       expect(result).to.deep.equal(normalisedCharge);
     });
   });
@@ -85,16 +95,16 @@ describe('normalise', function () {
 
   describe('addresslines', function () {
     it('should return the body with adressline 2 moved to address line 1 if filled', function () {
-      var passedByReference = { addressLine2: "foo"}
+      var passedByReference = {addressLine2: "foo"}
       normalise.addressLines(passedByReference);
-      expect(passedByReference).to.deep.equal({ addressLine1: "foo"});
+      expect(passedByReference).to.deep.equal({addressLine1: "foo"});
       expect(passedByReference.addressLine2).to.be.undefined;
     });
 
     it('should do nothing if there is addressLine1', function () {
-      var passedByReference = { addressLine1: "bar", addressLine2: "foo"}
+      var passedByReference = {addressLine1: "bar", addressLine2: "foo"}
       normalise.addressLines(passedByReference);
-      expect(passedByReference).to.deep.equal({ addressLine1: "bar", addressLine2: "foo"});
+      expect(passedByReference).to.deep.equal({addressLine1: "bar", addressLine2: "foo"});
     });
   });
 

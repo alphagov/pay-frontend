@@ -16,10 +16,13 @@ module.exports = function() {
       email: charge.email,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     };
-     if (charge.card_details) {
+    if (charge.auth_3ds_data) {
+       chargeObj.auth3dsData = _normaliseAuth3dsData(charge.auth_3ds_data);
+    }
+    if (charge.card_details) {
        chargeObj.cardDetails = _normaliseConfirmationDetails(charge.card_details);
-     }
-     return chargeObj;
+    }
+    return chargeObj;
   },
 
   penceToPounds = function(pence) {
@@ -63,6 +66,13 @@ module.exports = function() {
     var gatewayAccountDetails = humps.camelizeKeys(accountDetails);
     gatewayAccountDetails.cardTypes = normaliseCards(gatewayAccountDetails.cardTypes);
     return gatewayAccountDetails;
+  },
+
+  _normaliseAuth3dsData = function(auth3dsData) {
+    return {
+      paRequest: auth3dsData.paRequest,
+      issuerUrl: auth3dsData.issuerUrl
+    };
   },
 
   // an empty string is equal to false in soft equality used by filter

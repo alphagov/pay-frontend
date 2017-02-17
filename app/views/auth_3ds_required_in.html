@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+{{$head}}
+{{>includes/iframe_head}}
+{{/head}}
+<body OnLoad="OnLoadEvent();">
+<noscript>
+    <p class="lede">The card details have been approved by the bank.</p>
+</noscript>
+<form name="three_ds_required" method="post" action="{{threeDsHandlerUrl}}" target="_top">
+    <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}"/>
+    <input type="hidden" name="PaRes" value="{{paResponse}}"/>
+    <noscript>
+        <button id="confirm" class="button">Continue</button>
+    </noscript>
+</form>
+
+<script>
+    function OnLoadEvent() {
+        document.three_ds_required.submit();
+    }
+</script>
+</body>
+</html>

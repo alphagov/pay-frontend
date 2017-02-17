@@ -163,6 +163,12 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
       }
     }
   }
+  if (status == "AUTHORISATION 3DS REQUIRED") {
+    charge.auth_3ds_data = {
+      'paRequest': 'aPaRequest',
+      'issuerUrl': 'http://issuerUrl.com'
+      }
+    }
   return charge;
 }
 
@@ -197,7 +203,20 @@ module.exports = {
       .set('x-request-id',defaultCorrelationId);
   },
 
-  connector_response_for_put_charge: function (chargeId, statusCode , responseBody, override_url) {
+  post_charge_request(app, cookieValue, data, chargeId, sendCSRF=true, query='') {
+  if (sendCSRF) {
+    data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET);
+  }
+  return request(app)
+    .post(frontendCardDetailsPath + "/" + chargeId + query)
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .set('Cookie', ['frontend_state=' + cookieValue])
+    .set('Accept', 'application/json')
+    .set('x-request-id','some-unique-id')
+    .send(data);
+},
+
+connector_response_for_put_charge: function (chargeId, statusCode , responseBody, override_url) {
     init_connector_url();
     url = (override_url) ? override_url : localServer();
     var connectorMock = nock(localServer());

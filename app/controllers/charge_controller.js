@@ -17,6 +17,9 @@ var paths = require('../paths.js');
 var CHARGE_VIEW = 'charge';
 var CONFIRM_VIEW = 'confirm';
 var AUTH_WAITING_VIEW = 'auth_waiting';
+var AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required';
+var AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out';
+var AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in';
 var CAPTURE_WAITING_VIEW = 'capture_waiting';
 var preserveProperties = ['cardholderName','addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry'];
 var countries = require("../services/countries.js");
@@ -25,26 +28,34 @@ var {withAnalyticsError, withAnalytics} = require('../utils/analytics.js');
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
-    var cardModel             = Card(charge.gatewayAccount.cardTypes);
-    var translation           = i18n.__("chargeController.withdrawalText");
-    charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
-    charge.allowedCards       = cardModel.allowed;
-    charge.cardsAsStrings     = JSON.stringify(cardModel.allowed);
-    charge.post_card_action   = paths.generateRoute("card.create", {
-      chargeId: chargeId
-    });
-    charge.id                 = chargeId;
-    charge.post_cancel_action = paths.generateRoute("card.cancel", {
-      chargeId: chargeId
-    });
+  var cardModel             = Card(charge.gatewayAccount.cardTypes);
+  var translation           = i18n.__("chargeController.withdrawalText");
+  charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
+  charge.allowedCards       = cardModel.allowed;
+  charge.cardsAsStrings     = JSON.stringify(cardModel.allowed);
+  charge.post_card_action   = routeFor('create', chargeId);
+  charge.id                 = chargeId;
+  charge.post_cancel_action = routeFor('cancel', chargeId);
 };
 
+var routeFor = (resource, chargeId) => {
+  return paths.generateRoute(`card.${resource}`, {chargeId: chargeId });
+};
 
+var redirect = (res) => {
+  return {
+    toAuth3dsRequired: (chargeId) => res.redirect(303, routeFor('auth3dsRequired', chargeId)),
+    toAuthWaiting: (chargeId) => res.redirect(303, routeFor('authWaiting', chargeId)),
+    toConfirm: (chargeId) =>  res.redirect(303, routeFor('confirm', chargeId)),
+    toNew: (chargeId) =>  res.redirect(303, routeFor('new', chargeId)),
+    toReturn: (chargeId) =>  res.redirect(303, routeFor('return', chargeId))
+  };
+};
 
 module.exports = {
   new: function (req, res) {
     var _views = views.create(),
-    charge     = normalise.charge(req.chargeData, req.chargeId);
+      charge     = normalise.charge(req.chargeData, req.chargeId);
     appendChargeForNewView(charge, req, charge.id);
 
     var init = function () {
@@ -70,7 +81,6 @@ module.exports = {
     var cardModel = Card(req.chargeData.gateway_account.card_types);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
-    var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
 
     var validator = chargeValidator(
       i18n.__("chargeController.fieldErrors"),
@@ -81,49 +91,58 @@ module.exports = {
     normalise.addressLines(req.body);
 
     if (submitted) {
-      return res.redirect(303, chargeModel.urlFor('authWaiting', req.chargeId));
+      return redirect(res).toAuthWaiting(req.chargeId);
     }
 
     var awaitingAuth = function() {
-      logging.failedChargePost(409,authUrl);
-      res.redirect(303, chargeModel.urlFor('authWaiting', req.chargeId));
-    },
+        logging.failedChargePost(409,authUrl);
+        redirect(res).toAuthWaiting(req.chargeId);
+      },
 
-    successfulAuth = function() {
-      res.redirect(303, chargeModel.urlFor('confirm', req.chargeId));
-    },
+      successfulAuth = function() {
+        redirect(res).toConfirm(req.chargeId);
+      },
 
-    connectorFailure = function() {
-      logging.failedChargePost(409,authUrl);
-      _views.display(res, 'SYSTEM_ERROR', withAnalytics(
+      authResolver = function(status) {
+        switch (status) {
+          case(State.AUTH_3DS_REQUIRED):
+            redirect(res).toAuth3dsRequired(req.chargeId);
+            break;
+          default:
+            successfulAuth();
+        }
+      },
+
+      connectorFailure = function() {
+        logging.failedChargePost(409,authUrl);
+        _views.display(res, 'SYSTEM_ERROR', withAnalytics(
           charge,
-          {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
-      ));
-    },
+          {returnUrl: routeFor('return', charge.id)}
+        ));
+      },
 
-    unknownFailure = function() {
-      res.redirect(303, chargeModel.urlFor('new', req.chargeId));
-    },
+      unknownFailure = function() {
+        redirect(res).toNew(req.chargeId);
+      },
 
-    connectorNonResponsive = function (err) {
-      logging.failedChargePostException(err);
-      _views.display(res, "ERROR", withAnalytics(charge));
-    },
+      connectorNonResponsive = function (err) {
+        logging.failedChargePostException(err);
+        _views.display(res, "ERROR", withAnalytics(charge));
+      },
 
-    hasValidationError = function(validation){
-      charge.countries = countries.retrieveCountries();
-      appendChargeForNewView(charge, req, charge.id);
-      _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties));
-      return res.render(CHARGE_VIEW, validation);
-    },
+      hasValidationError = function(validation){
+        charge.countries = countries.retrieveCountries();
+        appendChargeForNewView(charge, req, charge.id);
+        _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties));
+        return res.render(CHARGE_VIEW, validation);
+      },
 
-    responses = {
-      202: awaitingAuth,
-      409: awaitingAuth,
-      204: successfulAuth,
-      200: successfulAuth,
-      500: connectorFailure
-    };
+      responses = {
+        202: awaitingAuth,
+        409: awaitingAuth,
+        200: authResolver,
+        500: connectorFailure
+      };
 
     function postAuth(authUrl, req, cardBrand) {
       var startTime = new Date();
@@ -135,10 +154,9 @@ module.exports = {
           logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', authUrl, new Date() - startTime);
           var response = responses[json.statusCode];
           if (!response) return unknownFailure();
-          response();
-      }).on('error', connectorNonResponsive);
+          response(_.get(data, 'status'));
+        }).on('error', connectorNonResponsive);
     }
-
     validator.verify(req).then(function(data){
 
       if (data.validation.hasError) return hasValidationError(data.validation);
@@ -154,7 +172,7 @@ module.exports = {
             logging.failedChargePatch(err);
             _views.display(res, "ERROR", withAnalyticsError());
           }
-      );
+        );
     }, unknownFailure);
   },
 
@@ -162,32 +180,90 @@ module.exports = {
 
     var cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER]);
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
-    .then(
-      ()=>      { res.json({"accepted": true}); },
-      (data)=>  { res.json({"accepted": false, "message": data }); }
-    );
+      .then(
+        ()=>      { res.json({"accepted": true}); },
+        (data)=>  { res.json({"accepted": false, "message": data }); }
+      );
   },
 
   authWaiting: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId);
-    var _views;
-
-    if (charge.status === State.AUTH_READY) {
-      _views = views.create({
-        success: {
-          view: AUTH_WAITING_VIEW,
-          locals: withAnalytics(charge)
-        }
-      });
-      _views.display(res, "success");
-    } else {
-      res.redirect(303, paths.generateRoute('card.confirm', {chargeId: charge.id}));
+    switch(charge.status){
+      case(State.AUTH_READY):
+      case(State.AUTH_3DS_READY):
+        var _views = views.create({
+          success: {
+            view: AUTH_WAITING_VIEW,
+            locals: withAnalytics(charge)
+          }
+        });
+        _views.display(res, "success");
+        break;
+      case(State.AUTH_3DS_REQUIRED):
+        redirect(res).toAuth3dsRequired(req.chargeId);
+        break;
+      default:
+        redirect(res).toConfirm(req.chargeId);
     }
   },
+  auth3dsHandler(req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var startTime = new Date();
+    var correlationId = req.headers[CORRELATION_HEADER] || '';
+    var _views = views.create();
+    var templateData = {
+      pa_response: _.get(req, 'body.PaRes')
+    };
+    var connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id});
 
+    baseClient.post(connector3dsUrl, { data: templateData, correlationId: correlationId },
+      function (data, json) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId ,'POST', connector3dsUrl, new Date() - startTime);
+        switch(json.statusCode){
+          case 200:
+          case 400:
+            redirect(res).toConfirm(charge.id);
+            break;
+          case 202:
+          case 409:
+            redirect(res).toAuthWaiting(charge.id);
+            break;
+          case 500:
+            _views.display(res, "SYSTEM_ERROR", withAnalytics(charge));
+            break;
+          default:
+            _views.display(res, "ERROR", withAnalytics(charge));
+        }
+      }).on('error', function() {
+      _views.display(res, "ERROR", withAnalytics(charge));
+    });
+  },
+  auth3dsRequired: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    res.render(AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge));
+  },
+
+  auth3dsRequiredOut: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var templateData = {
+      issuerUrl: _.get(charge, 'auth3dsData.issuerUrl'),
+      paRequest: _.get(charge, 'auth3dsData.paRequest'),
+      termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
+    };
+    res.render(AUTH_3DS_REQUIRED_OUT_VIEW, templateData);
+  },
+
+  auth3dsRequiredIn: function (req, res) {
+    var charge = normalise.charge(req.chargeData, req.chargeId);
+    var templateData = {
+      threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
+      paResponse: _.get(req, 'body.PaRes')
+    };
+    res.render(AUTH_3DS_REQUIRED_IN_VIEW, templateData);
+  },
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId),
-      confirmPath = paths.generateRoute('card.confirm', {chargeId: charge.id}),
+      confirmPath = routeFor('confirm', charge.id),
       _views = views.create({
         success: {
           view: CONFIRM_VIEW,
@@ -195,7 +271,7 @@ module.exports = {
             charge: charge,
             confirmPath: confirmPath,
             gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
-            post_cancel_action: paths.generateRoute("card.cancel", {chargeId: charge.id})
+            post_cancel_action: routeFor("cancel", charge.id)
           })
         }
       });
@@ -213,15 +289,15 @@ module.exports = {
     var init = function () {
         var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
         chargeModel.capture(req.chargeId).then(function () {
-          res.redirect(303, paths.generateRoute('card.return', {chargeId: charge.id}));
+          redirect(res).toReturn(req.chargeId);
         }, captureFail);
       },
 
       captureFail = function (err) {
         if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge));
         _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-            charge,
-            {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+          charge,
+          {returnUrl: routeFor('return', charge.id)}
         ));
       };
     init();
@@ -241,8 +317,8 @@ module.exports = {
       _views.display(res, "success");
     } else {
       _views.display(res, 'CAPTURE_SUBMITTED', withAnalytics(
-          charge,
-          {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+        charge,
+        {returnUrl: routeFor('return', charge.id)}
       ));
     }
   },
@@ -253,8 +329,8 @@ module.exports = {
     var _views = views.create(),
       cancelFail = function () {
         _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-            charge,
-            {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+          charge,
+          {returnUrl: routeFor('return', charge.id)}
         ));
       };
 
@@ -262,8 +338,8 @@ module.exports = {
     chargeModel.cancel(req.chargeId)
       .then(function () {
         return _views.display(res, 'USER_CANCELLED', withAnalytics(
-            charge,
-            {returnUrl: paths.generateRoute('card.return', {chargeId: charge.id})}
+          charge,
+          {returnUrl: routeFor('return', charge.id)}
         ));
       }, cancelFail);
   }

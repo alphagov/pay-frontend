@@ -7,7 +7,7 @@ var nock   = require('nock');
 var paths  = require('../../app/paths.js');
 var helper = require(__dirname + '/../test_helpers/test_helpers.js');
 
-var csrf = require(__dirname + '/../../app/middleware/csrf.js');
+var {csrfCheck, csrfTokenGeneration} = require(__dirname + '/../../app/middleware/csrf.js');
 
 
 describe('retrieve param test', function () {
@@ -85,57 +85,59 @@ describe('retrieve param test', function () {
 
   it('should append csrf on get request', function () {
     var resp = _.cloneDeep(response);
-    csrf(validGetRequest,resp,next);
+    csrfTokenGeneration(validGetRequest,resp,next);
     assertValidRequest(next,resp,status,render);
   });
 
   it('should error if no charge in session', function () {
     var resp = _.cloneDeep(response);
-    csrf(noSession,resp,next);
+    csrfCheck(noSession,resp,next);
     assertUnauthorisedRequest(next,resp,status,render);
 
   });
 
   it('should error if no secret in session', function () {
     var resp = _.cloneDeep(response);
-    csrf(noSecret,resp,next);
+    csrfCheck(noSecret,resp,next);
     assertUnauthorisedRequest(next,resp,status,render);
   });
 
   it('should be successful on post if valid post and append token to used tokens', function () {
     var resp = _.cloneDeep(response);
-    csrf(validPost,resp,next);
+    csrfCheck(validPost,resp,next);
+    csrfTokenGeneration(validGetRequest,resp,next);
     assertValidRequest(next,resp,status,render);
     assert.equal(validPost.frontend_state.ch_foo.csrfTokens[0],validPost.body.csrfToken);
   });
 
   it('should be unsuccessful on post if token is already used', function () {
     var resp = _.cloneDeep(response);
-    csrf(validPost,resp,next);
+    csrfCheck(validPost,resp,next);
     assertErrorRequest(next,resp,status,render);
   });
 
   it('should error if no csrfToken in post request', function () {
     var resp = _.cloneDeep(response);
-    csrf(invalidPost,resp,next);
+    csrfCheck(invalidPost,resp,next);
     assertErrorRequest(next,resp,status,render);
   });
 
   it('should be successful on post if valid put', function () {
     var resp = _.cloneDeep(response);
-    csrf(validPut,resp,next);
+    csrfCheck(validPut,resp,next);
+    csrfTokenGeneration(validGetRequest,resp,next);
     assertValidRequest(next,resp,status,render);
   });
 
   it('should be unsuccessful on put if token is already used', function () {
     var resp = _.cloneDeep(response);
-    csrf(validPut,resp,next);
+    csrfCheck(validPut,resp,next);
     assertErrorRequest(next,resp,status,render);
   });
 
   it('should error if no csrfToken in put request', function () {
     var resp = _.cloneDeep(response);
-    csrf(invalidPut,resp,next);
+    csrfCheck(invalidPut,resp,next);
     assertErrorRequest(next,resp,status,render);
   });
 

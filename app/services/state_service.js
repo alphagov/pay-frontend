@@ -10,7 +10,11 @@ module.exports = function () {
   var STATES = {
     "card.new": [State.ENTERING_CARD_DETAILS, State.CREATED],
     "card.confirm": [State.AUTH_SUCCESS],
-    "card.authWaiting": [State.AUTH_READY, State.AUTH_SUCCESS],
+    "card.auth3dsRequired": [State.AUTH_3DS_REQUIRED],
+    "card.auth3dsRequiredIn": [State.AUTH_3DS_REQUIRED],
+    "card.auth3dsHandler": [State.AUTH_3DS_REQUIRED],
+    "card.auth3dsRequiredOut": [State.AUTH_3DS_REQUIRED],
+    "card.authWaiting": [State.AUTH_READY, State.AUTH_3DS_REQUIRED, State.AUTH_3DS_READY, State.AUTH_SUCCESS],
     "card.create": [State.AUTH_READY, State.ENTERING_CARD_DETAILS],
     "card.capture": [State.AUTH_SUCCESS],
     "card.captureWaiting": [State.CAPTURE_READY, State.CAPTURE_SUBMITTED],
