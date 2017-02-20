@@ -17,3 +17,5 @@ alpha_release-64.approve-date=2017-02-20:11:20:14
 staging-1.tag=alpha_staging-1-64
 
 staging-1.alpha_staging-1-64.date=2017-02-20:11:39:14
+
+staging-1.alpha_staging-1-64.status=success
