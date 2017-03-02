@@ -1,6 +1,9 @@
-FROM node:6.7.0
+FROM node:6.9.5-alpine
 
-ADD docker/upgrade-base.sh /upgrade-base.sh
+RUN apk update
+RUN apk upgrade
+
+RUN apk add python make g++
 
 ENV PORT 9000
 ENV ENABLE_NEWRELIC no
