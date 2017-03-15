@@ -12,6 +12,10 @@
         formValidation();
         showCardType().init();
       });
-    };
+    } else if ($('main').hasClass('confirm-page')) {
+      $( document ).ready(function() {
+        analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{hitPage}}');
+      });
+    }
   });
 </script>
