@@ -198,7 +198,7 @@ module.exports = function() {
         }
         locals = (action.locals) ? _.merge({}, action.locals, locals) : locals;
 
-        if (locals.analytics && locals.analytics.path) {
+        if (_.get(locals, 'analytics.path')) {
           locals.analytics.path = locals.analytics.path + _.get(action, 'analyticsPage', '');
         }
         status = (action.code) ? action.code : 200;
