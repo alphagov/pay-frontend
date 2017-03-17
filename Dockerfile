@@ -1,6 +1,9 @@
-FROM node:6.7.0
+FROM node:6.10.0-alpine
 
-ADD docker/upgrade-base.sh /upgrade-base.sh
+RUN apk update && apk upgrade
+
+# Install packages needed for production
+RUN apk add --update bash python make g++ libc6-compat
 
 ENV PORT 9000
 ENV ENABLE_NEWRELIC no
