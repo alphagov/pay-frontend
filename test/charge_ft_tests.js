@@ -318,6 +318,9 @@ describe('chargeTests', function () {
         .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
         .expect(200)
+        .expect(function (res) {
+          helper.templateValue(res, "viewName", "auth_waiting");
+        })
         .end(done);
     });
 
@@ -892,7 +895,7 @@ describe('chargeTests', function () {
         .set('Accept', 'application/json')
         .expect(200)
         .expect(function (res) {
-          helper.templateValue(res, "viewName", "success");
+          helper.templateValue(res, "viewName", "capture_waiting");
         })
         .end(done);
     });

@@ -6,113 +6,148 @@ module.exports = function() {
   'use strict';
 
   var expired = {
-    view: "errors/incorrect_state/session_expired"
-  },
-
-  systemCancelled = {
-    view: "errors/incorrect_state/system_cancelled"
-  },
-
-  userCancelled = {
-    view: "user_cancelled",
-    locals: { status: 'successful' }
-  },
-
-  systemError = {
-    code: 500,
-    view: 'errors/system_error'
-  },
-
-  error = {
-    code: 500,
-       view: 'error',
-       locals: {
-         message: 'There is a problem, please try again later'
-       }
-     },
-
-  _default = {
-    NOT_FOUND: {
-      code: 404,
-      view: 'error',
-      locals: {
-        message: "Page cannot be found"
-      }
+      view: "errors/incorrect_state/session_expired",
+      analyticsPage: "/problem"
+    },
+    systemCancelled = {
+      view: "errors/incorrect_state/system_cancelled",
+      analyticsPage: "/cancelled"
     },
 
-    ERROR: {
+    userCancelled = {
+      view: "user_cancelled",
+      locals: { status: 'successful' },
+      analyticsPage: "/cancelled"
+    },
+
+    systemError = {
+      code: 500,
+      view: 'errors/system_error',
+      analyticsPage: "/error"
+    },
+
+    error = {
       code: 500,
       view: 'error',
       locals: {
         message: 'There is a problem, please try again later'
-      }
+      },
+      analyticsPage: "/error"
     },
 
-    SESSION_INCORRECT: {
-      code: 422,
-      view: "errors/incorrect_state/session_expired"
-    },
+    _default = {
+      auth_3ds_required: {
+        view: "auth_3ds_required",
+        analyticsPage: "/3ds_required"
+      },
+      auth_3ds_required_in: {
+        view: "auth_3ds_required_in",
+        analyticsPage: "/3ds_required"
+      },
+      auth_3ds_required_out: {
+        view: "auth_3ds_required_out",
+        analyticsPage: "/3ds_required"
+      },
+      auth_waiting: {
+        view: "auth_waiting",
+        analyticsPage: "/auth_waiting"
+      },
+      confirm: {
+        view: "confirm",
+        analyticsPage: "/confirm"
+      },
+      charge: {
+        view: "charge"
+      },
+      capture_waiting: {
+        view: "capture_waiting",
+        analyticsPage: "/capture_waiting"
+      },
+      NOT_FOUND: {
+        code: 404,
+        view: 'error',
+        locals: {
+          message: "Page cannot be found"
+        }
+      },
+      ERROR: {
+        code: 500,
+        view: 'error',
+        locals: {
+          message: 'There is a problem, please try again later'
+        }
+      },
 
-    SYSTEM_ERROR: systemError,
+      SESSION_INCORRECT: {
+        code: 422,
+        view: "errors/incorrect_state/session_expired",
+        analyticsPage: "/problem"
+      },
 
-    NAXSI_SYSTEM_ERROR: {
-      code: 400,
-      view: 'error',
-      locals: {
-        message: "Please try again later"
-      }
-    },
+      SYSTEM_ERROR: systemError,
 
-    HUMANS: {
-      code: 200,
-      view: 'plain_message',
-      locals: {
-        message: "GOV.UK Payments is built by a team at the Government Digital Service in London. If you'd like to join us, see https://gds.blog.gov.uk/jobs"
-      }
-    },
+      NAXSI_SYSTEM_ERROR: {
+        code: 400,
+        view: 'error',
+        locals: {
+          message: "Please try again later"
+        }
+      },
 
-    UNAUTHORISED: {
-      code: 403,
-      view: 'errors/system_error',
-    },
+      HUMANS: {
+        code: 200,
+        view: 'plain_message',
+        locals: {
+          message: "GOV.UK Payments is built by a team at the Government Digital Service in London. If you'd like to join us, see https://gds.blog.gov.uk/jobs"
+        }
+      },
 
-    CAPTURE_SUBMITTED: {
-      view: "errors/charge_confirm_state_completed",
-      locals: {status: 'successful'}
-    },
+      UNAUTHORISED: {
+        code: 403,
+        view: 'errors/system_error'
+      },
 
-    CREATED: error,
+      CAPTURE_SUBMITTED: {
+        view: "errors/charge_confirm_state_completed",
+        locals: {status: 'successful'},
+        analyticsPage: "/success-return"
+      },
 
-    EXPIRED: expired,
+      CREATED: error,
 
-    EXPIRE_CANCEL_READY: expired,
+      EXPIRED: expired,
 
-    EXPIRE_CANCEL_FAILED: expired,
+      EXPIRE_CANCEL_READY: expired,
 
-    SYSTEM_CANCELLED: systemCancelled,
+      EXPIRE_CANCEL_FAILED: expired,
 
-    SYSTEM_CANCEL_READY: systemCancelled,
+      SYSTEM_CANCELLED: systemCancelled,
 
-    SYSTEM_CANCEL_ERROR: systemCancelled,
+      SYSTEM_CANCEL_READY: systemCancelled,
 
-    USER_CANCELLED: userCancelled,
+      SYSTEM_CANCEL_ERROR: systemCancelled,
 
-    USER_CANCEL_READY: userCancelled,
+      USER_CANCELLED: userCancelled,
 
-    USER_CANCEL_ERROR: userCancelled,
+      USER_CANCEL_READY: userCancelled,
 
-    CAPTURED: {
-      view: "errors/charge_confirm_state_completed",
-      locals: {status: 'successful'}
-    },
+      USER_CANCEL_ERROR: userCancelled,
 
-    CAPTURE_FAILURE: {
-      view: "errors/incorrect_state/capture_failure"
-    },
+      CAPTURED: {
+        view: "errors/charge_confirm_state_completed",
+        locals: {status: 'successful'},
+        analyticsPage: "/success-return"
+      },
 
-    CAPTURE_ERROR: {
-      view: "errors/incorrect_state/capture_failure"
-    },
+      CAPTURE_FAILURE: {
+        view: "errors/incorrect_state/capture_failure",
+        analyticsPage: "/problem"
+      },
+
+      CAPTURE_ERROR: {
+        view: "errors/incorrect_state/capture_failure",
+        analyticsPage: "/problem"
+      },
 
       CAPTURE_APPROVED: {
         view: "errors/incorrect_state/capture_failure",
@@ -120,57 +155,66 @@ module.exports = function() {
       },
 
       AUTHORISATION_3DS_REQUIRED: {
-        view: "errors/incorrect_state/auth_3ds_required"
+        view: "errors/incorrect_state/auth_3ds_required",
+        analyticsPage: "/3ds_required"
       },
 
       AUTHORISATION_SUCCESS: {
-        view: "errors/incorrect_state/auth_success"
+        view: "errors/incorrect_state/auth_success",
+        analyticsPage: "/in-progress"
       },
 
-    AUTHORISATION_REJECTED: {
-      view: "errors/incorrect_state/auth_failure"
-    },
+      AUTHORISATION_REJECTED: {
+        view: "errors/incorrect_state/auth_failure",
+        analyticsPage: "/problem"
+      },
 
-    AUTHORISATION_CANCELLED: {
-      view: "errors/incorrect_state/auth_failure"
-    },
+      AUTHORISATION_CANCELLED: {
+        view: "errors/incorrect_state/auth_failure",
+        analyticsPage: "/problem"
+      },
 
-    AUTHORISATION_ERROR: {
-      view: "errors/system_error"
-    },
+      AUTHORISATION_ERROR: {
+        view: "errors/system_error",
+        analyticsPage: "/error"
+      },
 
-    AUTHORISATION_READY: {
-      view: "errors/incorrect_state/auth_waiting"
-    },
+      AUTHORISATION_READY: {
+        view: "errors/incorrect_state/auth_waiting",
+        analyticsPage: "/in-progress"
+      },
 
-    CAPTURE_READY: {
-      view: "errors/incorrect_state/capture_waiting"
-    },
+      CAPTURE_READY: {
+        view: "errors/incorrect_state/capture_waiting",
+        analyticsPage: "/in-progress"
+      },
 
-    ENTERING_CARD_DETAILS: systemError,
+      ENTERING_CARD_DETAILS: systemError,
 
-    display: function(res, resName, locals) {
-      var action = _.result(this, resName);
-      var status;
-      locals = locals || {};
-      locals.viewName = resName;
+      display: function(res, resName, locals) {
+        var action = _.result(this, resName);
+        var status;
+        locals = locals || {};
+        locals.viewName = resName;
+        if (!action) {
+          logger.error("VIEW " + resName + " NOT FOUND");
+          locals = { viewName: 'error' };
+          action = this.ERROR;
+        }
+        locals = (action.locals) ? _.merge({}, action.locals, locals) : locals;
 
-      if (!action) {
-        logger.error("VIEW " + resName + " NOT FOUND");
-        locals = { viewName: 'error' };
-        action = this.ERROR;
+        if (_.get(locals, 'analytics.path')) {
+          locals.analytics.path = locals.analytics.path + _.get(action, 'analyticsPage', '');
+        }
+        status = (action.code) ? action.code : 200;
+        res.status(status);
+        res.render(action.view,locals);
       }
+    },
 
-      locals = (action.locals) ? _.merge({}, action.locals, locals) : locals;
-      status = (action.code) ? action.code : 200;
-      res.status(status);
-      res.render(action.view,locals);
-    }
-  },
-
-  create = function(localViews) {
-    return _.merge({},_default,localViews);
-  };
+    create = function(localViews) {
+      return _.merge({},_default,localViews);
+    };
 
   return {
     create: create

@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 
 var mockCharge = function () {
 
-  var mock = function (shouldSuccess) {
+  var mock = function (shouldSuccess, error) {
     return function () {
       var updateToEnterDetails = function () {
         return {
@@ -14,9 +14,16 @@ var mockCharge = function () {
           }
         };
       };
-
+      var capture = function () {
+        return {
+          then: function (success, fail) {
+            return shouldSuccess ? success() : fail(error);
+          }
+        };
+      };
       return {
-        updateToEnterDetails: updateToEnterDetails
+        updateToEnterDetails: updateToEnterDetails,
+        capture: capture
       }
     };
   };
@@ -78,7 +85,8 @@ describe('card details endpoint', function () {
         "analyticsId": "test-1234",
         "type": "test",
         "paymentProvider": "sandbox"
-      }
+      },
+      "id": "3"
     };
   };
 
@@ -138,7 +146,6 @@ describe('card details endpoint', function () {
     var expectedCharge = aResponseWithStatus('CREATED');
     requireChargeController(charge, mockedNormalise).new(request, response);
     expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true;
-
   });
 
   it('should display NOT FOUND if updateToEnterDetails returns error', function () {
@@ -156,6 +163,45 @@ describe('card details endpoint', function () {
           "type": "Service unavailable",
           "paymentProvider": "Service unavailable"
         }
+    })).to.be.true;
+  });
+
+  it('should display SYSTEM_ERROR if capture returns an error', function () {
+
+    var charge = mockCharge.mock(false, { message: 'some error' });
+
+    var mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY');
+    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
+
+    requireChargeController(charge, mockedNormalise).capture(request, response);
+    expect(response.render.calledWith('errors/system_error', {
+      "viewName": 'SYSTEM_ERROR',
+      "returnUrl": '/return/3',
+      "analytics" : {
+        "analyticsId": 'test-1234',
+        "type": 'test',
+        "paymentProvider": 'sandbox',
+        "path": '/card_details/3/error',
+      }
+    })).to.be.true;
+  });
+
+  it('should display CAPTURE_FAILURE if capture returns a capture failed error', function () {
+
+    var charge = mockCharge.mock(false, { message: 'CAPTURE_FAILED' });
+
+    var mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY');
+    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge);
+
+    requireChargeController(charge, mockedNormalise).capture(request, response);
+    expect(response.render.calledWith('errors/incorrect_state/capture_failure', {
+      "viewName": 'CAPTURE_FAILURE',
+      "analytics" : {
+        "analyticsId": 'test-1234',
+        "type": 'test',
+        "paymentProvider": 'sandbox',
+        "path": '/card_details/3/problem'
+      }
     })).to.be.true;
   });
 
