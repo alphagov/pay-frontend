@@ -149,6 +149,11 @@ module.exports = function() {
         analyticsPage: "/problem"
       },
 
+      CAPTURE_APPROVED: {
+        view: "errors/incorrect_state/capture_failure",
+        analyticsPage: "/problem"
+      },
+
       AUTHORISATION_3DS_REQUIRED: {
         view: "errors/incorrect_state/auth_3ds_required",
         analyticsPage: "/3ds_required"
