@@ -6,16 +6,17 @@
 <script type="text/javascript">
   $(function(){
     GOVUK.stickAtTopWhenScrolling.init();
+    // wasn't too sure how to do this, as we cannot get at bodyend in the
+    // charge template
     if ($('main').hasClass('charge-new')) {
       $( document ).ready(function() {
         window.Card = { allowed: {{{ cardsAsStrings }}} };
         formValidation();
         showCardType().init();
       });
-    } else if ($('main').hasClass('confirm-page')) {
-      $( document ).ready(function() {
-        analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{hitPage}}');
-      });
-    }
+    };
   });
+
+
+
 </script>

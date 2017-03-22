@@ -61,12 +61,12 @@ module.exports = {
     var init = function () {
       charge.countries = countries.retrieveCountries();
       if (charge.status === State.ENTERING_CARD_DETAILS) {
-        return _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge));
+        return res.render(CHARGE_VIEW, withAnalytics(charge, charge));
       }
       var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
       chargeModel.updateToEnterDetails(charge.id)
         .then(function () {
-          _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge));
+          res.render(CHARGE_VIEW, withAnalytics(charge, charge));
         }, function () {
           _views.display(res, "NOT_FOUND", withAnalyticsError());
         });
@@ -117,7 +117,8 @@ module.exports = {
         logging.failedChargePost(409,authUrl);
         _views.display(res, 'SYSTEM_ERROR', withAnalytics(
           charge,
-          {returnUrl: routeFor('return', charge.id)}));
+          {returnUrl: routeFor('return', charge.id)}
+        ));
       },
 
       unknownFailure = function() {
@@ -133,8 +134,7 @@ module.exports = {
         charge.countries = countries.retrieveCountries();
         appendChargeForNewView(charge, req, charge.id);
         _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties));
-
-        return _views.display(res, CHARGE_VIEW, validation);
+        return res.render(CHARGE_VIEW, validation);
       },
 
       responses = {
@@ -191,8 +191,13 @@ module.exports = {
     switch(charge.status){
       case(State.AUTH_READY):
       case(State.AUTH_3DS_READY):
-        var _views = views.create({});
-        _views.display(res, AUTH_WAITING_VIEW, withAnalytics(charge));
+        var _views = views.create({
+          success: {
+            view: AUTH_WAITING_VIEW,
+            locals: withAnalytics(charge)
+          }
+        });
+        _views.display(res, "success");
         break;
       case(State.AUTH_3DS_REQUIRED):
         redirect(res).toAuth3dsRequired(req.chargeId);
@@ -235,8 +240,7 @@ module.exports = {
   },
   auth3dsRequired: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId);
-    var _views = views.create();
-    _views.display(res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge));
+    res.render(AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge));
   },
 
   auth3dsRequiredOut: function (req, res) {
@@ -246,8 +250,7 @@ module.exports = {
       paRequest: _.get(charge, 'auth3dsData.paRequest'),
       termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
     };
-    var _views = views.create();
-    _views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, templateData);
+    res.render(AUTH_3DS_REQUIRED_OUT_VIEW, templateData);
   },
 
   auth3dsRequiredIn: function (req, res) {
@@ -256,22 +259,25 @@ module.exports = {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes')
     };
-    var _views = views.create();
-    _views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, templateData);
+    res.render(AUTH_3DS_REQUIRED_IN_VIEW, templateData);
   },
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId),
       confirmPath = routeFor('confirm', charge.id),
-      _views = views.create();
+      _views = views.create({
+        success: {
+          view: CONFIRM_VIEW,
+          locals: withAnalytics(charge, {
+            charge: charge,
+            confirmPath: confirmPath,
+            gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
+            post_cancel_action: routeFor("cancel", charge.id)
+          })
+        }
+      });
+
     var init = function () {
-      _views.display(res, CONFIRM_VIEW, withAnalytics(charge, {
-          hitPage: routeFor('new', charge.id) + "/success",
-          charge: charge,
-          confirmPath: confirmPath,
-          gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
-          post_cancel_action: routeFor("cancel", charge.id)
-        },
-        confirmPath));
+      _views.display(res, 'success');
     };
     init();
   },
@@ -302,7 +308,13 @@ module.exports = {
     var _views = views.create();
 
     if (charge.status === State.CAPTURE_READY) {
-      _views.display(res, CAPTURE_WAITING_VIEW, withAnalytics(charge));
+      _views = views.create({
+        success: {
+          view: CAPTURE_WAITING_VIEW,
+          locals: withAnalytics(charge)
+        }
+      });
+      _views.display(res, "success");
     } else {
       _views.display(res, 'CAPTURE_SUBMITTED', withAnalytics(
         charge,
