@@ -7,6 +7,9 @@
     ga('create', '{{analyticsTrackingId}}', 'auto');
     ga('set', 'anonymizeIp', true);
     ga('send', 'pageview', {
+    {{#analytics.path}}
+    'page':'{{analytics.path}}',
+      {{/analytics.path}}
       'dimension1':'{{analytics.analyticsId}}',
       'dimension2':'{{analytics.type}}',
       'dimension3':'{{analytics.paymentProvider}}'
