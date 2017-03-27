@@ -200,7 +200,7 @@ describe('card details endpoint', function () {
         "analyticsId": 'test-1234',
         "type": 'test',
         "paymentProvider": 'sandbox',
-        "path": '/card_details/3/problem'
+        "path": '/card_details/3/capture_failure'
       }
     })).to.be.true;
   });
