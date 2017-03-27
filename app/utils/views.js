@@ -7,17 +7,17 @@ module.exports = function() {
 
   var expired = {
       view: "errors/incorrect_state/session_expired",
-      analyticsPage: "/problem"
+      analyticsPage: "/session_expired"
     },
     systemCancelled = {
       view: "errors/incorrect_state/system_cancelled",
-      analyticsPage: "/cancelled"
+      analyticsPage: "/system_cancelled"
     },
 
     userCancelled = {
       view: "user_cancelled",
       locals: { status: 'successful' },
-      analyticsPage: "/cancelled"
+      analyticsPage: "/user_cancelled"
     },
 
     systemError = {
@@ -110,7 +110,7 @@ module.exports = function() {
       CAPTURE_SUBMITTED: {
         view: "errors/charge_confirm_state_completed",
         locals: {status: 'successful'},
-        analyticsPage: "/success-return"
+        analyticsPage: "/success_return"
       },
 
       CREATED: error,
@@ -136,22 +136,22 @@ module.exports = function() {
       CAPTURED: {
         view: "errors/charge_confirm_state_completed",
         locals: {status: 'successful'},
-        analyticsPage: "/success-return"
+        analyticsPage: "/success_return"
       },
 
       CAPTURE_FAILURE: {
         view: "errors/incorrect_state/capture_failure",
-        analyticsPage: "/problem"
+        analyticsPage: "/capture_failure"
       },
 
       CAPTURE_ERROR: {
         view: "errors/incorrect_state/capture_failure",
-        analyticsPage: "/problem"
+        analyticsPage: "/capture_failure"
       },
 
       CAPTURE_APPROVED: {
         view: "errors/incorrect_state/capture_failure",
-        analyticsPage: "/problem"
+        analyticsPage: "/capture_failure"
       },
 
       AUTHORISATION_3DS_REQUIRED: {
@@ -161,17 +161,17 @@ module.exports = function() {
 
       AUTHORISATION_SUCCESS: {
         view: "errors/incorrect_state/auth_success",
-        analyticsPage: "/in-progress"
+        analyticsPage: "/in_progress"
       },
 
       AUTHORISATION_REJECTED: {
         view: "errors/incorrect_state/auth_failure",
-        analyticsPage: "/problem"
+        analyticsPage: "/auth_failure"
       },
 
       AUTHORISATION_CANCELLED: {
         view: "errors/incorrect_state/auth_failure",
-        analyticsPage: "/problem"
+        analyticsPage: "/auth_failure"
       },
 
       AUTHORISATION_ERROR: {
@@ -181,12 +181,12 @@ module.exports = function() {
 
       AUTHORISATION_READY: {
         view: "errors/incorrect_state/auth_waiting",
-        analyticsPage: "/in-progress"
+        analyticsPage: "/in_progress"
       },
 
       CAPTURE_READY: {
         view: "errors/incorrect_state/capture_waiting",
-        analyticsPage: "/in-progress"
+        analyticsPage: "/in_progress"
       },
 
       ENTERING_CARD_DETAILS: systemError,

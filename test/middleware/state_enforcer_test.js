@@ -64,13 +64,33 @@ describe('state enforcer', function () {
           analyticsId: "Test AnalyticsID",
           type: "Test Type",
           paymentProvider: "Test Provider",
-          path: '/card_details/1/in-progress'
+          path: '/card_details/1/in_progress'
         },
         returnUrl: '/return/1',
         viewName: 'AUTHORISATION_SUCCESS' }
     ));
   });
 
+  it('should render the auth_waiting view the correct analytics when auth is rejected', function () {
+    stateEnforcer({
+      actionName: "card.new",
+      chargeData: { status: 'AUTHORISATION_READY', return_url: "foo" , gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeId: 1
+    },response,next);
+    expect(next.notCalled).to.be.true;
+    assert(status.calledWith(200));
+    assert(render.calledWith("errors/incorrect_state/auth_waiting",
+      { chargeId: 1,
+        analytics: {
+          analyticsId: "Test AnalyticsID",
+          type: "Test Type",
+          paymentProvider: "Test Provider",
+          path: '/card_details/1/in_progress'
+        },
+        returnUrl: '/return/1',
+        viewName: 'AUTHORISATION_READY' }
+    ));
+  });
   it('should throw an error when a view is passed in without having a state', function () {
 
     expect(function() { stateEnforcer({
@@ -95,7 +115,7 @@ describe('state enforcer', function () {
           analyticsId: "Test AnalyticsID",
           type: "Test Type",
           paymentProvider: "Test Provider",
-          path: '/card_details/1/success-return'
+          path: '/card_details/1/success_return'
         },
         returnUrl: '/return/1',
         viewName: 'CAPTURED' }
@@ -116,7 +136,7 @@ describe('state enforcer', function () {
           analyticsId: "Test AnalyticsID",
           type: "Test Type",
           paymentProvider: "Test Provider",
-          path: '/card_details/1/problem'
+          path: '/card_details/1/auth_failure'
         },
         returnUrl: '/return/1',
         viewName: 'AUTHORISATION_REJECTED' }
@@ -137,12 +157,73 @@ describe('state enforcer', function () {
           analyticsId: "Test AnalyticsID",
           type: "Test Type",
           paymentProvider: "Test Provider",
-          path: '/card_details/1/problem'
+          path: '/card_details/1/auth_failure'
         },
         returnUrl: '/return/1',
         viewName: 'AUTHORISATION_CANCELLED' }
     ));
   });
+  it('should render the capture_failure view the correct analytics when capture fails', function () {
+    stateEnforcer({
+      actionName: "card.new",
+      chargeData: { status: 'CAPTURE_FAILURE', return_url: "foo" , gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeId: 1
+    },response,next);
+    expect(next.notCalled).to.be.true;
+    assert(status.calledWith(200));
+    assert(render.calledWith("errors/incorrect_state/capture_failure",
+      { chargeId: 1,
+        analytics: {
+          analyticsId: "Test AnalyticsID",
+          type: "Test Type",
+          paymentProvider: "Test Provider",
+          path: '/card_details/1/capture_failure'
+        },
+        returnUrl: '/return/1',
+        viewName: 'CAPTURE_FAILURE' }
+    ));
+  });
 
+  it('should render the capture_failure view the correct analytics when capture errors', function () {
+    stateEnforcer({
+      actionName: "card.new",
+      chargeData: { status: 'CAPTURE_ERROR', return_url: "foo" , gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeId: 1
+    },response,next);
+    expect(next.notCalled).to.be.true;
+    assert(status.calledWith(200));
+    assert(render.calledWith("errors/incorrect_state/capture_failure",
+      { chargeId: 1,
+        analytics: {
+          analyticsId: "Test AnalyticsID",
+          type: "Test Type",
+          paymentProvider: "Test Provider",
+          path: '/card_details/1/capture_failure'
+        },
+        returnUrl: '/return/1',
+        viewName: 'CAPTURE_ERROR' }
+    ));
+  });
+
+  it('should render the capture_waiting view the correct analytics when capture is ready', function () {
+    stateEnforcer({
+      actionName: "card.new",
+      chargeData: { status: 'CAPTURE_READY', return_url: "foo" , gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeId: 1
+    },response,next);
+    expect(next.notCalled).to.be.true;
+    assert(status.calledWith(200));
+    assert(render.calledWith("errors/incorrect_state/capture_waiting",
+      { chargeId: 1,
+        analytics: {
+          analyticsId: "Test AnalyticsID",
+          type: "Test Type",
+          paymentProvider: "Test Provider",
+          path: '/card_details/1/in_progress'
+        },
+        returnUrl: '/return/1',
+        viewName: 'CAPTURE_READY' }
+    ));
+  });
 
 });
