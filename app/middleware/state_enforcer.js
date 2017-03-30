@@ -12,6 +12,8 @@ module.exports = function(req,res,next){
     var gatewayAccount = _.get(req, 'chargeData.gateway_account');
     if (gatewayAccount) {
       return {
+        //The state enforcer will append the correct analytics page to the base charge path
+        'path': paths.generateRoute(`card.new`, {chargeId: req.chargeId}),
         'analyticsId': gatewayAccount.analytics_id,
         'type': gatewayAccount.type,
         'paymentProvider': gatewayAccount.payment_provider
