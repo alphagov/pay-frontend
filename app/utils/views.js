@@ -139,9 +139,16 @@ module.exports = function() {
         analyticsPage: "/success_return"
       },
 
-      CAPTURE_FAILURE: {
-        view: "errors/incorrect_state/capture_failure",
-        analyticsPage: "/capture_failure"
+      CAPTURE_APPROVED: {
+        view: "errors/charge_confirm_state_completed",
+        locals: {status: 'successful'},
+        analyticsPage: "/success_return"
+      },
+
+      CAPTURE_APPROVED_RETRY: {
+        view: "errors/charge_confirm_state_completed",
+        locals: {status: 'successful'},
+        analyticsPage: "/success_return"
       },
 
       CAPTURE_ERROR: {
@@ -149,7 +156,7 @@ module.exports = function() {
         analyticsPage: "/capture_failure"
       },
 
-      CAPTURE_APPROVED: {
+      CAPTURE_FAILURE: {
         view: "errors/incorrect_state/capture_failure",
         analyticsPage: "/capture_failure"
       },
