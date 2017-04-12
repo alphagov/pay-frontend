@@ -20,10 +20,11 @@ module.exports = function(Card){
   ];
 
   /*
-   These are customs validaitons for each field,
-   fucntion should be named the same as the input name,
-   and will receive two arguments, one is the field,
-   second is allfields in case ti is needed for vlaidation.
+   These are custom validations for each field.
+   Functions should be named the same as the input name
+   and will receive two arguments.
+   One is the field, second is allfields in case it is
+   needed for validation.
   */
 
   var fieldValidations = {
