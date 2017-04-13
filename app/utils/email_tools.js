@@ -1,10 +1,10 @@
-"use strict";
-
 /* Uses Regexes from the rfc822-validate library.
    We use rfc822-validate in our email validation
    so this follows that standard. */
 
 var emailTools = function(email) {
+  "use strict";
+
   var init = function() {
     var sQtext = '[^\\x0d\\x22\\x5c\\x80-\\xff]';
     var sDtext = '[^\\x0d\\x5b-\\x5d\\x80-\\xff]';
@@ -23,15 +23,18 @@ var emailTools = function(email) {
     var reValidEmail = new RegExp(sValidEmail);
 
     var f = function (email) {
-      return reValidEmail.test(email);
-    }
+      return reValidEmail.exec(email);
+    };
 
     return f;
   }();
 
-  var validEmail = init(email);
+  var match = init(email);
 
-  return validEmail;
-}
+  return {
+    'local-part': (match !== null) ? match[1] : false,
+    'domain': (match !== null) ? match[7] : false
+  };
+};
 
 module.exports = emailTools;

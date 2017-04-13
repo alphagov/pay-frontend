@@ -1,8 +1,8 @@
 var luhn = require('./luhn');
 var ukPostcode = require("uk-postcode");
 var creditCardType = require('credit-card-type');
-var rfc822-validator = require('rfc822-validate');
-var emailTools = require('email-tools');
+var rfc822Validator = require('rfc822-validate');
+var emailTools = require('./email_tools');
 var EMAIL_MAX_LENGTH = 254;
 
 module.exports = function(Card){
@@ -21,14 +21,14 @@ module.exports = function(Card){
   ];
 
   var validateEmail = function(email) {
-    var validEmail = rfc822-validator(email),
+    var validEmail = rfc822Validator(email),
         domain;
 
     if (!validEmail) {
       return "message";
     } else {
       domain = emailTools(email).domain;
-      if (domain.indexOf('.') === -1) {
+      if (domain && domain.indexOf('.') === -1) {
         return "message";
       }
       return true;
