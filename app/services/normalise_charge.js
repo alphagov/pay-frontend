@@ -1,6 +1,7 @@
 var countries = require("../services/countries");
 var humps = require("humps");
 var normaliseCards = require('../services/normalise_cards.js');
+var _ = require('lodash');
 
 module.exports = function() {
   "use strict";
@@ -44,6 +45,19 @@ module.exports = function() {
         body.addressLine1 = body.addressLine2;
         delete body.addressLine2;
     }
+  },
+  whitespace = function(body){
+    var toIgnore = [
+      'submitCardDetails',
+      'csrfToken',
+      'chargeId'
+    ];
+
+    _.forIn(body, function(value, key) {
+      if (!_.includes(toIgnore, key)) {
+        body[key] = value.trim();
+      }
+    });
   },
 
   _normaliseConfirmationDetails = function(cardDetails){
@@ -121,6 +135,7 @@ module.exports = function() {
     charge: _charge,
     addressForApi: addressForApi,
     addressLines: addressLines,
+    whitespace: whitespace,
     addressForView: addressForView,
     creditCard: creditCard,
     expiryDate: expiryDate,

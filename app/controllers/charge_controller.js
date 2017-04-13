@@ -89,6 +89,7 @@ module.exports = {
     );
 
     normalise.addressLines(req.body);
+    normalise.whitespace(req.body);
 
     if (submitted) {
       return redirect(res).toAuthWaiting(req.chargeId);
