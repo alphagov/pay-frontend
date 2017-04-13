@@ -1,7 +1,8 @@
 var luhn = require('./luhn');
 var ukPostcode = require("uk-postcode");
 var creditCardType = require('credit-card-type');
-var validateEmail = require('rfc822-validate');
+var rfc822-validator = require('rfc822-validate');
+var emailTools = require('email-tools');
 var EMAIL_MAX_LENGTH = 254;
 
 module.exports = function(Card){
@@ -18,6 +19,21 @@ module.exports = function(Card){
     "email",
     "addressCountry"
   ];
+
+  var validateEmail = function(email) {
+    var validEmail = rfc822-validator(email),
+        domain;
+
+    if (!validEmail) {
+      return "message";
+    } else {
+      domain = emailTools(email).domain;
+      if (domain.indexOf('.') === -1) {
+        return "message";
+      }
+      return true;
+    }
+  };
 
   /*
    These are custom validations for each field.
@@ -90,8 +106,7 @@ module.exports = function(Card){
 
     email: function(email){
       if (email && email.length > EMAIL_MAX_LENGTH) return "invalid_length";
-      if (!validateEmail(email)) return "message";
-      return true;
+      return validateEmail(email);
     },
 
     creditCardType: creditCardType,
