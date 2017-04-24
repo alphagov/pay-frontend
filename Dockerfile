@@ -23,4 +23,6 @@ RUN mkdir -p /app && cp -a /tmp/node_modules /app/
 
 RUN npm install && npm run compile && npm test && npm prune --production
 
+RUN apk del python make g++
+
 CMD bash ./docker-startup.sh
