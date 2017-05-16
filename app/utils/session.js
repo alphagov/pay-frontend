@@ -1,3 +1,5 @@
+var cookie = require('../utils/cookies');
+
 module.exports = function() {
   'use strict';
 
@@ -6,7 +8,7 @@ module.exports = function() {
   },
 
   retrieve = function(req, chargeId) {
-    return req.frontend_state[createChargeIdSessionKey(chargeId)];
+    return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId));
   };
 
 

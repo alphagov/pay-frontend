@@ -1,4 +1,5 @@
 var logger = require('winston');
+var cookie = require('../utils/cookies');
 
 module.exports = function(){
   "use strict";
@@ -27,8 +28,8 @@ module.exports = function(){
   },
 
   getChargeFromSession = function(req,chargeId) {
-    if (!req.frontend_state) return;
-    return req.frontend_state[createChargeIdSessionKey(chargeId)];
+    if (!cookie.getSessionCookieName()) return;
+    return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId));
   },
 
   createChargeIdSessionKey = function(chargeId) {
