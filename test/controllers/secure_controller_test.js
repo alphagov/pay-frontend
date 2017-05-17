@@ -6,6 +6,7 @@ var q = require('q');
 var sinon = require('sinon');
 var expect = require('chai').expect;
 var paths = require('../../app/paths.js');
+var cookies = require('../../app/utils/cookies');
 
 var mockCharge = function () {
   var mock = function (withSuccess, chargeObject) {

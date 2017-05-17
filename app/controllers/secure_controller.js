@@ -3,6 +3,7 @@ var paths = require('../paths.js'),
   Charge = require('../models/charge.js'),
   views = require('../utils/views.js'),
   session = require('../utils/session.js'),
+  cookie = require('../utils/cookies'),
   csrf = require('csrf'),
   CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER,
     withAnalyticsError = require('../utils/analytics.js').withAnalyticsError,
@@ -29,9 +30,9 @@ module.exports.new = function (req, res) {
     apiSuccess = function (chargeData) {
       var chargeId = chargeData.externalId;
 
-      req.frontend_state[session.createChargeIdSessionKey(chargeId)] = {
+      cookie.setSessionVariable(req, session.createChargeIdSessionKey(chargeId), {
         csrfSecret: csrf().secretSync()
-      };
+      });
 
       var actionName = stateService.resolveActionName(chargeData.status,'get');
       res.redirect(303, paths.generateRoute(actionName, {chargeId: chargeId}));

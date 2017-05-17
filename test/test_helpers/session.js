@@ -1,7 +1,7 @@
 /*jslint node: true */
 "use strict";
 var clientSessions = require("client-sessions");
-var frontendCookie = require(__dirname + '/../../app/utils/cookies.js').frontendCookie;
+var cookies = require(__dirname + '/../../app/utils/cookies.js');
 
 function createSessionChargeKey(chargeId) {
 	return 'ch_' + chargeId;
@@ -20,7 +20,7 @@ function createSessionWithReturnUrl(chargeId, chargeSession, returnUrl) {
 		session[createReturnUrlKey(chargeId)] = encodeURIComponent(returnUrl);
 	}
 
-	return clientSessions.util.encode(frontendCookie(), session);
+	return clientSessions.util.encode(cookies.namedCookie('frontend_state', process.env.SESSION_ENCRYPTION_KEY), session);
 }
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
 	},
 
 	decrypt: function decryptCookie(res, chargeId) {
-	  var content = clientSessions.util.decode(frontendCookie(), res.headers['set-cookie'][0].split(";")[0].split("=")[1]).content;
+	  var content = clientSessions.util.decode(cookies.namedCookie('frontend_state', process.env.SESSION_ENCRYPTION_KEY), res.headers['set-cookie'][0].split(";")[0].split("=")[1]).content;
 	  return chargeId ? content[createSessionChargeKey(chargeId)] : content;
 	}
 };
