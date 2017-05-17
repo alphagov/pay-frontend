@@ -3,12 +3,25 @@ const clientSessions = require("client-sessions");
 const SESSION_COOKIE_NAME_1 = 'frontend_state';
 const SESSION_COOKIE_NAME_2 = 'frontend_state_2';
 
+
 /**
- * Returns valid client_sessions configuration for supplied
- * cookie name and encryption key
- *
  * @private
  *
+ * @param req
+ * @param key
+ * @param value
+ * @param cookieName
+ */
+function setValueOnCookie(req, key, value, cookieName) {
+  if(typeof req[cookieName] === 'object') {
+    req[cookieName][key] = value;
+  }
+}
+
+/**
+ * Returns valid client-sessions configuration for supplied
+ * cookie name and encryption key
+ **
  * @param {string} name
  * @param {string} key
  *
@@ -20,13 +33,12 @@ function namedCookie(name, key) {
     proxy: true,
     secret: key,
     cookie: {
-      maxAge: parseInt(process.env.COOKIE_MAX_AGE), //expires after 90 minutes
+      maxAge: parseInt(process.env.COOKIE_MAX_AGE),
       httpOnly: true,
       secureProxy: (process.env.SECURE_COOKIE_OFF !== "true") // default is true, only false if the env variable present
     }
   };
 }
-
 /**
  * Initialises app with client_sessions middleware.
  * Configures one middleware per existing encryption key, to enable multiple
@@ -70,7 +82,8 @@ function getSessionCookieName() {
 }
 
 /**
- * Sets session[key] = value for all valid sessions, based on existence of encryption key
+ * Sets session[key] = value for all valid sessions, based on existence of encryption key,
+ * and the existence of relevant cookie on the request
  *
  * @param {Request} req
  * @param {string} key
@@ -78,11 +91,11 @@ function getSessionCookieName() {
  */
 function setSessionVariable(req, key, value) {
   if (process.env.SESSION_ENCRYPTION_KEY !== undefined) {
-    req[SESSION_COOKIE_NAME_1][key] = value;
+    setValueOnCookie(req, key, value, SESSION_COOKIE_NAME_1);
   }
 
   if (process.env.SESSION_ENCRYPTION_KEY_2 !== undefined) {
-    req[SESSION_COOKIE_NAME_2][key] = value;
+    setValueOnCookie(req, key, value, SESSION_COOKIE_NAME_2);
   }
 }
 

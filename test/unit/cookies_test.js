@@ -147,6 +147,15 @@ describe('setting value on session', function() {
     delete process.env.SESSION_ENCRYPTION_KEY_2;
 
   });
+
+  it('does not try to set value on non-existent cookie', function() {
+    let cookies = getCookiesUtil();
+    let req = {};
+
+    cookies.setSessionVariable(req, 'foo', 'bar');
+
+    expect(req).to.deep.equal({});
+  })
 });
 
 describe('getting value from session', function() {
