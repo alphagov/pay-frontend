@@ -2,20 +2,30 @@ const clientSessions = require("client-sessions");
 
 const SESSION_COOKIE_NAME_1 = 'frontend_state';
 const SESSION_COOKIE_NAME_2 = 'frontend_state_2';
-
+const KEY_MIN_LENGTH = 10;
 
 /**
  * @private
  *
- * @param req
- * @param key
- * @param value
- * @param cookieName
+ * @param {object} req
+ * @param {string} key
+ * @param {*} value
+ * @param {string} cookieName
  */
 function setValueOnCookie(req, key, value, cookieName) {
   if(typeof req[cookieName] === 'object') {
     req[cookieName][key] = value;
   }
+}
+
+/**
+ * @private
+ *
+ * @param {string} key
+ * @returns {boolean}
+ */
+function isValidKey(key) {
+  return !!key && typeof key === 'string' && key.length > KEY_MIN_LENGTH;
 }
 
 /**
@@ -39,6 +49,7 @@ function namedCookie(name, key) {
     }
   };
 }
+
 /**
  * Initialises app with client_sessions middleware.
  * Configures one middleware per existing encryption key, to enable multiple
@@ -50,7 +61,7 @@ function configureSessionCookie(app) {
   let key1 = process.env.SESSION_ENCRYPTION_KEY;
   let key2 = process.env.SESSION_ENCRYPTION_KEY_2;
 
-  if (key1 === undefined && key2 === undefined) {
+  if (!isValidKey(key1) && !isValidKey(key2)) {
     throw new Error('cookie encryption key is not set');
   }
 
@@ -58,25 +69,28 @@ function configureSessionCookie(app) {
     throw new Error('cookie max age is not set');
   }
 
-  if (key1 !== undefined) {
+  if (isValidKey(key1)) {
     app.use(clientSessions(namedCookie(SESSION_COOKIE_NAME_1, key1)));
   }
 
-  if (key2 !== undefined) {
+  if (isValidKey(key2)) {
     app.use(clientSessions(namedCookie(SESSION_COOKIE_NAME_2, key2)));
   }
 }
 
 /**
+ * Returns current 'active' cookie name based on
+ * existing env vars. Favours `SESSION_ENCRYPTION_KEY`
+ * over `SESSION_ENCRYPTION_KEY_2`
  *
  * @returns {string}
  */
 function getSessionCookieName() {
-  if (process.env.SESSION_ENCRYPTION_KEY !== undefined) {
+  if (isValidKey(process.env.SESSION_ENCRYPTION_KEY)) {
     return SESSION_COOKIE_NAME_1;
   }
 
-  if (process.env.SESSION_ENCRYPTION_KEY_2 !== undefined) {
+  if (isValidKey(process.env.SESSION_ENCRYPTION_KEY_2)) {
     return SESSION_COOKIE_NAME_2;
   }
 }
@@ -90,11 +104,11 @@ function getSessionCookieName() {
  * @param {*} value
  */
 function setSessionVariable(req, key, value) {
-  if (process.env.SESSION_ENCRYPTION_KEY !== undefined) {
+  if (!!process.env.SESSION_ENCRYPTION_KEY) {
     setValueOnCookie(req, key, value, SESSION_COOKIE_NAME_1);
   }
 
-  if (process.env.SESSION_ENCRYPTION_KEY_2 !== undefined) {
+  if (!!process.env.SESSION_ENCRYPTION_KEY_2) {
     setValueOnCookie(req, key, value, SESSION_COOKIE_NAME_2);
   }
 }

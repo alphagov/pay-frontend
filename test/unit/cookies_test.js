@@ -40,9 +40,10 @@ describe('cookie configuration', function () {
   });
 
   it('should configure two cookies if two session keys are set', function() {
-    process.env.SESSION_ENCRYPTION_KEY_2 = 'bob';
+    let key2 = 'bobbobbobbob';
+    process.env.SESSION_ENCRYPTION_KEY_2 = key2;
     let app = {
-      use: sinon.stub()
+      use: sinon.spy()
     };
     let clientSessionsStub = sinon.stub();
     let cookies = getCookiesUtil(clientSessionsStub);
@@ -61,7 +62,7 @@ describe('cookie configuration', function () {
     let expectedConfig2 = {
       cookieName: 'frontend_state_2',
       proxy: true,
-      secret: "bob",
+      secret: key2,
       cookie: {
         maxAge: 5400000,
         httpOnly: true,
@@ -73,6 +74,34 @@ describe('cookie configuration', function () {
 
     expect(clientSessionsStub.calledWith(expectedConfig1)).to.equal(true);
     expect(clientSessionsStub.calledWith(expectedConfig2)).to.equal(true);
+    expect(clientSessionsStub.callCount).to.equal(2);
+
+    delete process.env.SESSION_ENCRYPTION_KEY_2;
+  });
+
+  it('should configure two cookies if two session keys are set', function() {
+    process.env.SESSION_ENCRYPTION_KEY_2 = '';
+    let app = {
+      use: sinon.spy()
+    };
+    let clientSessionsStub = sinon.stub();
+    let cookies = getCookiesUtil(clientSessionsStub);
+
+    let expectedConfig1 = {
+      cookieName: 'frontend_state',
+      proxy: true,
+      secret: "naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk",
+      cookie: {
+        maxAge: 5400000,
+        httpOnly: true,
+        secureProxy: true
+      }
+    };
+
+    cookies.configureSessionCookie(app);
+
+    expect(clientSessionsStub.calledWith(expectedConfig1)).to.equal(true);
+    expect(clientSessionsStub.callCount).to.equal(1);
 
     delete process.env.SESSION_ENCRYPTION_KEY_2;
   });
@@ -80,7 +109,7 @@ describe('cookie configuration', function () {
   it('should throw an error if no session keys are set', function() {
     let originalKey = process.env.SESSION_ENCRYPTION_KEY;
     delete process.env.SESSION_ENCRYPTION_KEY_2;
-    delete process.env.SESSION_ENCRYPTION_KEY;
+    process.env.SESSION_ENCRYPTION_KEY = '';
 
     let clientSessionsStub = sinon.stub();
     let cookies = getCookiesUtil(clientSessionsStub);
@@ -88,6 +117,20 @@ describe('cookie configuration', function () {
     expect(() => cookies.configureSessionCookie({})).to.throw(/cookie encryption key is not set/);
 
     process.env.SESSION_ENCRYPTION_KEY = originalKey;
+  });
+
+  it('should throw an error if no valid session keys are set', function() {
+    let originalKey = process.env.SESSION_ENCRYPTION_KEY;
+    process.env.SESSION_ENCRYPTION_KEY_2 = 'asfdwv';
+    process.env.SESSION_ENCRYPTION_KEY = '';
+
+    let clientSessionsStub = sinon.stub();
+    let cookies = getCookiesUtil(clientSessionsStub);
+
+    expect(() => cookies.configureSessionCookie({})).to.throw(/cookie encryption key is not set/);
+
+    process.env.SESSION_ENCRYPTION_KEY = originalKey;
+    delete process.env.SESSION_ENCRYPTION_KEY_2;
   });
 });
 
@@ -107,9 +150,9 @@ describe('setting value on session', function() {
 
   it('should set value on frontend_state_2 if SESSION_ENCRYPTION_KEY_2 set', function() {
     let originalKey = process.env.SESSION_ENCRYPTION_KEY;
-    delete process.env.SESSION_ENCRYPTION_KEY;
+    process.env.SESSION_ENCRYPTION_KEY = '';
 
-    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2';
+    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2key2key2key2';
 
 
     let cookies = getCookiesUtil();
@@ -130,7 +173,7 @@ describe('setting value on session', function() {
 
 
   it('should set values on frontend_state and frontend_state_2 if both keys set', function() {
-    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2';
+    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2key2key2key2';
 
 
     let cookies = getCookiesUtil();
@@ -174,7 +217,7 @@ describe('getting value from session', function() {
     let originalKey = process.env.SESSION_ENCRYPTION_KEY;
     delete process.env.SESSION_ENCRYPTION_KEY;
 
-    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2';
+    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2key2key2key2';
 
     let cookies = getCookiesUtil();
     let req = {
@@ -191,7 +234,7 @@ describe('getting value from session', function() {
   });
 
   it('should get value from frontend_state if both keys set', function() {
-    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2';
+    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2key2key2key2key';
 
     let cookies = getCookiesUtil();
     let req = {
