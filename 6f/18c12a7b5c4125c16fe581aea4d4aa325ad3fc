@@ -67,3 +67,5 @@ release.alpha_release-91.date=2017-05-18:15:30:50
 staging-2.tag=FAILED-90
 
 staging-2.FAILED-90.date=
+
+staging-2.FAILED-90.status=failed
