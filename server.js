@@ -81,12 +81,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-if (!environment.isProduction()) {
-  // Will return stack traces to the browser as well - only use in development!
-  var errorhandler = require('errorhandler');
-  app.use(errorhandler())
-}
-
 router.bind(app);
 
 /**
