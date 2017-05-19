@@ -66,10 +66,11 @@
     "winston": "2.2.x",
     "appmetrics": "1.1.2",
     "appmetrics-statsd": "1.0.1",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.1.1/pay-product-page-1.1.1.tgz"
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.2.0/pay-product-page-1.2.0.tgz"
   },
   "devDependencies": {
     "chai": "^3.2.0",
+    "chai-as-promised": "^6.0.0",
     "chai-string": "^1.1.2",
     "cheerio": "^0.22.0",
     "chokidar-cli": "latest",

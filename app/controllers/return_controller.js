@@ -19,15 +19,21 @@ let CANCELABLE_STATES = [
 module.exports.return = function (req, res) {
   'use strict';
 
-  let correlationId = req.headers[CORRELATION_HEADER] || '',
-   _views = views.create({}),
-  doRedirect = () => res.redirect(req.chargeData.return_url),
-  chargeModel = Charge(correlationId);
+  let correlationId = req.headers[CORRELATION_HEADER] || '';
+  let _views = views.create({});
+  let doRedirect = () => res.redirect(req.chargeData.return_url);
+  let chargeModel = Charge(correlationId);
 
   if (CANCELABLE_STATES.includes(req.chargeData.status)) {
-    chargeModel.cancel(req.chargeId).then(
-      () => logger.warn('Return controller cancelled payment', {'chargeId': req.chargeId}),
-      () => _views.display(res, 'SYSTEM_ERROR', withAnalyticsError()));
+     return chargeModel.cancel(req.chargeId)
+      .then(() => logger.warn('Return controller cancelled payment', {'chargeId': req.chargeId}))
+      .then(doRedirect)
+      .catch(() => {
+        logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId});
+        _views.display(res, 'SYSTEM_ERROR', withAnalyticsError());
+      });
+
+  } else {
+    return doRedirect();
   }
-    doRedirect();
 };

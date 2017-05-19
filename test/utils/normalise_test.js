@@ -108,6 +108,36 @@ describe('normalise', function () {
     });
   });
 
+  describe('whitespace', function () {
+    it('should return the body with no surrounding whitespace', function () {
+      var passedByReference = {
+        email: " foo@foo.com",
+        name: "Foo Bar ",
+        postcode: " WC2B 6NH "
+      };
+      normalise.whitespace(passedByReference);
+      expect(passedByReference).to.deep.equal({
+        email: "foo@foo.com",
+        name: "Foo Bar",
+        postcode: "WC2B 6NH"
+      });
+    });
+
+    it('should return the body with no surrounding whitespace but within the email', function () {
+      var passedByReference = {
+          email: ' fo" "o@foo.com',
+          name: "Foo Bar ",
+          postcode: " WC2B 6NH "
+      };
+      normalise.whitespace(passedByReference);
+      expect(passedByReference).to.deep.equal({
+          email: 'fo" "o@foo.com',
+          name: "Foo Bar",
+          postcode: "WC2B 6NH"
+      });
+    });
+  });
+
   describe('address for view', function () {
     it('should return a comma seperated address', function () {
       var address = normalise.addressForView(unNormalisedAddress);

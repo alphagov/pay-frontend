@@ -157,7 +157,7 @@ var formValidation = function(){
   allFieldValues = function(){
     var values = {};
     $(required).each(function(index,requiredField){
-      values[requiredField] =findInputByKey(requiredField).val();
+      values[requiredField] = $.trim(findInputByKey(requiredField).val());
     });
     return values;
   },

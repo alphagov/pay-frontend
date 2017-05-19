@@ -5,8 +5,7 @@ var path              = require('path');
 var favicon           = require('serve-favicon');
 var router            = require(__dirname + '/app/router.js');
 var bodyParser        = require('body-parser');
-var clientSessions    = require("client-sessions");
-var frontendCookie    = require(__dirname + '/app/utils/cookies.js').frontendCookie;
+var cookies    = require(__dirname + '/app/utils/cookies.js');
 var logger            = require('winston');
 var loggingMiddleware = require('morgan');
 var noCache           = require(__dirname + '/app/utils/no_cache.js');
@@ -20,7 +19,6 @@ var staticify         = require("staticify")(path.join(__dirname, "public"));
 var compression       = require('compression');
 var oneYear           = 86400000 * 365;
 var publicCaching     = {maxAge: oneYear};
-var applicationMetrics= require('./app/utils/metrics.js').metrics;
 
 i18n.configure({
   locales: ['en'],
@@ -42,8 +40,10 @@ app.use(i18n.init);
 app.use(compression());
 app.use(staticify.middleware);
 
+
 app.enable('trust proxy');
-app.use(clientSessions(frontendCookie()));
+
+cookies.configureSessionCookie(app);
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
