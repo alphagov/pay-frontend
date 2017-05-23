@@ -27,7 +27,9 @@
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "test": "grunt lint && npm run grunt-test",
     "lint": "node ./node_modules/.bin/jshint --verbose ./app/*.js ./test/*.js",
-    "grunt-test": "node ./node_modules/.bin/grunt test"
+    "grunt-test": "node ./node_modules/.bin/grunt test",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "array.prototype.find": "2.0.x",
@@ -58,7 +60,7 @@
     "randomstring": "^1.1.5",
     "readdir": "0.0.x",
     "rfc822-validate": "1.0.x",
-    "serve-favicon": "2.3.x",
+    "serve-favicon": "2.4.3",
     "staticify": "0.0.x",
     "string": "3.3.x",
     "throng": "4.0.x",
@@ -66,7 +68,8 @@
     "winston": "2.2.x",
     "appmetrics": "1.1.2",
     "appmetrics-statsd": "1.0.1",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.2.0/pay-product-page-1.2.0.tgz"
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.2.0/pay-product-page-1.2.0.tgz",
+    "snyk": "^1.30.1"
   },
   "devDependencies": {
     "chai": "^3.2.0",
@@ -104,5 +107,6 @@
     "supertest": "^2.0.0",
     "proxyquire": "~1.7.4",
     "sinon": "~1.17.3"
-  }
+  },
+  "snyk": true
 }
