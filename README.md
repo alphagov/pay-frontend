@@ -4,6 +4,7 @@ GOV.UK Pay Frontend application (Node.js)
 
 ## Key environment variables
 
+
 | variable                    | required | default value | Description                               |
 | --------------------------- |:--------:|:-------------:| ----------------------------------------- |
 | PORT                        | X | 9200 | The port number for the express server to be bound at runtime |
