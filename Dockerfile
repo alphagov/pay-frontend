@@ -6,8 +6,6 @@ RUN apk update && apk upgrade
 RUN apk add --update bash python make g++ libc6-compat
 
 ENV PORT 9000
-ENV ENABLE_NEWRELIC no
-ENV NEW_RELIC_HOME /app/newrelic
 
 EXPOSE 9000
 
