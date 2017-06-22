@@ -1,3 +1,6 @@
+//Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
+require('./app/utils/metrics.js').metrics;
+
 var express           = require('express');
 var path              = require('path');
 var favicon           = require('serve-favicon');
@@ -17,9 +20,6 @@ var staticify         = require("staticify")(path.join(__dirname, "public"));
 var compression       = require('compression');
 var oneYear           = 86400000 * 365;
 var publicCaching     = {maxAge: oneYear};
-
-//Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
-require('./app/utils/metrics.js').metrics;
 
 i18n.configure({
   locales: ['en'],
