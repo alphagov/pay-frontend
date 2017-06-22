@@ -54,7 +54,6 @@
     "minimist": "1.2.x",
     "moment": "2.15.x",
     "morgan": "1.7.x",
-    "newrelic": "1.30.x",
     "node-sass": "3.10.x",
     "q": "1.4.x",
     "randomstring": "^1.1.5",
