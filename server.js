@@ -18,6 +18,9 @@ var compression       = require('compression');
 var oneYear           = 86400000 * 365;
 var publicCaching     = {maxAge: oneYear};
 
+//Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
+require('./app/utils/metrics.js').metrics;
+
 i18n.configure({
   locales: ['en'],
   directory: __dirname + '/locales',
