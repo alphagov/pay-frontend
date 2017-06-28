@@ -9,28 +9,30 @@ var fields= require('../../../app/utils/charge_validation_fields.js')(Card);
 let result;
 
 describe('card validation: email', function () {
-  describe('should validate if does not contain 10 consecutive digits', () => {
+  describe('should validate if does not contain 10 digits', () => {
     
     it('and it contains only text', () => {
       result = fields.fieldValidations.email('pumpkinlover@example.com');
       expect(result).to.equal(true);
     });
     
-    it('and it contains 9 consecutive digits', () => {
+    it('and it contains 9 digits', () => {
       result = fields.fieldValidations.email('pumpkinlover123456789@example.com');
-      expect(result).to.equal(true);
-    });
-
-    it('and it contains 10 non-consecutive digits', () => {
-      result = fields.fieldValidations.email('pumpkinlover123456@example7890.com');
       expect(result).to.equal(true);
     });
     
   });
 
-  it('should not validate if it contains 10 consecutive digits', () => {
-      result = fields.fieldValidations.email('1234567890@example.com');
+  describe('should not validate if it contains 10 or more digits', () => {
+    it('and the digits are consecutive', () => {
+      result = fields.fieldValidations.email('1234567890123@example.com');
       expect(result).to.equal('contains_too_many_digits');
+    });
+
+    it('and the digits are not consecutive', () => {
+      result = fields.fieldValidations.email('012345AB6789@cheesey-feet.com');
+      expect(result).to.equal('contains_too_many_digits');
+    });
   });
 
 });

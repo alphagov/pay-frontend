@@ -429,7 +429,7 @@ describe('chargeTests', function () {
             "key": "cardNo",
             "value": "Enter a valid card number"
           }]);
-          helper.templateValue(res, "highlightErrorFields", {"cardNo": "Please enter a valid card number"});
+          helper.templateValue(res, "highlightErrorFields", {"cardNo": "Enter a valid card number"});
         })
         .end(done);
     });
@@ -473,20 +473,20 @@ describe('chargeTests', function () {
             {"key": "addressCity", "cssKey": "address-city", "value": "Enter a valid town/city"},
             {"key": "addressPostcode", "cssKey": "address-postcode", "value": "Enter a valid postcode"},
             {"key": "email", "cssKey": "email", "value": "Enter a valid email"},
-            {"key": "addressCountry", "cssKey": "address-country", "value": "Enter a valid country"}
+            {"key": "addressCountry", "cssKey": "address-country", "value": "Enter a valid country or territory"}
           ]);
 
           helper.templateValue(res, "highlightErrorFields", {
-            "cardholderName": "Enter the name on the card",
-            "cvc": "Enter a card security code",
+            "cardholderName": "Enter the name as it appears on the card",
+            "cvc": "Enter a valid card security code",
             "email": "Enter a valid email",
             "expiryMonth": "Enter a valid expiry date",
             "expiryYear": "Enter a valid expiry date",
-            "cardNo": "Please enter a valid card number",
-            "addressCity": "Enter a Town/City",
-            "addressLine1": "Enter a billing address",
+            "cardNo": "Enter a valid card number",
+            "addressCity": "Enter a valid town/city",
+            "addressLine1": "Enter a valid billing address",
             "addressPostcode": "Enter a valid postcode",
-            "addressCountry": "Enter a valid country"
+            "addressCountry": "Enter a valid country or territory"
           });
 
         })

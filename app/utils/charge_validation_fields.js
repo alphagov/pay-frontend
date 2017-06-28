@@ -20,6 +20,10 @@ module.exports = function(Card){
     "addressCountry"
   ];
 
+  const optionalFormFields = [
+    'addressLine2'
+  ];
+
   var validateEmail = function(email) {
     var validEmail = rfc822Validator(email),
       domain;
@@ -35,13 +39,15 @@ module.exports = function(Card){
     }
   };
 
-  function hasTooManyConsecutiveDigits(input) {
-    return /\d{10}/g.test(input);
+  function hasTooManyDigits(input) {
+    if (!input || typeof input !== 'string') return false;
+    const matchedDigits = input.match(/(\d)/g);
+    return (matchedDigits !== null) && (matchedDigits.length >= 10) ;
   }
 
   function isValidPostcode(postcode, countryCode) {
     return !(countryCode === "GB" && !ukPostcode.fromString(postcode).isComplete());
-  };
+  }
 
   /*
    These are custom validations for each field.
@@ -107,30 +113,30 @@ module.exports = function(Card){
 
     addressPostcode: function(addressPostcode, allFields){
       if (!isValidPostcode(addressPostcode, allFields.addressCountry)) return 'message';
-      if (hasTooManyConsecutiveDigits(addressPostcode)) return 'contains_too_many_digits';
+      if (hasTooManyDigits(addressPostcode)) return 'contains_too_many_digits';
       return true;
     },
 
     email: function(email){
       if (email && email.length > EMAIL_MAX_LENGTH) return "invalid_length";
-      if (hasTooManyConsecutiveDigits(email)) return 'contains_too_many_digits';
+      if (hasTooManyDigits(email)) return 'contains_too_many_digits';
       return validateEmail(email);
     },
 
     cardholderName: function(name) {
-      return !hasTooManyConsecutiveDigits(name) || 'contains_too_many_digits';
+      return !hasTooManyDigits(name) || 'contains_too_many_digits';
     },
 
     addressLine1: function(addressLine) {
-      return !hasTooManyConsecutiveDigits(addressLine) || 'contains_too_many_digits';
+      return !hasTooManyDigits(addressLine) || 'contains_too_many_digits';
     },
 
     addressLine2: function(addressLine) {
-      return !hasTooManyConsecutiveDigits(addressLine) || 'contains_too_many_digits';
+      return !hasTooManyDigits(addressLine) || 'contains_too_many_digits';
     },
 
     addressCity: function(townCity) {
-      return !hasTooManyConsecutiveDigits(townCity) || 'contains_too_many_digits';
+      return !hasTooManyDigits(townCity) || 'contains_too_many_digits';
     },
 
     creditCardType: creditCardType,
@@ -141,7 +147,8 @@ module.exports = function(Card){
     creditCardType: creditCardType,
     allowedCards: Card.allowed,
     requiredFormFields: requiredFormFields,
-    fieldValidations: fieldValidations
+    fieldValidations: fieldValidations,
+    optionalFormFields: optionalFormFields
   };
 
 };
