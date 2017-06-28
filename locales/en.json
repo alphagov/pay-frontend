@@ -10,7 +10,8 @@
      "fields": {
        "cardholderName": {
          "name": "name",
-         "message": "Enter the name on the card"
+         "message": "Enter the name on the card",
+         "contains_too_many_digits": "Enter the name on the card"
        },
        "cardNo": {
          "name": "card number",
@@ -43,11 +44,18 @@
        },
        "addressLine1": {
          "name": "building name/number and street",
-         "message": "Enter a billing address"
+         "message": "Enter a billing address",
+         "contains_too_many_digits": "Enter a valid billing address"
+       },
+       "addressLine2": {
+         "name": "additional address line",
+         "message": "Enter valid address information",
+         "contains_too_many_digits": "Enter valid address information"
        },
        "addressCity": {
          "name": "town/city",
-         "message": "Enter a Town/City"
+         "message": "Enter a Town/City",
+         "contains_too_many_digits": "Enter a valid Town/City"
        },
        "addressPostcode": {
          "name": "postcode",

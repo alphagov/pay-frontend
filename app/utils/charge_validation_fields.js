@@ -22,7 +22,7 @@ module.exports = function(Card){
 
   var validateEmail = function(email) {
     var validEmail = rfc822Validator(email),
-        domain;
+      domain;
 
     if (!validEmail) {
       return "message";
@@ -35,13 +35,21 @@ module.exports = function(Card){
     }
   };
 
+  function hasTooManyConsecutiveDigits(input) {
+    return /\d{10}/g.test(input);
+  }
+
+  function isValidPostcode(postcode, countryCode) {
+    return !(countryCode === "GB" && !ukPostcode.fromString(postcode).isComplete());
+  };
+
   /*
    These are custom validations for each field.
    Functions should be named the same as the input name
    and will receive two arguments.
    One is the field, second is allfields in case it is
    needed for validation.
-  */
+   */
 
   var fieldValidations = {
     cardNo:  function(cardNo) {
@@ -73,7 +81,7 @@ module.exports = function(Card){
       // validations are grouped for expiry month and year,
       // this is why both validations are happening in expiry month
       // can;t be renamed as it all runs off meta programming further up the stack
-      var isValidYear = (String(allFields.expiryYear).length === 2 || String(allFields.expiryYear).length === 4);     
+      var isValidYear = (String(allFields.expiryYear).length === 2 || String(allFields.expiryYear).length === 4);
       if (!isValidYear) return "invalid_year";
 
       var cardDate = allFields.expiryYear;
@@ -83,7 +91,7 @@ module.exports = function(Card){
       var currentDate = new Date();
       if (currentDate.getFullYear() > cardDate.getFullYear()) return "in_the_past";
       if (currentDate.getFullYear() === cardDate.getFullYear() &&
-          currentDate.getMonth() > cardDate.getMonth()) return "in_the_past";
+        currentDate.getMonth() > cardDate.getMonth()) return "in_the_past";
 
       return true;
     },
@@ -92,21 +100,37 @@ module.exports = function(Card){
       if(code === undefined) return "invalid_length";
       code = code.replace(/\D/g,'');
       if (code.length === 3 || code.length === 4) {
-          return true;
+        return true;
       }
       return "invalid_length";
     },
 
-    addressPostcode: function(AddressPostcode, allFields){
-      if (allFields.addressCountry !== "GB") return true;
-      var postCode = ukPostcode.fromString(AddressPostcode);
-      if (postCode.isComplete()) { return true; }
-      return "message";
+    addressPostcode: function(addressPostcode, allFields){
+      if (!isValidPostcode(addressPostcode, allFields.addressCountry)) return 'message';
+      if (hasTooManyConsecutiveDigits(addressPostcode)) return 'contains_too_many_digits';
+      return true;
     },
 
     email: function(email){
       if (email && email.length > EMAIL_MAX_LENGTH) return "invalid_length";
+      if (hasTooManyConsecutiveDigits(email)) return 'contains_too_many_digits';
       return validateEmail(email);
+    },
+
+    cardholderName: function(name) {
+      return !hasTooManyConsecutiveDigits(name) || 'contains_too_many_digits';
+    },
+
+    addressLine1: function(addressLine) {
+      return !hasTooManyConsecutiveDigits(addressLine) || 'contains_too_many_digits';
+    },
+
+    addressLine2: function(addressLine) {
+      return !hasTooManyConsecutiveDigits(addressLine) || 'contains_too_many_digits';
+    },
+
+    addressCity: function(townCity) {
+      return !hasTooManyConsecutiveDigits(townCity) || 'contains_too_many_digits';
     },
 
     creditCardType: creditCardType,
