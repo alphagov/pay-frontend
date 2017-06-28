@@ -1,4 +1,6 @@
-var changeCase      = require('change-case');
+'use strict';
+var chargeValidationFields = require('./charge_validation_fields');
+var changeCase  = require('change-case');
 var customError  = {
   expiryYear:  {
     skip: true
@@ -10,8 +12,7 @@ var customError  = {
 
 
 module.exports = function(translations, logger, Card) {
-  'use strict';
-  var validations     = require('./charge_validation_fields')(Card);
+  var validations     = chargeValidationFields(Card);
   var fieldValidations= validations.fieldValidations;
   var requiredFields  = validations.requiredFormFields;
   var creditCardType  = validations.creditCardType;
