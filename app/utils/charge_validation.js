@@ -1,4 +1,6 @@
-var changeCase      = require('change-case');
+
+var chargeValidationFields = require('./charge_validation_fields');
+var changeCase  = require('change-case');
 var customError  = {
   expiryYear:  {
     skip: true
@@ -11,9 +13,11 @@ var customError  = {
 
 module.exports = function(translations, logger, Card) {
   'use strict';
-  var validations     = require('./charge_validation_fields')(Card);
+  var validations     = chargeValidationFields(Card);
   var fieldValidations= validations.fieldValidations;
   var requiredFields  = validations.requiredFormFields;
+  var optionalFields  = validations.optionalFormFields;
+
   var creditCardType  = validations.creditCardType;
   var verify = function(body) {
     var checkResult = {
@@ -23,26 +27,41 @@ module.exports = function(translations, logger, Card) {
     },
 
     init = function(){
-      for (var index in requiredFields) {
-        if (requiredFields.hasOwnProperty(index)) {
-          var name  = requiredFields[index];
-          var value = body[name];
-          checkFormField(name, value);
-        }
+
+      var field;
+      for(var i=0; i < requiredFields.length; i++) {
+        field = requiredFields[i];
+        checkRequiredFormField(field, body[field]);
+      }
+
+      for(var j=0; j < optionalFields.length; j++) {
+        field = optionalFields[j];
+        if(body[field]) checkOptionalFormField(field, body[field]);
       }
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true;
       return checkResult;
     },
 
-    checkFormField = function(name, value) {
+    checkRequiredFormField = function(name, value) {
       var customValidation = checkFieldValidation(name, value);
       if (value && customValidation === true) return;
       var translation   = translations.fields[name],
       highlightMessage  = translation.message,
       problem           = !value ?  missing(name) : translation[customValidation];
 
-      pushToErrorFields(name, problem, highlightMessage);
+      pushToErrorFields(name, problem);
+      pushToHighlightField(name, highlightMessage);
+    },
+
+    checkOptionalFormField = function(name, value) {
+      var customValidation = checkFieldValidation(name, value);
+      if (value && customValidation === true) return;
+      var translation   = translations.fields[name],
+        highlightMessage  = translation.message,
+        problem           = translation[customValidation];
+
+      pushToErrorFields(name, problem);
       pushToHighlightField(name, highlightMessage);
     },
 
@@ -81,6 +100,7 @@ module.exports = function(translations, logger, Card) {
   return {
     verify: verify,
     required: requiredFields,
+    optional: optionalFields,
     creditCardType: creditCardType,
     allowedCards: Card.allowed,
     cardNo: fieldValidations.cardNo

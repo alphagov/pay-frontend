@@ -139,8 +139,8 @@ var formValidation = function(){
   },
 
   validationFor = function(name){
-     var validation =$.grep(allValidations().errorFields,function(validation){
-      return validation.key == name;
+     var validation = $.grep(allValidations().errorFields,function(validation){
+      return validation.key === name;
     });
      if (!validation[0]) return;
      return validation[0].value;

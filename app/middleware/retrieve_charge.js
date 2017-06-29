@@ -1,33 +1,26 @@
-var views              = require('../utils/views.js');
-var Charge             = require('../models/charge.js');
-var chargeParam        = require('../services/charge_param_retriever.js');
-var q                  = require('q');
-var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
-var withAnalyticsError    = require('../utils/analytics.js').withAnalyticsError;
+const views = require('../utils/views.js');
+const Charge = require('../models/charge.js');
+const chargeParam = require('../services/charge_param_retriever.js');
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER;
+const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError;
 
 module.exports = function(req, res, next){
   "use strict";
-  var _views  = views.create(),
-  defer       = q.defer();
+  const _views = views.create();
+  const chargeId = chargeParam.retrieve(req);
 
-  var init = function(){
-    var chargeId = chargeParam.retrieve(req);
-    if (!chargeId) return _views.display(res,"UNAUTHORISED", withAnalyticsError());
+  if (!chargeId) {
+    _views.display(res,"UNAUTHORISED", withAnalyticsError());
+  } else {
     req.chargeId = chargeId;
-    var chargeModel = Charge(req.headers[CORRELATION_HEADER]);
-    chargeModel.find(chargeId).then(gotCharge, apiFail);
-  },
+    Charge(req.headers[CORRELATION_HEADER]).find(chargeId)
+      .then(data => {
+        req.chargeData = data;
+        next();
+      })
+      .catch(() => {
+        _views.display(res,"SYSTEM_ERROR", withAnalyticsError());
+      });
+  }
 
-  gotCharge = function(data){
-    req.chargeData = data;
-    next();
-  },
-
-  apiFail = function(){
-    _views.display(res,"SYSTEM_ERROR", withAnalyticsError());
-  };
-
-  init();
-
-  return defer.promise;
 };
