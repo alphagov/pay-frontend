@@ -34,7 +34,7 @@ describe('charge validator', () => {
       });
 
       it('it should run custom validators against any defined fields', () => {
-        expect(result.errorFields.find(field => field.key === 'cardNo').value).to.eq('This card number is not the correct length');
+        expect(result.errorFields.find(field => field.key === 'cardNo').value).to.eq('Card number is not the correct length');
       });
     });
 

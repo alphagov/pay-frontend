@@ -20,7 +20,7 @@ module.exports = function(Card){
     "addressCountry"
   ];
 
-  const optionalFormFields = [
+  var optionalFormFields = [
     'addressLine2'
   ];
 
@@ -41,7 +41,7 @@ module.exports = function(Card){
 
   function hasTooManyDigits(input) {
     if (!input || typeof input !== 'string') return false;
-    const matchedDigits = input.match(/(\d)/g);
+    var matchedDigits = input.match(/(\d)/g);
     return (matchedDigits !== null) && (matchedDigits.length >= 10) ;
   }
 

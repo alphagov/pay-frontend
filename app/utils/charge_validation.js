@@ -28,15 +28,16 @@ module.exports = function(translations, logger, Card) {
 
     init = function(){
 
-      requiredFields.forEach(field => {
+      var field;
+      for(var i=0; i < requiredFields.length; i++) {
+        field = requiredFields[i];
         checkRequiredFormField(field, body[field]);
-      });
+      }
 
-      optionalFields.forEach(field => {
-        if(body[field]) {
-          checkOptionalFormField(field, body[field]);
-        }
-      });
+      for(var j=0; j < optionalFields.length; j++) {
+        field = optionalFields[j];
+        if(body[field]) checkOptionalFormField(field, body[field]);
+      }
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true;
       return checkResult;
