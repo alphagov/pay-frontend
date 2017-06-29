@@ -11,34 +11,34 @@ let result;
 describe('card validation: address', () => {
 
   describe('addressLine1', function () {
-    describe('should validate if does not contain 10 digits', () => {
+    describe('should validate if does not contain 12 digits', () => {
 
       it('and it contains only text', () => {
         result = fields.fieldValidations.addressLine1('Spooner Street');
         expect(result).to.equal(true);
       });
 
-      it('and it contains 9 digits', () => {
-        result = fields.fieldValidations.addressLine1('Spooner Street 123456789');
+      it('and it contains 11 digits', () => {
+        result = fields.fieldValidations.addressLine1('Spooner Street 01234567890');
         expect(result).to.equal(true);
       });
 
 
     });
 
-    describe('should not validate if it contains 10 or more digits', () => {
+    describe('should not validate if it contains 12 or more digits', () => {
       it('and it contains only digits', () => {
-        result = fields.fieldValidations.addressLine1('0123456789');
+        result = fields.fieldValidations.addressLine1('012345678901');
         expect(result).to.equal('contains_too_many_digits');
       });
 
       it('and it contains both digits and text and the digits are consecutive', () => {
-        result = fields.fieldValidations.addressLine1('Spooner Street 0123456789');
+        result = fields.fieldValidations.addressLine1('Spooner Street 012345678901');
         expect(result).to.equal('contains_too_many_digits');
       });
 
       it('and it contains both digits and text and the digits are not consecutive', () => {
-        result = fields.fieldValidations.addressLine2('Spoo-12345-ner-67890-Street');
+        result = fields.fieldValidations.addressLine2('Spoo-012345-ner-678901-Street');
         expect(result).to.equal('contains_too_many_digits');
       });
     });
@@ -46,24 +46,24 @@ describe('card validation: address', () => {
   });
 
   describe('addressLine2', function () {
-    describe('should validate if does not contain 10 digits', () => {
+    describe('should validate if does not contain 12 digits', () => {
 
       it('and it contains only text', () => {
         result = fields.fieldValidations.addressLine2('Spooner Street');
         expect(result).to.equal(true);
       });
 
-      it('and it contains 9 digits', () => {
-        result = fields.fieldValidations.addressLine2('Spooner Street 123456789');
+      it('and it contains 11 digits', () => {
+        result = fields.fieldValidations.addressLine2('Spooner Street 01234567890');
         expect(result).to.equal(true);
       });
 
 
     });
 
-    describe('should not validate if it contains 10 or more digits', () => {
+    describe('should not validate if it contains 12 or more digits', () => {
       it('and it contains only digits', () => {
-        result = fields.fieldValidations.addressLine2('0123456789');
+        result = fields.fieldValidations.addressLine2('012345678901');
         expect(result).to.equal('contains_too_many_digits');
       });
 
@@ -73,7 +73,7 @@ describe('card validation: address', () => {
       });
 
       it('and it contains both digits and text and the digits are not consecutive', () => {
-        result = fields.fieldValidations.addressLine2('Spoo-12345-ner-67890-Street');
+        result = fields.fieldValidations.addressLine2('Spoo-012345-ner-678901-Street');
         expect(result).to.equal('contains_too_many_digits');
       });
     });
@@ -81,34 +81,34 @@ describe('card validation: address', () => {
   });
 
   describe('addressCity', function () {
-    describe('should validate if does not contain 10 digits', () => {
+    describe('should validate if does not contain 12 digits', () => {
 
       it('and it contains only text', () => {
         result = fields.fieldValidations.addressCity('Mr Quahog');
         expect(result).to.equal(true);
       });
 
-      it('and it contains 9 digits', () => {
-        result = fields.fieldValidations.addressCity('Mr Quahog 123456789');
+      it('and it contains 11 digits', () => {
+        result = fields.fieldValidations.addressCity('Mr Quahog 01234567890');
         expect(result).to.equal(true);
       });
 
 
     });
 
-    describe('should not validate if it contains 10 or more digits', () => {
+    describe('should not validate if it contains 12 or more digits', () => {
       it('and it contains only digits', () => {
-        result = fields.fieldValidations.addressCity('0123456789');
+        result = fields.fieldValidations.addressCity('012345678901');
         expect(result).to.equal('contains_too_many_digits');
       });
 
       it('and it contains both digits and text and the digits are consecutive', () => {
-        result = fields.fieldValidations.addressCity('Quahog 0123456789');
+        result = fields.fieldValidations.addressCity('Quahog 012345678901');
         expect(result).to.equal('contains_too_many_digits');
       });
 
       it('and it contains both digits and text and the digits are not consecutive', () => {
-        result = fields.fieldValidations.addressCity('Qua-12345-h-67890-og');
+        result = fields.fieldValidations.addressCity('Qua-012345-h-678901-og');
         expect(result).to.equal('contains_too_many_digits');
       });
     });

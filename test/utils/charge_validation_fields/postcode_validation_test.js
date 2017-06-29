@@ -45,15 +45,15 @@ describe('card validation: postcode', function () {
     });
   });
 
-  describe('should validate if does not contain 10 digits', () => {
+  describe('should validate if does not contain 12 digits', () => {
 
     it('and it contains only text', () => {
       result = fields.fieldValidations.addressPostcode('ABCDEF', { addressCountry: "US" });
       expect(result).to.equal(true);
     });
 
-    it('and it contains 9 digits', () => {
-      result = fields.fieldValidations.addressPostcode('AB123456789', { addressCountry: "US" });
+    it('and it contains 11 digits', () => {
+      result = fields.fieldValidations.addressPostcode('AB01234567890', { addressCountry: "US" });
       expect(result).to.equal(true);
     });
 
@@ -61,9 +61,9 @@ describe('card validation: postcode', function () {
 
   });
 
-  describe('should not validate if it contains 10 or more digits', () => {
+  describe('should not validate if it contains 12 or more digits', () => {
     it('and it contains only digits', () => {
-      result = fields.fieldValidations.addressPostcode('0123456789', { addressCountry: "US" });
+      result = fields.fieldValidations.addressPostcode('012345678901', { addressCountry: "US" });
       expect(result).to.equal('contains_too_many_digits');
     });
 
@@ -73,7 +73,7 @@ describe('card validation: postcode', function () {
     });
 
     it('and it contains both digits and text and the digits are not consecutive', () => {
-      result = fields.fieldValidations.addressPostcode('012345AB6789', { addressCountry: "US" });
+      result = fields.fieldValidations.addressPostcode('012345AB678901', { addressCountry: "US" });
       expect(result).to.equal('contains_too_many_digits');
     });
   });

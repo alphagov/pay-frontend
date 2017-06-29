@@ -42,7 +42,7 @@ module.exports = function(Card){
   function hasTooManyDigits(input) {
     if (!input || typeof input !== 'string') return false;
     var matchedDigits = input.match(/(\d)/g);
-    return (matchedDigits !== null) && (matchedDigits.length >= 10) ;
+    return (matchedDigits !== null) && (matchedDigits.length > 11) ;
   }
 
   function isValidPostcode(postcode, countryCode) {

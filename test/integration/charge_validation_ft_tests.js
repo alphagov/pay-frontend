@@ -47,12 +47,12 @@ describe('checks for PAN-like numbers', () => {
       'cvc': '234',
       'expiryMonth': '11',
       'expiryYear': '99',
-      'cardholderName': '1234567890Jimi Hendrix',
-      'addressLine1': '1234567890 Whip Ma Whop Ma Avenue',
-      'addressLine2': '1234567890 line two',
-      'addressPostcode': 'Y1 1234567890 1YN',
-      'addressCity': 'Willy wonka 1234567890',
-      'email': '1234567890willy@wonka.com',
+      'cardholderName': '012345678901Jimi Hendrix',
+      'addressLine1': '012345678901 Whip Ma Whop Ma Avenue',
+      'addressLine2': '012345678901line two',
+      'addressPostcode': 'Y1 012345678901 1YN',
+      'addressCity': 'Willy wonka 012345678901',
+      'email': '012345678901willy@wonka.com',
       'addressCountry': 'US'
     };
     const cookieValue = cookie.create(chargeId, {});

@@ -40,7 +40,7 @@ describe('charge validator', () => {
 
     describe('when there is an error in an optional field', () => {
       before(() => {
-        result = validator.verify({"addressLine2" : "1234567890 Cheese Avenue"});
+        result = validator.verify({"addressLine2" : "012345678901 Cheese Avenue"});
 
       });
 
