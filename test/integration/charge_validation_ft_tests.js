@@ -37,7 +37,7 @@ describe('checks for PAN-like numbers', () => {
     nock.cleanAll();
   });
 
-  it('shows an error when a card is submitted with missing fields', function (done) {
+  it('shows an error when a card is submitted with non-PAN fields containing a suspected PAN', function (done) {
     const chargeId = '23144323';
     const formWithAllFieldsContainingTooManyDigits = {
       'returnUrl': RETURN_URL,
@@ -73,6 +73,42 @@ describe('checks for PAN-like numbers', () => {
         expect(body.highlightErrorFields.addressCity).to.equal('Enter a valid town/city');
         expect(body.highlightErrorFields.addressPostcode).to.equal('Enter a valid postcode');
         expect(body.highlightErrorFields.email).to.equal('Enter a valid email');
+
+        done();
+      });
+  });
+
+  it('shows an error when a card is submitted with a card holder name containing a suspected CVV', function (done) {
+    const chargeId = '23144323';
+    const formWithAllFieldsContainingTooManyDigits = {
+      'returnUrl': RETURN_URL,
+      'cardUrl': connectorAuthUrl,
+      'chargeId': chargeId,
+      'cardNo': '4242424242424242',
+      'cvc': '234',
+      'expiryMonth': '11',
+      'expiryYear': '99',
+      'cardholderName': '234',
+      'addressLine1': 'Whip Ma Whop Ma Avenue',
+      'addressLine2': '1line two',
+      'addressPostcode': 'Y1 1YN',
+      'addressCity': 'Willy Wonka',
+      'email': 'willy@wonka.com',
+      'addressCountry': 'US'
+    };
+    const cookieValue = cookie.create(chargeId, {});
+
+    defaultCardID('4242424242424242');
+    default_connector_response_for_get_charge(chargeId, State.ENTERING_CARD_DETAILS);
+
+    post_charge_request(app, cookieValue, formWithAllFieldsContainingTooManyDigits, chargeId)
+      .expect(200)
+      .end((err,res) => {
+        if (err) return done(err);
+
+        var body = JSON.parse(res.text);
+
+        expect(body.highlightErrorFields.cardholderName).to.equal('Enter the name as it appears on the card');
 
         done();
       });

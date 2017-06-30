@@ -39,10 +39,21 @@ module.exports = function(Card){
     }
   };
 
-  function hasTooManyDigits(input) {
-    if (!input || typeof input !== 'string') return false;
-    var matchedDigits = input.match(/(\d)/g);
-    return (matchedDigits !== null) && (matchedDigits.length > 11) ;
+  function containsSuspectedCVV(input) {
+    if (typeof input === 'number' || typeof input === 'string') {
+      return /^\s*\d{3,4}\s*$/.test(String(input));
+    } else {
+      return false;
+    }
+  }
+
+  function containsSuspectedPAN(input) {
+    if (typeof input === 'number' || typeof input === 'string') {
+      var matchedDigits = String(input).match(/(\d)/g);
+      return (matchedDigits !== null) && (matchedDigits.length > 11) ;
+    } else {
+      return false;
+    }
   }
 
   function isValidPostcode(postcode, countryCode) {
@@ -113,30 +124,32 @@ module.exports = function(Card){
 
     addressPostcode: function(addressPostcode, allFields){
       if (!isValidPostcode(addressPostcode, allFields.addressCountry)) return 'message';
-      if (hasTooManyDigits(addressPostcode)) return 'contains_too_many_digits';
+      if (containsSuspectedPAN(addressPostcode)) return 'contains_too_many_digits';
       return true;
     },
 
     email: function(email){
       if (email && email.length > EMAIL_MAX_LENGTH) return "invalid_length";
-      if (hasTooManyDigits(email)) return 'contains_too_many_digits';
+      if (containsSuspectedPAN(email)) return 'contains_too_many_digits';
       return validateEmail(email);
     },
 
     cardholderName: function(name) {
-      return !hasTooManyDigits(name) || 'contains_too_many_digits';
+      if (containsSuspectedPAN(name)) return 'contains_too_many_digits';
+      if (containsSuspectedCVV(name)) return 'contains_suspected_cvv';
+      return true;
     },
 
     addressLine1: function(addressLine) {
-      return !hasTooManyDigits(addressLine) || 'contains_too_many_digits';
+      return !containsSuspectedPAN(addressLine) || 'contains_too_many_digits';
     },
 
     addressLine2: function(addressLine) {
-      return !hasTooManyDigits(addressLine) || 'contains_too_many_digits';
+      return !containsSuspectedPAN(addressLine) || 'contains_too_many_digits';
     },
 
     addressCity: function(townCity) {
-      return !hasTooManyDigits(townCity) || 'contains_too_many_digits';
+      return !containsSuspectedPAN(townCity) || 'contains_too_many_digits';
     },
 
     creditCardType: creditCardType,
