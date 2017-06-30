@@ -11,8 +11,9 @@
         "cardholderName": {
           "name": "name",
           "message": "Enter the name as it appears on the card",
-          "contains_too_many_digits": "Enter the name as it appears on the card"
-        },
+          "contains_too_many_digits": "Enter the name as it appears on the card",
+		  "contains_suspected_cvv": "Enter the name as it appears on the card"
+		},
         "cardNo": {
           "name": "card number",
           "message": "Enter a valid card number",
