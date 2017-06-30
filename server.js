@@ -43,6 +43,7 @@ app.use(staticify.middleware);
 
 
 app.enable('trust proxy');
+app.disable('x-powered-by');
 
 cookies.configureSessionCookie(app);
 
