@@ -78,7 +78,7 @@ describe('checks for PAN-like numbers', () => {
       });
   });
 
-  it.only('shows an error when a card is submitted with a card holder name containing a suspected CVV', function (done) {
+  it('shows an error when a card is submitted with a card holder name containing a suspected CVV', function (done) {
     const chargeId = '23144323';
     const formWithAllFieldsContainingTooManyDigits = {
       'returnUrl': RETURN_URL,
