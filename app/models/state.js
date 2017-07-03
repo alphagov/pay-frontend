@@ -8,6 +8,4 @@ module.exports = {
   CAPTURE_SUBMITTED: 'CAPTURE SUBMITTED',
   CREATED: 'CREATED',
   CANCELLED: 'CANCELLED'
-};
-
-
+}

@@ -1,34 +1,33 @@
-var path = require('path');
-var fs   = require('fs');
+var path = require('path')
+var fs = require('fs')
 
-var logger = require('winston');
+var logger = require('winston')
 
 module.exports = {
   getCertOptions: function () {
-    var certsPath = process.env.CERTS_PATH || __dirname + '/../../certs';
+    var certsPath = process.env.CERTS_PATH || path.join(__dirname, '/../../certs')
 
     try {
       if (!fs.lstatSync(certsPath).isDirectory()) {
         logger.error('Provided CERTS_PATH is not a directory', {
           certsPath: certsPath
-        });
-        return;
+        })
+        return
       }
-    }
-    catch (e) {
+    } catch (e) {
       logger.error('Provided CERTS_PATH could not be read', {
         certsPath: certsPath
-      });
-      return;
+      })
+      return
     }
 
-    var ca = [];
-    var certs = fs.readdirSync(certsPath).forEach(
-      (certPath) => ca.push(
+    var ca = []
+    fs.readdirSync(certsPath).forEach(
+      certPath => ca.push(
         fs.readFileSync(path.join(certsPath, certPath))
       )
-    );
+    )
 
-    return ca;
+    return ca
   }
-};
+}

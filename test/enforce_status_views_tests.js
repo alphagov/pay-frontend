@@ -1,81 +1,75 @@
-process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk';
+process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk'
+var path = require('path')
+var request = require('supertest')
+var app = require(path.join(__dirname, '/../server.js')).getApp
+var helper = require(path.join(__dirname, '/test_helpers/test_helpers.js'))
+var nock = require('nock')
 
-var request = require('supertest');
-var portfinder = require('portfinder');
-var app = require(__dirname + '/../server.js').getApp;
-var should = require('chai').should();
-var helper = require(__dirname + '/test_helpers/test_helpers.js');
-var nock = require('nock');
-var paths = require(__dirname + '/../app/paths.js');
+var cookie = require(path.join(__dirname, '/test_helpers/session.js'))
 
-
-
-
-var cookie = require(__dirname + '/test_helpers/session.js');
-
-var chargeId = '23144323';
-var frontendCardDetailsPath = '/card_details';
+var chargeId = '23144323'
+var frontendCardDetailsPath = '/card_details'
 
 describe('The /charge endpoint undealt statuses', function () {
-  var charge_not_allowed_statuses = [
+  var chargeNotAllowedStatuses = [
     'READY_FOR_CAPTURE'
-  ];
+  ]
 
-  charge_not_allowed_statuses.forEach(function (status) {
-    beforeEach(function(){
-      nock.cleanAll();
+  chargeNotAllowedStatuses.forEach(function (status) {
+    beforeEach(function () {
+      nock.cleanAll()
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
-        status,"http://www.example.com/service"
-      ));
-    });
+      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+        status, 'http://www.example.com/service'
+      ))
+    })
 
     it('should error when the payment status is ' + status, function (done) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
-        .expect(function(res){
-          helper.templateValue(res,"message", "There is a problem, please try again later");
+        .expect(function (res) {
+          helper.templateValue(res, 'message', 'There is a problem, please try again later')
         })
-        .end(done);
-    });
-  });
-});
+        .end(done)
+    })
+  })
+})
 
 describe('The /charge endpoint dealt statuses', function () {
-  var charge_allowed_statuses = [
+  var chargeAllowedStatuses = [
     {
       name: 'authorisation success',
-      view: "AUTHORISATION_SUCCESS"
+      view: 'AUTHORISATION_SUCCESS'
     },
     {
       name: 'authorisation rejected',
-      view: "AUTHORISATION_REJECTED"
+      view: 'AUTHORISATION_REJECTED'
     },
     {
       name: 'authorisation cancelled',
-      view: "AUTHORISATION_CANCELLED"
+      view: 'AUTHORISATION_CANCELLED'
     },
     {
       name: 'authorisation 3ds required',
-      view: "AUTHORISATION_3DS_REQUIRED"
+      view: 'AUTHORISATION_3DS_REQUIRED'
     },
     {
       name: 'system error',
-      view: "SYSTEM_ERROR"
+      view: 'SYSTEM_ERROR'
     },
     {
       name: 'captured',
-      view: "CAPTURED"
+      view: 'CAPTURED'
     },
     {
       name: 'capture failure',
-      view: "CAPTURE_FAILURE"
+      view: 'CAPTURE_FAILURE'
     },
     {
       name: 'capture submitted',
-      view: "CAPTURE_SUBMITTED"
+      view: 'CAPTURE_SUBMITTED'
     },
     {
       name: 'expired',
@@ -103,102 +97,96 @@ describe('The /charge endpoint dealt statuses', function () {
     },
     {
       name: 'system cancel ready',
-      view: "SYSTEM_CANCEL_READY"
+      view: 'SYSTEM_CANCEL_READY'
     },
     {
       name: 'system cancel error',
-      view: "SYSTEM_CANCEL_ERROR"
+      view: 'SYSTEM_CANCEL_ERROR'
     },
     {
       name: 'user cancel ready',
-      view: "USER_CANCEL_READY"
+      view: 'USER_CANCEL_READY'
     },
     {
       name: 'user cancel error',
-      view: "USER_CANCEL_ERROR"
+      view: 'USER_CANCEL_ERROR'
     }
-  ];
-  beforeEach(function() {
-    nock.cleanAll();
-  });
+  ]
+  beforeEach(function () {
+    nock.cleanAll()
+  })
 
-  charge_allowed_statuses.forEach(function (state) {
-
+  chargeAllowedStatuses.forEach(function (state) {
     it('should not error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.raw_successful_get_charge(
-        state.name,"http://www.example.com/service"
-      ));
+      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+        state.name, 'http://www.example.com/service'
+      ))
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-        .expect(function(res){
-          helper.templateValue(res,"viewName", state.view);
-          helper.templateValue(res,"chargeId", chargeId);
+        .expect(function (res) {
+          helper.templateValue(res, 'viewName', state.view)
+          helper.templateValue(res, 'chargeId', chargeId)
         })
-        .end(done);
-    });
-  });
-});
-
+        .end(done)
+    })
+  })
+})
 
 describe('The /confirm endpoint undealt statuses', function () {
-  var confirm_not_allowed_statuses = [
+  var confirmNotAllowedStatuses = [
     'CREATED',
     'AUTHORISATION SUBMITTED',
     'READY_FOR_CAPTURE'
-  ];
-  beforeEach(function() {
-    nock.cleanAll();
-  });
+  ]
+  beforeEach(function () {
+    nock.cleanAll()
+  })
 
-  afterEach(function() {
-    nock.cleanAll();
-  });
+  afterEach(function () {
+    nock.cleanAll()
+  })
 
-
-
-
-  confirm_not_allowed_statuses.forEach(function (status) {
+  confirmNotAllowedStatuses.forEach(function (status) {
     it('should error when the payment status is ' + status, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
-        status,"http://www.example.com/service"
-      ));
+      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+        status, 'http://www.example.com/service'
+      ))
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
-        .expect(function(res){
-          helper.templateValue(res,"message", "There is a problem, please try again later");
+        .expect(function (res) {
+          helper.templateValue(res, 'message', 'There is a problem, please try again later')
         })
-        .end(done);
-    });
-  });
-});
-
+        .end(done)
+    })
+  })
+})
 
 describe('The /confirm endpoint dealt statuses', function () {
-  var confirm_allowed_statuses = [
+  var confirmAllowedStatuses = [
     {
       name: 'capture submitted',
-      view: "CAPTURE_SUBMITTED",
+      view: 'CAPTURE_SUBMITTED',
       viewState: 'successful'
     },
     {
       name: 'captured',
-      view: "CAPTURED",
+      view: 'CAPTURED',
       viewState: 'successful'
     },
     {
       name: 'capture failure',
-      view: "CAPTURE_FAILURE"
+      view: 'CAPTURE_FAILURE'
     },
     {
       name: 'system error',
-      view: "SYSTEM_ERROR"
+      view: 'SYSTEM_ERROR'
     },
     {
       name: 'expired',
@@ -210,19 +198,19 @@ describe('The /confirm endpoint dealt statuses', function () {
     },
     {
       name: 'authorisation success',
-      view: "AUTHORISATION_SUCCESS"
+      view: 'AUTHORISATION_SUCCESS'
     },
     {
       name: 'authorisation rejected',
-      view: "AUTHORISATION_REJECTED"
+      view: 'AUTHORISATION_REJECTED'
     },
     {
       name: 'authorisation ready',
-      view: "AUTHORISATION_READY"
+      view: 'AUTHORISATION_READY'
     },
     {
       name: 'authorisation 3ds required',
-      view: "AUTHORISATION_3DS_REQUIRED"
+      view: 'AUTHORISATION_3DS_REQUIRED'
     },
     {
       name: 'capture error',
@@ -238,44 +226,44 @@ describe('The /confirm endpoint dealt statuses', function () {
     },
     {
       name: 'system cancel ready',
-      view: "SYSTEM_CANCEL_READY"
+      view: 'SYSTEM_CANCEL_READY'
     },
     {
       name: 'system cancel error',
-      view: "SYSTEM_CANCEL_ERROR"
+      view: 'SYSTEM_CANCEL_ERROR'
     },
     {
       name: 'user cancel ready',
-      view: "USER_CANCEL_READY"
+      view: 'USER_CANCEL_READY'
     },
     {
       name: 'user cancel error',
-      view: "USER_CANCEL_ERROR"
+      view: 'USER_CANCEL_ERROR'
     }
-  ];
-  beforeEach(function() {
-    nock.cleanAll();
-  });
+  ]
+  beforeEach(function () {
+    nock.cleanAll()
+  })
 
-  afterEach(function() {
-    nock.cleanAll();
-  });
+  afterEach(function () {
+    nock.cleanAll()
+  })
 
-  confirm_allowed_statuses.forEach(function (state) {
+  confirmAllowedStatuses.forEach(function (state) {
     it('should not error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200,helper.raw_successful_get_charge(
-        state.name,"http://www.example.com/service"
-      ));
+      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+        state.name, 'http://www.example.com/service'
+      ))
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-        .expect(function(res){
-          helper.templateValue(res,"viewName", state.view);
-          if (state.viewState) helper.templateValue(res,"status", state.viewState);
+        .expect(function (res) {
+          helper.templateValue(res, 'viewName', state.view)
+          if (state.viewState) helper.templateValue(res, 'status', state.viewState)
         })
-        .end(done);
-    });
-  });
-});
+        .end(done)
+    })
+  })
+})

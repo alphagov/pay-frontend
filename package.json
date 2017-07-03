@@ -7,17 +7,20 @@
   "engines": {
     "node": ">5.6.0"
   },
-  "jshintConfig": {
-    "node": true,
-    "esversion": 6,
-    "globals": {
-      "describe": false,
-      "it": false,
-      "before": false,
-      "beforeEach": false,
-      "after": false,
-      "afterEach": false
-    }
+  "standard": {
+    "globals": [
+      "describe",
+      "context",
+      "before",
+      "beforeEach",
+      "after",
+      "afterEach",
+      "it",
+      "expect"
+    ],
+    "ignore": [
+      "app/assets/**/*.js"
+    ]
   },
   "scripts": {
     "compile": "grunt generate-assets",
@@ -25,8 +28,8 @@
     "start": "node_modules/forever/bin/forever --minUptime 1000 --spinSleepTime 500 start.js",
     "stop": "node_modules/forever/bin/forever stop start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
-    "test": "grunt lint && npm run grunt-test",
-    "lint": "node ./node_modules/.bin/jshint --verbose ./app/*.js ./test/*.js",
+    "test": "npm run lint && npm run grunt-test",
+    "lint": "standard",
     "grunt-test": "node ./node_modules/.bin/grunt test",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect"
@@ -37,7 +40,6 @@
     "browserify": "14.4.x",
     "change-case": "2.3.x",
     "client-sessions": "0.8.x",
-    "cluster": "0.7.x",
     "compression": "1.6.x",
     "credit-card-type": "5.0.x",
     "csrf": "3.0.x",
@@ -86,7 +88,6 @@
     "grunt-contrib-compress": "1.4.x",
     "grunt-contrib-concat": "1.0.x",
     "grunt-contrib-copy": "1.0.x",
-    "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "1.0.x",
     "grunt-env": "0.4.x",
     "grunt-mocha-test": "^0.13.2",
@@ -96,16 +97,16 @@
     "grunt-rewrite": "1.0.x",
     "grunt-sass": "2.0.x",
     "grunt-text-replace": "0.4.x",
-    "jshint": "latest",
     "mocha": "^3.4.2",
     "mockserver-client": "^1.0.16",
     "mockserver-grunt": "^1.0.41",
     "nock": "^9.0.13",
     "portfinder": "^1.0.13",
-    "superagent": "^3.5.2",
-    "supertest": "^3.0.0",
     "proxyquire": "~1.8.0",
-    "sinon": "~2.3.5"
+    "sinon": "~2.3.5",
+    "standard": "^10.0.2",
+    "superagent": "^3.5.2",
+    "supertest": "^3.0.0"
   },
   "snyk": true
 }
