@@ -78,7 +78,7 @@ describe('checks for PAN-like numbers', () => {
       });
   });
 
-  it('shows an error when a card is submitted with a card holder name containing a suspected CVV', function (done) {
+  it.only('shows an error when a card is submitted with a card holder name containing a suspected CVV', function (done) {
     const chargeId = '23144323';
     const formWithAllFieldsContainingTooManyDigits = {
       'returnUrl': RETURN_URL,
@@ -109,7 +109,8 @@ describe('checks for PAN-like numbers', () => {
         var body = JSON.parse(res.text);
 
         expect(body.highlightErrorFields.cardholderName).to.equal('Enter the name as it appears on the card');
-
+        expect(body.errorFields.length).to.equal(1);
+        expect(body.errorFields[0].value).to.equal('Enter the name as it appears on the card');
         done();
       });
   });
