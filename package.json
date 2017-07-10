@@ -102,10 +102,11 @@
     "mockserver-grunt": "^1.0.41",
     "nock": "^9.0.13",
     "portfinder": "^1.0.13",
-    "superagent": "^3.5.2",
-    "supertest": "^3.0.0",
     "proxyquire": "~1.8.0",
-    "sinon": "~2.3.5"
+    "sass-lint": "^1.10.2",
+    "sinon": "~2.3.5",
+    "superagent": "^3.5.2",
+    "supertest": "^3.0.0"
   },
   "snyk": true
 }
