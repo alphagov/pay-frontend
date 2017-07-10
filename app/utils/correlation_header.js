@@ -1,4 +1,1 @@
-module.exports.CORRELATION_HEADER  = 'x-request-id';
-
-
-
+module.exports.CORRELATION_HEADER = 'x-request-id'

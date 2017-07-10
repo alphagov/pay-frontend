@@ -1,26 +1,26 @@
-const urlParse = require('url');
-const https = require('https');
+const urlParse = require('url')
+const https = require('https')
+const path = require('path')
+const logger = require('winston')
 
-const logger = require('winston');
-
-const customCertificate = require(__dirname + '/custom_certificate');
-const CORRELATION_HEADER_NAME = require(__dirname + '/correlation_header').CORRELATION_HEADER;
+const customCertificate = require(path.join(__dirname, '/custom_certificate'))
+const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
 
 var agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
-};
+}
 
-if (process.env.DISABLE_INTERNAL_HTTPS !== "true") {
-  agentOptions.ca = customCertificate.getCertOptions();
+if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
+  agentOptions.ca = customCertificate.getCertOptions()
 } else {
-  logger.warn('DISABLE_INTERNAL_HTTPS is set.');
+  logger.warn('DISABLE_INTERNAL_HTTPS is set.')
 }
 
 /**
  * @type {https.Agent}
  */
-const agent = new https.Agent(agentOptions);
+const agent = new https.Agent(agentOptions)
 
 /**
  *
@@ -33,12 +33,12 @@ const agent = new https.Agent(agentOptions);
  *
  * @private
  */
-var _request = function request(methodName, url, args, callback) {
-  const parsedUrl = urlParse.parse(url);
-  let headers = {};
+var _request = function request (methodName, url, args, callback) {
+  const parsedUrl = urlParse.parse(url)
+  let headers = {}
 
-  headers["Content-Type"] = "application/json";
-  headers[CORRELATION_HEADER_NAME] = args.correlationId;
+  headers['Content-Type'] = 'application/json'
+  headers[CORRELATION_HEADER_NAME] = args.correlationId
 
   const httpsOptions = {
     hostname: parsedUrl.hostname,
@@ -47,43 +47,42 @@ var _request = function request(methodName, url, args, callback) {
     method: methodName,
     agent: agent,
     headers: headers
-  };
+  }
 
   let req = https.request(httpsOptions, (res) => {
-    let data = '';
+    let data = ''
     res.on('data', (chunk) => {
-      data += chunk;
-    });
+      data += chunk
+    })
 
     res.on('end', () => {
       try {
-        data = JSON.parse(data);
-      } catch(e) {
-        //if response exists but is not parsable, log it and carry on
+        data = JSON.parse(data)
+      } catch (e) {
+        // if response exists but is not parsable, log it and carry on
         if (data) {
-          logger.info('Response from %s in unexpected format: %s', url, data);
+          logger.info('Response from %s in unexpected format: %s', url, data)
         }
-        data = null;
+        data = null
       }
-      callback(data, {statusCode: res.statusCode});
-    });
-  });
+      callback(data, {statusCode: res.statusCode})
+    })
+  })
 
   if (args.data) {
-    req.write(JSON.stringify(args.data));
+    req.write(JSON.stringify(args.data))
   }
 
   req.on('response', (response) => {
     response.on('readable', () => {
-      response.read();
-    });
-  });
+      response.read()
+    })
+  })
 
-  req.end();
+  req.end()
 
-  return req;
-};
-
+  return req
+}
 
 /*
  * @module baseClient
@@ -97,8 +96,8 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  get: function(url, args, callback) {
-    return _request('GET', url, args, callback);
+  get: function (url, args, callback) {
+    return _request('GET', url, args, callback)
   },
 
   /**
@@ -109,8 +108,8 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  post : function (url, args, callback) {
-    return _request('POST', url, args, callback);
+  post: function (url, args, callback) {
+    return _request('POST', url, args, callback)
   },
 
   /**
@@ -121,8 +120,8 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  put: function(url, args, callback) {
-    return _request('PUT', url, args, callback);
+  put: function (url, args, callback) {
+    return _request('PUT', url, args, callback)
   },
 
   /**
@@ -133,8 +132,8 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  patch: function(url, args, callback) {
-    return _request('PATCH', url, args, callback);
+  patch: function (url, args, callback) {
+    return _request('PATCH', url, args, callback)
   },
 
   /**
@@ -145,7 +144,7 @@ module.exports = {
    *
    * @returns {OutgoingMessage}
    */
-  delete: function(url, args, callback) {
-    return _request('DELETE', url, args, callback);
+  delete: function (url, args, callback) {
+    return _request('DELETE', url, args, callback)
   }
-};
+}

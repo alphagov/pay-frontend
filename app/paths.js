@@ -1,12 +1,13 @@
-var _ = require('lodash');
-var generateRoute = require(__dirname + '/utils/generate_route.js');
+var _ = require('lodash')
+var path = require('path')
+var generateRoute = require(path.join(__dirname, '/utils/generate_route.js'))
 
-if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined');
+if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined')
 // please structure each route as follows
 // name: {
 //    path: "/foo"
 //    action: get
-//}
+// }
 // the action while not used directly here is used so we can match to the named
 // routes when we have duplicate paths on different actions
 
@@ -63,70 +64,70 @@ var paths = {
     return: {
       path: '/return/:chargeId',
       action: 'get'
-    },
+    }
   },
   secure: {
     get: {
-      path: "/secure/:chargeTokenId",
+      path: '/secure/:chargeTokenId',
       action: 'get'
     },
     post: {
-      path: "/secure/",
+      path: '/secure/',
       action: 'post'
     }
   },
   static: {
     privacy: {
-      path:"/privacy",
+      path: '/privacy',
       action: 'get'
     },
 
     naxsi_error: {
-      path:"/request-denied",
+      path: '/request-denied',
       action: 'get',
-      message: "An invalid character was entered, please try again"
+      message: 'An invalid character was entered, please try again'
     },
 
     humans: {
-      path:"/humans.txt",
+      path: '/humans.txt',
       action: 'get'
     }
   },
   connectorCharge: {
     show: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId',
       action: 'get'
     },
     updateStatus: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/status",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/status',
       action: 'put'
     },
     capture: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/capture",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/capture',
       action: 'put'
     },
     cancel: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/cancel",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/cancel',
       action: 'post'
     },
     findByToken: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId/charge",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId/charge',
       action: 'get'
     },
     token: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/tokens/:chargeTokenId",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId',
       action: 'delete'
     },
     allCards: {
-      path: process.env.CONNECTOR_HOST + "/v1/api/card-types",
+      path: process.env.CONNECTOR_HOST + '/v1/api/card-types',
       action: 'get'
     },
     threeDs: {
-      path: process.env.CONNECTOR_HOST + "/v1/frontend/charges/:chargeId/3ds",
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/3ds',
       action: 'post'
-    },
+    }
   }
-};
+}
 
 var extendedPaths = _.extend({}, paths, {
   external: {
@@ -137,8 +138,6 @@ var extendedPaths = _.extend({}, paths, {
       }
     }
   }
-});
+})
 
-module.exports = _.extend({}, extendedPaths, {generateRoute: generateRoute(extendedPaths)});
-
-
+module.exports = _.extend({}, extendedPaths, {generateRoute: generateRoute(extendedPaths)})
