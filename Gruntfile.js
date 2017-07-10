@@ -70,7 +70,8 @@ module.exports = function (grunt) {
       files: ['app/assets/**/*'],
       tasks: ['generate-assets'],
       options: {
-        spawn: false
+        spawn: false,
+        livereload: true
       }
     },
     forBrowsifier: {
