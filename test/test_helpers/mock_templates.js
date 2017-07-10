@@ -1,8 +1,8 @@
-function TemplateEngine() {
+function TemplateEngine () {
 }
 
 TemplateEngine.__express = function (templatePath, templateData, next) {
-   next("", JSON.stringify(templateData));
-};
+  next('', JSON.stringify(templateData))
+}
 
-module.exports = TemplateEngine;
+module.exports = TemplateEngine

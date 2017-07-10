@@ -1,94 +1,92 @@
-var request = require('supertest');
-var _       = require('lodash');
+var request = require('supertest')
+var _ = require('lodash')
+var frontendCardDetailsPath = '/card_details'
+var connectorChargePath = '/v1/frontend/charges/'
+var chaiExpect = require('chai').expect
+var csrf = require('csrf')
+var nock = require('nock')
 
-var frontendCardDetailsPath = '/card_details';
+var defaultCorrelationId = 'some-unique-id'
 
-var connectorChargePath = '/v1/frontend/charges/';
-var chai_expect         = require('chai').expect;
-var csrf                = require('csrf');
-var nock                = require('nock');
-
-var defaultCorrelationId = 'some-unique-id';
-
-function localServer() {
-  return process.env.CONNECTOR_HOST;
+function localServer () {
+  return process.env.CONNECTOR_HOST
 }
 
-function connectorChargeUrl(chargeId) {
-  return localServer() + connectorChargePath + chargeId;
+function connectorChargeUrl (chargeId) {
+  return localServer() + connectorChargePath + chargeId
 }
 
-function connectorAuthUrl(chargeId) {
-  return localServer() + connectorChargePath + chargeId + '/cards';
-}
-function connectorCaptureUrl(chargeId) {
-  return localServer() + connectorChargePath + chargeId + '/capture';
+function connectorAuthUrl (chargeId) {
+  return localServer() + connectorChargePath + chargeId + '/cards'
 }
 
-function connector_responds_with(chargeId, charge) {
-  var connectorMock = nock(localServer());
-  connectorMock.get(connectorChargePath + chargeId).reply(200, charge);
+function connectorCaptureUrl (chargeId) {
+  return localServer() + connectorChargePath + chargeId + '/capture'
 }
 
-function init_connector_url() {
-  process.env.CONNECTOR_URL = localServer() + connectorChargePath + '{chargeId}';
+function connectorRespondsWith (chargeId, charge) {
+  var connectorMock = nock(localServer())
+  connectorMock.get(connectorChargePath + chargeId).reply(200, charge)
 }
 
-function cardTypes(){
+function initConnectorUrl () {
+  process.env.CONNECTOR_URL = localServer() + connectorChargePath + '{chargeId}'
+}
+
+function cardTypes () {
   return [
     {
-      brand: "visa",
+      brand: 'visa',
       debit: true,
       credit: true
     },
     {
-      brand: "master-card",
+      brand: 'master-card',
       debit: true,
       credit: true
     },
     {
-      brand: "american-express",
+      brand: 'american-express',
       debit: false,
       credit: true
     },
     {
-      brand: "jcb",
+      brand: 'jcb',
       debit: true,
       credit: true
     },
     {
-      brand: "diners-club",
+      brand: 'diners-club',
       debit: true,
       credit: true
     },
     {
-      brand: "discover",
+      brand: 'discover',
       debit: true,
       credit: true
     }
-  ];
+  ]
 }
 
-function raw_successful_get_charge_debit_card_only(status, returnUrl, chargeId) {
-  var charge = raw_successful_get_charge(status, returnUrl, chargeId);
+function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId) {
+  var charge = rawSuccessfulGetCharge(status, returnUrl, chargeId)
   charge.gateway_account.card_types = [
     {
       'type': 'DEBIT',
       'brand': 'visa',
       'label': 'visa'
     }
-  ];
-  return charge;
+  ]
+  return charge
 }
 
-
-function raw_successful_get_charge(status, returnUrl, chargeId) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId) {
   var charge = {
     'amount': 2345,
-    'description': "Payment Description",
+    'description': 'Payment Description',
     'status': status,
     'return_url': returnUrl,
-    'email': "bob@bob.bob",
+    'email': 'bob@bob.bob',
     'links': [{
       'href': connectorChargeUrl(chargeId),
       'rel': 'self',
@@ -146,8 +144,8 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
         }
       ]
     }
-  };
-  if (status == "AUTHORISATION SUCCESS") {
+  }
+  if (status === 'AUTHORISATION SUCCESS') {
     charge.card_details = {
       'card_brand': 'Visa',
       'cardholder_name': 'Test User',
@@ -163,101 +161,102 @@ function raw_successful_get_charge(status, returnUrl, chargeId) {
       }
     }
   }
-  if (status == "AUTHORISATION 3DS REQUIRED") {
+  if (status === 'AUTHORISATION 3DS REQUIRED') {
     charge.auth_3ds_data = {
       'paRequest': 'aPaRequest',
       'issuerUrl': 'http://issuerUrl.com'
-      }
     }
-  return charge;
+  }
+  return charge
 }
 
 module.exports = {
-  responseTo: function (app, endpoint) {
 
+  responseTo: function (app, endpoint) {
     return {
       contains: function (expectedResponse) {
         return function (done) {
           request(app)
-            .get(endpoint)
-            .set('Accept', 'application/json')
-            .expect(200)
-            .end(function (err, res) {
-              response = JSON.parse(res.text);
-              Object.keys(expectedResponse).map(function (key) {
-                expectedResponse[key].should.equal(response[key]);
-              });
-              done();
-            });
+                        .get(endpoint)
+                        .set('Accept', 'application/json')
+                        .expect(200)
+                        .end(function (err, res) {
+                          if (err) done(err)
+                          var response = JSON.parse(res.text)
+                          Object.keys(expectedResponse).map(function (key) {
+                            expectedResponse[key].should.equal(response[key])
+                          })
+                          done()
+                        })
         }
       }
     }
   },
 
-  get_charge_request: function (app, cookieValue, chargeId, query) {
-    query = query || "";
+  getChargeRequest: function (app, cookieValue, chargeId, query) {
+    query = query || ''
     return request(app)
-      .get(frontendCardDetailsPath + '/' + chargeId + query)
-      .set('Cookie', ['frontend_state=' + cookieValue])
-      .set('Accept', 'application/json')
-      .set('x-request-id',defaultCorrelationId);
+            .get(frontendCardDetailsPath + '/' + chargeId + query)
+            .set('Cookie', ['frontend_state=' + cookieValue])
+            .set('Accept', 'application/json')
+            .set('x-request-id', defaultCorrelationId)
   },
 
-  post_charge_request(app, cookieValue, data, chargeId, sendCSRF=true, query='') {
-  if (sendCSRF) {
-    data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET);
-  }
-  return request(app)
-    .post(frontendCardDetailsPath + "/" + chargeId + query)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Cookie', ['frontend_state=' + cookieValue])
-    .set('Accept', 'application/json')
-    .set('x-request-id','some-unique-id')
-    .send(data);
-},
-
-connector_response_for_put_charge: function (chargeId, statusCode , responseBody, override_url) {
-    init_connector_url();
-    url = (override_url) ? override_url : localServer();
-    var connectorMock = nock(localServer());
-    var mockPath = connectorChargePath + chargeId + '/status';
-    var payload = {'new_status':'ENTERING CARD DETAILS'};
-    connectorMock.put(mockPath, payload).reply(statusCode, responseBody);
+  postChargeRequest (app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
+    if (sendCSRF) {
+      data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET)
+    }
+    return request(app)
+            .post(frontendCardDetailsPath + '/' + chargeId + query)
+            .set('Content-Type', 'application/x-www-form-urlencoded')
+            .set('Cookie', ['frontend_state=' + cookieValue])
+            .set('Accept', 'application/json')
+            .set('x-request-id', 'some-unique-id')
+            .send(data)
   },
 
-  default_connector_response_for_get_charge: function (chargeId, status) {
-    init_connector_url();
-    var returnUrl = 'http://www.example.com/service';
-    raw_response = raw_successful_get_charge(status, returnUrl, chargeId);
-    connector_responds_with(chargeId, raw_response);
+  connectorResponseForPutCharge: function (chargeId, statusCode, responseBody, overrideUrl) {
+    initConnectorUrl()
+    var connectorMock = nock(localServer())
+    var mockPath = connectorChargePath + chargeId + '/status'
+    var payload = {'new_status': 'ENTERING CARD DETAILS'}
+    connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 
-  raw_successful_get_charge: raw_successful_get_charge,
-  raw_successful_get_charge_debit_card_only: raw_successful_get_charge_debit_card_only,
-
-  templateValue: function(res,key,value){
-    var body = JSON.parse(res.text);
-    return chai_expect(_.result(body,key)).to.deep.equal(value);
+  defaultConnectorResponseForGetCharge: function (chargeId, status) {
+    initConnectorUrl()
+    var returnUrl = 'http://www.example.com/service'
+    var rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId)
+    connectorRespondsWith(chargeId, rawResponse)
   },
 
-  templateValueNotUndefined: function(res,key){
-    var body = JSON.parse(res.text);
-    return chai_expect(_.result(body,key)).to.not.be.undefined;
+  rawSuccessfulGetCharge: rawSuccessfulGetCharge,
+
+  rawSuccessfulGetChargeDebitCardOnly: rawSuccessfulGetChargeDebitCardOnly,
+
+  templateValue: function (res, key, value) {
+    var body = JSON.parse(res.text)
+    return chaiExpect(_.result(body, key)).to.deep.equal(value)
   },
 
-  templateValueUndefined: function(res,key){
-    var body = JSON.parse(res.text);
-    return chai_expect(_.result(body,key)).to.be.undefined;
+  templateValueNotUndefined: function (res, key) {
+    var body = JSON.parse(res.text)
+    return chaiExpect(_.result(body, key)).to.not.be.undefined
   },
 
-  unexpectedPromise: function(data){
-    throw new Error('Promise was unexpectedly fulfilled.');
+  templateValueUndefined: function (res, key) {
+    var body = JSON.parse(res.text)
+    return chaiExpect(_.result(body, key)).to.be.undefined
   },
 
-  csrfToken: function(){
-    return csrf().create(process.env.CSRF_USER_SECRET);
+  unexpectedPromise: function (data) {
+    throw new Error('Promise was unexpectedly fulfilled.')
+  },
+
+  csrfToken: function () {
+    return csrf().create(process.env.CSRF_USER_SECRET)
   },
 
   cardTypes: cardTypes
 
-};
+}

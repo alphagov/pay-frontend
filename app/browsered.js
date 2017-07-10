@@ -1,1 +1,1 @@
-module.exports.chargeValidation = require('./utils/charge_validation');
+module.exports.chargeValidation = require('./utils/charge_validation')

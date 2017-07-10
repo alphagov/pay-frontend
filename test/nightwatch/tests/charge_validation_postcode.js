@@ -1,22 +1,22 @@
 module.exports = {
   '@tags': ['chargeValidation', 'chargeValidationCvc'],
-  beforeEach: function(browser){
-    var demoService = browser.page.demo_service();
+  beforeEach: function (browser) {
+    var demoService = browser.page.demo_service()
     demoService.navigate().generateCharge({
       token: process.env.demo_token,
-      description: "hello",
+      description: 'hello',
       amount: 1234,
-      reference: "hi"
-    });
+      reference: 'hi'
+    })
   },
 
   'label gets replaced on invalid': function (browser) {
-    var cardDetails = browser.page.payment_new();
+    var cardDetails = browser.page.payment_new()
     cardDetails
       .setValue('@addressPostcode', 'N4')
-      .click('@expiryYear');
+      .click('@expiryYear')
     cardDetails.expect.element('@addressPostcodeLabel')
-      .text.to.contain('Enter a valid postcode').before(300);
-    browser.end();
-  },
-};
+      .text.to.contain('Enter a valid postcode').before(300)
+    browser.end()
+  }
+}
