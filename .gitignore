@@ -1,5 +1,3 @@
-.nyc_output
-.idea
 .sass-cache
 .DS_Store
 .start.pid
@@ -24,3 +22,7 @@ public/javascripts/browsered.js
 # floobit, intellij plugin used for remote pairing
 .floo
 .flooignore
+
+# nyc/istanbul
+.nyc_output
+coverage
