@@ -1,45 +1,44 @@
 body:not(.js-enabled) .form-group.cvc .hidden {
   display: block;
   visibility: visible;
-  float: left;
   margin-right: 3px;
+  float: left;
 }
 
 body:not(.js-enabled) .form-group.cvc .amex-cvc {
   text-transform: lowercase;
 }
 
-body:not(.js-enabled) .form-group.cvc img.amex-cvc {
+body:not(.js-enabled) .form-group.cvc .amex-cvc {
   margin-left: 10px;
 }
 
-
 .form-group.cvc {
   .cvc {
-    float: left;
     margin-right: $gutter-half;
+    float: left;
   }
 
   img {
-    float: left;
-    max-height: 38px;
     position: relative;
     top: -1px;
+    max-height: 38px;
     margin-right: 15px;
     float: left;
   }
+
   .either {
-    float: left;
-    float: left;
-    line-height: 38px;
     margin-right: 15px;
+    float: left;
     color: $secondary-text-colour;
+    line-height: 38px;
   }
+
   .form-hint {
     overflow: hidden;
   }
 
-  span.generic-cvc {
+  .generic-cvc {
     display: block;
   }
 }

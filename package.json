@@ -103,6 +103,7 @@
     "nock": "^9.0.13",
     "portfinder": "^1.0.13",
     "proxyquire": "~1.8.0",
+    "sass-lint": "^1.10.2",
     "sinon": "~2.3.5",
     "standard": "^10.0.2",
     "superagent": "^3.5.2",
