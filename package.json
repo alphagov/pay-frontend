@@ -28,7 +28,8 @@
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "test": "npm run lint && npm run grunt-test",
     "lint": "standard",
-    "grunt-test": "node ./node_modules/.bin/grunt test",
+    "watch-live-reload": "./node_modules/.bin/grunt watch",
+    "grunt-test": "nyc node ./node_modules/.bin/grunt test",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect"
   },
@@ -99,12 +100,23 @@
     "mockserver-client": "^1.0.16",
     "mockserver-grunt": "^1.0.41",
     "nock": "^9.0.13",
+    "nyc": "^11.0.3",
     "portfinder": "^1.0.13",
     "proxyquire": "~1.8.0",
+    "sass-lint": "^1.10.2",
     "sinon": "~2.3.5",
     "standard": "^10.0.2",
     "superagent": "^3.5.2",
     "supertest": "^3.0.0"
+  },
+  "nyc": {
+    "reporter": "text",
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 85,
+    "statements": 85,
+    "functions": 85,
+    "branches": 85
   },
   "snyk": true
 }

@@ -1,25 +1,26 @@
 @import "colours";
 
 #payment-description {
-  clear: left;
   display: block;
   float: none;
+  clear: left;
   font-weight: bold;
 }
 
-form#card-details {
+#card-details {
   overflow: visible;
 
-  input#card-no {
+  #card-no {
     max-width: 400px;
   }
 
   .card-no-group p {
-    clear: left;
-    @include core-16();
-    color: $secondary-text-colour;
-    margin-bottom: 0;
+    @include core-16;
+
     margin-top: 0;
+    margin-bottom: 0;
+    clear: left;
+    color: $secondary-text-colour;
   }
 
   .expiry-date-label {
@@ -31,8 +32,8 @@ form#card-details {
   }
 
   .address-line-1-label {
-    padding-top: 15px;
     display: block;
+    padding-top: 15px;
   }
 
   #address-line-2 {
@@ -40,24 +41,24 @@ form#card-details {
   }
 
   #submit-card-details {
-    @include core-19();
-    font-weight: normal;
+    @include core-19;
     margin-top: 15px;
+    font-weight: normal;
   }
 }
 
 #cancel-payment {
-  /* Remove all decorations to look like normal text */
-  background: none;
-  border: none;
+  // Remove all decorations to look like normal text
   display: inline;
-  font: inherit;
   margin: 10px 0 0 2px;
   padding: 0;
+  border: 0;
   outline: none;
   outline-offset: 0;
-  /* Additional styles to look like a link */
   color: $link-colour;
-  cursor: pointer;
+  background: none;
+  font: inherit;
+  // Additional styles to look like a link
   text-decoration: underline;
+  cursor: pointer;
 }
