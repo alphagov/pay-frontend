@@ -1,4 +1,6 @@
 var i18n = require('i18n');
+const AWSXRay = require('aws-xray-sdk');
+
 
 var charge = require('./controllers/charge_controller.js');
 var secure = require('./controllers/secure_controller.js');
@@ -61,6 +63,9 @@ module.exports.bind = function (app) {
   app.get(paths.static.privacy.path, statik.privacy);
   app.get(paths.static.humans.path, statik.humans);
   app.all(paths.static.naxsi_error.path, statik.naxsi_error);
+
+  app.use(AWSXRay.express.closeSegment());
+
 
 
 };

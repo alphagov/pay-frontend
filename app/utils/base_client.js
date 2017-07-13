@@ -1,4 +1,6 @@
 const urlParse = require('url');
+const AWSXRay = require('aws-xray-sdk');
+AWSXRay.captureHTTPsGlobal(require('https'));
 const https = require('https');
 
 const logger = require('winston');

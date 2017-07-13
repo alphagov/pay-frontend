@@ -32,7 +32,10 @@
     "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
+    "appmetrics": "1.1.2",
+    "appmetrics-statsd": "1.0.1",
     "array.prototype.find": "2.0.x",
+    "aws-xray-sdk": "^1.1.2",
     "body-parser": "1.17.x",
     "browserify": "14.4.x",
     "change-case": "2.3.x",
@@ -55,20 +58,18 @@
     "moment": "2.18.x",
     "morgan": "1.8.x",
     "node-sass": "4.5.x",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.2.0/pay-product-page-1.2.0.tgz",
     "q": "1.5.x",
     "randomstring": "^1.1.5",
     "readdir": "0.0.x",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.4.3",
+    "snyk": "^1.36.0",
     "staticify": "0.0.7",
     "string": "3.3.x",
     "throng": "4.0.x",
     "uk-postcode": "0.1.x",
-    "winston": "2.3.x",
-    "appmetrics": "1.1.2",
-    "appmetrics-statsd": "1.0.1",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/1.2.0/pay-product-page-1.2.0.tgz",
-    "snyk": "^1.36.0"
+    "winston": "2.3.x"
   },
   "devDependencies": {
     "chai": "^4.0.2",
