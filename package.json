@@ -68,7 +68,7 @@
     "winston": "2.3.x",
     "appmetrics": "1.1.2",
     "appmetrics-statsd": "1.0.1",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.0/pay-product-page-2.0.0.tgz",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.1/pay-product-page-2.0.1.tgz",
     "snyk": "^1.36.0"
   },
   "devDependencies": {
