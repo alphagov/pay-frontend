@@ -44,7 +44,7 @@ var checkCard = function(cardNo,allowed, correlationId) {
       return defer.resolve(cardBrand);
     }).on('error',function(error){
       logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, error);
-      logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime);
+      logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime);
       defer.resolve();
     });
     return defer.promise;
