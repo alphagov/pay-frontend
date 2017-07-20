@@ -38,7 +38,9 @@ var _request = function request (methodName, url, args, callback) {
   let headers = {}
 
   headers['Content-Type'] = 'application/json'
-  headers[CORRELATION_HEADER_NAME] = args.correlationId
+  if (args.correlationId) {
+    headers[CORRELATION_HEADER_NAME] = args.correlationId
+  }
 
   const httpsOptions = {
     hostname: parsedUrl.hostname,
