@@ -28,7 +28,7 @@ var {withAnalyticsError, withAnalytics} = require('../utils/analytics.js');
 
 
 var appendChargeForNewView = function(charge, req, chargeId){
-  var cardModel             = Card(charge.gatewayAccount.cardTypes);
+  var cardModel             = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER]);
   var translation           = i18n.__("chargeController.withdrawalText");
   charge.withdrawalText     = translation[cardModel.withdrawalTypes.join("_")];
   charge.allowedCards       = cardModel.allowed;
@@ -78,7 +78,7 @@ module.exports = {
     var charge    = normalise.charge(req.chargeData, req.chargeId);
     var _views    = views.create();
 
-    var cardModel = Card(req.chargeData.gateway_account.card_types);
+    var cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER]);
     var submitted = charge.status === State.AUTH_READY;
     var authUrl   = normalise.authUrl(charge);
 
