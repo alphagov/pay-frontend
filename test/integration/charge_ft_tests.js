@@ -450,7 +450,7 @@ describe('chargeTests', function () {
           helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
           helper.templateValue(res, 'hasError', true)
           helper.templateValue(res, 'amount', '23.45')
-          helper.templateValue(res, 'withdrawalText', 'accepted credit and debit card types')
+          helper.templateValue(res, 'withdrawalText', 'Accepted credit and debit card types')
           helper.templateValue(res, 'post_cancel_action', '/card_details/23144323/cancel')
           helper.templateValue(res, 'errorFields', [
             {'key': 'cardNo', 'cssKey': 'card-no', 'value': 'Enter a valid card number'},
@@ -653,7 +653,7 @@ describe('chargeTests', function () {
           helper.templateValue(res, 'amount', '23.45')
           helper.templateValue(res, 'description', 'Payment Description')
           helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
-          helper.templateValue(res, 'withdrawalText', 'accepted credit and debit card types')
+          helper.templateValue(res, 'withdrawalText', 'Accepted credit and debit card types')
         })
         .end(done)
     })
