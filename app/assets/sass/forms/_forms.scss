@@ -63,19 +63,24 @@ fieldset {
 
 .date-container {
   float: left;
+
   input {
-    width:60px;
-    float: left;
     display: none;
+    width: 60px;
+    float: left;
   }
 
   .seperator {
     @include core-27();
     margin: 0 17px 0 15px;
     padding: 0;
-    color: $secondary-text-colour;
+    color: $text-colour;
     float: left;
-    line-height: 42px;
+    line-height: 36px;
+
+    @include media(tablet) {
+      line-height: 42px;
+    }
   }
   .form-hint {
     color: $text-colour;
@@ -266,7 +271,7 @@ fieldset {
   @include box-sizing(border-box);
   padding: 4px;
   background-color: $white;
-  border: 2px solid $border-colour;
+  border: 2px solid $text-colour;
 
   // Disable webkit appearance and remove rounded corners
   -webkit-appearance: none;
