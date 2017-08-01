@@ -85,12 +85,12 @@ Enter your card details.
                 <label class="form-hint" for="expiry-month"> Month </label>
                 <input id="expiry-month" type="number" name="expiryMonth"
                 class="form-control"
-                min="1" max="12" />
+                min="1" max="12" minlength="1" maxlength="2"/>
                 <p class="seperator"> / </p>
               </div>
               <div class="date-container">
                 <div class="form-hint"> Year </div>
-                <input id="expiry-year" type="number" name="expiryYear"
+                <input id="expiry-year" type="number" name="expiryYear" minlength="2" maxlength="4"
                 class="form-control"
                 data-last-of-form-group
                 data-required
