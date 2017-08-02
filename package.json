@@ -111,7 +111,7 @@
   },
   "nyc": {
     "reporter": "text",
-    "check-coverage": true,
+    "check-coverage": false,
     "per-file": true,
     "lines": 85,
     "statements": 85,
