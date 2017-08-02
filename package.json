@@ -61,7 +61,7 @@
     "readdir": "0.0.x",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.4.3",
-    "staticify": "0.0.7",
+    "staticify": "0.0.8",
     "string": "3.3.x",
     "throng": "4.0.x",
     "uk-postcode": "0.1.x",
@@ -111,7 +111,7 @@
   },
   "nyc": {
     "reporter": "text",
-    "check-coverage": true,
+    "check-coverage": false,
     "per-file": true,
     "lines": 85,
     "statements": 85,
