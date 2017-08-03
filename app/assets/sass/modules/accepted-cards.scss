@@ -1,28 +1,36 @@
 .accepted-cards {
   display: block;
+  width: 100%;
   margin: 15px 0 10px;
   padding: 0;
   float: none;
   overflow: hidden;
 
-  li {
-    display: block;
-    width: 50px;
-    height: 34px;
-    margin-right: 5px;
-    float: left;
-    background-size: 100%;
+  @include media(tablet) {
+    width: 50%;
   }
 
-  $cards: american-express diners-club discover jcb master-card visa unionpay;
+  li {
+    display: block;
+    width: 10%;
+    height: 0;
+    margin-right: 5px;
+    padding-bottom: 6.5%;
+    float: left;
+    background-image: url("/images/accepted-cards-sprite.png");
+    background-size: 900% 200%;
+  }
+
+  $cards: visa master-card american-express jcb diners-club discover maestro visa-electron unionpay;
   @for $i from 1 through length($cards) {
-    li.#{nth($cards, $i)} {
-      background-image: url("/images/#{nth($cards, $i)}-bw.png");
+    // sass-lint:disable space-around-operator
+    .#{nth($cards, $i)} {
+      background-position: #{12.5 * ($i - 1)}% 100%;
     }
 
-    &.field-empty li.#{nth($cards, $i)},
-    li.#{nth($cards, $i)}.selected {
-      background-image: url("/images/#{nth($cards, $i)}-color.png");
+    &.field-empty .#{nth($cards, $i)},
+    .#{nth($cards, $i)}.selected {
+      background-position: #{12.5 * ($i - 1)}% 0%;
     }
   }
 }
