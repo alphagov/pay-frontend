@@ -131,7 +131,17 @@ module.exports = function (grunt) {
   var browserify = {
     'public/javascripts/browsered.js': ['app/browsered.js'],
     options: {
-      browserifyOptions: { standalone: 'module' }
+      browserifyOptions: {
+        standalone: 'module'
+      },
+      transform: [
+        [
+          'babelify',
+          {
+            presets: ['es2015']
+          }
+        ]
+      ]
     }
   }
 
