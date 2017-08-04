@@ -321,6 +321,16 @@ select.form-control {
 
 
 .confirm-details {
+  border-collapse: collapse;
+
+  tr {
+    border-top: 1px solid $border-colour;
+
+    &:last-child {
+      border-bottom: 1px solid $border-colour;
+    }
+  }
+
   th {
     &:first-child {
       width: $one-third;
