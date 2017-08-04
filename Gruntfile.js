@@ -51,6 +51,24 @@ module.exports = function (grunt) {
         src: ['**', '!package.json'],
         dest: 'public'
       }]
+    },
+    accessibleAutocompleteCSS: {
+      files: [{
+        expand: true,
+        cwd: 'node_modules/accessible-autocomplete/dist',
+        src: ['accessible-autocomplete.min.css'],
+        dest: 'govuk_modules/accessible-autocomplete/'
+      }]
+    }
+  }
+
+  var cssmin = {
+    target: {
+      files: {
+        'public/stylesheets/application.min.css': [
+          'public/stylesheets/application.css', 'govuk_modules/accessible-autocomplete/accessible-autocomplete.min.css'
+        ]
+      }
     }
   }
 
@@ -201,11 +219,13 @@ module.exports = function (grunt) {
     browserify: browserify,
     concat: concat,
     rewrite: rewrite,
-    compress: compress
+    compress: compress,
+    cssmin: cssmin
   });
 
   [
     'grunt-contrib-copy',
+    'grunt-contrib-cssmin',
     'grunt-contrib-compress',
     'grunt-contrib-watch',
     'grunt-contrib-clean',
@@ -243,7 +263,8 @@ module.exports = function (grunt) {
     'browserify',
     'concat',
     'rewrite',
-    'compress'
+    'compress',
+    'cssmin'
   ])
 
   grunt.registerTask('test', ['env:test', 'mochaTest'])
