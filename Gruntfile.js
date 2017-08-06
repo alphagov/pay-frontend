@@ -130,6 +130,7 @@ module.exports = function (grunt) {
       src: [
         'test/*.js',
         'test/unit/*.js',
+        'test/unit/clients/*.js',
         'test/services/*.js',
         'test/models/*.js',
         'test/utils/*.js',

@@ -66,6 +66,7 @@
     "q": "1.5.x",
     "randomstring": "^1.1.5",
     "readdir": "0.0.x",
+    "requestretry": "^1.12.0",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.4.3",
     "snyk": "^1.36.0",
@@ -108,13 +109,16 @@
     "mockserver-grunt": "^1.0.41",
     "nock": "^9.0.13",
     "nyc": "^11.0.3",
+    "@pact-foundation/pact-node": "4.6.0",
     "portfinder": "^1.0.13",
     "proxyquire": "~1.8.0",
     "sass-lint": "^1.10.2",
-    "sinon": "~2.3.5",
+    "should": "^11.2.1",
+    "sinon": "^2.3.5",
     "standard": "^10.0.2",
     "superagent": "^3.5.2",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "pact": "1.0.0"
   },
   "nyc": {
     "reporter": "text",
