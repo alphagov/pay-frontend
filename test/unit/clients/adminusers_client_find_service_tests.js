@@ -39,15 +39,15 @@ describe('adminusers client - services API', function () {
   })
 
   describe('service GET API', function () {
-    let serviceExternalId = 'randomId'
-    let getServiceResponse = serviceFixtures.validServiceResponse({external_id: serviceExternalId})
-
     context('GET service - success', () => {
+      let serviceExternalId = 'random-id'
+      let getServiceResponse = serviceFixtures.validServiceResponse({external_id: serviceExternalId})
+
       beforeEach((done) => {
         adminUsersMock.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}/${serviceExternalId}`)
             .withState('a service exists with the given id')
-            .withUponReceiving('a valid get service users request')
+            .withUponReceiving('a valid get service request')
             .withResponseBody(getServiceResponse.getPactified())
             .withStatusCode(200)
             .build()
@@ -61,6 +61,107 @@ describe('adminusers client - services API', function () {
       it('should return service successfully', function (done) {
         adminusersClient.getServiceById(serviceExternalId).should.be.fulfilled.then(service => {
           expect(service.externalId).to.be.equal(serviceExternalId)
+        }).should.notify(done)
+      })
+    })
+
+    context('GET service - not found', function () {
+      let serviceExternalId = 'non-existent-random-id'
+
+      beforeEach((done) => {
+        adminUsersMock.addInteraction(
+          new PactInteractionBuilder(`${SERVICES_PATH}/${serviceExternalId}`)
+            .withState('a service does not exists with the given id')
+            .withUponReceiving('a valid get service request')
+            .withStatusCode(404)
+            .build()
+        ).then(() => done())
+      })
+
+      afterEach((done) => {
+        adminUsersMock.finalize().then(() => done())
+      })
+
+      it('should error 404', function (done) {
+        adminusersClient.getServiceById(serviceExternalId).should.be.rejected.should.notify(done)
+      })
+    })
+  })
+
+  describe('service FIND by gateway account id API', function () {
+    context('FIND service by gateway account id - success', function () {
+      let gatewayAccountId = '101'
+      let getServiceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]})
+
+      beforeEach((done) => {
+        adminUsersMock.addInteraction(
+          new PactInteractionBuilder(`${SERVICES_PATH}`)
+            .withQuery({gatewayAccountId: gatewayAccountId})
+            .withState('a service exists with the given gateway account id association')
+            .withUponReceiving('a valid find service request')
+            .withResponseBody(getServiceResponse.getPactified())
+            .withStatusCode(200)
+            .build()
+        ).then(() => done())
+      })
+
+      afterEach((done) => {
+        adminUsersMock.finalize().then(() => done())
+      })
+
+      it('should return service successfully', function (done) {
+        adminusersClient.findServiceBy({gatewayAccountId: gatewayAccountId}).should.be.fulfilled.then(service => {
+          expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
+        }).should.notify(done)
+      })
+    })
+
+    context('FIND service by gateway account id - bad request', function () {
+      let invalidGatewayAccountId = 'not-a-number'
+
+      beforeEach((done) => {
+        adminUsersMock.addInteraction(
+          new PactInteractionBuilder(`${SERVICES_PATH}`)
+            .withQuery({gatewayAccountId: invalidGatewayAccountId})
+            .withState('a service exists with the given gateway account id association')
+            .withUponReceiving('an invalid find service request')
+            .withStatusCode(400)
+            .build()
+        ).then(() => done())
+      })
+
+      afterEach((done) => {
+        adminUsersMock.finalize().then(() => done())
+      })
+
+      it('error 400', function (done) {
+        adminusersClient.findServiceBy({gatewayAccountId: invalidGatewayAccountId}).should.be.rejected.then(response => {
+          expect(response.errorCode).to.be.equal(400)
+        }).should.notify(done)
+      })
+    })
+
+    context('FIND service by gateway account id - not found', function () {
+      let nonAssociatedGatewayAccountId = '999'
+
+      beforeEach((done) => {
+        adminUsersMock.addInteraction(
+          new PactInteractionBuilder(`${SERVICES_PATH}`)
+            .withQuery({gatewayAccountId: nonAssociatedGatewayAccountId})
+            .withState('a service with given gateway account id does not exist')
+            .withUponReceiving('a valid find service request')
+            .withStatusCode(404)
+            .build()
+        ).then(() => done())
+      })
+
+      afterEach((done) => {
+        adminUsersMock.finalize().then(() => done())
+      })
+
+      it('error 400', function (done) {
+        adminusersClient.findServiceBy({gatewayAccountId: nonAssociatedGatewayAccountId}).should.be.rejected.then(response => {
+          expect(response.errorCode).to.be.equal(404)
         }).should.notify(done)
       })
     })

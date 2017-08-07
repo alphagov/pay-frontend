@@ -11,7 +11,7 @@ const SERVICE_NAME = 'adminusers'
 module.exports = function (clientOptions = {}) {
   const baseUrl = clientOptions.baseUrl || process.env.ADMINUSERS_URL
   const correlationId = clientOptions.correlationId || ''
-  const serviceResource = `${baseUrl}/v1/api/services`
+  const servicesResource = `${baseUrl}/v1/api/services`
 
   /**
    *
@@ -22,7 +22,7 @@ module.exports = function (clientOptions = {}) {
     const params = {
       correlationId: correlationId
     }
-    const url = `${serviceResource}/${serviceExternalId}`
+    const url = `${servicesResource}/${serviceExternalId}`
     const defer = q.defer()
     const startTime = new Date()
     const context = {
@@ -57,7 +57,7 @@ module.exports = function (clientOptions = {}) {
       }
     }
 
-    const url = `${serviceResource}`
+    const url = `${servicesResource}`
     const defer = q.defer()
     const startTime = new Date()
     const context = {

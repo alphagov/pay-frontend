@@ -47,6 +47,11 @@ class PactInteractionBuilder {
     return this
   }
 
+  withQuery (queryStringObject) {
+    this.query = queryStringObject
+    return this
+  }
+
   build () {
     let pact = {
       state: this.state,

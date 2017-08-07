@@ -71,6 +71,10 @@ const _request = function request (methodName, url, args, callback) {
     requestOptions.body = args.payload
   }
 
+  if (args.qs) {
+    requestOptions.qs = args.qs
+  }
+
   return client(requestOptions, callback)
 }
 
