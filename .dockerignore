@@ -1,6 +1,10 @@
 node_modules
 govuk_modules
 public
+.git
+.gihub
+coverage
+.nyc_output
 .settings
 .project
 *.log
