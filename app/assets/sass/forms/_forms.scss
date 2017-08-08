@@ -318,8 +318,6 @@ select.form-control {
   }
 }
 
-
-
 .confirm-details {
   border-collapse: collapse;
 
@@ -340,5 +338,12 @@ select.form-control {
 
   @include media(tablet) {
     width: $two-thirds;
+  }
+}
+
+#address-country-lbl {
+  width: 100%;
+  @include media(tablet) {
+    width: 50%;
   }
 }
