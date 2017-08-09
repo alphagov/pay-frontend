@@ -26,3 +26,4 @@ public/javascripts/browsered.js
 # nyc/istanbul
 .nyc_output
 coverage
+pacts
