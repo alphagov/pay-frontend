@@ -11,6 +11,7 @@ var showCardType = function(){
   validations       = module.chargeValidation(i18n.chargeController.fieldErrors,console,window.Card);
   var cardValidation    = validations.creditCardType,
   cardTypes         = validations.allowedCards,
+  cvcInput          = form.find('#cvc'),
   amexCvcTip        = form.find('.amex-cvc'),
   genericCvcTip     = form.find('.generic-cvc');
 
@@ -18,6 +19,9 @@ var showCardType = function(){
     cardInput
       .on('blur',unselectIfNotAvailable)
       .on('keyup',showCardType);
+
+    cvcInput
+      .on('input', cvcTrim)
   },
 
   unselectIfNotAvailable = function(){
@@ -36,9 +40,11 @@ var showCardType = function(){
     checkAllowed(cardType);
     checkNumeric($(this).val(), number);
     cvcHighlight(); // to reset
+    cvcLength();
     if (cardType.length !== 1) return;
     cvcHighlight(cardType[0].type);
     selectCard(cardType[0].type);
+    cvcLength(cardType[0].type);
   },
 
   getCardType = function(){
@@ -93,6 +99,21 @@ var showCardType = function(){
     amexCvcTip.toggleClass('hidden',!isAmex);
     genericCvcTip.toggleClass('hidden',isAmex);
   },
+
+  cvcLength = function(type){
+    var isAmex = type === 'american-express';
+    if (isAmex) {
+      cvcInput.attr('maxlength', 4)
+    } else {
+      cvcInput.attr('maxlength', 3)
+    }
+  },
+
+  cvcTrim = function(){
+    if (this.value.length > this.maxLength) {
+      this.value = this.value.slice(0, this.maxLength);
+    }
+  }
 
   getSupportedChargeType = function(name){
     var card =  cards.filter('.' + name).first();
