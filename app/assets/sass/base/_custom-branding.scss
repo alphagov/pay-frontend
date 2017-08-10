@@ -1,0 +1,59 @@
+@import "colours";
+@import "conditionals";
+
+// CUSTOM BRANDING
+// Use the variables below to control the style
+// Make sure banner colours meet minimum colour contrast levels
+
+$custom-banner-colour: #98283a;
+$custom-banner-border-colour: #ffffff;
+$custom-text-colour: #ffffff;
+$logo-image: true;
+$logo-image-height: 2em;
+
+.custom-branding {
+  &#global-header,
+  &#global-header .header-wrapper {
+    position: relative;
+    background-color: $custom-banner-colour;
+
+    #logo {
+      color: $custom-text-colour;
+
+      @if $logo-image == true {
+        background-image: none;
+
+        img {
+          visibility: visible;
+          max-height: $logo-image-height;
+          margin: 5px 0;
+        }
+      }
+    }
+
+    &+#global-header-bar {
+      height: 4px;
+      background-color: $custom-banner-border-colour;
+    }
+
+    .header-proposition {
+      #proposition-name {
+        color: $custom-text-colour;
+      }
+    }
+    #proposition-menu {
+      @include media(desktop) {
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+    }
+  }
+  .header-logo {
+    display: none;
+
+    &--custom {
+      display: block;
+    }
+  }
+}

@@ -5,11 +5,20 @@
   {{>includes/analytics}}
 {{/head}}
 
+{{$globalHeaderText}}{{/globalHeaderText}}
+{{$insideHeader}}
+<div class="header-logo header-logo--custom">
+  <a href="{{$homepageUrl}}https://www.gov.uk{{/homepageUrl}}" title="" id="logo" class="content">
+    <img src="https://i.imgur.com/GeCO3Qo.jpg" alt=""> {{$globalHeaderText}}GOV.UK{{/globalHeaderText}}
+  </a>
+</div>
+{{/insideHeader}}
+
 {{$propositionHeader}}
   {{>includes/propositional_navigation}}
 {{/propositionHeader}}
 
-{{$headerClass}}with-proposition{{/headerClass}}
+{{$headerClass}}with-proposition custom-branding{{/headerClass}}
 
 {{$bodyEnd}}
   {{>includes/scripts}}
