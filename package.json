@@ -62,7 +62,7 @@
     "moment": "2.18.x",
     "morgan": "1.8.x",
     "node-sass": "4.5.x",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.5/pay-product-page-2.0.5.tgz",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.6/pay-product-page-2.0.6.tgz",
     "q": "1.5.x",
     "randomstring": "^1.1.5",
     "readdir": "0.0.x",
