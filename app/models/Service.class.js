@@ -21,7 +21,11 @@ class Service {
     this.externalId = serviceData.external_id
     this.name = serviceData.name
     this.gatewayAccountIds = serviceData.gateway_account_ids
-    this.customBranding = serviceData.custom_branding
+    this.customBranding =
+      serviceData.custom_branding ? {
+        cssUrl: serviceData.custom_branding.css_url,
+        imageUrl: serviceData.custom_branding.image_url
+      } : undefined
   }
 
   /**
@@ -33,7 +37,10 @@ class Service {
       external_id: this.externalId,
       name: this.name,
       gateway_account_ids: this.gatewayAccountIds,
-      custom_branding: this.custom_branding
+      custom_branding: this.customBranding ? {
+        css_url: this.customBranding.cssUrl,
+        image_url: this.customBranding.imageUrl
+      } : undefined
     }
   }
 
