@@ -39,7 +39,7 @@ module.exports = function (grunt) {
       },
       {
         expand: true,
-        cwd: 'node_modules/govuk_template_mustache/',
+        cwd: 'node_modules/govuk_template_mustache_inheritance/',
         src: '**',
         dest: 'govuk_modules/govuk_template/'
       }]
@@ -245,21 +245,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks(task)
   })
 
-  grunt.registerTask(
-    'convert_template',
-    'Converts the govuk_template to use mustache inheritance',
-    function () {
-      var script = require(path.join(__dirname, '/lib/template-conversion.js'))
-
-      script.convert()
-      grunt.log.writeln('govuk_template converted')
-    }
-  )
-
   grunt.registerTask('generate-assets', [
     'clean',
     'copy',
-    'convert_template',
     'replace',
     'sass',
     'browserify',

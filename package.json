@@ -50,7 +50,7 @@
     "express": "4.15.x",
     "forever": "0.15.x",
     "govuk_frontend_toolkit": "6.0.x",
-    "govuk_template_mustache": "0.22.x",
+    "govuk_template_mustache_inheritance": "https://github.com/jonheslop/govuk_template/releases/download/v0.22.4/mustache_inheritance_govuk_template-0.22.3.tgz",
     "hogan.js": "3.0.x",
     "humps": "^2.0.1",
     "i18n": "0.8.x",

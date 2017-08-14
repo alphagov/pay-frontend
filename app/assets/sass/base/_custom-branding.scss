@@ -12,8 +12,8 @@ $logo-image: true;
 $logo-image-height: 2em;
 
 .custom-branding {
-  &#global-header,
-  &#global-header .header-wrapper {
+  #global-header,
+  #global-header .header-wrapper {
     position: relative;
     background-color: $custom-banner-colour;
 
@@ -41,6 +41,7 @@ $logo-image-height: 2em;
         color: $custom-text-colour;
       }
     }
+
     #proposition-menu {
       @include media(desktop) {
         position: absolute;
@@ -49,11 +50,17 @@ $logo-image-height: 2em;
       }
     }
   }
+
   .header-logo {
     display: none;
 
     &--custom {
       display: block;
     }
+  }
+
+  .button {
+    padding: 7px 15px 6px;
+    padding: .368421053em .842105263em .315789474em;
   }
 }
