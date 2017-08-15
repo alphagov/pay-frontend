@@ -16,7 +16,7 @@ module.exports = (function () {
 
   var userCancelled = {
     view: 'user_cancelled',
-    locals: { status: 'successful' },
+    locals: {status: 'successful'},
     analyticsPage: '/user_cancelled'
   }
 
@@ -98,7 +98,7 @@ module.exports = (function () {
       code: 200,
       view: 'plain_message',
       locals: {
-        message: "GOV.UK Payments is built by a team at the Government Digital Service in London. If you'd like to join us, see https://gds.blog.gov.uk/jobs"
+        message: 'GOV.UK Payments is built by a team at the Government Digital Service in London. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'
       }
     },
 
@@ -205,16 +205,22 @@ module.exports = (function () {
       locals.viewName = resName
       if (!action) {
         logger.error('VIEW ' + resName + ' NOT FOUND')
-        locals = { viewName: 'error' }
+        locals = {viewName: 'error'}
         action = this.ERROR
       }
       locals = (action.locals) ? _.merge({}, action.locals, locals) : locals
+
+      if (_.get(res.locals, 'service.hasCustomBranding', false)) {
+        locals.customBrandingCssPath = _.get(res.locals, 'service.customBranding.cssUrl')
+        locals.customBrandingImagePath = _.get(res.locals, 'service.customBranding.imageUrl')
+      }
 
       if (_.get(locals, 'analytics.path')) {
         locals.analytics.path = locals.analytics.path + _.get(action, 'analyticsPage', '')
       }
       status = (action.code) ? action.code : 200
       res.status(status)
+      console.log(`${action.view} ... ${JSON.stringify(locals)}`)
       res.render(action.view, locals)
     }
   }

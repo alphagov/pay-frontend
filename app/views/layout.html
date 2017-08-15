@@ -7,11 +7,14 @@
 
 {{$globalHeaderText}}{{/globalHeaderText}}
 {{$insideHeader}}
+
+{{#customBrandingImagePath}}
 <div class="header-logo header-logo--custom">
   <a href="{{$homepageUrl}}https://www.gov.uk{{/homepageUrl}}" title="" id="logo" class="content">
-    <img src="https://i.imgur.com/GeCO3Qo.jpg" alt=""> {{$globalHeaderText}}GOV.UK{{/globalHeaderText}}
+    <img src="{{customBrandingImagePath}}" class="custom-branding-image" alt=""> {{$globalHeaderText}}GOV.UK{{/globalHeaderText}}
   </a>
 </div>
+{{/customBrandingImagePath}}
 {{/insideHeader}}
 
 {{$propositionHeader}}
