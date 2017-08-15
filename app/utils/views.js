@@ -220,7 +220,6 @@ module.exports = (function () {
       }
       status = (action.code) ? action.code : 200
       res.status(status)
-      console.log(`${action.view} ... ${JSON.stringify(locals)}`)
       res.render(action.view, locals)
     }
   }

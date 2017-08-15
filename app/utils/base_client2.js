@@ -19,16 +19,13 @@ function retryOnEconnreset (err) {
   return err && _.includes(RETRIABLE_ERRORS, err.code)
 }
 
-/**
- * @type {https.Agent}
- */
-const httpsAgent = new https.Agent(agentOptions)
-
 if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
-  httpsAgent.ca = customCertificate.getCertOptions()
+  agentOptions.ca = customCertificate.getCertOptions()
 } else {
   logger.warn('DISABLE_INTERNAL_HTTPS is set.')
 }
+
+const httpsAgent = new https.Agent(agentOptions)
 
 const client = request
   .defaults({
