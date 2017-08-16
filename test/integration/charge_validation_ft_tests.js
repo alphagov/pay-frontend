@@ -1,28 +1,28 @@
-var nock = require('nock')
-var app = require('../../server.js').getApp
-var mockTemplates = require('../test_helpers/mock_templates.js')
+const nock = require('nock')
+const app = require('../../server.js').getApp
+const mockTemplates = require('../test_helpers/mock_templates.js')
 app.engine('html', mockTemplates.__express)
-var expect = require('chai').expect
-var State = require('../../app/models/state.js')
+const expect = require('chai').expect
+const State = require('../../app/models/state.js')
+const cookie = require('../test_helpers/session.js')
 
-var cookie = require('../test_helpers/session.js')
+let {postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
 
-var {postChargeRequest, defaultConnectorResponseForGetCharge} = require('../test_helpers/test_helpers.js')
-
-var defaultCardID = function () {
+let defaultCardID = function () {
   nock(process.env.CARDID_HOST)
     .post('/v1/api/card', () => {
       return true
     })
     .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
 }
-var localServer = process.env.CONNECTOR_HOST
+let localServer = process.env.CONNECTOR_HOST
 
-var connectorChargePath = '/v1/frontend/charges/'
-var chargeId = '23144323'
-var RETURN_URL = 'http://www.example.com/service'
+const connectorChargePath = '/v1/frontend/charges/'
+const chargeId = '23144323'
+const gatewayAccountId = '12345'
+const RETURN_URL = 'http://www.example.com/service'
 
-var connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards'
+const connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards'
 describe('checks for PAN-like numbers', () => {
   beforeEach(function () {
     nock.cleanAll()
@@ -49,14 +49,14 @@ describe('checks for PAN-like numbers', () => {
     const cookieValue = cookie.create(chargeId, {})
 
     defaultCardID('4242424242424242')
-    defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS)
-
+    defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
+    defaultAdminusersResponseForGetService(gatewayAccountId)
     postChargeRequest(app, cookieValue, formWithAllFieldsContainingTooManyDigits, chargeId)
       .expect(200)
       .end((err, res) => {
         if (err) return done(err)
 
-        var body = JSON.parse(res.text)
+        let body = JSON.parse(res.text)
 
         expect(body.highlightErrorFields.cardholderName).to.equal('Enter the name as it appears on the card')
         expect(body.highlightErrorFields.addressLine1).to.equal('Enter a valid billing address')
@@ -90,14 +90,15 @@ describe('checks for PAN-like numbers', () => {
     const cookieValue = cookie.create(chargeId, {})
 
     defaultCardID('4242424242424242')
-    defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS)
+    defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
+    defaultAdminusersResponseForGetService(gatewayAccountId)
 
     postChargeRequest(app, cookieValue, formWithAllFieldsContainingTooManyDigits, chargeId)
       .expect(200)
       .end((err, res) => {
         if (err) return done(err)
 
-        var body = JSON.parse(res.text)
+        let body = JSON.parse(res.text)
 
         expect(body.highlightErrorFields.cardholderName).to.equal('Enter the name as it appears on the card')
         expect(body.errorFields.length).to.equal(1)

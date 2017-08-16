@@ -11,6 +11,7 @@ var {csrfCheck, csrfTokenGeneration} = require(path.join(__dirname, '/middleware
 var actionName = require(path.join(__dirname, '/middleware/action_name.js'))
 var stateEnforcer = require(path.join(__dirname, '/middleware/state_enforcer.js'))
 var retrieveCharge = require(path.join(__dirname, '/middleware/retrieve_charge.js'))
+const resolveService = require(path.join(__dirname, '/middleware/resolve_service.js'))
 
 module.exports.paths = paths
 
@@ -35,7 +36,8 @@ module.exports.bind = function (app) {
     csrfTokenGeneration,
     actionName,
     retrieveCharge,
-    stateEnforcer
+    stateEnforcer,
+    resolveService
   ]
 
   app.get(card.new.path, middlewareStack, charge.new)
