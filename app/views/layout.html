@@ -1,18 +1,33 @@
 {{< govuk_template}}
 
 {{$head}}
-{{>includes/head}}
-{{>includes/analytics}}
+  {{>includes/head}}
+  {{>includes/analytics}}
 {{/head}}
 
+{{$globalHeaderText}}GOV.UK{{/globalHeaderText}}
+{{$insideHeader}}
+
+{{#customBrandingImagePath}}
+<div class="header-logo header-logo--custom">
+  <a href="{{$homepageUrl}}https://www.gov.uk{{/homepageUrl}}" title="" id="logo" class="content">
+    <img src="{{customBrandingImagePath}}" class="custom-branding-image" alt=""> {{$globalHeaderText}}{{/globalHeaderText}}
+  </a>
+</div>
+{{$fontsCSS}}
+{{/fontsCSS}}
+{{/customBrandingImagePath}}
+{{/insideHeader}}
+
 {{$propositionHeader}}
-{{>includes/propositional_navigation}}
+  {{>includes/propositional_navigation}}
 {{/propositionHeader}}
 
+{{$bodyClasses}}custom-branding{{/bodyClasses}}
 {{$headerClass}}with-proposition{{/headerClass}}
 
 {{$bodyEnd}}
-{{>includes/scripts}}
+  {{>includes/scripts}}
 {{/bodyEnd}}
 {{$footerSupportLinks}}
 <ul><li><a href="/privacy">Privacy policy</a></li></ul>
