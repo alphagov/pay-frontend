@@ -3,6 +3,7 @@
 .start.pid
 .project
 .settings
+.tmp
 .start.pid
 public
 govuk_modules
