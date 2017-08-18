@@ -1,13 +1,13 @@
 var path = require('path')
-// const _ = require('lodash')
+const _ = require('lodash')
 var renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions.js')).render
 var cheerio = require('cheerio')
 var should = require('chai').should() // eslint-disable-line
 
-// const customBranding = {
-//   customBrandingCssPath: 'css url',
-//   customBrandingImagePath: 'image url'
-// }
+const customBranding = {
+  customBrandingCssPath: 'css url',
+  customBrandingImagePath: 'image url'
+}
 
 describe('The charge view', function () {
   it('should render the amount', function () {
@@ -56,17 +56,17 @@ describe('The charge view', function () {
     body.should.not.containSelector('.custom-branding-image')
   })
 
-  // it('should display custom branding', () => {
-  //   const templateData = _.merge('charge', {'id': '1234'}, customBranding)
-  //   const body = renderTemplate('charge', templateData)
-  //   body.should.containSelector('.custom-branding-image')
-  //
-  //   const $ = cheerio.load(body)
-  //   const customBrandingCssUrl = $('link').filter((i, el) => {
-  //     return $(el).attr('href') === 'css url'
-  //   }).attr('href')
-  //   customBrandingCssUrl.should.equal('css url')
-  // })
+  it('should display custom branding', () => {
+    const templateData = _.merge('charge', {'id': '1234'}, customBranding)
+    const body = renderTemplate('charge', templateData)
+    body.should.containSelector('.custom-branding-image')
+
+    const $ = cheerio.load(body)
+    const customBrandingCssUrl = $('link').filter((i, el) => {
+      return $(el).attr('href') === 'css url'
+    }).attr('href')
+    customBrandingCssUrl.should.equal('css url')
+  })
 
   it('should populate form data if reserved in response', function () {
     var responseData = {
@@ -113,17 +113,17 @@ describe('The confirm view', function () {
     body.should.containSelector('#address').withText('1 street lane, avenue city, AB1 3DF')
   })
 
-  // it('should display custom branding', () => {
-  //   const templateData = _.merge(successTemplateData, customBranding)
-  //   var body = renderTemplate('confirm', templateData)
-  //   body.should.containSelector('.custom-branding-image')
-  //
-  //   var $ = cheerio.load(body)
-  //   const customBrandingCssUrl = $('link').filter((i, el) => {
-  //     return $(el).attr('href') === 'css url'
-  //   }).attr('href')
-  //   customBrandingCssUrl.should.equal('css url')
-  // })
+  it('should display custom branding', () => {
+    const templateData = _.merge(successTemplateData, customBranding)
+    var body = renderTemplate('confirm', templateData)
+    body.should.containSelector('.custom-branding-image')
+
+    var $ = cheerio.load(body)
+    const customBrandingCssUrl = $('link').filter((i, el) => {
+      return $(el).attr('href') === 'css url'
+    }).attr('href')
+    customBrandingCssUrl.should.equal('css url')
+  })
 
   it('should render a confirm button', function () {
     var body = renderTemplate('confirm', {confirmPath: '/card_details/123/confirm', 'charge': {id: 1234}})
