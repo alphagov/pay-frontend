@@ -211,8 +211,7 @@ module.exports = (function () {
       locals = (action.locals) ? _.merge({}, action.locals, locals) : locals
 
       if (_.get(res.locals, 'service.hasCustomBranding', false)) {
-        locals.customBrandingCssPath = _.get(res.locals, 'service.customBranding.cssUrl')
-        locals.customBrandingImagePath = _.get(res.locals, 'service.customBranding.imageUrl')
+        locals.customBranding = _.get(res.locals, 'service.customBranding')
       }
 
       if (_.get(locals, 'analytics.path')) {

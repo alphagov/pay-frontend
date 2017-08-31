@@ -4,9 +4,11 @@ var renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions
 var cheerio = require('cheerio')
 var should = require('chai').should() // eslint-disable-line
 
-const customBranding = {
-  customBrandingCssPath: 'css url',
-  customBrandingImagePath: 'image url'
+const customBrandingData = {
+  customBranding: {
+    cssUrl: 'css url',
+    imageUrl: 'image url'
+  }
 }
 
 describe('The charge view', function () {
@@ -56,8 +58,8 @@ describe('The charge view', function () {
     body.should.not.containSelector('.custom-branding-image')
   })
 
-  it('should display custom branding', () => {
-    const templateData = _.merge('charge', {'id': '1234'}, customBranding)
+  it.only('should display custom branding', () => {
+    const templateData = _.merge('charge', {'id': '1234'}, customBrandingData)
     const body = renderTemplate('charge', templateData)
     body.should.containSelector('.custom-branding-image')
 
@@ -114,7 +116,7 @@ describe('The confirm view', function () {
   })
 
   it('should display custom branding', () => {
-    const templateData = _.merge(successTemplateData, customBranding)
+    const templateData = _.merge(successTemplateData, customBrandingData)
     var body = renderTemplate('confirm', templateData)
     body.should.containSelector('.custom-branding-image')
 
