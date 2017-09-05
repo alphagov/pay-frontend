@@ -25,7 +25,7 @@
   "scripts": {
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
-    "start": "node_modules/forever/bin/forever --minUptime 1000 --spinSleepTime 500 start.js",
+    "start": "AWS_XRAY_DEBUG_MODE=TRUE AWS_XRAY_DAEMON_ADDRESS=172.17.0.1:2000 AWS_XRAY_TRACING_NAME=FRONTENT node_modules/forever/bin/forever --minUptime 1000 --spinSleepTime 500 start.js",
     "stop": "node_modules/forever/bin/forever stop start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "test": "npm run lint && npm run grunt-test",
@@ -40,6 +40,7 @@
     "appmetrics": "1.1.2",
     "appmetrics-statsd": "1.0.1",
     "array.prototype.find": "2.0.x",
+    "aws-xray-sdk": "^1.1.4",
     "body-parser": "1.17.x",
     "change-case": "2.3.x",
     "client-sessions": "0.8.x",
