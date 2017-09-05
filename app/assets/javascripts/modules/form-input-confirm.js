@@ -44,5 +44,5 @@ var confirmInput = function() {
     }
   };
 
-  $inputs.on('change', update);
+  $inputs.on('input', update);
 };
