@@ -19,6 +19,14 @@ var staticify = require('staticify')(path.join(__dirname, 'public'))
 var compression = require('compression')
 var oneYear = 86400000 * 365
 var publicCaching = {maxAge: oneYear}
+var AWSXRay = require('aws-xray-sdk')
+AWSXRay.middleware.setSamplingRules('sampling-rules.json')
+
+// AWS - X-RAY
+// AWS - X-RAY
+app.use(AWSXRay.express.openSegment('defaultName'))
+// AWS - X-RAY
+// AWS - X-RAY
 
 i18n.configure({
   locales: ['en'],
@@ -96,6 +104,12 @@ function start () {
 if (argv.i) {
   start()
 }
+
+// AWS - X-RAY
+// AWS - X-RAY
+app.use(AWSXRay.express.closeSegment())
+// AWS - X-RAY
+// AWS - X-RAY
 
 module.exports = {
   start: start,
