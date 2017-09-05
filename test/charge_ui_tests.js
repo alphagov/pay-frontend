@@ -58,7 +58,7 @@ describe('The charge view', function () {
     body.should.not.containSelector('.custom-branding-image')
   })
 
-  it.only('should display custom branding', () => {
+  it('should display custom branding', () => {
     const templateData = _.merge('charge', {'id': '1234'}, customBrandingData)
     const body = renderTemplate('charge', templateData)
     body.should.containSelector('.custom-branding-image')
