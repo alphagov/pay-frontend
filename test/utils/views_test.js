@@ -9,8 +9,10 @@ var _ = require('lodash')
 describe('views helper', function () {
   const service = serviceFixtures.validServiceResponse().getPlain()
   const expectedDefaultCustomBranding = {
-    customBrandingCssPath: service.custom_branding.css_url,
-    customBrandingImagePath: service.custom_branding.image_url
+    customBranding: {
+      cssUrl: service.custom_branding.css_url,
+      imageUrl: service.custom_branding.image_url
+    }
   }
 
   var response = {
