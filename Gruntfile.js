@@ -14,7 +14,7 @@ module.exports = function (grunt) {
       files: [{
         expand: true,
         cwd: 'app/assets/sass',
-        src: ['*.scss'],
+        src: ['*.scss', 'custom/*.scss'],
         dest: 'public/stylesheets/',
         ext: '.css'
       }]
@@ -67,8 +67,7 @@ module.exports = function (grunt) {
       files: {
         'public/stylesheets/application.min.css': [
           'public/stylesheets/application.css', 'govuk_modules/accessible-autocomplete/accessible-autocomplete.min.css'
-        ],
-        'public/stylesheets/custom.min.css': 'public/stylesheets/custom.css'
+        ]
       }
     }
   }
