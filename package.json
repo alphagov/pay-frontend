@@ -25,7 +25,7 @@
   "scripts": {
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
-    "start": "node_modules/forever/bin/forever --minUptime 1000 --spinSleepTime 500 start.js",
+    "start": "node --debug-brk=5858 --expose_debug_as=v8debug start.js",
     "stop": "node_modules/forever/bin/forever stop start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "test": "npm run lint && npm run grunt-test",
