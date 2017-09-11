@@ -2,8 +2,7 @@
 require('array.prototype.find')
 var logger = require('winston')
 var logging = require('../utils/logging.js')
-var baseClient = require('../utils/base_client')
-var baseClient2 = require('../utils/base_client2')
+var baseClient = require('../utils/base_client2')
 
 var _ = require('lodash')
 var views = require('../utils/views.js')
@@ -148,7 +147,7 @@ module.exports = {
       var startTime = new Date()
       var correlationId = req.headers[CORRELATION_HEADER] || ''
 
-      baseClient2.post(authUrl, { payload: normalise.apiPayload(req, cardBrand), correlationId: correlationId }, function (err, data) {
+      baseClient.post(authUrl, { payload: normalise.apiPayload(req, cardBrand), correlationId: correlationId }, function (err, data) {
         if (err) {
           return connectorNonResponsive(err)
         }
@@ -210,7 +209,7 @@ module.exports = {
     }
     var connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
 
-    baseClient.post(connector3dsUrl, { data: templateData, correlationId: correlationId },
+    baseClient.post(connector3dsUrl, { payload: templateData, correlationId: correlationId },
       function (err, data) {
         if (err) {
           _views.display(res, 'ERROR', withAnalytics(charge))

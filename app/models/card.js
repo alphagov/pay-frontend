@@ -1,4 +1,3 @@
-/* jslint node: true */
 'use strict'
 var _ = require('lodash')
 
@@ -11,21 +10,25 @@ var checkCard = function (cardNo, allowed, correlationId) {
   var defer = q.defer()
 
   var startTime = new Date()
-  var data = {'cardNumber': parseInt(cardNo)}
+  var payload = {'cardNumber': parseInt(cardNo)}
 
-  cardIdClient.post({data: data, correlationId: correlationId}, function (data, response) {
+  cardIdClient.post({payload: payload, correlationId: correlationId}, function (err, data) {
     logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime)
-
-    if (response.statusCode === 404) {
-      return defer.reject('Your card is not supported')
-    }
-      // if the server is down, or returns non 500, just continue
-    if (response.statusCode !== 200) {
+    if (err) {
+      logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, err)
       return defer.resolve()
     }
 
-    var cardBrand = changeCase.paramCase(data.brand)
-    var cardType = normaliseCardType(data.type)
+    if (data.statusCode === 404) {
+      return defer.reject('Your card is not supported')
+    }
+      // if the server is down, or returns non 500, just continue
+    if (data.statusCode !== 200) {
+      return defer.resolve()
+    }
+
+    var cardBrand = changeCase.paramCase(data.body.brand)
+    var cardType = normaliseCardType(data.body.type)
 
     logger.debug(`[${correlationId}] Checking card brand - `, {'cardBrand': cardBrand, 'cardType': cardType})
 
