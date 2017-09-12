@@ -1,5 +1,4 @@
 const path = require('path')
-const https = require('https')
 const httpAgent = require('http').globalAgent
 const urlParse = require('url').parse
 const _ = require('lodash')
@@ -7,6 +6,9 @@ const logger = require('winston')
 const request = require('requestretry')
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
+const xray = require('aws-xray-sdk')
+xray.middleware.setSamplingRules(path.join(__dirname, '../../sampling-rules.json'))
+const https = xray.captureHTTPs(require('https'))
 
 const agentOptions = {
   keepAlive: true,

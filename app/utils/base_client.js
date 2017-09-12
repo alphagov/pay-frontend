@@ -5,9 +5,11 @@
  * Leaving for backward compatibility.
  */
 const urlParse = require('url')
-const https = require('https')
 const path = require('path')
 const logger = require('winston')
+const xray = require('aws-xray-sdk')
+xray.middleware.setSamplingRules(path.join(__dirname, '../../sampling-rules.json'))
+const https = xray.captureHTTPs(require('https'))
 
 const customCertificate = require(path.join(__dirname, '/custom_certificate'))
 const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
@@ -57,21 +59,24 @@ var _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  let req = https.request(httpsOptions, (res) => {
+  function tryParse (data) {
+    try {
+      data = JSON.parse(data)
+      return data
+    } catch (err) {
+      return null
+    }
+  }
+
+  let req = https.request(httpsOptions, function handleResponse (res) {
     let data = ''
-    res.on('data', (chunk) => {
+    res.on('data', function handleChunk (chunk) {
       data += chunk
     })
-
-    res.on('end', () => {
-      try {
-        data = JSON.parse(data)
-      } catch (e) {
-        // if response exists but is not parsable, log it and carry on
-        if (data) {
-          logger.info('Response from %s in unexpected format: %s', url, data)
-        }
-        data = null
+    res.on('end', function endResponse () {
+      data = tryParse(data)
+      if (!data) {
+        logger.info('Response from %s in unexpected format: %s', url, data)
       }
       callback(data, {statusCode: res.statusCode})
     })
