@@ -12,7 +12,7 @@ const logger = require('winston')
 const customCertificate = require(path.join(__dirname, '/custom_certificate'))
 const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
 
-var agentOptions = {
+const agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
 }
@@ -39,7 +39,7 @@ const agent = new https.Agent(agentOptions)
  *
  * @private
  */
-var _request = function request (methodName, url, args, callback) {
+const _request = function request (methodName, url, args, callback) {
   const parsedUrl = urlParse.parse(url)
   let headers = {}
 
@@ -57,16 +57,31 @@ var _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  function tryParse (data) {
-    try {
-      data = JSON.parse(data)
-      return data
-    } catch (err) {
-      return null
-    }
+  const handleResponseCallback = handleResponse(callback, url)
+
+  const req = https.request(httpsOptions, handleResponseCallback)
+
+  if (args.data) {
+    req.write(JSON.stringify(args.data))
   }
 
-  let req = https.request(httpsOptions, function handleResponse (res) {
+  req.on('response', readResponse)
+
+  req.end()
+
+  return req
+}
+
+function tryParse (data) {
+  try {
+    return JSON.parse(data)
+  } catch (err) {
+    return null
+  }
+}
+
+function handleResponse (callback, url) {
+  return function responseProcessor(res){
     let data = ''
     res.on('data', function handleChunk (chunk) {
       data += chunk
@@ -78,21 +93,13 @@ var _request = function request (methodName, url, args, callback) {
       }
       callback(data, {statusCode: res.statusCode})
     })
-  })
-
-  if (args.data) {
-    req.write(JSON.stringify(args.data))
   }
+}
 
-  req.on('response', (response) => {
-    response.on('readable', () => {
-      response.read()
-    })
+function readResponse (response) {
+  response.on('readable', function handleRead() {
+    response.read()
   })
-
-  req.end()
-
-  return req
 }
 
 /*
