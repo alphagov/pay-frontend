@@ -81,7 +81,7 @@ function tryParse (data) {
 }
 
 function handleResponse (callback, url) {
-  return function responseProcessor(res){
+  return function responseProcessor (res) {
     let data = ''
     res.on('data', function handleChunk (chunk) {
       data += chunk
@@ -97,7 +97,7 @@ function handleResponse (callback, url) {
 }
 
 function readResponse (response) {
-  response.on('readable', function handleRead() {
+  response.on('readable', function handleRead () {
     response.read()
   })
 }
