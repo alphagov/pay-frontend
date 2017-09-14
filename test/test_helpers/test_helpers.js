@@ -1,36 +1,49 @@
-var request = require('supertest')
-var _ = require('lodash')
-var frontendCardDetailsPath = '/card_details'
-var connectorChargePath = '/v1/frontend/charges/'
-var chaiExpect = require('chai').expect
-var csrf = require('csrf')
-var nock = require('nock')
+const request = require('supertest')
+const _ = require('lodash')
+const serviceFixtures = require('../fixtures/service_fixtures')
+const Service = require('../../app/models/Service.class')
+const frontendCardDetailsPath = '/card_details'
+const connectorChargePath = '/v1/frontend/charges/'
+const adminusersServicePath = '/v1/api/services'
+const chaiExpect = require('chai').expect
+const csrf = require('csrf')
+const nock = require('nock')
 
-var defaultCorrelationId = 'some-unique-id'
+const defaultCorrelationId = 'some-unique-id'
+const defaultGatewayAccountId = '12345'
 
-function localServer () {
+function localConnector () {
   return process.env.CONNECTOR_HOST
 }
 
+function localAdminusers () {
+  return process.env.ADMINUSERS_URL
+}
+
 function connectorChargeUrl (chargeId) {
-  return localServer() + connectorChargePath + chargeId
+  return localConnector() + connectorChargePath + chargeId
 }
 
 function connectorAuthUrl (chargeId) {
-  return localServer() + connectorChargePath + chargeId + '/cards'
+  return localConnector() + connectorChargePath + chargeId + '/cards'
 }
 
 function connectorCaptureUrl (chargeId) {
-  return localServer() + connectorChargePath + chargeId + '/capture'
+  return localConnector() + connectorChargePath + chargeId + '/capture'
 }
 
 function connectorRespondsWith (chargeId, charge) {
-  var connectorMock = nock(localServer())
+  var connectorMock = nock(localConnector())
   connectorMock.get(connectorChargePath + chargeId).reply(200, charge)
 }
 
+function adminusersRespondsWith (gatewayAccountId, service) {
+  var adminusersMock = nock(localAdminusers())
+  adminusersMock.get(`${adminusersServicePath}?gatewayAccountId=${gatewayAccountId}`).reply(200, service)
+}
+
 function initConnectorUrl () {
-  process.env.CONNECTOR_URL = localServer() + connectorChargePath + '{chargeId}'
+  process.env.CONNECTOR_URL = localConnector() + connectorChargePath + '{chargeId}'
 }
 
 function cardTypes () {
@@ -68,8 +81,8 @@ function cardTypes () {
   ]
 }
 
-function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId) {
-  var charge = rawSuccessfulGetCharge(status, returnUrl, chargeId)
+function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
+  var charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.gateway_account.card_types = [
     {
       'type': 'DEBIT',
@@ -80,7 +93,7 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId) {
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId) {
   var charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -101,6 +114,7 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId) {
       'method': 'POST'
     }],
     'gateway_account': {
+      'gateway_account_id': gatewayAccountId || defaultGatewayAccountId,
       'analytics_id': 'test-1234',
       'type': 'test',
       'payment_provider': 'sandbox',
@@ -177,17 +191,17 @@ module.exports = {
       contains: function (expectedResponse) {
         return function (done) {
           request(app)
-                        .get(endpoint)
-                        .set('Accept', 'application/json')
-                        .expect(200)
-                        .end(function (err, res) {
-                          if (err) done(err)
-                          var response = JSON.parse(res.text)
-                          Object.keys(expectedResponse).map(function (key) {
-                            expectedResponse[key].should.equal(response[key])
-                          })
-                          done()
-                        })
+            .get(endpoint)
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function (err, res) {
+              if (err) done(err)
+              var response = JSON.parse(res.text)
+              Object.keys(expectedResponse).map(function (key) {
+                expectedResponse[key].should.equal(response[key])
+              })
+              done()
+            })
         }
       }
     }
@@ -196,10 +210,10 @@ module.exports = {
   getChargeRequest: function (app, cookieValue, chargeId, query) {
     query = query || ''
     return request(app)
-            .get(frontendCardDetailsPath + '/' + chargeId + query)
-            .set('Cookie', ['frontend_state=' + cookieValue])
-            .set('Accept', 'application/json')
-            .set('x-request-id', defaultCorrelationId)
+      .get(frontendCardDetailsPath + '/' + chargeId + query)
+      .set('Cookie', ['frontend_state=' + cookieValue])
+      .set('Accept', 'application/json')
+      .set('x-request-id', defaultCorrelationId)
   },
 
   postChargeRequest (app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
@@ -207,26 +221,31 @@ module.exports = {
       data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET)
     }
     return request(app)
-            .post(frontendCardDetailsPath + '/' + chargeId + query)
-            .set('Content-Type', 'application/x-www-form-urlencoded')
-            .set('Cookie', ['frontend_state=' + cookieValue])
-            .set('Accept', 'application/json')
-            .set('x-request-id', 'some-unique-id')
-            .send(data)
+      .post(frontendCardDetailsPath + '/' + chargeId + query)
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Cookie', ['frontend_state=' + cookieValue])
+      .set('Accept', 'application/json')
+      .set('x-request-id', 'some-unique-id')
+      .send(data)
   },
 
   connectorResponseForPutCharge: function (chargeId, statusCode, responseBody, overrideUrl) {
     initConnectorUrl()
-    var connectorMock = nock(localServer())
+    var connectorMock = nock(localConnector())
     var mockPath = connectorChargePath + chargeId + '/status'
     var payload = {'new_status': 'ENTERING CARD DETAILS'}
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 
-  defaultConnectorResponseForGetCharge: function (chargeId, status) {
+  defaultAdminusersResponseForGetService: function (gatewayAccountId) {
+    let service = new Service(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
+    adminusersRespondsWith(gatewayAccountId, service)
+  },
+
+  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId) {
     initConnectorUrl()
     var returnUrl = 'http://www.example.com/service'
-    var rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId)
+    var rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
     connectorRespondsWith(chargeId, rawResponse)
   },
 

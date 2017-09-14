@@ -1,22 +1,40 @@
 {{< govuk_template}}
 
 {{$head}}
-  {{>includes/head}}
-  {{>includes/analytics}}
+{{>includes/head}}
+{{>includes/analytics}}
 {{/head}}
 
+{{$globalHeaderText}}GOV.UK{{/globalHeaderText}}
+
+{{$bodyClasses}}
+  {{#customBranding}}custom-branding{{/customBranding}}
+{{/bodyClasses}}
+
+{{$fontsStylesheets}}
+  {{^customBranding}}
+    <!--[if IE 8]><link href="{{{ assetPath }}}stylesheets/fonts-ie8.css?0.22.3" media="all" rel="stylesheet" /><![endif]-->
+    <!--[if gte IE 9]><!--><link href="{{{ assetPath }}}stylesheets/fonts.css?0.22.3" media="all" rel="stylesheet" /><!--<![endif]-->
+  {{/customBranding}}
+{{/fontsStylesheets}}
+
+{{$insideHeader}}
+  {{#customBranding}}
+    {{>includes/custom}}
+  {{/customBranding}}
+{{/insideHeader}}
+
 {{$propositionHeader}}
-  {{>includes/propositional_navigation}}
+{{>includes/propositional_navigation}}
 {{/propositionHeader}}
 
 {{$headerClass}}with-proposition{{/headerClass}}
 
 {{$bodyEnd}}
-  {{>includes/scripts}}
+{{>includes/scripts}}
 {{/bodyEnd}}
 {{$footerSupportLinks}}
 <ul><li><a href="/privacy">Privacy policy</a></li></ul>
 {{/footerSupportLinks}}
-
 
 {{/govuk_template}}

@@ -1,5 +1,9 @@
 var accessibleAutocomplete = require('accessible-autocomplete')
 
-accessibleAutocomplete.enhanceSelectElement({
-  selectElement: document.querySelector('#address-country')
-})
+var countryPicker = document.querySelector('#address-country')
+
+if (countryPicker) {
+  accessibleAutocomplete.enhanceSelectElement({
+    selectElement: countryPicker
+  })
+}

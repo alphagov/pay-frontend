@@ -39,7 +39,7 @@ Enter your card details.
                 name="cardNo"
                 maxlength="26"
                 class="form-control-1-2"
-                autocomplete="off"
+                autocomplete="cc-number"
                 val=""
               />
           </label>
@@ -82,13 +82,14 @@ Enter your card details.
                 <label class="form-hint" for="expiry-month"> Month </label>
                 <input id="expiry-month" type="number" name="expiryMonth"
                 class="form-control"
-                min="1" max="12" minlength="1" maxlength="2"/>
+                min="1" max="12" minlength="1" maxlength="2"  autocomplete="cc-exp-month"/>
                 <p class="seperator"> / </p>
               </div>
               <div class="date-container">
                 <div class="form-hint"> Year </div>
                 <input id="expiry-year" type="number" name="expiryYear" minlength="2" maxlength="4"
                 class="form-control"
+                autocomplete="cc-exp-year"
                 data-last-of-form-group
                 data-required
                 />
@@ -113,7 +114,8 @@ Enter your card details.
                       name="cardholderName"
                       maxlength="200"
                       class="form-control-1-2 form-control"
-                      value="{{ cardholderName }}" />
+                      value="{{ cardholderName }}"
+                      autocomplete="cc-name" />
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.cvc}} error{{/highlightErrorFields.cvc}} cvc" data-validation="cvc">
@@ -145,7 +147,8 @@ Enter your card details.
                 value=""
                 name="cvc"
                 class="form-control-1-8 cvc"
-                autocomplete="off" />
+                maxlength="4"
+                autocomplete="cc-csc" />
               <img src="/images/security-code.png" class="generic-cvc" alt="Please enter either a 3 or 4 digit card security code"/>
               <span class="either hidden">
                 or
@@ -170,7 +173,7 @@ Enter your card details.
               </p>
               {{/highlightErrorFields.addressCountry}}
               <span class="ui-front form-label-bold">
-                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocomplete="off">
+                  <select name="addressCountry" class="form-control form-control-2-3" id="address-country"  autocomplete="billing country-name">
                       {{#countries}}
                       <option
                           value="{{ entry.country }}"
@@ -198,20 +201,22 @@ Enter your card details.
                 </p>
               {{/highlightErrorFields.addressLine1}}
               <input id="address-line-1"
-                     type="text"
-                     name="addressLine1"
-                     maxlength="100"
-                     class="form-control-1-2"
-                     value ="{{ addressLine1 }}" />
+                  type="text"
+                  name="addressLine1"
+                  maxlength="100"
+                  class="form-control-1-2"
+                  value ="{{ addressLine1 }}"
+                  autocomplete="billing street-address" />
           </label>
           <input id="address-line-2"
-                 type="text"
-                 name="addressLine2"
-                 maxlength="100"
-                 class="form-control-1-2"
-                 data-last-of-form-group
-                 value ="{{ addressLine2 }}"
-                 aria-label="Enter address line 2" />
+              type="text"
+              name="addressLine2"
+              maxlength="100"
+              class="form-control-1-2"
+              data-last-of-form-group
+              value ="{{ addressLine2 }}"
+              aria-label="Enter address line 2"
+              autocomplete="billing address-line2" />
       </div>
       <div class="form-group{{#highlightErrorFields.addressCity}} error{{/highlightErrorFields.addressCity}}" data-validation="addressCity">
           <label id="address-city-lbl" for="address-city" class="form-label-bold">
@@ -227,11 +232,12 @@ Enter your card details.
                 </p>
               {{/highlightErrorFields.addressCity}}
               <input id="address-city"
-                     type="text"
-                     name="addressCity"
-                     maxlength="100"
-                     class="form-control-1-4"
-                     value="{{ addressCity }}"  />
+                  type="text"
+                  name="addressCity"
+                  maxlength="100"
+                  class="form-control-1-4"
+                  value="{{ addressCity }}"
+                  autocomplete="billing address-level2" />
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.addressPostcode}} error{{/highlightErrorFields.addressPostcode}}" data-validation="addressPostcode">
@@ -249,11 +255,12 @@ Enter your card details.
                 </p>
               {{/highlightErrorFields.addressPostcode}}
               <input id="address-postcode"
-                     type="text"
-                     name="addressPostcode"
-                     maxlength="10"
-                     class="form-control-1-8"
-                     value = "{{ addressPostcode }}" />
+                  type="text"
+                  name="addressPostcode"
+                  maxlength="10"
+                  class="form-control-1-8"
+                  value = "{{ addressPostcode }}"
+                  autocomplete="billing postal-code" />
           </label>
       </div>
       <div class="form-group{{#highlightErrorFields.email}} error{{/highlightErrorFields.email}}" data-validation="email" data-confirmation="true">
@@ -272,11 +279,12 @@ Enter your card details.
                 </p>
               {{/highlightErrorFields.email}}
               <input id="email"
-                     type="email"
-                     name="email"
-                     maxlength="254"
-                     class="form-control-1-2"
-                     value = "{{ email }}" />
+                  type="email"
+                  name="email"
+                  maxlength="254"
+                  class="form-control-1-2"
+                  value = "{{ email }}"
+                  autocomplete="email" />
           </label>
       </div>
       <div>

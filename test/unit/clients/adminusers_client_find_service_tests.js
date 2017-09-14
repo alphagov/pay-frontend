@@ -61,6 +61,8 @@ describe('adminusers client - services API', function () {
       it('should return service successfully', function (done) {
         adminusersClient.getServiceById(serviceExternalId).should.be.fulfilled.then(service => {
           expect(service.externalId).to.be.equal(serviceExternalId)
+          expect(service.customBranding.cssUrl).to.be.equal(getServiceResponse.getPlain().custom_branding.css_url)
+          expect(service.customBranding.imageUrl).to.be.equal(getServiceResponse.getPlain().custom_branding.image_url)
         }).should.notify(done)
       })
     })
