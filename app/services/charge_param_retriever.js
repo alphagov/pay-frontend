@@ -1,4 +1,4 @@
-var logger = require('winston')
+var logger = require('pino')
 var cookie = require('../utils/cookies')
 
 module.exports = (function () {

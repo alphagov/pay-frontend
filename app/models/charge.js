@@ -1,5 +1,4 @@
-var logger = require('winston')
-var q = require('q')
+var logger = require('pino')
 
 var baseClient = require('../utils/base_client')
 var paths = require('../paths.js')
@@ -19,256 +18,270 @@ module.exports = function (correlationId) {
   }
 
   var updateStatus = function (chargeId, status) {
-    var url = connectorurl('updateStatus', {chargeId: chargeId})
-    var data = {new_status: status}
-    var defer = q.defer()
 
-    logger.debug('[%s] Calling connector to update charge status -', correlationId, {
-      service: 'connector',
-      method: 'PUT',
-      chargeId: chargeId,
-      newStatus: status,
-      url: url
-    })
+    return new Promise(function(resolve, reject){
 
-    var startTime = new Date()
+      var url = connectorurl('updateStatus', {chargeId: chargeId})
+      var data = {new_status: status}
 
-    baseClient.put(url, { data: data, correlationId: correlationId }, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
-      updateComplete(chargeId, data, response, defer)
-    }).on('error', function (err) {
-      logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime)
-      logger.error('Calling connector to update charge status threw exception -', {
+      logger.debug('[%s] Calling connector to update charge status -', correlationId, {
         service: 'connector',
         method: 'PUT',
         chargeId: chargeId,
-        url: url,
-        error: err
+        newStatus: status,
+        url: url
       })
-      clientUnavailable(err, defer)
-    })
 
-    return defer.promise
+      var startTime = new Date()
+
+      baseClient.put(url, { data: data, correlationId: correlationId }, function (data, response) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
+        updateComplete(chargeId, data, response, { resolve : resolve, reject : reject })
+      }).on('error', function (err) {
+        logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime)
+        logger.error('Calling connector to update charge status threw exception -', {
+          service: 'connector',
+          method: 'PUT',
+          chargeId: chargeId,
+          url: url,
+          error: err
+        })
+        clientUnavailable(err, { resolve : resolve, reject : reject })
+      })
+
+    })
   }
 
   var find = function (chargeId) {
-    var defer = q.defer()
-    var url = connectorurl('show', {chargeId: chargeId})
 
-    logger.debug('[%s] Calling connector to get charge -', correlationId, {
-      service: 'connector',
-      method: 'GET',
-      chargeId: chargeId,
-      url: url
-    })
+    return new Promise(function(resolve, reject){
 
-    var startTime = new Date()
-    baseClient.get(url, {correlationId: correlationId}, function (data, response) {
-      if (response.statusCode !== 200) {
+      var url = connectorurl('show', {chargeId: chargeId})
+
+      logger.debug('[%s] Calling connector to get charge -', correlationId, {
+        service: 'connector',
+        method: 'GET',
+        chargeId: chargeId,
+        url: url
+      })
+
+      var startTime = new Date()
+      baseClient.get(url, {correlationId: correlationId}, function (data, response) {
+        if (response.statusCode !== 200) {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
+          logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
+            service: 'connector',
+            method: 'GET',
+            chargeId: chargeId,
+            url: url,
+            status: response.statusCode
+          })
+          return reject(new Error('GET_FAILED'))
+        }
+        resolve(data)
+      }).on('error', function (err) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-        logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
+        logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
           service: 'connector',
           method: 'GET',
           chargeId: chargeId,
           url: url,
-          status: response.statusCode
+          error: err
         })
-        return defer.reject(new Error('GET_FAILED'))
-      }
-      defer.resolve(data)
-    }).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-      logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
-        service: 'connector',
-        method: 'GET',
-        chargeId: chargeId,
-        url: url,
-        error: err
+        clientUnavailable(err, { resolve : resolve, reject : reject })
       })
-      clientUnavailable(err, defer)
+
     })
-    return defer.promise
+
   }
 
   var capture = function (chargeId) {
-    var url = connectorurl('capture', {chargeId: chargeId})
-    var defer = q.defer()
 
-    logger.debug('[%s] Calling connector to do capture -', correlationId, {
-      service: 'connector',
-      method: 'POST',
-      chargeId: chargeId,
-      url: url
-    })
+    return new Promise(function(resolve, reject){
 
-    var startTime = new Date()
-    baseClient.post(url, { correlationId: correlationId }, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-      captureComplete(data, response, defer)
-    })
-    .on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
-      logger.error('[%s] Calling connector to do capture failed -', correlationId, {
+      var url = connectorurl('capture', {chargeId: chargeId})
+
+      logger.debug('[%s] Calling connector to do capture -', correlationId, {
         service: 'connector',
         method: 'POST',
         chargeId: chargeId,
-        url: url,
-        error: err
+        url: url
       })
-      captureFail(err, defer)
+
+      var startTime = new Date()
+      baseClient.post(url, { correlationId: correlationId }, function (data, response) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+        captureComplete(data, response, { resolve : resolve, reject : reject })
+      }).on('error', function (err) {
+            logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
+            logger.error('[%s] Calling connector to do capture failed -', correlationId, {
+              service: 'connector',
+              method: 'POST',
+              chargeId: chargeId,
+              url: url,
+              error: err
+            })
+            captureFail(err, { resolve : resolve, reject : reject })
+          })
     })
 
-    return defer.promise
   }
 
   var cancel = function (chargeId) {
-    var url = connectorurl('cancel', {chargeId: chargeId})
-    var defer = q.defer()
 
-    logger.debug('[%s] Calling connector to cancel a charge -', correlationId, {
-      service: 'connector',
-      method: 'POST',
-      chargeId: chargeId,
-      url: url
-    })
+    return new Promise(function(resolve, reject){
 
-    var startTime = new Date()
-    baseClient.post(url, { correlationId: correlationId }, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-      cancelComplete(data, response, defer)
-    })
-      .on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-        logger.error('[%s] Calling connector cancel a charge threw exception -', correlationId, {
-          service: 'connector',
-          method: 'POST',
-          url: url,
-          error: err
-        })
-        cancelFail(err, defer)
+      var url = connectorurl('cancel', {chargeId: chargeId})
+
+      logger.debug('[%s] Calling connector to cancel a charge -', correlationId, {
+        service: 'connector',
+        method: 'POST',
+        chargeId: chargeId,
+        url: url
       })
 
-    return defer.promise
+      var startTime = new Date()
+      baseClient.post(url, { correlationId: correlationId }, function (data, response) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+        cancelComplete(data, response, { resolve : resolve, reject : reject })
+      }).on('error', function (err) {
+            logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+            logger.error('[%s] Calling connector cancel a charge threw exception -', correlationId, {
+              service: 'connector',
+              method: 'POST',
+              url: url,
+              error: err
+            })
+            cancelFail(err, { resolve : resolve, reject : reject })
+          })
+
+    })
+
   }
 
-  var cancelComplete = function (data, response, defer) {
+  var cancelComplete = function (data, response, promise) {
     var code = response.statusCode
-    if (code === 204) return defer.resolve()
+    if (code === 204) return promise.resolve()
     logger.error('[%s] Calling connector cancel a charge failed -', correlationId, {
       service: 'connector',
       method: 'POST',
       status: code
     })
-    if (code === 400) return defer.reject(new Error('CANCEL_FAILED'))
-    return defer.reject(new Error('POST_FAILED'))
+    if (code === 400) return promise.reject(new Error('CANCEL_FAILED'))
+    return promise.reject(new Error('POST_FAILED'))
   }
 
-  var cancelFail = function (err, defer) {
-    clientUnavailable(err, defer)
+  var cancelFail = function (err, promise) {
+    clientUnavailable(err, promise)
   }
 
   var findByToken = function (tokenId) {
-    var defer = q.defer()
-    logger.debug('[%s] Calling connector to find a charge by token -', correlationId, {
-      service: 'connector',
-      method: 'GET'
-    })
 
-    var startTime = new Date()
-    var findByUrl = connectorurl('findByToken', {chargeTokenId: tokenId})
+    return new Promise(function(resolve, reject){
 
-    baseClient.get(findByUrl, {correlationId: correlationId}, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
-      if (response.statusCode !== 200) {
-        logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
+      logger.debug('[%s] Calling connector to find a charge by token -', correlationId, {
+        service: 'connector',
+        method: 'GET'
+      })
+
+      var startTime = new Date()
+      var findByUrl = connectorurl('findByToken', {chargeTokenId: tokenId})
+
+      baseClient.get(findByUrl, {correlationId: correlationId}, function (data, response) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
+        if (response.statusCode !== 200) {
+          logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
+            service: 'connector',
+            method: 'GET',
+            status: response.statusCode
+          })
+          reject(new Error('GET_FAILED'))
+          return
+        }
+        resolve(data)
+      }).on('error', function (err) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
+        logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
           service: 'connector',
           method: 'GET',
-          status: response.statusCode
+          error: err
         })
-        defer.reject(new Error('GET_FAILED'))
-        return
-      }
-
-      defer.resolve(data)
-    }).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
-      logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
-        service: 'connector',
-        method: 'GET',
-        error: err
+        clientUnavailable(err, { resolve : resolve, reject : reject })
       })
-      clientUnavailable(err, defer)
+
     })
-    return defer.promise
+
   }
 
-  var captureComplete = function (data, response, defer) {
+  var captureComplete = function (data, response, promise) {
     var code = response.statusCode
-    if (code === 204) return defer.resolve()
-    if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'))
-    return defer.reject(new Error('POST_FAILED'))
+    if (code === 204) return promise.resolve()
+    if (code === 400) return promise.reject(new Error('CAPTURE_FAILED'))
+    return promise.reject(new Error('POST_FAILED'))
   }
 
-  var captureFail = function (err, defer) {
-    clientUnavailable(err, defer)
+  var captureFail = function (err, promise) {
+    clientUnavailable(err, promise)
   }
 
-  var updateComplete = function (chargeId, data, response, defer) {
+  var updateComplete = function (chargeId, data, response, promise) {
     if (response.statusCode !== 204) {
       logger.error('[%s] Calling connector to update charge status failed -', correlationId, {
         chargeId: chargeId,
         status: response.statusCode
       })
-      defer.reject(new Error('UPDATE_FAILED'))
+      promise.reject(new Error('UPDATE_FAILED'))
       return
     }
 
-    defer.resolve({success: 'OK'})
+    promise.resolve({success: 'OK'})
   }
 
   var patch = function (chargeId, op, path, value) {
-    var defer = q.defer()
 
-    var startTime = new Date()
-    var chargesUrl = process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
+    return new Promise(function(resolve, reject){
 
-    logger.debug('[%s] Calling connector to patch charge -', correlationId, {
-      service: 'connector',
-      method: 'PATCH'
-    })
+      var startTime = new Date()
+      var chargesUrl = process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
 
-    var params = {
-      data: {
-        op: op,
-        path: path,
-        value: value
-      },
-      correlationId: correlationId
-    }
-
-    baseClient.patch(chargesUrl + chargeId, params, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-      var code = response.statusCode
-      if (code === 200) {
-        defer.resolve()
-      } else {
-        defer.reject()
-      }
-    }).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-      logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
+      logger.debug('[%s] Calling connector to patch charge -', correlationId, {
         service: 'connector',
-        method: 'PATCH',
-        error: err
+        method: 'PATCH'
       })
-      defer.reject()
+
+      var params = {
+        data: {
+          op: op,
+          path: path,
+          value: value
+        },
+        correlationId: correlationId
+      }
+
+      baseClient.patch(chargesUrl + chargeId, params, function (data, response) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
+        var code = response.statusCode
+        if (code === 200) {
+          resolve()
+        } else {
+          reject()
+        }
+      }).on('error', function (err) {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
+        logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
+          service: 'connector',
+          method: 'PATCH',
+          error: err
+        })
+        reject()
+      })
+
     })
 
-    return defer.promise
   }
 
-  var clientUnavailable = function (error, defer) {
-    defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
+  var clientUnavailable = function (error, promise) {
+    promise.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
 
   return {

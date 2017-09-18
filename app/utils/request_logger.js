@@ -1,4 +1,4 @@
-const logger = require('winston')
+const logger = require('pino')
 
 module.exports = {
   logRequestStart: context => {

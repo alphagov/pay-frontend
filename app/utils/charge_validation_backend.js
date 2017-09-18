@@ -2,7 +2,6 @@
 'use strict'
 
 var chargeValidator = require('./charge_validation.js')
-var q = require('q')
 var _ = require('lodash')
 var normalise = require('../services/normalise_charge.js')
 
@@ -14,19 +13,22 @@ module.exports = function (translations, logger, cardModel) {
   )
 
   var verify = function (req) {
-    var logger = require('winston')
-    var defer = q.defer()
-    var validation = validator.verify(req.body)
-    cardModel.checkCard(normalise.creditCard(req.body.cardNo)).then(function (cardBrand) {
-      logger.debug('Card supported - ', {'cardBrand': cardBrand})
-      defer.resolve({validation: validation, cardBrand: cardBrand})
-    }, function (err) {
-      logger.error('Card not supported - ', {'err': err})
-      addCardnotSupportedError(validation, err)
-      defer.resolve({validation: validation})
+
+    return new Promise(function(resolve){
+
+      var logger = require('pino')
+      var validation = validator.verify(req.body)
+      cardModel.checkCard(normalise.creditCard(req.body.cardNo)).then(function (cardBrand) {
+        logger.debug('Card supported - ', {'cardBrand': cardBrand})
+        resolve({validation: validation, cardBrand: cardBrand})
+      }, function (err) {
+        logger.error('Card not supported - ', {'err': err})
+        addCardnotSupportedError(validation, err)
+        resolve({validation: validation})
+      })
+
     })
 
-    return defer.promise
   }
 
   var addCardnotSupportedError = function (validation, cardErrors) {

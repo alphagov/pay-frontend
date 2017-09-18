@@ -4,7 +4,7 @@ var views = require('../utils/views.js')
 var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 
-var logger = require('winston')
+var logger = require('pino')
 
 let CANCELABLE_STATES = [
   StateModel.CREATED,

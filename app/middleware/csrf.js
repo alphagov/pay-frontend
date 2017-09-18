@@ -2,7 +2,7 @@ var csrf = require('csrf')
 var session = require('../utils/session.js')
 var views = require('../utils/views.js')
 var chargeParam = require('../services/charge_param_retriever.js')
-var logger = require('winston')
+var logger = require('pino')
 var _views = views.create()
 
 var csrfTokenGeneration = function (req, res, next) {
