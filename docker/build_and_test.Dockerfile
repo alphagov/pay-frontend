@@ -12,7 +12,7 @@ RUN apk add glibc-2.25-r0.apk
 
 # add package.json before source for node_module cache layer
 ADD package.json /tmp/package.json
-RUN cd /tmp && npm install
+RUN cd /tmp && npm update -g npm && npm install
 WORKDIR /app
 
 CMD mkdir -p /app && cp -a /tmp/node_modules /app/ && npm run compile && npm test && npm prune --production
