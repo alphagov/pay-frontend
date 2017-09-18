@@ -1,4 +1,4 @@
-FROM node:8.5.0-alpine
+FROM node:6.11.1-alpine
 
 RUN apk update &&\
     apk upgrade &&\
@@ -15,4 +15,4 @@ ADD package.json /tmp/package.json
 RUN cd /tmp && npm install
 WORKDIR /app
 
-CMD mkdir -p /app && cp -a /tmp/node_modules /app/ && npm run compile && npm test
+CMD mkdir -p /app && cp -a /tmp/node_modules /app/ && npm run compile && npm test && npm prune --production
