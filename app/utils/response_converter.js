@@ -17,17 +17,14 @@ module.exports = {
 
       if (error) {
         requestLogger.logRequestError(context, error)
-        console.log('XXXXXXXXXX createCallbackToPromiseConverterNEW > rejecting')
         context.promise.reject({error: error})
         return
       }
 
       if (response && SUCCESS_CODES.indexOf(response.statusCode) !== -1) {
         if (body && transformer && typeof transformer === 'function') {
-          console.log('XXXXXXXXX createCallbackToPromiseConverterNEW > resolving')
           context.promise.resolve(transformer(body))
         } else {
-          console.log('XXXXXXXXXX createCallbackToPromiseConverterNEW > resolving 2')
           context.promise.resolve(body)
         }
       } else {
