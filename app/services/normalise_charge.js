@@ -43,7 +43,7 @@ module.exports = (function () {
   var addressLines = function (body) {
     if (!body.addressLine1 && body.addressLine2) {
       body.addressLine1 = body.addressLine2
-      body.addressLine2 = undefined
+      delete body.addressLine2
     }
   }
   var whitespace = function (body) {
@@ -62,7 +62,7 @@ module.exports = (function () {
 
   var _normaliseConfirmationDetails = function (cardDetails) {
     cardDetails.cardNumber = '************' + cardDetails.last_digits_card_number
-    cardDetails.last_digits_card_number = undefined
+    delete cardDetails.last_digits_card_number
     var normalisedDetails = humps.camelizeKeys(cardDetails)
     normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
     return normalisedDetails
