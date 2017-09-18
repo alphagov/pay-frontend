@@ -1,5 +1,5 @@
 // Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
-//require('./app/utils/metrics.js').metrics()
+// require('./app/utils/metrics.js').metrics()
 
 var path = require('path')
 var express = require('express')
