@@ -25,7 +25,7 @@
   "scripts": {
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
-    "start": "node start.js",
+    "start": "node_modules/forever/bin/forever --minUptime 1000 --spinSleepTime 500 start.js",
     "stop": "node_modules/forever/bin/forever stop start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "test": "npm run lint && npm run grunt-test",
@@ -36,8 +36,6 @@
     "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
-    "appmetrics": "1.1.2",
-    "appmetrics-statsd": "1.0.1",
     "accessible-autocomplete": "^1.6.0",
     "array.prototype.find": "2.0.x",
     "body-parser": "1.17.x",

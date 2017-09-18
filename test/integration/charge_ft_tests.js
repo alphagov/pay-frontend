@@ -13,7 +13,7 @@ const should = require('chai').should()
 const cookie = require('../test_helpers/session.js')
 const helper = require('../test_helpers/test_helpers.js')
 
-const winston = require('winston')
+const winston = require('pino')()
 
 const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
 const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js').connectorResponseForPutCharge
