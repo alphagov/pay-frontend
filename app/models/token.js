@@ -1,6 +1,6 @@
 var baseClient = require('../utils/base_client')
 
-var logger = require('pino')
+var logger = require('pino')()
 var paths = require('../paths.js')
 
 module.exports = function (correlationId) {
@@ -13,9 +13,7 @@ module.exports = function (correlationId) {
   }
 
   var destroy = function (tokenId) {
-
-    return new Promise(function(resolve, reject){
-
+    return new Promise(function (resolve, reject) {
       logger.debug('[%s] Calling connector to delete a token -', correlationId, {
         service: 'connector',
         method: 'DELETE',
@@ -46,11 +44,9 @@ module.exports = function (correlationId) {
           url: createUrl('token', {chargeTokenId: '{tokenId}'}),
           error: err
         })
-        clientUnavailable(err,  { resolve : resolve, reject : reject })
+        clientUnavailable(err, { resolve: resolve, reject: reject })
       })
-
     })
-
   }
 
   var clientUnavailable = function (error, promise) {

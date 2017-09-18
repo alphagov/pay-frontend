@@ -1,7 +1,7 @@
 var path = require('path')
 var fs = require('fs')
 
-var logger = require('pino')
+var logger = require('pino')()
 
 module.exports = {
   getCertOptions: function () {

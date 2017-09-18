@@ -13,10 +13,8 @@ module.exports = function (translations, logger, cardModel) {
   )
 
   var verify = function (req) {
-
-    return new Promise(function(resolve){
-
-      var logger = require('pino')
+    return new Promise(function (resolve) {
+      var logger = require('pino')()
       var validation = validator.verify(req.body)
       cardModel.checkCard(normalise.creditCard(req.body.cardNo)).then(function (cardBrand) {
         logger.debug('Card supported - ', {'cardBrand': cardBrand})
@@ -26,9 +24,7 @@ module.exports = function (translations, logger, cardModel) {
         addCardnotSupportedError(validation, err)
         resolve({validation: validation})
       })
-
     })
-
   }
 
   var addCardnotSupportedError = function (validation, cardErrors) {

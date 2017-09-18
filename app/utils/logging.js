@@ -1,6 +1,6 @@
 /* jslint node: true */
 'use strict'
-var logger = require('pino')
+var logger = require('pino')()
 module.exports = {
 
   authChargePost: function (url) {

@@ -1,6 +1,6 @@
 'use strict'
 require('array.prototype.find')
-var logger = require('pino')
+var logger = require('pino')()
 var logging = require('../utils/logging.js')
 var baseClient = require('../utils/base_client')
 

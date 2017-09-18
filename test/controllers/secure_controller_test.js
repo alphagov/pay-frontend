@@ -10,8 +10,8 @@ var mockCharge = (function () {
     return function () {
       return {
         findByToken: function () {
-          return new Promise(function(resolve, reject){
-            (withSuccess) ? resolve(chargeObject) : reject()
+          return new Promise(function (resolve, reject) {
+            (withSuccess) ? resolve(chargeObject) : reject(new Error())
           })
         }
       }
@@ -33,8 +33,8 @@ var mockToken = (function () {
     return function () {
       return {
         destroy: function () {
-          return new Promise(function(resolve, reject){
-            (withSuccess) ? resolve() : reject()
+          return new Promise(function (resolve, reject) {
+            (withSuccess) ? resolve() : reject(new Error())
           })
         }
       }

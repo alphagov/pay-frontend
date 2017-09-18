@@ -4,12 +4,10 @@ var _ = require('lodash')
 
 var changeCase = require('change-case')
 var cardIdClient = require('../utils/cardid_client')
-var logger = require('pino')
+var logger = require('pino')()
 
 var checkCard = function (cardNo, allowed, correlationId) {
-
-  return new Promise(function(resolve, reject){
-
+  return new Promise(function (resolve, reject) {
     var startTime = new Date()
     var data = {'cardNumber': parseInt(cardNo)}
 
@@ -17,7 +15,7 @@ var checkCard = function (cardNo, allowed, correlationId) {
       logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime)
 
       if (response.statusCode === 404) {
-        return reject('Your card is not supported')
+        return reject(new Error('Your card is not supported').message)
       }
       // if the server is down, or returns non 500, just continue
       if (response.statusCode !== 200) {
@@ -30,16 +28,16 @@ var checkCard = function (cardNo, allowed, correlationId) {
       logger.debug(`[${correlationId}] Checking card brand - `, {'cardBrand': cardBrand, 'cardType': cardType})
 
       var brandExists = _.filter(allowed, {brand: cardBrand}).length > 0
-      if (!brandExists) reject(changeCase.titleCase(cardBrand) + ' is not supported')
+      if (!brandExists) reject(new Error(changeCase.titleCase(cardBrand) + ' is not supported').message)
 
       var cardObject = _.find(allowed, {brand: cardBrand, type: cardType})
 
       if (!cardObject) {
         switch (cardType) {
           case 'DEBIT':
-            return reject(changeCase.titleCase(cardBrand) + ' debit cards are not supported')
+            return reject(new Error(changeCase.titleCase(cardBrand) + ' debit cards are not supported').message)
           case 'CREDIT':
-            return reject(changeCase.titleCase(cardBrand) + ' credit cards are not supported')
+            return reject(new Error(changeCase.titleCase(cardBrand) + ' credit cards are not supported').message)
         }
       }
       return resolve(cardBrand)
@@ -48,9 +46,7 @@ var checkCard = function (cardNo, allowed, correlationId) {
       logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime)
       resolve()
     })
-
   })
-
 }
 
 var normaliseCardType = function (cardType) {
