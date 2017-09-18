@@ -153,8 +153,8 @@ module.exports = function (correlationId) {
       method: 'POST',
       status: code
     })
-    if (code === 400) return promise.reject(new Error('CANCEL_FAILED'))
-    return promise.reject(new Error('POST_FAILED'))
+    if (code === 400) return promise.reject(new Error('CANCEL_FAILED').message)
+    return promise.reject(new Error('POST_FAILED').message)
   }
 
   var cancelFail = function (err, promise) {
@@ -244,7 +244,7 @@ module.exports = function (correlationId) {
         if (code === 200) {
           resolve()
         } else {
-          reject(new Error())
+          reject(new Error().message)
         }
       }).on('error', function (err) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
@@ -253,7 +253,7 @@ module.exports = function (correlationId) {
           method: 'PATCH',
           error: err
         })
-        reject(new Error())
+        reject(new Error(err).message)
       })
     })
   }
