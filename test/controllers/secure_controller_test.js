@@ -1,7 +1,6 @@
 var path = require('path')
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 var proxyquire = require('proxyquire')
-var q = require('q')
 var sinon = require('sinon')
 var expect = require('chai').expect
 var paths = require('../../app/paths.js')
@@ -11,9 +10,9 @@ var mockCharge = (function () {
     return function () {
       return {
         findByToken: function () {
-          var defer = q.defer();
-          (withSuccess) ? defer.resolve(chargeObject) : defer.reject()
-          return defer.promise
+          return new Promise(function (resolve, reject) {
+            (withSuccess) ? resolve(chargeObject) : reject(new Error())
+          })
         }
       }
     }
@@ -34,9 +33,9 @@ var mockToken = (function () {
     return function () {
       return {
         destroy: function () {
-          var defer = q.defer();
-          (withSuccess) ? defer.resolve() : defer.reject()
-          return defer.promise
+          return new Promise(function (resolve, reject) {
+            (withSuccess) ? resolve() : reject(new Error())
+          })
         }
       }
     }

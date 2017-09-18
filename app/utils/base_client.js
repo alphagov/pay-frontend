@@ -7,7 +7,7 @@
 const urlParse = require('url')
 const https = require('https')
 const path = require('path')
-const logger = require('winston')
+const logger = require('pino')()
 
 const customCertificate = require(path.join(__dirname, '/custom_certificate'))
 const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER

@@ -22,7 +22,7 @@ module.exports = function (paths) {
 
     var replaceAndDeleteNamedParam = function (key, value) {
       route = route.replace(':' + key, value)
-      delete copiedParams[key]
+      copiedParams[key] = undefined
     }
 
     var constructQueryString = function () {
