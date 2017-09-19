@@ -1,4 +1,4 @@
-var logger = require('winston')
+var logger = require('pino')()
 var _ = require('lodash')
 
 module.exports = (function () {

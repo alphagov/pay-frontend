@@ -4,6 +4,6 @@ module.exports = {
      * @return {Number}
      */
   getWorkerCount: function () {
-    return process.env.NODE_WORKER_COUNT || 1
+    return 1
   }
 }

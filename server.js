@@ -1,5 +1,5 @@
 // Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
-require('./app/utils/metrics.js').metrics()
+// require('./app/utils/metrics.js').metrics()
 
 var path = require('path')
 var express = require('express')
@@ -7,8 +7,7 @@ var favicon = require('serve-favicon')
 var router = require(path.join(__dirname, '/app/router.js'))
 var bodyParser = require('body-parser')
 var cookies = require(path.join(__dirname, '/app/utils/cookies.js'))
-var logger = require('winston')
-var loggingMiddleware = require('morgan')
+var logger = require('pino')()
 var noCache = require(path.join(__dirname, '/app/utils/no_cache.js'))
 var i18n = require('i18n')
 var port = process.env.PORT || 3000
@@ -28,13 +27,6 @@ i18n.configure({
   register: global
 })
 app.set('settings', {getVersionedPath: staticify.getVersionedPath})
-logger.stream = {
-  write: function (message) {
-    logger.info(message)
-  }
-}
-app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
-      ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
 
 app.use(i18n.init)
 app.use(compression())

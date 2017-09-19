@@ -7,12 +7,12 @@
 const urlParse = require('url')
 const https = require('https')
 const path = require('path')
-const logger = require('winston')
+const logger = require('pino')()
 
 const customCertificate = require(path.join(__dirname, '/custom_certificate'))
 const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
 
-var agentOptions = {
+const agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
 }
@@ -39,7 +39,7 @@ const agent = new https.Agent(agentOptions)
  *
  * @private
  */
-var _request = function request (methodName, url, args, callback) {
+const _request = function request (methodName, url, args, callback) {
   const parsedUrl = urlParse.parse(url)
   let headers = {}
 
@@ -57,39 +57,49 @@ var _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  let req = https.request(httpsOptions, (res) => {
-    let data = ''
-    res.on('data', (chunk) => {
-      data += chunk
-    })
+  const handleResponseCallback = handleResponse(callback, url)
 
-    res.on('end', () => {
-      try {
-        data = JSON.parse(data)
-      } catch (e) {
-        // if response exists but is not parsable, log it and carry on
-        if (data) {
-          logger.info('Response from %s in unexpected format: %s', url, data)
-        }
-        data = null
-      }
-      callback(data, {statusCode: res.statusCode})
-    })
-  })
+  const req = https.request(httpsOptions, handleResponseCallback)
 
   if (args.data) {
     req.write(JSON.stringify(args.data))
   }
 
-  req.on('response', (response) => {
-    response.on('readable', () => {
-      response.read()
-    })
-  })
+  req.on('response', readResponse)
 
   req.end()
 
   return req
+}
+
+function tryParse (data) {
+  try {
+    return JSON.parse(data)
+  } catch (err) {
+    return null
+  }
+}
+
+function handleResponse (callback, url) {
+  return function responseProcessor (res) {
+    let data = ''
+    res.on('data', function handleChunk (chunk) {
+      data += chunk
+    })
+    res.on('end', function endResponse () {
+      data = tryParse(data)
+      if (!data) {
+        logger.info('Response from %s in unexpected format: %s', url, data)
+      }
+      callback(data, {statusCode: res.statusCode})
+    })
+  }
+}
+
+function readResponse (response) {
+  response.on('readable', function handleRead () {
+    response.read()
+  })
 }
 
 /*

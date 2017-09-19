@@ -16,7 +16,7 @@ _.each(countries, function (countryList, i) {
 
     // delete east germany etc
   if (country['end-date']) {
-    delete countries[i]
+    countries[i] = undefined
     return
   }
 

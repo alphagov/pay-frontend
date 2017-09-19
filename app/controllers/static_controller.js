@@ -1,7 +1,7 @@
 /* jslint node: true */
 'use strict'
 var views = require('../utils/views.js')
-var logger = require('winston')
+var logger = require('pino')()
 var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 
 module.exports = {

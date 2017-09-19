@@ -12,26 +12,24 @@ module.exports = {
    * @returns {function}
    */
   createCallbackToPromiseConverter: (context, transformer) => {
-    let defer = context.defer
-
     return (error, response, body) => {
       requestLogger.logRequestEnd(context)
 
       if (error) {
         requestLogger.logRequestError(context, error)
-        defer.reject({error: error})
+        context.promise.reject({error: error})
         return
       }
 
       if (response && SUCCESS_CODES.indexOf(response.statusCode) !== -1) {
         if (body && transformer && typeof transformer === 'function') {
-          defer.resolve(transformer(body))
+          context.promise.resolve(transformer(body))
         } else {
-          defer.resolve(body)
+          context.promise.resolve(body)
         }
       } else {
         requestLogger.logRequestFailure(context, response)
-        defer.reject({
+        context.promise.reject({
           errorCode: response.statusCode,
           message: response.body
         })

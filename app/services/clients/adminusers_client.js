@@ -1,5 +1,5 @@
 'use strict'
-const q = require('q')
+// const q = require('q')
 const baseClient = require('../../utils/base_client2')
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
@@ -19,30 +19,30 @@ module.exports = function (clientOptions = {}) {
    * @returns {*|promise}
    */
   const getServiceById = (serviceExternalId) => {
-    const params = {
-      correlationId: correlationId
-    }
-    const url = `${servicesResource}/${serviceExternalId}`
-    const defer = q.defer()
-    const startTime = new Date()
-    const context = {
-      url: url,
-      defer: defer,
-      startTime: startTime,
-      correlationId: correlationId,
-      method: 'GET',
-      description: 'get a service',
-      service: SERVICE_NAME
-    }
+    return new Promise(function (resolve, reject) {
+      const params = {
+        correlationId: correlationId
+      }
+      const url = `${servicesResource}/${serviceExternalId}`
+      const startTime = new Date()
+      const context = {
+        url: url,
+        // defer: defer,
+        promise: { resolve: resolve, reject: reject },
+        startTime: startTime,
+        correlationId: correlationId,
+        method: 'GET',
+        description: 'get a service',
+        service: SERVICE_NAME
+      }
 
-    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
+      const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
 
-    requestLogger.logRequestStart(context)
+      requestLogger.logRequestStart(context)
 
-    baseClient.get(url, params, callbackToPromiseConverter)
-      .on('error', callbackToPromiseConverter)
-
-    return defer.promise
+      baseClient.get(url, params, callbackToPromiseConverter)
+          .on('error', callbackToPromiseConverter)
+    })
   }
 
   /**
@@ -50,34 +50,33 @@ module.exports = function (clientOptions = {}) {
    * @param findOptions - for now only `findOptions.gatewayAccountId` property is supported
    */
   const findServiceBy = (findOptions) => {
-    const params = {
-      correlationId: correlationId,
-      qs: {
-        gatewayAccountId: findOptions.gatewayAccountId
+    return new Promise(function (resolve, reject) {
+      const params = {
+        correlationId: correlationId,
+        qs: {
+          gatewayAccountId: findOptions.gatewayAccountId
+        }
       }
-    }
 
-    const url = `${servicesResource}`
-    const defer = q.defer()
-    const startTime = new Date()
-    const context = {
-      url: url,
-      defer: defer,
-      startTime: startTime,
-      correlationId: correlationId,
-      method: 'GET',
-      description: 'find a service',
-      service: SERVICE_NAME
-    }
+      const url = `${servicesResource}`
+      const startTime = new Date()
+      const context = {
+        url: url,
+        promise: { resolve: resolve, reject: reject },
+        startTime: startTime,
+        correlationId: correlationId,
+        method: 'GET',
+        description: 'find a service',
+        service: SERVICE_NAME
+      }
 
-    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
+      const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
 
-    requestLogger.logRequestStart(context)
+      requestLogger.logRequestStart(context)
 
-    baseClient.get(url, params, callbackToPromiseConverter)
-      .on('error', callbackToPromiseConverter)
-
-    return defer.promise
+      baseClient.get(url, params, callbackToPromiseConverter)
+          .on('error', callbackToPromiseConverter)
+    })
   }
 
   return {
