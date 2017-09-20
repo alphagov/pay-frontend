@@ -1,5 +1,4 @@
 'use strict'
-// const q = require('q')
 const baseClient = require('../../utils/base_client2')
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
@@ -27,7 +26,6 @@ module.exports = function (clientOptions = {}) {
       const startTime = new Date()
       const context = {
         url: url,
-        // defer: defer,
         promise: { resolve: resolve, reject: reject },
         startTime: startTime,
         correlationId: correlationId,

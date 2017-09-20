@@ -16,17 +16,20 @@ describe('Frontend analytics', function () {
     body.should.containSelector('script').withText("'dimension3':'paymentProvider'")
   }
 
-  it('should be enabled in charge view', function () {
+  it('should be enabled in charge view', function (done) {
     var templateData = {
       'amount': '50.00',
       'analytics': googleAnalyticsCustomDimensions
     }
-    var body = renderTemplate('charge', templateData)
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
+    renderTemplate('charge', templateData, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
+    })
   })
 
-  it('should be enabled in confirm view', function () {
+  it('should be enabled in confirm view', function (done) {
     var templateData = {
       'cardNumber': '************5100',
       'expiryDate': '11/99',
@@ -38,54 +41,72 @@ describe('Frontend analytics', function () {
       'analytics': googleAnalyticsCustomDimensions
     }
 
-    var body = renderTemplate('confirm', templateData)
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
+    renderTemplate('confirm', templateData, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
+    })
   })
 
-  it('should be enabled in error view', function () {
+  it('should be enabled in error view', function (done) {
     var msg = 'error processing your payment!'
-    var body = renderTemplate('error', {
+    renderTemplate('error', {
       'message': msg,
       'analytics': googleAnalyticsCustomDimensions
+    }, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
     })
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
   })
 
-  it('should be enabled in error with return url view', function () {
+  it('should be enabled in error with return url view', function (done) {
     var msg = 'error processing your payment!'
     var returnUrl = 'http://some.return.url'
-    var body = renderTemplate('error_with_return_url', {
+    renderTemplate('error_with_return_url', {
       'message': msg,
       'return_url': returnUrl,
       'analytics': googleAnalyticsCustomDimensions
+    }, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
     })
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
   })
 
-  it('should be enabled when waiting for auth', function () {
-    var body = renderTemplate('auth_waiting', {
+  it('should be enabled when waiting for auth', function (done) {
+    renderTemplate('auth_waiting', {
       'analytics': googleAnalyticsCustomDimensions
+    }, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
     })
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
   })
 
-  it('should be enabled when waiting for capture', function () {
-    var body = renderTemplate('capture_waiting', {
+  it('should be enabled when waiting for capture', function (done) {
+    renderTemplate('capture_waiting', {
       'analytics': googleAnalyticsCustomDimensions
+    }, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
     })
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
   })
 
-  it('should be enabled when user cancels a payment', function () {
-    var body = renderTemplate('user_cancelled', {
+  it('should be enabled when user cancels a payment', function (done) {
+    renderTemplate('user_cancelled', {
       'analytics': googleAnalyticsCustomDimensions
+    }, function (err, body) {
+      if (err) done(err)
+      body.should.containSelector('script').withText(googleAnalyticsScript)
+      checkGACustomDimensions(body)
+      done()
     })
-    body.should.containSelector('script').withText(googleAnalyticsScript)
-    checkGACustomDimensions(body)
   })
 })
