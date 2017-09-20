@@ -25,7 +25,7 @@
   "scripts": {
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
-    "start": "node start.js",
+    "start": "NODE_ENV=production node start.js",
     "stop": "node_modules/forever/bin/forever stop start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "test": "npm run lint && npm run grunt-test",
@@ -38,6 +38,7 @@
   "dependencies": {
     "accessible-autocomplete": "^1.6.0",
     "array.prototype.find": "2.0.x",
+    "async": "^2.5.0",
     "body-parser": "1.17.x",
     "change-case": "2.3.x",
     "client-sessions": "0.8.x",
@@ -54,7 +55,6 @@
     "latest-version": "3.1.x",
     "lodash": "4.17.x",
     "luhn": "2.1.x",
-    "minimist": "1.2.x",
     "moment": "2.18.x",
     "morgan": "1.8.x",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.9/pay-product-page-2.0.9.tgz",

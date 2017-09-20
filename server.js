@@ -11,7 +11,6 @@ var logger = require('pino')()
 var noCache = require(path.join(__dirname, '/app/utils/no_cache.js'))
 var i18n = require('i18n')
 var port = process.env.PORT || 3000
-var argv = require('minimist')(process.argv.slice(2))
 var app = express()
 var session = require('./app/utils/session.js')
 var staticify = require('staticify')(path.join(__dirname, 'public'))
@@ -82,11 +81,6 @@ function start () {
   app.listen(port)
   logger.info('Listening on port ' + port)
   return app
-}
-
-// immediately invoke start if -i flag set. Allows script to be run by task runner
-if (argv.i) {
-  start()
 }
 
 module.exports = {
