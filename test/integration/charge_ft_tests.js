@@ -13,8 +13,6 @@ const should = require('chai').should()
 const cookie = require('../test_helpers/session.js')
 const helper = require('../test_helpers/test_helpers.js')
 
-const logger = require('pino')()
-
 const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
 const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js').connectorResponseForPutCharge
 const {defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
