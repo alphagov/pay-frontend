@@ -1,42 +1,21 @@
-var logger = require('winston')
-var cookie = require('../utils/cookies')
+'use strict'
 
-module.exports = (function () {
-  'use strict'
+const logger = require('winston')
+const cookie = require('../utils/cookies')
 
-  var retrieve = function (req) {
-    var chargeId = getChargeParam(req)
+exports.retrieve = req => {
+  const chargeId = req.params.chargeId ? req.params.chargeId : req.body.chargeId
 
-    if (!chargeId) {
-      logger.error('ChargeId was not found in request -', {
-        chargeId: 'undefined'
-      })
-      return false
-    }
-
-    if (!getChargeFromSession(req, chargeId)) {
-      logger.error('ChargeId was not found on the session -', {
-        chargeId: chargeId
-      })
-      return false
-    }
-    return chargeId
+  if (!chargeId) {
+    logger.error('ChargeId was not found in request -', {
+      chargeId: 'undefined'
+    })
+    return false
+  } else if (!(cookie.getSessionCookieName() && cookie.getSessionVariable(req, 'ch_' + chargeId))) {
+    logger.error('ChargeId was not found on the session -', {
+      chargeId: chargeId
+    })
+    return false
   }
-
-  var getChargeParam = function (req) {
-    return (req.params.chargeId) ? req.params.chargeId : req.body.chargeId
-  }
-
-  var getChargeFromSession = function (req, chargeId) {
-    if (!cookie.getSessionCookieName()) return
-    return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId))
-  }
-
-  var createChargeIdSessionKey = function (chargeId) {
-    return 'ch_' + chargeId
-  }
-
-  return {
-    retrieve: retrieve
-  }
-}())
+  return chargeId
+}

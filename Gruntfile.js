@@ -128,15 +128,7 @@ module.exports = function (grunt) {
         captureFile: 'mocha-test-results.txt'
       },
       src: [
-        'test/*.js',
-        'test/unit/*.js',
-        'test/unit/clients/*.js',
-        'test/services/*.js',
-        'test/models/*.js',
-        'test/utils/*.js',
-        'test/middleware/*.js',
-        'test/controllers/*.js',
-        'test/integration/*.js'
+        'test/**/*.js'
       ]
     }
   }
