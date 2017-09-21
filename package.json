@@ -56,7 +56,6 @@
     "lodash": "4.17.x",
     "luhn": "2.1.x",
     "moment": "2.18.x",
-    "morgan": "1.8.x",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.9/pay-product-page-2.0.9.tgz",
     "pino": "^4.7.2",
     "randomstring": "^1.1.5",
