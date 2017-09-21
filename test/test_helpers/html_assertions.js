@@ -3,12 +3,15 @@ var TemplateEngine = require(path.join(__dirname, '/../../lib/template-engine.js
 var cheerio = require('cheerio')
 var chai = require('chai')
 
-function render (templateName, templateData) {
-  var templates = TemplateEngine._getTemplates([
+function render (templateName, templateData, callback) {
+  TemplateEngine.loadTemplates([
     path.join(__dirname, '/../../app/views'),
     path.join(__dirname, '/../../govuk_modules/govuk_template/views/layouts')
-  ])
-  return templates[templateName].render(templateData, templates)
+  ], (err, templates) => {
+    if (err) callback(err)
+    // Got templates successfully
+    callback(null, templates[templateName].render(templateData, templates))
+  })
 }
 
 module.exports = {
