@@ -1,9 +1,6 @@
-module.exports = {
-    /**
-     * Number of node workers in cluster
-     * @return {Number}
-     */
-  getWorkerCount: function () {
-    return process.env.NODE_WORKER_COUNT || 1
-  }
-}
+'use strict'
+
+/**
+ * @return {Number} Number of node workers in cluster
+ */
+exports.getWorkerCount = () => process.env.NODE_WORKER_COUNT || 1

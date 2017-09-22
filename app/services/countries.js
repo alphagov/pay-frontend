@@ -1,51 +1,26 @@
 'use strict'
-var fs = require('fs')
-var _ = require('lodash')
-var path = require('path')
 
-var countries = {}
+// NPM Dependencies
+const lodash = require('lodash')
 
-countries = JSON.parse(fs.readFileSync(path.join(__dirname, '/../data/countries.json'), 'utf8'))
-// Load additional country data from JSON file
-var extensions = JSON.parse(fs.readFileSync(path.join(__dirname, '/../data/country-record-extension.json'), 'utf8'))
+// Local Dependencies
+let countries = require('../data/countries.json')
+const extensions = require('../data/country-record-extension.json')
+
+// Exports
+exports.retrieveCountries = () => lodash.clone(countries)
+exports.translateAlpha2 = alpha2Code => countries.find(country => country.entry.country === alpha2Code).entry.name
 
 // Merge the additional data into the register data
-_.each(countries, function (countryList, i) {
-  var country = countries[i].entry
-  if (country.country === 'GB') country.selected = true
-
-    // delete east germany etc
-  if (country['end-date']) {
-    delete countries[i]
-    return
+countries.forEach((country, i) => {
+  const extension = extensions.find(item => item.country === item.country)
+  country.entry.selected = country.entry.country === 'GB'
+  if (extension) {
+    country.entry.aliases = extension.aliases
+    country.entry.weighting = extension.weighting
   }
-
-  for (var j = 0; j < extensions.length; j++) {
-    if (country.country === extensions[j].country) {
-      country.aliases = extensions[j].aliases
-      country.weighting = extensions[j].weighting
-    }
-  }
+  if (country.entry['end-date']) delete countries[i] // delete east germany etc
 })
 
-countries = _.compact(countries)
-countries = _.sortBy(countries, function (country) {
-  country.entry.name.toLowerCase()
-}).reverse()
-
-var retrieveCountries = function () {
-  return _.clone(countries)
-}
-
-var translateAlpha2 = function (alhpa2Code) {
-  var country = _.filter(countries, function (country) {
-    return country.entry.country === alhpa2Code
-  })[0]
-  return country.entry.name
-}
-
-module.exports =
-{
-  retrieveCountries: retrieveCountries,
-  translateAlpha2: translateAlpha2
-}
+countries = lodash.compact(countries)
+countries = lodash.sortBy(countries, country => country.entry.name.toLowerCase()).reverse()
