@@ -2,7 +2,7 @@
 require('array.prototype.find')
 var logger = require('winston')
 var logging = require('../utils/logging.js')
-var baseClient = require('../utils/base_client')
+var baseClient = require('../utils/base_client2')
 
 var _ = require('lodash')
 var views = require('../utils/views.js')
@@ -147,13 +147,15 @@ module.exports = {
       var startTime = new Date()
       var correlationId = req.headers[CORRELATION_HEADER] || ''
 
-      baseClient.post(authUrl, { data: normalise.apiPayload(req, cardBrand), correlationId: correlationId },
-        function (data, json) {
-          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
-          var response = responses[json.statusCode]
-          if (!response) return unknownFailure()
-          response(_.get(data, 'status'))
-        }).on('error', connectorNonResponsive)
+      baseClient.post(authUrl, { payload: normalise.apiPayload(req, cardBrand), correlationId: correlationId }, function (err, data) {
+        if (err) {
+          return connectorNonResponsive(err)
+        }
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
+        var response = responses[data.statusCode]
+        if (!response) return unknownFailure()
+        response(_.get(data, 'body.status'))
+      }).on('error', connectorNonResponsive)
     }
     validator.verify(req).then(function (data) {
       if (data.validation.hasError) return hasValidationError(data.validation)
@@ -207,10 +209,14 @@ module.exports = {
     }
     var connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
 
-    baseClient.post(connector3dsUrl, { data: templateData, correlationId: correlationId },
-      function (data, json) {
+    baseClient.post(connector3dsUrl, { payload: templateData, correlationId: correlationId },
+      function (err, data) {
+        if (err) {
+          _views.display(res, 'ERROR', withAnalytics(charge))
+          return
+        }
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
-        switch (json.statusCode) {
+        switch (data.statusCode) {
           case 200:
           case 400:
             redirect(res).toConfirm(charge.id)

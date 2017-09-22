@@ -1,6 +1,6 @@
 const path = require('path')
 const https = require('https')
-const httpAgent = require('http').globalAgent
+const http = require('http')
 const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
@@ -26,6 +26,7 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
 }
 
 const httpsAgent = new https.Agent(agentOptions)
+const httpAgent = new http.Agent(agentOptions)
 
 const client = request
   .defaults({
