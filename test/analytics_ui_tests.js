@@ -16,7 +16,7 @@ describe('Frontend analytics', function () {
     body.should.containSelector('script').withText("'dimension3':'paymentProvider'")
   }
 
-  it('should be enabled in charge view', function (done) {
+  it.only('should be enabled in charge view', function (done) {
     var templateData = {
       'amount': '50.00',
       'analytics': googleAnalyticsCustomDimensions

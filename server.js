@@ -19,6 +19,17 @@ var compression = require('compression')
 var oneYear = 86400000 * 365
 var publicCaching = {maxAge: oneYear}
 
+const memwatch = require('memwatch-next')
+const heapdump = require('heapdump')
+//
+memwatch.on('leak', (info) => {
+  console.error('SERVER ---------------------> Memory leak detected:\n', info)
+  heapdump.writeSnapshot((err, filename) => {
+    if (err) console.error(err)
+    else console.error('SERVER ---------------------> Wrote snapshot: ' + filename)
+  })
+})
+
 i18n.configure({
   locales: ['en'],
   directory: path.join(__dirname, '/locales'),

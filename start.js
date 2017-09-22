@@ -1,5 +1,18 @@
 (function () {
   'use strict'
+  //
+  const memwatch = require('memwatch-next')
+  const heapdump = require('heapdump')
+  //
+  memwatch.on('leak', (info) => {
+    console.error('START ---------------------> Memory leak detected:\n', info)
+    heapdump.writeSnapshot((err, filename) => {
+      if (err) console.error(err)
+      else console.error('START ---------------------> Wrote snapshot: ' + filename)
+    })
+  })
+  //
+  // require('newrelic')
 
   var path = require('path')
   var fs = require('fs')
@@ -10,6 +23,8 @@
   var pidFile = path.join(__dirname, '/.start.pid')
   var fileOptions = { encoding: 'utf-8' }
   var pid
+
+  // require('./heapdump.js').init(path.join(__dirname, '/heap_snapshots'))
 
   /**
    * throng is a wrapper around node cluster

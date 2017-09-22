@@ -21,7 +21,7 @@ module.exports = {
         return
       }
 
-      if (response && SUCCESS_CODES.indexOf(response.statusCode) !== -1) {
+      if (response && SUCCESS_CODES[response.statusCode] !== null) {
         if (body && transformer && typeof transformer === 'function') {
           context.promise.resolve(transformer(body))
         } else {

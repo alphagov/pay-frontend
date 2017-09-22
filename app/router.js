@@ -19,9 +19,8 @@ module.exports.bind = function (app) {
   'use strict'
 
   app.get('/healthcheck', function (req, res) {
-    var data = {'ping': {'healthy': true}}
     res.writeHead(200, {'Content-Type': 'application/json'})
-    res.end(JSON.stringify(data))
+    res.end('{"ping":{"healthy":true}}')
   })
 
   // charges

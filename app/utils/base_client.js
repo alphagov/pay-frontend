@@ -1,4 +1,7 @@
 /**
+ *
+ * NOTE : This base client re-work may be more performant than the new base_client. The statement below needs to be checked
+ *
  * @Deprecated
  *
  * Use base_client2.js instead (which is `requestretry` based with retry support and sync with selfservice
@@ -57,15 +60,15 @@ const _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  const handleResponseCallback = handleResponse(callback, url)
+  const handleResponseCallback = handleResponse(callback)
+
+  logger.info('0. Setting up http request')
 
   const req = https.request(httpsOptions, handleResponseCallback)
 
   if (args.data) {
     req.write(JSON.stringify(args.data))
   }
-
-  req.on('response', readResponse)
 
   req.end()
 
@@ -74,31 +77,38 @@ const _request = function request (methodName, url, args, callback) {
 
 function tryParse (data) {
   try {
+    //logger.info('RESPONSE DATA : ' + data)
     return JSON.parse(data)
   } catch (err) {
     return null
   }
 }
 
-function handleResponse (callback, url) {
-  return function responseProcessor (res) {
-    let data = ''
-    res.on('data', function handleChunk (chunk) {
-      data += chunk
-    })
-    res.on('end', function endResponse () {
-      data = tryParse(data)
-      if (!data) {
-        logger.info('Response from %s in unexpected format: %s', url, data)
-      }
-      callback(data, {statusCode: res.statusCode})
-    })
+function handleResponse (callback) {
+  logger.info('1. Handing response')
+  return function readBufferPartial (res) {
+    return readBuffer(res, callback)
   }
 }
 
-function readResponse (response) {
-  response.on('readable', function handleRead () {
-    response.read()
+function readBuffer (buffer, callback) {
+  logger.info('2. Reading buffer')
+  let data = ''
+  buffer.on('readable', function bufferReadable () {
+    logger.info('3. buffer readable')
+    const read = buffer.read()
+    data += read ? read.toString() : ''
+  })
+  return buffer.on('end', function bufferEnd () {
+    logger.info('4. buffer end')
+    logger.info('status code : ' + buffer.statusCode)
+    let dataRet = tryParse(data)
+    if (!dataRet) {
+      logger.error('Response from outbound http request was in unexpected format!')
+    }
+    logger.info('5. Calling back')
+    callback(dataRet, {statusCode: buffer.statusCode})
+    data = null // TEST
   })
 }
 
