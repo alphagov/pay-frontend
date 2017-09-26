@@ -77,7 +77,7 @@ const _request = function request (methodName, url, args, callback) {
 
 function tryParse (data) {
   try {
-    //logger.info('RESPONSE DATA : ' + data)
+    // logger.info('RESPONSE DATA : ' + data)
     return JSON.parse(data)
   } catch (err) {
     return null

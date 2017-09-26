@@ -39,7 +39,6 @@
     "accessible-autocomplete": "^1.6.0",
     "appmetrics": "1.1.2",
     "appmetrics-statsd": "1.0.1",
-    "array.prototype.find": "2.0.x",
     "async": "^2.5.0",
     "body-parser": "1.17.x",
     "change-case": "2.3.x",
