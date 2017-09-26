@@ -1,7 +1,6 @@
-FROM node:6.11.1-alpine
+FROM node:8.5.0-alpine
 
 RUN apk update &&\
-    apk upgrade &&\
     apk add --update bash python make g++ ruby openssl
 
 ADD docker/sgerrand.rsa.pub /etc/apk/keys/sgerrand.rsa.pub

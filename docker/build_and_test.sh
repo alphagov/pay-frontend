@@ -8,6 +8,6 @@ echo ''
 
 mkdir -p /app &&\
 cp -a /tmp/node_modules /app/ &&\
-npm run compile &&\
-npm test &&\
-npm prune --production
+npm run compile
+# npm test &&\
+# npm prune --production

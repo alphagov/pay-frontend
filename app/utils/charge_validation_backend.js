@@ -1,9 +1,9 @@
 /* jslint node: true */
 'use strict'
 
-var chargeValidator = require('./charge_validation.js')
-var _ = require('lodash')
-var normalise = require('../services/normalise_charge.js')
+const chargeValidator = require('./charge_validation.js')
+const _ = require('lodash')
+const normalise = require('../services/normalise_charge.js')
 
 module.exports = function (translations, logger, cardModel) {
   var validator = chargeValidator(

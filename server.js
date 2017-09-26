@@ -1,5 +1,5 @@
 // Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
-require('./app/utils/metrics.js').metrics()
+// require('./app/utils/metrics.js').metrics()
 
 var path = require('path')
 var express = require('express')
@@ -19,9 +19,19 @@ var compression = require('compression')
 var oneYear = 86400000 * 365
 var publicCaching = {maxAge: oneYear}
 
+// START - HEAP / APM / BLOCKING INSTRUMENTATION
 const memwatch = require('memwatch-next')
 const heapdump = require('heapdump')
-//
+// const blocked = require('blocked-at')
+
+// Be careful with this - heap analysis shows lots of strings in memory relating to this module which
+// might in turn be creating memory leak alerts
+// blocked((time, stack) => {
+//   console.log('BLOCKED (server)----------------------------------------------')
+//   console.log(`Blocked for ${time}ms, operation started here:`, stack)
+//   console.log('BLOCKED (server)----------------------------------------------')
+// })
+
 memwatch.on('leak', (info) => {
   console.error('SERVER ---------------------> Memory leak detected:\n', info)
   heapdump.writeSnapshot((err, filename) => {
@@ -29,6 +39,7 @@ memwatch.on('leak', (info) => {
     else console.error('SERVER ---------------------> Wrote snapshot: ' + filename)
   })
 })
+// END - HEAP / APM / BLOCKING INSTRUMENTATION
 
 i18n.configure({
   locales: ['en'],

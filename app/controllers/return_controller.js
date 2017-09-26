@@ -1,12 +1,12 @@
-var Charge = require('../models/charge.js')
-var StateModel = require('../models/state.js')
-var views = require('../utils/views.js')
-var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const chargeModel = require('../models/charge.js')
+const StateModel = require('../models/state.js')
+const views = require('../utils/views.js')
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 
-var logger = require('pino')()
+const logger = require('pino')()
 
-let CANCELABLE_STATES = [
+const CANCELABLE_STATES = [
   StateModel.CREATED,
   StateModel.ENTERING_CARD_DETAILS,
   StateModel.AUTH_SUCCESS,
@@ -16,23 +16,22 @@ let CANCELABLE_STATES = [
   StateModel.AUTH_3DS_READY
 ]
 
-module.exports.return = function (req, res) {
-  'use strict'
+module.exports = {
+  return: function (req, res) {
+    const correlationId = req.headers[CORRELATION_HEADER] || ''
+    const _views = views.create({})
+    const doRedirect = () => res.redirect(req.chargeData.return_url)
 
-  let correlationId = req.headers[CORRELATION_HEADER] || ''
-  let _views = views.create({})
-  let doRedirect = () => res.redirect(req.chargeData.return_url)
-  let chargeModel = Charge(correlationId)
-
-  if (CANCELABLE_STATES.includes(req.chargeData.status)) {
-    return chargeModel.cancel(req.chargeId)
-      .then(() => logger.warn('Return controller cancelled payment', {'chargeId': req.chargeId}))
-      .then(doRedirect)
-      .catch(() => {
-        logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId})
-        _views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
-      })
-  } else {
-    return doRedirect()
+    if (CANCELABLE_STATES.includes(req.chargeData.status)) {
+      return chargeModel.cancel(req.chargeId, correlationId)
+          .then(() => logger.warn('Return controller cancelled payment', {'chargeId': req.chargeId}))
+          .then(doRedirect)
+          .catch(() => {
+            logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId})
+            _views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
+          })
+    } else {
+      return doRedirect()
+    }
   }
 }

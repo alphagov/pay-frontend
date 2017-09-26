@@ -1,45 +1,41 @@
-var paths = require('../paths.js')
-var Token = require('../models/token.js')
-var Charge = require('../models/charge.js')
-var views = require('../utils/views.js')
-var session = require('../utils/session.js')
-var cookie = require('../utils/cookies')
-var csrf = require('csrf')
-var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
-var stateService = require('../services/state_service.js')
+const paths = require('../paths.js')
+const Token = require('../models/token.js')
+const Charge = require('../models/charge.js')
+const views = require('../utils/views.js')
+const session = require('../utils/session.js')
+const cookie = require('../utils/cookies')
+const csrf = require('csrf')
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const stateService = require('../services/state_service.js')
 
-module.exports.new = function (req, res) {
-  'use strict'
-
-  var chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
-  var correlationId = req.headers[CORRELATION_HEADER] || ''
-
-  var init = function () {
-    var charge = Charge(correlationId)
-    charge.findByToken(chargeTokenId)
-        .then(chargeRetrieved, apiFail)
-  }
-
-  var chargeRetrieved = function (chargeData) {
-    var token = Token(correlationId)
+function chargeRetrievedPartial (req, res, chargeTokenId, correlationId) {
+  return function (chargeData) {
+    const token = Token(correlationId)
     token.destroy(chargeTokenId)
-          .then(apiSuccess(chargeData), apiFail)
+        .then(apiSuccess(chargeData, req, res), () => {
+          views.create().display(res, 'SYSTEM_ERROR', withAnalyticsError())
+        })
   }
+}
 
-  var apiSuccess = function (chargeData) {
-    var chargeId = chargeData.externalId
+function apiSuccess (chargeData, req, res) {
+  const chargeId = chargeData.externalId
+  cookie.setSessionVariable(req, session.createChargeIdSessionKey(chargeId), {
+    csrfSecret: csrf().secretSync()
+  })
+  const actionName = stateService.resolveActionName(chargeData.status, 'get')
+  res.redirect(303, paths.generateRoute(actionName, {chargeId: chargeId}))
+}
 
-    cookie.setSessionVariable(req, session.createChargeIdSessionKey(chargeId), {
-      csrfSecret: csrf().secretSync()
-    })
-
-    var actionName = stateService.resolveActionName(chargeData.status, 'get')
-    res.redirect(303, paths.generateRoute(actionName, {chargeId: chargeId}))
+module.exports = {
+  new: function (req, res) {
+    const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
+    const correlationId = req.headers[CORRELATION_HEADER] || ''
+    Charge.findByToken(chargeTokenId, correlationId)
+        .then(chargeRetrievedPartial(req, res, chargeTokenId, correlationId),
+            () => {
+              views.create().display(res, 'SYSTEM_ERROR', withAnalyticsError())
+            })
   }
-
-  var apiFail = function () {
-    views.create().display(res, 'SYSTEM_ERROR', withAnalyticsError())
-  }
-  init()
 }

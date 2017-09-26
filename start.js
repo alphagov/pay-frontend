@@ -1,9 +1,21 @@
 (function () {
   'use strict'
-  //
+  var path = require('path')
+
+  // START - HEAP / APM / BLOCKING INSTRUMENTATION
   const memwatch = require('memwatch-next')
   const heapdump = require('heapdump')
-  //
+  // const blocked = require('blocked-at')
+  require('newrelic')
+
+  // Be careful with this - heap analysis shows lots of strings in memory relating to this module which
+  // might in turn be creating memory leak alerts
+  // blocked((time, stack) => {
+  //   console.log('BLOCKED (start)----------------------------------------------')
+  //   console.log(`Blocked for ${time}ms, operation started here:`, stack)
+  //   console.log('BLOCKED (start)----------------------------------------------')
+  // })
+
   memwatch.on('leak', (info) => {
     console.error('START ---------------------> Memory leak detected:\n', info)
     heapdump.writeSnapshot((err, filename) => {
@@ -11,10 +23,11 @@
       else console.error('START ---------------------> Wrote snapshot: ' + filename)
     })
   })
-  //
-  // require('newrelic')
 
-  var path = require('path')
+  // require('./heapdump.js').init(path.join(__dirname, '/heap_snapshots'))
+
+  // END - HEAP / APM / BLOCKING INSTRUMENTATION
+
   var fs = require('fs')
   var logger = require('pino')()
   var throng = require('throng')
@@ -23,8 +36,6 @@
   var pidFile = path.join(__dirname, '/.start.pid')
   var fileOptions = { encoding: 'utf-8' }
   var pid
-
-  // require('./heapdump.js').init(path.join(__dirname, '/heap_snapshots'))
 
   /**
    * throng is a wrapper around node cluster

@@ -51,7 +51,7 @@ const _request = function request (methodName, url, args, callback) {
     headers[CORRELATION_HEADER_NAME] = args.correlationId
   }
 
-  const httpsOptions = {
+  let httpsOptions = {
     hostname: parsedUrl.hostname,
     port: parsedUrl.port,
     path: parsedUrl.pathname,
@@ -62,7 +62,7 @@ const _request = function request (methodName, url, args, callback) {
 
   const handleResponseCallback = handleResponse(callback)
 
-  logger.info('0. Setting up http request')
+  // logger.info('0. Setting up http request')
 
   const req = https.request(httpsOptions, handleResponseCallback)
 
@@ -71,6 +71,12 @@ const _request = function request (methodName, url, args, callback) {
   }
 
   req.end()
+
+  // TODO : Experimental
+  httpsOptions = null
+  methodName = null
+  url = null
+  args = null
 
   return req
 }
@@ -85,30 +91,33 @@ function tryParse (data) {
 }
 
 function handleResponse (callback) {
-  logger.info('1. Handing response')
+  // logger.info('1. Handing response')
   return function readBufferPartial (res) {
     return readBuffer(res, callback)
   }
 }
 
 function readBuffer (buffer, callback) {
-  logger.info('2. Reading buffer')
+  // logger.info('2. Reading buffer')
   let data = ''
   buffer.on('readable', function bufferReadable () {
-    logger.info('3. buffer readable')
+    // logger.info('3. buffer readable')
     const read = buffer.read()
     data += read ? read.toString() : ''
   })
   return buffer.on('end', function bufferEnd () {
-    logger.info('4. buffer end')
-    logger.info('status code : ' + buffer.statusCode)
+    // logger.info('4. buffer end')
+    // logger.info('status code : ' + buffer.statusCode)
     let dataRet = tryParse(data)
+
+    // TODO : Experimental
+    data = null
+
     if (!dataRet) {
       logger.error('Response from outbound http request was in unexpected format!')
     }
-    logger.info('5. Calling back')
+    // logger.info('5. Calling back')
     callback(dataRet, {statusCode: buffer.statusCode})
-    data = null // TEST
   })
 }
 

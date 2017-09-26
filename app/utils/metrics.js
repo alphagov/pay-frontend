@@ -1,19 +1,15 @@
-/* jslint node: true */
-'use strict'
-var appmetrics = require('appmetrics')
-var metricsHost = process.env.METRICS_HOST || 'localhost'
-var metricsPort = process.env.METRICS_PORT || 8125
-var metricsPrefix = 'frontend.'
+const appmetrics = require('appmetrics')
+
+const metricsHost = process.env.METRICS_HOST || 'localhost'
+const metricsPort = process.env.METRICS_PORT || 8125
+const metricsPrefix = 'frontend.'
 
 function initialiseMonitoring () {
   appmetrics.configure({'mqtt': 'off'})
-  var appmetricsStatsd = require('appmetrics-statsd')
-
+  const appmetricsStatsd = require('appmetrics-statsd')
   return appmetricsStatsd.StatsD(null, metricsHost, metricsPort, metricsPrefix)
 }
 
-module.exports = (function () {
-  return {
-    metrics: initialiseMonitoring
-  }
-}())
+module.exports = {
+  metrics: initialiseMonitoring
+}

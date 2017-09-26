@@ -13,7 +13,7 @@ module.exports = function (req, res, next) {
     _views.display(res, 'UNAUTHORISED', withAnalyticsError())
   } else {
     req.chargeId = chargeId
-    Charge(req.headers[CORRELATION_HEADER]).find(chargeId)
+    Charge.find(chargeId, req.headers[CORRELATION_HEADER])
       .then(data => {
         req.chargeData = data
         next()

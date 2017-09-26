@@ -1,16 +1,14 @@
-'use strict'
+const cookie = require('../utils/cookies')
 
-var cookie = require('../utils/cookies')
+function createChargeIdSessionKey (chargeId) {
+  return 'ch_' + chargeId
+}
 
-module.exports = (function () {
-  var createChargeIdSessionKey = function (chargeId) {
-    return 'ch_' + chargeId
-  }
-  var retrieve = function (req, chargeId) {
-    return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId))
-  }
-  return {
-    retrieve: retrieve,
-    createChargeIdSessionKey: createChargeIdSessionKey
-  }
-}())
+function retrieve (req, chargeId) {
+  return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId))
+}
+
+module.exports = {
+  retrieve: retrieve,
+  createChargeIdSessionKey: createChargeIdSessionKey
+}

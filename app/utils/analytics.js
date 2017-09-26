@@ -1,5 +1,5 @@
-var _ = require('lodash')
-var paths = require('../paths.js')
+const _ = require('lodash')
+const paths = require('../paths.js')
 
 const ANALYTICS_ERROR = {
   analytics: {
@@ -9,24 +9,22 @@ const ANALYTICS_ERROR = {
   }
 }
 
-module.exports = (function () {
-  'use strict'
+function withAnalytics (charge, param) {
+  return _.merge(
+    {
+      analytics: {
+        path: paths.generateRoute('card.new', {chargeId: charge.id}),
+        analyticsId: charge.gatewayAccount.analyticsId,
+        type: charge.gatewayAccount.type,
+        paymentProvider: charge.gatewayAccount.paymentProvider
+      }}, param)
+}
 
-  var withAnalytics = function (charge, param) {
-    return _.merge(
-      {
-        analytics: {
-          path: paths.generateRoute(`card.new`, {chargeId: charge.id}),
-          analyticsId: charge.gatewayAccount.analyticsId,
-          type: charge.gatewayAccount.type,
-          paymentProvider: charge.gatewayAccount.paymentProvider
-        }}, param)
-  }
-  var withError = function () {
-    return _.clone(ANALYTICS_ERROR)
-  }
-  return {
-    withAnalyticsError: withError,
-    withAnalytics: withAnalytics
-  }
-}())
+function withError () {
+  return _.clone(ANALYTICS_ERROR)
+}
+
+module.exports = {
+  withAnalyticsError: withError,
+  withAnalytics: withAnalytics
+}
