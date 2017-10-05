@@ -1,5 +1,5 @@
 'use strict'
-const baseClient = require('../../utils/base_client2')
+const baseClient = require('../../utils/base_client')
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
 const createCallbackToPromiseConverter = require('../../utils/response_converter').createCallbackToPromiseConverter
@@ -39,7 +39,6 @@ module.exports = function (clientOptions = {}) {
       requestLogger.logRequestStart(context)
 
       baseClient.get(url, params, callbackToPromiseConverter)
-          .on('error', callbackToPromiseConverter)
     })
   }
 
@@ -73,7 +72,6 @@ module.exports = function (clientOptions = {}) {
       requestLogger.logRequestStart(context)
 
       baseClient.get(url, params, callbackToPromiseConverter)
-          .on('error', callbackToPromiseConverter)
     })
   }
 

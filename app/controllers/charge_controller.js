@@ -31,9 +31,6 @@ const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION
 
 module.exports = {
   new: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - NEW')
-
     let charge = normalise.charge(req.chargeData, req.chargeId)
     appendChargeForNewView(charge, req, charge.id)
     charge.countries = countries
@@ -47,9 +44,6 @@ module.exports = {
   },
 
   create: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - CREATE')
-
     let charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     const submitted = charge.status === State.AUTH_READY
@@ -73,9 +67,9 @@ module.exports = {
             const startTime = new Date()
             const correlationId = req.headers[CORRELATION_HEADER] || ''
             baseClient.post(authUrl, { data: normalise.apiPayload(req, cardBrand), correlationId: correlationId },
-                (data, json) => {
+                (data, status) => {
                   logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
-                  const response = responses[json.statusCode]
+                  const response = responses[status.statusCode]
                   if (!response) return redirect(res).toNew(req.chargeId)
                   response(req, res, _.get(data, 'status'), authUrl, charge)
                 })
@@ -87,9 +81,6 @@ module.exports = {
   },
 
   checkCard: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - CHECK CARD')
-
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     cardModel.checkCard(normalise.creditCard(req.body.cardNo))
         .then(
@@ -99,9 +90,6 @@ module.exports = {
   },
 
   authWaiting: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - AUTH WAITING')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
     switch (charge.status) {
       case (State.AUTH_READY):
@@ -116,9 +104,6 @@ module.exports = {
     }
   },
   auth3dsHandler (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - AUTH 3DS HANDLER')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const startTime = new Date()
     const correlationId = req.headers[CORRELATION_HEADER] || ''
@@ -148,17 +133,11 @@ module.exports = {
         })
   },
   auth3dsRequired: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - AUTH 3DS REQUIRED')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
     _views.display(res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
   },
 
   auth3dsRequiredOut: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - AUTH 3DS REQUIRED OUT')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const templateData = {
       issuerUrl: _.get(charge, 'auth3dsData.issuerUrl'),
@@ -169,21 +148,16 @@ module.exports = {
   },
 
   auth3dsRequiredIn: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - AUTH 3DS REQUIRED IN')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const templateData = {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes')
     }
+
     _views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, templateData)
   },
 
   confirm: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - CONFIRM')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const confirmPath = routeFor('confirm', charge.id)
 
@@ -198,9 +172,6 @@ module.exports = {
   },
 
   capture: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - CAPTURE')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
 
     chargeModel.capture(req.chargeId, req.headers[CORRELATION_HEADER]).then(() => {
@@ -212,9 +183,6 @@ module.exports = {
   },
 
   captureWaiting: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - CAPTURE WAITING')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
 
     if (charge.status === State.CAPTURE_READY) {
@@ -228,9 +196,6 @@ module.exports = {
   },
 
   cancel: function (req, res) {
-    // TODO - REMOVE LOGGING
-    logger.info('CHARGE - CANCEL')
-
     const charge = normalise.charge(req.chargeData, req.chargeId)
 
     chargeModel.cancel(req.chargeId, req.headers[CORRELATION_HEADER])
