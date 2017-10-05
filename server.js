@@ -19,28 +19,6 @@ var compression = require('compression')
 var oneYear = 86400000 * 365
 var publicCaching = {maxAge: oneYear}
 
-// START - HEAP / APM / BLOCKING INSTRUMENTATION
-const memwatch = require('memwatch-next')
-const heapdump = require('heapdump')
-// const blocked = require('blocked-at')
-
-// Be careful with this - heap analysis shows lots of strings in memory relating to this module which
-// might in turn be creating memory leak alerts
-// blocked((time, stack) => {
-//   console.log('BLOCKED (server)----------------------------------------------')
-//   console.log(`Blocked for ${time}ms, operation started here:`, stack)
-//   console.log('BLOCKED (server)----------------------------------------------')
-// })
-
-memwatch.on('leak', (info) => {
-  console.error('SERVER ---------------------> Memory leak detected:\n', info)
-  heapdump.writeSnapshot((err, filename) => {
-    if (err) console.error(err)
-    else console.error('SERVER ---------------------> Wrote snapshot: ' + filename)
-  })
-})
-// END - HEAP / APM / BLOCKING INSTRUMENTATION
-
 i18n.configure({
   locales: ['en'],
   directory: path.join(__dirname, '/locales'),
