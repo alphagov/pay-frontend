@@ -1,6 +1,6 @@
-var _ = require('lodash')
-var path = require('path')
-var generateRoute = require(path.join(__dirname, '/utils/generate_route.js'))
+const _ = require('lodash')
+const path = require('path')
+const generateRoute = require(path.join(__dirname, '/utils/generate_route.js'))
 
 if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined')
 // please structure each route as follows
@@ -11,7 +11,7 @@ if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST en
 // the action while not used directly here is used so we can match to the named
 // routes when we have duplicate paths on different actions
 
-var paths = {
+const paths = {
   card: {
     new: {
       path: '/card_details/:chargeId',
@@ -129,7 +129,7 @@ var paths = {
   }
 }
 
-var extendedPaths = _.extend({}, paths, {
+const extendedPaths = _.extend({}, paths, {
   external: {
     card: {
       auth3dsRequiredIn: {

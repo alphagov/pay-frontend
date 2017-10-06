@@ -28,3 +28,7 @@ public/javascripts/browsered.js
 .nyc_output
 coverage
 pacts
+
+# new relic APM related
+newrelic.js
+newrelic_agent.log

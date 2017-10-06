@@ -1,36 +1,26 @@
-var _ = require('lodash')
-var querystring = require('querystring')
+const _ = require('lodash')
+const querystring = require('querystring')
 
 module.exports = function (paths) {
-  'use strict'
-
   return function (actionName, params) {
-    var route = _.result(paths, actionName).path
-    var copiedParams = _.cloneDeep(params)
+    let route = _.result(paths, actionName).path
+    const copiedParams = _.cloneDeep(params)
 
-    var init = function () {
-      _.forEach(copiedParams, checkNamedParams)
-      var query = constructQueryString()
-      return route + query
-    }
-
-    var checkNamedParams = function (value, key) {
-      var hasNamedParam = route.indexOf(':' + key) !== -1
+    _.forEach(copiedParams, function (value, key) {
+      const hasNamedParam = route.indexOf(':' + key) !== -1
       if (!hasNamedParam) return
-      replaceAndDeleteNamedParam(key, value)
-    }
 
-    var replaceAndDeleteNamedParam = function (key, value) {
       route = route.replace(':' + key, value)
-      delete copiedParams[key]
-    }
+      copiedParams[key] = undefined
+    })
 
-    var constructQueryString = function () {
-      var validParams = _.omitBy(copiedParams, _.isEmpty, _.isUndefined)
-      if (Object.keys(validParams).length === 0) return ''
-      return ['?', querystring.stringify(validParams)].join('')
-    }
-
-    return init()
+    const query = constructQueryString(copiedParams)
+    return route + query
   }
+}
+
+function constructQueryString (copiedParams) {
+  const validParams = _.omitBy(copiedParams, _.isEmpty, _.isUndefined)
+  if (Object.keys(validParams).length === 0) return ''
+  return ['?', querystring.stringify(validParams)].join('')
 }

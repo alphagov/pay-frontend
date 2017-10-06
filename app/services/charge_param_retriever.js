@@ -1,6 +1,6 @@
 'use strict'
 
-const logger = require('winston')
+const logger = require('pino')()
 const cookie = require('../utils/cookies')
 
 exports.retrieve = req => {

@@ -1,4 +1,7 @@
 /**
+ *
+ * NOTE : This base client re-work may be more performant than the new base_client. The statement below needs to be checked
+ *
  * @Deprecated
  *
  * Use base_client2.js instead (which is `requestretry` based with retry support and sync with selfservice
@@ -7,12 +10,12 @@
 const urlParse = require('url')
 const https = require('https')
 const path = require('path')
-const logger = require('winston')
+const logger = require('pino')()
 
 const customCertificate = require(path.join(__dirname, '/custom_certificate'))
 const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
 
-var agentOptions = {
+const agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
 }
@@ -39,7 +42,7 @@ const agent = new https.Agent(agentOptions)
  *
  * @private
  */
-var _request = function request (methodName, url, args, callback) {
+const _request = function request (methodName, url, args, callback) {
   const parsedUrl = urlParse.parse(url)
   let headers = {}
 
@@ -48,7 +51,7 @@ var _request = function request (methodName, url, args, callback) {
     headers[CORRELATION_HEADER_NAME] = args.correlationId
   }
 
-  const httpsOptions = {
+  let httpsOptions = {
     hostname: parsedUrl.hostname,
     port: parsedUrl.port,
     path: parsedUrl.pathname,
@@ -57,39 +60,53 @@ var _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  let req = https.request(httpsOptions, (res) => {
-    let data = ''
-    res.on('data', (chunk) => {
-      data += chunk
-    })
-
-    res.on('end', () => {
-      try {
-        data = JSON.parse(data)
-      } catch (e) {
-        // if response exists but is not parsable, log it and carry on
-        if (data) {
-          logger.info('Response from %s in unexpected format: %s', url, data)
-        }
-        data = null
-      }
-      callback(data, {statusCode: res.statusCode})
-    })
-  })
+  const handleResponseCallback = handleResponse(callback)
+  const req = https.request(httpsOptions, handleResponseCallback)
 
   if (args.data) {
     req.write(JSON.stringify(args.data))
   }
 
-  req.on('response', (response) => {
-    response.on('readable', () => {
-      response.read()
-    })
-  })
-
   req.end()
 
+  httpsOptions = null
+  methodName = null
+  url = null
+  args = null
+
   return req
+}
+
+function tryParse (data) {
+  try {
+    return JSON.parse(data)
+  } catch (err) {
+    return null
+  }
+}
+
+function handleResponse (callback) {
+  return function readBufferPartial (res) {
+    return readBuffer(res, callback)
+  }
+}
+
+function readBuffer (buffer, callback) {
+  let data = ''
+  let read = null
+  buffer.on('readable', function bufferReadable () {
+    read = buffer.read()
+    data += read ? read.toString() : ''
+  })
+  return buffer.on('end', function bufferEnd () {
+    read = null
+    let dataRet = tryParse(data)
+    data = null
+    if (!dataRet) {
+      logger.error('Response from outbound http request was in unexpected format!')
+    }
+    callback(dataRet, {statusCode: buffer.statusCode})
+  })
 }
 
 /*

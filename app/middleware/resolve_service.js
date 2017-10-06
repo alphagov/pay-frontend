@@ -12,7 +12,7 @@ module.exports = function (req, res, next) {
   } else {
     let correlationId = req.headers[CORRELATION_HEADER]
     return getAdminUsersClient({correlationId: correlationId}).findServiceBy({gatewayAccountId: req.chargeData.gateway_account.gateway_account_id})
-      .then(service => {
+      .then(function handleAdminUsersClient (service) {
         res.locals.service = service
         next()
       })

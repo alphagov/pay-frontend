@@ -13,8 +13,6 @@ const should = require('chai').should()
 const cookie = require('../test_helpers/session.js')
 const helper = require('../test_helpers/test_helpers.js')
 
-const winston = require('winston')
-
 const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
 const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js').connectorResponseForPutCharge
 const {defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
@@ -112,11 +110,6 @@ describe('chargeTests', function () {
   beforeEach(function () {
     nock.cleanAll()
     mockServer = nock(localServer)
-  })
-
-  before(function () {
-    // Disable logging.
-    winston.level = 'none'
   })
 
   describe('The /charge endpoint', function () {
