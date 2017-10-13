@@ -1168,5 +1168,329 @@
       "country": "GB",
       "name": "United Kingdom"
     }
+  },
+  {
+    "entry": {
+      "country": "AX",
+      "name": "Aland Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "MO",
+      "name": "Macao"
+    }
+  },
+  {
+    "entry": {
+      "country": "AS",
+      "name": "American Samoa"
+    }
+  },
+  {
+    "entry": {
+      "country": "AI",
+      "name": "Anguilla"
+    }
+  },
+  {
+    "entry": {
+      "country": "AQ",
+      "name": "Antarctica"
+    }
+  },
+  {
+    "entry": {
+      "country": "AW",
+      "name": "Aruba"
+    }
+  },
+  {
+    "entry": {
+      "country": "MQ",
+      "name": "Martinique"
+    }
+  },
+  {
+    "entry": {
+      "country": "YT",
+      "name": "Mayotte"
+    }
+  },
+  {
+    "entry": {
+      "country": "MS",
+      "name": "Montserrat"
+    }
+  },
+  {
+    "entry": {
+      "country": "BM",
+      "name": "Bermuda"
+    }
+  },
+  {
+    "entry": {
+      "country": "BQ",
+      "name": "Bonaire"
+    }
+  },
+  {
+    "entry": {
+      "country": "NC",
+      "name": "New Caledonia"
+    }
+  },
+  {
+    "entry": {
+      "country": "BV",
+      "name": "Bouvet Island"
+    }
+  },
+  {
+    "entry": {
+      "country": "IO",
+      "name": "British Indian Ocean Territory"
+    }
+  },
+  {
+    "entry": {
+      "country": "NU",
+      "name": "Niue"
+    }
+  },
+  {
+    "entry": {
+      "country": "NF",
+      "name": "Norfolk Island"
+    }
+  },
+  {
+    "entry": {
+      "country": "MP",
+      "name": "Northern Mariana Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "KY",
+      "name": "Cayman Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "PS",
+      "name": "Occupied Palestinian Territories"
+    }
+  },
+  {
+    "entry": {
+      "country": "CX",
+      "name": "Christmas Island"
+    }
+  },
+  {
+    "entry": {
+      "country": "CC",
+      "name": "Cocos (Keeling) Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "PN",
+      "name": "Pitcairn"
+    }
+  },
+  {
+    "entry": {
+      "country": "PR",
+      "name": "Puerto Rico"
+    }
+  },
+  {
+    "entry": {
+      "country": "CK",
+      "name": "Cook Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "RE",
+      "name": "Réunion"
+    }
+  },
+  {
+    "entry": {
+      "country": "CW",
+      "name": "Curaçao"
+    }
+  },
+  {
+    "entry": {
+      "country": "GS",
+      "name": "South Georgia and South Sandwich Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "BL",
+      "name": "Saint Barthélemy"
+    }
+  },
+  {
+    "entry": {
+      "country": "MF",
+      "name": "Saint-Martin (French part)"
+    }
+  },
+  {
+    "entry": {
+      "country": "FK",
+      "name": "Falkland Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "FO",
+      "name": "Faroe Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "SX",
+      "name": "Sint Maarten (Dutch part)"
+    }
+  },
+  {
+    "entry": {
+      "country": "GF",
+      "name": "French Guiana"
+    }
+  },
+  {
+    "entry": {
+      "country": "PF",
+      "name": "French Polynesia"
+    }
+  },
+  {
+    "entry": {
+      "country": "TF",
+      "name": "French Southern Territories"
+    }
+  },
+  {
+    "entry": {
+      "country": "SH",
+      "name": "Saint Helena"
+    }
+  },
+  {
+    "entry": {
+      "country": "PM",
+      "name": "Saint Pierre and Miquelon"
+    }
+  },
+  {
+    "entry": {
+      "country": "GI",
+      "name": "Gibraltar"
+    }
+  },
+  {
+    "entry": {
+      "country": "SJ",
+      "name": "Svalbard and Jan Mayen"
+    }
+  },
+  {
+    "entry": {
+      "country": "GL",
+      "name": "Greenland"
+    }
+  },
+  {
+    "entry": {
+      "country": "GP",
+      "name": "Guadeloupe"
+    }
+  },
+  {
+    "entry": {
+      "country": "GU",
+      "name": "Guam"
+    }
+  },
+  {
+    "entry": {
+      "country": "TW",
+      "name": "Taiwan"
+    }
+  },
+  {
+    "entry": {
+      "country": "GG",
+      "name": "Guernsey"
+    }
+  },
+  {
+    "entry": {
+      "country": "HM",
+      "name": "Heard Island and McDonald Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "TK",
+      "name": "Tokelau"
+    }
+  },
+  {
+    "entry": {
+      "country": "HK",
+      "name": "Hong Kong"
+    }
+  },
+  {
+    "entry": {
+      "country": "TC",
+      "name": "Turks and Caicos Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "IM",
+      "name": "Isle of Man"
+    }
+  },
+  {
+    "entry": {
+      "country": "JE",
+      "name": "Jersey"
+    }
+  },
+  {
+    "entry": {
+      "country": "VG",
+      "name": "British Virgin Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "VI",
+      "name": "United States Virgin Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "WF",
+      "name": "Wallis and Futuna"
+    }
+  },
+  {
+    "entry": {
+      "country": "EH",
+      "name": "Western Sahara"
+    }
   }
 ]
