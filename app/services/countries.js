@@ -19,7 +19,6 @@ countries.forEach((country, i) => {
     country.entry.aliases = extension.aliases
     country.entry.weighting = extension.weighting
   }
-  if (country.entry['end-date']) delete countries[i] // delete east germany etc
 })
 
 countries = lodash.compact(countries)

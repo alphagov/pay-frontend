@@ -1,2047 +1,1496 @@
 [
   {
-    "serial-number": 203,
-    "hash": "2c8c9a535bfc0ac2b674329963956b86704903a5",
     "entry": {
-      "citizen-names": "Bahamian",
       "country": "BS",
-      "name": "The Bahamas",
-      "official-name": "The Commonwealth of The Bahamas"
+      "name": "The Bahamas"
     }
   },
   {
-    "serial-number": 202,
-    "hash": "fde9852e443c2bca5995871ec2f0e8fa6cf472d6",
     "entry": {
-      "citizen-names": "Gambian",
       "country": "GM",
-      "name": "The Gambia",
-      "official-name": "The Islamic Republic of The Gambia"
+      "name": "The Gambia"
     }
   },
   {
-    "serial-number": 200,
-    "hash": "ebf024efc7131e480ed43d5b95c56dbd0daa8009",
     "entry": {
-      "citizen-names": "Zimbabwean",
       "country": "ZW",
-      "name": "Zimbabwe",
-      "official-name": "The Republic of Zimbabwe",
-      "start-date": "1980-04-18"
+      "name": "Zimbabwe"
     }
   },
   {
-    "serial-number": 199,
-    "hash": "2ea17795c9d5d52d9bf5a26440db28982cdcc760",
     "entry": {
-      "citizen-names": "Zambian",
       "country": "ZM",
-      "name": "Zambia",
-      "official-name": "The Republic of Zambia"
+      "name": "Zambia"
     }
   },
   {
-    "serial-number": 198,
-    "hash": "3c3d586d9644606c8a675e544f76e0f1640352a3",
     "entry": {
-      "citizen-names": "Yemeni",
       "country": "YE",
-      "name": "Yemen",
-      "official-name": "The Republic of Yemen",
-      "start-date": "1990-05-22"
+      "name": "Yemen"
     }
   },
   {
-    "serial-number": 197,
-    "hash": "ce9f877d4e4721d22f7ec661bc13513c9333ce1b",
     "entry": {
-      "citizen-names": "Vietnamese",
       "country": "VN",
-      "name": "Vietnam",
-      "official-name": "The Socialist Republic of Vietnam"
+      "name": "Vietnam"
     }
   },
   {
-    "serial-number": 196,
-    "hash": "ef766b12f2c0b1995e7cf254b897240e1e2b1887",
     "entry": {
-      "citizen-names": "Venezuelan",
       "country": "VE",
-      "name": "Venezuela",
-      "official-name": "The Bolivarian Republic of Venezuela"
+      "name": "Venezuela"
     }
   },
   {
-    "serial-number": 195,
-    "hash": "4b40eae028026f4ee1f2281ffe6dd1a3c9087550",
     "entry": {
-      "citizen-names": "Vatican citizen",
       "country": "VA",
-      "name": "Vatican City",
-      "official-name": "The Vatican City"
+      "name": "Vatican City"
     }
   },
   {
-    "serial-number": 194,
-    "hash": "49e4a5533616dcccffb8d6452a13cc84cc6d86ff",
     "entry": {
-      "citizen-names": "Citizen of Vanuatu",
       "country": "VU",
-      "name": "Vanuatu",
-      "official-name": "The Republic of Vanuatu",
-      "start-date": "1980-07-30"
+      "name": "Vanuatu"
     }
   },
   {
-    "serial-number": 193,
-    "hash": "1b3bc357165c42671c27961ee833cc1f27a017ac",
     "entry": {
-      "citizen-names": "Uzbek",
       "country": "UZ",
-      "name": "Uzbekistan",
-      "official-name": "The Republic of Uzbekistan",
-      "start-date": "1991-09-01"
+      "name": "Uzbekistan"
     }
   },
   {
-    "serial-number": 192,
-    "hash": "8b7709201d11afb5d3f6edd2cb3b6abb58f9c247",
     "entry": {
-      "citizen-names": "Uruguayan",
       "country": "UY",
-      "name": "Uruguay",
-      "official-name": "The Oriental Republic of Uruguay"
+      "name": "Uruguay"
     }
   },
   {
-    "serial-number": 191,
-    "hash": "3ad5ddc3ab33d096e37ccfd87d8295a21fcb8536",
     "entry": {
-      "citizen-names": "United States citizen",
       "country": "US",
-      "name": "United States",
-      "official-name": "The United States of America"
+      "name": "United States"
     }
   },
   {
-    "serial-number": 190,
-    "hash": "afa1882f591354e8f024278dee0e438e813f8038",
     "entry": {
-      "citizen-names": "Citizen of the United Arab Emirates",
       "country": "AE",
-      "name": "United Arab Emirates",
-      "official-name": "The United Arab Emirates"
+      "name": "United Arab Emirates"
     }
   },
   {
-    "serial-number": 189,
-    "hash": "438698fa1ef21d2ce501a487b2ad01db91c053ea",
     "entry": {
-      "citizen-names": "Ukrainian",
       "country": "UA",
-      "name": "Ukraine",
-      "official-name": "Ukraine",
-      "start-date": "1991-08-24"
+      "name": "Ukraine"
     }
   },
   {
-    "serial-number": 188,
-    "hash": "435b63e106c9f26c429bbd3c6364934889cf8972",
     "entry": {
-      "citizen-names": "Ugandan",
       "country": "UG",
-      "name": "Uganda",
-      "official-name": "The Republic of Uganda"
+      "name": "Uganda"
     }
   },
   {
-    "serial-number": 187,
-    "hash": "714b77b1f76598633def4537ecf1c06822772a53",
     "entry": {
-      "citizen-names": "Tuvaluan",
       "country": "TV",
-      "name": "Tuvalu",
-      "official-name": "Tuvalu",
-      "start-date": "1978-10-01"
+      "name": "Tuvalu"
     }
   },
   {
-    "serial-number": 186,
-    "hash": "ccc5e07df54c2d8a3a026e9c381b40c198792852",
     "entry": {
-      "citizen-names": "Turkmen",
       "country": "TM",
-      "name": "Turkmenistan",
-      "official-name": "Turkmenistan",
-      "start-date": "1991-10-27"
+      "name": "Turkmenistan"
     }
   },
   {
-    "serial-number": 185,
-    "hash": "151e4b9062efdb26e2b9513880006bd8bb84d52b",
     "entry": {
-      "citizen-names": "Turk",
       "country": "TR",
-      "name": "Turkey",
-      "official-name": "The Republic of Turkey"
+      "name": "Turkey"
     }
   },
   {
-    "serial-number": 184,
-    "hash": "63b1125526aac67ecc09d78bc96b0272d1b46844",
     "entry": {
-      "citizen-names": "Tunisian",
       "country": "TN",
-      "name": "Tunisia",
-      "official-name": "The Tunisian Republic"
+      "name": "Tunisia"
     }
   },
   {
-    "serial-number": 183,
-    "hash": "071306edd8d20274a08b26ce54db078498c6f792",
     "entry": {
-      "citizen-names": "Trinidad and Tobago citizen",
       "country": "TT",
-      "name": "Trinidad and Tobago",
-      "official-name": "The Republic of Trinidad and Tobago"
+      "name": "Trinidad and Tobago"
     }
   },
   {
-    "serial-number": 182,
-    "hash": "d5ff7d3d5669f1d67c57bb09f08405b74fd7a3c8",
     "entry": {
-      "citizen-names": "Tongan",
       "country": "TO",
-      "name": "Tonga",
-      "official-name": "The Kingdom of Tonga"
+      "name": "Tonga"
     }
   },
   {
-    "serial-number": 181,
-    "hash": "5d849096f2fcd640191171f8c88f01f4b97b26bb",
     "entry": {
-      "citizen-names": "Togolese",
       "country": "TG",
-      "name": "Togo",
-      "official-name": "The Togolese Republic"
+      "name": "Togo"
     }
   },
   {
-    "serial-number": 180,
-    "hash": "572db57df891184032964cd0df306379c1ad59e7",
     "entry": {
-      "citizen-names": "Thai",
       "country": "TH",
-      "name": "Thailand",
-      "official-name": "The Kingdom of Thailand"
+      "name": "Thailand"
     }
   },
   {
-    "serial-number": 179,
-    "hash": "2d429e2d93d770a13286390b4f682cbc3ae40da1",
     "entry": {
-      "citizen-names": "Tanzanian",
       "country": "TZ",
-      "name": "Tanzania",
-      "official-name": "The United Republic of Tanzania"
+      "name": "Tanzania"
     }
   },
   {
-    "serial-number": 178,
-    "hash": "cf21be5dd68d4462a1bc1582410feee2d79dc44f",
     "entry": {
-      "citizen-names": "Tajik",
       "country": "TJ",
-      "name": "Tajikistan",
-      "official-name": "The Republic of Tajikistan",
-      "start-date": "1991-09-09"
+      "name": "Tajikistan"
     }
   },
   {
-    "serial-number": 177,
-    "hash": "9045fd4b8fae04c99366bee2e101f695b33e7087",
     "entry": {
-      "citizen-names": "Syrian",
       "country": "SY",
-      "name": "Syria",
-      "official-name": "The Syrian Arab Republic"
+      "name": "Syria"
     }
   },
   {
-    "serial-number": 176,
-    "hash": "e9f2ed55fed78d36afdd4371b455f35e4611de16",
     "entry": {
-      "citizen-names": "Swiss",
       "country": "CH",
-      "name": "Switzerland",
-      "official-name": "The Swiss Confederation"
+      "name": "Switzerland"
     }
   },
   {
-    "serial-number": 175,
-    "hash": "c694f3689f581b8e62e2094e7c900204f288c55b",
     "entry": {
-      "citizen-names": "Swede",
       "country": "SE",
-      "name": "Sweden",
-      "official-name": "The Kingdom of Sweden"
+      "name": "Sweden"
     }
   },
   {
-    "serial-number": 174,
-    "hash": "c2eb02c7c909faaefc207c90f760235393efaa94",
     "entry": {
-      "citizen-names": "Swazi",
       "country": "SZ",
-      "name": "Swaziland",
-      "official-name": "The Kingdom of Swaziland"
+      "name": "Swaziland"
     }
   },
   {
-    "serial-number": 173,
-    "hash": "b0662ed2a77bd29f7891444e5806781d5daa0c20",
     "entry": {
-      "citizen-names": "Surinamer",
       "country": "SR",
-      "name": "Suriname",
-      "official-name": "The Republic of Suriname",
-      "start-date": "1975-11-25"
+      "name": "Suriname"
     }
   },
   {
-    "serial-number": 172,
-    "hash": "b1dc5da7e18d69570ab92ac53ba61ca44a67d10e",
     "entry": {
-      "citizen-names": "Sudanese",
       "country": "SD",
-      "name": "Sudan",
-      "official-name": "The Republic of the Sudan"
+      "name": "Sudan"
     }
   },
   {
-    "serial-number": 171,
-    "hash": "d6a72c221680c34583e34cc799b10b99e9a6f778",
     "entry": {
-      "citizen-names": "Citizen of Sri Lanka",
       "country": "LK",
-      "name": "Sri Lanka",
-      "official-name": "The Democratic Socialist Republic of Sri Lanka"
+      "name": "Sri Lanka"
     }
   },
   {
-    "serial-number": 170,
-    "hash": "b0292610b1a27a132bd3629a5d6e11467fba9dbd",
     "entry": {
-      "citizen-names": "Spaniard;Spanish citizen",
       "country": "ES",
-      "name": "Spain",
-      "official-name": "The Kingdom of Spain"
+      "name": "Spain"
     }
   },
   {
-    "serial-number": 169,
-    "hash": "f16f89de3f10ab6d734564d1895681210f0dce8d",
     "entry": {
-      "citizen-names": "South Sudanese",
       "country": "SS",
-      "name": "South Sudan",
-      "official-name": "The Republic of South Sudan",
-      "start-date": "2011-07-09"
+      "name": "South Sudan"
     }
   },
   {
-    "serial-number": 168,
-    "hash": "8392bb463a2a775ccb130e98e43db0f97921bbac",
     "entry": {
-      "citizen-names": "South African",
       "country": "ZA",
-      "name": "South Africa",
-      "official-name": "The Republic of South Africa"
+      "name": "South Africa"
     }
   },
   {
-    "serial-number": 167,
-    "hash": "5e1dc780855950b7b80176c8c7346d77647e034f",
     "entry": {
-      "citizen-names": "Somali",
       "country": "SO",
-      "name": "Somalia",
-      "official-name": "Federal Republic of Somalia"
+      "name": "Somalia"
     }
   },
   {
-    "serial-number": 166,
-    "hash": "27475d7b257419f660e01b34bf5389c3107484f6",
     "entry": {
-      "citizen-names": "Solomon Islander",
       "country": "SB",
-      "name": "Solomon Islands",
-      "official-name": "Solomon Islands",
-      "start-date": "1978-07-07"
+      "name": "Solomon Islands"
     }
   },
   {
-    "serial-number": 165,
-    "hash": "56376b403cd28d88a05744e61e638ff694e01a06",
     "entry": {
-      "citizen-names": "Slovene",
       "country": "SI",
-      "name": "Slovenia",
-      "official-name": "The Republic of Slovenia",
-      "start-date": "1991-06-25"
+      "name": "Slovenia"
     }
   },
   {
-    "serial-number": 164,
-    "hash": "53b8100eb756583ccb6f3a1c05aa81de39d5b99f",
     "entry": {
-      "citizen-names": "Slovak",
       "country": "SK",
-      "name": "Slovakia",
-      "official-name": "The Slovak Republic",
-      "start-date": "1993-01-01"
+      "name": "Slovakia"
     }
   },
   {
-    "serial-number": 163,
-    "hash": "8e76b7c54bbc81764c1dff6e662b87a44b7bb6d6",
     "entry": {
-      "citizen-names": "Singaporean",
       "country": "SG",
-      "name": "Singapore",
-      "official-name": "The Republic of Singapore"
+      "name": "Singapore"
     }
   },
   {
-    "serial-number": 162,
-    "hash": "87b6b59cc4a086f8bdb92cb3d826a80076bd5bc1",
     "entry": {
-      "citizen-names": "Sierra Leonean",
       "country": "SL",
-      "name": "Sierra Leone",
-      "official-name": "The Republic of Sierra Leone"
+      "name": "Sierra Leone"
     }
   },
   {
-    "serial-number": 161,
-    "hash": "83f3760945cae621237e3e44e3ec7b5821cd5fae",
     "entry": {
-      "citizen-names": "Citizen of Seychelles",
       "country": "SC",
-      "name": "Seychelles",
-      "official-name": "The Republic of Seychelles",
-      "start-date": "1976-06-29"
+      "name": "Seychelles"
     }
   },
   {
-    "serial-number": 160,
-    "hash": "28ed204aaa1cb6982e4618b11fabc28a9272e72e",
     "entry": {
-      "citizen-names": "Serbian",
       "country": "RS",
-      "name": "Serbia",
-      "official-name": "The Republic of Serbia"
+      "name": "Serbia"
     }
   },
   {
-    "serial-number": 159,
-    "hash": "1f98a3d4bbc21f44995cf351d2b8e4722cef478e",
     "entry": {
-      "citizen-names": "Senegalese",
       "country": "SN",
-      "name": "Senegal",
-      "official-name": "The Republic of Senegal"
+      "name": "Senegal"
     }
   },
   {
-    "serial-number": 158,
-    "hash": "9f8156bcdb78942f864adcc39402c5554d077b25",
     "entry": {
-      "citizen-names": "Saudi Arabian",
       "country": "SA",
-      "name": "Saudi Arabia",
-      "official-name": "The Kingdom of Saudi Arabia"
+      "name": "Saudi Arabia"
     }
   },
   {
-    "serial-number": 157,
-    "hash": "8f6d4c406464353c9bcfd2563e4db6ebe54a47d0",
     "entry": {
-      "citizen-names": "Citizen of Sao Tome and Principe",
       "country": "ST",
-      "name": "Sao Tome and Principe",
-      "official-name": "The Democratic Republic of Sao Tome and Principe",
-      "start-date": "1975-07-12"
+      "name": "Sao Tome and Principe"
     }
   },
   {
-    "serial-number": 156,
-    "hash": "5eeea603d8fc0fb4c4a1926649c45ff170142030",
     "entry": {
-      "citizen-names": "Citizen of San Marino",
       "country": "SM",
-      "name": "San Marino",
-      "official-name": "The Republic of San Marino"
+      "name": "San Marino"
     }
   },
   {
-    "serial-number": 155,
-    "hash": "1255b08d74a6b696a596e73e669d7d2e8a6c57b8",
     "entry": {
-      "citizen-names": "Samoan",
       "country": "WS",
-      "name": "Samoa",
-      "official-name": "The Independent State of Samoa"
+      "name": "Samoa"
     }
   },
   {
-    "serial-number": 154,
-    "hash": "4027d91cfb9ad376b526d495eede2939d6f0fbe5",
     "entry": {
-      "citizen-names": "Vincentian",
       "country": "VC",
-      "name": "St Vincent",
-      "official-name": "Saint Vincent and the Grenadines",
-      "start-date": "1979-10-27"
+      "name": "St Vincent"
     }
   },
   {
-    "serial-number": 153,
-    "hash": "3a3e2fcc14377b44e7d8a74b5de1482718f62337",
     "entry": {
-      "citizen-names": "St Lucian",
       "country": "LC",
-      "name": "St Lucia",
-      "official-name": "Saint Lucia",
-      "start-date": "1979-02-22"
+      "name": "St Lucia"
     }
   },
   {
-    "serial-number": 152,
-    "hash": "15efe18747c9850eb43664e63a5771c08cd3fb5b",
     "entry": {
-      "citizen-names": "Citizen of St Christopher (St Kitts) and Nevis",
       "country": "KN",
-      "name": "St Kitts and Nevis",
-      "official-name": "The Federation of Saint Christopher and Nevis",
-      "start-date": "1983-09-19"
+      "name": "St Kitts and Nevis"
     }
   },
   {
-    "serial-number": 151,
-    "hash": "50e747a867eb0337f0626388aba928d2d0ce22b5",
     "entry": {
-      "citizen-names": "Rwandan",
       "country": "RW",
-      "name": "Rwanda",
-      "official-name": "The Republic of Rwanda"
+      "name": "Rwanda"
     }
   },
   {
-    "serial-number": 150,
-    "hash": "32f52517223256d4d601447c12302be8e0e57f7e",
     "entry": {
-      "citizen-names": "Russian",
       "country": "RU",
-      "name": "Russia",
-      "official-name": "The Russian Federation",
-      "start-date": "1991-12-25"
+      "name": "Russia"
     }
   },
   {
-    "serial-number": 149,
-    "hash": "a05df4ccb329791e1b7202bf580f36b165f4c70a",
     "entry": {
-      "citizen-names": "Romanian",
       "country": "RO",
-      "name": "Romania",
-      "official-name": "Romania"
+      "name": "Romania"
     }
   },
   {
-    "serial-number": 148,
-    "hash": "8a92db12d562977cbe7b02c61f8ee6cfe5c3848e",
     "entry": {
-      "citizen-names": "Qatari",
       "country": "QA",
-      "name": "Qatar",
-      "official-name": "The State of Qatar"
+      "name": "Qatar"
     }
   },
   {
-    "serial-number": 147,
-    "hash": "6c51aa0d20fba5e2ac5b05c8dd0e6eafb12cd223",
     "entry": {
-      "citizen-names": "Portuguese",
       "country": "PT",
-      "name": "Portugal",
-      "official-name": "The Portuguese Republic"
+      "name": "Portugal"
     }
   },
   {
-    "serial-number": 146,
-    "hash": "35c31abfd852c9d6ce721c4db31a968659b632e3",
     "entry": {
-      "citizen-names": "Pole",
       "country": "PL",
-      "name": "Poland",
-      "official-name": "The Republic of Poland"
+      "name": "Poland"
     }
   },
   {
-    "serial-number": 145,
-    "hash": "6a41a241b3da036a92f32aa1f2bd07c3b9d8322d",
     "entry": {
-      "citizen-names": "Filipino;Filipina",
       "country": "PH",
-      "name": "Philippines",
-      "official-name": "The Republic of the Philippines"
+      "name": "Philippines"
     }
   },
   {
-    "serial-number": 144,
-    "hash": "133b0a958b2fcc0060eb60292fc0d9a4a4d7d50f",
     "entry": {
-      "citizen-names": "Peruvian",
       "country": "PE",
-      "name": "Peru",
-      "official-name": "The Republic of Peru"
+      "name": "Peru"
     }
   },
   {
-    "serial-number": 143,
-    "hash": "37994858da705a26f5568ef7a765039cfca62d0a",
     "entry": {
-      "citizen-names": "Paraguayan",
       "country": "PY",
-      "name": "Paraguay",
-      "official-name": "The Republic of Paraguay"
+      "name": "Paraguay"
     }
   },
   {
-    "serial-number": 142,
-    "hash": "99dbe3987881ff3e4787fc94e1099b6978e63458",
     "entry": {
-      "citizen-names": "Papua New Guinean",
       "country": "PG",
-      "name": "Papua New Guinea",
-      "official-name": "The Independent State of Papua New Guinea",
-      "start-date": "1975-09-16"
+      "name": "Papua New Guinea"
     }
   },
   {
-    "serial-number": 141,
-    "hash": "4fd07e623a6aac58746c8a0d81dc3c284580557f",
     "entry": {
-      "citizen-names": "Panamanian",
       "country": "PA",
-      "name": "Panama",
-      "official-name": "The Republic of Panama"
+      "name": "Panama"
     }
   },
   {
-    "serial-number": 140,
-    "hash": "ec56c5ce7e57ef7274fe7dcb3ef45c2aecb33bab",
     "entry": {
-      "citizen-names": "Palauan",
       "country": "PW",
-      "name": "Palau",
-      "official-name": "The Republic of Palau",
-      "start-date": "1994-10-01"
+      "name": "Palau"
     }
   },
   {
-    "serial-number": 139,
-    "hash": "c101fac5417b36300055223474640f9cc1905c01",
     "entry": {
-      "citizen-names": "Pakistani",
       "country": "PK",
-      "name": "Pakistan",
-      "official-name": "The Islamic Republic of Pakistan"
+      "name": "Pakistan"
     }
   },
   {
-    "serial-number": 138,
-    "hash": "26c52fc511853a39f1a7c76c22fff1e6ffd529cb",
     "entry": {
-      "citizen-names": "Omani",
       "country": "OM",
-      "name": "Oman",
-      "official-name": "The Sultanate of Oman"
+      "name": "Oman"
     }
   },
   {
-    "serial-number": 137,
-    "hash": "1352c086e31324a21c214ce376f4331692c85a2d",
     "entry": {
-      "citizen-names": "Norwegian",
       "country": "NO",
-      "name": "Norway",
-      "official-name": "The Kingdom of Norway"
+      "name": "Norway"
     }
   },
   {
-    "serial-number": 136,
-    "hash": "6ad3e1684b32e060641168bea8459c82374451f5",
     "entry": {
-      "citizen-names": "Nigerian",
       "country": "NG",
-      "name": "Nigeria",
-      "official-name": "The Federal Republic of Nigeria"
+      "name": "Nigeria"
     }
   },
   {
-    "serial-number": 135,
-    "hash": "6499934918106a5c128019fa1fdc7c7369331cc4",
     "entry": {
-      "citizen-names": "Citizen of Niger",
       "country": "NE",
-      "name": "Niger",
-      "official-name": "The Republic of Niger"
+      "name": "Niger"
     }
   },
   {
-    "serial-number": 134,
-    "hash": "712f861f8b158ac9c7bfda4ddaa20a482008ec11",
     "entry": {
-      "citizen-names": "Nicaraguan",
       "country": "NI",
-      "name": "Nicaragua",
-      "official-name": "The Republic of Nicaragua"
+      "name": "Nicaragua"
     }
   },
   {
-    "serial-number": 133,
-    "hash": "200ae96435f762c3628481fbfc7856107359530a",
     "entry": {
-      "citizen-names": "New Zealander",
       "country": "NZ",
-      "name": "New Zealand",
-      "official-name": "New Zealand"
+      "name": "New Zealand"
     }
   },
   {
-    "serial-number": 132,
-    "hash": "47458556f1052aca319eb76d2eceeab7b2883236",
     "entry": {
-      "citizen-names": "Dutch citizen;Dutchman;Dutchwoman",
       "country": "NL",
-      "name": "Netherlands",
-      "official-name": "The Kingdom of the Netherlands"
+      "name": "Netherlands"
     }
   },
   {
-    "serial-number": 131,
-    "hash": "0fdabab3a224143a58566747a581ec88ae92aa7b",
     "entry": {
-      "citizen-names": "Nepalese",
       "country": "NP",
-      "name": "Nepal",
-      "official-name": "The Federal Democratic Republic of Nepal"
+      "name": "Nepal"
     }
   },
   {
-    "serial-number": 130,
-    "hash": "0ebabf6bf3c5a8a1340f50422b414ab32f5ae8fa",
     "entry": {
-      "citizen-names": "Nauruan",
       "country": "NR",
-      "name": "Nauru",
-      "official-name": "The Republic of Nauru"
+      "name": "Nauru"
     }
   },
   {
-    "serial-number": 129,
-    "hash": "19701794318f687ddb55ea7e2b2dc2558f560c84",
     "entry": {
-      "citizen-names": "Namibian",
       "country": "NA",
-      "name": "Namibia",
-      "official-name": "The Republic of Namibia",
-      "start-date": "1980-03-21"
+      "name": "Namibia"
     }
   },
   {
-    "serial-number": 128,
-    "hash": "820590c8e69ea964c9def0e88c340fe9dbde125a",
     "entry": {
-      "citizen-names": "Mozambican",
       "country": "MZ",
-      "name": "Mozambique",
-      "official-name": "The Republic of Mozambique",
-      "start-date": "1975-06-25"
+      "name": "Mozambique"
     }
   },
   {
-    "serial-number": 127,
-    "hash": "bbaf325bec90d13bd2359b6040f9ccd70b129f5e",
     "entry": {
-      "citizen-names": "Moroccan",
       "country": "MA",
-      "name": "Morocco",
-      "official-name": "The Kingdom of Morocco"
+      "name": "Morocco"
     }
   },
   {
-    "serial-number": 126,
-    "hash": "24c42ec548e27d44588d94f7d68898eb472cbddf",
     "entry": {
-      "citizen-names": "Montenegrin",
       "country": "ME",
-      "name": "Montenegro",
-      "official-name": "Montenegro"
+      "name": "Montenegro"
     }
   },
   {
-    "serial-number": 125,
-    "hash": "bce165ead70c51d563f84c1b286ff97962ddadb8",
     "entry": {
-      "citizen-names": "Mongolian",
       "country": "MN",
-      "name": "Mongolia",
-      "official-name": "Mongolia"
+      "name": "Mongolia"
     }
   },
   {
-    "serial-number": 124,
-    "hash": "da0dd1f12787e3c87b85256fdf3b2a081bfcc770",
     "entry": {
-      "citizen-names": "Monegasque",
       "country": "MC",
-      "name": "Monaco",
-      "official-name": "The Principality of Monaco"
+      "name": "Monaco"
     }
   },
   {
-    "serial-number": 123,
-    "hash": "67c5eccb7d7a0d4e682397b8e8f0cbfc13a423f4",
     "entry": {
-      "citizen-names": "Moldovan",
       "country": "MD",
-      "name": "Moldova",
-      "official-name": "The Republic of Moldova",
-      "start-date": "1991-08-27"
+      "name": "Moldova"
     }
   },
   {
-    "serial-number": 122,
-    "hash": "6d0aafb9d299fcc5e1721741da19f7a9359b01c5",
     "entry": {
-      "citizen-names": "Micronesian",
       "country": "FM",
-      "name": "Micronesia",
-      "official-name": "The Federated States of Micronesia",
-      "start-date": "1986-11-03"
+      "name": "Micronesia"
     }
   },
   {
-    "serial-number": 121,
-    "hash": "a8fd55b77c10abf15c901a96b6f645ba6fbc2527",
     "entry": {
-      "citizen-names": "Mexican",
       "country": "MX",
-      "name": "Mexico",
-      "official-name": "The United Mexican States"
+      "name": "Mexico"
     }
   },
   {
-    "serial-number": 120,
-    "hash": "6d3bc17d3ca36b7a9fd4c70063102b526d10eda7",
     "entry": {
-      "citizen-names": "Mauritian",
       "country": "MU",
-      "name": "Mauritius",
-      "official-name": "The Republic of Mauritius"
+      "name": "Mauritius"
     }
   },
   {
-    "serial-number": 119,
-    "hash": "905755bcc053702a50a8a16cc672922ac2192725",
     "entry": {
-      "citizen-names": "Mauritanian",
       "country": "MR",
-      "name": "Mauritania",
-      "official-name": "The Islamic Republic of Mauritania"
+      "name": "Mauritania"
     }
   },
   {
-    "serial-number": 118,
-    "hash": "d1a216f173c5926c165f850c5d47d5e5cfadbd1a",
     "entry": {
-      "citizen-names": "Marshall Islander",
       "country": "MH",
-      "name": "Marshall Islands",
-      "official-name": "The Republic of the Marshall Islands",
-      "start-date": "1986-10-21"
+      "name": "Marshall Islands"
     }
   },
   {
-    "serial-number": 117,
-    "hash": "ee1390fba71638bc1fb810c5a06906a3c7e279d2",
     "entry": {
-      "citizen-names": "Maltese",
       "country": "MT",
-      "name": "Malta",
-      "official-name": "The Republic of Malta"
+      "name": "Malta"
     }
   },
   {
-    "serial-number": 116,
-    "hash": "389e94e8017aedfb4610b9affee1fb2defe17290",
     "entry": {
-      "citizen-names": "Malian",
       "country": "ML",
-      "name": "Mali",
-      "official-name": "The Republic of Mali"
+      "name": "Mali"
     }
   },
   {
-    "serial-number": 115,
-    "hash": "f183522cefb895eac72355438d79b4d3bd80e586",
     "entry": {
-      "citizen-names": "Maldivian",
       "country": "MV",
-      "name": "Maldives",
-      "official-name": "The Republic of Maldives"
+      "name": "Maldives"
     }
   },
   {
-    "serial-number": 114,
-    "hash": "5e2943e2fba7308ce3a66c1e4fdc77c683e40921",
     "entry": {
-      "citizen-names": "Citizen of Malaysia",
       "country": "MY",
-      "name": "Malaysia",
-      "official-name": "Malaysia"
+      "name": "Malaysia"
     }
   },
   {
-    "serial-number": 113,
-    "hash": "1fd4e8b6c5f19095d6912d58d13a4c557dcd72cd",
     "entry": {
-      "citizen-names": "Malawian",
       "country": "MW",
-      "name": "Malawi",
-      "official-name": "The Republic of Malawi"
+      "name": "Malawi"
     }
   },
   {
-    "serial-number": 112,
-    "hash": "63f015ff6d5892badacd897bd5fcf4742936b6de",
     "entry": {
-      "citizen-names": "Citizen of Madagascar",
       "country": "MG",
-      "name": "Madagascar",
-      "official-name": "The Republic of Madagascar"
+      "name": "Madagascar"
     }
   },
   {
-    "serial-number": 111,
-    "hash": "1db50ace0821ddeab9100dc2b2078fe24f8fa1a0",
     "entry": {
-      "citizen-names": "Macedonian",
       "country": "MK",
-      "name": "Macedonia",
-      "official-name": "The Republic of Macedonia",
-      "start-date": "1991-09-08"
+      "name": "Macedonia"
     }
   },
   {
-    "serial-number": 110,
-    "hash": "2bce43d2e5e282b98f5eea96aedd080af57cde47",
     "entry": {
-      "citizen-names": "Luxembourger",
       "country": "LU",
-      "name": "Luxembourg",
-      "official-name": "The Grand Duchy of Luxembourg"
+      "name": "Luxembourg"
     }
   },
   {
-    "serial-number": 109,
-    "hash": "7e4cfeccfc1aab143b88baadd2aa58d0f92fd5ea",
     "entry": {
-      "citizen-names": "Lithuanian",
       "country": "LT",
-      "name": "Lithuania",
-      "official-name": "The Republic of Lithuania",
-      "start-date": "1990-03-11"
+      "name": "Lithuania"
     }
   },
   {
-    "serial-number": 108,
-    "hash": "25538ef9132ada11bcea966f5fe11b985a3c79ac",
     "entry": {
-      "citizen-names": "Liechtenstein citizen",
       "country": "LI",
-      "name": "Liechtenstein",
-      "official-name": "The Principality of Liechtenstein"
+      "name": "Liechtenstein"
     }
   },
   {
-    "serial-number": 107,
-    "hash": "ed8810daeae8f86a9f91b513073359fedd49e38e",
     "entry": {
-      "citizen-names": "Libyan",
       "country": "LY",
-      "name": "Libya",
-      "official-name": "Libya"
+      "name": "Libya"
     }
   },
   {
-    "serial-number": 106,
-    "hash": "0241ba8014f2cd44103e525287c5f59ee0a94a1a",
     "entry": {
-      "citizen-names": "Liberian",
       "country": "LR",
-      "name": "Liberia",
-      "official-name": "The Republic of Liberia"
+      "name": "Liberia"
     }
   },
   {
-    "serial-number": 105,
-    "hash": "43a1e60eb08b6486a5cd4790102ded9a94860c35",
     "entry": {
-      "citizen-names": "Citizen of Lesotho",
       "country": "LS",
-      "name": "Lesotho",
-      "official-name": "The Kingdom of Lesotho"
+      "name": "Lesotho"
     }
   },
   {
-    "serial-number": 104,
-    "hash": "3a98017bbe47c87a3947b60d5859e964d6a737d8",
     "entry": {
-      "citizen-names": "Lebanese",
       "country": "LB",
-      "name": "Lebanon",
-      "official-name": "The Lebanese Republic"
+      "name": "Lebanon"
     }
   },
   {
-    "serial-number": 103,
-    "hash": "c3099f050238c88bcb843dab4e9b3e8d132db818",
     "entry": {
-      "citizen-names": "Latvian",
       "country": "LV",
-      "name": "Latvia",
-      "official-name": "The Republic of Latvia",
-      "start-date": "1990-05-04"
+      "name": "Latvia"
     }
   },
   {
-    "serial-number": 102,
-    "hash": "6fa7acb144c8a5475821be97357e48a6b9376cda",
     "entry": {
-      "citizen-names": "Lao",
       "country": "LA",
-      "name": "Laos",
-      "official-name": "The Lao People's Democratic Republic"
+      "name": "Laos"
     }
   },
   {
-    "serial-number": 101,
-    "hash": "e114befbe7bbd95b299e700ffdb7d263b535a8ff",
     "entry": {
-      "citizen-names": "Kyrgyz",
       "country": "KG",
-      "name": "Kyrgyzstan",
-      "official-name": "The Kyrgyz Republic",
-      "start-date": "1991-08-31"
+      "name": "Kyrgyzstan"
     }
   },
   {
-    "serial-number": 100,
-    "hash": "87cec38b9b1a616c137cda2f1f4e8104524be570",
     "entry": {
-      "citizen-names": "Kuwaiti",
       "country": "KW",
-      "name": "Kuwait",
-      "official-name": "The State of Kuwait"
+      "name": "Kuwait"
     }
   },
   {
-    "serial-number": 99,
-    "hash": "3df5cefdc3833585d5451c446d38fa8d41fcd932",
     "entry": {
-      "citizen-names": "Kosovan",
       "country": "XK",
-      "name": "Kosovo",
-      "official-name": "The Republic of Kosovo"
+      "name": "Kosovo"
     }
   },
   {
-    "serial-number": 98,
-    "hash": "52c05c7d3108b651cc422b7959af24ae04a1db06",
     "entry": {
-      "citizen-names": "South Korean",
       "country": "KR",
-      "name": "South Korea",
-      "official-name": "The Republic of Korea"
+      "name": "South Korea"
     }
   },
   {
-    "serial-number": 97,
-    "hash": "75d9cd357f8feaff27e98ddd38a092af57ea7f50",
     "entry": {
-      "citizen-names": "Citizen of the Democratic People's Republic of Korea;Citizen of the DPRK",
       "country": "KP",
-      "name": "North Korea",
-      "official-name": "The Democratic People's Republic of Korea"
+      "name": "North Korea"
     }
   },
   {
-    "serial-number": 96,
-    "hash": "96e54b6053df70d3c81c7a058d5149b32cb9bc34",
     "entry": {
-      "citizen-names": "Citizen of Kiribati",
       "country": "KI",
-      "name": "Kiribati",
-      "official-name": "The Republic of Kiribati",
-      "start-date": "1979-07-12"
+      "name": "Kiribati"
     }
   },
   {
-    "serial-number": 95,
-    "hash": "2ce140d59766762261a402cbb54bfbf2e34a26f5",
     "entry": {
-      "citizen-names": "Kenyan",
       "country": "KE",
-      "name": "Kenya",
-      "official-name": "The Republic of Kenya"
+      "name": "Kenya"
     }
   },
   {
-    "serial-number": 94,
-    "hash": "5b887327bbc7ab3d3f9af801d7d18509725a3bd1",
     "entry": {
-      "citizen-names": "Kazakh",
       "country": "KZ",
-      "name": "Kazakhstan",
-      "official-name": "The Republic of Kazakhstan",
-      "start-date": "1991-12-16"
+      "name": "Kazakhstan"
     }
   },
   {
-    "serial-number": 93,
-    "hash": "99a159f5320938a67ffac14f9462f0c769c0694d",
     "entry": {
-      "citizen-names": "Jordanian",
       "country": "JO",
-      "name": "Jordan",
-      "official-name": "The Hashemite Kingdom of Jordan"
+      "name": "Jordan"
     }
   },
   {
-    "serial-number": 92,
-    "hash": "6523dd27915ace9dcedefdbcea9d1c82c93095ca",
     "entry": {
-      "citizen-names": "Japanese",
       "country": "JP",
-      "name": "Japan",
-      "official-name": "Japan"
+      "name": "Japan"
     }
   },
   {
-    "serial-number": 91,
-    "hash": "dea7cc14330c25da7c6a9e91ccffea985778f0c5",
     "entry": {
-      "citizen-names": "Jamaican",
       "country": "JM",
-      "name": "Jamaica",
-      "official-name": "Jamaica"
+      "name": "Jamaica"
     }
   },
   {
-    "serial-number": 90,
-    "hash": "0151ad124ed1fc583e5e7d663fe75dcbfbaae40f",
     "entry": {
-      "citizen-names": "Citizen of the Ivory Coast",
       "country": "CI",
-      "name": "Ivory Coast",
-      "official-name": "The Republic of Cote D'Ivoire"
+      "name": "Ivory Coast"
     }
   },
   {
-    "serial-number": 89,
-    "hash": "b861477ea268412c16ca5402d0a69888d0148595",
     "entry": {
-      "citizen-names": "Italian",
       "country": "IT",
-      "name": "Italy",
-      "official-name": "The Italian Republic"
+      "name": "Italy"
     }
   },
   {
-    "serial-number": 88,
-    "hash": "0b719503b6bfda4b00b3f34874a211ab59778ea3",
     "entry": {
-      "citizen-names": "Israeli",
       "country": "IL",
-      "name": "Israel",
-      "official-name": "The State of Israel"
+      "name": "Israel"
     }
   },
   {
-    "serial-number": 87,
-    "hash": "837ed21ebeb9ed35bb7f97d5d2af4481e429999a",
     "entry": {
-      "citizen-names": "Citizen of Ireland;Irish citizen",
       "country": "IE",
-      "name": "Ireland",
-      "official-name": "Ireland"
+      "name": "Ireland"
     }
   },
   {
-    "serial-number": 86,
-    "hash": "87445b55beb7fff7b9c5175a20db26ae97b0158f",
     "entry": {
-      "citizen-names": "Iraqi",
       "country": "IQ",
-      "name": "Iraq",
-      "official-name": "The Republic of Iraq"
+      "name": "Iraq"
     }
   },
   {
-    "serial-number": 85,
-    "hash": "7a11ac71537b8089c7e32c5b3bc7ad2984d874b8",
     "entry": {
-      "citizen-names": "Iranian",
       "country": "IR",
-      "name": "Iran",
-      "official-name": "The Islamic Republic of Iran"
+      "name": "Iran"
     }
   },
   {
-    "serial-number": 84,
-    "hash": "b2636564d6c09887793c5dddffae2772b3f24836",
     "entry": {
-      "citizen-names": "Indonesian",
       "country": "ID",
-      "name": "Indonesia",
-      "official-name": "The Republic of Indonesia"
+      "name": "Indonesia"
     }
   },
   {
-    "serial-number": 83,
-    "hash": "a487b061f155d13201beda17e6a340058da9d935",
     "entry": {
-      "citizen-names": "Indian",
       "country": "IN",
-      "name": "India",
-      "official-name": "The Republic of India"
+      "name": "India"
     }
   },
   {
-    "serial-number": 82,
-    "hash": "0093482bbc1008add67166eec8c3a8c9bcb5be22",
     "entry": {
-      "citizen-names": "Icelander",
       "country": "IS",
-      "name": "Iceland",
-      "official-name": "The Republic of Iceland"
+      "name": "Iceland"
     }
   },
   {
-    "serial-number": 81,
-    "hash": "d10b57f87ce35dc0a139970da251c6e316a3d7cf",
     "entry": {
-      "citizen-names": "Hungarian",
       "country": "HU",
-      "name": "Hungary",
-      "official-name": "Hungary"
+      "name": "Hungary"
     }
   },
   {
-    "serial-number": 80,
-    "hash": "9273434f8b42b7044023040bef3df9ef2d7e1bb8",
     "entry": {
-      "citizen-names": "Honduran",
       "country": "HN",
-      "name": "Honduras",
-      "official-name": "The Republic of Honduras"
+      "name": "Honduras"
     }
   },
   {
-    "serial-number": 79,
-    "hash": "aefc58f2e8872307863f8a7ba2c78ac5318db05a",
     "entry": {
-      "citizen-names": "Haitian",
       "country": "HT",
-      "name": "Haiti",
-      "official-name": "The Republic of Haiti"
+      "name": "Haiti"
     }
   },
   {
-    "serial-number": 78,
-    "hash": "ff8586f5a78aa1959fdfec4c4979fc2901d26c5f",
     "entry": {
-      "citizen-names": "Guyanese",
       "country": "GY",
-      "name": "Guyana",
-      "official-name": "The Co-operative Republic of Guyana"
+      "name": "Guyana"
     }
   },
   {
-    "serial-number": 77,
-    "hash": "c2b24eb5193cffc91bbfb27ceff5e4651899e5b0",
     "entry": {
-      "citizen-names": "Citizen of Guinea-Bissau",
       "country": "GW",
-      "name": "Guinea-Bissau",
-      "official-name": "The Republic of Guinea-Bissau"
+      "name": "Guinea-Bissau"
     }
   },
   {
-    "serial-number": 76,
-    "hash": "4fbbae9fc85e81603bb52b8402cf5de171aeda17",
     "entry": {
-      "citizen-names": "Guinean",
       "country": "GN",
-      "name": "Guinea",
-      "official-name": "The Republic of Guinea"
+      "name": "Guinea"
     }
   },
   {
-    "serial-number": 75,
-    "hash": "43434c1afe474f417cd96db10dd5f75b76534b3c",
     "entry": {
-      "citizen-names": "Guatemalan",
       "country": "GT",
-      "name": "Guatemala",
-      "official-name": "The Republic of Guatemala"
+      "name": "Guatemala"
     }
   },
   {
-    "serial-number": 74,
-    "hash": "b327b6d3a22f114d33cf8e0ed50df01c5f565036",
     "entry": {
-      "citizen-names": "Grenadian",
       "country": "GD",
-      "name": "Grenada",
-      "official-name": "Grenada",
-      "start-date": "1974-02-07"
+      "name": "Grenada"
     }
   },
   {
-    "serial-number": 73,
-    "hash": "6be64bc3e0859943b32a8b56852271ceea566852",
     "entry": {
-      "citizen-names": "Greek",
       "country": "GR",
-      "name": "Greece",
-      "official-name": "The Hellenic Republic"
+      "name": "Greece"
     }
   },
   {
-    "serial-number": 72,
-    "hash": "3c7f521a031fc904ec988239c95e8b84d153dcc3",
     "entry": {
-      "citizen-names": "Ghanaian",
       "country": "GH",
-      "name": "Ghana",
-      "official-name": "The Republic of Ghana"
+      "name": "Ghana"
     }
   },
   {
-    "serial-number": 71,
-    "hash": "06851e39d2b9a6b3bea1d6bdbc184bea3e609ea8",
     "entry": {
-      "citizen-names": "German",
       "country": "DE",
-      "name": "Germany",
-      "official-name": "The Federal Republic of Germany",
-      "start-date": "1990-10-03"
+      "name": "Germany"
     }
   },
   {
-    "serial-number": 70,
-    "hash": "19887f5482ebce173a4b48c1eaffaadd994530d0",
     "entry": {
-      "citizen-names": "Georgian",
       "country": "GE",
-      "name": "Georgia",
-      "official-name": "Georgia",
-      "start-date": "1991-04-09"
+      "name": "Georgia"
     }
   },
   {
-    "serial-number": 68,
-    "hash": "7826c2fc47c5d2c5e2b5fd8568a1d9e695dd6965",
     "entry": {
-      "citizen-names": "Gabonese",
       "country": "GA",
-      "name": "Gabon",
-      "official-name": "The Gabonese Republic"
+      "name": "Gabon"
     }
   },
   {
-    "serial-number": 67,
-    "hash": "20701b605dfeaf854baf0af2f71f66676df4c840",
     "entry": {
-      "citizen-names": "French citizen;Frenchman;Frenchwoman",
       "country": "FR",
-      "name": "France",
-      "official-name": "The French Republic"
+      "name": "France"
     }
   },
   {
-    "serial-number": 66,
-    "hash": "d0c2d3c0ffa49662cdd55a03685c99b9cffd442d",
     "entry": {
-      "citizen-names": "Finn",
       "country": "FI",
-      "name": "Finland",
-      "official-name": "The Republic of Finland"
+      "name": "Finland"
     }
   },
   {
-    "serial-number": 65,
-    "hash": "596ce4d2e6b33cff79a134d3f487225e910d69a3",
     "entry": {
-      "citizen-names": "Citizen of Fiji",
       "country": "FJ",
-      "name": "Fiji",
-      "official-name": "The Republic of Fiji"
+      "name": "Fiji"
     }
   },
   {
-    "serial-number": 64,
-    "hash": "a444cd18fdb0a4a805e9b5a89d8513600e915182",
     "entry": {
-      "citizen-names": "Ethiopian",
       "country": "ET",
-      "name": "Ethiopia",
-      "official-name": "The Federal Democratic Republic of Ethiopia"
+      "name": "Ethiopia"
     }
   },
   {
-    "serial-number": 63,
-    "hash": "b9121c7e72c82d23c0162065a837ad0e116d8b35",
     "entry": {
-      "citizen-names": "Estonian",
       "country": "EE",
-      "name": "Estonia",
-      "official-name": "The Republic of Estonia",
-      "start-date": "1991-08-20"
+      "name": "Estonia"
     }
   },
   {
-    "serial-number": 62,
-    "hash": "c6753ceb8bd41c8184228461f8e608c7aa922246",
     "entry": {
-      "citizen-names": "Eritrean",
       "country": "ER",
-      "name": "Eritrea",
-      "official-name": "The State of Eritrea",
-      "start-date": "1993-05-24"
+      "name": "Eritrea"
     }
   },
   {
-    "serial-number": 61,
-    "hash": "e98d80c2714024428458554ab99fdf1a1a513668",
     "entry": {
-      "citizen-names": "Equatorial Guinean",
       "country": "GQ",
-      "name": "Equatorial Guinea",
-      "official-name": "The Republic of Equatorial Guinea"
+      "name": "Equatorial Guinea"
     }
   },
   {
-    "serial-number": 60,
-    "hash": "54907c44388b93503300f98eebd2d01a0942eaef",
     "entry": {
-      "citizen-names": "Salvadorean",
       "country": "SV",
-      "name": "El Salvador",
-      "official-name": "The Republic of El Salvador"
+      "name": "El Salvador"
     }
   },
   {
-    "serial-number": 59,
-    "hash": "30c6cf3a149687e2ff0dfdd059ebb0fa0a2fc096",
     "entry": {
-      "citizen-names": "Egyptian",
       "country": "EG",
-      "name": "Egypt",
-      "official-name": "The Arab Republic of Egypt"
+      "name": "Egypt"
     }
   },
   {
-    "serial-number": 58,
-    "hash": "b6b7530b4779ce1926c1d6d74abf815c7e0bddd6",
     "entry": {
-      "citizen-names": "Ecuadorean",
       "country": "EC",
-      "name": "Ecuador",
-      "official-name": "The Republic of Ecuador"
+      "name": "Ecuador"
     }
   },
   {
-    "serial-number": 57,
-    "hash": "0013c961811071aef7c2b4cf29f37a4acb62b0df",
     "entry": {
-      "citizen-names": "East Timorese",
       "country": "TL",
-      "name": "East Timor",
-      "official-name": "The Democratic Republic of Timor-Leste"
+      "name": "East Timor"
     }
   },
   {
-    "serial-number": 56,
-    "hash": "225a3d1dc423b17302b18b153c5089fd7219c323",
     "entry": {
-      "citizen-names": "Citizen of the Dominican Republic",
       "country": "DO",
-      "name": "Dominican Republic",
-      "official-name": "The Dominican Republic"
+      "name": "Dominican Republic"
     }
   },
   {
-    "serial-number": 55,
-    "hash": "a57ffa482434cf9e547ec4b1ef9c26e61d82b953",
     "entry": {
-      "citizen-names": "Dominican",
       "country": "DM",
-      "name": "Dominica",
-      "official-name": "The Commonwealth of Dominica",
-      "start-date": "1978-11-03"
+      "name": "Dominica"
     }
   },
   {
-    "serial-number": 54,
-    "hash": "5cb79cda28bae2552116a9d83abbc055a93cb6b8",
     "entry": {
-      "citizen-names": "Djiboutian",
       "country": "DJ",
-      "name": "Djibouti",
-      "official-name": "The Republic of Djibouti",
-      "start-date": "1977-06-27"
+      "name": "Djibouti"
     }
   },
   {
-    "serial-number": 53,
-    "hash": "b27cdb36c252b9b187004994733f7666b34866ab",
     "entry": {
-      "citizen-names": "Dane",
       "country": "DK",
-      "name": "Denmark",
-      "official-name": "The Kingdom of Denmark"
+      "name": "Denmark"
     }
   },
   {
-    "serial-number": 52,
-    "hash": "6b8109068979745743b7ba0aba4ac0083bd4f0e8",
     "entry": {
-      "citizen-names": "Czech",
       "country": "CZ",
-      "name": "Czech Republic",
-      "official-name": "The Czech Republic",
-      "start-date": "1993-01-01"
+      "name": "Czech Republic"
     }
   },
   {
-    "serial-number": 51,
-    "hash": "dc086d54afefaf68dfa3971a710741a8a6383d89",
     "entry": {
-      "citizen-names": "Cypriot",
       "country": "CY",
-      "name": "Cyprus",
-      "official-name": "The Republic of Cyprus"
+      "name": "Cyprus"
     }
   },
   {
-    "serial-number": 50,
-    "hash": "f4ff0e091a171fea0774e878fd995080853d61d3",
     "entry": {
-      "citizen-names": "Cuban",
       "country": "CU",
-      "name": "Cuba",
-      "official-name": "The Republic of Cuba"
+      "name": "Cuba"
     }
   },
   {
-    "serial-number": 49,
-    "hash": "5249cb3dceb5df9db59930b27901d785bdcce20e",
     "entry": {
-      "citizen-names": "Croatian",
       "country": "HR",
-      "name": "Croatia",
-      "official-name": "The Republic of Croatia",
-      "start-date": "1991-06-25"
+      "name": "Croatia"
     }
   },
   {
-    "serial-number": 48,
-    "hash": "a80ad602ae463a4121b5b8bc8488ee3d838838ae",
     "entry": {
-      "citizen-names": "Costa Rican",
       "country": "CR",
-      "name": "Costa Rica",
-      "official-name": "The Republic of Costa Rica"
+      "name": "Costa Rica"
     }
   },
   {
-    "serial-number": 47,
-    "hash": "a4c270b5693485aa77f2d70462a98209edcd5081",
     "entry": {
-      "citizen-names": "Citizen of The Democratic Republic of the Congo",
       "country": "CD",
-      "name": "Congo (Democratic Republic)",
-      "official-name": "The Democratic Republic of the Congo"
+      "name": "Congo (Democratic Republic)"
     }
   },
   {
-    "serial-number": 46,
-    "hash": "6db729a3156773bc9d41bde3604396d0216a0cce",
     "entry": {
-      "citizen-names": "Citizen of the Republic of the Congo",
       "country": "CG",
-      "name": "Congo",
-      "official-name": "The Republic of the Congo"
+      "name": "Congo"
     }
   },
   {
-    "serial-number": 45,
-    "hash": "4e885c07da0c3d8482958f10e89de884ad544134",
     "entry": {
-      "citizen-names": "Comoran",
       "country": "KM",
-      "name": "Comoros",
-      "official-name": "The Union of the Comoros",
-      "start-date": "1975-07-06"
+      "name": "Comoros"
     }
   },
   {
-    "serial-number": 44,
-    "hash": "414541598e574f3aec80fa94a970c3b61b1efa75",
     "entry": {
-      "citizen-names": "Colombian",
       "country": "CO",
-      "name": "Colombia",
-      "official-name": "The Republic of Colombia"
+      "name": "Colombia"
     }
   },
   {
-    "serial-number": 43,
-    "hash": "6cc0f894c2ba1b0f15fdcecfecf2be40ea486f19",
     "entry": {
-      "citizen-names": "Chinese",
       "country": "CN",
-      "name": "China",
-      "official-name": "The People's Republic of China"
+      "name": "China"
     }
   },
   {
-    "serial-number": 42,
-    "hash": "bf1fb8d71d7f569361e32279a1c27aa03da71da4",
     "entry": {
-      "citizen-names": "Chilean",
       "country": "CL",
-      "name": "Chile",
-      "official-name": "The Republic of Chile"
+      "name": "Chile"
     }
   },
   {
-    "serial-number": 41,
-    "hash": "949f534413f37d4f4681cd6997de4c82f249069e",
     "entry": {
-      "citizen-names": "Chadian",
       "country": "TD",
-      "name": "Chad",
-      "official-name": "The Republic of Chad"
+      "name": "Chad"
     }
   },
   {
-    "serial-number": 40,
-    "hash": "3e648b3a25d56aef413dd720b91be274b645eede",
     "entry": {
-      "citizen-names": "Citizen of the Central African Republic",
       "country": "CF",
-      "name": "Central African Republic",
-      "official-name": "The Central African Republic"
+      "name": "Central African Republic"
     }
   },
   {
-    "serial-number": 39,
-    "hash": "4dd56148d70e21e9318626812ccc9e4167d7f795",
     "entry": {
-      "citizen-names": "Cape Verdean",
       "country": "CV",
-      "name": "Cape Verde",
-      "official-name": "The Republic of Cabo Verde",
-      "start-date": "1975-07-05"
+      "name": "Cape Verde"
     }
   },
   {
-    "serial-number": 38,
-    "hash": "be42e788cf39ba7340fe9e2ec2d58985d191e6a9",
     "entry": {
-      "citizen-names": "Canadian",
       "country": "CA",
-      "name": "Canada",
-      "official-name": "Canada"
+      "name": "Canada"
     }
   },
   {
-    "serial-number": 37,
-    "hash": "c1570fb106fd63b50ba8d8ef2db0f20f582dcc95",
     "entry": {
-      "citizen-names": "Cameroonian",
       "country": "CM",
-      "name": "Cameroon",
-      "official-name": "The Republic of Cameroon"
+      "name": "Cameroon"
     }
   },
   {
-    "serial-number": 36,
-    "hash": "f452d3f31f21e69e74e11865671400c0830aad3c",
     "entry": {
-      "citizen-names": "Cambodian",
       "country": "KH",
-      "name": "Cambodia",
-      "official-name": "The Kingdom of Cambodia"
+      "name": "Cambodia"
     }
   },
   {
-    "serial-number": 35,
-    "hash": "c00033f1fe8b35cd14c45292c22c80320a8aa2ea",
     "entry": {
-      "citizen-names": "Citizen of Burundi",
       "country": "BI",
-      "name": "Burundi",
-      "official-name": "The Republic of Burundi"
+      "name": "Burundi"
     }
   },
   {
-    "serial-number": 34,
-    "hash": "b1eb04d4360d7eedb8c2ea6271830806a92389b9",
     "entry": {
-      "citizen-names": "Burmese",
       "country": "MM",
-      "name": "Burma",
-      "official-name": "The Republic of the Union of Myanmar"
+      "name": "Burma"
     }
   },
   {
-    "serial-number": 33,
-    "hash": "ff1887711d1aa70a45f467d4a0f1654e642511f5",
     "entry": {
-      "citizen-names": "Burkinabe;Burkinan",
       "country": "BF",
-      "name": "Burkina Faso",
-      "official-name": "Burkina Faso"
+      "name": "Burkina Faso"
     }
   },
   {
-    "serial-number": 32,
-    "hash": "4cae7bf035bf029fac995a7ef8c655c8156a8bc6",
     "entry": {
-      "citizen-names": "Bulgarian",
       "country": "BG",
-      "name": "Bulgaria",
-      "official-name": "The Republic of Bulgaria"
+      "name": "Bulgaria"
     }
   },
   {
-    "serial-number": 31,
-    "hash": "66d429bb09f9a477996b740a9798682a443c9d0d",
     "entry": {
-      "citizen-names": "Citizen of Brunei",
       "country": "BN",
-      "name": "Brunei",
-      "official-name": "Brunei Darussalam",
-      "start-date": "1984-01-01"
+      "name": "Brunei"
     }
   },
   {
-    "serial-number": 30,
-    "hash": "0997dde4088dac9c1b63672a74dc22eaa53c259c",
     "entry": {
-      "citizen-names": "Brazilian",
       "country": "BR",
-      "name": "Brazil",
-      "official-name": "The Federative Republic of Brazil"
+      "name": "Brazil"
     }
   },
   {
-    "serial-number": 29,
-    "hash": "08f1dd2391a169606831eba626db4024ea9aff2d",
     "entry": {
-      "citizen-names": "Citizen of Botswana",
       "country": "BW",
-      "name": "Botswana",
-      "official-name": "The Republic of Botswana"
+      "name": "Botswana"
     }
   },
   {
-    "serial-number": 28,
-    "hash": "8e3c1de002b8a2b815d19f02efb1aee89d48da45",
     "entry": {
-      "citizen-names": "Citizen of Bosnia and Herzegovina",
       "country": "BA",
-      "name": "Bosnia and Herzegovina",
-      "official-name": "Bosnia and Herzegovina",
-      "start-date": "1992-03-03"
+      "name": "Bosnia and Herzegovina"
     }
   },
   {
-    "serial-number": 27,
-    "hash": "b51e2bb8d88d7265c5b64ff75b281d9c7d828218",
     "entry": {
-      "citizen-names": "Bolivian",
       "country": "BO",
-      "name": "Bolivia",
-      "official-name": "The Plurinational State of Bolivia"
+      "name": "Bolivia"
     }
   },
   {
-    "serial-number": 26,
-    "hash": "4714f01511468d2919e52566b5979a7c5a4bbf8b",
     "entry": {
-      "citizen-names": "Bhutanese",
       "country": "BT",
-      "name": "Bhutan",
-      "official-name": "The Kingdom of Bhutan"
+      "name": "Bhutan"
     }
   },
   {
-    "serial-number": 25,
-    "hash": "f7370541ff1c7341c2adb241f93dc7121d929953",
     "entry": {
-      "citizen-names": "Beninese",
       "country": "BJ",
-      "name": "Benin",
-      "official-name": "The Republic of Benin"
+      "name": "Benin"
     }
   },
   {
-    "serial-number": 24,
-    "hash": "a22701b83cae1315fb21a055d0fa0baf0269fa2a",
     "entry": {
-      "citizen-names": "Citizen of Belize",
       "country": "BZ",
-      "name": "Belize",
-      "official-name": "Belize",
-      "start-date": "1981-09-21"
+      "name": "Belize"
     }
   },
   {
-    "serial-number": 23,
-    "hash": "1edfbbf6c6a89ce4d8b315b9611b4a53247e9ab4",
     "entry": {
-      "citizen-names": "Belgian",
       "country": "BE",
-      "name": "Belgium",
-      "official-name": "The Kingdom of Belgium"
+      "name": "Belgium"
     }
   },
   {
-    "serial-number": 22,
-    "hash": "762783c8a2988a3a4459014a0d5505efd5de7cfd",
     "entry": {
-      "citizen-names": "Belarusian",
       "country": "BY",
-      "name": "Belarus",
-      "official-name": "The Republic of Belarus",
-      "start-date": "1991-08-25"
+      "name": "Belarus"
     }
   },
   {
-    "serial-number": 21,
-    "hash": "940137c320bc9a17470ad491dcc70dd06128d5f1",
     "entry": {
-      "citizen-names": "Barbadian",
       "country": "BB",
-      "name": "Barbados",
-      "official-name": "Barbados"
+      "name": "Barbados"
     }
   },
   {
-    "serial-number": 20,
-    "hash": "a6fada0a5adbbb9598eb29c2b74ff05ef73b69e5",
     "entry": {
-      "citizen-names": "Bangladeshi",
       "country": "BD",
-      "name": "Bangladesh",
-      "official-name": "The People's Republic of Bangladesh"
+      "name": "Bangladesh"
     }
   },
   {
-    "serial-number": 19,
-    "hash": "11199c4d321409f38fd94004a47b2a0ffae8580b",
     "entry": {
-      "citizen-names": "Bahraini",
       "country": "BH",
-      "name": "Bahrain",
-      "official-name": "The Kingdom of Bahrain"
+      "name": "Bahrain"
     }
   },
   {
-    "serial-number": 17,
-    "hash": "be5a722d704ab78e28ce8c433dc20538270d8870",
     "entry": {
-      "citizen-names": "Azerbaijani",
       "country": "AZ",
-      "name": "Azerbaijan",
-      "official-name": "The Republic of Azerbaijan",
-      "start-date": "1991-08-30"
+      "name": "Azerbaijan"
     }
   },
   {
-    "serial-number": 16,
-    "hash": "8d06d1a876a131fde34534f86e38a7bd9e75208d",
     "entry": {
-      "citizen-names": "Austrian",
       "country": "AT",
-      "name": "Austria",
-      "official-name": "The Republic of Austria"
+      "name": "Austria"
     }
   },
   {
-    "serial-number": 15,
-    "hash": "422f6b9a08aedf332b9a6f5809a7a12732208705",
     "entry": {
-      "citizen-names": "Australian",
       "country": "AU",
-      "name": "Australia",
-      "official-name": "The Commonwealth of Australia"
+      "name": "Australia"
     }
   },
   {
-    "serial-number": 14,
-    "hash": "364f69a447046bfe7510cbdde89ecbc4cafc963b",
     "entry": {
-      "citizen-names": "Armenian",
       "country": "AM",
-      "name": "Armenia",
-      "official-name": "The Republic of Armenia",
-      "start-date": "1991-09-21"
+      "name": "Armenia"
     }
   },
   {
-    "serial-number": 13,
-    "hash": "efaa4a8d7438b326f94a797d3f9d720e98b05d9d",
     "entry": {
-      "citizen-names": "Argentine;Argentinian",
       "country": "AR",
-      "name": "Argentina",
-      "official-name": "The Argentine Republic"
+      "name": "Argentina"
     }
   },
   {
-    "serial-number": 12,
-    "hash": "f3a96297a0d7e6bb9c022390af323868db5d58f3",
     "entry": {
-      "citizen-names": "Citizen of Antigua and Barbuda",
       "country": "AG",
-      "name": "Antigua and Barbuda",
-      "official-name": "Antigua and Barbuda",
-      "start-date": "1981-11-01"
+      "name": "Antigua and Barbuda"
     }
   },
   {
-    "serial-number": 11,
-    "hash": "d07657358ce8c9548002c0277fc93736b6daf83a",
     "entry": {
-      "citizen-names": "Angolan",
       "country": "AO",
-      "name": "Angola",
-      "official-name": "The Republic of Angola",
-      "start-date": "1975-11-11"
+      "name": "Angola"
     }
   },
   {
-    "serial-number": 10,
-    "hash": "287c76ffc5dadc631ab1566d8d54fcc96c88daa1",
     "entry": {
-      "citizen-names": "Andorran",
       "country": "AD",
-      "name": "Andorra",
-      "official-name": "The Principality of Andorra"
+      "name": "Andorra"
     }
   },
   {
-    "serial-number": 9,
-    "hash": "581d272dc0b8d55cbc0bd5f02138e391c8266590",
     "entry": {
-      "citizen-names": "Algerian",
       "country": "DZ",
-      "name": "Algeria",
-      "official-name": "The People's Democratic Republic of Algeria"
+      "name": "Algeria"
     }
   },
   {
-    "serial-number": 8,
-    "hash": "57be55153d6f0a3b0f59a3c159b395f3ab3aab4c",
     "entry": {
-      "citizen-names": "Albanian",
       "country": "AL",
-      "name": "Albania",
-      "official-name": "The Republic of Albania"
+      "name": "Albania"
     }
   },
   {
-    "serial-number": 7,
-    "hash": "0bbac76afc6c19d0523377e54f3d1aca1f1a14eb",
     "entry": {
-      "citizen-names": "Afghan",
       "country": "AF",
-      "name": "Afghanistan",
-      "official-name": "The Islamic Republic of Afghanistan"
+      "name": "Afghanistan"
     }
   },
   {
-    "serial-number": 6,
-    "hash": "2778fa2a0a97b98728053b4caf7fee918aa0357c",
     "entry": {
-      "citizen-names": "Briton;British citizen",
       "country": "GB",
-      "name": "United Kingdom",
-      "official-name": "The United Kingdom of Great Britain and Northern Ireland"
+      "name": "United Kingdom"
     }
   },
   {
-    "serial-number": 5,
-    "hash": "556d59cfbee5cde6f46f7938a6f3379bd058b25b",
     "entry": {
-      "citizen-names": "Czechoslovak",
-      "country": "CS",
-      "end-date": "1992-12-31",
-      "name": "Czechoslovakia",
-      "official-name": "Czechoslovak Republic"
+      "country": "AX",
+      "name": "Aland Islands"
     }
   },
   {
-    "serial-number": 4,
-    "hash": "7340a8ea34b9d4587078c353fca12385ea67df2c",
     "entry": {
-      "citizen-names": "Yugoslavian",
-      "country": "YU",
-      "end-date": "1992-04-28",
-      "name": "Yugoslavia",
-      "official-name": "Socialist Federal Republic of Yugoslavia"
+      "country": "MO",
+      "name": "Macao"
     }
   },
   {
-    "serial-number": 3,
-    "hash": "5dce41f151975260b49cbb0484f7ac6c2a279b9a",
     "entry": {
-      "citizen-names": "East German",
-      "country": "DD",
-      "end-date": "1990-10-02",
-      "name": "East Germany",
-      "official-name": "Germany Democratic Republic"
+      "country": "AS",
+      "name": "American Samoa"
     }
   },
   {
-    "serial-number": 1,
-    "hash": "439cf12ecb3f3cff67b8b5eab67aab4e28896941",
     "entry": {
-      "citizen-names": "Soviet citizen",
-      "country": "SU",
-      "end-date": "1991-12-25",
-      "name": "USSR",
-      "official-name": "Union of Soviet Socialist Republics"
+      "country": "AI",
+      "name": "Anguilla"
+    }
+  },
+  {
+    "entry": {
+      "country": "AQ",
+      "name": "Antarctica"
+    }
+  },
+  {
+    "entry": {
+      "country": "AW",
+      "name": "Aruba"
+    }
+  },
+  {
+    "entry": {
+      "country": "MQ",
+      "name": "Martinique"
+    }
+  },
+  {
+    "entry": {
+      "country": "YT",
+      "name": "Mayotte"
+    }
+  },
+  {
+    "entry": {
+      "country": "MS",
+      "name": "Montserrat"
+    }
+  },
+  {
+    "entry": {
+      "country": "BM",
+      "name": "Bermuda"
+    }
+  },
+  {
+    "entry": {
+      "country": "BQ",
+      "name": "Bonaire"
+    }
+  },
+  {
+    "entry": {
+      "country": "NC",
+      "name": "New Caledonia"
+    }
+  },
+  {
+    "entry": {
+      "country": "BV",
+      "name": "Bouvet Island"
+    }
+  },
+  {
+    "entry": {
+      "country": "IO",
+      "name": "British Indian Ocean Territory"
+    }
+  },
+  {
+    "entry": {
+      "country": "NU",
+      "name": "Niue"
+    }
+  },
+  {
+    "entry": {
+      "country": "NF",
+      "name": "Norfolk Island"
+    }
+  },
+  {
+    "entry": {
+      "country": "MP",
+      "name": "Northern Mariana Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "KY",
+      "name": "Cayman Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "PS",
+      "name": "Occupied Palestinian Territories"
+    }
+  },
+  {
+    "entry": {
+      "country": "CX",
+      "name": "Christmas Island"
+    }
+  },
+  {
+    "entry": {
+      "country": "CC",
+      "name": "Cocos (Keeling) Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "PN",
+      "name": "Pitcairn"
+    }
+  },
+  {
+    "entry": {
+      "country": "PR",
+      "name": "Puerto Rico"
+    }
+  },
+  {
+    "entry": {
+      "country": "CK",
+      "name": "Cook Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "RE",
+      "name": "Réunion"
+    }
+  },
+  {
+    "entry": {
+      "country": "CW",
+      "name": "Curaçao"
+    }
+  },
+  {
+    "entry": {
+      "country": "GS",
+      "name": "South Georgia and South Sandwich Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "BL",
+      "name": "Saint Barthélemy"
+    }
+  },
+  {
+    "entry": {
+      "country": "MF",
+      "name": "Saint-Martin (French part)"
+    }
+  },
+  {
+    "entry": {
+      "country": "FK",
+      "name": "Falkland Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "FO",
+      "name": "Faroe Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "SX",
+      "name": "Sint Maarten (Dutch part)"
+    }
+  },
+  {
+    "entry": {
+      "country": "GF",
+      "name": "French Guiana"
+    }
+  },
+  {
+    "entry": {
+      "country": "PF",
+      "name": "French Polynesia"
+    }
+  },
+  {
+    "entry": {
+      "country": "TF",
+      "name": "French Southern Territories"
+    }
+  },
+  {
+    "entry": {
+      "country": "SH",
+      "name": "Saint Helena"
+    }
+  },
+  {
+    "entry": {
+      "country": "PM",
+      "name": "Saint Pierre and Miquelon"
+    }
+  },
+  {
+    "entry": {
+      "country": "GI",
+      "name": "Gibraltar"
+    }
+  },
+  {
+    "entry": {
+      "country": "SJ",
+      "name": "Svalbard and Jan Mayen"
+    }
+  },
+  {
+    "entry": {
+      "country": "GL",
+      "name": "Greenland"
+    }
+  },
+  {
+    "entry": {
+      "country": "GP",
+      "name": "Guadeloupe"
+    }
+  },
+  {
+    "entry": {
+      "country": "GU",
+      "name": "Guam"
+    }
+  },
+  {
+    "entry": {
+      "country": "TW",
+      "name": "Taiwan"
+    }
+  },
+  {
+    "entry": {
+      "country": "GG",
+      "name": "Guernsey"
+    }
+  },
+  {
+    "entry": {
+      "country": "HM",
+      "name": "Heard Island and McDonald Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "TK",
+      "name": "Tokelau"
+    }
+  },
+  {
+    "entry": {
+      "country": "HK",
+      "name": "Hong Kong"
+    }
+  },
+  {
+    "entry": {
+      "country": "TC",
+      "name": "Turks and Caicos Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "IM",
+      "name": "Isle of Man"
+    }
+  },
+  {
+    "entry": {
+      "country": "JE",
+      "name": "Jersey"
+    }
+  },
+  {
+    "entry": {
+      "country": "VG",
+      "name": "British Virgin Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "VI",
+      "name": "United States Virgin Islands"
+    }
+  },
+  {
+    "entry": {
+      "country": "WF",
+      "name": "Wallis and Futuna"
+    }
+  },
+  {
+    "entry": {
+      "country": "EH",
+      "name": "Western Sahara"
     }
   }
 ]
