@@ -22,4 +22,4 @@ countries.forEach((country, i) => {
 })
 
 countries = lodash.compact(countries)
-countries = lodash.sortBy(countries, country => country.entry.name.toLowerCase()).reverse()
+countries = lodash.sortBy(countries, country => country.entry.name.toLowerCase())
