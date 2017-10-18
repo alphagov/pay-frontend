@@ -1,5 +1,4 @@
 'use strict'
-require('array.prototype.find')
 var logger = require('winston')
 var logging = require('../utils/logging.js')
 var baseClient = require('../utils/base_client')
