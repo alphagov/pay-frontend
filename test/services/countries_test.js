@@ -7,6 +7,6 @@ describe('retrieveCountries', function () {
     let retrievedCountries = countries.retrieveCountries()
 
     expect(retrievedCountries[0].entry.country).to.eql('AF')
-    expect(retrievedCountries[1].entry.country).to.eql('AX')
+    expect(retrievedCountries[1].entry.country).to.eql('AL')
   })
 })
