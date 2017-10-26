@@ -16,7 +16,6 @@ class Service {
    * @returns {Object} service - internal representation of the service object
    **/
   constructor (serviceData) {
-    console.log(serviceData.merchant_details.address_country)
     this.externalId = serviceData.external_id
     this.name = serviceData.name
     this.gatewayAccountIds = serviceData.gateway_account_ids
