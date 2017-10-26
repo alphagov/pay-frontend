@@ -214,6 +214,10 @@ module.exports = (function () {
         locals.customBranding = _.get(res.locals, 'service.customBranding')
       }
 
+      if (_.get(res.locals, 'service.hasMerchantDetails', false)) {
+        locals.merchantDetails = _.get(res.locals, 'service.merchantDetails')
+      }
+
       if (_.get(locals, 'analytics.path')) {
         locals.analytics.path = locals.analytics.path + _.get(action, 'analyticsPage', '')
       }

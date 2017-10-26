@@ -11,7 +11,8 @@ let random = require('../../app/utils/random')
 module.exports = {
   validServiceResponse: (serviceData = {}) => {
     let defaultCustomBranding = {css_url: 'css url', image_url: 'image url'}
-    let defaultMerchantDetais = { name: 'Give Me Your Money',
+    let defaultMerchantDetais = {
+      name: 'Give Me Your Money',
       address_line1: 'Clive House',
       address_line2: '10 Downing Street',
       address_city: 'London',

@@ -1,8 +1,7 @@
-{{#service.merchantDetails?}}
-<div class="footer-meta">
-    <div class="footer-meta-inner">
-        <p>Service provided by {{name}} Service</p>
-        <p>{{addressLine1}}, {{#addressLine2}}{{addressLine2}},{{/addressLine2}} {{city}} {{postcode}} {{countryName}}</p>
-    </div>
-</div>
-{{/service.merchantDetails}}
+{{#merchantDetails}}
+<ul>
+    <li class="merchant-details-line-1">Service provided by {{merchantDetails.name}} Service</li>
+    <li class="merchant-details-line-2">{{merchantDetails.addressLine1}}, {{#merchantDetails.addressLine2}}{{merchantDetails.addressLine2}},{{/merchantDetails.addressLine2}} {{merchantDetails.city}}
+        {{merchantDetails.postcode}} {{merchantDetails.countryName}}</li>
+</ul>
+{{/merchantDetails}}

@@ -39,7 +39,20 @@ class Service {
    * @returns {boolean} if the service got a non-GOV.UK branding
    */
   hasCustomBranding () {
-    return !_.isEmtpy(this.customBranding)
+    return !_.isEmpty(this.customBranding)
+  }
+
+  /**
+   * @method hasMerchantDetails
+   *
+   * All services must have merchant details defined for all gateway accounts
+   * This will be kept as backward compatibility until merchant details are
+   * enforced.
+   *
+   * @returns {boolean} if the service got merchant details specified
+   */
+  hasMerchantDetails () {
+    return !_.isEmpty(this.merchantDetails)
   }
 }
 

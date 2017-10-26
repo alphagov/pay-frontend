@@ -15,38 +15,6 @@ module.exports = function (clientOptions = {}) {
 
   /**
    *
-   * @param serviceExternalId
-   * @returns {*|promise}
-   */
-  const getServiceById = (serviceExternalId) => {
-    const params = {
-      correlationId: correlationId
-    }
-    const url = `${servicesResource}/${serviceExternalId}`
-    const defer = q.defer()
-    const startTime = new Date()
-    const context = {
-      url: url,
-      defer: defer,
-      startTime: startTime,
-      correlationId: correlationId,
-      method: 'GET',
-      description: 'get a service',
-      service: SERVICE_NAME
-    }
-
-    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
-
-    requestLogger.logRequestStart(context)
-
-    baseClient.get(url, params, callbackToPromiseConverter)
-      .on('error', callbackToPromiseConverter)
-
-    return defer.promise
-  }
-
-  /**
-   *
    * @param findOptions - for now only `findOptions.gatewayAccountId` property is supported
    */
   const findServiceBy = (findOptions) => {
@@ -81,7 +49,6 @@ module.exports = function (clientOptions = {}) {
   }
 
   return {
-    getServiceById: getServiceById,
     findServiceBy: findServiceBy
   }
 }

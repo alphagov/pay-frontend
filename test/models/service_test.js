@@ -1,11 +1,9 @@
 const path = require('path')
-const assert = require('assert')
+const expect = require('chai').expect
 const Service = require(path.join(__dirname, '/../../app/models/Service.class'))
 
 describe('Service model from service raw data', function () {
-  let serviceModel
-
-  before('Create Service from raw data', function () {
+  it('should contain expected merchant details country name', function () {
     let data = {
       external_id: '1234',
       name: 'service name',
@@ -20,10 +18,22 @@ describe('Service model from service raw data', function () {
         address_country: 'GB'
       }
     }
-    serviceModel = new Service(data)
+
+    let serviceModel = new Service(data)
+
+    expect(serviceModel.merchantDetails.countryName).to.equal('United Kingdom')
   })
 
-  it('should contain expected merchant details country name', function () {
-    assert.equal(serviceModel.merchantDetails.countryName, 'United Kingdom')
+  it('should return merchant details as undefined when not in raw data', function () {
+    let data = {
+      external_id: '1234',
+      name: 'service name',
+      gateway_account_ids: [1],
+      custom_branding: {css_url: 'css url', image_url: 'image url'}
+    }
+
+    let serviceModel = new Service(data)
+
+    expect(serviceModel.merchantDetails).to.equal(undefined)
   })
 })
