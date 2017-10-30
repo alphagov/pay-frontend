@@ -6,8 +6,8 @@
 // Make sure banner colours meet minimum colour contrast levels
 
 $custom-banner-colour: #ffffff;
-$custom-banner-border-colour: #DFDFDF;
-$custom-text-colour: #0b0c0c; //#424242;
+$custom-banner-border-colour: #dfdfdf;
+$custom-text-colour: #0b0c0c;
 $logo-image: true;
 $logo-image-height: 2em;
 
@@ -25,7 +25,8 @@ $logo-image-height: 2em;
 
         img {
           visibility: visible;
-          max-height: $logo-image-height;
+          width: 75%;
+          // max-height: $logo-image-height;
           margin: 5px 0;
         }
       }
