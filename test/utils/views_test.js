@@ -14,6 +14,16 @@ describe('views helper', function () {
       imageUrl: service.custom_branding.image_url
     }
   }
+  const expectedDefaultMerchantDetails = {
+    merchantDetails: {
+      name: 'Give Me Your Money',
+      addressLine1: 'Clive House',
+      addressLine2: '10 Downing Street',
+      city: 'London',
+      postcode: 'AW1H 9UX',
+      countryName: 'United Kingdom'
+    }
+  }
 
   var response = {
     status: function () {},
@@ -44,7 +54,7 @@ describe('views helper', function () {
     var _views = views.create(testView)
     _views.display(response, 'TEST_VIEW')
     assert(status.calledWith(999))
-    assert(render.calledWith('TEST_VIEW', _.merge({viewName: 'TEST_VIEW'}, expectedDefaultCustomBranding)))
+    assert(render.calledWith('TEST_VIEW', _.merge({viewName: 'TEST_VIEW'}, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
   })
 
   it('should return a 200 by default', function () {
@@ -53,7 +63,7 @@ describe('views helper', function () {
     var _views = views.create(view)
     _views.display(response, 'TEST_VIEW')
     assert(status.calledWith(200))
-    assert(render.calledWith('TEST_VIEW', _.merge({viewName: 'TEST_VIEW'}, expectedDefaultCustomBranding)))
+    assert(render.calledWith('TEST_VIEW', _.merge({viewName: 'TEST_VIEW'}, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
   })
 
   it('should return locals passed in', function () {
@@ -61,7 +71,7 @@ describe('views helper', function () {
     var _views = views.create(view)
     _views.display(response, 'TEST_VIEW', {a: 'local'})
     assert(status.calledWith(999))
-    assert(render.calledWith('TEST_VIEW', _.merge({viewName: 'TEST_VIEW', a: 'local'}, expectedDefaultCustomBranding)))
+    assert(render.calledWith('TEST_VIEW', _.merge({viewName: 'TEST_VIEW', a: 'local'}, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
   })
 
   it('should rendor error view when view not found', function () {
@@ -71,7 +81,7 @@ describe('views helper', function () {
     assert(render.calledWith('error', _.merge({
       message: 'There is a problem, please try again later',
       viewName: 'error'
-    }, expectedDefaultCustomBranding)))
+    }, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
   })
 
   var defaultTemplates = {
@@ -101,7 +111,7 @@ describe('views helper', function () {
         assert(render.calledWith(values.template, _.merge({
           message: values.message,
           viewName: name
-        }, expectedDefaultCustomBranding)))
+        }, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
       })
 
       it('should be able to ovverride the default ' + name + ' message', function () {
@@ -111,7 +121,7 @@ describe('views helper', function () {
         assert(render.calledWith(values.template, _.merge({
           message: 'lol',
           viewName: name
-        }, expectedDefaultCustomBranding)))
+        }, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
       })
 
       it('should be able to ovverride the default ' + name + ' template', function () {
@@ -120,7 +130,7 @@ describe('views helper', function () {
         var _views = views.create(overriden)
         _views.display(response, name, {message: 'lol'})
         assert(status.calledWith(333))
-        assert(render.calledWith('foo', _.merge({message: 'lol', viewName: name}, expectedDefaultCustomBranding)))
+        assert(render.calledWith('foo', _.merge({message: 'lol', viewName: name}, expectedDefaultCustomBranding, expectedDefaultMerchantDetails)))
       })
     }
   )

@@ -1,5 +1,6 @@
 'use strict'
 const _ = require('lodash')
+const countries = require('../services/countries')
 
 /**
  @class Service
@@ -12,10 +13,7 @@ class Service {
   /**
    * Create an instance of Service
    * @param {Object} serviceData - raw 'service' object from server
-   * @param {string} serviceData.external_id - The external ID of the service
-   * @param {string} serviceData.name - The name of the service
-   * @param {string[]} serviceData.gateway_account_ids - list of gateway account id's that belong to this service
-   * @property {string} customBranding -  custom (non-GOV.UK) styling for the service.
+   * @returns {Object} service - internal representation of the service object
    **/
   constructor (serviceData) {
     this.externalId = serviceData.external_id
@@ -26,22 +24,14 @@ class Service {
         cssUrl: serviceData.custom_branding.css_url,
         imageUrl: serviceData.custom_branding.image_url
       } : undefined
-  }
-
-  /**
-   * @method toJson
-   * @returns {Object} An 'adminusers' compatible representation of the service
-   */
-  toJson () {
-    return {
-      external_id: this.externalId,
-      name: this.name,
-      gateway_account_ids: this.gatewayAccountIds,
-      custom_branding: this.customBranding ? {
-        css_url: this.customBranding.cssUrl,
-        image_url: this.customBranding.imageUrl
-      } : undefined
-    }
+    this.merchantDetails = serviceData.merchant_details ? {
+      name: serviceData.merchant_details.name,
+      addressLine1: serviceData.merchant_details.address_line1,
+      addressLine2: serviceData.merchant_details.address_line2,
+      city: serviceData.merchant_details.address_city,
+      postcode: serviceData.merchant_details.address_postcode,
+      countryName: countries.translateAlpha2(serviceData.merchant_details.address_country)
+    } : undefined
   }
 
   /**
@@ -49,7 +39,20 @@ class Service {
    * @returns {boolean} if the service got a non-GOV.UK branding
    */
   hasCustomBranding () {
-    return !_.isEmtpy(this.customBranding)
+    return !_.isEmpty(this.customBranding)
+  }
+
+  /**
+   * @method hasMerchantDetails
+   *
+   * All services must have merchant details defined for all gateway accounts
+   * This will be kept as backward compatibility until merchant details are
+   * enforced.
+   *
+   * @returns {boolean} if the service got merchant details specified
+   */
+  hasMerchantDetails () {
+    return !_.isEmpty(this.merchantDetails)
   }
 }
 
