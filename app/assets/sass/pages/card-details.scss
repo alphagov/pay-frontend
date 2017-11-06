@@ -59,3 +59,11 @@
   cursor: pointer;
   font-size: 19px;
 }
+
+#footer .footer-meta .footer-meta-inner {
+  .merchant-details,
+  .merchant-details-line-1,
+  .merchant-details-line-2 {
+    display: block;
+  }
+}
