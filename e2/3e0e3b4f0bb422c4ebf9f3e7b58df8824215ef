@@ -5,3 +5,5 @@ release.alpha_release-171.date=2017-11-07:20:52:58
 staging-2.tag=alpha_staging-2-171
 
 staging-2.alpha_staging-2-171.date=2017-11-09:09:59:45
+
+staging-2.alpha_staging-2-171.status=success
