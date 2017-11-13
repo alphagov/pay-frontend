@@ -58,7 +58,7 @@
     "minimist": "1.2.x",
     "moment": "2.18.x",
     "morgan": "1.8.x",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.13/pay-product-page-2.0.13.tgz",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.0.14/pay-product-page-2.0.14.tgz",
     "q": "1.5.x",
     "randomstring": "^1.1.5",
     "readdir": "0.0.x",
