@@ -33,7 +33,10 @@ var formValidation = function () {
 
       showCardType().checkCardtypeIsAllowed().then(
         function () {
-          if (!validations.hasError) return form.submit()
+          if (!validations.hasError) {
+            $('#submit-card-details').attr('disabled', 'disabled')
+            return form.submit()
+          }
           addValidationsErrors()
         },
         function (error) {
@@ -107,8 +110,7 @@ var formValidation = function () {
         groupHasError = getFormGroup(input).hasClass('error'),
         lastOfgroup = $(input).is('[data-last-of-form-group]'),
         required = $(input).is('[data-required]')
-      if ((lastOfgroup && required) || groupHasError)
-        return checkValidation(input)
+      if ((lastOfgroup && required) || groupHasError) { return checkValidation(input) }
       if (inGroup || blank) return
       checkValidation(input)
     },
