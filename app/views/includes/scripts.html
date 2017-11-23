@@ -6,6 +6,7 @@
 <script type="text/javascript">
   $(function(){
     GOVUK.stickAtTopWhenScrolling.init();
+    GOVUK.stopDoubleSubmit.init();
     if ($('main').hasClass('charge-new')) {
       $( document ).ready(function() {
         {{#cardsAsStrings}}
