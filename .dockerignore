@@ -12,9 +12,9 @@ Jenkinsfile
 CONTRIBUTING.md
 env.sh
 .snyk
-build-local.sh
+node_modules
+node_modules_local
 logs/**/*
-.sass-lint.yml
 .jshintrc
 .sass-lint.yml
 Dockerfile
