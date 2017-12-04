@@ -30,7 +30,7 @@ module.exports = {
   'error label gets replaced when in error state and you fix it without leaving the form group': function (browser) {
     var cardDetails = browser.page.payment_new()
     cardDetails
-      .setValue('@expiryYear', '17')
+      .setValue('@expiryYear', '21')
       .click('@addressLine1')
     cardDetails.expect.element('@expiryLabel').text.to.contain('Enter a valid expiry date').before(100)
     cardDetails
