@@ -13,7 +13,7 @@ exports.translateAlpha2 = alpha2Code => countries.find(country => country.entry.
 
 // Merge the additional data into the register data
 countries.forEach((country, i) => {
-  const extension = extensions.find(item => item.country === item.country)
+  const extension = extensions.find(item => item.country === country.entry.country)
   country.entry.selected = country.entry.country === 'GB'
   if (extension) {
     country.entry.aliases = extension.aliases
