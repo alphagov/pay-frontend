@@ -1,6 +1,7 @@
-var path = require('path')
+const path = require('path')
+
 module.exports = function (grunt) {
-  var sass = {
+  const sass = {
     dev: {
       options: {
         style: 'expanded',
@@ -21,7 +22,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var copy = {
+  const copy = {
     assets: {
       files: [{
         expand: true,
@@ -31,18 +32,21 @@ module.exports = function (grunt) {
       }]
     },
     govuk: {
-      files: [{
-        expand: true,
-        cwd: 'node_modules/govuk_frontend_toolkit',
-        src: '**',
-        dest: 'govuk_modules/govuk_frontend_toolkit/'
-      },
-      {
-        expand: true,
-        cwd: 'node_modules/govuk_template_mustache_inheritance/',
-        src: '**',
-        dest: 'govuk_modules/govuk_template/'
-      }]
+      files: [
+        {
+          expand: true,
+          cwd: 'node_modules/govuk_frontend_toolkit',
+          src: '**',
+          dest: 'govuk_modules/govuk_frontend_toolkit/'
+        },
+        {
+          expand: true,
+          cwd: 'node_modules/govuk_template_jinja/',
+          src: '**',
+          dest: 'govuk_modules/govuk_template/',
+          rename: (dest, src) => dest + src.replace('html', 'njk')
+        }
+      ]
     },
     payProductPage: {
       files: [{
@@ -62,7 +66,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var cssmin = {
+  const cssmin = {
     target: {
       files: {
         'public/stylesheets/application.min.css': [
@@ -72,7 +76,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var replace = {
+  const replace = {
     fixSass: {
       src: ['govuk_modules/govuk_template/**/*.scss', 'govuk_modules/govuk_frontend_toolkit/**/*.scss'],
       overwrite: true,
@@ -83,7 +87,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var watch = {
+  const watch = {
     assets: {
       files: ['app/assets/**/*'],
       tasks: ['generate-assets'],
@@ -101,7 +105,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var nodeMon = {
+  const nodeMon = {
     dev: {
       script: 'server.js',
       options: {
@@ -112,7 +116,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var concurrent = {
+  const concurrent = {
     target: {
       tasks: ['watch', 'nodemon'],
       options: {
@@ -121,7 +125,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var browserify = {
+  const browserify = {
     'public/javascripts/browsered.js': ['app/browsered.js'],
     options: {
       browserifyOptions: {
@@ -138,7 +142,7 @@ module.exports = function (grunt) {
     }
   }
 
-  var concat = {
+  const concat = {
     options: {
       separator: ';'
     },
@@ -149,18 +153,18 @@ module.exports = function (grunt) {
     }
   }
 
-  var rewrite = {
+  const rewrite = {
     'application.css': {
       src: 'public/stylesheets/application.css',
       editor: function (contents) {
-        var staticify = require('staticify')(path.join(__dirname, 'public'))
+        const staticify = require('staticify')(path.join(__dirname, 'public'))
 
         return staticify.replacePaths(contents)
       }
     }
   }
 
-  var compress = {
+  const compress = {
     main: {
       options: {
         mode: 'gzip'
