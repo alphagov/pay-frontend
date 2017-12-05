@@ -1,0 +1,21 @@
+{% extends "layout.njk" %}
+
+{% block page_title %}
+  Processing your payment
+{% endblock %}
+
+{% block head %}
+  {% include "includes/head.njk" %}
+  {% include "includes/analytics.njk" %}
+  <meta http-equiv="refresh" content="2" />
+{% endblock %}
+
+{% block content %}
+  <main id="content" class="content-wrapper">
+    <h1 class="form-title">Processing card details</h1>
+    <p class="lede">Your payment is being processed.</p>
+    <div id="spinner">
+      <img src="/images/spinner.gif" alt="waiting"/>
+    </div>
+  </main>
+{% endblock %}

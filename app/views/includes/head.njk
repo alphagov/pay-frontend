@@ -1,0 +1,7 @@
+<link href="{{ css_path }}" media="screen" rel="stylesheet" type="text/css" />
+{% if customBranding %}
+  <link href="{{ customBranding.cssUrl }}" media="screen" rel="stylesheet" type="text/css" />
+{% else %}
+  <!--[if IE 8]><link href="{{ asset_path }}stylesheets/fonts-ie8.css?0.22.3" media="all" rel="stylesheet" /><![endif]-->
+  <!--[if gte IE 9]><!--><link href="{{ asset_path }}stylesheets/fonts.css?0.22.3" media="all" rel="stylesheet" /><!--<![endif]-->
+{% endif %}

@@ -1,0 +1,10 @@
+{% extends "../../layout.njk" %}
+
+{% block page_title %}
+  Your payment is in progress
+{% endblock %}
+
+{% block head %}
+  {% include "includes/head.njk" %}
+  <meta http-equiv="refresh" content="0;URL='/card_details/{{ chargeId }}/capture_waiting'" />
+{% endblock %}

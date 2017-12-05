@@ -1,0 +1,18 @@
+{% extends "../../layout.njk" %}
+
+{% block page_title %}
+Your payment is in progress
+{% endblock %}
+
+{% block content %}
+<main id="content" class="content-wrapper error-pages grid-row">
+<div class="column-two-thirds">
+  <h1 class="heading-large"> Your payment is in progress </h1>
+  <p class="lede"> You can either:</p>
+  <a class="lede" href="/card_details/{{chargeId}}/confirm" id="confirm-link"> Continue with your payment </a>
+  <p class="lede">or</p>
+
+  <a href="{{returnUrl}}" id="return-url" class="lede">Go back to try the payment again</a>
+</div>
+</main>
+{% endblock %}

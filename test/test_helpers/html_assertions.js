@@ -1,18 +1,20 @@
-var path = require('path')
-var TemplateEngine = require(path.join(__dirname, '/../../lib/template-engine.js'))
-var cheerio = require('cheerio')
-var chai = require('chai')
+// npm dependencies
+const cheerio = require('cheerio')
+const chai = require('chai')
+const nunjucks = require('nunjucks')
 
-function render (templateName, templateData) {
-  var templates = TemplateEngine._getTemplates([
-    path.join(__dirname, '/../../app/views'),
-    path.join(__dirname, '/../../govuk_modules/govuk_template/views/layouts')
-  ])
-  return templates[templateName].render(templateData, templates)
-}
+// Global initialisation
+const views = ['./app/views', './govuk_modules/govuk_template/views/layouts']
+const environment = nunjucks.configure(views)
 
 module.exports = {
   render: render
+}
+
+function render (templateName, templateData) {
+  const pathToTemplate = templateName + '.njk'
+
+  return environment.render(pathToTemplate, templateData)
 }
 
 chai.use(function (_chai, utils) {
@@ -25,45 +27,45 @@ chai.use(function (_chai, utils) {
 
   chai.Assertion.addMethod('containSelector', function (selector) {
     utils.flag(this, 'rawHtml', this._obj)
-    var $ = cheerio.load(this._obj)
-    var result = $(selector)
+    const $ = cheerio.load(this._obj)
+    const result = $(selector)
     this.assert(result.length > 0,
-        "Expected #{this} to contain '" + selector + "'",
-        "Did not expect #{this} to contain '" + selector + "'"
+      'Expected #{this} to contain \'' + selector + '\'',
+      'Did not expect #{this} to contain \'' + selector + '\''
     )
     this._obj = result
   })
 
   chai.Assertion.addMethod('withText', function (msg) {
-    var actual = this._obj.text()
+    const actual = this._obj.text()
     this.assert(actual.indexOf(msg) > -1,
-        "Expected #{act} to contain '" + msg + "'.",
-        "Did not expect #{act} to contain '" + msg + "'.",
-        msg,
-        actual
+      'Expected #{act} to contain \'' + msg + '\'.',
+      'Did not expect #{act} to contain \'' + msg + '\'.',
+      msg,
+      actual
     )
   })
 
   chai.Assertion.addMethod('withAttribute', function (expectedAttr, expectedValue) {
     this.assert(this._obj.attr(expectedAttr) !== undefined,
-        "Expected #{act} to contain '" + expectedAttr + "'",
-        "Did not expect #{act} to contain '" + expectedAttr + "'",
-        expectedAttr,
-        JSON.stringify(this._obj['0'].attribs)
+      'Expected #{act} to contain \'' + expectedAttr + '\'',
+      'Did not expect #{act} to contain \'' + expectedAttr + '\'',
+      expectedAttr,
+      JSON.stringify(this._obj['0'].attribs)
     )
 
     if (arguments.length === 2) {
       this.assert(this._obj.attr(expectedAttr) === expectedValue,
-          "Expected #{act} to contain '" + expectedAttr + "' with value '" + expectedValue + "'",
-          "Did not expect #{act} to contain '" + expectedAttr + "' with value '" + expectedValue + "'",
-          expectedAttr,
-          JSON.stringify(this._obj['0'].attribs)
+        'Expected #{act} to contain \'' + expectedAttr + '\' with value \'' + expectedValue + '\'',
+        'Did not expect #{act} to contain \'' + expectedAttr + '\' with value \'' + expectedValue + '\'',
+        expectedAttr,
+        JSON.stringify(this._obj['0'].attribs)
       )
     }
   })
 
   chai.Assertion.addMethod('withAttributes', function (attributes) {
-    for (var attr in attributes) {
+    for (const attr in attributes) {
       if (attributes.hasOwnProperty(attr)) {
         this.withAttribute(attr, attributes[attr])
       }
@@ -81,8 +83,8 @@ chai.use(function (_chai, utils) {
   })
 
   chai.Assertion.addMethod('withLabel', function (labelId, labelText) {
-    var inputFieldId = utils.flag(this, 'inputFieldId')
-    var subAssertion = new chai.Assertion(utils.flag(this, 'rawHtml'))
+    const inputFieldId = utils.flag(this, 'inputFieldId')
+    const subAssertion = new chai.Assertion(utils.flag(this, 'rawHtml'))
     subAssertion.containSelector('label#' + labelId).withAttribute('for', inputFieldId)
   })
 })

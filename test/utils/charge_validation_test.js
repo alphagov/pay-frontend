@@ -1,9 +1,16 @@
+const path = require('path')
 const expect = require('chai').expect
 const charge = require('../../app/utils/charge_validation.js')
 const i18n = require('i18n')
+i18n.configure({
+  locales: ['en'],
+  directory: path.join(__dirname, '../../locales'),
+  objectNotation: true,
+  defaultLocale: 'en',
+  register: global
+})
 const Card = require('../../app/models/card.js')()
 let result
-i18n.setLocale('en')
 const validator = charge(i18n.__('chargeController.fieldErrors'), {info: () => {}}, Card)
 
 describe('charge validator', () => {

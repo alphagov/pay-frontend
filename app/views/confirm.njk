@@ -1,0 +1,58 @@
+{% extends "layout.njk" %}
+
+{% block page_title %}
+  Confirm your details.
+{% endblock %}
+
+{% block content %}
+  <main id="content" role="main" class="content-wrapper confirm-page">
+    <h1 class="form-title">Confirm your payment</h1>
+
+    <table class="confirm-details">
+      <tr>
+        <td>Card number:</td>
+        <td id="card-number" class="details">{{ charge.cardDetails.cardNumber }}</td>
+      </tr>
+      <tr>
+        <td>Card brand:</td>
+        <td id="card-brand" class="details">{{ charge.cardDetails.cardBrand }}</td>
+      </tr>
+      <tr>
+        <td>Expiry date:</td>
+        <td id="expiry-date" class="details">{{ charge.cardDetails.expiryDate }}</td>
+      </tr>
+      <tr>
+        <td>Name on card:</td>
+        <td id="cardholder-name" class="details">{{ charge.cardDetails.cardholderName }}</td>
+      </tr>
+      <tr>
+        <td>Billing address:</td>
+        <td id="address" class="details">{{ charge.cardDetails.billingAddress }}</td>
+      </tr>
+      <tr>
+        <td>Payment for:</td>
+        <td id="payment-description" class="details">{{ charge.description }}</td>
+      </tr>
+      <tr>
+        <td>Total amount:</td>
+        <td id="amount" class="details">£{{ charge.amount }}</td>
+      </tr>
+      <tr>
+        <td>Confirmation email:</td>
+        <td id="email" class="details">{{ charge.email }}</td>
+      </tr>
+    </table>
+
+    <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
+      <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+      <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
+      <button id="confirm" class="button" data-module="stop-double-submit">Confirm payment</button>
+    </form>
+    <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
+      <div>
+        <input id="cancel-payment" type="submit" class="link" value="Cancel payment" name="cancel">
+        <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+      </div>
+    </form>
+  </main>
+{% endblock %}

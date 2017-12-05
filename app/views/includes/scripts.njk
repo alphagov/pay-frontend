@@ -1,0 +1,29 @@
+<!-- Javascript -->
+<script type="text/javascript">
+  {% if i18n_as_string %}
+  var i18n = {{ i18n_as_string | safe }};
+  {% endif %}
+</script>
+<script src="{{ js_path }}"></script>
+<script id="govuk-script-analytics" type="text/javascript">
+  $(function(){
+    GOVUK.stickAtTopWhenScrolling.init();
+    GOVUK.stopDoubleSubmit.init();
+    if ($('main').hasClass('charge-new')) {
+      $( document ).ready(function() {
+        {% if cardsAsStrings %}
+        window.Card = { allowed: {{ cardsAsStrings | safe }} };
+        {% else %}
+        window.Card = { allowed: {} };
+        {% endif %}
+        formValidation();
+        showCardType().init();
+        confirmInput();
+      });
+    } else if ($('main').hasClass('confirm-page')) {
+      $( document ).ready(function() {
+        analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{hitPage}}');
+      });
+    }
+  });
+</script>

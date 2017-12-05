@@ -1,0 +1,16 @@
+{% extends "layout.njk" %}
+
+{% block page_title %}
+  Your payment has been cancelled
+{% endblock %}
+
+{% block content %}
+  <main id="content" class="content-wrapper error-pages grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large user-cancel"> Your payment has been cancelled </h1>
+      <p class="lede">No money has been taken from your account</p>
+      <a id="return-url" href="{{ returnUrl }}" class="lede">Go back to the service</a>
+      <p>You can try to pay again</p>
+    </div>
+  </main>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "../../govuk_modules/govuk_template/views/layouts/govuk_template.njk" %}
+
+{% block head %}
+  {% include "includes/head.njk" %}
+  {% include "includes/analytics.njk" %}
+{% endblock %}
+
+{% block body_classes %}
+  {% if customBranding %}custom-branding{% endif %}
+{% endblock %}
+
+{% block inside_header %}
+  {% if customBranding %}
+    {% include "includes/custom.njk" %}
+  {% endif %}
+{% endblock %}
+
+{% block proposition_header %}
+  {% include "includes/propositional_navigation.njk" %}
+{% endblock %}
+
+{% block header_class %}with-proposition{% endblock %}
+
+{% block body_end %}
+  {% include "includes/scripts.njk" %}
+{% endblock %}
+
+{% block footer_support_links %}
+  {% include "includes/merchant_details.njk" %}
+  {% include "includes/privacy_policy.njk" %}
+{% endblock %}
