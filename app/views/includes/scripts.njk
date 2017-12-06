@@ -1,7 +1,7 @@
 <!-- Javascript -->
 <script type="text/javascript">
   {% if i18n_as_string %}
-  var i18n = {{ i18n_as_string }};
+  var i18n = {{ i18n_as_string | safe }};
   {% endif %}
 </script>
 <script src="{{ js_path }}"></script>
@@ -12,7 +12,7 @@
     if ($('main').hasClass('charge-new')) {
       $( document ).ready(function() {
         {% if cardsAsStrings %}
-        window.Card = { allowed: {{ cardsAsStrings }} };
+        window.Card = { allowed: {{ cardsAsStrings | safe }} };
         {% else %}
         window.Card = { allowed: {} };
         {% endif %}
