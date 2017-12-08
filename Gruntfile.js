@@ -121,24 +121,6 @@ module.exports = function (grunt) {
     }
   }
 
-  var mochaTest = {
-    test: {
-      options: {
-        reporter: 'spec',
-        captureFile: 'mocha-test-results.txt'
-      },
-      src: [
-        'test/**/*.js'
-      ]
-    }
-  }
-
-  var env = {
-    test: {
-      src: 'config/test-env.json'
-    }
-  }
-
   var browserify = {
     'public/javascripts/browsered.js': ['app/browsered.js'],
     options: {
@@ -207,8 +189,6 @@ module.exports = function (grunt) {
     // nodemon watches for changes and restarts app
     nodemon: nodeMon,
     concurrent: concurrent,
-    mochaTest: mochaTest,
-    env: env,
     browserify: browserify,
     concat: concat,
     rewrite: rewrite,
@@ -226,8 +206,6 @@ module.exports = function (grunt) {
     'grunt-nodemon',
     'grunt-text-replace',
     'grunt-concurrent',
-    'grunt-mocha-test',
-    'grunt-env',
     'grunt-browserify',
     'grunt-contrib-concat',
     'grunt-rewrite'
@@ -247,8 +225,6 @@ module.exports = function (grunt) {
     'compress',
     'cssmin'
   ])
-
-  grunt.registerTask('test', ['env:test', 'mochaTest'])
 
   grunt.registerTask('default', [
     'generate-assets',
