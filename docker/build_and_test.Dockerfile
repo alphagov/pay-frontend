@@ -13,6 +13,7 @@ RUN apk add glibc-2.25-r0.apk
 # add package.json before source for node_module cache layer
 ADD package.json /tmp/package.json
 RUN cd /tmp && npm install
+ENV LD_LIBRARY_PATH /app/node_modules/appmetrics
 WORKDIR /app
 
 CMD ./docker/build_and_test.sh

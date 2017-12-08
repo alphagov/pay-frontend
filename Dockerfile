@@ -14,5 +14,5 @@ WORKDIR /app
 ADD . /app
 
 RUN ln -s /tmp/node_modules /app/node_modules
-
+ENV LD_LIBRARY_PATH /app/node_modules/appmetrics
 CMD npm start
