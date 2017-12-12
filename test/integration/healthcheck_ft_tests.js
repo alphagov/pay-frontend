@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../server.js').getApp
+const app = require('../../server.js').getApp()
 const expect = require('chai').expect
 
 describe('The /healthcheck endpoint returned json', function () {

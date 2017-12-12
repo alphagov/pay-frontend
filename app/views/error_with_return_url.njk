@@ -1,0 +1,16 @@
+{% extends "layout.njk" %}
+
+{% block page_title %}
+  An error occurred
+{% endblock %}
+
+{% block content %}
+  <main id="content">
+    <h3>
+      An error occurred:
+    </h3>
+
+    <a id="return-url" href="{{ returnUrl }}">Return to service</a>
+    <div id="errorMsg">{{ message }}</div>
+  </main>
+{% endblock %}

@@ -1,9 +1,11 @@
 process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk'
 var path = require('path')
 var request = require('supertest')
-var app = require(path.join(__dirname, '/../server.js')).getApp
+var app = require(path.join(__dirname, '/../server.js')).getApp()
 var helper = require(path.join(__dirname, '/test_helpers/test_helpers.js'))
 var nock = require('nock')
+const cheerio = require('cheerio')
+const expect = require('chai').expect
 
 var cookie = require(path.join(__dirname, '/test_helpers/session.js'))
 
@@ -30,7 +32,8 @@ describe('The /charge endpoint undealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .expect(function (res) {
-          helper.templateValue(res, 'message', 'There is a problem, please try again later')
+          const $ = cheerio.load(res.text)
+          expect($('#content #errorMsg').text()).to.eql('There is a problem, please try again later')
         })
         .end(done)
     })
@@ -127,8 +130,8 @@ describe('The /charge endpoint dealt statuses', function () {
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(function (res) {
-          helper.templateValue(res, 'viewName', state.view)
-          helper.templateValue(res, 'chargeId', chargeId)
+          const $ = cheerio.load(res.text)
+          expect($('#content #return-url').attr('href')).to.eql('/return/' + chargeId)
         })
         .end(done)
     })
@@ -161,7 +164,8 @@ describe('The /confirm endpoint undealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .expect(function (res) {
-          helper.templateValue(res, 'message', 'There is a problem, please try again later')
+          const $ = cheerio.load(res.text)
+          expect($('#content #errorMsg').text()).to.eql('There is a problem, please try again later')
         })
         .end(done)
     })
@@ -260,8 +264,8 @@ describe('The /confirm endpoint dealt statuses', function () {
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(function (res) {
-          helper.templateValue(res, 'viewName', state.view)
-          if (state.viewState) helper.templateValue(res, 'status', state.viewState)
+          const $ = cheerio.load(res.text)
+          expect($('#content #return-url').attr('href')).to.eql('/return/' + chargeId)
         })
         .end(done)
     })

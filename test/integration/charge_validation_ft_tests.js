@@ -1,8 +1,7 @@
 const nock = require('nock')
-const app = require('../../server.js').getApp
-const mockTemplates = require('../test_helpers/mock_templates.js')
-app.engine('html', mockTemplates.__express)
+const app = require('../../server.js').getApp()
 const expect = require('chai').expect
+const cheerio = require('cheerio')
 const State = require('../../app/models/state.js')
 const cookie = require('../test_helpers/session.js')
 
@@ -55,15 +54,25 @@ describe('checks for PAN-like numbers', () => {
       .expect(200)
       .end((err, res) => {
         if (err) return done(err)
-
-        let body = JSON.parse(res.text)
-
-        expect(body.highlightErrorFields.cardholderName).to.equal('Enter the name as it appears on the card')
-        expect(body.highlightErrorFields.addressLine1).to.equal('Enter a valid billing address')
-        expect(body.highlightErrorFields.addressLine2).to.equal('Enter valid address information')
-        expect(body.highlightErrorFields.addressCity).to.equal('Enter a valid town/city')
-        expect(body.highlightErrorFields.addressPostcode).to.equal('Enter a valid postcode')
-        expect(body.highlightErrorFields.email).to.equal('Enter a valid email')
+        const $ = cheerio.load(res.text)
+        const errorMessages = {
+          cardholder: 'Enter the name as it appears on the card',
+          addressLine1: 'Enter a valid billing address',
+          city: 'Enter a valid town/city',
+          postcode: 'Enter a valid postcode',
+          email: 'Enter a valid email'
+        }
+        expect($('#cardholder-name-error').text()).to.contains(errorMessages.cardholder)
+        expect($('#error-cardholder-name').text()).to.contains(errorMessages.cardholder)
+        expect($('#address-line-1-error').text()).to.contains(errorMessages.addressLine1)
+        expect($('#error-address-line-1').text()).to.contains(errorMessages.addressLine1)
+        expect($('#address-line-2-error').text()).to.contains('Enter valid address information')
+        expect($('#address-city-error').text()).to.contains(errorMessages.city)
+        expect($('#error-address-city').text()).to.contains(errorMessages.city)
+        expect($('#address-postcode-error').text()).to.contains(errorMessages.postcode)
+        expect($('#error-address-postcode').text()).to.contains(errorMessages.postcode)
+        expect($('#email-error').text()).to.contains(errorMessages.email)
+        expect($('#error-email').text()).to.contains(errorMessages.email)
 
         done()
       })
@@ -97,12 +106,10 @@ describe('checks for PAN-like numbers', () => {
       .expect(200)
       .end((err, res) => {
         if (err) return done(err)
-
-        let body = JSON.parse(res.text)
-
-        expect(body.highlightErrorFields.cardholderName).to.equal('Enter the name as it appears on the card')
-        expect(body.errorFields.length).to.equal(1)
-        expect(body.errorFields[0].value).to.equal('Enter the name as it appears on the card')
+        const $ = cheerio.load(res.text)
+        const cardholderErrorText = 'Enter the name as it appears on the card'
+        expect($('#cardholder-name-error').text()).to.contains(cardholderErrorText)
+        expect($('#error-cardholder-name').text()).to.contains(cardholderErrorText)
         done()
       })
   })

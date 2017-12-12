@@ -3,7 +3,7 @@
 const request = require('supertest')
 const {expect} = require('chai')
 
-const app = require('../../server').getApp
+const app = require('../../server').getApp()
 
 describe('server config:', () => {
   it(`should not return the 'x-powered-by' header by default`, done => {

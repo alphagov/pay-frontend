@@ -1,0 +1,19 @@
+{% extends "layout.njk" %}
+
+{% block page_title %}
+  An error occurred
+{% endblock %}
+
+{% block content %}
+  <main id="content" class="content-wrapper error-pages grid-row">
+    <div class="column-two-thirds">
+      <h1 class="heading-large">
+        An error occurred
+      </h1>
+      <p id="errorMsg" class="lede">{{ message }}</p>
+      {% if returnUrl %}
+        <a id="return-url" class="lede" href="{{ returnUrl }}">Go back to start the payment again</a>
+      {% endif %}
+    </div>
+  </main>
+{% endblock %}

@@ -3,12 +3,12 @@ const EMPTY_BODY = ''
 const _ = require('lodash')
 const request = require('supertest')
 const nock = require('nock')
-const app = require('../../server.js').getApp
-const mockTemplates = require('../test_helpers/mock_templates.js')
-app.engine('html', mockTemplates.__express)
-const expect = require('chai').expect
+const app = require('../../server.js').getApp()
+const chai = require('chai')
+const cheerio = require('cheerio')
+const expect = chai.expect
 
-const should = require('chai').should()
+const should = chai.should()
 
 const cookie = require('../test_helpers/session.js')
 const helper = require('../test_helpers/test_helpers.js')
@@ -35,6 +35,13 @@ let defaultCorrelationHeader = {
   reqheaders: {'x-request-id': 'some-unique-id'}
 }
 
+const gatewayAccount = {
+  gatewayAccountId: '12345',
+  paymentProvider: 'sandbox',
+  analyticsId: 'test-1234',
+  type: 'test'
+}
+
 describe('chargeTests', function () {
   let localServer = process.env.CONNECTOR_HOST
   let adminUsersHost = process.env.ADMINUSERS_URL
@@ -44,7 +51,7 @@ describe('chargeTests', function () {
   let chargeId = '23144323'
   let frontendCardDetailsPath = '/card_details'
   let frontendCardDetailsPostPath = '/card_details/' + chargeId
-  const gatewayAccountId = '12345'
+  const gatewayAccountId = gatewayAccount.gatewayAccountId
 
   let connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards'
   let enteringCardDetailsState = 'ENTERING CARD DETAILS'
@@ -157,14 +164,13 @@ describe('chargeTests', function () {
         get(status)
           .expect(200)
           .expect(function (res) {
-            helper.templateValueNotUndefined(res, 'csrf')
-            helper.templateValue(res, 'amount', '23.45')
-            helper.templateValue(res, 'id', chargeId)
-            helper.templateValue(res, 'description', 'Payment Description')
-            helper.templateValue(res, 'gatewayAccount.paymentProvider', 'sandbox')
-            helper.templateValue(res, 'gatewayAccount.analyticsId', 'test-1234')
-            helper.templateValue(res, 'gatewayAccount.type', 'test')
-            helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
+            const $ = cheerio.load(res.text)
+            expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+            expect($('.payment-summary #amount').text()).to.eql('£23.45')
+            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
+            expect($('#govuk-script-analytics').text()).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '')`)
+            expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
           })
           .end(done)
       }
@@ -181,32 +187,27 @@ describe('chargeTests', function () {
         get('invalid')
           .expect(500)
           .expect(function (res) {
-            helper.templateValue(res, 'message', 'There is a problem, please try again later')
+            const $ = cheerio.load(res.text)
+            expect($('#content #errorMsg').text()).to.eql('There is a problem, please try again later')
           }).end(done)
       })
 
       it('should show appropriate error page when the charge is in a state we deal with', function (done) {
         get('authorisation success')
           .expect(200)
-          .expect(function (res) {
-            helper.templateValue(res, 'viewName', 'AUTHORISATION_SUCCESS')
-          }).end(done)
+          .end(done)
       })
 
       it('should show auth failure page when the authorisation has been rejected', function (done) {
         get('authorisation rejected')
           .expect(200)
-          .expect(function (res) {
-            helper.templateValue(res, 'viewName', 'AUTHORISATION_REJECTED')
-          }).end(done)
+          .end(done)
       })
 
       it('should show auth failure page when the authorisation has been cancelled', function (done) {
         get('authorisation cancelled')
           .expect(200)
-          .expect(function (res) {
-            helper.templateValue(res, 'viewName', 'AUTHORISATION_CANCELLED')
-          }).end(done)
+          .end(done)
       })
     })
 
@@ -331,9 +332,6 @@ describe('chargeTests', function () {
           .set('Cookie', ['frontend_state=' + cookieValue])
           .set('Accept', 'application/json')
           .expect(200)
-          .expect(function (res) {
-            helper.templateValue(res, 'viewName', 'auth_waiting')
-          })
           .end(done)
       })
 
@@ -423,9 +421,6 @@ describe('chargeTests', function () {
 
         postChargeRequest(app, cookieValue, formData, chargeId)
           .expect(403)
-          .expect(function (res) {
-            helper.templateValue(res, 'viewName', 'UNAUTHORISED')
-          })
           .end(done)
       })
 
@@ -437,16 +432,12 @@ describe('chargeTests', function () {
         postChargeRequest(app, cookieValue, minimumFormCardData('1111111111111111'), chargeId)
           .expect(200)
           .expect(function (res) {
-            helper.templateValue(res, 'id', chargeId)
-            helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
-            helper.templateValue(res, 'hasError', true)
-            helper.templateValue(res, 'amount', '23.45')
-            helper.templateValue(res, 'errorFields', [{
-              'cssKey': 'card-no',
-              'key': 'cardNo',
-              'value': 'Enter a valid card number'
-            }])
-            helper.templateValue(res, 'highlightErrorFields', {'cardNo': 'Enter a valid card number'})
+            const $ = cheerio.load(res.text)
+            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
+            expect($('.payment-summary #amount').text()).to.eql('£23.45')
+            expect($('#card-no-error').text()).to.contains('Enter a valid card number')
+            expect($('#error-card-no').text()).to.contains('Enter a valid card number')
           })
           .end(done)
       })
@@ -458,8 +449,8 @@ describe('chargeTests', function () {
         defaultAdminusersResponseForGetService(gatewayAccountId)
         postChargeRequest(app, cookieValue, missingFormCardData(), chargeId)
           .expect((res) => {
-            let body = JSON.parse(res.text)
-            expect(body.countries.length > 0).to.equal(true)
+            const $ = cheerio.load(res.text)
+            expect($('#address-country').find('option').length > 0).to.equal(true)
           })
           .end(done)
       })
@@ -472,41 +463,40 @@ describe('chargeTests', function () {
         postChargeRequest(app, cookieValue, missingFormCardData(), chargeId)
           .expect(200)
           .expect(function (res) {
-            helper.templateValue(res, 'id', chargeId)
-            helper.templateValue(res, 'description', 'Payment Description')
-            helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
-            helper.templateValue(res, 'hasError', true)
-            helper.templateValue(res, 'amount', '23.45')
-            helper.templateValue(res, 'withdrawalText', 'Accepted credit and debit card types')
-            helper.templateValue(res, 'post_cancel_action', '/card_details/23144323/cancel')
-            helper.templateValue(res, 'errorFields', [
-              {'key': 'cardNo', 'cssKey': 'card-no', 'value': 'Enter a valid card number'},
-              {'key': 'expiryMonth', 'cssKey': 'expiry-date', 'value': 'Enter a valid expiry date'},
-              {'key': 'cardholderName', 'cssKey': 'cardholder-name', 'value': 'Enter a valid name'},
-              {'key': 'cvc', 'cssKey': 'cvc', 'value': 'Enter a valid card security code'},
-              {
-                'key': 'addressLine1',
-                'cssKey': 'address-line-1',
-                'value': 'Enter a valid building name/number and street'
-              },
-              {'key': 'addressCity', 'cssKey': 'address-city', 'value': 'Enter a valid town/city'},
-              {'key': 'addressPostcode', 'cssKey': 'address-postcode', 'value': 'Enter a valid postcode'},
-              {'key': 'email', 'cssKey': 'email', 'value': 'Enter a valid email'},
-              {'key': 'addressCountry', 'cssKey': 'address-country', 'value': 'Enter a valid country or territory'}
-            ])
-
-            helper.templateValue(res, 'highlightErrorFields', {
-              'cardholderName': 'Enter the name as it appears on the card',
-              'cvc': 'Enter a valid card security code',
-              'email': 'Enter a valid email',
-              'expiryMonth': 'Enter a valid expiry date',
-              'expiryYear': 'Enter a valid expiry date',
-              'cardNo': 'Enter a valid card number',
-              'addressCity': 'Enter a valid town/city',
-              'addressLine1': 'Enter a valid billing address',
-              'addressPostcode': 'Enter a valid postcode',
-              'addressCountry': 'Enter a valid country or territory'
-            })
+            const $ = cheerio.load(res.text)
+            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
+            expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
+            expect($('.payment-summary #amount').text()).to.eql('£23.45')
+            expect($('.withdrawal-text').text()).to.contains('Accepted credit and debit card types')
+            expect($('#cancel').attr('action')).to.eql('/card_details/23144323/cancel')
+            const errorMessages = {
+              cardNo: 'Enter a valid card number',
+              expiryDate: 'Enter a valid expiry date',
+              cvc: 'Enter a valid card security code',
+              city: 'Enter a valid town/city',
+              postcode: 'Enter a valid postcode',
+              email: 'Enter a valid email',
+              country: 'Enter a valid country or territory'
+            }
+            expect($('#card-no-error').text()).to.contains(errorMessages.cardNo)
+            expect($('#error-card-no').text()).to.contains(errorMessages.cardNo)
+            expect($('#expiry-date-error').text()).to.contains(errorMessages.expiryDate)
+            expect($('#error-expiry-date').text()).to.contains(errorMessages.expiryDate)
+            expect($('#cardholder-name-error').text()).to.contains('Enter a valid name')
+            expect($('#error-cardholder-name').text()).to.contains('Enter the name as it appears on the card')
+            expect($('#cvc-error').text()).to.contains(errorMessages.cvc)
+            expect($('#error-cvc').text()).to.contains(errorMessages.cvc)
+            expect($('#address-line-1-error').text()).to.contains('Enter a valid building name/number and street')
+            expect($('#error-address-line-1').text()).to.contains('Enter a valid billing address')
+            expect($('#address-city-error').text()).to.contains(errorMessages.city)
+            expect($('#error-address-city').text()).to.contains(errorMessages.city)
+            expect($('#address-postcode-error').text()).to.contains(errorMessages.postcode)
+            expect($('#error-address-postcode').text()).to.contains(errorMessages.postcode)
+            expect($('#email-error').text()).to.contains(errorMessages.email)
+            expect($('#error-email').text()).to.contains(errorMessages.email)
+            expect($('#address-country-error').text()).to.contains(errorMessages.country)
+            expect($('#error-address-country').text()).to.contains(errorMessages.country)
           })
           .end(done)
       })
@@ -524,17 +514,16 @@ describe('chargeTests', function () {
         postChargeRequest(app, cookieValue, minimumFormCardData('3528000700000000'), chargeId)
           .expect(200)
           .expect(function (res) {
-            helper.templateValue(res, 'id', chargeId)
-            helper.templateValue(res, 'description', 'Payment Description')
-            helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
-            helper.templateValue(res, 'hasError', true)
-            helper.templateValue(res, 'amount', '23.45')
-            helper.templateValue(res, 'errorFields', [
-              {'key': 'cardNo', 'cssKey': 'card-no', 'value': 'Foobar is not supported'}
-            ])
-            helper.templateValue(res, 'highlightErrorFields', {
-              'cardNo': 'Foobar is not supported'
-            })
+            const $ = cheerio.load(res.text)
+            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
+            expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
+            expect($('.payment-summary #amount').text()).to.eql('£23.45')
+            const errorMessages = {
+              cardNo: 'Foobar is not supported'
+            }
+            expect($('#card-no-error').text()).to.contains(errorMessages.cardNo)
+            expect($('#error-card-no').text()).to.contains(errorMessages.cardNo)
           })
           .end(done)
       })
@@ -553,17 +542,16 @@ describe('chargeTests', function () {
         postChargeRequest(app, cookieValue, minimumFormCardData('3528000700000000'), chargeId)
           .expect(200)
           .expect(function (res) {
-            helper.templateValue(res, 'id', chargeId)
-            helper.templateValue(res, 'description', 'Payment Description')
-            helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
-            helper.templateValue(res, 'hasError', true)
-            helper.templateValue(res, 'amount', '23.45')
-            helper.templateValue(res, 'errorFields', [
-              {'key': 'cardNo', 'cssKey': 'card-no', 'value': 'American Express debit cards are not supported'}
-            ])
-            helper.templateValue(res, 'highlightErrorFields', {
-              'cardNo': 'American Express debit cards are not supported'
-            })
+            const $ = cheerio.load(res.text)
+            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
+            expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
+            expect($('.payment-summary #amount').text()).to.eql('£23.45')
+            const errorMessages = {
+              cardNo: 'American Express debit cards are not supported'
+            }
+            expect($('#card-no-error').text()).to.contains(errorMessages.cardNo)
+            expect($('#error-card-no').text()).to.contains(errorMessages.cardNo)
           })
           .end(done)
       })
@@ -582,13 +570,14 @@ describe('chargeTests', function () {
         postChargeRequest(app, cookieValue, cardData, chargeId)
           .expect(200)
           .expect(function (res) {
-            helper.templateValue(res, 'cardholderName', cardData.cardholderName)
-            helper.templateValue(res, 'addressLine1', cardData.addressLine1)
-            helper.templateValue(res, 'addressLine2', cardData.addressLine2)
-            helper.templateValue(res, 'addressCity', cardData.addressCity)
-            helper.templateValue(res, 'addressPostcode', cardData.addressPostcode)
-            helper.templateValueUndefined(res, 'cardNo')
-            helper.templateValueUndefined(res, 'cvc')
+            const $ = cheerio.load(res.text)
+            expect($('#cardholder-name').attr('value')).to.eql(cardData.cardholderName)
+            expect($('#address-line-1').attr('value')).to.eql(cardData.addressLine1)
+            expect($('#address-line-2').attr('value')).to.eql(cardData.addressLine2)
+            expect($('#address-city').attr('value')).to.eql(cardData.addressCity)
+            expect($('#address-postcode').attr('value')).to.eql(cardData.addressPostcode)
+            expect($('#card-no').attr('value')).to.eql('')
+            expect($('#cvc').attr('value')).to.eql('')
           })
           .end(done)
       })
@@ -665,9 +654,6 @@ describe('chargeTests', function () {
             should.not.exist(res.headers['set-cookie'])
           })
           .expect(403)
-          .expect(function (res) {
-            helper.templateValue(res, 'viewName', 'UNAUTHORISED')
-          })
           .end(done)
       })
     })
@@ -684,13 +670,13 @@ describe('chargeTests', function () {
       getChargeRequest(app, cookieValue, chargeId)
         .expect(200)
         .expect(function (res) {
-          helper.templateValue(res, 'id', chargeId)
-          helper.templateValueNotUndefined(res, 'csrf')
-          helper.templateValue(res, 'id', chargeId)
-          helper.templateValue(res, 'amount', '23.45')
-          helper.templateValue(res, 'description', 'Payment Description')
-          helper.templateValue(res, 'post_card_action', frontendCardDetailsPostPath)
-          helper.templateValue(res, 'withdrawalText', 'Accepted credit and debit card types')
+          const $ = cheerio.load(res.text)
+          expect($('#govuk-script-charge').text()).to.contains(chargeId)
+          expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('.payment-summary #amount').text()).to.eql('£23.45')
+          expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
+          expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
+          expect($('.withdrawal-text').text()).to.contains('Accepted credit and debit card types')
         })
         .end(done)
     })
@@ -705,7 +691,8 @@ describe('chargeTests', function () {
       getChargeRequest(app, cookieValue, chargeId, '?debitOnly=true')
         .expect(200)
         .expect(function (res) {
-          helper.templateValue(res, 'withdrawalText', 'Credit card payments are not accepted. Please use a debit card.')
+          const $ = cheerio.load(res.text)
+          expect($('.withdrawal-text').text()).to.contains('Credit card payments are not accepted. Please use a debit card.')
         })
         .end(done)
     })
@@ -725,15 +712,12 @@ describe('chargeTests', function () {
         .end(done)
     })
 
-    it('It should show 404 page not found if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done) {
+    it('It should show 500 page if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done) {
       let cookieValue = cookie.create(chargeId)
       connectorResponseForPutCharge(chargeId, 400, {'message': 'some error'})
 
       getChargeRequest(app, cookieValue, chargeId)
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-        })
         .end(done)
     })
 
@@ -787,15 +771,16 @@ describe('chargeTests', function () {
       getChargeRequest(app, cookieValue, chargeId, '/confirm')
         .expect(200)
         .expect(function (res) {
-          helper.templateValueNotUndefined(res, 'csrf')
-          helper.templateValue(res, 'charge.cardDetails.cardNumber', '************1234')
-          helper.templateValue(res, 'charge.cardDetails.cardBrand', 'Visa')
-          helper.templateValue(res, 'charge.cardDetails.expiryDate', '11/99')
-          helper.templateValue(res, 'charge.cardDetails.cardholderName', 'Test User')
-          helper.templateValue(res, 'charge.cardDetails.billingAddress', 'line1, line2, city, postcode, United Kingdom')
-          helper.templateValue(res, 'charge.gatewayAccount.serviceName', 'Pranks incorporated')
-          helper.templateValue(res, 'charge.amount', '23.45')
-          helper.templateValue(res, 'charge.description', 'Payment Description')
+          const $ = cheerio.load(res.text)
+          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('#card-number').text()).to.contains('************1234')
+          expect($('#card-brand').text()).to.contains('Visa')
+          expect($('#expiry-date').text()).to.contains('11/99')
+          expect($('#cardholder-name').text()).to.contains('Test User')
+          expect($('#address').text()).to.contains('line1, line2, city, postcode, United Kingdom')
+          expect($('#proposition-name').text()).to.contains('Pranks incorporated')
+          expect($('.confirm-details #amount').text()).to.eql('£23.45')
+          expect($('.confirm-details #payment-description').text()).to.eql('Payment Description')
         })
         .end(done)
     })
@@ -842,8 +827,8 @@ describe('chargeTests', function () {
         .send({csrfToken: helper.csrfToken()})
         .expect(500)
         .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-          helper.templateValue(res, 'returnUrl', '/return/' + chargeId)
+          const $ = cheerio.load(res.text)
+          expect($('#content #return-url').attr('href')).to.eql('/return/' + chargeId)
         })
         .end(done)
     })
@@ -858,9 +843,6 @@ describe('chargeTests', function () {
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
         .send({csrfToken: helper.csrfToken()})
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'CAPTURE_FAILURE')
-        })
         .end(done)
     })
 
@@ -873,9 +855,6 @@ describe('chargeTests', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .set('Accept', 'application/json')
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-        })
         .end(done)
     })
 
@@ -889,9 +868,6 @@ describe('chargeTests', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .send({csrfToken: helper.csrfToken()})
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-        })
         .end(done)
     })
 
@@ -904,9 +880,6 @@ describe('chargeTests', function () {
         .send({csrfToken: helper.csrfToken()})
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-        })
         .end(done)
     })
   })
@@ -923,9 +896,6 @@ describe('chargeTests', function () {
         .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
         .expect(200)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'capture_waiting')
-        })
         .end(done)
     })
 
@@ -940,9 +910,6 @@ describe('chargeTests', function () {
         .set('Cookie', ['frontend_state=' + cookieValue])
         .set('Accept', 'application/json')
         .expect(200)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'CAPTURE_SUBMITTED')
-        })
         .end(done)
     })
   })
@@ -961,9 +928,6 @@ describe('chargeTests', function () {
         .send({csrfToken: helper.csrfToken()})
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'USER_CANCELLED')
-        })
         .end(done)
     })
 
@@ -980,9 +944,6 @@ describe('chargeTests', function () {
         .send({csrfToken: helper.csrfToken()})
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'USER_CANCELLED')
-        })
         .end(done)
     })
 
@@ -999,9 +960,6 @@ describe('chargeTests', function () {
         .send({csrfToken: helper.csrfToken()})
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-        })
         .end(done)
     })
   })
@@ -1022,9 +980,9 @@ describe('chargeTests', function () {
       getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
         .expect(200)
         .expect(function (res) {
-          let body = JSON.parse(res.text)
-          expect(body.paRequest).to.equal('aPaRequest')
-          expect(body.issuerUrl).to.equal('http://issuerUrl.com')
+          const $ = cheerio.load(res.text)
+          expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
+          expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
         })
         .end(done)
     })
@@ -1048,9 +1006,9 @@ describe('chargeTests', function () {
       postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
         .expect(200)
         .expect(function (res) {
-          let body = JSON.parse(res.text)
-          expect(body.paResponse).to.equal('aPaRes')
-          expect(body.threeDsHandlerUrl).to.equal(`/card_details/${chargeId}/3ds_handler`)
+          const $ = cheerio.load(res.text)
+          expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
+          expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
         })
         .end(done)
     })
@@ -1111,9 +1069,7 @@ describe('chargeTests', function () {
 
       postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'SYSTEM_ERROR')
-        }).end(done)
+        .end(done)
     })
 
     it('should send 3ds data to connector and render an error if connector returns an invalid status code', function (done) {
@@ -1125,9 +1081,7 @@ describe('chargeTests', function () {
 
       postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'ERROR')
-        }).end(done)
+        .end(done)
     })
 
     it('should send 3ds data to connector and render an error if connector post failed', function (done) {
@@ -1139,9 +1093,7 @@ describe('chargeTests', function () {
 
       postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
         .expect(500)
-        .expect(function (res) {
-          helper.templateValue(res, 'viewName', 'ERROR')
-        }).end(done)
+        .end(done)
     })
   })
 })
