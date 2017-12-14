@@ -1,3 +1,7 @@
+'use strict'
+
+const logger = require('winston')
+
 const views = require('../utils/views.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
@@ -11,13 +15,15 @@ module.exports = function (req, res, next) {
     _views.display(res, 'UNAUTHORISED', withAnalyticsError())
   } else {
     let correlationId = req.headers[CORRELATION_HEADER]
-    return getAdminUsersClient({correlationId: correlationId}).findServiceBy({gatewayAccountId: req.chargeData.gateway_account.gateway_account_id})
+    return getAdminUsersClient({correlationId: correlationId})
+      .findServiceBy({gatewayAccountId: req.chargeData.gateway_account.gateway_account_id})
       .then(service => {
         res.locals.service = service
         next()
       })
       .catch(() => {
-        _views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
+        logger.error(`Failed to retrieve service information for service: ${req.chargeData.gateway_account.serviceName}`)
+        next()
       })
   }
 }

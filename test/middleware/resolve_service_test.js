@@ -10,6 +10,7 @@ const serviceFixtures = require('../fixtures/service_fixtures')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
+const errorLogger = sinon.spy()
 
 const resolveServiceMiddleware = function (findServicePromise) {
   return proxyquire(path.join(__dirname, '/../../app/middleware/resolve_service.js'), {
@@ -19,6 +20,9 @@ const resolveServiceMiddleware = function (findServicePromise) {
           return findServicePromise
         }
       }
+    },
+    'winston': {
+      error: errorLogger
     }
   })
 }
@@ -66,15 +70,16 @@ describe('resolve service middleware', function () {
     expect(res.render.calledWith('errors/system_error', expectedRenderData)).to.be.equal(true) // eslint-disable-line
   })
 
-  it('should display SYSTEM_ERROR if on error retrieving service data', function (done) {
+  it('should log an error if it fails to retrieving service data', function (done) {
     const gatewayAccountId = '1'
-    let expectedRenderData = {'analytics': analyticsDataForErrors, 'viewName': 'SYSTEM_ERROR'}
     const resolveService = resolveServiceMiddleware(q.reject())
     let chargeData = {}
+    _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
+    _.set(chargeData, 'gateway_account.serviceName', 'Example Service Name')
     let req = {
       headers: [],
       chargeId: '111',
-      chargeData: _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
+      chargeData: chargeData
     }
     let res = {
       status: sinon.spy(),
@@ -84,8 +89,8 @@ describe('resolve service middleware', function () {
 
     let nextSpy = sinon.spy()
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
-      expect(res.status.calledWith(500)).to.be.equal(true)
-      expect(res.render.calledWith('errors/system_error', expectedRenderData)).to.be.equal(true) // eslint-disable-line
+      expect(errorLogger.called).to.equal(true)
+      expect(errorLogger.lastCall.args[0]).to.equal(`Failed to retrieve service information for service: ${chargeData.gateway_account.serviceName}`)
     }).should.notify(done)
   })
 })
