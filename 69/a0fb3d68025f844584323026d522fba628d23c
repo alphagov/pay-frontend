@@ -23,3 +23,5 @@ staging-2.FAILED-187.status=failed
 production-2.tag=alpha_production-2-187
 
 production-2.alpha_production-2-187.date=2017-12-15:17:10:55
+
+production-2.alpha_production-2-187.status=success
