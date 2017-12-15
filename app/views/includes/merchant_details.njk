@@ -1,8 +1,8 @@
-{% if merchantDetails %}
+{% if service and service.merchantDetails %}
   <ul class="merchant-details">
-    <li class="merchant-details-line-1">Service provided by {{ merchantDetails.name }}</li>
-    <li class="merchant-details-line-2">{{ merchantDetails.addressLine1 }},
-      {% if merchantDetails.addressLine2 %} {{ merchantDetails.addressLine2 }}, {% endif %}
-      {{ merchantDetails.city }} {{ merchantDetails.postcode }} {{ merchantDetails.countryName }}</li>
+    <li class="merchant-details-line-1">Service provided by {{ service.merchantDetails.name }}</li>
+    <li class="merchant-details-line-2">{{ service.merchantDetails.addressLine1 }},
+      {% if service.merchantDetails.addressLine2 %} {{ service.merchantDetails.addressLine2 }}, {% endif %}
+      {{ service.merchantDetails.city }} {{ service.merchantDetails.postcode }} {{ service.merchantDetails.countryName }}</li>
   </ul>
 {% endif %}

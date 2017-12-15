@@ -5,9 +5,12 @@ var cheerio = require('cheerio')
 var should = require('chai').should() // eslint-disable-line
 
 const customBrandingData = {
-  customBranding: {
-    cssUrl: 'css url',
-    imageUrl: 'image url'
+  service: {
+    hasCustomBranding: true,
+    customBranding: {
+      cssUrl: 'css url',
+      imageUrl: 'image url'
+    }
   }
 }
 

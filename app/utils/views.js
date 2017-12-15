@@ -198,32 +198,24 @@ module.exports = (function () {
 
     ENTERING_CARD_DETAILS: systemError,
 
-    display: function (res, resName, locals) {
-      var action = _.result(this, resName)
+    display: function (res, viewName, options) {
+      var action = _.result(this, viewName)
       var status
-      locals = locals || {}
-      locals.viewName = resName
+      options = options || {}
+      options.viewName = viewName
       if (!action) {
-        logger.error('VIEW ' + resName + ' NOT FOUND')
-        locals = {viewName: 'error'}
+        logger.error('VIEW ' + viewName + ' NOT FOUND')
+        options = {viewName: 'error'}
         action = this.ERROR
       }
-      locals = (action.locals) ? _.merge({}, action.locals, locals) : locals
+      options = (action.locals) ? _.merge({}, action.locals, options) : options
 
-      if (_.get(res.locals, 'service.hasCustomBranding', false)) {
-        locals.customBranding = _.get(res.locals, 'service.customBranding')
-      }
-
-      if (_.get(res.locals, 'service.hasMerchantDetails', false)) {
-        locals.merchantDetails = _.get(res.locals, 'service.merchantDetails')
-      }
-
-      if (_.get(locals, 'analytics.path')) {
-        locals.analytics.path = locals.analytics.path + _.get(action, 'analyticsPage', '')
+      if (_.get(options, 'analytics.path')) {
+        options.analytics.path = options.analytics.path + _.get(action, 'analyticsPage', '')
       }
       status = (action.code) ? action.code : 200
       res.status(status)
-      res.render(action.view, locals)
+      res.render(action.view, options)
     }
   }
 

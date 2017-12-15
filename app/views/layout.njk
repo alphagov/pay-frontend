@@ -6,11 +6,11 @@
 {% endblock %}
 
 {% block body_classes %}
-  {% if customBranding %}custom-branding{% endif %}
+  {% if service and service.customBranding and service.customBranding.cssUrl %}custom-branding{% endif %}
 {% endblock %}
 
 {% block inside_header %}
-  {% if customBranding %}
+  {% if service and service.customBranding and service.customBranding.imageUrl %}
     {% include "includes/custom.njk" %}
   {% endif %}
 {% endblock %}
