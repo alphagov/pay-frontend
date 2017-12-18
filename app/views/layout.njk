@@ -5,6 +5,10 @@
   {% include "includes/analytics.njk" %}
 {% endblock %}
 
+{% block fontsStylesheets %}
+{# Clear fonts because we want to only load them if not custom branding, see head.njk #}
+{% endblock %}
+
 {% block body_classes %}
   {% if service and service.customBranding and service.customBranding.cssUrl %}custom-branding{% endif %}
 {% endblock %}
