@@ -261,7 +261,7 @@
                value="{{ addressPostcode }}"
                autocomplete="billing postal-code"/>
       </div>
-      <div class="form-group{% if highlightErrorFields.email %} error{% endif %}" data-validation="email" data-confirmation="true">
+      <div class="form-group{% if highlightErrorFields.email %} error{% endif %}" data-validation="email">
         <label id="email-lbl" for="email" class="form-label-bold">
               <span
                   class="email-label"
@@ -283,7 +283,9 @@
                maxlength="254"
                class="form-control-1-2"
                value="{{ email }}"
-               autocomplete="email"/>
+               autocomplete="email"
+               data-confirmation="true"
+               data-confirmation-label="An email will be sent to: "/>
       </div>
       <div>
         <input id="submit-card-details" type="submit" class="button" value="Continue" name="submitCardDetails"/>
