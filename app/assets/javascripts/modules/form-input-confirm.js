@@ -1,48 +1,43 @@
-"use strict";
-var confirmInput = function() {
-  var $inputs = $('[data-confirmation]'),
-      makeConfirmation,
-      addFor,
-      update;
+'use strict'
 
-  makeConfirmation = function(id) {
-    var confirmation = [
-          '<div class="form-group panel panel-border-wide input-confirm">',
-              '<p class="form-hint">',
-                  'An email will be sent to: <span class="email"></span>',
-              '</p>',
-          '</div>'
-        ].join(''),
-        $elm;
+module.exports = () => {
+  const inputs = document.querySelectorAll('[data-confirmation]')
 
-    $elm = $(confirmation);
-    $elm.attr('id', id);
-    return $elm;
-  };
+  inputs.forEach(input => {
+    input.addEventListener('input', update, false)
+  })
 
-  addFor = function ($input, $confirmation) {
-    var $formGroup = $input.closest('.form-group');
+  const addFor = (input, confirmation) => {
+    const formGroup = input.closest('.form-group')
 
-    $confirmation.insertAfter($formGroup);
-  };
+    formGroup.after(confirmation)
+  }
 
-  update = function (e) {
-    var $input = $(e.target),
-        value = $input.val(),
-        confirmationId = $input.attr('id') + '-confirmation',
-        $confirmation = $('#' + confirmationId);
+  function update (e) {
+    const input = e.target
+    const value = input.value
+    const confirmationId = `${input.id}-confirmation`
+    let confirmation = document.getElementById(confirmationId)
+    const confirmationLabel = input.dataset.confirmationLabel
+    const confirmationPrepend = input.dataset.confirmationPrepend
 
-    if ($confirmation.length === 0) {
-      $confirmation = makeConfirmation(confirmationId);
-      addFor($input, $confirmation);
+    if (!confirmation) {
+      const confirmationInner = `
+      <div id="${confirmationId}" class="form-group panel panel-border-wide input-confirm">
+        <p class="form-hint">
+          ${confirmationLabel}<span class="input-confirmation"></span>
+        </p>
+      </div>`
+      confirmation = document.createElement('div')
+      confirmation.innerHTML = confirmationInner
+      addFor(input, confirmation)
     }
 
     if (value === '') {
-      $confirmation.remove();
+      confirmation.remove()
     } else {
-      $confirmation.find('.email').text(value);
+      const confirmationText = document.querySelectorAll(`#${confirmationId} .input-confirmation`)
+      confirmationText[0].innerText = confirmationPrepend + value
     }
-  };
-
-  $inputs.on('input', update);
-};
+  }
+}
