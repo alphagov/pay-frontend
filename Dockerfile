@@ -1,4 +1,4 @@
-FROM govukpay/nodejs:6.12.2
+FROM govukpay/nodejs:smaller_node_image
 
 ADD package.json /tmp/package.json
 RUN cd /tmp && npm install --production
