@@ -6,6 +6,7 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', '{{analyticsTrackingId}}', 'auto');
     ga('set', 'anonymizeIp', true);
+    ga('set', 'transport', 'beacon');
     ga('send', 'pageview', {
     {% if analytics.path %}
       'page':'{{analytics.path}}',
