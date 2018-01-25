@@ -1,48 +1,36 @@
-"use strict";
-var confirmInput = function() {
-  var $inputs = $('[data-confirmation]'),
-      makeConfirmation,
-      addFor,
-      update;
+'use strict'
 
-  makeConfirmation = function(id) {
-    var confirmation = [
-          '<div class="form-group panel panel-border-wide input-confirm">',
-              '<p class="form-hint">',
-                  'An email will be sent to: <span class="email"></span>',
-              '</p>',
-          '</div>'
-        ].join(''),
-        $elm;
+module.exports = () => {
+  const inputs = document.querySelectorAll('[data-confirmation]')
 
-    $elm = $(confirmation);
-    $elm.attr('id', id);
-    return $elm;
-  };
+  inputs.forEach(input => {
+    input.addEventListener('input', confirmInput, false)
+  })
 
-  addFor = function ($input, $confirmation) {
-    var $formGroup = $input.closest('.form-group');
+  function confirmInput (e) {
+    const input = e.target
+    const value = input.value
+    const confirmationId = `${input.id}-confirmation`
+    const confirmationPrepend = input.dataset.confirmationPrepend || ''
+    let confirmation = document.getElementById(confirmationId)
 
-    $confirmation.insertAfter($formGroup);
-  };
-
-  update = function (e) {
-    var $input = $(e.target),
-        value = $input.val(),
-        confirmationId = $input.attr('id') + '-confirmation',
-        $confirmation = $('#' + confirmationId);
-
-    if ($confirmation.length === 0) {
-      $confirmation = makeConfirmation(confirmationId);
-      addFor($input, $confirmation);
+    if (!confirmation) {
+      confirmation = document.createElement('div')
+      confirmation.innerHTML = `
+      <div id="${confirmationId}" class="form-group panel panel-border-wide input-confirm">
+        <p class="form-hint">
+          ${input.dataset.confirmationLabel}<span class="input-confirmation"></span>
+        </p>
+      </div>`
+      input.closest('.form-group').after(confirmation)
     }
 
     if (value === '') {
-      $confirmation.remove();
+      confirmation.remove()
     } else {
-      $confirmation.find('.email').text(value);
+      document
+        .querySelector(`#${confirmationId} .input-confirmation`)
+        .innerText = confirmationPrepend + value
     }
-  };
-
-  $inputs.on('input', update);
-};
+  }
+}
