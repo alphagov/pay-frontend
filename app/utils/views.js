@@ -104,7 +104,7 @@ module.exports = (function () {
 
     UNAUTHORISED: {
       code: 403,
-      view: 'errors/system_error'
+      view: 'errors/incorrect_state/session_expired'
     },
 
     CAPTURE_SUBMITTED: {
