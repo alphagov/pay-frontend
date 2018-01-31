@@ -91,4 +91,4 @@ class PactInteractionBuilder {
   }
 }
 
-module.exports.PactInteractionBuilder = PactInteractionBuilder
+exports.PactInteractionBuilder = PactInteractionBuilder
