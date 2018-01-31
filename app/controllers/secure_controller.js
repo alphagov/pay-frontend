@@ -9,7 +9,7 @@ var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_H
 var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 var stateService = require('../services/state_service.js')
 
-module.exports.new = function (req, res) {
+exports.new = function (req, res) {
   'use strict'
 
   var chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId

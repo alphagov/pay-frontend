@@ -16,7 +16,7 @@ let CANCELABLE_STATES = [
   StateModel.AUTH_3DS_READY
 ]
 
-module.exports.return = function (req, res) {
+exports.return = function (req, res) {
   'use strict'
 
   let correlationId = req.headers[CORRELATION_HEADER] || ''

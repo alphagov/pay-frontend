@@ -13,9 +13,9 @@ var stateEnforcer = require(path.join(__dirname, '/middleware/state_enforcer.js'
 var retrieveCharge = require(path.join(__dirname, '/middleware/retrieve_charge.js'))
 const resolveService = require(path.join(__dirname, '/middleware/resolve_service.js'))
 
-module.exports.paths = paths
+exports.paths = paths
 
-module.exports.bind = function (app) {
+exports.bind = function (app) {
   'use strict'
 
   app.get('/healthcheck', function (req, res) {
