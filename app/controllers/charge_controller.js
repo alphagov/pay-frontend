@@ -206,28 +206,22 @@ module.exports = {
       post_cancel_action: routeFor('cancel', charge.id)
     }, confirmPath))
   },
-
-  capture: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var _views = views.create()
-
-    var init = function () {
-      var chargeModel = Charge(req.headers[CORRELATION_HEADER])
-      chargeModel.capture(req.chargeId).then(function () {
-        redirect(res).toReturn(req.chargeId)
-      }, captureFail)
-    }
-
-    var captureFail = function (err) {
-      if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
-      _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-        charge,
-        {returnUrl: routeFor('return', charge.id)}
-      ))
-    }
-    init()
+  capture: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const _views = views.create()
+    Charge(req.headers[CORRELATION_HEADER])
+      .capture(req.chargeId)
+      .then(
+        () => redirect(res).toReturn(req.chargeId),
+        err => {
+          if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
+          _views.display(res, 'SYSTEM_ERROR', withAnalytics(
+            charge,
+            {returnUrl: routeFor('return', charge.id)}
+          ))
+        }
+      )
   },
-
   captureWaiting: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId)
     var _views = views.create()
