@@ -1,32 +1,32 @@
 'use strict'
-var logger = require('winston')
-var logging = require('../utils/logging.js')
-var baseClient = require('../utils/base_client')
+const logger = require('winston')
+const logging = require('../utils/logging.js')
+const baseClient = require('../utils/base_client')
 
-var _ = require('lodash')
-var views = require('../utils/views.js')
-var normalise = require('../services/normalise_charge.js')
-var chargeValidator = require('../utils/charge_validation_backend.js')
-var i18n = require('i18n')
-var Charge = require('../models/charge.js')
-var Card = require('../models/card.js')
-var State = require('../models/state.js')
-var paths = require('../paths.js')
-var CHARGE_VIEW = 'charge'
-var CONFIRM_VIEW = 'confirm'
-var AUTH_WAITING_VIEW = 'auth_waiting'
-var AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required'
-var AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
-var AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
-var CAPTURE_WAITING_VIEW = 'capture_waiting'
-var preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry']
-var countries = require('../services/countries.js')
-var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-var {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+const _ = require('lodash')
+const views = require('../utils/views.js')
+const normalise = require('../services/normalise_charge.js')
+const chargeValidator = require('../utils/charge_validation_backend.js')
+const i18n = require('i18n')
+const Charge = require('../models/charge.js')
+const Card = require('../models/card.js')
+const State = require('../models/state.js')
+const paths = require('../paths.js')
+const CHARGE_VIEW = 'charge'
+const CONFIRM_VIEW = 'confirm'
+const AUTH_WAITING_VIEW = 'auth_waiting'
+const AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required'
+const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
+const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
+const CAPTURE_WAITING_VIEW = 'capture_waiting'
+const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry']
+const countries = require('../services/countries.js')
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
+const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
 
-var appendChargeForNewView = function (charge, req, chargeId) {
-  var cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
-  var translation = i18n.__('chargeController.withdrawalText')
+function appendChargeForNewView(charge, req, chargeId) {
+  const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
+  const translation = i18n.__('chargeController.withdrawalText')
   charge.withdrawalText = translation[cardModel.withdrawalTypes.join('_')]
   charge.allowedCards = cardModel.allowed
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
@@ -35,11 +35,11 @@ var appendChargeForNewView = function (charge, req, chargeId) {
   charge.post_cancel_action = routeFor('cancel', chargeId)
 }
 
-var routeFor = (resource, chargeId) => {
+function routeFor(resource, chargeId) {
   return paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
 }
 
-var redirect = (res) => {
+function redirect(res) {
   return {
     toAuth3dsRequired: (chargeId) => res.redirect(303, routeFor('auth3dsRequired', chargeId)),
     toAuthWaiting: (chargeId) => res.redirect(303, routeFor('authWaiting', chargeId)),
@@ -50,25 +50,15 @@ var redirect = (res) => {
 }
 
 module.exports = {
-  new: function (req, res) {
-    var _views = views.create()
-    var charge = normalise.charge(req.chargeData, req.chargeId)
+  new: (req, res) => {
+    const _views = views.create()
+    const charge = normalise.charge(req.chargeData, req.chargeId)
     appendChargeForNewView(charge, req, charge.id)
-
-    var init = function () {
-      charge.countries = countries.retrieveCountries()
-      if (charge.status === State.ENTERING_CARD_DETAILS) {
-        return _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge))
-      }
-      var chargeModel = Charge(req.headers[CORRELATION_HEADER])
-      chargeModel.updateToEnterDetails(charge.id)
-        .then(function () {
-          _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge))
-        }, function () {
-          _views.display(res, 'NOT_FOUND', withAnalyticsError())
-        })
-    }
-    init()
+    charge.countries = countries.retrieveCountries()
+    if (charge.status === State.ENTERING_CARD_DETAILS) return _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge))
+    Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
+      () => _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge)),
+      () => _views.display(res, 'NOT_FOUND', withAnalyticsError()))
   },
 
   create: function (req, res) {
@@ -114,8 +104,8 @@ module.exports = {
     var connectorFailure = function () {
       logging.failedChargePost(409, authUrl)
       _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-          charge,
-          {returnUrl: routeFor('return', charge.id)}))
+        charge,
+        {returnUrl: routeFor('return', charge.id)}))
     }
 
     var unknownFailure = function () {
@@ -163,11 +153,11 @@ module.exports = {
       var chargeModel = Charge(req.headers[CORRELATION_HEADER])
       chargeModel.patch(req.chargeId, 'replace', 'email', req.body.email)
         .then(function () {
-          postAuth(authUrl, req, cardBrand)
-        }, function (err) {
-          logging.failedChargePatch(err)
-          _views.display(res, 'ERROR', withAnalyticsError())
-        }
+            postAuth(authUrl, req, cardBrand)
+          }, function (err) {
+            logging.failedChargePatch(err)
+            _views.display(res, 'ERROR', withAnalyticsError())
+          }
         )
     }, unknownFailure)
   },
@@ -225,8 +215,8 @@ module.exports = {
             _views.display(res, 'ERROR', withAnalytics(charge))
         }
       }).on('error', function () {
-        _views.display(res, 'ERROR', withAnalytics(charge))
-      })
+      _views.display(res, 'ERROR', withAnalytics(charge))
+    })
   },
   auth3dsRequired: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId)
@@ -260,12 +250,12 @@ module.exports = {
     var _views = views.create()
     var init = function () {
       _views.display(res, CONFIRM_VIEW, withAnalytics(charge, {
-        hitPage: routeFor('new', charge.id) + '/success',
-        charge: charge,
-        confirmPath: confirmPath,
-        gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
-        post_cancel_action: routeFor('cancel', charge.id)
-      },
+          hitPage: routeFor('new', charge.id) + '/success',
+          charge: charge,
+          confirmPath: confirmPath,
+          gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
+          post_cancel_action: routeFor('cancel', charge.id)
+        },
         confirmPath))
     }
     init()
@@ -285,9 +275,9 @@ module.exports = {
     var captureFail = function (err) {
       if (err.message === 'CAPTURE_FAILED') return _views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
       _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-          charge,
-          {returnUrl: routeFor('return', charge.id)}
-        ))
+        charge,
+        {returnUrl: routeFor('return', charge.id)}
+      ))
     }
     init()
   },
@@ -312,9 +302,9 @@ module.exports = {
     var _views = views.create()
     var cancelFail = function () {
       _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-          charge,
-          {returnUrl: routeFor('return', charge.id)}
-        ))
+        charge,
+        {returnUrl: routeFor('return', charge.id)}
+      ))
     }
 
     var chargeModel = Charge(req.headers[CORRELATION_HEADER])
