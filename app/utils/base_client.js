@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * @Deprecated
  *
@@ -6,11 +8,10 @@
  */
 const urlParse = require('url')
 const https = require('https')
-const path = require('path')
 const logger = require('winston')
 
-const customCertificate = require(path.join(__dirname, '/custom_certificate'))
-const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
+const customCertificate = require('./custom_certificate')
+const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 
 var agentOptions = {
   keepAlive: true,
