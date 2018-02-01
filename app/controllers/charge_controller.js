@@ -180,16 +180,13 @@ module.exports = {
     var _views = views.create()
     _views.display(res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
   },
-
-  auth3dsRequiredOut: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var templateData = {
+  auth3dsRequiredOut: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    views.create().display(res, AUTH_3DS_REQUIRED_OUT_VIEW, {
       issuerUrl: _.get(charge, 'auth3dsData.issuerUrl'),
       paRequest: _.get(charge, 'auth3dsData.paRequest'),
       termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
-    }
-    var _views = views.create()
-    _views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, templateData)
+    })
   },
 
   auth3dsRequiredIn: function (req, res) {
