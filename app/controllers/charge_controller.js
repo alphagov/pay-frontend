@@ -175,9 +175,9 @@ module.exports = {
       _views.display(res, 'ERROR', withAnalytics(charge))
     })
   },
-  auth3dsRequired: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var _views = views.create()
+  auth3dsRequired: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const _views = views.create()
     _views.display(res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
   },
   auth3dsRequiredOut: (req, res) => {
@@ -231,25 +231,14 @@ module.exports = {
       _views.display(res, 'CAPTURE_SUBMITTED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
     }
   },
-
-  cancel: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-
-    var _views = views.create()
-    var cancelFail = function () {
-      _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-        charge,
-        {returnUrl: routeFor('return', charge.id)}
-      ))
-    }
-
-    var chargeModel = Charge(req.headers[CORRELATION_HEADER])
-    chargeModel.cancel(req.chargeId)
-      .then(function () {
-        return _views.display(res, 'USER_CANCELLED', withAnalytics(
-          charge,
-          {returnUrl: routeFor('return', charge.id)}
-        ))
-      }, cancelFail)
+  cancel: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const _views = views.create()
+    Charge(req.headers[CORRELATION_HEADER])
+      .cancel(req.chargeId)
+      .then(
+        () => _views.display(res, 'USER_CANCELLED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)})),
+        () => _views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      )
   }
 }
