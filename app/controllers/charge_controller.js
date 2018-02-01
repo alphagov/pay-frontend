@@ -144,16 +144,13 @@ module.exports = {
     }
   },
   auth3dsHandler (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var startTime = new Date()
-    var correlationId = req.headers[CORRELATION_HEADER] || ''
-    var _views = views.create()
-    var templateData = {
-      pa_response: _.get(req, 'body.PaRes')
-    }
-    var connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const startTime = new Date()
+    const correlationId = req.headers[CORRELATION_HEADER] || ''
+    const _views = views.create()
+    const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
 
-    baseClient.post(connector3dsUrl, { data: templateData, correlationId: correlationId },
+    baseClient.post(connector3dsUrl, {data: {pa_response: _.get(req, 'body.PaRes')}, correlationId},
       function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
         switch (json.statusCode) {
