@@ -188,15 +188,12 @@ module.exports = {
       termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
     })
   },
-
-  auth3dsRequiredIn: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var templateData = {
+  auth3dsRequiredIn: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    views.create().display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes')
-    }
-    var _views = views.create()
-    _views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, templateData)
+    })
   },
   confirm: function (req, res) {
     var charge = normalise.charge(req.chargeData, req.chargeId)
