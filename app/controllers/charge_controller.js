@@ -195,21 +195,16 @@ module.exports = {
       paResponse: _.get(req, 'body.PaRes')
     })
   },
-  confirm: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var confirmPath = routeFor('confirm', charge.id)
-    var _views = views.create()
-    var init = function () {
-      _views.display(res, CONFIRM_VIEW, withAnalytics(charge, {
-          hitPage: routeFor('new', charge.id) + '/success',
-          charge: charge,
-          confirmPath: confirmPath,
-          gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
-          post_cancel_action: routeFor('cancel', charge.id)
-        },
-        confirmPath))
-    }
-    init()
+  confirm: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const confirmPath = routeFor('confirm', charge.id)
+    views.create().display(res, CONFIRM_VIEW, withAnalytics(charge, {
+      hitPage: routeFor('new', charge.id) + '/success',
+      charge: charge,
+      confirmPath: confirmPath,
+      gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
+      post_cancel_action: routeFor('cancel', charge.id)
+    }, confirmPath))
   },
 
   capture: function (req, res) {
