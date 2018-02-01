@@ -61,105 +61,66 @@ module.exports = {
       () => _views.display(res, 'NOT_FOUND', withAnalyticsError()))
   },
 
-  create: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var _views = views.create()
-
-    var cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-    var submitted = charge.status === State.AUTH_READY
-    var authUrl = normalise.authUrl(charge)
-
-    var validator = chargeValidator(
-      i18n.__('chargeController.fieldErrors'),
-      logger,
-      cardModel
-    )
+  create: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const _views = views.create()
+    const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
+    const authUrl = normalise.authUrl(charge)
+    const validator = chargeValidator(i18n.__('chargeController.fieldErrors'), logger, cardModel)
+    let cardBrand
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
 
-    if (submitted) {
-      return redirect(res).toAuthWaiting(req.chargeId)
-    }
+    if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
 
-    var awaitingAuth = function () {
-      logging.failedChargePost(409, authUrl)
-      redirect(res).toAuthWaiting(req.chargeId)
-    }
-
-    var successfulAuth = function () {
-      redirect(res).toConfirm(req.chargeId)
-    }
-
-    var authResolver = function (status) {
-      switch (status) {
-        case (State.AUTH_3DS_REQUIRED):
-          redirect(res).toAuth3dsRequired(req.chargeId)
-          break
-        default:
-          successfulAuth()
-      }
-    }
-
-    var connectorFailure = function () {
-      logging.failedChargePost(409, authUrl)
-      _views.display(res, 'SYSTEM_ERROR', withAnalytics(
-        charge,
-        {returnUrl: routeFor('return', charge.id)}))
-    }
-
-    var unknownFailure = function () {
-      redirect(res).toNew(req.chargeId)
-    }
-
-    var connectorNonResponsive = function (err) {
-      logging.failedChargePostException(err)
-      _views.display(res, 'ERROR', withAnalytics(charge))
-    }
-
-    var hasValidationError = function (validation) {
-      charge.countries = countries.retrieveCountries()
-      appendChargeForNewView(charge, req, charge.id)
-      _.merge(validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-
-      return _views.display(res, CHARGE_VIEW, validation)
-    }
-
-    var responses = {
-      202: awaitingAuth,
-      409: awaitingAuth,
-      200: authResolver,
-      500: connectorFailure
-    }
-
-    function postAuth (authUrl, req, cardBrand) {
-      var startTime = new Date()
-      var correlationId = req.headers[CORRELATION_HEADER] || ''
-
-      baseClient.post(authUrl, { data: normalise.apiPayload(req, cardBrand), correlationId: correlationId },
-        function (data, json) {
-          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
-          var response = responses[json.statusCode]
-          if (!response) return unknownFailure()
-          response(_.get(data, 'status'))
-        }).on('error', connectorNonResponsive)
-    }
-    validator.verify(req).then(function (data) {
-      if (data.validation.hasError) return hasValidationError(data.validation)
-
-      var cardBrand = data.cardBrand
-
-      logging.authChargePost(authUrl)
-      var chargeModel = Charge(req.headers[CORRELATION_HEADER])
-      chargeModel.patch(req.chargeId, 'replace', 'email', req.body.email)
-        .then(function () {
-            postAuth(authUrl, req, cardBrand)
-          }, function (err) {
+    validator.verify(req)
+      .catch(() => redirect(res).toNew(req.chargeId))
+      .then(data => {
+        cardBrand = data.cardBrand
+        if (data.validation.hasError) {
+          charge.countries = countries.retrieveCountries()
+          appendChargeForNewView(charge, req, charge.id)
+          _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+          return _views.display(res, CHARGE_VIEW, data.validation)
+        }
+        logging.authChargePost(authUrl)
+        Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.email)
+          .then(() => {
+            const startTime = new Date()
+            const correlationId = req.headers[CORRELATION_HEADER] || ''
+            baseClient.post(authUrl, { data: normalise.apiPayload(req, cardBrand), correlationId: correlationId }, (data, json) => {
+              logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
+              switch (json.statusCode) {
+                case 202:
+                case 409:
+                  logging.failedChargePost(409, authUrl)
+                  redirect(res).toAuthWaiting(req.chargeId)
+                  break
+                case 200:
+                  if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
+                    redirect(res).toAuth3dsRequired(req.chargeId)
+                  } else {
+                    redirect(res).toConfirm(req.chargeId)
+                  }
+                  break
+                case 500:
+                  logging.failedChargePost(409, authUrl)
+                  _views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+                  break
+                default:
+                  redirect(res).toNew(req.chargeId)
+              }
+            }).on('error', err => {
+              logging.failedChargePostException(err)
+              _views.display(res, 'ERROR', withAnalytics(charge))
+            })
+          })
+          .catch(err => {
             logging.failedChargePatch(err)
             _views.display(res, 'ERROR', withAnalyticsError())
-          }
-        )
-    }, unknownFailure)
+          })
+      })
   },
 
   checkCard: function (req, res) {
