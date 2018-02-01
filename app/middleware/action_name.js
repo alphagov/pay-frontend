@@ -1,6 +1,7 @@
-var path = require('path')
-var paths = require(path.join(__dirname, '/../paths.js'))
-var flatPaths = require(path.join(__dirname, '/../utils/flattened_paths.js'))(paths)
+'use strict'
+
+var paths = require('./../paths.js')
+var flatPaths = require('./../utils/flattened_paths.js')(paths)
 
 module.exports = function (req, res, next) {
   'use strict'

@@ -1,6 +1,7 @@
+'use strict'
+
 var _ = require('lodash')
-var path = require('path')
-var generateRoute = require(path.join(__dirname, '/utils/generate_route.js'))
+var generateRoute = require('./utils/generate_route.js')
 
 if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined')
 // please structure each route as follows

@@ -1,4 +1,5 @@
-const path = require('path')
+'use strict'
+
 const https = require('https')
 const httpAgent = require('http').globalAgent
 const urlParse = require('url').parse
@@ -6,7 +7,7 @@ const _ = require('lodash')
 const logger = require('winston')
 const request = require('requestretry')
 const customCertificate = require('./custom_certificate')
-const CORRELATION_HEADER_NAME = require(path.join(__dirname, '/correlation_header')).CORRELATION_HEADER
+const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 
 const agentOptions = {
   keepAlive: true,
