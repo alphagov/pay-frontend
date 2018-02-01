@@ -222,17 +222,13 @@ module.exports = {
         }
       )
   },
-  captureWaiting: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
-    var _views = views.create()
-
+  captureWaiting: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const _views = views.create()
     if (charge.status === State.CAPTURE_READY) {
       _views.display(res, CAPTURE_WAITING_VIEW, withAnalytics(charge))
     } else {
-      _views.display(res, 'CAPTURE_SUBMITTED', withAnalytics(
-        charge,
-        {returnUrl: routeFor('return', charge.id)}
-      ))
+      _views.display(res, 'CAPTURE_SUBMITTED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
     }
   },
 
