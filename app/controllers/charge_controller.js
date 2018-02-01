@@ -24,7 +24,7 @@ const countries = require('../services/countries.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
 
-function appendChargeForNewView(charge, req, chargeId) {
+function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
   const translation = i18n.__('chargeController.withdrawalText')
   charge.withdrawalText = translation[cardModel.withdrawalTypes.join('_')]
@@ -172,8 +172,8 @@ module.exports = {
             _views.display(res, 'ERROR', withAnalytics(charge))
         }
       }).on('error', function () {
-      _views.display(res, 'ERROR', withAnalytics(charge))
-    })
+        _views.display(res, 'ERROR', withAnalytics(charge))
+      })
   },
   auth3dsRequired: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
