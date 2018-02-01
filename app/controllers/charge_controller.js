@@ -35,11 +35,11 @@ function appendChargeForNewView(charge, req, chargeId) {
   charge.post_cancel_action = routeFor('cancel', chargeId)
 }
 
-function routeFor(resource, chargeId) {
+function routeFor (resource, chargeId) {
   return paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
 }
 
-function redirect(res) {
+function redirect (res) {
   return {
     toAuth3dsRequired: (chargeId) => res.redirect(303, routeFor('auth3dsRequired', chargeId)),
     toAuthWaiting: (chargeId) => res.redirect(303, routeFor('authWaiting', chargeId)),
@@ -129,14 +129,12 @@ module.exports = {
         message => res.json({'accepted': false, message})
       )
   },
-
-  authWaiting: function (req, res) {
-    var charge = normalise.charge(req.chargeData, req.chargeId)
+  authWaiting: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
     switch (charge.status) {
       case (State.AUTH_READY):
       case (State.AUTH_3DS_READY):
-        var _views = views.create({})
-        _views.display(res, AUTH_WAITING_VIEW, withAnalytics(charge))
+        views.create({}).display(res, AUTH_WAITING_VIEW, withAnalytics(charge))
         break
       case (State.AUTH_3DS_REQUIRED):
         redirect(res).toAuth3dsRequired(req.chargeId)
