@@ -60,7 +60,6 @@ module.exports = {
       () => _views.display(res, CHARGE_VIEW, withAnalytics(charge, charge)),
       () => _views.display(res, 'NOT_FOUND', withAnalyticsError()))
   },
-
   create: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const _views = views.create()
@@ -122,13 +121,12 @@ module.exports = {
           })
       })
   },
-
-  checkCard: function (req, res) {
-    var cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-    cardModel.checkCard(normalise.creditCard(req.body.cardNo))
+  checkCard: (req, res) => {
+    Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
+      .checkCard(normalise.creditCard(req.body.cardNo))
       .then(
-        () => { res.json({'accepted': true}) },
-        (data) => { res.json({'accepted': false, 'message': data}) }
+        () => res.json({'accepted': true}),
+        message => res.json({'accepted': false, message})
       )
   },
 
