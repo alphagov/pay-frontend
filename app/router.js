@@ -1,17 +1,18 @@
+'use strict'
+
 var i18n = require('i18n')
-var path = require('path')
 
 var charge = require('./controllers/charge_controller.js')
 var secure = require('./controllers/secure_controller.js')
 var statik = require('./controllers/static_controller.js')
 var returnCont = require('./controllers/return_controller.js')
 
-var paths = require(path.join(__dirname, '/paths.js'))
-var {csrfCheck, csrfTokenGeneration} = require(path.join(__dirname, '/middleware/csrf.js'))
-var actionName = require(path.join(__dirname, '/middleware/action_name.js'))
-var stateEnforcer = require(path.join(__dirname, '/middleware/state_enforcer.js'))
-var retrieveCharge = require(path.join(__dirname, '/middleware/retrieve_charge.js'))
-const resolveService = require(path.join(__dirname, '/middleware/resolve_service.js'))
+var paths = require('./paths.js')
+var {csrfCheck, csrfTokenGeneration} = require('./middleware/csrf.js')
+var actionName = require('./middleware/action_name.js')
+var stateEnforcer = require('./middleware/state_enforcer.js')
+var retrieveCharge = require('./middleware/retrieve_charge.js')
+const resolveService = require('./middleware/resolve_service.js')
 
 exports.paths = paths
 
