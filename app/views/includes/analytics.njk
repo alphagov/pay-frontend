@@ -9,10 +9,10 @@
     ga('set', 'transport', 'beacon');
     ga('send', 'pageview', {
     {% if analytics.path %}
-      'page':'{{analytics.path}}',
+      'page': '{{ analytics.path }}',
     {% endif %}
-      'dimension1':'{{analytics.analyticsId}}',
-      'dimension2':'{{analytics.type}}',
-      'dimension3':'{{analytics.paymentProvider}}'
+      'dimension1': '{{ analytics.analyticsId }}',
+      'dimension2': '{{ analytics.type }}',
+      'dimension3': '{{ analytics.paymentProvider }}',
     });
 </script>
