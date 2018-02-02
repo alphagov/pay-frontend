@@ -30,7 +30,8 @@ const resolveServiceMiddleware = function (findServicePromise) {
 const analyticsDataForErrors = {
   'analyticsId': 'Service unavailable',
   'type': 'Service unavailable',
-  'paymentProvider': 'Service unavailable'
+  'paymentProvider': 'Service unavailable',
+  'amount': '0.00'
 }
 
 describe('resolve service middleware', function () {
