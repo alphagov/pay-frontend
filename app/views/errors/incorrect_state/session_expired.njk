@@ -1,7 +1,7 @@
 {% extends "../../layout.njk" %}
 
 {% block page_title %}
-  Your Payment expired
+  Your Payment expired - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
@@ -9,7 +9,9 @@
     <div class="column-two-thirds">
       <h1 class="heading-large session-expired">Your payment session has expired</h1>
       <p class="lede">No money has been taken from your account.</p>
-      <p class="lede"><a href="{{ returnUrl }}" id="return-url"> Go back to try the payment again</a></p>
+      {% if returnUrl %}
+        <p class="lede"><a href="{{ returnUrl }}" id="return-url"> Go back to try the payment again</a></p>
+      {% endif %}
     </div>
   </main>
 {% endblock %}

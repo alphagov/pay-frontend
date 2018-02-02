@@ -58,12 +58,12 @@ describe('retrieve param test', function () {
     expect(next.called).to.not.be.true // eslint-disable-line
     expect(resp.locals.csrf).to.be.undefined // eslint-disable-line
     assert(status.calledWith(403))
-    assert(render.calledWith('errors/system_error', { viewName: 'UNAUTHORISED' }))
+    assert(render.calledWith('errors/incorrect_state/session_expired', { viewName: 'UNAUTHORISED' }))
   }
 
   var assertValidRequest = function (next, resp, status, render) {
     expect(next.called).to.be.true // eslint-disable-line
-    expect(resp.locals.csrf).to.not.be.undefined // eslint-disable-line 
+    expect(resp.locals.csrf).to.not.be.undefined // eslint-disable-line
   }
 
   beforeEach(function () {
