@@ -1,45 +1,29 @@
-var paths = require('../paths.js')
-var Token = require('../models/token.js')
-var Charge = require('../models/charge.js')
-var views = require('../utils/views.js')
-var session = require('../utils/session.js')
-var cookie = require('../utils/cookies')
-var csrf = require('csrf')
-var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
-var stateService = require('../services/state_service.js')
+'use strict'
 
-exports.new = function (req, res) {
-  'use strict'
+// npm dependencies
+const csrf = require('csrf')
 
-  var chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
-  var correlationId = req.headers[CORRELATION_HEADER] || ''
+// local dependencies
+const {generateRoute} = require('../paths.js')
+const Token = require('../models/token.js')
+const Charge = require('../models/charge.js')
+const views = require('../utils/views.js')
+const {createChargeIdSessionKey} = require('../utils/session.js')
+const {setSessionVariable} = require('../utils/cookies')
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const {resolveActionName} = require('../services/state_service.js')
 
-  var init = function () {
-    var charge = Charge(correlationId)
-    charge.findByToken(chargeTokenId)
-        .then(chargeRetrieved, apiFail)
-  }
+exports.new = (req, res) => {
+  const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
+  const correlationId = req.headers[CORRELATION_HEADER] || ''
 
-  var chargeRetrieved = function (chargeData) {
-    var token = Token(correlationId)
-    token.destroy(chargeTokenId)
-          .then(apiSuccess(chargeData), apiFail)
-  }
-
-  var apiSuccess = function (chargeData) {
-    var chargeId = chargeData.externalId
-
-    cookie.setSessionVariable(req, session.createChargeIdSessionKey(chargeId), {
-      csrfSecret: csrf().secretSync()
-    })
-
-    var actionName = stateService.resolveActionName(chargeData.status, 'get')
-    res.redirect(303, paths.generateRoute(actionName, {chargeId: chargeId}))
-  }
-
-  var apiFail = function () {
-    views.create().display(res, 'SYSTEM_ERROR', withAnalyticsError())
-  }
-  init()
+  Charge(correlationId).findByToken(chargeTokenId)
+      .then(chargeData => Token(correlationId).destroy(chargeTokenId).then(() => Promise.resolve(chargeData)))
+      .then(chargeData => {
+        const chargeId = chargeData.externalId
+        setSessionVariable(req, createChargeIdSessionKey(chargeId), {csrfSecret: csrf().secretSync()})
+        res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), {chargeId}))
+      })
+      .catch(() => views.create().display(res, 'SYSTEM_ERROR', withAnalyticsError()))
 }

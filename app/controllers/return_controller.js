@@ -1,12 +1,17 @@
-var Charge = require('../models/charge.js')
-var StateModel = require('../models/state.js')
-var views = require('../utils/views.js')
-var CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+'use strict'
 
-var logger = require('winston')
+// npm dependencies
+const logger = require('winston')
 
-let CANCELABLE_STATES = [
+// local dependencies
+const Charge = require('../models/charge.js')
+const StateModel = require('../models/state.js')
+const views = require('../utils/views.js')
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+
+// constants
+const CANCELABLE_STATES = [
   StateModel.CREATED,
   StateModel.ENTERING_CARD_DETAILS,
   StateModel.AUTH_SUCCESS,
@@ -16,23 +21,17 @@ let CANCELABLE_STATES = [
   StateModel.AUTH_3DS_READY
 ]
 
-exports.return = function (req, res) {
-  'use strict'
-
-  let correlationId = req.headers[CORRELATION_HEADER] || ''
-  let _views = views.create({})
-  let doRedirect = () => res.redirect(req.chargeData.return_url)
-  let chargeModel = Charge(correlationId)
-
+exports.return = (req, res) => {
+  const correlationId = req.headers[CORRELATION_HEADER] || ''
   if (CANCELABLE_STATES.includes(req.chargeData.status)) {
-    return chargeModel.cancel(req.chargeId)
+    return Charge(correlationId).cancel(req.chargeId)
       .then(() => logger.warn('Return controller cancelled payment', {'chargeId': req.chargeId}))
-      .then(doRedirect)
+      .then(() => res.redirect(req.chargeData.return_url))
       .catch(() => {
         logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId})
-        _views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
+        views.create({}).display(res, 'SYSTEM_ERROR', withAnalyticsError())
       })
   } else {
-    return doRedirect()
+    return res.redirect(req.chargeData.return_url)
   }
 }
