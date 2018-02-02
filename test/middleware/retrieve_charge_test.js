@@ -48,7 +48,7 @@ describe('retrieve param test', function () {
   it('should call not found view if charge param does not return an id', function () {
     retrieveCharge({params: {}, body: {}}, response, next)
     assert(status.calledWith(403))
-    assert(render.calledWith('errors/system_error', {viewName: 'UNAUTHORISED', analytics: ANALYTICS_ERROR.analytics}))
+    assert(render.calledWith('errors/incorrect_state/session_expired', {viewName: 'UNAUTHORISED', analytics: ANALYTICS_ERROR.analytics}))
     expect(next.notCalled).to.be.true // eslint-disable-line
   })
 
@@ -84,7 +84,7 @@ describe('retrieve param test', function () {
         expect(status.calledWith(200))
         expect(validRequest.chargeId).to.equal(chargeId)
         expect(validRequest.chargeData).to.deep.equal(chargeData)
-        expect(next.called).to.be.true // eslint-disable-line 
+        expect(next.called).to.be.true // eslint-disable-line
         done()
       } catch (err) { done(err) }
     }, done)

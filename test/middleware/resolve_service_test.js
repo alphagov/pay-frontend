@@ -67,7 +67,7 @@ describe('resolve service middleware', function () {
     let nextSpy = sinon.spy()
     resolveService(req, res, nextSpy)
     expect(res.status.calledWith(403)).to.be.equal(true)
-    expect(res.render.calledWith('errors/system_error', expectedRenderData)).to.be.equal(true) // eslint-disable-line
+    expect(res.render.calledWith('errors/incorrect_state/session_expired', expectedRenderData)).to.be.equal(true) // eslint-disable-line
   })
 
   it('should log an error if it fails to retrieving service data', function (done) {
