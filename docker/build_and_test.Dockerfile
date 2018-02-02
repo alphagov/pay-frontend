@@ -1,4 +1,4 @@
-FROM govukpay/nodejs:6.12.2
+FROM govukpay/nodejs:smaller_node_image
 
 RUN apk update &&\
     apk upgrade &&\
