@@ -18,6 +18,7 @@ describe('retrieve param test', function () {
   var render
   var next
   var validGetRequest = {
+    method: 'GET',
     params: {chargeId: 'foo'},
     body: {},
     route: {methods: {get: true}},
@@ -35,11 +36,11 @@ describe('retrieve param test', function () {
   delete noSecret.frontend_state.ch_foo.csrfSecret
 
   var invalidPost = _.cloneDeep(validGetRequest)
-  delete invalidPost.route.methods.get
+  delete invalidPost.method
   var invalidPut = _.cloneDeep(invalidPost)
 
-  invalidPost.route.methods.post = true
-  invalidPut.route.methods.put = true
+  invalidPost.method = 'POST'
+  invalidPut.method = 'PUT'
 
   var validPost = _.cloneDeep(invalidPost)
   validPost.body.csrfToken = helper.csrfToken()
