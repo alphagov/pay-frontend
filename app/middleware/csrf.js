@@ -5,8 +5,6 @@ const session = require('../utils/session.js')
 const views = require('../utils/views.js')
 const chargeParam = require('../services/charge_param_retriever.js')
 const logger = require('winston')
-const _views = views.create()
-
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
   const chargeSession = session.retrieve(req, chargeId)
@@ -21,10 +19,10 @@ exports.csrfCheck = (req, res, next) => {
   chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
   if (!chargeSession.csrfSecret) {
-    _views.display(res, 'UNAUTHORISED')
+    views.display(res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined')
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    _views.display(res, 'SYSTEM_ERROR')
+    views.display(res, 'SYSTEM_ERROR')
     logger.error('CSRF is invalid')
   } else {
     chargeSession.csrfTokens.push(csrfToken)
