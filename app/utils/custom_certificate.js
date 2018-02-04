@@ -1,12 +1,14 @@
-var path = require('path')
-var fs = require('fs')
+'use strict'
+// core dependencies
+const path = require('path')
+const fs = require('fs')
 
-var logger = require('winston')
+// npm dependencies
+const logger = require('winston')
 
-module.exports = {
-  getCertOptions: function () {
-    var certsPath = process.env.CERTS_PATH || path.join(__dirname, '/../../certs')
-
+// constants
+const CERTS_PATH = process.env.CERTS_PATH || path.join(__dirname, '/../../certs')
+exports.getCertOptions = (certsPath) => {
     try {
       if (!fs.lstatSync(certsPath).isDirectory()) {
         logger.error('Provided CERTS_PATH is not a directory', {
