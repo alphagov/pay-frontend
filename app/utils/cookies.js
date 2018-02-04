@@ -1,8 +1,21 @@
+'use strict'
+
+// npm dependencies
 const clientSessions = require('client-sessions')
 
+// constants
+const {COOKIE_MAX_AGE, SESSION_ENCRYPTION_KEY, SESSION_ENCRYPTION_KEY_2, SECURE_COOKIE_OFF} = process.env
 const SESSION_COOKIE_NAME_1 = 'frontend_state'
 const SESSION_COOKIE_NAME_2 = 'frontend_state_2'
 const KEY_MIN_LENGTH = 10
+
+module.exports = {
+  configureSessionCookie: configureSessionCookie,
+  getSessionCookieName: getSessionCookieName,
+  setSessionVariable: setSessionVariable,
+  getSessionVariable: getSessionVariable,
+  namedCookie: namedCookie
+}
 
 /**
  * @private
@@ -43,9 +56,9 @@ function namedCookie (name, key) {
     proxy: true,
     secret: key,
     cookie: {
-      maxAge: parseInt(process.env.COOKIE_MAX_AGE),
+      maxAge: parseInt(COOKIE_MAX_AGE),
       httpOnly: true,
-      secureProxy: (process.env.SECURE_COOKIE_OFF !== 'true') // default is true, only false if the env variable present
+      secureProxy: SECURE_COOKIE_OFF !== 'true' // default is true, only false if the env variable present
     }
   }
 }
@@ -58,24 +71,14 @@ function namedCookie (name, key) {
  * @param {Express.App} app
  */
 function configureSessionCookie (app) {
-  let key1 = process.env.SESSION_ENCRYPTION_KEY
-  let key2 = process.env.SESSION_ENCRYPTION_KEY_2
-
-  if (!isValidKey(key1) && !isValidKey(key2)) {
+  if (!isValidKey(SESSION_ENCRYPTION_KEY) && !isValidKey(SESSION_ENCRYPTION_KEY_2)) {
     throw new Error('cookie encryption key is not set')
-  }
-
-  if (process.env.COOKIE_MAX_AGE === undefined) {
+  } else if (!COOKIE_MAX_AGE) {
     throw new Error('cookie max age is not set')
   }
 
-  if (isValidKey(key1)) {
-    app.use(clientSessions(namedCookie(SESSION_COOKIE_NAME_1, key1)))
-  }
-
-  if (isValidKey(key2)) {
-    app.use(clientSessions(namedCookie(SESSION_COOKIE_NAME_2, key2)))
-  }
+  if (isValidKey(SESSION_ENCRYPTION_KEY)) app.use(clientSessions(namedCookie(SESSION_COOKIE_NAME_1, SESSION_ENCRYPTION_KEY)))
+  if (isValidKey(SESSION_ENCRYPTION_KEY_2)) app.use(clientSessions(namedCookie(SESSION_COOKIE_NAME_2, SESSION_ENCRYPTION_KEY_2)))
 }
 
 /**
@@ -86,11 +89,9 @@ function configureSessionCookie (app) {
  * @returns {string}
  */
 function getSessionCookieName () {
-  if (isValidKey(process.env.SESSION_ENCRYPTION_KEY)) {
+  if (isValidKey(SESSION_ENCRYPTION_KEY)) {
     return SESSION_COOKIE_NAME_1
-  }
-
-  if (isValidKey(process.env.SESSION_ENCRYPTION_KEY_2)) {
+  } else if (isValidKey(SESSION_ENCRYPTION_KEY_2)) {
     return SESSION_COOKIE_NAME_2
   }
 }
@@ -104,11 +105,11 @@ function getSessionCookieName () {
  * @param {*} value
  */
 function setSessionVariable (req, key, value) {
-  if (process.env.SESSION_ENCRYPTION_KEY) {
+  if (SESSION_ENCRYPTION_KEY) {
     setValueOnCookie(req, key, value, SESSION_COOKIE_NAME_1)
   }
 
-  if (process.env.SESSION_ENCRYPTION_KEY_2) {
+  if (SESSION_ENCRYPTION_KEY_2) {
     setValueOnCookie(req, key, value, SESSION_COOKIE_NAME_2)
   }
 }
@@ -121,15 +122,7 @@ function setSessionVariable (req, key, value) {
  * @returns {*}
  */
 function getSessionVariable (req, key) {
-  let session = req[getSessionCookieName()]
+  const session = req[getSessionCookieName()]
 
   return session && session[key]
-}
-
-module.exports = {
-  configureSessionCookie: configureSessionCookie,
-  getSessionCookieName: getSessionCookieName,
-  setSessionVariable: setSessionVariable,
-  getSessionVariable: getSessionVariable,
-  namedCookie: namedCookie
 }
