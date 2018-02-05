@@ -1,9 +1,7 @@
-module.exports = {
-  hashOutCardNumber: function (cardNumber) {
-    'use strict'
+'use strict'
 
-    var hashedSize = cardNumber.length - 4
-    var lastFour = cardNumber.substring(hashedSize)
-    return new Array(hashedSize + 1).join('*') + lastFour
-  }
+exports.hashOutCardNumber = cardNumber => {
+  const hashedSize = cardNumber.length - 4
+  const lastFour = cardNumber.substring(hashedSize)
+  return new Array(hashedSize + 1).join('*') + lastFour
 }
