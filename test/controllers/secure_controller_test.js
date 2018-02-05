@@ -104,7 +104,8 @@ describe('secure controller', function () {
             analytics: {
               'analyticsId': 'Service unavailable',
               'type': 'Service unavailable',
-              'paymentProvider': 'Service unavailable'
+              'paymentProvider': 'Service unavailable',
+              'amount': '0.00'
             }
           }
           expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
@@ -122,7 +123,8 @@ describe('secure controller', function () {
             analytics: {
               'analyticsId': 'Service unavailable',
               'type': 'Service unavailable',
-              'paymentProvider': 'Service unavailable'
+              'paymentProvider': 'Service unavailable',
+              'amount': '0.00'
             }
           }
           expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line

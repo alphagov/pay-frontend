@@ -169,7 +169,7 @@ describe('chargeTests', function () {
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
             expect($('#govuk-script-charge').text()).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
-            expect($('#govuk-script-analytics').text()).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '')`)
+            expect($('#govuk-script-analytics').text()).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '23.45', '')`)
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
           })
           .end(done)

@@ -11,9 +11,9 @@ describe('Frontend analytics', function () {
   }
 
   var checkGACustomDimensions = function (body) {
-    body.should.containSelector('script').withText("'dimension1':'testId'")
-    body.should.containSelector('script').withText("'dimension2':'testType'")
-    body.should.containSelector('script').withText("'dimension3':'paymentProvider'")
+    body.should.containSelector('script').withText("'dimension1': 'testId'")
+    body.should.containSelector('script').withText("'dimension2': 'testType'")
+    body.should.containSelector('script').withText("'dimension3': 'paymentProvider'")
   }
 
   it('should be enabled in charge view', function () {

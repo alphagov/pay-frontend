@@ -76,6 +76,7 @@ describe('card details endpoint', function () {
     return {
       'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
       'status': status,
+      'amount': '4.99',
       'gatewayAccount': {
         'serviceName': 'Service Name',
         'analyticsId': 'test-1234',
@@ -153,7 +154,8 @@ describe('card details endpoint', function () {
       'analytics': {
         'analyticsId': 'Service unavailable',
         'type': 'Service unavailable',
-        'paymentProvider': 'Service unavailable'
+        'paymentProvider': 'Service unavailable',
+        'amount': '0.00'
       }
     }
     expect(response.render.calledWith('error', systemErrorObj)).to.be.true // eslint-disable-line
@@ -173,7 +175,8 @@ describe('card details endpoint', function () {
         'analyticsId': 'test-1234',
         'type': 'test',
         'paymentProvider': 'sandbox',
-        'path': '/card_details/3/error'
+        'path': '/card_details/3/error',
+        'amount': '4.99'
       }
     }
     expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
@@ -192,7 +195,8 @@ describe('card details endpoint', function () {
         'analyticsId': 'test-1234',
         'type': 'test',
         'paymentProvider': 'sandbox',
-        'path': '/card_details/3/capture_failure'
+        'path': '/card_details/3/capture_failure',
+        'amount': '4.99'
       }
     }
     expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line

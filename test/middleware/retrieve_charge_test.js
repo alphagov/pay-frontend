@@ -10,7 +10,8 @@ const ANALYTICS_ERROR = {
   analytics: {
     analyticsId: 'Service unavailable',
     type: 'Service unavailable',
-    paymentProvider: 'Service unavailable'
+    paymentProvider: 'Service unavailable',
+    amount: '0.00'
   }
 }
 

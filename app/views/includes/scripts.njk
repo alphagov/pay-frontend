@@ -22,7 +22,7 @@
       });
     } else if ($('main').hasClass('confirm-page')) {
       $( document ).ready(function() {
-        analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{hitPage}}');
+        analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
       });
     }
   });

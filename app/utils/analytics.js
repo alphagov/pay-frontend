@@ -5,7 +5,8 @@ const ANALYTICS_ERROR = {
   analytics: {
     analyticsId: 'Service unavailable',
     type: 'Service unavailable',
-    paymentProvider: 'Service unavailable'
+    paymentProvider: 'Service unavailable',
+    amount: '0.00'
   }
 }
 
@@ -19,7 +20,8 @@ module.exports = (function () {
           path: paths.generateRoute(`card.new`, {chargeId: charge.id}),
           analyticsId: charge.gatewayAccount.analyticsId,
           type: charge.gatewayAccount.type,
-          paymentProvider: charge.gatewayAccount.paymentProvider
+          paymentProvider: charge.gatewayAccount.paymentProvider,
+          amount: charge.amount
         }}, param)
   }
   var withError = function () {
