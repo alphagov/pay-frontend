@@ -1,48 +1,35 @@
-/* jslint node: true */
 'use strict'
 
-var chargeValidator = require('./charge_validation.js')
-var q = require('q')
-var _ = require('lodash')
-var normalise = require('../services/normalise_charge.js')
+// npm dependencies
+const _ = require('lodash')
 
-module.exports = function (translations, logger, cardModel) {
-  var validator = chargeValidator(
-    translations,
-    logger,
-    cardModel
-  )
+// local dependencies
+const chargeValidator = require('./charge_validation.js')
+const normalise = require('../services/normalise_charge.js')
 
-  var verify = function (req) {
-    var logger = require('winston')
-    var defer = q.defer()
-    var validation = validator.verify(req.body)
-    cardModel.checkCard(normalise.creditCard(req.body.cardNo)).then(function (cardBrand) {
-      logger.debug('Card supported - ', {'cardBrand': cardBrand})
-      defer.resolve({validation: validation, cardBrand: cardBrand})
-    }, function (err) {
-      logger.error('Card not supported - ', {'err': err})
-      addCardnotSupportedError(validation, err)
-      defer.resolve({validation: validation})
-    })
-
-    return defer.promise
-  }
-
-  var addCardnotSupportedError = function (validation, cardErrors) {
-    validation.hasError = true
-    _.remove(validation.errorFields, (errorField) => {
-      return errorField.cssKey === 'card-no'
-    })
-    validation.errorFields.unshift({
-      'cssKey': 'card-no',
-      'key': 'cardNo',
-      'value': cardErrors
-    })
-    validation.highlightErrorFields.cardNo = cardErrors
-  }
-
+module.exports = (translations, logger, cardModel) => {
+  const validator = chargeValidator(translations, logger, cardModel)
   return {
-    verify: verify
+    verify: (req) => new Promise((resolve) => {
+      const validation = validator.verify(req.body)
+      cardModel.checkCard(normalise.creditCard(req.body.cardNo))
+        .then(cardBrand => {
+          logger.debug('Card supported - ', {cardBrand})
+          resolve({validation, cardBrand})
+        })
+        .catch(err => {
+          logger.error('Card not supported - ', {'err': err})
+          // add card not supported error to validation
+          validation.hasError = true
+          _.remove(validation.errorFields, errorField => errorField.cssKey === 'card-no')
+          validation.errorFields.unshift({
+            'cssKey': 'card-no',
+            'key': 'cardNo',
+            'value': err
+          })
+          validation.highlightErrorFields.cardNo = err
+          resolve({validation})
+        })
+    })
   }
 }
