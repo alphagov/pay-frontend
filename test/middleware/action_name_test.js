@@ -9,8 +9,8 @@ describe('actionName', function () {
   it('should append the viewname to the request', function () {
     var next = sinon.spy()
     var req = {
+      method: 'POST',
       route: {
-        methods: {post: true},
         path: '/card_details/:chargeId'
       }
     }
@@ -22,13 +22,13 @@ describe('actionName', function () {
   it('should not append the viewname to the request if it cannot match', function () {
     var next = sinon.spy()
     var req = {
+      method: 'POST',
       route: {
-        methods: {post: true},
         path: '/invalid'
       }
     }
     actionName(req, {}, next)
-    expect(next.calledOnce).to.be.true // eslint-disable-line 
+    expect(next.calledOnce).to.be.true // eslint-disable-line
     assert.equal(req.actionName, undefined)
   })
 })

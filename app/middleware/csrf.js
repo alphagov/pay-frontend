@@ -1,77 +1,44 @@
-var csrf = require('csrf')
-var session = require('../utils/session.js')
-var views = require('../utils/views.js')
-var chargeParam = require('../services/charge_param_retriever.js')
-var logger = require('winston')
-var _views = views.create()
+'use strict'
 
-var csrfTokenGeneration = function (req, res, next) {
-  'use strict'
-  var chargeId = chargeParam.retrieve(req)
-  var chargeSession = session.retrieve(req, chargeId)
+const csrf = require('csrf')
+const session = require('../utils/session.js')
+const views = require('../utils/views.js')
+const chargeParam = require('../services/charge_param_retriever.js')
+const logger = require('winston')
+const _views = views.create()
 
-  var init = function () {
-    appendCsrf()
-    next()
-  }
-
-  var appendCsrf = function () {
-    res.locals.csrf = csrf().create(chargeSession.csrfSecret)
-  }
-
-  init()
+exports.csrfTokenGeneration = (req, res, next) => {
+  const chargeId = chargeParam.retrieve(req)
+  const chargeSession = session.retrieve(req, chargeId)
+  res.locals.csrf = csrf().create(chargeSession.csrfSecret)
+  next()
 }
 
-var csrfCheck = function (req, res, next) {
-  'use strict'
+exports.csrfCheck = (req, res, next) => {
+  const chargeId = chargeParam.retrieve(req)
+  const chargeSession = session.retrieve(req, chargeId) || {}
+  const csrfToken = req.body.csrfToken
+  chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
-  var chargeId = chargeParam.retrieve(req)
-  var chargeSession = session.retrieve(req, chargeId)
-  var csrfToken = req.body.csrfToken
-
-  var init = function () {
-    if (!sessionAvailable()) return showNoSession()
-    if (!csrfValid()) return showCsrfInvalid()
-    next()
-  }
-
-  var sessionAvailable = function () {
-    return chargeSession && chargeSession.csrfSecret
-  }
-
-  var showNoSession = function () {
+  if (!chargeSession.csrfSecret) {
     _views.display(res, 'UNAUTHORISED')
-    return logger.error('CSRF secret is not defined')
-  }
-
-  var csrfValid = function () {
-    if (!(req.route.methods.post || req.route.methods.put)) return true
-    if (!chargeSession.csrfTokens) chargeSession.csrfTokens = []
-
-    if (csrfUsed()) {
-      logger.error('CSRF token was already used')
-      return false
-    }
-    var verify = csrf().verify(chargeSession.csrfSecret, csrfToken)
-    if (verify === false) return false
-
-    chargeSession.csrfTokens.push(csrfToken)
-    return true
-  }
-
-  var csrfUsed = function () {
-    return chargeSession.csrfTokens.indexOf(csrfToken) !== -1
-  }
-
-  var showCsrfInvalid = function () {
+    logger.error('CSRF secret is not defined')
+  } else if (!csrfValid(csrfToken, chargeSession, req)) {
     _views.display(res, 'SYSTEM_ERROR')
-    return logger.error('CSRF is invalid')
+    logger.error('CSRF is invalid')
+  } else {
+    chargeSession.csrfTokens.push(csrfToken)
+    next()
   }
-
-  init()
 }
 
-module.exports = {
-  csrfCheck: csrfCheck,
-  csrfTokenGeneration: csrfTokenGeneration
+function csrfValid (csrfToken, chargeSession, req) {
+  if (!['put', 'post'].includes(req.method.toLowerCase())) {
+    return true
+  } else if (chargeSession.csrfTokens.includes(csrfToken)) {
+    logger.error('CSRF token was already used')
+    return false
+  } else {
+    return csrf().verify(chargeSession.csrfSecret, csrfToken)
+  }
 }

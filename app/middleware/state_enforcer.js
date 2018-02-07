@@ -1,53 +1,39 @@
-var views = require('../utils/views.js')
-var _views = views.create({})
-var _ = require('lodash')
-var stateService = require('../services/state_service.js')
-var paths = require('../paths.js')
+'use strict'
 
-var withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
-module.exports = function (req, res, next) {
-  'use strict'
+// npm dependencies
+const lodash = require('lodash')
 
-  function getGoogleAnalytics () {
-    var gatewayAccount = _.get(req, 'chargeData.gateway_account')
-    if (gatewayAccount) {
-      return {
-        // The state enforcer will append the correct analytics page to the base charge path
-        'path': paths.generateRoute(`card.new`, {chargeId: req.chargeId}),
-        'analyticsId': gatewayAccount.analytics_id,
-        'type': gatewayAccount.type,
-        'paymentProvider': gatewayAccount.payment_provider
-      }
-    }
-    return withAnalyticsError().analytics
-  }
+// local dependencies
+const views = require('../utils/views.js').create({})
+const stateService = require('../services/state_service.js')
+const paths = require('../paths.js')
+const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 
-  var correctStates = stateService.resolveStates(req.actionName)
-  var currentState = req.chargeData.status
-  var locals = {
-    chargeId: req.chargeId,
-    returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
-    analytics: getGoogleAnalytics()
-  }
-
-  var init = function () {
-    if (!stateCorrect()) return
+module.exports = (req, res, next) => {
+  const correctStates = stateService.resolveStates(req.actionName)
+  const currentState = req.chargeData.status
+  if (!correctStates.includes(currentState)) {
+    const stateName = currentState.toUpperCase().replace(/\s/g, '_')
+    views.display(res, stateName, {
+      chargeId: req.chargeId,
+      returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
+      analytics: getGoogleAnalytics(req)
+    })
+  } else {
     next()
   }
+}
 
-  var stateCorrect = function () {
-    var chargeOK = ischargeSessionOK()
-    if (!chargeOK) {
-      var stateName = currentState.toUpperCase().replace(/\s/g, '_')
-      _views.display(res, stateName, locals)
-      return false
+function getGoogleAnalytics (req) {
+  const gatewayAccount = lodash.get(req, 'chargeData.gateway_account')
+  if (gatewayAccount) {
+    return {
+      // The state enforcer will append the correct analytics page to the base charge path
+      'path': paths.generateRoute(`card.new`, {chargeId: req.chargeId}),
+      'analyticsId': gatewayAccount.analytics_id,
+      'type': gatewayAccount.type,
+      'paymentProvider': gatewayAccount.payment_provider
     }
-    return true
   }
-
-  var ischargeSessionOK = function () {
-    return _.includes(correctStates, currentState)
-  }
-
-  return init()
+  return withAnalyticsError().analytics
 }
