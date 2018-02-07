@@ -29,7 +29,7 @@ exports.return = (req, res) => {
       .then(() => res.redirect(req.chargeData.return_url))
       .catch(() => {
         logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId})
-        views.create({}).display(res, 'SYSTEM_ERROR', withAnalyticsError())
+        views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
       })
   } else {
     return res.redirect(req.chargeData.return_url)

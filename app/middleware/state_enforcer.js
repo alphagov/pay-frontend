@@ -4,7 +4,7 @@
 const lodash = require('lodash')
 
 // local dependencies
-const views = require('../utils/views.js').create({})
+const views = require('../utils/views.js')
 const stateService = require('../services/state_service.js')
 const paths = require('../paths.js')
 const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError

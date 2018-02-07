@@ -10,9 +10,8 @@ const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 
 module.exports = (req, res, next) => {
-  const _views = views.create()
   if (!req.chargeId && !req.chargeData) {
-    _views.display(res, 'UNAUTHORISED', withAnalyticsError())
+    views.display(res, 'UNAUTHORISED', withAnalyticsError())
   } else {
     return getAdminUsersClient({correlationId: req.headers[CORRELATION_HEADER]})
       .findServiceBy({gatewayAccountId: req.chargeData.gateway_account.gateway_account_id})
