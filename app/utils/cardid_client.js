@@ -1,21 +1,17 @@
-var baseClient = require('./base_client')
+'use strict'
 
-var cardUrl = process.env.CARDID_HOST + '/v1/api/card'
+// local dependencies
+const baseClient = require('./base_client')
 
-/*
- * @module cardIdClient
+// constants
+const CARD_URL = process.env.CARDID_HOST + '/v1/api/card'
+
+/**
+ *
+ * @param args
+ * @param callBack
+ *
+ * @returns {Request}
  */
-module.exports = {
-  /**
-   *
-   * @param args
-   * @param callBack
-   *
-   * @returns {NodeRestClient}
-   */
-  post: function (args, callBack) {
-    return baseClient.post(cardUrl, args, callBack)
-  },
-
-  CARD_URL: cardUrl
-}
+exports.post = (args, callBack) => baseClient.post(CARD_URL, args, callBack)
+exports.CARD_URL = CARD_URL

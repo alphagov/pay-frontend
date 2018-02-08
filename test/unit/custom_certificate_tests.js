@@ -1,18 +1,18 @@
-var path = require('path')
-var assert = require('assert')
-var customCertificate = require(path.join(__dirname, '/../../app/utils/custom_certificate.js'))
+'use strict'
 
-describe('custom certificate', function () {
-  beforeEach(function () {
-    process.env.CERTS_PATH = path.join(__dirname, '/../test_helpers/certs')
-  })
+// core dependencies
+const path = require('path')
 
-  afterEach(function () {
-    process.env.CERTS_PATH = undefined
-  })
+// npm dependencies
+const {expect} = require('chai')
+const customCertificate = require('../../app/utils/custom_certificate.js')
 
-  it('should set secure options', function () {
-    let ca = customCertificate.getCertOptions()
-    assert.equal(1, ca.length)
+// constants
+const CERTS_PATH = path.join(__dirname, '/../test_helpers/certs')
+
+describe('custom certificate', () => {
+  it('should set secure options', () => {
+    const ca = customCertificate.getCertOptions(CERTS_PATH)
+    expect(ca.length).to.equal(1)
   })
 })

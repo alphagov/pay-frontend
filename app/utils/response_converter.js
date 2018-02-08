@@ -1,45 +1,44 @@
+'use strict'
+
+// local dependencies
 const requestLogger = require('../utils/request_logger')
 
+// constants
 const SUCCESS_CODES = [200, 201, 202, 204, 206]
 
-module.exports = {
-  /**
-   * Creates a callback that can be used to log the stuff we're interested
-   * in and converts the response/error into a promise.
-   *
-   * @private
-   * @param {Object} context
-   * @returns {function}
-   */
-  createCallbackToPromiseConverter: (context, transformer) => {
-    let defer = context.defer
+exports.createCallbackToPromiseConverter = createCallbackToPromiseConverter
+exports.successCodes = () => SUCCESS_CODES
 
-    return (error, response, body) => {
-      requestLogger.logRequestEnd(context)
+/**
+ * Creates a callback that can be used to log the stuff we're interested
+ * in and converts the response/error into a promise.
+ *
+ * @private
+ * @param {Object} context
+ * @param {function} transformer
+ * @returns {function}
+ */
+function createCallbackToPromiseConverter (context, transformer) {
+  const defer = context.defer
 
-      if (error) {
-        requestLogger.logRequestError(context, error)
-        defer.reject({error: error})
-        return
-      }
+  return (error, response, body) => {
+    requestLogger.logRequestEnd(context)
 
-      if (response && SUCCESS_CODES.indexOf(response.statusCode) !== -1) {
-        if (body && transformer && typeof transformer === 'function') {
-          defer.resolve(transformer(body))
-        } else {
-          defer.resolve(body)
-        }
+    if (error) {
+      requestLogger.logRequestError(context, error)
+      defer.reject({error: error})
+    } else if (response && SUCCESS_CODES.includes(response.statusCode)) {
+      if (body && typeof transformer === 'function') {
+        defer.resolve(transformer(body))
       } else {
-        requestLogger.logRequestFailure(context, response)
-        defer.reject({
-          errorCode: response.statusCode,
-          message: response.body
-        })
+        defer.resolve(body)
       }
+    } else {
+      requestLogger.logRequestFailure(context, response)
+      defer.reject({
+        errorCode: response.statusCode,
+        message: response.body
+      })
     }
-  },
-
-  successCodes: () => {
-    return SUCCESS_CODES
   }
 }
