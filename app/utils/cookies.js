@@ -26,9 +26,8 @@ module.exports = {
  * @param {string} cookieName
  */
 function setValueOnCookie (req, key, value, cookieName) {
-  if (typeof req[cookieName] === 'object') {
-    req[cookieName][key] = value
-  }
+  if (typeof req[cookieName] !== 'object') return
+  req[cookieName][key] = Object.assign(req[cookieName][key] || {}, value)
 }
 
 /**
