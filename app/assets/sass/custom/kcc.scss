@@ -1,0 +1,103 @@
+@import "colours";
+@import "conditionals";
+
+// CUSTOM BRANDING
+// Use the variables below to control the style
+// Make sure banner colours meet minimum colour contrast levels
+
+$custom-banner-colour: #248096;
+$custom-banner-border-colour: #103a44;
+$custom-text-colour: #ffffff;
+$logo-image: true;
+$logo-image-height: 2.1em;
+
+.custom-branding {
+  #global-header,
+  #global-header .header-wrapper {
+    position: relative;
+    background-color: $custom-banner-colour;
+    padding-bottom: 0;
+
+    .header-global, .header-proposition {
+    @include media(mobile) {
+      width: 100%;
+    }
+
+    width: 50%;
+    }
+
+    #logo {
+      color: $custom-text-colour;
+      border-bottom: none;
+
+      @if $logo-image == true {
+        background-image: none;
+
+        img {
+          visibility: visible;
+          max-height: $logo-image-height;
+          margin: 0;
+        }
+      }
+    }
+
+    &+#global-header-bar {
+      max-width: 100%;
+      height: 10px;
+      margin: 0;
+      background-color: $custom-banner-border-colour;
+    }
+
+    .header-proposition {
+      #proposition-name {
+        @include media(mobile) {
+          margin-left: 115px;
+        }
+
+        color: $custom-text-colour;
+      }
+    }
+
+    #proposition-menu {
+      @include media(desktop) {
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+    }
+  }
+
+  #global-header .header-wrapper {
+    padding-top: 16px;
+
+    @include media(mobile) {
+      background-image: url(/public/images/kcc-mobile.svg);
+      background-size: 100px 66px;
+      background-position: 15px top;
+      background-repeat: no-repeat;
+    }
+}
+
+  .header-logo {
+    display: none;
+
+    &--custom {
+      display: block;
+
+      #logo {
+        img {
+          display: none;
+
+          @include media(tablet) {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  .button {
+    padding: 7px 15px 6px;
+    padding: .368421053em .842105263em .315789474em;
+  }
+}
