@@ -37,8 +37,8 @@ exports.bind = function (app) {
     csrfTokenGeneration,
     actionName,
     retrieveCharge,
-    stateEnforcer,
-    resolveService
+    resolveService,
+    stateEnforcer
   ]
 
   app.get(card.new.path, middlewareStack, charge.new)

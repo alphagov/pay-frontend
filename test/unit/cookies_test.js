@@ -145,6 +145,19 @@ describe('setting value on session', function () {
     expect(req.frontend_state.foo).to.equal('bar')
   })
 
+  it('should set object on frontend_state and add to it not replace it', function () {
+    let cookies = getCookiesUtil()
+    let req = {
+      frontend_state: {
+      }
+    }
+
+    cookies.setSessionVariable(req, 'foo', {a: 'f'})
+    cookies.setSessionVariable(req, 'foo', {b: 'o'})
+
+    expect(req.frontend_state.foo).to.deep.equal({a: 'f', b: 'o'})
+  })
+
   it('should set value on frontend_state_2 if SESSION_ENCRYPTION_KEY_2 set', function () {
     let originalKey = process.env.SESSION_ENCRYPTION_KEY
     process.env.SESSION_ENCRYPTION_KEY = ''
