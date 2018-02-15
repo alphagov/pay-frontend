@@ -135,6 +135,7 @@ function initialiseTemplateEngine (app) {
 function initialisePublic (app) {
   app.use('/public', express.static(path.join(__dirname, '/public'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_template/assets'), publicCaching))
+  app.use('/public', express.static(path.join(__dirname, '/app/data'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk-country-and-territory-autocomplete'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_frontend_toolkit'), publicCaching))
   app.use('/javascripts', express.static(path.join(__dirname, '/public/assets/javascripts'), publicCaching))
