@@ -175,12 +175,10 @@
           {% endif %}
         </label>
         <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocomplete="billing country-name">
-          {% for currentCountry in countries %}
+          {% for country in countries %}
             <option
-                value="{{ currentCountry.entry.country }}"
-                data-aliases="{{ currentCountry.entry.aliases }}"
-                data-weighting="{{ currentCountry.entry.weighting }}"
-                {% if currentCountry.entry.selected %} selected="selected"{% endif %}>{{ currentCountry.entry.name }}</option>
+                value="{{ country[1].split(':')[1] }}"
+                {% if country[1].split(':')[1] === 'GB' %} selected="selected"{% endif %}>{{ country[0] }}</option>
           {% endfor %}
         </select>
       </div>
@@ -311,5 +309,18 @@
   </main>
   <script id="govuk-script-charge">
     window.chargeId = "{{ id }}"
+  </script>
+{% endblock %}
+
+{% block body_end %}
+  {% include "includes/scripts.njk" %}
+  <script type="text/javascript" src="/public/location-autocomplete.min.js"></script>
+  <script type="text/javascript">
+    openregisterLocationPicker({
+      selectElement: document.getElementById('address-country'),
+      url: '/public/location-autocomplete-graph.json',
+      autoselect: true,
+      displayMenu: 'overlay'
+    })
   </script>
 {% endblock %}

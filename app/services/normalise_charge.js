@@ -73,7 +73,7 @@ module.exports = (function () {
       address.line2,
       address.city,
       address.postcode,
-      countries.translateAlpha2(address.country)].filter(function (str) { return str }).join(', ')
+      countries.translateCountryISOtoName(address.country)].filter(function (str) { return str }).join(', ')
   }
 
   var _normaliseGatewayAccountDetails = function (accountDetails) {
@@ -95,7 +95,7 @@ module.exports = (function () {
       body.addressLine2,
       body.addressCity,
       body.addressPostcode,
-      countries.translateAlpha2(body.addressCountry)].filter(function (str) { return str }).join(', ')
+      countries.translateCountryISOtoName(body.addressCountry)].filter(function (str) { return str }).join(', ')
   }
 
   var creditCard = function (creditCardNo) {

@@ -1,25 +1,7 @@
 'use strict'
 
-// NPM Dependencies
-const lodash = require('lodash')
-
 // Local Dependencies
-let countries = require('../data/countries.json')
-const extensions = require('../data/country-record-extension.json')
+const countries = require('../../node_modules/govuk-country-and-territory-autocomplete/dist/location-autocomplete-canonical-list.json')
 
-// Exports
-exports.retrieveCountries = () => lodash.clone(countries)
-exports.translateAlpha2 = alpha2Code => countries.find(country => country.entry.country === alpha2Code).entry.name
-
-// Merge the additional data into the register data
-countries.forEach((country, i) => {
-  const extension = extensions.find(item => item.country === country.entry.country)
-  country.entry.selected = country.entry.country === 'GB'
-  if (extension) {
-    country.entry.aliases = extension.aliases
-    country.entry.weighting = extension.weighting
-  }
-})
-
-countries = lodash.compact(countries)
-countries = lodash.sortBy(countries, country => country.entry.name.toLowerCase())
+exports.countries = countries
+exports.translateCountryISOtoName = countryISO => countries.find(country => country[1].split(':')[1] === countryISO)[0]

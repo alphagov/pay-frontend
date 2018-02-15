@@ -20,7 +20,7 @@ const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
 const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
 const CAPTURE_WAITING_VIEW = 'capture_waiting'
 const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry']
-const countries = require('../services/countries.js')
+const {countries} = require('../services/countries.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
 
@@ -53,7 +53,7 @@ module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     appendChargeForNewView(charge, req, charge.id)
-    charge.countries = countries.retrieveCountries()
+    charge.countries = countries
     if (charge.status === State.ENTERING_CARD_DETAILS) return views.display(res, CHARGE_VIEW, withAnalytics(charge, charge))
     Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
       () => views.display(res, CHARGE_VIEW, withAnalytics(charge, charge)),
@@ -76,7 +76,7 @@ module.exports = {
       .then(data => {
         cardBrand = data.cardBrand
         if (data.validation.hasError) {
-          charge.countries = countries.retrieveCountries()
+          charge.countries = countries
           appendChargeForNewView(charge, req, charge.id)
           _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
           return views.display(res, CHARGE_VIEW, data.validation)

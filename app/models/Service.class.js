@@ -30,7 +30,7 @@ class Service {
       addressLine2: serviceData.merchant_details.address_line2,
       city: serviceData.merchant_details.address_city,
       postcode: serviceData.merchant_details.address_postcode,
-      countryName: countries.translateAlpha2(serviceData.merchant_details.address_country)
+      countryName: countries.translateCountryISOtoName(serviceData.merchant_details.address_country)
     } : undefined
   }
 

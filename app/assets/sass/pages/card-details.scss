@@ -41,6 +41,15 @@
     margin-top: 15px;
     font-weight: normal;
   }
+
+  .autocomplete__input {
+    width: 100%;
+
+    @include media(tablet) {
+      width: 50%;
+    }
+  }
+
 }
 
 #cancel-payment {
