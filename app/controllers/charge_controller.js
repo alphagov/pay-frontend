@@ -178,7 +178,7 @@ module.exports = {
     views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, {
       issuerUrl: _.get(charge, 'auth3dsData.issuerUrl'),
       paRequest: _.get(charge, 'auth3dsData.paRequest'),
-      termUrl: paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})
+      threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})}`
     })
   },
   auth3dsRequiredIn: (req, res) => {

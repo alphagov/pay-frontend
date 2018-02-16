@@ -1,6 +1,5 @@
 'use strict'
 
-var _ = require('lodash')
 var generateRoute = require('./utils/generate_route.js')
 
 if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined')
@@ -130,15 +129,15 @@ var paths = {
   }
 }
 
-var extendedPaths = _.extend({}, paths, {
-  external: {
-    card: {
-      auth3dsRequiredIn: {
-        path: process.env.FRONTEND_URL + paths.card.auth3dsRequiredIn.path,
-        action: 'post'
-      }
+paths.external = {
+  card: {
+    auth3dsRequiredIn: {
+      path: paths.card.auth3dsRequiredIn.path,
+      action: 'post'
     }
   }
-})
+}
 
-module.exports = _.extend({}, extendedPaths, {generateRoute: generateRoute(extendedPaths)})
+paths.generateRoute = generateRoute(paths)
+
+module.exports = paths
