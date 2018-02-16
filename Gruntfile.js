@@ -56,12 +56,12 @@ module.exports = function (grunt) {
         dest: 'public'
       }]
     },
-    accessibleAutocompleteCSS: {
+    countryAutocompleteFiles: {
       files: [{
         expand: true,
-        cwd: 'node_modules/accessible-autocomplete/dist',
-        src: ['accessible-autocomplete.min.css'],
-        dest: 'govuk_modules/accessible-autocomplete/'
+        cwd: 'node_modules/govuk-country-and-territory-autocomplete/dist',
+        src: '**',
+        dest: 'govuk_modules/govuk-country-and-territory-autocomplete/'
       }]
     }
   }
@@ -70,7 +70,7 @@ module.exports = function (grunt) {
     target: {
       files: {
         'public/stylesheets/application.min.css': [
-          'public/stylesheets/application.css', 'govuk_modules/accessible-autocomplete/accessible-autocomplete.min.css'
+          'public/stylesheets/application.css', 'govuk_modules/govuk-country-and-territory-autocomplete/location-autocomplete.min.css'
         ]
       }
     }
