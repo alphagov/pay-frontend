@@ -9,7 +9,7 @@
 </noscript>
 <form name="three_ds_required" method="post" action="{{ issuerUrl }}">
   <input type="hidden" name="PaReq" value="{{ paRequest }}"/>
-  <input type="hidden" name="TermUrl" value="{{ termUrl }}"/>
+  <input type="hidden" name="TermUrl" value="{{ threeDSReturnUrl }}"/>
   <noscript>
     <button id="confirm" class="button">Continue</button>
   </noscript>
