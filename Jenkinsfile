@@ -40,7 +40,8 @@ pipeline {
         branch 'master'
       }
       steps {
-        deploy("frontend", "test", null, true)
+        deploy("frontend", "test", null, false, false)
+        deployEcs("frontend", "test", null, true, true)
       }
     }
   }
