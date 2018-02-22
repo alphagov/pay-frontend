@@ -2,26 +2,31 @@
 
 // npm dependencies
 const logger = require('winston')
+const {Cache} = require('memory-cache')
+const lodash = require('lodash')
 
 // local dependencies
 const views = require('../utils/views.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const session = require('../utils/session.js')
-const {setSessionVariable} = require('../utils/cookies')
 const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 
+// constants
+const SERVICE_CACHE_EXPIRY = 15 * 60 * 1000
+const serviceCache = new Cache()
+
 module.exports = (req, res, next) => {
+  const gatewayAccountId = lodash.get(req, 'chargeData.gateway_account.gateway_account_id')
   if (!req.chargeId && !req.chargeData) return views.display(res, 'UNAUTHORISED', withAnalyticsError())
-  const chargeSession = session.retrieve(req, req.chargeId) || {}
-  if (chargeSession.service) {
-    res.locals.service = chargeSession.service
+  const cachedService = serviceCache.get(gatewayAccountId)
+  if (cachedService) {
+    res.locals.service = cachedService
     next()
   } else {
     return getAdminUsersClient({correlationId: req.headers[CORRELATION_HEADER]})
-      .findServiceBy({gatewayAccountId: req.chargeData.gateway_account.gateway_account_id})
+      .findServiceBy({gatewayAccountId})
       .then(service => {
-        setSessionVariable(req, session.createChargeIdSessionKey(req.chargeId), {service})
+        serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_EXPIRY)
         res.locals.service = service
         next()
       })
