@@ -51,6 +51,7 @@
     "humps": "^2.0.1",
     "i18n": "0.8.x",
     "lodash": "4.17.x",
+    "memory-cache": "^0.2.0",
     "minimist": "1.2.x",
     "morgan": "1.9.x",
     "nunjucks": "^3.0.1",

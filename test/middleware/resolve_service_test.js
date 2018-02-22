@@ -72,7 +72,7 @@ describe('resolve service middleware', function () {
   })
 
   it('should log an error if it fails to retrieving service data', function (done) {
-    const gatewayAccountId = '1'
+    const gatewayAccountId = Math.random()
     const resolveService = resolveServiceMiddleware(q.reject())
     let chargeData = {}
     _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
