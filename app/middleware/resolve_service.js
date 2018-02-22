@@ -12,7 +12,7 @@ const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 
 // constants
-const SERVICE_CACHE_EXPIRY = 15 * 60 * 1000
+const SERVICE_CACHE_MAX_AGE = parseInt(process.env.SERVICE_CACHE_MAX_AGE || 15 * 60 * 1000) // default to 15 mins
 const serviceCache = new Cache()
 
 module.exports = (req, res, next) => {
@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
     return getAdminUsersClient({correlationId: req.headers[CORRELATION_HEADER]})
       .findServiceBy({gatewayAccountId})
       .then(service => {
-        serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_EXPIRY)
+        serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_MAX_AGE)
         res.locals.service = service
         next()
       })
