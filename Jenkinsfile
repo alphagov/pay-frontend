@@ -15,9 +15,14 @@ pipeline {
     stage('Docker Build') {
       steps {
         script {
-          buildApp{
+          buildAppWithMetrics {
             app = "frontend"
           }
+        }
+      }
+      post {
+        failure {
+          postMetric("frontend.docker-build.failure", 1)
         }
       }
     }
@@ -29,9 +34,14 @@ pipeline {
     stage('Docker Tag') {
       steps {
         script {
-          dockerTag {
+          dockerTagWithMetrics {
             app = "frontend"
           }
+        }
+      }
+      post {
+        failure {
+          postMetric("frontend.docker-tag.failure", 1)
         }
       }
     }
@@ -40,9 +50,16 @@ pipeline {
         branch 'master'
       }
       steps {
-        deploy("frontend", "test", null, false, false)
         deployEcs("frontend", "test", null, true, true)
       }
+    }
+  }
+  post {
+    failure {
+      postMetric(appendBranchSuffix("frontend") + ".failure", 1)
+    }
+    success {
+      postSuccessfulMetrics(appendBranchSuffix("frontend"))
     }
   }
 }
