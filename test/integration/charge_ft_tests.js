@@ -968,23 +968,69 @@ describe('chargeTests', function () {
     beforeEach(function () {
       nock.cleanAll()
     })
+    describe('When invoked on a worldpay gateway account', function () {
+      it('should return the data needed for the iframe UI', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
+          {
+            'paRequest': 'aPaRequest',
+            'issuerUrl': 'http://issuerUrl.com'
+          })
+        defaultAdminusersResponseForGetService(gatewayAccountId)
 
-    it('should return the data needed for the iframe UI', function (done) {
-      let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
-      defaultAdminusersResponseForGetService(gatewayAccountId)
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
 
-      nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-      let cookieValue = cookie.create(chargeId)
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
+          })
+          .end(done)
+      })
+    })
 
-      getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
-        .expect(200)
-        .expect(function (res) {
-          const $ = cheerio.load(res.text)
-          expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
-          expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
-        })
-        .end(done)
+    describe('When invoked on an epdq gateway account', function () {
+      it('should return the data needed for the iframe UI', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
+          {
+            'htmlOut': Buffer.from('<form> epdq data </form>').toString('base64')
+          })
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($.html()).to.include('<form> epdq data </form>')
+          })
+          .end(done)
+      })
+    })
+
+    describe('When required information not found for auth 3ds out view', function () {
+      it('should display error in iframe UI', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId, {})
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
+          .expect(500)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('title').text()).to.include('An error occurred')
+          })
+          .end(done)
+      })
     })
   })
 

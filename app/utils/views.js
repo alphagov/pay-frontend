@@ -48,6 +48,10 @@ module.exports = {
     view: 'auth_3ds_required_out',
     analyticsPage: '/3ds_required'
   },
+  auth_3ds_required_html_out: {
+    view: 'auth_3ds_required_html_out',
+    analyticsPage: '/3ds_required'
+  },
   auth_waiting: {
     view: 'auth_waiting',
     analyticsPage: '/auth_waiting'

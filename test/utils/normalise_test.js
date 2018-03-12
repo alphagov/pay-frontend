@@ -15,7 +15,8 @@ var unNormalisedCharge = {
   email: 'bobbybobby@bobby.bob',
   auth_3ds_data: {
     paRequest: 'paRequest',
-    issuerUrl: 'issuerUrl'
+    issuerUrl: 'issuerUrl',
+    htmlOut: 'html'
   },
   gateway_account: {
     analytics_id: 'bla-1234',
@@ -43,7 +44,8 @@ var normalisedCharge = {
   email: 'bobbybobby@bobby.bob',
   auth3dsData: {
     paRequest: 'paRequest',
-    issuerUrl: 'issuerUrl'
+    issuerUrl: 'issuerUrl',
+    htmlOut: 'html'
   },
   gatewayAccount: {
     analyticsId: 'bla-1234',
@@ -94,7 +96,7 @@ describe('normalise', function () {
       var passedByReference = {addressLine2: 'foo'}
       normalise.addressLines(passedByReference)
       expect(passedByReference).to.deep.equal({addressLine1: 'foo'})
-      expect(passedByReference.addressLine2).to.be.undefined // eslint-disable-line 
+      expect(passedByReference.addressLine2).to.be.undefined // eslint-disable-line
     })
 
     it('should do nothing if there is addressLine1', function () {

@@ -93,7 +93,7 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}) {
   var charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -177,8 +177,9 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId) 
   }
   if (status === 'AUTHORISATION 3DS REQUIRED') {
     charge.auth_3ds_data = {
-      'paRequest': 'aPaRequest',
-      'issuerUrl': 'http://issuerUrl.com'
+      'paRequest': auth3dsData.paRequest,
+      'issuerUrl': auth3dsData.issuerUrl,
+      'htmlOut': auth3dsData.htmlOut
     }
   }
   return charge
