@@ -85,7 +85,8 @@ module.exports = (function () {
   var _normaliseAuth3dsData = function (auth3dsData) {
     return {
       paRequest: auth3dsData.paRequest,
-      issuerUrl: auth3dsData.issuerUrl
+      issuerUrl: auth3dsData.issuerUrl,
+      htmlOut: auth3dsData.htmlOut
     }
   }
 
