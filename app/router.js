@@ -1,17 +1,17 @@
 'use strict'
 
-var i18n = require('i18n')
+const i18n = require('i18n')
 
-var charge = require('./controllers/charge_controller.js')
-var secure = require('./controllers/secure_controller.js')
-var statik = require('./controllers/static_controller.js')
-var returnCont = require('./controllers/return_controller.js')
+const charge = require('./controllers/charge_controller.js')
+const secure = require('./controllers/secure_controller.js')
+const statik = require('./controllers/static_controller.js')
+const returnCont = require('./controllers/return_controller.js')
 
-var paths = require('./paths.js')
-var {csrfCheck, csrfTokenGeneration} = require('./middleware/csrf.js')
-var actionName = require('./middleware/action_name.js')
-var stateEnforcer = require('./middleware/state_enforcer.js')
-var retrieveCharge = require('./middleware/retrieve_charge.js')
+const paths = require('./paths.js')
+const {csrfCheck, csrfTokenGeneration} = require('./middleware/csrf.js')
+const actionName = require('./middleware/action_name.js')
+const stateEnforcer = require('./middleware/state_enforcer.js')
+const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
 
 exports.paths = paths
@@ -20,15 +20,15 @@ exports.bind = function (app) {
   'use strict'
 
   app.get('/healthcheck', function (req, res) {
-    var data = {'ping': {'healthy': true}}
+    const data = {'ping': {'healthy': true}}
     res.writeHead(200, {'Content-Type': 'application/json'})
     res.end(JSON.stringify(data))
   })
 
   // charges
-  var card = paths.card
+  const card = paths.card
 
-  var middlewareStack = [
+  const middlewareStack = [
     function (req, res, next) {
       i18n.setLocale('en')
       next()

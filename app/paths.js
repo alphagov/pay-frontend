@@ -11,7 +11,7 @@ if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST en
 // the action while not used directly here is used so we can match to the named
 // routes when we have duplicate paths on different actions
 
-var paths = {
+const paths = {
   card: {
     new: {
       path: '/card_details/:chargeId',
