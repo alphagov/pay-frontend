@@ -1039,24 +1039,65 @@ describe('chargeTests', function () {
       nock.cleanAll()
     })
 
-    it('should return the data needed for the UI', function (done) {
-      let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
-      defaultAdminusersResponseForGetService(gatewayAccountId)
+    describe('for worldpay payment provider', function () {
+      it('should return the data needed for the UI', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-      let cookieValue = cookie.create(chargeId)
-      let data = {
-        PaRes: 'aPaRes'
-      }
-      postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
-        .expect(200)
-        .expect(function (res) {
-          const $ = cheerio.load(res.text)
-          expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
-          expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
-        })
-        .end(done)
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+        let data = {
+          PaRes: 'aPaRes'
+        }
+        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+    })
+
+    describe('for epdq payment provider', function () {
+      it('should return the data needed for the UI when POST', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        chargeResponse.gateway_account.payment_provider = 'epdq'
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+        let data = {}
+        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in?status=success')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('success')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+
+      it('should return the data needed for the UI when GET', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        chargeResponse.gateway_account.payment_provider = 'epdq'
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_in?status=declined')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('declined')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
     })
   })
 

@@ -46,6 +46,7 @@ exports.bind = function (app) {
   app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut)
   app.post(card.auth3dsRequiredIn.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
   app.post(card.auth3dsHandler.path, middlewareStack, charge.auth3dsHandler)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)

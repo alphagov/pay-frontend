@@ -24,6 +24,11 @@ const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'a
 const {countries} = require('../services/countries.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+const AUTH_3DS_EPDQ_RESULTS = {
+  success: 'AUTHORISED',
+  declined: 'DECLINED',
+  error: 'ERROR'
+}
 
 function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
@@ -147,8 +152,11 @@ module.exports = {
     const startTime = new Date()
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
-
-    baseClient.post(connector3dsUrl, {data: {pa_response: _.get(req, 'body.PaRes')}, correlationId},
+    const auth3dsPayload = {
+      pa_response: _.get(req, 'body.PaRes'),
+      auth_3ds_result: AUTH_3DS_EPDQ_RESULTS[_.get(req, 'body.providerStatus', '')]
+    }
+    baseClient.post(connector3dsUrl, { data: auth3dsPayload, correlationId },
       function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
         switch (json.statusCode) {
@@ -198,7 +206,8 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
-      paResponse: _.get(req, 'body.PaRes')
+      paResponse: _.get(req, 'body.PaRes'),
+      providerStatus: _.get(req, 'query.status')
     })
   },
   confirm: (req, res) => {
