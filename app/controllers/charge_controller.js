@@ -206,8 +206,14 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
-      paResponse: _.get(req, 'body.PaRes'),
-      providerStatus: _.get(req, 'query.status')
+      paResponse: _.get(req, 'body.PaRes')
+    })
+  },
+  auth3dsRequiredInEpdq: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
+      threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
+      providerStatus: _.get(req, 'query.status', 'success')
     })
   },
   confirm: (req, res) => {

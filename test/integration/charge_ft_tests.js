@@ -1071,7 +1071,7 @@ describe('chargeTests', function () {
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
         let cookieValue = cookie.create(chargeId)
         let data = {}
-        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in?status=success')
+        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in/epdq')
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
@@ -1089,11 +1089,30 @@ describe('chargeTests', function () {
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
         let cookieValue = cookie.create(chargeId)
-        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_in?status=declined')
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_in/epdq?status=declined')
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('declined')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+
+      it('should return error when POST', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        chargeResponse.gateway_account.payment_provider = 'epdq'
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+        let data = {}
+        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in/epdq?status=error')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('error')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
           .end(done)
