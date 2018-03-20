@@ -48,7 +48,7 @@ pipeline {
                 }
             }
             steps {
-                runE2E("frontend")
+                runCardPaymentsE2E("frontend")
             }
         }
         stage('Accept Tests') {
