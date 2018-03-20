@@ -55,6 +55,21 @@ function redirect (res) {
   }
 }
 
+function build3dsPayload (req) {
+  let auth3dsPayload = {}
+  const paRes = _.get(req, 'body.PaRes')
+  if (!_.isUndefined(paRes)) {
+    auth3dsPayload.pa_response = paRes
+  }
+
+  const providerStatus = AUTH_3DS_EPDQ_RESULTS[_.get(req, 'body.providerStatus', '')]
+  if (!_.isUndefined(providerStatus)) {
+    auth3dsPayload.auth_3ds_result = providerStatus
+  }
+
+  return auth3dsPayload
+}
+
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
@@ -152,11 +167,8 @@ module.exports = {
     const startTime = new Date()
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
-    const auth3dsPayload = {
-      pa_response: _.get(req, 'body.PaRes'),
-      auth_3ds_result: AUTH_3DS_EPDQ_RESULTS[_.get(req, 'body.providerStatus', '')]
-    }
-    baseClient.post(connector3dsUrl, { data: auth3dsPayload, correlationId },
+
+    baseClient.post(connector3dsUrl, { data: build3dsPayload(req), correlationId },
       function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
         switch (json.statusCode) {
