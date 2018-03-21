@@ -94,7 +94,41 @@ pipeline {
         branch 'master'
       }
       steps {
-        deployEcs("frontend", "test", null, true, true)
+        deployEcs("frontend", "test", null, false, false)
+      }
+    }
+    stage('Smoke Tests') {
+      failFast true
+      parallel {
+        stage('Card Smoke Test') {
+          when { branch 'master' }
+          steps { runCardSmokeTest() }
+        }
+        stage('Product Smoke Test') {
+          when { branch 'master' }
+          steps { runProductsSmokeTest() }
+        }
+      }
+    }
+    stage('Complete') {
+      failFast true
+      parallel {
+        stage('Tag Build') {
+          when {
+            branch 'master'
+          }
+          steps {
+            tagDeployment("frontend")
+          }
+        }
+        stage('Trigger Deploy Notification') {
+          when {
+            branch 'master'
+          }
+          steps {
+            triggerGraphiteDeployEvent("frontend")
+          }
+        }
       }
     }
   }
