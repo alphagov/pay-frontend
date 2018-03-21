@@ -24,6 +24,11 @@ const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'a
 const {countries} = require('../services/countries.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+const AUTH_3DS_EPDQ_RESULTS = {
+  success: 'AUTHORISED',
+  declined: 'DECLINED',
+  error: 'ERROR'
+}
 
 function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
@@ -48,6 +53,21 @@ function redirect (res) {
     toNew: (chargeId) => res.redirect(303, routeFor('new', chargeId)),
     toReturn: (chargeId) => res.redirect(303, routeFor('return', chargeId))
   }
+}
+
+function build3dsPayload (req) {
+  let auth3dsPayload = {}
+  const paRes = _.get(req, 'body.PaRes')
+  if (!_.isUndefined(paRes)) {
+    auth3dsPayload.pa_response = paRes
+  }
+
+  const providerStatus = AUTH_3DS_EPDQ_RESULTS[_.get(req, 'body.providerStatus', '')]
+  if (!_.isUndefined(providerStatus)) {
+    auth3dsPayload.auth_3ds_result = providerStatus
+  }
+
+  return auth3dsPayload
 }
 
 module.exports = {
@@ -148,7 +168,7 @@ module.exports = {
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
 
-    baseClient.post(connector3dsUrl, {data: {pa_response: _.get(req, 'body.PaRes')}, correlationId},
+    baseClient.post(connector3dsUrl, { data: build3dsPayload(req), correlationId },
       function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
         switch (json.statusCode) {
@@ -199,6 +219,13 @@ module.exports = {
     views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes')
+    })
+  },
+  auth3dsRequiredInEpdq: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
+      threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
+      providerStatus: _.get(req, 'query.status', 'success')
     })
   },
   confirm: (req, res) => {
