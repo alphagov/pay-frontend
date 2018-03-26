@@ -206,7 +206,14 @@ module.exports = {
     const md = _.get(charge, 'auth3dsData.md')
     const htmlOut = _.get(charge, 'auth3dsData.htmlOut')
 
-    if (issuerUrl && paRequest) {
+    if (issuerUrl && paRequest && md) {
+      views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, {
+        issuerUrl: issuerUrl,
+        paRequest: paRequest,
+        md: md,
+        threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})}`
+      })
+    } else if (issuerUrl && paRequest) {
       views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, {
         issuerUrl: issuerUrl,
         paRequest: paRequest,
@@ -215,13 +222,6 @@ module.exports = {
     } else if (htmlOut) {
       views.display(res, AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
-      })
-    } else if (issuerUrl && paRequest && md) {
-      views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, {
-        issuerUrl: issuerUrl,
-        paRequest: paRequest,
-        md: md,
-        threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})}`
       })
     } else {
       views.display(res, 'ERROR', withAnalytics(charge))
