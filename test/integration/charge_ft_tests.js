@@ -1118,6 +1118,30 @@ describe('chargeTests', function () {
           .end(done)
       })
     })
+
+    describe('for smartpay payment provider', function () {
+      it('should return the data needed for the UI when GET', function (done) {
+        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        let cookieValue = cookie.create(chargeId)
+        let data = {
+          PaRes: 'aPaRes',
+          MD: 'md'
+        }
+        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
+            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('md')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+    })
   })
 
   describe('The /card_details/charge_id/3ds_handler', function () {

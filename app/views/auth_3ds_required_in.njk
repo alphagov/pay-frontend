@@ -15,6 +15,9 @@
     {% if providerStatus %}
         <input type="hidden" name="providerStatus" value="{{ providerStatus }}"/>
     {% endif %}
+    {% if md %}
+        <input type="hidden" name="MD" value="{{ md }}"/>
+    {% endif %}
     <noscript>
         <button id="confirm" class="button">Continue</button>
     </noscript>
