@@ -16,7 +16,8 @@ var unNormalisedCharge = {
   auth_3ds_data: {
     paRequest: 'paRequest',
     issuerUrl: 'issuerUrl',
-    htmlOut: 'html'
+    htmlOut: 'html',
+    md: 'md'
   },
   gateway_account: {
     analytics_id: 'bla-1234',
@@ -45,7 +46,8 @@ var normalisedCharge = {
   auth3dsData: {
     paRequest: 'paRequest',
     issuerUrl: 'issuerUrl',
-    htmlOut: 'html'
+    htmlOut: 'html',
+    md: 'md'
   },
   gatewayAccount: {
     analyticsId: 'bla-1234',

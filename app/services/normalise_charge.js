@@ -86,7 +86,8 @@ module.exports = (function () {
     return {
       paRequest: auth3dsData.paRequest,
       issuerUrl: auth3dsData.issuerUrl,
-      htmlOut: auth3dsData.htmlOut
+      htmlOut: auth3dsData.htmlOut,
+      md: auth3dsData.md
     }
   }
 
