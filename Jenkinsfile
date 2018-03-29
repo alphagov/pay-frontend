@@ -94,7 +94,7 @@ pipeline {
         branch 'master'
       }
       steps {
-        deployEcs("frontend", "test", null, false, false)
+        deployEcs("frontend")
       }
     }
     stage('Smoke Tests') {
