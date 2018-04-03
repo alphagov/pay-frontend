@@ -10,11 +10,11 @@ const SESSION_COOKIE_NAME_2 = 'frontend_state_2'
 const KEY_MIN_LENGTH = 10
 
 module.exports = {
-  configureSessionCookie: configureSessionCookie,
-  getSessionCookieName: getSessionCookieName,
-  setSessionVariable: setSessionVariable,
-  getSessionVariable: getSessionVariable,
-  namedCookie: namedCookie
+  configureSessionCookie,
+  getSessionCookieName,
+  setSessionVariable,
+  getSessionVariable,
+  namedCookie
 }
 
 /**

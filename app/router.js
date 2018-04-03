@@ -14,6 +14,8 @@ const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
 
+const abTest = require('./utils/ab_test.js')
+
 exports.paths = paths
 
 exports.bind = function (app) {
@@ -41,7 +43,15 @@ exports.bind = function (app) {
     stateEnforcer
   ]
 
-  app.get(card.new.path, middlewareStack, charge.new)
+  app.get(
+    card.new.path,
+    middlewareStack,
+    abTest.switch({
+      threshold:      90,
+      defaultVariant: charge.new,
+      testingVariant: charge.new
+    })
+  )
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut)
