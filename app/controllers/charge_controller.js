@@ -14,6 +14,7 @@ const State = require('../models/state.js')
 const paths = require('../paths.js')
 const CHARGE_VIEW = 'charge'
 const CONFIRM_VIEW = 'confirm'
+const CONFIRM_VARIANT_VIEW = 'confirm_variant'
 const AUTH_WAITING_VIEW = 'auth_waiting'
 const AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required'
 const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
@@ -248,6 +249,20 @@ module.exports = {
       confirmPath: confirmPath,
       gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
       post_cancel_action: routeFor('cancel', charge.id)
+    }, confirmPath))
+  },
+  confirmVariant: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const confirmPath = routeFor('confirm', charge.id)
+    views.display(res, CONFIRM_VARIANT_VIEW, withAnalytics(charge, {
+      hitPage: routeFor('new', charge.id) + '/success',
+      charge: charge,
+      confirmPath: confirmPath,
+      gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
+      post_cancel_action: routeFor('cancel', charge.id),
+      analytics: {
+        testingVariant: 'Condensed confirmation page v1'
+      }
     }, confirmPath))
   },
   capture: (req, res) => {

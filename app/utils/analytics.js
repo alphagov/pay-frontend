@@ -24,6 +24,7 @@ exports.withAnalytics = (charge, param) => {
       analyticsId: charge.gatewayAccount.analyticsId,
       type: charge.gatewayAccount.type,
       paymentProvider: charge.gatewayAccount.paymentProvider,
-      amount: charge.amount
+      amount: charge.amount,
+      testingVariant: 'original'
     }}, param)
 }

@@ -43,15 +43,7 @@ exports.bind = function (app) {
     stateEnforcer
   ]
 
-  app.get(
-    card.new.path,
-    middlewareStack,
-    abTest.switch({
-      threshold:      90,
-      defaultVariant: charge.new,
-      testingVariant: charge.new
-    })
-  )
+  app.get(card.new.path, middlewareStack, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut)
@@ -62,7 +54,15 @@ exports.bind = function (app) {
   app.post(card.auth3dsHandler.path, middlewareStack, charge.auth3dsHandler)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
-  app.get(card.confirm.path, middlewareStack, charge.confirm)
+  app.get(
+    card.confirm.path,
+    middlewareStack,
+    abTest.switch({
+      threshold: 90,
+      defaultVariant: charge.confirm,
+      testingVariant: charge.confirmVariant
+    })
+  )
   app.post(card.capture.path, middlewareStack, charge.capture)
   app.post(card.cancel.path, middlewareStack, charge.cancel)
   app.post(card.checkCard.path, retrieveCharge, charge.checkCard)
