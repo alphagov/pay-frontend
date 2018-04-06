@@ -58,7 +58,7 @@ exports.bind = function (app) {
     card.confirm.path,
     middlewareStack,
     abTest.switch({
-      threshold: 90,
+      threshold: process.env.AB_TEST_THRESHOLD || 100,
       defaultVariant: charge.confirm,
       testingVariant: charge.confirmVariant
     })

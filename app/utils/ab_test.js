@@ -54,7 +54,12 @@ exports.switch = function (opts) {
   return function (req, res) {
     let sessionValue = exports._getOrSetSession(req)
 
-    if (sessionValue <= threshold && !req.query.showAbTest) {
+    let showDefault = true
+    if (sessionValue <= threshold) showDefault = true
+    if (req.query.showAbTest) showDefault = false
+    if (req.query.avoidAbTest) showDefault = true
+
+    if (showDefault) {
       logger.info(
         'Session value was %s, <= %s, showing default variant',
         sessionValue,
