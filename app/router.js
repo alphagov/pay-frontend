@@ -13,8 +13,9 @@ const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
-
 const abTest = require('./utils/ab_test.js')
+
+const AB_TEST_THRESHOLD = process.env.AB_TEST_THRESHOLD || 100
 
 exports.paths = paths
 
@@ -58,7 +59,7 @@ exports.bind = function (app) {
     card.confirm.path,
     middlewareStack,
     abTest.switch({
-      threshold: process.env.AB_TEST_THRESHOLD || 100,
+      threshold: AB_TEST_THRESHOLD,
       defaultVariant: charge.confirm,
       testingVariant: charge.confirmVariant
     })

@@ -5,7 +5,7 @@ const random = require('./random')
 const crypto = require('crypto')
 const logger = require('winston')
 
-exports.uniformlyGeneratedRandomNumber = function () {
+exports.uniformlyGeneratedRandomNumber = () => {
   // AFAIK node's Math.random function is not uniformly random
   // Hence the following dance
   //
@@ -25,12 +25,12 @@ exports.uniformlyGeneratedRandomNumber = function () {
   return uniformModNumber
 }
 
-exports._getSession = function (req) {
+exports._getSession = req => {
   let sessionVal = cookie.getSessionVariable(req, 'abTestId')
   return sessionVal || null
 }
 
-exports._setSession = function (req) {
+exports._setSession = req => {
   return cookie.setSessionVariable(
     req,
     'abTestId',
@@ -38,7 +38,7 @@ exports._setSession = function (req) {
   )
 }
 
-exports._getOrSetSession = function (req) {
+exports._getOrSetSession = req => {
   if (exports._getSession(req) === null) {
     logger.info('Could not find user ab testing session, creating one')
     exports._setSession(req)
@@ -46,28 +46,17 @@ exports._getOrSetSession = function (req) {
   return exports._getSession(req)
 }
 
-exports.switch = function (opts) {
-  let threshold = Math.floor(opts.threshold || 90)
-  let defaultVariant = opts.defaultVariant
-  let testingVariant = opts.testingVariant
+exports.switch = opts => {
+  const threshold = Math.floor(opts.threshold || 90)
+  const defaultVariant = opts.defaultVariant
+  const testingVariant = opts.testingVariant
 
-  return function (req, res) {
-    let sessionValue = exports._getOrSetSession(req)
+  return (req, res) => {
+    const sessionValue = exports._getOrSetSession(req)
 
-    let showDefault = true
-    if (sessionValue <= threshold) showDefault = true
-    if (req.query.showAbTest) showDefault = false
-    if (req.query.avoidAbTest) showDefault = true
+    const showABTest = req.query.abTest ? req.query.abTest === 'yes' : sessionValue > threshold
 
-    if (showDefault) {
-      logger.info(
-        'Session value was %s, <= %s, showing default variant',
-        sessionValue,
-        threshold
-      )
-
-      return defaultVariant(req, res)
-    } else {
+    if (showABTest) {
       logger.info(
         'Session value was %s, >= %s, showing testing variant',
         sessionValue,
@@ -75,6 +64,14 @@ exports.switch = function (opts) {
       )
 
       return testingVariant(req, res)
+    } else {
+      logger.info(
+        'Session value was %s, <= %s, showing default variant',
+        sessionValue,
+        threshold
+      )
+
+      return defaultVariant(req, res)
     }
   }
 }
