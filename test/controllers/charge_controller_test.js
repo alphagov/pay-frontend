@@ -176,7 +176,8 @@ describe('card details endpoint', function () {
         'type': 'test',
         'paymentProvider': 'sandbox',
         'path': '/card_details/3/error',
-        'amount': '4.99'
+        'amount': '4.99',
+        'testingVariant': 'original'
       }
     }
     expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
@@ -196,7 +197,8 @@ describe('card details endpoint', function () {
         'type': 'test',
         'paymentProvider': 'sandbox',
         'path': '/card_details/3/capture_failure',
-        'amount': '4.99'
+        'amount': '4.99',
+        'testingVariant': 'original'
       }
     }
     expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line

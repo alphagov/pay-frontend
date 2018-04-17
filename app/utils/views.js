@@ -60,6 +60,10 @@ module.exports = {
     view: 'confirm',
     analyticsPage: '/confirm'
   },
+  confirm_variant: {
+    view: 'confirm_variant',
+    analyticsPage: '/confirm_variant'
+  },
   charge: {
     view: 'charge'
   },
