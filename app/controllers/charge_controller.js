@@ -14,6 +14,7 @@ const State = require('../models/state.js')
 const paths = require('../paths.js')
 const CHARGE_VIEW = 'charge'
 const CONFIRM_VIEW = 'confirm'
+const CONFIRM_VARIANT_VIEW = 'confirm_variant'
 const AUTH_WAITING_VIEW = 'auth_waiting'
 const AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required'
 const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
@@ -65,6 +66,11 @@ function build3dsPayload (req) {
   const providerStatus = AUTH_3DS_EPDQ_RESULTS[_.get(req, 'body.providerStatus', '')]
   if (!_.isUndefined(providerStatus)) {
     auth3dsPayload.auth_3ds_result = providerStatus
+  }
+
+  const md = _.get(req, 'body.MD')
+  if (!_.isUndefined(md)) {
+    auth3dsPayload.md = md
   }
 
   return auth3dsPayload
@@ -198,14 +204,19 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const issuerUrl = _.get(charge, 'auth3dsData.issuerUrl')
     const paRequest = _.get(charge, 'auth3dsData.paRequest')
+    const md = _.get(charge, 'auth3dsData.md')
     const htmlOut = _.get(charge, 'auth3dsData.htmlOut')
 
     if (issuerUrl && paRequest) {
-      views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, {
+      let data = {
         issuerUrl: issuerUrl,
         paRequest: paRequest,
         threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})}`
-      })
+      }
+      if (md) {
+        data.md = md
+      }
+      views.display(res, AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (htmlOut) {
       views.display(res, AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
@@ -218,7 +229,8 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     views.display(res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
-      paResponse: _.get(req, 'body.PaRes')
+      paResponse: _.get(req, 'body.PaRes'),
+      md: _.get(req, 'body.MD')
     })
   },
   auth3dsRequiredInEpdq: (req, res) => {
@@ -237,6 +249,20 @@ module.exports = {
       confirmPath: confirmPath,
       gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
       post_cancel_action: routeFor('cancel', charge.id)
+    }, confirmPath))
+  },
+  confirmVariant: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const confirmPath = routeFor('confirm', charge.id)
+    views.display(res, CONFIRM_VARIANT_VIEW, withAnalytics(charge, {
+      hitPage: routeFor('new', charge.id) + '/success',
+      charge: charge,
+      confirmPath: confirmPath,
+      gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
+      post_cancel_action: routeFor('cancel', charge.id),
+      analytics: {
+        testingVariant: 'Condensed confirmation page v1'
+      }
     }, confirmPath))
   },
   capture: (req, res) => {
