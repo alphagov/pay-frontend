@@ -35,3 +35,5 @@ staging-2.alpha_staging-2-234.status=success
 production-2.tag=FAILED-234
 
 production-2.FAILED-234.date=
+
+production-2.FAILED-234.status=failed
