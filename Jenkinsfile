@@ -98,17 +98,8 @@ pipeline {
       }
     }
     stage('Smoke Tests') {
-      failFast true
-      parallel {
-        stage('Card Smoke Test') {
-          when { branch 'master' }
-          steps { runCardSmokeTest() }
-        }
-        stage('Product Smoke Test') {
-          when { branch 'master' }
-          steps { runProductsSmokeTest() }
-        }
-      }
+      when { branch 'master' }
+      steps { runCardSmokeTest() }
     }
     stage('Complete') {
       failFast true
