@@ -47,7 +47,7 @@ exports._getOrSetSession = req => {
 }
 
 exports.switch = opts => {
-  const threshold = Math.floor(opts.threshold || 90)
+  const threshold = Math.floor(parseInt(opts.threshold, 10) || 100)
   const defaultVariant = opts.defaultVariant
   const testingVariant = opts.testingVariant
 

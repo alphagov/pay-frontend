@@ -15,7 +15,7 @@ const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
 const abTest = require('./utils/ab_test.js')
 
-const AB_TEST_THRESHOLD = parseInt(process.env.AB_TEST_THRESHOLD, 10) || 100
+const AB_TEST_THRESHOLD = process.env.AB_TEST_THRESHOLD
 
 exports.paths = paths
 
