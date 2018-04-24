@@ -21,8 +21,8 @@ module.exports = () => {
     const value = input.value
     const confirmationId = `${input.id}-confirmation`
     let confirmation = document.getElementById(confirmationId)
-    const confirmationLabel = input.dataset.confirmationLabel
-    const confirmationPrepend = input.dataset.confirmationPrepend
+    const confirmationLabel = input.dataset.confirmationLabel || ''
+    const confirmationPrepend = input.dataset.confirmationPrepend || ''
 
     if (!confirmation) {
       const confirmationInner = `
