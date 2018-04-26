@@ -21,6 +21,7 @@ const router = require('./app/router')
 const cookies = require('./app/utils/cookies')
 const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
+const {userPersistenceMiddleware} = require('./app/utils/user_persistence')
 
 // Global constants
 const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.min.css')
@@ -74,6 +75,8 @@ function initialiseGlobalMiddleware (app) {
   app.use(bodyParser.urlencoded({extended: true}))
 
   app.use(compression())
+
+  app.use(userPersistenceMiddleware)
 
   app.disable('x-powered-by')
 }
