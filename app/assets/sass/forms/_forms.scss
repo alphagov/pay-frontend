@@ -4,6 +4,7 @@
 @import "../helpers/helpers";
 @import "_form-errors";
 @import "colours";
+@import "_multiple-choice";
 
 // Fieldset is used to group more than one .form-group
 fieldset {
@@ -284,6 +285,11 @@ fieldset {
 
 select.form-control {
   -webkit-appearance: menulist;
+}
+
+.form-control-full {
+  @extend .form-control;
+  width: 100%;
 }
 
 .form-control-3-4 {

@@ -12,6 +12,7 @@ const Charge = require('../models/charge.js')
 const Card = require('../models/card.js')
 const State = require('../models/state.js')
 const paths = require('../paths.js')
+const {commonTypos} = require('../utils/email_tools.js')
 const CHARGE_VIEW = 'charge'
 const CONFIRM_VIEW = 'confirm'
 const CONFIRM_VARIANT_VIEW = 'confirm_variant'
@@ -21,7 +22,7 @@ const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
 const AUTH_3DS_REQUIRED_HTML_OUT_VIEW = 'auth_3ds_required_html_out'
 const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
 const CAPTURE_WAITING_VIEW = 'capture_waiting'
-const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry']
+const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
 const {countries} = require('../services/countries.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
@@ -102,11 +103,23 @@ module.exports = {
       .catch(() => redirect(res).toNew(req.chargeId))
       .then(data => {
         cardBrand = data.cardBrand
-        if (data.validation.hasError) {
-          charge.countries = countries
-          appendChargeForNewView(charge, req, charge.id)
-          _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-          return views.display(res, CHARGE_VIEW, data.validation)
+        if (!req.body['email-typo-sugestion']) {
+          if (data.validation.hasError || commonTypos(req.body.email)) {
+            if (commonTypos(req.body.email)) {
+              data.validation.hasError = true
+              data.validation.errorFields.push({
+                cssKey: 'email-typo',
+                value: i18n.__('chargeController.fieldErrors.fields.email.typo')
+              })
+              data.validation.typos = commonTypos(req.body.email)
+            }
+            charge.countries = countries
+            appendChargeForNewView(charge, req, charge.id)
+            _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+            return views.display(res, CHARGE_VIEW, data.validation)
+          }
+        } else {
+          req.body.email = req.body['email-typo-sugestion']
         }
         logging.authChargePost(authUrl)
         Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.email)

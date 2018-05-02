@@ -42,7 +42,7 @@
                maxlength="26"
                class="form-control-1-2"
                autocomplete="cc-number"
-               value=""
+               value="{{cardNo}}"
         />
         <ul class="accepted-cards field-empty">
           {% if allowedCards %}
@@ -82,18 +82,32 @@
         {% endif %}
         <div class="date-container">
           <label class="form-hint" for="expiry-month"> Month </label>
-          <input id="expiry-month" type="number" name="expiryMonth"
-                 class="form-control"
-                 min="1" max="12" minlength="1" maxlength="2" autocomplete="cc-exp-month"/>
+          <input
+            id="expiry-month"
+            type="number"
+            name="expiryMonth"
+            value="{{expiryMonth}}"
+            class="form-control"
+            min="1"
+            max="12"
+            minlength="1"
+            maxlength="2"
+            autocomplete="cc-exp-month"/>
           <p class="seperator"> / </p>
         </div>
         <div class="date-container">
           <div class="form-hint"> Year</div>
-          <input id="expiry-year" type="number" name="expiryYear" minlength="2" maxlength="4"
-                 class="form-control"
-                 autocomplete="cc-exp-year"
-                 data-last-of-form-group
-                 data-required
+          <input
+            id="expiry-year"
+            type="number"
+            name="expiryYear"
+            value="{{expiryYear}}"
+            minlength="2"
+            maxlength="4"
+            class="form-control"
+            autocomplete="cc-exp-year"
+            data-last-of-form-group
+            data-required
           />
         </div>
       </div>
@@ -146,7 +160,7 @@
         </label>
         <input id="cvc"
                type="number"
-               value=""
+               value="{{cvc}}"
                name="cvc"
                class="form-control-1-8 cvc"
                maxlength="4"
@@ -285,8 +299,31 @@
                data-confirmation="true"
                data-confirmation-label="An email will be sent to: "/>
       </div>
+      {% if typos %}
+        <div class="form-group form-group-email-typo error">
+          <legend for="email-typo" id="email-typo-lbl" class="form-label-bold error-label">
+            <p class="error-message" id="error-typo">
+              {{ i18n.chargeController.fieldErrors.fields.email.typo }}
+            </p>
+          </legend>
+          <div class="multiple-choice">
+            <input id="email-corrected" type="radio" name="email-typo-sugestion" value="{{ typos.full }}" checked>
+            <label class="form-label" for="email-corrected">{{ typos.address }}@<strong>{{ typos.domain }}</strong></label>
+          </div>
+          <div class="multiple-choice">
+            <input id="email-uncorrected" type="radio" name="email-typo-sugestion" value="{{ email }}">
+            <label class="form-label" for="email-uncorrected">{{ email }}</label>
+          </div>
+        </div>
+      {% endif %}
       <div>
-        <input id="submit-card-details" type="submit" class="button" value="Continue" name="submitCardDetails"/>
+        <input id="submit-card-details" type="submit" class="button" value="Continue" name="submitCardDetails"
+        {% if typos %}
+        data-click-events
+        data-click-category="Typo made"
+        data-click-action="Corrected email: {{ typos.domain }}"
+        {% endif %}
+        />
       </div>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
