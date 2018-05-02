@@ -1,12 +1,18 @@
-var path = require('path')
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
-var assert = require('assert')
-var CardModel = require(path.join(__dirname, '/../../app/models/card.js'))
-var nock = require('nock')
-var wrongPromise = require(path.join(__dirname, '/../test_helpers/test_helpers.js')).unexpectedPromise
+'use strict'
 
-var aRequestId = 'unique-request-id'
-var aCorrelationHeader = {
+// npm dependencies
+const path = require('path')
+const assert = require('assert')
+const nock = require('nock')
+const {unexpectedPromise} = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
+
+// local dependencies
+require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+const CardModel = require(path.join(__dirname, '/../../app/models/card.js'))
+
+// constants
+const aRequestId = 'unique-request-id'
+const aCorrelationHeader = {
   reqheaders: {
     'x-request-id': aRequestId
   }
@@ -18,12 +24,12 @@ describe('card', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
-            .post('/v1/api/card')
-            .reply(404)
+          .post('/v1/api/card')
+          .reply(404)
       })
 
       it('should return the correct message', function () {
-        return CardModel({}, aRequestId).checkCard(1234).then(wrongPromise, function (message) {
+        return CardModel({}, aRequestId).checkCard(1234).then(unexpectedPromise, function (message) {
           assert.equal(message, 'Your card is not supported')
         })
       })
@@ -34,12 +40,12 @@ describe('card', function () {
         nock.cleanAll()
 
         nock(process.env.CARDID_HOST, aCorrelationHeader)
-            .post('/v1/api/card')
-            .reply(201)
+          .post('/v1/api/card')
+          .reply(201)
       })
 
       it('should resolve', function () {
-        return CardModel({}, aRequestId).checkCard(1234).then(() => {}, wrongPromise)
+        return CardModel({}, aRequestId).checkCard(1234).then(() => {}, unexpectedPromise)
       })
     })
 
@@ -48,12 +54,12 @@ describe('card', function () {
         nock.cleanAll()
 
         nock(process.env.CARDID_HOST)
-            .post('/v1/api/card')
-            .reply(201)
+          .post('/v1/api/card')
+          .reply(201)
       })
 
       it('should resolve', function () {
-        return CardModel().checkCard(1234).then(() => {}, wrongPromise)
+        return CardModel().checkCard(1234).then(() => {}, unexpectedPromise)
       })
     })
 
@@ -67,9 +73,9 @@ describe('card', function () {
 
       it('should reject with appropriate message', function () {
         return CardModel([{brand: 'foo', label: 'foo', type: 'CREDIT', id: 'id-0'}])
-        .checkCard(1234).then(wrongPromise, function (message) {
-          assert.equal(message, 'Bar is not supported')
-        })
+          .checkCard(1234).then(unexpectedPromise, function (message) {
+            assert.equal(message, 'Bar is not supported')
+          })
       })
     })
 
@@ -83,9 +89,9 @@ describe('card', function () {
 
       it('should reject with appropriate message', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0'}], aRequestId)
-        .checkCard(1234).then(wrongPromise, function (message) {
-          assert.equal(message, 'Bar debit cards are not supported')
-        })
+          .checkCard(1234).then(unexpectedPromise, function (message) {
+            assert.equal(message, 'Bar debit cards are not supported')
+          })
       })
     })
 
@@ -99,9 +105,9 @@ describe('card', function () {
 
       it('should reject with appropriate message', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'DEBIT', id: 'id-0'}])
-        .checkCard(1234).then(wrongPromise, function (message) {
-          assert.equal(message, 'Bar credit cards are not supported')
-        })
+          .checkCard(1234).then(unexpectedPromise, function (message) {
+            assert.equal(message, 'Bar credit cards are not supported')
+          })
       })
     })
 
@@ -117,7 +123,7 @@ describe('card', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0'}])
           .checkCard(1234).then((cardBrand) => {
             assert.equal(cardBrand, 'bar')
-          }, wrongPromise)
+          }, unexpectedPromise)
       })
     })
 
@@ -133,26 +139,26 @@ describe('card', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0'}])
           .checkCard(1234).then((cardBrand) => {
             assert.equal(cardBrand, 'bar')
-          }, wrongPromise)
+          }, unexpectedPromise)
       })
     })
   })
 
   describe('allowedCards', function () {
     it('should return the passed in cards', function () {
-      var cards = [{brand: 'foo', debit: true}]
-      var Card = CardModel(cards)
-      var CardCopy = CardModel(cards)
+      const cards = [{brand: 'foo', debit: true}]
+      const Card = CardModel(cards)
+      const CardCopy = CardModel(cards)
       assert.deepEqual(Card.allowed, cards)
-      // shoudl return a copy
+      // should return a copy
       assert.notEqual(Card.allowed, cards)
       assert.notEqual(Card.allowed, CardCopy.allowed)
     })
 
     it('should return the passed in cards wityhdrawal types', function () {
-      var debitOnly = CardModel([{brand: 'foo', debit: true}])
-      var creditOnly = CardModel([{brand: 'foo', credit: true}])
-      var both = CardModel([{brand: 'foo', credit: true, debit: true}])
+      const debitOnly = CardModel([{brand: 'foo', debit: true}])
+      const creditOnly = CardModel([{brand: 'foo', credit: true}])
+      const both = CardModel([{brand: 'foo', credit: true, debit: true}])
 
       assert.deepEqual(debitOnly.withdrawalTypes, ['debit'])
       assert.deepEqual(creditOnly.withdrawalTypes, ['credit'])
@@ -162,9 +168,9 @@ describe('card', function () {
 
   describe('withdrawalTypes', function () {
     it('should return the passed in cards wityhdrawal types', function () {
-      var debitOnly = CardModel([{brand: 'foo', debit: true}])
-      var creditOnly = CardModel([{brand: 'foo', credit: true}])
-      var both = CardModel([{brand: 'foo', credit: true, debit: true}])
+      const debitOnly = CardModel([{brand: 'foo', debit: true}])
+      const creditOnly = CardModel([{brand: 'foo', credit: true}])
+      const both = CardModel([{brand: 'foo', credit: true, debit: true}])
 
       assert.deepEqual(debitOnly.withdrawalTypes, ['debit'])
       assert.deepEqual(creditOnly.withdrawalTypes, ['credit'])

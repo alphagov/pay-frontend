@@ -1,19 +1,25 @@
-process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk'
-var path = require('path')
-var request = require('supertest')
-var app = require(path.join(__dirname, '/../server.js')).getApp()
-var helper = require(path.join(__dirname, '/test_helpers/test_helpers.js'))
-var nock = require('nock')
+'use strict'
+
+// npm dependencies
+const path = require('path')
+const request = require('supertest')
+const nock = require('nock')
 const cheerio = require('cheerio')
-const expect = require('chai').expect
+const {expect} = require('chai')
 
-var cookie = require(path.join(__dirname, '/test_helpers/session.js'))
+// local dependencies
+const app = require(path.join(__dirname, '/../server.js')).getApp()
+const helper = require(path.join(__dirname, '/test_helpers/test_helpers.js'))
+const cookie = require(path.join(__dirname, '/test_helpers/session.js'))
 
-var chargeId = '23144323'
-var frontendCardDetailsPath = '/card_details'
+// constants
+const chargeId = '23144323'
+const frontendCardDetailsPath = '/card_details'
+
+process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwefjkbwfiu24fmjbwfk'
 
 describe('The /charge endpoint undealt statuses', function () {
-  var chargeNotAllowedStatuses = [
+  const chargeNotAllowedStatuses = [
     'READY_FOR_CAPTURE'
   ]
 
@@ -21,9 +27,9 @@ describe('The /charge endpoint undealt statuses', function () {
     beforeEach(function () {
       nock.cleanAll()
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
-        status, 'http://www.example.com/service'
-      ))
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+          status, 'http://www.example.com/service'
+        ))
     })
 
     it('should error when the payment status is ' + status, function (done) {
@@ -41,7 +47,7 @@ describe('The /charge endpoint undealt statuses', function () {
 })
 
 describe('The /charge endpoint dealt statuses', function () {
-  var chargeAllowedStatuses = [
+  const chargeAllowedStatuses = [
     {
       name: 'authorisation success',
       view: 'AUTHORISATION_SUCCESS'
@@ -122,9 +128,9 @@ describe('The /charge endpoint dealt statuses', function () {
   chargeAllowedStatuses.forEach(function (state) {
     it('should not error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
-        state.name, 'http://www.example.com/service'
-      ))
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+          state.name, 'http://www.example.com/service'
+        ))
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
@@ -139,7 +145,7 @@ describe('The /charge endpoint dealt statuses', function () {
 })
 
 describe('The /confirm endpoint undealt statuses', function () {
-  var confirmNotAllowedStatuses = [
+  const confirmNotAllowedStatuses = [
     'CREATED',
     'AUTHORISATION SUBMITTED',
     'READY_FOR_CAPTURE'
@@ -155,9 +161,9 @@ describe('The /confirm endpoint undealt statuses', function () {
   confirmNotAllowedStatuses.forEach(function (status) {
     it('should error when the payment status is ' + status, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
-        status, 'http://www.example.com/service'
-      ))
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+          status, 'http://www.example.com/service'
+        ))
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
@@ -173,7 +179,7 @@ describe('The /confirm endpoint undealt statuses', function () {
 })
 
 describe('The /confirm endpoint dealt statuses', function () {
-  var confirmAllowedStatuses = [
+  const confirmAllowedStatuses = [
     {
       name: 'capture submitted',
       view: 'CAPTURE_SUBMITTED',
@@ -256,9 +262,9 @@ describe('The /confirm endpoint dealt statuses', function () {
   confirmAllowedStatuses.forEach(function (state) {
     it('should not error when the payment status is ' + state.name, function (done) {
       nock(process.env.CONNECTOR_HOST)
-      .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
-        state.name, 'http://www.example.com/service'
-      ))
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(
+          state.name, 'http://www.example.com/service'
+        ))
 
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId + '/confirm')
