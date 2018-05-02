@@ -1,5 +1,8 @@
 'use strict'
 
+// NPM dependencies
+const mailcheck = require('mailcheck')
+
 /* Uses Regexes from the rfc822-validate library.
    We use rfc822-validate in our email validation
    so this follows that standard. */
@@ -18,10 +21,21 @@ const sAddrSpec = '(' + sLocalPart + ')' + '\\x40' + '(' + sDomain + ')' // comp
 const sValidEmail = '^' + sAddrSpec + '$' // as whole string
 const reValidEmail = new RegExp(sValidEmail)
 
-module.exports = email => {
+const validEmail = email => {
   const match = reValidEmail.exec(email)
   return {
     'local-part': match !== null ? match[1] : false,
     'domain': match !== null ? match[7] : false
   }
+}
+
+const commonTypos = email => {
+  return mailcheck.run({
+    email
+  })
+}
+
+module.exports = {
+  validEmail,
+  commonTypos
 }

@@ -88,7 +88,7 @@ function email (email) {
   if (email && email.length > EMAIL_MAX_LENGTH) return 'invalid_length'
   if (containsSuspectedPAN(email)) return 'contains_too_many_digits'
   if (!rfc822Validator(email)) return 'message'
-  const domain = emailTools(email).domain
+  const domain = emailTools.validEmail(email).domain
   return domain && domain.indexOf('.') === -1 ? 'message' : true
 }
 function cardholderName (name) {

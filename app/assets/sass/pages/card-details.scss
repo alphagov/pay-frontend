@@ -52,6 +52,15 @@
 
 }
 
+.form-group-email-typo {
+  @extend .error;
+
+  @include media(tablet) {
+    width: 50%;
+    margin-right: 50%;
+  }
+}
+
 #cancel-payment {
   // Remove all decorations to look like normal text
   display: inline;
