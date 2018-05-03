@@ -30,6 +30,7 @@ const validEmail = email => {
 }
 
 const commonTypos = email => {
+  mailcheck.defaultTopLevelDomains.push('gov.uk')
   return mailcheck.run({
     email
   })
