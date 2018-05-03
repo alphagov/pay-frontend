@@ -1,27 +1,29 @@
-var logger = require('winston')
-var q = require('q')
+'use strict'
 
-var baseClient = require('../utils/base_client')
-var paths = require('../paths.js')
-var State = require('./state.js')
+// npm dependencies
+const logger = require('winston')
+const q = require('q')
+
+// local dependencies
+const baseClient = require('../utils/base_client')
+const paths = require('../paths.js')
+const State = require('./state.js')
 
 module.exports = function (correlationId) {
-  'use strict'
-
   correlationId = correlationId || ''
 
-  var connectorurl = function (resource, params) {
+  const connectorurl = function (resource, params) {
     return paths.generateRoute(`connectorCharge.${resource}`, params)
   }
 
-  var updateToEnterDetails = function (chargeId) {
+  const updateToEnterDetails = function (chargeId) {
     return updateStatus(chargeId, State.ENTERING_CARD_DETAILS)
   }
 
-  var updateStatus = function (chargeId, status) {
-    var url = connectorurl('updateStatus', {chargeId: chargeId})
-    var data = {new_status: status}
-    var defer = q.defer()
+  const updateStatus = function (chargeId, status) {
+    const url = connectorurl('updateStatus', {chargeId: chargeId})
+    const data = {new_status: status}
+    const defer = q.defer()
 
     logger.debug('[%s] Calling connector to update charge status -', correlationId, {
       service: 'connector',
@@ -31,7 +33,7 @@ module.exports = function (correlationId) {
       url: url
     })
 
-    var startTime = new Date()
+    const startTime = new Date()
 
     baseClient.put(url, { data: data, correlationId: correlationId }, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
@@ -51,9 +53,9 @@ module.exports = function (correlationId) {
     return defer.promise
   }
 
-  var find = function (chargeId) {
-    var defer = q.defer()
-    var url = connectorurl('show', {chargeId: chargeId})
+  const find = function (chargeId) {
+    const defer = q.defer()
+    const url = connectorurl('show', {chargeId: chargeId})
 
     logger.debug('[%s] Calling connector to get charge -', correlationId, {
       service: 'connector',
@@ -62,7 +64,7 @@ module.exports = function (correlationId) {
       url: url
     })
 
-    var startTime = new Date()
+    const startTime = new Date()
     baseClient.get(url, {correlationId: correlationId}, function (data, response) {
       if (response.statusCode !== 200) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
@@ -90,9 +92,9 @@ module.exports = function (correlationId) {
     return defer.promise
   }
 
-  var capture = function (chargeId) {
-    var url = connectorurl('capture', {chargeId: chargeId})
-    var defer = q.defer()
+  const capture = function (chargeId) {
+    const url = connectorurl('capture', {chargeId: chargeId})
+    const defer = q.defer()
 
     logger.debug('[%s] Calling connector to do capture -', correlationId, {
       service: 'connector',
@@ -101,29 +103,29 @@ module.exports = function (correlationId) {
       url: url
     })
 
-    var startTime = new Date()
+    const startTime = new Date()
     baseClient.post(url, { correlationId: correlationId }, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
       captureComplete(data, response, defer)
     })
-    .on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
-      logger.error('[%s] Calling connector to do capture failed -', correlationId, {
-        service: 'connector',
-        method: 'POST',
-        chargeId: chargeId,
-        url: url,
-        error: err
+      .on('error', function (err) {
+        logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
+        logger.error('[%s] Calling connector to do capture failed -', correlationId, {
+          service: 'connector',
+          method: 'POST',
+          chargeId: chargeId,
+          url: url,
+          error: err
+        })
+        captureFail(err, defer)
       })
-      captureFail(err, defer)
-    })
 
     return defer.promise
   }
 
-  var cancel = function (chargeId) {
-    var url = connectorurl('cancel', {chargeId: chargeId})
-    var defer = q.defer()
+  const cancel = function (chargeId) {
+    const url = connectorurl('cancel', {chargeId: chargeId})
+    const defer = q.defer()
 
     logger.debug('[%s] Calling connector to cancel a charge -', correlationId, {
       service: 'connector',
@@ -132,7 +134,7 @@ module.exports = function (correlationId) {
       url: url
     })
 
-    var startTime = new Date()
+    const startTime = new Date()
     baseClient.post(url, { correlationId: correlationId }, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
       cancelComplete(data, response, defer)
@@ -151,8 +153,8 @@ module.exports = function (correlationId) {
     return defer.promise
   }
 
-  var cancelComplete = function (data, response, defer) {
-    var code = response.statusCode
+  const cancelComplete = function (data, response, defer) {
+    const code = response.statusCode
     if (code === 204) return defer.resolve()
     logger.error('[%s] Calling connector cancel a charge failed -', correlationId, {
       service: 'connector',
@@ -163,19 +165,19 @@ module.exports = function (correlationId) {
     return defer.reject(new Error('POST_FAILED'))
   }
 
-  var cancelFail = function (err, defer) {
+  const cancelFail = function (err, defer) {
     clientUnavailable(err, defer)
   }
 
-  var findByToken = function (tokenId) {
-    var defer = q.defer()
+  const findByToken = function (tokenId) {
+    const defer = q.defer()
     logger.debug('[%s] Calling connector to find a charge by token -', correlationId, {
       service: 'connector',
       method: 'GET'
     })
 
-    var startTime = new Date()
-    var findByUrl = connectorurl('findByToken', {chargeTokenId: tokenId})
+    const startTime = new Date()
+    const findByUrl = connectorurl('findByToken', {chargeTokenId: tokenId})
 
     baseClient.get(findByUrl, {correlationId: correlationId}, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
@@ -202,18 +204,18 @@ module.exports = function (correlationId) {
     return defer.promise
   }
 
-  var captureComplete = function (data, response, defer) {
-    var code = response.statusCode
+  const captureComplete = function (data, response, defer) {
+    const code = response.statusCode
     if (code === 204) return defer.resolve()
     if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
   }
 
-  var captureFail = function (err, defer) {
+  const captureFail = function (err, defer) {
     clientUnavailable(err, defer)
   }
 
-  var updateComplete = function (chargeId, data, response, defer) {
+  const updateComplete = function (chargeId, data, response, defer) {
     if (response.statusCode !== 204) {
       logger.error('[%s] Calling connector to update charge status failed -', correlationId, {
         chargeId: chargeId,
@@ -226,18 +228,18 @@ module.exports = function (correlationId) {
     defer.resolve({success: 'OK'})
   }
 
-  var patch = function (chargeId, op, path, value) {
-    var defer = q.defer()
+  const patch = function (chargeId, op, path, value) {
+    const defer = q.defer()
 
-    var startTime = new Date()
-    var chargesUrl = process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
+    const startTime = new Date()
+    const chargesUrl = process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
 
     logger.debug('[%s] Calling connector to patch charge -', correlationId, {
       service: 'connector',
       method: 'PATCH'
     })
 
-    var params = {
+    const params = {
       data: {
         op: op,
         path: path,
@@ -248,7 +250,7 @@ module.exports = function (correlationId) {
 
     baseClient.patch(chargesUrl + chargeId, params, function (data, response) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-      var code = response.statusCode
+      const code = response.statusCode
       if (code === 200) {
         defer.resolve()
       } else {
@@ -267,7 +269,7 @@ module.exports = function (correlationId) {
     return defer.promise
   }
 
-  var clientUnavailable = function (error, defer) {
+  const clientUnavailable = function (error, defer) {
     defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
 

@@ -1,18 +1,26 @@
 'use strict'
+
+// npm dependencies
 const logger = require('winston')
+const _ = require('lodash')
+const i18n = require('i18n')
+
+// local dependencies
 const logging = require('../utils/logging.js')
 const baseClient = require('../utils/base_client')
-
-const _ = require('lodash')
 const views = require('../utils/views.js')
 const normalise = require('../services/normalise_charge.js')
 const chargeValidator = require('../utils/charge_validation_backend.js')
-const i18n = require('i18n')
 const Charge = require('../models/charge.js')
 const Card = require('../models/card.js')
 const State = require('../models/state.js')
 const paths = require('../paths.js')
+const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
+const {countries} = require('../services/countries.js')
 const {commonTypos} = require('../utils/email_tools.js')
+const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+
+// constants
 const CHARGE_VIEW = 'charge'
 const CONFIRM_VIEW = 'confirm'
 const CONFIRM_VARIANT_VIEW = 'confirm_variant'
@@ -22,10 +30,7 @@ const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
 const AUTH_3DS_REQUIRED_HTML_OUT_VIEW = 'auth_3ds_required_html_out'
 const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
 const CAPTURE_WAITING_VIEW = 'capture_waiting'
-const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
-const {countries} = require('../services/countries.js')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry']
 const AUTH_3DS_EPDQ_RESULTS = {
   success: 'AUTHORISED',
   declined: 'DECLINED',
@@ -206,8 +211,8 @@ module.exports = {
             views.display(res, 'ERROR', withAnalytics(charge))
         }
       }).on('error', function () {
-        views.display(res, 'ERROR', withAnalytics(charge))
-      })
+      views.display(res, 'ERROR', withAnalytics(charge))
+    })
   },
   auth3dsRequired: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)

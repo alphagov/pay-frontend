@@ -19,11 +19,11 @@ exports.new = (req, res) => {
   const correlationId = req.headers[CORRELATION_HEADER] || ''
 
   Charge(correlationId).findByToken(chargeTokenId)
-      .then(chargeData => Token(correlationId).destroy(chargeTokenId).then(() => Promise.resolve(chargeData)))
-      .then(chargeData => {
-        const chargeId = chargeData.externalId
-        setSessionVariable(req, createChargeIdSessionKey(chargeId), {csrfSecret: csrf().secretSync()})
-        res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), {chargeId}))
-      })
-      .catch(() => views.display(res, 'SYSTEM_ERROR', withAnalyticsError()))
+    .then(chargeData => Token(correlationId).destroy(chargeTokenId).then(() => Promise.resolve(chargeData)))
+    .then(chargeData => {
+      const chargeId = chargeData.externalId
+      setSessionVariable(req, createChargeIdSessionKey(chargeId), {csrfSecret: csrf().secretSync()})
+      res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), {chargeId}))
+    })
+    .catch(() => views.display(res, 'SYSTEM_ERROR', withAnalyticsError()))
 }

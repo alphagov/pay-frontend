@@ -58,21 +58,31 @@ describe('chargeTests', function () {
   let RETURN_URL = 'http://www.example.com/service'
 
   function connectorExpects (data) {
-    return mockServer.post(connectorChargePath + chargeId + '/cards', data)
+    return mockServer.post(connectorChargePath + chargeId + '/cards', body => {
+      // Strip non body data (header data) before comparing
+      delete body.accept_header
+      delete body.user_agent_header
+      console.log('COMPARING: ')
+      console.log(JSON.stringify(body))
+      console.log('WITH: ')
+      console.log(JSON.stringify(data))
+      console.log('RETURNING: ' + _.isEqual(body, data))
+      return _.isEqual(body, data)
+    })
   }
 
   function minimumConnectorCardData (cardNumber) {
     return {
-      'card_number': cardNumber,
-      'cvc': '234',
-      'expiry_date': '11/99',
-      'card_brand': 'visa',
-      'cardholder_name': 'Jimi Hendrix',
-      'address': {
-        'line1': '32 Whip Ma Whop Ma Avenue',
-        'postcode': 'Y1 1YN',
-        'country': 'GB',
-        'city': 'Willy wonka'
+      card_number: cardNumber,
+      cvc: '234',
+      card_brand: 'visa',
+      expiry_date: '11/99',
+      cardholder_name: 'Jimi Hendrix',
+      address: {
+        line1: '32 Whip Ma Whop Ma Avenue',
+        city: 'Willy wonka',
+        postcode: 'Y1 1YN',
+        country: 'GB'
       }
     }
   }
@@ -167,9 +177,9 @@ describe('chargeTests', function () {
             const $ = cheerio.load(res.text)
             expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
-            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
-            expect($('#govuk-script-analytics').text()).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '23.45', '')`)
+            expect($('#govuk-script-analytics')[0].children[0].data).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '23.45', '')`)
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
           })
           .end(done)
@@ -214,7 +224,7 @@ describe('chargeTests', function () {
     // TODO - need to split these tests in to smaller files
     describe('Some random grouping -- Needs refactoring :( ', function () {
       it('should redirect user to auth_waiting when connector returns 202', function (done) {
-        var cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -307,7 +317,7 @@ describe('chargeTests', function () {
       })
 
       it('should redirect user from /auth_waiting to /3ds_required when connector returns that 3DS is required for authorisation', function (done) {
-        var cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.AUTH_3DS_REQUIRED, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -322,7 +332,7 @@ describe('chargeTests', function () {
       })
 
       it('should keep user in /auth_waiting when connector returns an authorisation ready state', function (done) {
-        var cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.AUTH_READY, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -336,7 +346,7 @@ describe('chargeTests', function () {
       })
 
       it('should give an error page if user is in entering card details state', function (done) {
-        var cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -370,11 +380,11 @@ describe('chargeTests', function () {
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
-        var cardData = fullConnectorCardData('5105105105105100')
+        const cardData = fullConnectorCardData('5105105105105100')
 
         connectorExpects(cardData).reply(200)
 
-        var formData = minimumFormCardData('5105105105105100')
+        const formData = minimumFormCardData('5105105105105100')
         formData.addressLine2 = cardData.address.line2
         formData.addressCity = cardData.address.city
 
@@ -385,7 +395,7 @@ describe('chargeTests', function () {
       })
 
       it('show an error page when authorization was refused', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -406,16 +416,16 @@ describe('chargeTests', function () {
       })
 
       it('show an error page when the chargeId is not found on the session', function (done) {
-        var cookieValue = cookie.create()
+        const cookieValue = cookie.create()
 
-        var cardData = minimumConnectorCardData('5105105105105100')
+        const cardData = minimumConnectorCardData('5105105105105100')
         cardData.address.line2 = 'bla bla'
         cardData.address.city = 'London'
         cardData.address.country = 'GB'
 
         connectorExpects(cardData).reply(200)
 
-        var formData = minimumFormCardData('5105105105105100')
+        const formData = minimumFormCardData('5105105105105100')
         formData.addressLine2 = cardData.address.line2
         formData.addressCity = cardData.address.city
 
@@ -425,7 +435,7 @@ describe('chargeTests', function () {
       })
 
       it('shows an error when a card is submitted that does not pass the luhn algorithm', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         defaultCardID('1111111111111111')
@@ -433,7 +443,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
             expect($('#card-no-error').text()).to.contains('Enter a valid card number')
@@ -443,7 +453,7 @@ describe('chargeTests', function () {
       })
 
       it('should return country list when invalid fields submitted', (done) => {
-        let cookieValue = cookie.create(chargeId, {})
+        const cookieValue = cookie.create(chargeId, {})
         defaultCardID('4242424242424242')
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -456,7 +466,7 @@ describe('chargeTests', function () {
       })
 
       it('shows an error when a card is submitted with missing fields', function (done) {
-        let cookieValue = cookie.create(chargeId, {})
+        const cookieValue = cookie.create(chargeId, {})
         defaultCardID('4242424242424242')
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -464,7 +474,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
@@ -502,7 +512,7 @@ describe('chargeTests', function () {
       })
 
       it('shows an error when a card is submitted that is not supported', function (done) {
-        let cookieValue = cookie.create(chargeId, {})
+        const cookieValue = cookie.create(chargeId, {})
         nock.cleanAll()
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -515,7 +525,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
@@ -529,7 +539,7 @@ describe('chargeTests', function () {
       })
 
       it('shows an error when a card is submitted that is not supported withdrawal type', function (done) {
-        let cookieValue = cookie.create(chargeId, {})
+        const cookieValue = cookie.create(chargeId, {})
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
           .post('/v1/api/card', () => {
@@ -543,7 +553,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge').text()).to.contains(chargeId)
+            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
@@ -557,7 +567,7 @@ describe('chargeTests', function () {
       })
 
       it('preserve cardholder name, address lines when a card is submitted with validation errors', function (done) {
-        let cookieValue = cookie.create(chargeId, {})
+        const cookieValue = cookie.create(chargeId, {})
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -566,7 +576,7 @@ describe('chargeTests', function () {
             return true
           })
           .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
-        let cardData = fullFormCardData('4242')
+        const cardData = fullFormCardData('4242')
         postChargeRequest(app, cookieValue, cardData, chargeId)
           .expect(200)
           .expect(function (res) {
@@ -583,9 +593,9 @@ describe('chargeTests', function () {
       })
 
       it('should ignore empty/null address lines when second address line populated', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultCardID('5105105105105100')
-        let cardData = minimumConnectorCardData('5105105105105100')
+        const cardData = minimumConnectorCardData('5105105105105100')
         cardData.address.line1 = 'bla bla'
         delete cardData.address.line3
 
@@ -596,7 +606,7 @@ describe('chargeTests', function () {
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         connectorExpects(cardData).reply(200)
-        let formData = minimumFormCardData('5105105105105100')
+        const formData = minimumFormCardData('5105105105105100')
         formData.addressLine1 = ''
         formData.addressLine2 = cardData.address.line1
 
@@ -607,9 +617,9 @@ describe('chargeTests', function () {
       })
 
       it('should ignore empty/null address lines when only second address line populated', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultCardID('5105105105105100')
-        let cardData = minimumConnectorCardData('5105105105105100')
+        const cardData = minimumConnectorCardData('5105105105105100')
         cardData.address.line1 = 'bla bla'
         delete cardData.address.line2
 
@@ -620,7 +630,7 @@ describe('chargeTests', function () {
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
-        let formData = minimumFormCardData('5105105105105100')
+        const formData = minimumFormCardData('5105105105105100')
         formData.addressLine1 = ''
         formData.addressLine2 = cardData.address.line1
 
@@ -631,7 +641,7 @@ describe('chargeTests', function () {
       })
 
       it('show an error page when the chargeId is not found on the session', function (done) {
-        let cookieValue = cookie.create()
+        const cookieValue = cookie.create()
         defaultCardID('5105105105105100')
         mockServer.post(connectorChargePath + chargeId + '/cards', {
           'card_number': '5105105105105100',
@@ -661,7 +671,7 @@ describe('chargeTests', function () {
 
   describe('The /card_details/charge_id endpoint', function () {
     it('It should show card details page if charge status is in "ENTERING CARD DETAILS" state', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
         .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(enteringCardDetailsState, 'http://www.example.com/service', gatewayAccountId))
@@ -671,7 +681,7 @@ describe('chargeTests', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#govuk-script-charge').text()).to.contains(chargeId)
+          expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
           expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('.payment-summary #amount').text()).to.eql('£23.45')
           expect($('.payment-summary #payment-description').text()).to.eql('Payment Description')
@@ -682,7 +692,7 @@ describe('chargeTests', function () {
     })
 
     it('It should show card details page with correct text for credit card only', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
         .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetChargeDebitCardOnly(enteringCardDetailsState, 'http://www.example.com/service', gatewayAccountId))
@@ -698,7 +708,7 @@ describe('chargeTests', function () {
     })
 
     it('It should not show amex if it is excluded', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
         .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetChargeDebitCardOnly(enteringCardDetailsState, 'http://www.example.com/service', gatewayAccountId))
@@ -713,7 +723,7 @@ describe('chargeTests', function () {
     })
 
     it('It should show 500 page if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       connectorResponseForPutCharge(chargeId, 400, {'message': 'some error'})
 
       getChargeRequest(app, cookieValue, chargeId)
@@ -722,7 +732,7 @@ describe('chargeTests', function () {
     })
 
     it('should fail to authorise when email patch fails', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock.cleanAll()
 
       nock(process.env.CARDID_HOST)
@@ -746,7 +756,7 @@ describe('chargeTests', function () {
     })
 
     it('It should show 500 when email patch fails', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .patch('/v1/frontend/charges/23144323')
         .reply(500)
@@ -766,7 +776,7 @@ describe('chargeTests', function () {
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge('AUTHORISATION SUCCESS', 'http://www.example.com/service', gatewayAccountId))
       defaultAdminusersResponseForGetService(gatewayAccountId)
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
 
       getChargeRequest(app, cookieValue, chargeId, '/confirm')
         .expect(200)
@@ -886,7 +896,7 @@ describe('chargeTests', function () {
 
   describe('capture waiting endpoint', function () {
     it('should keep user in /capture_waiting when connector returns a capture ready state', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.CAPTURE_READY, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -900,7 +910,7 @@ describe('chargeTests', function () {
     })
 
     it('should take user to capture submitted view when charge in CAPTURE_SUBMITTED state', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.CAPTURE_SUBMITTED, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -916,7 +926,7 @@ describe('chargeTests', function () {
 
   describe('The cancel endpoint', function () {
     it('should take user to cancel page on successful cancel when carge in entering card details state', function (done) {
-      let cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
+      const cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -932,7 +942,7 @@ describe('chargeTests', function () {
     })
 
     it('should take user to cancel page on successful cancel when charge in authorisation successful state', function (done) {
-      let cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
+      const cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
       defaultConnectorResponseForGetCharge(chargeId, State.AUTH_SUCCESS, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -948,7 +958,7 @@ describe('chargeTests', function () {
     })
 
     it('should take user to error page on failed cancel', function (done) {
-      let cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
+      const cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
       defaultConnectorResponseForGetCharge(chargeId, State.AUTH_SUCCESS, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -970,7 +980,7 @@ describe('chargeTests', function () {
     })
     describe('When invoked on a worldpay gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
           {
             'paRequest': 'aPaRequest',
             'issuerUrl': 'http://issuerUrl.com'
@@ -979,7 +989,7 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
 
         getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
           .expect(200)
@@ -994,7 +1004,7 @@ describe('chargeTests', function () {
 
     describe('When invoked on a smartpay gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
           {
             'paRequest': 'aPaRequest',
             'md': 'mdValue',
@@ -1004,7 +1014,7 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
 
         getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
           .expect(200)
@@ -1020,7 +1030,7 @@ describe('chargeTests', function () {
 
     describe('When invoked on an epdq gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
           {
             'htmlOut': Buffer.from('<form> epdq data </form>').toString('base64')
           })
@@ -1028,7 +1038,7 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
 
         getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
           .expect(200)
@@ -1042,12 +1052,12 @@ describe('chargeTests', function () {
 
     describe('When required information not found for auth 3ds out view', function () {
       it('should display error in iframe UI', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId, {})
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId, {})
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
 
         getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
           .expect(500)
@@ -1067,13 +1077,13 @@ describe('chargeTests', function () {
 
     describe('for worldpay payment provider', function () {
       it('should return the data needed for the UI', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
-        let data = {
+        const cookieValue = cookie.create(chargeId)
+        const data = {
           PaRes: 'aPaRes'
         }
         postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
@@ -1089,14 +1099,14 @@ describe('chargeTests', function () {
 
     describe('for epdq payment provider', function () {
       it('should return the data needed for the UI when POST', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
         chargeResponse.gateway_account.payment_provider = 'epdq'
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
-        let data = {}
+        const cookieValue = cookie.create(chargeId)
+        const data = {}
         postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in/epdq')
           .expect(200)
           .expect(function (res) {
@@ -1108,13 +1118,13 @@ describe('chargeTests', function () {
       })
 
       it('should return the data needed for the UI when GET', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
         chargeResponse.gateway_account.payment_provider = 'epdq'
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         getChargeRequest(app, cookieValue, chargeId, '/3ds_required_in/epdq?status=declined')
           .expect(200)
           .expect(function (res) {
@@ -1126,14 +1136,14 @@ describe('chargeTests', function () {
       })
 
       it('should return error when POST', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
         chargeResponse.gateway_account.payment_provider = 'epdq'
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
-        let data = {}
+        const cookieValue = cookie.create(chargeId)
+        const data = {}
         postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in/epdq?status=error')
           .expect(200)
           .expect(function (res) {
@@ -1147,13 +1157,13 @@ describe('chargeTests', function () {
 
     describe('for smartpay payment provider', function () {
       it('should return the data needed for the UI when GET', function (done) {
-        let chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        let cookieValue = cookie.create(chargeId)
-        let data = {
+        const cookieValue = cookie.create(chargeId)
+        const data = {
           PaRes: 'aPaRes',
           MD: 'md'
         }
@@ -1174,11 +1184,11 @@ describe('chargeTests', function () {
     beforeEach(function () {
       nock.cleanAll()
     })
-    let chargeResponse = _.extend(
+    const chargeResponse = _.extend(
       helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId))
 
     it('should send 3ds data to connector and redirect to confirm', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(200)
@@ -1191,7 +1201,7 @@ describe('chargeTests', function () {
     })
 
     it('should send 3ds data to connector and redirect to auth_waiting if connector returns a 202', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(202)
@@ -1204,7 +1214,7 @@ describe('chargeTests', function () {
     })
 
     it('should send 3ds data to connector and redirect to auth_waiting if connector returns a 409', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(409)
@@ -1217,7 +1227,7 @@ describe('chargeTests', function () {
     })
 
     it('should send 3ds data to connector and render an error if connector returns an 500', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(500)
@@ -1229,7 +1239,7 @@ describe('chargeTests', function () {
     })
 
     it('should send 3ds data to connector and render an error if connector returns an invalid status code', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(404)

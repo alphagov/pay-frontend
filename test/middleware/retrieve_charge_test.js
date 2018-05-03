@@ -1,10 +1,14 @@
-var path = require('path')
-var assert = require('assert')
-var sinon = require('sinon')
-var expect = require('chai').expect
-var nock = require('nock')
+'use strict'
 
-var retrieveCharge = require(path.join(__dirname, '/../../app/middleware/retrieve_charge.js'))
+// npm dependencies
+const path = require('path')
+const assert = require('assert')
+const sinon = require('sinon')
+const {expect} = require('chai')
+const nock = require('nock')
+
+// local dependencies
+const retrieveCharge = require(path.join(__dirname, '/../../app/middleware/retrieve_charge.js'))
 
 const ANALYTICS_ERROR = {
   analytics: {
@@ -16,21 +20,21 @@ const ANALYTICS_ERROR = {
 }
 
 describe('retrieve param test', function () {
-  var response = {
+  const response = {
     status: function () {},
     render: function () {}
   }
-  var status
-  var render
-  var next
-  var validRequest = {
+  let status
+  let render
+  let next
+  const validRequest = {
     params: {chargeId: 'foo'},
     body: {},
     method: 'GET',
     frontend_state: {ch_foo: true},
     headers: {}
   }
-  var chargeId = 'foo'
+  const chargeId = 'foo'
 
   beforeEach(function () {
     status = sinon.stub(response, 'status')
@@ -55,7 +59,7 @@ describe('retrieve param test', function () {
 
   it('should call not found view if the connector does not respond', function (done) {
     retrieveCharge(validRequest, response, next)
-    var testPromise = new Promise((resolve, reject) => {
+    const testPromise = new Promise((resolve, reject) => {
       setTimeout(() => { resolve() }, 700)
     })
 
@@ -70,13 +74,13 @@ describe('retrieve param test', function () {
   })
 
   it('should set chargeData chargeID and call next on success', function (done) {
-    var chargeData = {foo: 'bar'}
+    const chargeData = {foo: 'bar'}
     nock(process.env.CONNECTOR_HOST)
-        .get(`/v1/frontend/charges/${chargeId}`)
-        .reply(200, chargeData)
+      .get(`/v1/frontend/charges/${chargeId}`)
+      .reply(200, chargeData)
     retrieveCharge(validRequest, response, next)
 
-    var testPromise = new Promise((resolve, reject) => {
+    const testPromise = new Promise((resolve, reject) => {
       setTimeout(() => { resolve() }, 100)
     })
 

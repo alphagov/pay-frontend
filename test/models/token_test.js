@@ -16,9 +16,9 @@ describe('token model', function () {
       it('should return client unavailable', function () {
         var token = Token('blah')
         return token.destroy(1).then(wrongPromise,
-            function rejected (error) {
-              assert.equal(error.message, 'CLIENT_UNAVAILABLE')
-            })
+          function rejected (error) {
+            assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          })
       })
     })
 
@@ -37,9 +37,9 @@ describe('token model', function () {
       it('should return delete_failed', function () {
         var token = Token('blah')
         return token.destroy(1).then(wrongPromise,
-            function rejected (error) {
-              assert.equal(error.message, 'DELETE_FAILED')
-            })
+          function rejected (error) {
+            assert.equal(error.message, 'DELETE_FAILED')
+          })
       })
     })
 

@@ -1,90 +1,90 @@
+'use strict'
+
+// NPM dependencies
+const path = require('path')
 const Pact = require('pact')
-const pactProxy = require('../../test_helpers/pact_proxy')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
+
+// Custom dependencies
 const getAdminUsersClient = require('../../../app/services/clients/adminusers_client')
 const serviceFixtures = require('../../fixtures/service_fixtures')
 const PactInteractionBuilder = require('../../fixtures/pact_interaction_builder').PactInteractionBuilder
 
-chai.use(chaiAsPromised)
-
+// Constants
+const port = Math.floor(Math.random() * 48127) + 1024
+const adminusersClient = getAdminUsersClient({baseUrl: `http://localhost:${port}`})
 const expect = chai.expect
 const SERVICES_PATH = '/v1/api/services'
-const mockPort = Math.floor(Math.random() * 65535)
-const mockServer = pactProxy.create('localhost', mockPort)
 
-let adminusersClient = getAdminUsersClient({baseUrl: `http://localhost:${mockPort}`})
+// Global setup
+chai.use(chaiAsPromised)
 
 describe('adminusers client - services API', function () {
-  let adminUsersMock
-
-  /**
-   * Start the server and set up Pact
-   */
-  before(function (done) {
-    this.timeout(5000)
-    mockServer.start().then(function () {
-      adminUsersMock = Pact({consumer: 'Frontend-services', provider: 'adminusers', port: mockPort})
-      done()
-    })
+  let provider = Pact({
+    consumer: 'frontend-to-be',
+    provider: 'adminusers',
+    port: port,
+    log: path.resolve(process.cwd(), 'logs', 'mockserver-integration.log'),
+    dir: path.resolve(process.cwd(), 'pacts'),
+    spec: 2,
+    pactfileWriteMode: 'merge'
   })
 
-  /**
-   * Remove the server and publish pacts to broker
-   */
-  after(function (done) {
-    mockServer.delete()
-      .then(() => pactProxy.removeAll())
-      .then(() => done())
-  })
+  before(() => provider.setup())
+  after((done) => provider.finalize().then(done()))
 
-  describe('service GET API', function () {
-    context('GET service - success', () => {
-      let serviceExternalId = 'random-id'
-      let getServiceResponse = serviceFixtures.validServiceResponse({external_id: serviceExternalId})
+  describe('GET service', function () {
+    describe('success', () => {
+      const serviceExternalId = 'random-id'
+      const getServiceResponse = serviceFixtures.validServiceResponse({external_id: serviceExternalId})
 
-      beforeEach((done) => {
-        adminUsersMock.addInteraction(
+      before((done) => {
+        provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}/${serviceExternalId}`)
             .withState('a service exists with the given id')
+            .withMethod('GET')
             .withUponReceiving('a valid get service request')
             .withResponseBody(getServiceResponse.getPactified())
             .withStatusCode(200)
             .build()
         ).then(() => done())
+          .catch(done)
       })
 
-      afterEach((done) => {
-        adminUsersMock.finalize().then(() => done())
-      })
+      afterEach(() => provider.verify())
+
+      // TODO : There aren't any GET service interactions on the adminusers client in frontend
     })
 
-    context('GET service - not found', function () {
-      let serviceExternalId = 'non-existent-random-id'
+    describe('not found', function () {
+      const serviceExternalId = 'non-existent-random-id'
 
-      beforeEach((done) => {
-        adminUsersMock.addInteraction(
+      before((done) => {
+        provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}/${serviceExternalId}`)
             .withState('a service does not exists with the given id')
+            .withMethod('GET')
             .withUponReceiving('a valid get service request')
             .withStatusCode(404)
             .build()
         ).then(() => done())
+          .catch(done)
       })
 
-      afterEach((done) => {
-        adminUsersMock.finalize().then(() => done())
-      })
+      afterEach(() => provider.verify())
+
+      // TODO : There aren't any GET service interactions on the adminusers client in frontend
     })
   })
 
-  describe('service FIND by gateway account id API', function () {
-    context('FIND service by gateway account id - success', function () {
+  describe('FIND service by gateway account id', function () {
+    describe('success', function () {
       let gatewayAccountId = '101'
       let getServiceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]})
 
-      beforeEach((done) => {
-        adminUsersMock.addInteraction(
+      before((done) => {
+        provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
             .withQuery({gatewayAccountId: gatewayAccountId})
             .withState('a service exists with the given gateway account id association')
@@ -95,9 +95,7 @@ describe('adminusers client - services API', function () {
         ).then(() => done())
       })
 
-      afterEach((done) => {
-        adminUsersMock.finalize().then(() => done())
-      })
+      afterEach(() => provider.verify())
 
       it('should return service successfully', function (done) {
         adminusersClient.findServiceBy({gatewayAccountId: gatewayAccountId}).should.be.fulfilled.then(service => {
@@ -106,11 +104,11 @@ describe('adminusers client - services API', function () {
       })
     })
 
-    context('FIND service by gateway account id - bad request', function () {
+    describe('bad request', function () {
       let invalidGatewayAccountId = 'not-a-number'
 
       beforeEach((done) => {
-        adminUsersMock.addInteraction(
+        provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
             .withQuery({gatewayAccountId: invalidGatewayAccountId})
             .withState('a service exists with the given gateway account id association')
@@ -120,9 +118,7 @@ describe('adminusers client - services API', function () {
         ).then(() => done())
       })
 
-      afterEach((done) => {
-        adminUsersMock.finalize().then(() => done())
-      })
+      afterEach(() => provider.verify())
 
       it('error 400', function (done) {
         adminusersClient.findServiceBy({gatewayAccountId: invalidGatewayAccountId}).should.be.rejected.then(response => {
@@ -131,11 +127,11 @@ describe('adminusers client - services API', function () {
       })
     })
 
-    context('FIND service by gateway account id - not found', function () {
+    describe('not found', function () {
       let nonAssociatedGatewayAccountId = '999'
 
       beforeEach((done) => {
-        adminUsersMock.addInteraction(
+        provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
             .withQuery({gatewayAccountId: nonAssociatedGatewayAccountId})
             .withState('a service with given gateway account id does not exist')
@@ -145,9 +141,7 @@ describe('adminusers client - services API', function () {
         ).then(() => done())
       })
 
-      afterEach((done) => {
-        adminUsersMock.finalize().then(() => done())
-      })
+      afterEach(() => provider.verify())
 
       it('error 400', function (done) {
         adminusersClient.findServiceBy({gatewayAccountId: nonAssociatedGatewayAccountId}).should.be.rejected.then(response => {
