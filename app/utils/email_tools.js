@@ -29,23 +29,25 @@ const validEmail = email => {
   }
 }
 
+mailcheck.defaultTopLevelDomains.push(
+  'ac.uk',
+  'co.uk',
+  'gov.uk',
+  'judiciary.uk',
+  'ltd.uk',
+  'me.uk',
+  'mod.uk',
+  'net.uk',
+  'nhs.uk',
+  'nic.uk',
+  'org.uk',
+  'parliament.uk',
+  'plc.uk',
+  'police.uk',
+  'sch.uk'
+)
+
 const commonTypos = email => {
-  mailcheck.defaultTopLevelDomains.push(
-    'ac.uk',
-    'co.uk',
-    'gov.uk',
-    'judiciary.uk',
-    'ltd.uk',
-    'me.uk',
-    'mod.uk',
-    'net.uk',
-    'nhs.uk',
-    'nic.uk',
-    'org.uk',
-    'parliament.uk',
-    'plc.uk',
-    'police.uk',
-    'sch.uk')
   return mailcheck.run({
     email
   })
