@@ -47,13 +47,7 @@ mailcheck.defaultTopLevelDomains.push(
   'sch.uk'
 )
 
-const commonTypos = email => {
-  return mailcheck.run({
-    email
-  })
-}
-
 module.exports = {
   validEmail,
-  commonTypos
+  commonTypos: email => mailcheck.run({email})
 }
