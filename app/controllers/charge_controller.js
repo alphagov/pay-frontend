@@ -17,7 +17,6 @@ const State = require('../models/state.js')
 const paths = require('../paths.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {countries} = require('../services/countries.js')
-const {commonTypos} = require('../utils/email_tools.js')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
 
 // constants
@@ -30,7 +29,7 @@ const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
 const AUTH_3DS_REQUIRED_HTML_OUT_VIEW = 'auth_3ds_required_html_out'
 const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
 const CAPTURE_WAITING_VIEW = 'capture_waiting'
-const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry']
+const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
 const AUTH_3DS_EPDQ_RESULTS = {
   success: 'AUTHORISED',
   declined: 'DECLINED',
@@ -109,15 +108,7 @@ module.exports = {
       .then(data => {
         cardBrand = data.cardBrand
         if (!req.body['email-typo-sugestion']) {
-          if (data.validation.hasError || commonTypos(req.body.email)) {
-            if (commonTypos(req.body.email)) {
-              data.validation.hasError = true
-              data.validation.errorFields.push({
-                cssKey: 'email-typo',
-                value: i18n.__('chargeController.fieldErrors.fields.email.typo')
-              })
-              data.validation.typos = commonTypos(req.body.email)
-            }
+          if (data.validation.hasError) {
             charge.countries = countries
             appendChargeForNewView(charge, req, charge.id)
             _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
