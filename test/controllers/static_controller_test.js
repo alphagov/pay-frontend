@@ -8,26 +8,6 @@ var requireStaticController = function () {
 }
 
 describe('static controller', function () {
-  describe('privacy endpoint', function () {
-    var request, response
-
-    before(function () {
-      request = {
-      }
-
-      response = {
-        redirect: sinon.spy(),
-        render: sinon.spy(),
-        status: sinon.spy()
-      }
-    })
-
-    it('should render ok', function () {
-      requireStaticController().privacy(request, response)
-      expect(response.render.calledWith('static/privacy')).to.be.true // eslint-disable-line
-    })
-  })
-
   describe('naxsi system error endpoint', function () {
     var request, response
 
@@ -46,7 +26,7 @@ describe('static controller', function () {
     it('should render ok', function () {
       requireStaticController().naxsi_error(request, response)
       expect(response.render.calledWith('error')).to.be.true // eslint-disable-line
-      expect(response.status.calledWith(400)).to.be.true // eslint-disable-line 
+      expect(response.status.calledWith(400)).to.be.true // eslint-disable-line
     })
   })
 })

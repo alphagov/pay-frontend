@@ -74,7 +74,6 @@ exports.bind = function (app) {
   app.post(paths.secure.post.path, secure.new)
 
   // static controller
-  app.get(paths.static.privacy.path, statik.privacy)
   app.get(paths.static.humans.path, statik.humans)
   app.all(paths.static.naxsi_error.path, statik.naxsi_error)
 }
