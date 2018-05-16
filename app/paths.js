@@ -81,11 +81,6 @@ const paths = {
     }
   },
   static: {
-    privacy: {
-      path: '/privacy',
-      action: 'get'
-    },
-
     naxsi_error: {
       path: '/request-denied',
       action: 'get',
