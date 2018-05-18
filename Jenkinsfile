@@ -5,7 +5,6 @@ pipeline {
 
   parameters {
     booleanParam(defaultValue: true, description: '', name: 'runEndToEndTestsOnPR')
-    booleanParam(defaultValue: true, description: '', name: 'runAcceptTestsOnPR')
     booleanParam(defaultValue: false, description: '', name: 'runZapTestsOnPR')
   }
 
@@ -18,7 +17,6 @@ pipeline {
   }
   environment {
     RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"
-    RUN_ACCEPT_ON_PR = "${params.runAcceptTestsOnPR}"
     RUN_ZAP_ON_PR = "${params.runZapTestsOnPR}"
   }
 
@@ -49,17 +47,6 @@ pipeline {
             }
             steps {
                 runCardPaymentsE2E("frontend")
-            }
-        }
-        stage('Accept Tests') {
-            when {
-                anyOf {
-                  branch 'master'
-                  environment name: 'RUN_ACCEPT_ON_PR', value: 'true'
-                }
-            }
-            steps {
-                runAccept("frontend")
             }
         }
          stage('ZAP Tests') {
