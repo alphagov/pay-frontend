@@ -13,9 +13,10 @@ const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
-const abTest = require('./utils/ab_test.js')
 
-const AB_TEST_THRESHOLD = process.env.AB_TEST_THRESHOLD
+// Import AB test when we need to use it
+// const abTest = require('./utils/ab_test.js')
+// const AB_TEST_THRESHOLD = process.env.AB_TEST_THRESHOLD
 
 exports.paths = paths
 
@@ -55,15 +56,7 @@ exports.bind = function (app) {
   app.post(card.auth3dsHandler.path, middlewareStack, charge.auth3dsHandler)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
-  app.get(
-    card.confirm.path,
-    middlewareStack,
-    abTest.switch({
-      threshold: AB_TEST_THRESHOLD,
-      defaultVariant: charge.confirm,
-      testingVariant: charge.confirmVariant
-    })
-  )
+  app.get(card.confirm.path, middlewareStack, charge.confirm)
   app.post(card.capture.path, middlewareStack, charge.capture)
   app.post(card.cancel.path, middlewareStack, charge.cancel)
   app.post(card.checkCard.path, retrieveCharge, charge.checkCard)
