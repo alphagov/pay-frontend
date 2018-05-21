@@ -14,10 +14,6 @@
         <td id="card-number" class="details">{{ charge.cardDetails.cardNumber }}</td>
       </tr>
       <tr>
-        <th>Card brand:</th>
-        <td id="card-brand" class="details">{{ charge.cardDetails.cardBrand }}</td>
-      </tr>
-      <tr>
         <th>Expiry date:</th>
         <td id="expiry-date" class="details">{{ charge.cardDetails.expiryDate }}</td>
       </tr>
@@ -28,14 +24,6 @@
       <tr>
         <th>Billing address:</th>
         <td id="address" class="details">{{ charge.cardDetails.billingAddress }}</td>
-      </tr>
-      <tr>
-        <th>Payment for:</th>
-        <td id="payment-description" class="details">{{ charge.description }}</td>
-      </tr>
-      <tr>
-        <th>Total amount:</th>
-        <td id="amount" class="details">£{{ charge.amount }}</td>
       </tr>
       <tr>
         <th>Confirmation email:</th>
@@ -54,5 +42,17 @@
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
+    <aside class="payment-summary">
+      <div class="inner js-stick-at-top-when-scrolling">
+        <h2>Payment summary</h2>
+        <p>
+          <span id="payment-description">{{ charge.description }}</span>
+        </p>
+        <p>
+          Total amount:
+          <span id="amount" class="amount">£{{ charge.amount }}</span>
+        </p>
+      </div>
+    </aside>
   </main>
 {% endblock %}
