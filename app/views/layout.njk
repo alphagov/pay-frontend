@@ -25,6 +25,10 @@
 
 {% block header_class %}with-proposition{% endblock %}
 
+{% block cookie_message %}
+  {% include "includes/cookie-message.njk" %}
+{% endblock %}
+
 {% block body_end %}
   {% include "includes/scripts.njk" %}
 {% endblock %}
