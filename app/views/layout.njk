@@ -33,7 +33,10 @@
   {% include "includes/scripts.njk" %}
 {% endblock %}
 
+{% block footer_top %}
+  {% include "includes/privacy_notice.njk" %}
+{% endblock %}
+
 {% block footer_support_links %}
   {% include "includes/merchant_details.njk" %}
-  {% include "includes/privacy_notice.njk" %}
 {% endblock %}
