@@ -17,6 +17,7 @@ const State = require('../models/state.js')
 const paths = require('../paths.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {countries} = require('../services/countries.js')
+const {commonTypos} = require('../utils/email_tools.js')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
 
 // constants
@@ -107,7 +108,16 @@ module.exports = {
       .then(data => {
         cardBrand = data.cardBrand
         if (!req.body['email-typo-sugestion']) {
-          if (data.validation.hasError) {
+          const emailTypos = commonTypos(req.body.email)
+          if (data.validation.hasError || emailTypos) {
+            if (emailTypos) {
+              data.validation.hasError = true
+              data.validation.errorFields.push({
+                cssKey: 'email-typo',
+                value: i18n.__('chargeController.fieldErrors.fields.email.typo')
+              })
+              data.validation.typos = emailTypos
+            }
             charge.countries = countries
             appendChargeForNewView(charge, req, charge.id)
             _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
