@@ -7,6 +7,9 @@ RUN apk update &&\
 ADD docker/sgerrand.rsa.pub /etc/apk/keys/sgerrand.rsa.pub
 
 RUN apk --no-cache add ca-certificates
+# Install glibc (https://github.com/sgerrand/alpine-pkg-glibc), needed to run pact-mock_service
+# (https://github.com/bethesque/pact-mock_service) which ships with a binary dependency (@pact-foundation/pact-mock-service-linux-x64)
+# linked against glibc.
 RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.26-r0/glibc-2.26-r0.apk
 RUN apk del libc6-compat && apk add glibc-2.26-r0.apk
 
