@@ -1,4 +1,4 @@
-FROM govukpay/nodejs:8.11.1
+FROM govukpay/nodejs:8.11.1-2
 
 RUN apk update &&\
     apk upgrade &&\
