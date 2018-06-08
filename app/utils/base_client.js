@@ -8,12 +8,13 @@
  */
 const urlParse = require('url')
 const https = require('https')
+const http = require('http')
 const logger = require('winston')
 
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 
-var agentOptions = {
+let agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
 }
@@ -27,8 +28,8 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
 /**
  * @type {https.Agent}
  */
-const agent = new https.Agent(agentOptions)
-
+const _http = process.env.DISABLE_INTERNAL_HTTPS ? http : https
+const agent = new _http.Agent(agentOptions)
 /**
  *
  * @param {string} methodName
@@ -40,7 +41,7 @@ const agent = new https.Agent(agentOptions)
  *
  * @private
  */
-var _request = function request (methodName, url, args, callback) {
+const _request = function request (methodName, url, args, callback) {
   const parsedUrl = urlParse.parse(url)
   let headers = {}
 
@@ -58,7 +59,7 @@ var _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  let req = https.request(httpsOptions, (res) => {
+  let req = _http.request(httpsOptions, (res) => {
     let data = ''
     res.on('data', (chunk) => {
       data += chunk
