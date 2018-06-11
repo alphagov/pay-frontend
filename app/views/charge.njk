@@ -22,6 +22,9 @@
     <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" class="form">
       <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+      {% if (originalEmail) %}
+        <input name="originalemail" type="hidden" value="{{ originalEmail }}"/>
+      {% endif %}
       <div class="form-group{% if highlightErrorFields.cardNo %} error{% endif %} card-no-group" data-validation="cardNo">
         <label id="card-no-lbl" for="card-no" class="form-label-bold">
               <span
