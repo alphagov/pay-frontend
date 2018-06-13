@@ -113,4 +113,39 @@ describe('checks for PAN-like numbers', () => {
         done()
       })
   })
+
+  it('shows an error when an email contains what could be a typo', function (done) {
+    const chargeId = '23144323'
+    const formWithAllFieldsContainingTooManyDigits = {
+      'returnUrl': RETURN_URL,
+      'cardUrl': connectorAuthUrl,
+      'chargeId': chargeId,
+      'cardNo': '4242424242424242',
+      'cvc': '234',
+      'expiryMonth': '11',
+      'expiryYear': '99',
+      'cardholderName': 'A Name',
+      'addressLine1': 'Whip Ma Whop Ma Avenue',
+      'addressLine2': '1line two',
+      'addressPostcode': 'Y1 1YN',
+      'addressCity': 'Townfordshire',
+      'email': 'willy@wonka.con',
+      'addressCountry': 'US'
+    }
+    const cookieValue = cookie.create(chargeId, {})
+
+    defaultCardID('4242424242424242')
+    defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
+    defaultAdminusersResponseForGetService(gatewayAccountId)
+
+    postChargeRequest(app, cookieValue, formWithAllFieldsContainingTooManyDigits, chargeId)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err)
+        const $ = cheerio.load(res.text)
+        const typoErrorText = 'There might be a mistake in the last part of your email address. Select your email address.'
+        expect($('#email-typo-lbl').text()).to.contains(typoErrorText)
+        done()
+      })
+  })
 })

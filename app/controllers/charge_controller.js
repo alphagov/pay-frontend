@@ -17,6 +17,7 @@ const State = require('../models/state.js')
 const paths = require('../paths.js')
 const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
 const {countries} = require('../services/countries.js')
+const {commonTypos} = require('../utils/email_tools.js')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
 
 // constants
@@ -106,18 +107,33 @@ module.exports = {
       .catch(() => redirect(res).toNew(req.chargeId))
       .then(data => {
         cardBrand = data.cardBrand
-        if (!req.body['email-typo-sugestion']) {
-          if (data.validation.hasError) {
-            charge.countries = countries
-            appendChargeForNewView(charge, req, charge.id)
-            _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-            return views.display(res, CHARGE_VIEW, data.validation)
+        let emailChanged = false
+        let userEmail = req.body.email
+        if (req.body.originalemail) {
+          emailChanged = req.body.originalemail !== userEmail
+        }
+        let emailTypos = commonTypos(userEmail)
+        if (req.body['email-typo-sugestion']) {
+          userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
+          emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
+        }
+        if (data.validation.hasError || emailTypos) {
+          if (emailTypos) {
+            data.validation.hasError = true
+            data.validation.errorFields.push({
+              cssKey: 'email-typo',
+              value: i18n.__('chargeController.fieldErrors.fields.email.typo')
+            })
+            data.validation.typos = emailTypos
+            data.validation.originalEmail = userEmail
           }
-        } else {
-          req.body.email = req.body['email-typo-sugestion']
+          charge.countries = countries
+          appendChargeForNewView(charge, req, charge.id)
+          _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+          return views.display(res, CHARGE_VIEW, data.validation)
         }
         logging.authChargePost(authUrl)
-        Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.email)
+        Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail)
           .then(() => {
             const startTime = new Date()
             const correlationId = req.headers[CORRELATION_HEADER] || ''

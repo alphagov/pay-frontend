@@ -30,7 +30,7 @@
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard",
     "watch-live-reload": "./node_modules/.bin/grunt watch",
-    "test": "nyc node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests)'.js",
+    "test": "nyc node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect"
   },
