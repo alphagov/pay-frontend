@@ -25,8 +25,7 @@
   "scripts": {
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
-    "start": "node_modules/forever/bin/forever --minUptime 1000 --spinSleepTime 500 start.js",
-    "stop": "node_modules/forever/bin/forever stop start.js",
+    "start": "node start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard",
     "watch-live-reload": "./node_modules/.bin/grunt watch",
@@ -47,7 +46,6 @@
     "credit-card-type": "6.3.x",
     "csrf": "3.0.x",
     "express": "4.16.x",
-    "forever": "0.15.x",
     "gaap-analytics": "^3.0.0",
     "humps": "^2.0.1",
     "i18n": "0.8.x",
