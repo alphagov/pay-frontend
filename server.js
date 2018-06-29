@@ -166,7 +166,7 @@ function initialise () {
   initialiseCookies(app)
   initialiseTemplateEngine(app)
   initialisePublic(app)
-  initialiseRoutes(app)
+  initialiseRoutes(app) // This contains the 404 override and so should be last
 
   return app
 }
