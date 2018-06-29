@@ -165,8 +165,8 @@ function initialise () {
   initialisei18n(app)
   initialiseCookies(app)
   initialiseTemplateEngine(app)
-  initialiseRoutes(app)
   initialisePublic(app)
+  initialiseRoutes(app)
 
   return app
 }
