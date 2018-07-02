@@ -69,4 +69,8 @@ exports.bind = function (app) {
   // static controller
   app.get(paths.static.humans.path, statik.humans)
   app.all(paths.static.naxsi_error.path, statik.naxsi_error)
+
+  // route to gov.uk 404 page
+  // this has to be the last route registered otherwise it will redirect other routes
+  app.all('*', (req, res) => res.redirect('https://www.gov.uk/404'))
 }
