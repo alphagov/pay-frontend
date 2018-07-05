@@ -7,11 +7,20 @@
  * Leaving for backward compatibility.
  */
 const urlParse = require('url')
-const https = require('https')
 const logger = require('winston')
+const https = setHttpClient()
 
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
+
+function setHttpClient () {
+  if (process.env.DISABLE_INTERNAL_HTTPS === 'true') {
+    logger.warn('DISABLE_INTERNAL_HTTPS is enabled, base_client will use http.')
+    return require('http')
+  } else {
+    return require('https')
+  }
+}
 
 var agentOptions = {
   keepAlive: true,
