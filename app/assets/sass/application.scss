@@ -1,22 +1,9 @@
 @import "govuk-frontend/all";
 
-// @import "base/custom_resets";
-// @import "base/mixins";
-
-// @import "styleguide/layout";
-// @import "styleguide/buttons";
-// @import "helpers/page-containers";
-// @import "helpers/movement";
-// @import "helpers/panels";
-// @import "forms/forms";
-// @import "pages/errors";
-// @import "pages/card-details";
 @import "modules/accepted-cards";
-@import "modules/cvc";
-@import "modules/summary-panel";
-@import "modules/input-confirm";
-@import "modules/button-reset";
-@import "modules/expiry-date-separator";
 @import "modules/accessible-autocomplete";
-// @import "modules/3ds";
-
+@import "modules/button-reset";
+@import "modules/cvc";
+@import "modules/expiry-date-separator";
+@import "modules/input-confirm";
+@import "modules/summary-panel";
