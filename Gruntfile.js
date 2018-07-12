@@ -7,10 +7,9 @@ module.exports = function (grunt) {
         style: 'expanded',
         sourcemap: true,
         includePaths: [
-          'govuk_modules/govuk_template/assets/stylesheets',
-          'govuk_modules/govuk_frontend_toolkit/stylesheets'
+          'node_modules'
         ],
-        outputStyle: 'expanded'
+        outputStyle: 'compressed'
       },
       files: [{
         expand: true,
@@ -30,23 +29,6 @@ module.exports = function (grunt) {
         src: ['**', '**/*'],
         dest: 'public/images/'
       }]
-    },
-    govuk: {
-      files: [
-        {
-          expand: true,
-          cwd: 'node_modules/govuk_frontend_toolkit',
-          src: '**',
-          dest: 'govuk_modules/govuk_frontend_toolkit/'
-        },
-        {
-          expand: true,
-          cwd: 'node_modules/govuk_template_jinja/',
-          src: '**',
-          dest: 'govuk_modules/govuk_template/',
-          rename: (dest, src) => dest + src.replace('html', 'njk')
-        }
-      ]
     },
     payProductPage: {
       files: [{
@@ -73,17 +55,6 @@ module.exports = function (grunt) {
           'public/stylesheets/application.css', 'govuk_modules/govuk-country-and-territory-autocomplete/location-autocomplete.min.css'
         ]
       }
-    }
-  }
-
-  const replace = {
-    fixSass: {
-      src: ['govuk_modules/govuk_template/**/*.scss', 'govuk_modules/govuk_frontend_toolkit/**/*.scss'],
-      overwrite: true,
-      replacements: [{
-        from: /filter:chroma(.*);/g,
-        to: 'filter:unquote("chroma$1");'
-      }]
     }
   }
 
@@ -192,8 +163,6 @@ module.exports = function (grunt) {
     sass: sass,
     // Copies templates and assets from external modules and dirs
     copy: copy,
-    // workaround for libsass
-    replace: replace,
     // Watches assets and sass for changes
     watch: watch,
     // nodemon watches for changes and restarts app
@@ -214,7 +183,6 @@ module.exports = function (grunt) {
     'grunt-contrib-clean',
     'grunt-sass',
     'grunt-nodemon',
-    'grunt-text-replace',
     'grunt-concurrent',
     'grunt-browserify',
     'grunt-contrib-concat',
@@ -227,7 +195,6 @@ module.exports = function (grunt) {
   grunt.registerTask('generate-assets', [
     'clean',
     'copy',
-    'replace',
     'sass',
     'browserify',
     'concat',

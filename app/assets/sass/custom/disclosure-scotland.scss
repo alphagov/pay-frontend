@@ -1,5 +1,4 @@
-@import "colours";
-@import "conditionals";
+@import "govuk-frontend/all";
 
 // CUSTOM BRANDING
 // Use the variables below to control the style
@@ -44,7 +43,7 @@ $logo-image-height: 2em;
     }
 
     #proposition-menu {
-      @include media(desktop) {
+      @include govuk-media-query($from: desktop) {
         position: absolute;
         top: 50%;
         transform: translate(0, -50%);

@@ -1,11 +1,7 @@
-@import "base/custom_resets";
-@import "base/mixins";
-
-@import "styleguide/layout";
-@import "styleguide/buttons";
+@import "govuk-frontend/all";
 
 body {
-  @include core-19;
+  @include govuk-font($size: 19);
   margin: 0;
 }
 

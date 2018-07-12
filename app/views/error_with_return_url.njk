@@ -1,16 +1,19 @@
 {% extends "layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
   An error occurred - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
-  <main id="content">
-    <h3>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h3 class="govuk-heading-l">
       An error occurred:
     </h3>
-
-    <a id="return-url" href="{{ returnUrl }}">Return to service</a>
-    <div id="errorMsg">{{ message }}</div>
-  </main>
+    <p class="govuk-body-l">
+      <a id="return-url" href="{{ returnUrl }}">Return to service</a>
+    </p>
+    <div class="govuk-body" id="errorMsg">{{ message }}</div>
+  </div>
+</div>
 {% endblock %}

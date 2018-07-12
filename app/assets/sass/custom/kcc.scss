@@ -1,5 +1,4 @@
-@import "colours";
-@import "conditionals";
+@import "govuk-frontend/all";
 
 // CUSTOM BRANDING
 // Use the variables below to control the style
@@ -19,7 +18,7 @@ $logo-image-height: 2.1em;
     padding-bottom: 0;
 
     .header-global, .header-proposition {
-    @include media(mobile) {
+    @include govuk-media-query($until: mobile) {
       width: 100%;
     }
 
@@ -50,7 +49,7 @@ $logo-image-height: 2.1em;
 
     .header-proposition {
       #proposition-name {
-        @include media(mobile) {
+        @include govuk-media-query($until: mobile) {
           margin-left: 115px;
         }
 
@@ -59,7 +58,7 @@ $logo-image-height: 2.1em;
     }
 
     #proposition-menu {
-      @include media(desktop) {
+      @include govuk-media-query($from: desktop) {
         position: absolute;
         top: 50%;
         transform: translate(0, -50%);
@@ -70,7 +69,7 @@ $logo-image-height: 2.1em;
   #global-header .header-wrapper {
     padding-top: 16px;
 
-    @include media(mobile) {
+    @include govuk-media-query($until: mobile) {
       background-image: url(/public/images/kcc-mobile.svg);
       background-size: 100px 66px;
       background-position: 15px top;
@@ -88,7 +87,7 @@ $logo-image-height: 2.1em;
         img {
           display: none;
 
-          @include media(tablet) {
+      @include govuk-media-query($from: tablet) {
             display: block;
           }
         }

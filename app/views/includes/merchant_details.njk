@@ -1,8 +1,0 @@
-{% if service and service.merchantDetails %}
-  <ul class="merchant-details">
-    <li class="merchant-details-line-1">Service provided by {{ service.merchantDetails.name }}</li>
-    <li class="merchant-details-line-2">{{ service.merchantDetails.addressLine1 }},
-      {% if service.merchantDetails.addressLine2 %} {{ service.merchantDetails.addressLine2 }}, {% endif %}
-      {{ service.merchantDetails.city }} {{ service.merchantDetails.postcode }} {{ service.merchantDetails.countryName }}</li>
-  </ul>
-{% endif %}
