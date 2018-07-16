@@ -9,12 +9,12 @@
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-l system-error">Sorry, we’re experiencing technical&nbsp;problems</h1>
     {% if returnUrl %}
-      <p class="govuk-body-l">No money has been taken from your account.</p>
-      <p class="govuk-body-l">
+      <p class="govuk-body-l lede">No money has been taken from your account.</p>
+      <p class="govuk-body-l lede">
         <a href="{{ returnUrl }}" id="return-url">Go back to try the payment again</a>
       </p>
     {% else %}
-      <p class="govuk-body-l">No money has been taken from your account, please try again later.</p>
+      <p class="govuk-body-l lede">No money has been taken from your account, please try again later.</p>
     {% endif %}
   </div>
 </div>

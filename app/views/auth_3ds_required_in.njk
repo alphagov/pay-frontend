@@ -5,7 +5,7 @@
 {% endblock %}
 <body OnLoad="OnLoadEvent();">
 <noscript>
-    <p class="govuk-body-l">The card details have been approved by the bank.</p>
+    <p class="govuk-body-l lede">The card details have been approved by the bank.</p>
 </noscript>
 <form name="three_ds_required" method="post" action="{{ threeDsHandlerUrl }}" target="_top">
     <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
