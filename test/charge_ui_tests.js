@@ -108,7 +108,7 @@ describe('The confirm view', function () {
   it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
     var body = renderTemplate('confirm', successTemplateData)
     var $ = cheerio.load(body)
-    $('#payment-description').html().should.equal('Payment Description &amp; &lt;xss attack&gt; assessment')
+    $('#payment-description').html().should.contain('Payment Description &amp; &lt;xss attack&gt; assessment')
     body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
     body.should.containSelector('#card-number').withText('************5100')
     body.should.containSelector('#expiry-date').withText('11/99')

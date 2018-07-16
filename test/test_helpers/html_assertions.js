@@ -4,7 +4,7 @@ const chai = require('chai')
 const nunjucks = require('nunjucks')
 
 // Global initialisation
-const views = ['./app/views', './govuk_modules/govuk_template/views/layouts']
+const views = ['./app/views', './node_modules/govuk-frontend']
 const environment = nunjucks.configure(views)
 
 module.exports = {
