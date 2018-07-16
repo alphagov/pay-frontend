@@ -25,7 +25,7 @@ const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
 
 // Global constants
-const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.min.css')
+const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.css')
 const JAVASCRIPT_PATH = staticify.getVersionedPath('/javascripts/application.js')
 const IFRAME_CSS_PATH = staticify.getVersionedPath('/stylesheets/iframe.css')
 const PORT = process.env.PORT || 3000
@@ -121,7 +121,7 @@ function initialiseTemplateEngine (app) {
 
   // Version static assets on production for better caching
   // if it's not production we want to re-evaluate the assets on each file change
-  nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application.min.css'))
+  nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application.css'))
   nunjucksEnvironment.addGlobal('iframe_css_path', NODE_ENV === 'production' ? IFRAME_CSS_PATH : staticify.getVersionedPath('/stylesheets/iframe.css'))
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? JAVASCRIPT_PATH : staticify.getVersionedPath('/javascripts/application.js'))
   // Initialise internationalisation

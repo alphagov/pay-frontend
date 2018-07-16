@@ -1,64 +1,46 @@
-@import "govuk-frontend/all";
+$govuk-font-family: -apple-system,BlinkMacSystemFont,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif; // Override font as so not to use New Transport
+@import "../application";
 
 // CUSTOM BRANDING
 // Use the variables below to control the style
 // Make sure banner colours meet minimum colour contrast levels
 
-$custom-banner-colour: #98283a;
+$custom-banner-colour: #238b4f;
 $custom-banner-border-colour: #ffffff;
 $custom-text-colour: #ffffff;
-$logo-image: true;
 $logo-image-height: 2em;
 
 .custom-branding {
-  #global-header,
-  #global-header .header-wrapper {
-    position: relative;
+  @if $logo-image-height != null {
+    .custom-branding-image {
+      max-height: $logo-image-height;
+    }
+  }
+
+  .govuk-header {
     background-color: $custom-banner-colour;
+  }
 
-    #logo {
+  .govuk-header__link{
+    &:link,
+    &:visited {
       color: $custom-text-colour;
-
-      @if $logo-image == true {
-        background-image: none;
-
-        img {
-          visibility: visible;
-          max-height: $logo-image-height;
-          margin: 5px 0;
-        }
-      }
-    }
-
-    &+#global-header-bar {
-      height: 10px;
-      background-color: $custom-banner-border-colour;
-    }
-
-    .header-proposition {
-      #proposition-name {
-        color: $custom-text-colour;
-      }
-    }
-
-    #proposition-menu {
-      @include govuk-media-query($from: desktop) {
-        position: absolute;
-        top: 50%;
-        transform: translate(0, -50%);
-      }
     }
   }
 
-  .header-logo {
-    display: none;
+  .govuk-header__container {
+    border-bottom-color: $custom-banner-border-colour;
+  }
 
-    &--custom {
-      display: block;
+  @include govuk-media-query($from: tablet) {
+    .govuk-header__content {
+      width: 66%;
+      vertical-align: bottom;
+      margin-bottom: 7px;
     }
   }
 
-  .button {
+  .govuk-button {
     padding: 7px 15px 6px;
     padding: .368421053em .842105263em .315789474em;
   }

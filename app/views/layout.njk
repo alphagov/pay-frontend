@@ -12,30 +12,30 @@
     <script src="/html5-shiv/html5shiv.js"></script>
   <![endif]-->
 
-  {% include "includes/head.njk" %}
+
+  {% if service and service.customBranding and service.customBranding.cssUrl  %}
+    <link href="{{ service.customBranding.cssUrl }}" media="screen" rel="stylesheet" type="text/css" />
+  {% else %}
+    <link href="{{ css_path }}" media="screen" rel="stylesheet" type="text/css" />
+  {% endif %}
+
   {% include "includes/analytics.njk" %}
 {% endblock %}
 
-{% block fontsStylesheets %}
-{# Clear fonts because we want to only load them if not custom branding, see head.njk #}
-{% endblock %}
-
-{% block bodyClasses %}
-  {% if service and service.customBranding and service.customBranding.cssUrl %}custom-branding{% endif %}
-{% endblock %}
-
-{% block inside_header %}
-  {% if service and service.customBranding and service.customBranding.imageUrl %}
-    {% include "includes/custom.njk" %}
-  {% endif %}
-{% endblock %}
+{% if service and service.customBranding and service.customBranding.cssUrl %}
+  {% set bodyClasses = "custom-branding" %}
+{% endif %}
 
 {% block header %}
-  {{ govukHeader({
-    homepageUrl: 'https://www.gov.uk',
-    serviceName: gatewayAccount.serviceName,
-    serviceUrl: '/'
-  }) }}
+  {% if service and service.customBranding and service.customBranding.cssUrl %}
+    {% include "includes/custom.njk" %}
+  {% else %}
+    {{ govukHeader({
+      homepageUrl: 'https://www.gov.uk',
+      serviceName: gatewayAccount.serviceName,
+      serviceUrl: '/'
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block cookie_message %}

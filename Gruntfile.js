@@ -7,7 +7,8 @@ module.exports = function (grunt) {
         style: 'expanded',
         sourcemap: true,
         includePaths: [
-          'node_modules'
+          'node_modules',
+          'govuk_modules'
         ],
         outputStyle: 'compressed'
       },
@@ -41,20 +42,11 @@ module.exports = function (grunt) {
     countryAutocompleteFiles: {
       files: [{
         expand: true,
-        cwd: 'node_modules/govuk-country-and-territory-autocomplete/dist',
+        cwd: 'node_modules/govuk-country-and-territory-autocomplete/dist/',
         src: '**',
-        dest: 'govuk_modules/govuk-country-and-territory-autocomplete/'
+        dest: 'govuk_modules/govuk-country-and-territory-autocomplete/',
+        rename: (dest, src) => dest + src.replace('min.css', 'scss')
       }]
-    }
-  }
-
-  const cssmin = {
-    target: {
-      files: {
-        'public/stylesheets/application.min.css': [
-          'public/stylesheets/application.css', 'govuk_modules/govuk-country-and-territory-autocomplete/location-autocomplete.min.css'
-        ]
-      }
     }
   }
 
@@ -171,13 +163,11 @@ module.exports = function (grunt) {
     browserify: browserify,
     concat: concat,
     rewrite: rewrite,
-    compress: compress,
-    cssmin: cssmin
+    compress: compress
   });
 
   [
     'grunt-contrib-copy',
-    'grunt-contrib-cssmin',
     'grunt-contrib-compress',
     'grunt-contrib-watch',
     'grunt-contrib-clean',
@@ -199,8 +189,7 @@ module.exports = function (grunt) {
     'browserify',
     'concat',
     'rewrite',
-    'compress',
-    'cssmin'
+    'compress'
   ])
 
   grunt.registerTask('default', [
