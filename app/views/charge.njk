@@ -95,14 +95,14 @@
               type="number"
               name="expiryMonth"
               value="{{expiryMonth}}"
-              class="govuk-input govuk-date-input__input"
+              class="govuk-input govuk-date-input__input govuk-input--width-2"
               min="1"
               max="12"
               minlength="1"
               maxlength="2"
               autocomplete="cc-exp-month"/>
         </div>
-        <div class="govuk-date-input__item govuk-date-input__item--month">
+        <div class="govuk-date-input__item govuk-date-input__item--year">
             <label for="expiry-year" class="govuk-label govuk-date-input__label">Year</label>
             <input
               id="expiry-year"
@@ -111,7 +111,7 @@
               value="{{expiryYear}}"
               minlength="2"
               maxlength="4"
-              class="govuk-input govuk-date-input__input"
+              class="govuk-input govuk-date-input__input govuk-input--width-2"
               autocomplete="cc-exp-year"
               data-last-of-form-group
               data-required
