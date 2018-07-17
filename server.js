@@ -25,7 +25,7 @@ const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
 
 // Global constants
-const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.css')
+const CSS_PATH = staticify.getVersionedPath('/stylesheets/application-new.css')
 const JAVASCRIPT_PATH = staticify.getVersionedPath('/javascripts/application.js')
 const PORT = process.env.PORT || 3000
 const {NODE_ENV} = process.env
@@ -120,7 +120,7 @@ function initialiseTemplateEngine (app) {
 
   // Version static assets on production for better caching
   // if it's not production we want to re-evaluate the assets on each file change
-  nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application.css'))
+  nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application-new.css'))
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? JAVASCRIPT_PATH : staticify.getVersionedPath('/javascripts/application.js'))
   // Initialise internationalisation
   fs.readFile('./locales/en.json', 'utf8', (err, data) => {
