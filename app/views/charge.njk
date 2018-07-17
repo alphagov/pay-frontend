@@ -82,7 +82,7 @@
             {{ i18n.chargeView.expiry }}
           </span>
         </label>
-        <p class="govuk-hint">For example, 10/20</p>
+        <span class="govuk-hint govuk-!-margin-bottom-2">For example, 10/20</span>
         {% if highlightErrorFields.expiryMonth %}
           <p class="error-message" id="error-expiry-date">
             {{ highlightErrorFields.expiryMonth }}
@@ -148,7 +148,7 @@
             data-original-label="{{ i18n.chargeView.cvc }}">
           {{ i18n.chargeView.cvc }}
           </span>
-          <span class="govuk-hint">
+          <span class="govuk-hint govuk-!-margin-bottom-2">
             <span class="generic-cvc">
               {{ i18n.chargeView.cvcTip }}
             </span>
@@ -180,7 +180,7 @@
       </div>
       <div class="govuk-form-group govuk-!-width-two-thirds {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Billing address</h2>
-        <p class="govuk-hint govuk-!-margin-top-0">This is the address associated with the card</p>
+        <span class="govuk-hint govuk-!-margin-bottom-2">This is the address associated with the card</span>
 
         <label id="address-country-lbl" for="address-country" class="govuk-label govuk-label--s">
               <span
@@ -288,7 +288,7 @@
                   data-original-label="{{ i18n.chargeView.email }}">
                 {{ i18n.chargeView.email }}
               </span>
-          <span class="govuk-hint">We’ll send your payment confirmation here</span>
+          <span class="govuk-hint govuk-!-margin-bottom-2">We’ll send your payment confirmation here</span>
 
           {% if highlightErrorFields.email %}
             <p class="govuk-error-message" id="error-email">
