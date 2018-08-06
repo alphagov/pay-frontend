@@ -1,17 +1,14 @@
 {% extends "layout.njk" %}
 
-{% block page_title %}Payment in progress{% endblock %}
-
-{% block head %}
-  {% include "includes/head.njk" %}
-  {% include "includes/analytics.njk" %}
-{% endblock %}
+{% block pageTitle %}Payment in progress{% endblock %}
 
 {% block content %}
-  <main id="content" class="content-wrapper threeds-required">
-    <h1 class="form-title">Payment in progress</h1>
-    <p class="lede">You may need to complete some extra verification steps.</p>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l form-title">Payment in progress</h1>
+    <p class="govuk-body-l lede">You may need to complete some extra verification steps.</p>
     <iframe class="iframe-3ds" src="3ds_required_out">
     </iframe>
-  </main>
+  </div>
+</div>
 {% endblock %}

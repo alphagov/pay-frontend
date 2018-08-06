@@ -1,11 +1,346 @@
-@import "base/custom_resets";
-@import "base/mixins";
+body {
+  line-height: 1.15;
+}
 
-@import "styleguide/layout";
-@import "styleguide/buttons";
+.lede {
+  font-size: 24px;
+}
+
+.grid-row:after, #content:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+#content {
+  max-width: 960px;
+  margin: 0 15px;
+}
+
+@media (min-width: 641px) {
+  #content {
+    margin: 0 30px;
+  }
+}
+
+@media (min-width: 1020px) {
+  #content {
+    margin: 0 auto;
+  }
+}
+
+.grid-row {
+  margin: 0 -15px;
+}
+
+.grid-row:after, #content:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.example-highlight-grid .grid-row {
+  background: #bfc1c3;
+}
+
+.example-highlight-grid .column-highlight {
+  background: #dee0e2;
+  width: 100%;
+}
+
+.example-back-link {
+  display: -moz-inline-stack;
+  display: inline-block;
+  margin-top: 30px;
+}
+
+.visuallyhidden {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
+.js-enabled .js-hidden {
+  display: none;
+}
+
+table {
+  margin-bottom: 60px;
+  width: 100%;
+}
+
+table td, table th {
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 16px;
+  line-height: 1.25;
+  padding: 0.75em 1.25em 0.5625em 0;
+}
+
+@media (min-width: 641px) {
+  table td, table th {
+    font-size: 19px;
+    line-height: 1.3157894737;
+  }
+}
+
+table td.details, table th.details {
+  font-weight: bold;
+}
+
+#content {
+  padding-bottom: 30px;
+}
+
+@media (min-width: 769px) {
+  #content {
+    padding-bottom: 90px;
+  }
+}
+
+.content-wrapper {
+  position: relative;
+  min-height: 300px;
+}
+
+.column-quarter {
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media (min-width: 641px) {
+  .column-quarter {
+    float: left;
+    width: 25%;
+  }
+}
+
+.column-half {
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media (min-width: 641px) {
+  .column-half {
+    float: left;
+    width: 50%;
+  }
+}
+
+.column-third {
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media (min-width: 641px) {
+  .column-third {
+    float: left;
+    width: 33.3333333333%;
+  }
+}
+
+.column-two-thirds {
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media (min-width: 641px) {
+  .column-two-thirds {
+    float: left;
+    width: 66.6666666667%;
+  }
+}
+
+.grid-row:after, #content:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.button {
+  background-color: #00823b;
+  position: relative;
+  display: -moz-inline-stack;
+  display: inline-block;
+  padding: 0.3em 0.6em 0.2em 0.6em;
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -webkit-box-shadow: 0 2px 0 #003618;
+  -moz-box-shadow: 0 2px 0 #003618;
+  box-shadow: 0 2px 0 #003618;
+  font-size: 1em;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  cursor: pointer;
+  color: #fff;
+  margin: 0 15px 15px 0;
+  padding: 0.5263157895em 0.7894736842em 0.2631578947em 0.7894736842em;
+  vertical-align: top;
+}
+
+.button:visited {
+  background-color: #00823b;
+}
+
+.button:hover, .button:focus {
+  background-color: #00692f;
+}
+
+.button:active {
+  top: 2px;
+  -webkit-box-shadow: 0 0 0 #00823b;
+  -moz-box-shadow: 0 0 0 #00823b;
+  box-shadow: 0 0 0 #00823b;
+}
+
+.button.disabled, .button[disabled="disabled"], .button[disabled] {
+  zoom: 1;
+  filter: alpha(opacity=50);
+  opacity: 0.5;
+}
+
+.button.disabled:hover, .button[disabled="disabled"]:hover, .button[disabled]:hover {
+  cursor: default;
+  background-color: #00823b;
+}
+
+.button.disabled:active, .button[disabled="disabled"]:active, .button[disabled]:active {
+  top: 0;
+  -webkit-box-shadow: 0 2px 0 #003618;
+  -moz-box-shadow: 0 2px 0 #003618;
+  box-shadow: 0 2px 0 #003618;
+}
+
+.button:link, .button:hover, .button:focus, .button:visited {
+  color: #fff;
+}
+
+.button:before {
+  content: "";
+  height: 110%;
+  width: 100%;
+  display: block;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.button:active:before {
+  top: -10%;
+  height: 120%;
+}
+
+.button[rel="external"]:after {
+  display: none;
+  content: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.button:focus {
+  outline: 3px solid #ffbf47;
+}
+
+.button[disabled="disabled"] {
+  background: #00823b;
+}
+
+.button[disabled="disabled"]:focus {
+  outline: none;
+}
+
+.button-get-started {
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 18px;
+  line-height: 1.2;
+  background-image: image-url("icons/icon-pointer.png");
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  padding: 0.3684210526em 2.1578947368em 0.2105263158em 0.8421052632em;
+}
+
+@media (min-width: 641px) {
+  .button-get-started {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  .button-get-started {
+    background-image: image-url("icons/icon-pointer-2x.png");
+    background-size: 30px 19px;
+  }
+}
+
+.previous-page {
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 16px;
+  line-height: 1.25;
+  border-bottom: 1px solid #005ea5;
+  color: #005ea5;
+  text-decoration: none;
+}
+
+@media (min-width: 641px) {
+  .previous-page {
+    font-size: 19px;
+    line-height: 1.3157894737;
+  }
+}
+
+.previous-page:before {
+  content: "\25c0  ";
+}
+
+.previous-page:visited {
+  border-color: #4c2c92;
+}
+
+.previous-page:focus, .previous-page:hover {
+  border-color: #005ea5;
+}
 
 body {
-  @include core-19;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 16px;
+  line-height: 1.25;
   margin: 0;
 }
 
+@media (min-width: 641px) {
+  body {
+    font-size: 19px;
+    line-height: 1.3157894737;
+  }
+}

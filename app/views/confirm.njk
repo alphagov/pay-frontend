@@ -1,58 +1,84 @@
 {% extends "layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
   Confirm your payment
 {% endblock %}
 
-{% block content %}
-  <main id="content" role="main" class="content-wrapper confirm-page">
-    <h1 class="form-title">Confirm your payment</h1>
+{% set mainClasses = "confirm-page" %}
 
-    <table class="confirm-details">
-      <tr>
-        <th>Card number:</th>
-        <td id="card-number" class="details">{{ charge.cardDetails.cardNumber }}</td>
-      </tr>
-      <tr>
-        <th>Expiry date:</th>
-        <td id="expiry-date" class="details">{{ charge.cardDetails.expiryDate }}</td>
-      </tr>
-      <tr>
-        <th>Name on card:</th>
-        <td id="cardholder-name" class="details">{{ charge.cardDetails.cardholderName }}</td>
-      </tr>
-      <tr>
-        <th>Billing address:</th>
-        <td id="address" class="details">{{ charge.cardDetails.billingAddress }}</td>
-      </tr>
-      <tr>
-        <th>Confirmation email:</th>
-        <td id="email" class="details">{{ charge.email }}</td>
-      </tr>
+{% block content %}
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">Confirm your payment</h1>
+
+    <table class="govuk-table">
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
+            Card number:
+          </th>
+          <td class="govuk-table__cell govuk-!-font-weight-bold" id="card-number">
+            {{ charge.cardDetails.cardNumber }}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
+            Expiry date:
+          </th>
+          <td class="govuk-table__cell govuk-!-font-weight-bold" id="expiry-date">
+            {{ charge.cardDetails.expiryDate }}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
+            Name on card:
+          </th>
+          <td class="govuk-table__cell govuk-!-font-weight-bold" id="cardholder-name">
+            {{ charge.cardDetails.cardholderName }}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
+            Billing address:
+          </th>
+          <td class="govuk-table__cell govuk-!-font-weight-bold" id="address">
+            {{ charge.cardDetails.billingAddress }}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
+            Confirmation email:
+          </th>
+          <td class="govuk-table__cell govuk-!-font-weight-bold" id="email">
+            {{ charge.email }}
+          </td>
+        </tr>
+      </tbody>
     </table>
 
     <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
-      <button id="confirm" class="button" data-module="stop-double-submit">Confirm payment</button>
+      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">Confirm payment</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="link" value="Cancel payment" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="Cancel payment" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
+  </div>
+  <div class="govuk-grid-column-one-third">
     <aside class="payment-summary">
-      <div class="inner js-stick-at-top-when-scrolling">
-        <h2>Payment summary</h2>
-        <p>
-          <span id="payment-description">{{ charge.description }}</span>
-        </p>
-        <p>
-          Total amount:
-          <span id="amount" class="amount">£{{ charge.amount }}</span>
-        </p>
-      </div>
+      <h2 class="govuk-heading-m">Payment summary</h2>
+      <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-39">
+        {{ charge.description }}
+      </p>
+      <p class="govuk-body govuk-!-font-size-39 govuk-!-margin-bottom-0">
+        Total amount:
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.amount }}</span>
+      </p>
     </aside>
-  </main>
+  </div>
+</div>
 {% endblock %}

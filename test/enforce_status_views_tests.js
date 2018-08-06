@@ -39,7 +39,7 @@ describe('The /charge endpoint undealt statuses', function () {
         .expect(500)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#content #errorMsg').text()).to.eql('There is a problem, please try again later')
+          expect($('#errorMsg').text()).to.eql('There is a problem, please try again later')
         })
         .end(done)
     })
@@ -137,7 +137,7 @@ describe('The /charge endpoint dealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#content #return-url').attr('href')).to.eql('/return/' + chargeId)
+          expect($('#return-url').attr('href')).to.eql('/return/' + chargeId)
         })
         .end(done)
     })
@@ -171,7 +171,7 @@ describe('The /confirm endpoint undealt statuses', function () {
         .expect(500)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#content #errorMsg').text()).to.eql('There is a problem, please try again later')
+          expect($('#errorMsg').text()).to.eql('There is a problem, please try again later')
         })
         .end(done)
     })
@@ -271,7 +271,7 @@ describe('The /confirm endpoint dealt statuses', function () {
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#content #return-url').attr('href')).to.eql('/return/' + chargeId)
+          expect($('#return-url').attr('href')).to.eql('/return/' + chargeId)
         })
         .end(done)
     })

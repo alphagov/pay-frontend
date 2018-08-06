@@ -7,10 +7,10 @@ module.exports = function (grunt) {
         style: 'expanded',
         sourcemap: true,
         includePaths: [
-          'govuk_modules/govuk_template/assets/stylesheets',
-          'govuk_modules/govuk_frontend_toolkit/stylesheets'
+          'node_modules',
+          'govuk_modules'
         ],
-        outputStyle: 'expanded'
+        outputStyle: 'compressed'
       },
       files: [{
         expand: true,
@@ -31,23 +31,6 @@ module.exports = function (grunt) {
         dest: 'public/images/'
       }]
     },
-    govuk: {
-      files: [
-        {
-          expand: true,
-          cwd: 'node_modules/govuk_frontend_toolkit',
-          src: '**',
-          dest: 'govuk_modules/govuk_frontend_toolkit/'
-        },
-        {
-          expand: true,
-          cwd: 'node_modules/govuk_template_jinja/',
-          src: '**',
-          dest: 'govuk_modules/govuk_template/',
-          rename: (dest, src) => dest + src.replace('html', 'njk')
-        }
-      ]
-    },
     payProductPage: {
       files: [{
         expand: true,
@@ -59,30 +42,10 @@ module.exports = function (grunt) {
     countryAutocompleteFiles: {
       files: [{
         expand: true,
-        cwd: 'node_modules/govuk-country-and-territory-autocomplete/dist',
+        cwd: 'node_modules/govuk-country-and-territory-autocomplete/dist/',
         src: '**',
-        dest: 'govuk_modules/govuk-country-and-territory-autocomplete/'
-      }]
-    }
-  }
-
-  const cssmin = {
-    target: {
-      files: {
-        'public/stylesheets/application.min.css': [
-          'public/stylesheets/application.css', 'govuk_modules/govuk-country-and-territory-autocomplete/location-autocomplete.min.css'
-        ]
-      }
-    }
-  }
-
-  const replace = {
-    fixSass: {
-      src: ['govuk_modules/govuk_template/**/*.scss', 'govuk_modules/govuk_frontend_toolkit/**/*.scss'],
-      overwrite: true,
-      replacements: [{
-        from: /filter:chroma(.*);/g,
-        to: 'filter:unquote("chroma$1");'
+        dest: 'govuk_modules/govuk-country-and-territory-autocomplete/',
+        rename: (dest, src) => dest + src.replace('min.css', 'scss')
       }]
     }
   }
@@ -192,8 +155,6 @@ module.exports = function (grunt) {
     sass: sass,
     // Copies templates and assets from external modules and dirs
     copy: copy,
-    // workaround for libsass
-    replace: replace,
     // Watches assets and sass for changes
     watch: watch,
     // nodemon watches for changes and restarts app
@@ -202,19 +163,16 @@ module.exports = function (grunt) {
     browserify: browserify,
     concat: concat,
     rewrite: rewrite,
-    compress: compress,
-    cssmin: cssmin
+    compress: compress
   });
 
   [
     'grunt-contrib-copy',
-    'grunt-contrib-cssmin',
     'grunt-contrib-compress',
     'grunt-contrib-watch',
     'grunt-contrib-clean',
     'grunt-sass',
     'grunt-nodemon',
-    'grunt-text-replace',
     'grunt-concurrent',
     'grunt-browserify',
     'grunt-contrib-concat',
@@ -227,13 +185,11 @@ module.exports = function (grunt) {
   grunt.registerTask('generate-assets', [
     'clean',
     'copy',
-    'replace',
     'sass',
     'browserify',
     'concat',
     'rewrite',
-    'compress',
-    'cssmin'
+    'compress'
   ])
 
   grunt.registerTask('default', [

@@ -1,18 +1,19 @@
 {% extends "../../layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
 Your payment is in progress - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
-<main id="content" class="content-wrapper error-pages grid-row">
-<div class="column-two-thirds">
-  <h1 class="heading-large"> Your payment is in progress </h1>
-  <p class="lede"> You can either:</p>
-  <a class="lede" href="/card_details/{{chargeId}}/confirm" id="confirm-link"> Continue with your payment </a>
-  <p class="lede">or</p>
-
-  <a href="{{returnUrl}}" id="return-url" class="lede">Go back to try the payment again</a>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">Your payment is in progress</h1>
+    <p class="govuk-body-l lede">You can either:<br/>
+      <a href="/card_details/{{chargeId}}/confirm" id="confirm-link">Continue with your payment</a>
+    </p>
+    <p class="govuk-body-l lede">or<br/>
+      <a href="{{returnUrl}}" id="return-url">Go back to try the payment again</a>
+    </p>
+  </div>
 </div>
-</main>
 {% endblock %}

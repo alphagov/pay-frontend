@@ -1,16 +1,18 @@
 {% extends "layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
   Your payment has been cancelled - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
-  <main id="content" class="content-wrapper error-pages grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-large user-cancel"> Your payment has been cancelled </h1>
-      <p class="lede">No money has been taken from your account</p>
-      <a id="return-url" href="{{ returnUrl }}" class="lede">Go back to the service</a>
-      <p>You can try to pay again</p>
-    </div>
-  </main>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l user-cancel">Your payment has been cancelled</h1>
+    <p class="govuk-body-l lede">No money has been taken from your account</p>
+    <p class="govuk-body-l lede">
+      <a id="return-url" href="{{ returnUrl }}">Go back to the service</a>
+    </p>
+    <p class="govuk-body-l lede">You can try to pay again</p>
+  </div>
+</div>
 {% endblock %}

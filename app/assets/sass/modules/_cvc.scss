@@ -1,0 +1,44 @@
+.hidden {
+  display: none;
+}
+
+body:not(.js-enabled) .govuk-form-group.cvc .hidden {
+  display: block;
+  visibility: visible;
+  margin-right: 3px;
+  float: left;
+}
+
+body:not(.js-enabled) .govuk-form-group.cvc .amex-cvc {
+  text-transform: lowercase;
+}
+
+body:not(.js-enabled) .govuk-form-group.cvc .amex-cvc {
+  margin-left: 10px;
+}
+
+.govuk-form-group.cvc {
+  .cvc {
+    margin-right: govuk-spacing(3);
+    float: left;
+  }
+
+  img {
+    position: relative;
+    top: -1px;
+    max-height: 38px;
+    margin-right: govuk-spacing(3);
+    float: left;
+  }
+
+  .either {
+    margin-right: govuk-spacing(3);
+    float: left;
+    color: $govuk-secondary-text-colour;
+    line-height: 38px;
+  }
+
+  .form-hint {
+    overflow: hidden;
+  }
+}

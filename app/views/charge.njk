@@ -1,32 +1,39 @@
 {% extends "layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
   Enter card details
 {% endblock %}
 
+{% set mainClasses = "charge-new" %}
+
 {% block content %}
-  <main id="content" class="content-wrapper charge-new">
-    <div class="error-summary {% if not hasError %} hidden {% endif %}" role="group" id="error-summary" aria-hidden="true">
-      <h1 class="heading-medium error-summary-heading" id="error-message">The following fields are missing or contain errors</h1>
-      <ul class="error-summary-list">
-        {% if errorFields %}
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-two-thirds">
+    <div id="error-summary" class="govuk-error-summary hidden" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">
+        The following fields are missing or contain errors
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
           {% for currentErrorField in errorFields %}
-            <li><a href="#{{ currentErrorField.cssKey }}-lbl" id="{{ currentErrorField.cssKey }}-error">{{ currentErrorField.value }}</a></li>
+            <li>
+              <a href="#{{ currentErrorField.cssKey }}-lbl" id="{{ currentErrorField.cssKey }}-error">{{ currentErrorField.value }}</a>
+            </li>
           {% endfor %}
-        {% endif %}
-      </ul>
+        </ul>
+      </div>
     </div>
+    <h1 class="govuk-heading-l">Enter card details</h1>
 
-    <h1 class="form-title">Enter card details</h1>
-
-    <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" class="form">
+    <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}">
       <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       {% if (originalEmail) %}
         <input name="originalemail" type="hidden" value="{{ originalEmail }}"/>
       {% endif %}
-      <div class="form-group{% if highlightErrorFields.cardNo %} error{% endif %} card-no-group" data-validation="cardNo">
-        <label id="card-no-lbl" for="card-no" class="form-label-bold">
+
+      <div class="govuk-form-group{% if highlightErrorFields.cardNo %} govuk-form-group--error{% endif %} card-no-group" data-validation="cardNo">
+        <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-width-two-thirds">
               <span
                   class="card-no-label"
                   data-label-replace="cardNo"
@@ -34,18 +41,18 @@
               {{ i18n.chargeView.cardNo }}
               </span>
           {% if highlightErrorFields.cardNo %}
-            <p class="error-message" id="error-card-no">
+            <p class="govuk-error-message" id="error-card-no">
               {{ highlightErrorFields.cardNo }}
             </p>
           {% endif %}
         </label>
         <input id="card-no"
-               type="tel"
-               name="cardNo"
-               maxlength="26"
-               class="form-control-1-2"
-               autocomplete="cc-number"
-               value="{{cardNo}}"
+                type="tel"
+                name="cardNo"
+                maxlength="26"
+                class="govuk-input govuk-!-width-two-thirds"
+                autocomplete="cc-number"
+                value="{{cardNo}}"
         />
         <ul class="accepted-cards field-empty">
           {% if allowedCards %}
@@ -56,66 +63,63 @@
                   data-credit="{{ currentAllowedCard.credit }}"
                   data-debit="{{ currentAllowedCard.debit }}"
               >
-                  <span class="visuallyhidden">
+                  <span class="govuk-warning-text__assistive">
                     {{ currentAllowedCard.brand }}
                   </span>
               </li>
             {% endfor %}
           {% endif %}
         </ul>
-        <p class="withdrawal-text">
+        <p class="govuk-body-s accepted-cards-hint withdrawal-text">
           {{ withdrawalText }}
         </p>
       </div>
-      <div class="form-group{% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
-        <label
-            id="expiry-date-lbl"
-            class="form-label-bold expiry-date-label"
+      <div class="govuk-form-group govuk-clearfix{% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
+        <label class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
+          <span class="expiry-date-label"
             data-label-replace="expiryMonth"
-            data-original-label="{{ i18n.chargeView.expiry }}"
-            for="expiry-month"
-        >
-          {{ i18n.chargeView.expiry }}
+            data-original-label="{{ i18n.chargeView.expiry }}">
+            {{ i18n.chargeView.expiry }}
+          </span>
         </label>
-        <p class="form-hint-bold form-hint">For example, 10/20</p>
+        <span class="govuk-hint govuk-!-margin-bottom-2">For example, 10/20</span>
         {% if highlightErrorFields.expiryMonth %}
           <p class="error-message" id="error-expiry-date">
             {{ highlightErrorFields.expiryMonth }}
           </p>
         {% endif %}
-        <div class="date-container">
-          <label class="form-hint" for="expiry-month"> Month </label>
-          <input
-            id="expiry-month"
-            type="number"
-            name="expiryMonth"
-            value="{{expiryMonth}}"
-            class="form-control"
-            min="1"
-            max="12"
-            minlength="1"
-            maxlength="2"
-            autocomplete="cc-exp-month"/>
-          <p class="seperator"> / </p>
+        <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
+            <label class="govuk-label govuk-date-input__label" for="expiry-month">Month</label>
+            <input
+              id="expiry-month"
+              type="number"
+              name="expiryMonth"
+              value="{{expiryMonth}}"
+              class="govuk-input govuk-date-input__input govuk-input--width-2"
+              min="1"
+              max="12"
+              minlength="1"
+              maxlength="2"
+              autocomplete="cc-exp-month"/>
         </div>
-        <div class="date-container">
-          <div class="form-hint"> Year</div>
-          <input
-            id="expiry-year"
-            type="number"
-            name="expiryYear"
-            value="{{expiryYear}}"
-            minlength="2"
-            maxlength="4"
-            class="form-control"
-            autocomplete="cc-exp-year"
-            data-last-of-form-group
-            data-required
-          />
-        </div>
+        <div class="govuk-date-input__item govuk-date-input__item--year">
+            <label for="expiry-year" class="govuk-label govuk-date-input__label">Year</label>
+            <input
+              id="expiry-year"
+              type="number"
+              name="expiryYear"
+              value="{{expiryYear}}"
+              minlength="2"
+              maxlength="4"
+              class="govuk-input govuk-date-input__input govuk-input--width-2"
+              autocomplete="cc-exp-year"
+              data-last-of-form-group
+              data-required
+            />
+          </div>
       </div>
-      <div class="form-group{% if highlightErrorFields.cardholderName %} error{% endif %}" data-validation="cardholderName">
-        <label id="cardholder-name-lbl" for="cardholder-name" class="form-label-bold">
+      <div class="govuk-form-group{% if highlightErrorFields.cardholderName %} govuk-form-group--error{% endif %}" data-validation="cardholderName">
+        <label id="cardholder-name-lbl" for="cardholder-name" class="govuk-label govuk-label--s">
               <span
                   data-label-replace="cardholderName"
                   data-original-label="{{ i18n.chargeView.cardholderName }}"
@@ -123,75 +127,75 @@
               {{ i18n.chargeView.cardholderName }}
               </span>
           {% if highlightErrorFields.cardholderName %}
-            <p class="error-message" id="error-cardholder-name">
+            <p class="govuk-error-message" id="error-cardholder-name">
               {{ highlightErrorFields.cardholderName }}
             </p>
           {% endif %}
         </label>
         <input id="cardholder-name"
-               type="text"
-               name="cardholderName"
-               maxlength="200"
-               class="form-control-1-2 form-control"
-               value="{{ cardholderName }}"
-               autocomplete="cc-name"/>
+                type="text"
+                name="cardholderName"
+                maxlength="200"
+                class="govuk-input govuk-!-width-two-thirds"
+                value="{{ cardholderName }}"
+                autocomplete="cc-name"/>
       </div>
-      <div class="form-group{% if highlightErrorFields.cvc %} error{% endif %} cvc" data-validation="cvc">
-        <label id="cvc-lbl" for="cvc" class="form-label-bold">
-              <span
-                  class="cvc-label"
-                  data-label-replace="cvc"
-                  data-original-label="{{ i18n.chargeView.cvc }}">
-              {{ i18n.chargeView.cvc }}
-              </span>
-          <span class="form-hint">
-                <span class="generic-cvc">
-                  {{ i18n.chargeView.cvcTip }}
-                </span>
-                <span class="hidden">
-                  {{ i18n.chargeView.amexcvcNonjs }}
-                </span>
-                <span class="amex-cvc hidden">
-                  {{ i18n.chargeView.amexcvcTip }}
-                </span>
-              </span>
+      <div class="govuk-form-group{% if highlightErrorFields.cvc %} govuk-form-group--error{% endif %} cvc govuk-clearfix" data-validation="cvc">
+        <label id="cvc-lbl" for="cvc" class="govuk-label govuk-label--s">
+          <span
+            class="cvc-label"
+            data-label-replace="cvc"
+            data-original-label="{{ i18n.chargeView.cvc }}">
+          {{ i18n.chargeView.cvc }}
+          </span>
+          <span class="govuk-hint govuk-!-margin-bottom-2">
+            <span class="generic-cvc">
+              {{ i18n.chargeView.cvcTip }}
+            </span>
+            <span class="hidden">
+              {{ i18n.chargeView.amexcvcNonjs }}
+            </span>
+            <span class="amex-cvc hidden">
+              {{ i18n.chargeView.amexcvcTip }}
+            </span>
+          </span>
           {% if highlightErrorFields.cvc %}
-            <p class="error-message" id="error-cvc">
+            <p class="govuk-error-message" id="error-cvc">
               {{ highlightErrorFields.cvc }}
             </p>
           {% endif %}
         </label>
         <input id="cvc"
-               type="number"
-               value="{{cvc}}"
-               name="cvc"
-               class="form-control-1-8 cvc"
-               maxlength="4"
-               autocomplete="cc-csc"/>
+                type="number"
+                value="{{cvc}}"
+                name="cvc"
+                class="govuk-input govuk-!-width-one-quarter cvc"
+                maxlength="4"
+                autocomplete="cc-csc"/>
         <img src="/images/security-code.png" class="generic-cvc" alt="Please enter either a 3 or 4 digit card security code"/>
         <span class="either hidden">
           or
         </span>
         <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="Please enter either a 3 or 4 digit card security code"/>
       </div>
-      <div class="form-group pull-bottom{% if highlightErrorFields.addressCountry %} error{% endif %}" data-validation="addressCountry">
-        <h2 class="push-top">Billing address</h2>
-        <p class="form-hint">This is the address associated with the card</p>
+      <div class="govuk-form-group govuk-!-width-two-thirds {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Billing address</h2>
+        <span class="govuk-hint govuk-!-margin-bottom-2">This is the address associated with the card</span>
 
-        <label id="address-country-lbl" for="address-country" class="form-label-bold">
+        <label id="address-country-lbl" for="address-country" class="govuk-label govuk-label--s">
               <span
-                  class="address-country-label push-top-sml"
+                  class="address-country-label"
                   data-label-replace="addressCountry"
                   data-original-label="{{ i18n.chargeView.country }}">
                 {{ i18n.chargeView.country }}
               </span>
           {% if highlightErrorFields.addressCountry %}
-            <p class="error-message" id="error-address-country">
+            <p class="govuk-error-message" id="error-address-country">
               {{ highlightErrorFields.addressCountry }}
             </p>
           {% endif %}
         </label>
-        <select name="addressCountry" class="form-control form-control-2-3" id="address-country" autocomplete="billing country-name">
+        <select name="addressCountry" class="govuk-select" id="address-country" autocomplete="billing country-name">
           {% for country in countries %}
             <option
                 value="{{ country[1].split(':')[1] }}"
@@ -199,8 +203,8 @@
           {% endfor %}
         </select>
       </div>
-      <div class="form-group address{% if highlightErrorFields.addressLine1 %} error{% endif %}" data-validation="addressLine1">
-        <label id="address-line-1-lbl" for="address-line-1" class="form-label-bold">
+      <div class="govuk-form-group address{% if highlightErrorFields.addressLine1 %} govuk-form-group--error{% endif %}" data-validation="addressLine1">
+        <label id="address-line-1-lbl" for="address-line-1" class="govuk-label govuk-label--s">
               <span
                   class="address-line-1-label"
                   data-label-replace="addressLine1"
@@ -209,30 +213,30 @@
               </span>
 
           {% if highlightErrorFields.addressLine1 %}
-            <p class="error-message" id="error-address-line-1">
+            <p class="govuk-error-message" id="error-address-line-1">
               {{ highlightErrorFields.addressLine1 }}
             </p>
           {% endif %}
-          <input id="address-line-1"
-                 type="text"
-                 name="addressLine1"
-                 maxlength="100"
-                 class="form-control-1-2"
-                 value="{{ addressLine1 }}"
-                 autocomplete="billing street-address"/>
         </label>
+        <input id="address-line-1"
+                type="text"
+                name="addressLine1"
+                maxlength="100"
+                class="govuk-input govuk-!-width-two-thirds"
+                value="{{ addressLine1 }}"
+                autocomplete="billing street-address"/>
         <input id="address-line-2"
-               type="text"
-               name="addressLine2"
-               maxlength="100"
-               class="form-control-1-2"
-               data-last-of-form-group
-               value="{{ addressLine2 }}"
-               aria-label="Enter address line 2"
-               autocomplete="billing address-line2"/>
+                type="text"
+                name="addressLine2"
+                maxlength="100"
+                class="govuk-input govuk-!-width-two-thirds govuk-!-margin-top-2"
+                data-last-of-form-group
+                value="{{ addressLine2 }}"
+                aria-label="Enter address line 2"
+                autocomplete="billing address-line2"/>
       </div>
-      <div class="form-group{% if highlightErrorFields.addressCity %} error{% endif %}" data-validation="addressCity">
-        <label id="address-city-lbl" for="address-city" class="form-label-bold">
+      <div class="govuk-form-group{% if highlightErrorFields.addressCity %} govuk-form-group--error{% endif %}" data-validation="addressCity">
+        <label id="address-city-lbl" for="address-city" class="govuk-label govuk-label--s">
               <span
                   class="address-city-label"
                   data-label-replace="addressCity"
@@ -240,21 +244,21 @@
                 {{ i18n.chargeView.city }}
               </span>
           {% if highlightErrorFields.addressCity %}
-            <p class="error-message" id="error-address-city">
+            <p class="govuk-error-message" id="error-address-city">
               {{ highlightErrorFields.addressCity }}
             </p>
           {% endif %}
         </label>
         <input id="address-city"
-               type="text"
-               name="addressCity"
-               maxlength="100"
-               class="form-control-1-4"
-               value="{{ addressCity }}"
-               autocomplete="billing address-level2"/>
+                type="text"
+                name="addressCity"
+                maxlength="100"
+                class="govuk-input govuk-!-width-one-third"
+                value="{{ addressCity }}"
+                autocomplete="billing address-level2"/>
       </div>
-      <div class="form-group{% if highlightErrorFields.addressPostcode %} error{% endif %}" data-validation="addressPostcode">
-        <label id="address-postcode-lbl" for="address-postcode" class="form-label-bold">
+      <div class="govuk-form-group{% if highlightErrorFields.addressPostcode %} govuk-form-group--error{% endif %}" data-validation="addressPostcode">
+        <label id="address-postcode-lbl" for="address-postcode" class="govuk-label govuk-label--s">
               <span
                   class="address-postcode-label"
                   data-label-replace="addressPostcode"
@@ -263,64 +267,66 @@
               </span>
 
           {% if highlightErrorFields.addressPostcode %}
-            <p class="error-message" id="error-address-postcode">
+            <p class="govuk-error-message" id="error-address-postcode">
               {{ highlightErrorFields.addressPostcode }}
             </p>
           {% endif %}
         </label>
         <input id="address-postcode"
-               type="text"
-               name="addressPostcode"
-               maxlength="10"
-               class="form-control-1-8"
-               value="{{ addressPostcode }}"
-               autocomplete="billing postal-code"/>
+                type="text"
+                name="addressPostcode"
+                maxlength="10"
+                class="govuk-input govuk-!-width-one-quarter"
+                value="{{ addressPostcode }}"
+                autocomplete="billing postal-code"/>
       </div>
-      <div class="form-group{% if highlightErrorFields.email %} error{% endif %}" data-validation="email">
-        <label id="email-lbl" for="email" class="form-label-bold">
+      <div class="govuk-form-group{% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
+        <label id="email-lbl" for="email" class="govuk-label govuk-label--s">
               <span
                   class="email-label"
                   data-label-replace="email"
                   data-original-label="{{ i18n.chargeView.email }}">
                 {{ i18n.chargeView.email }}
               </span>
-          <span class="form-hint">We’ll send your payment confirmation here</span>
+          <span class="govuk-hint govuk-!-margin-bottom-2">We’ll send your payment confirmation here</span>
 
           {% if highlightErrorFields.email %}
-            <p class="error-message" id="error-email">
+            <p class="govuk-error-message" id="error-email">
               {{ highlightErrorFields.email }}
             </p>
           {% endif %}
         </label>
         <input id="email"
-               type="email"
-               name="email"
-               maxlength="254"
-               class="form-control-1-2"
-               value="{{ email }}"
-               autocomplete="email"
-               data-confirmation="true"
-               data-confirmation-label="An email will be sent to: "/>
+                type="email"
+                name="email"
+                maxlength="254"
+                class="govuk-input govuk-!-width-two-thirds"
+                value="{{ email }}"
+                autocomplete="email"
+                data-confirmation="true"
+                data-confirmation-label="An email will be sent to: "/>
       </div>
       {% if typos %}
-        <div class="form-group form-group-email-typo error">
-          <legend for="email-typo" id="email-typo-lbl" class="form-label-bold error-label">
-            <p class="error-message" id="error-typo">
+        <div class="govuk-form-group form-group-email-typo govuk-form-group--error">
+          <legend for="email-typo" id="email-typo-lbl" class="govuk-label govuk-label--s error-label">
+            <p class="govuk-error-message" id="error-typo">
               {{ i18n.chargeController.fieldErrors.fields.email.typo }}
             </p>
           </legend>
-          <div class="multiple-choice">
-            <input id="email-corrected" type="radio" name="email-typo-sugestion" value="{{ typos.full }}" checked>
-            <label class="form-label" for="email-corrected">{{ typos.address }}@<strong>{{ typos.domain }}</strong></label>
-          </div>
-          <div class="multiple-choice">
-            <input id="email-uncorrected" type="radio" name="email-typo-sugestion" value="{{ email }}">
-            <label class="form-label" for="email-uncorrected">{{ email }}</label>
+          <div class="govuk-radios">
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="email-corrected" type="radio" name="email-typo-sugestion" value="{{ typos.full }}" checked>
+              <label class="govuk-label govuk-radios__label" for="email-corrected">{{ typos.address }}@<strong>{{ typos.domain }}</strong></label>
+            </div>
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="email-uncorrected" type="radio" name="email-typo-sugestion" value="{{ email }}">
+              <label class="govuk-label govuk-radios__label" for="email-uncorrected">{{ email }}</label>
+            </div>
           </div>
         </div>
       {% endif %}
       <div>
-        <input id="submit-card-details" type="submit" class="button" value="Continue" name="submitCardDetails"
+        <input id="submit-card-details" type="submit" class="govuk-button" value="Continue" name="submitCardDetails"
         {% if typos %}
         data-click-events
         data-click-category="Typo made"
@@ -331,30 +337,30 @@
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="link" value="Cancel payment" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="Cancel payment" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
-
+  </div>
+  <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
-      <div class="inner js-stick-at-top-when-scrolling">
-        <h2>Payment summary</h2>
-        <p>
-          <span id="payment-description">{{ description }}</span>
-        </p>
-        <p>
-          Total amount:
-          <span id="amount" class="amount">£{{ amount }}</span>
-        </p>
-      </div>
+      <h2 class="govuk-heading-m">Payment summary</h2>
+      <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-19">
+        {{ description }}
+      </p>
+      <p class="govuk-body govuk-!-font-size-19 govuk-!-margin-bottom-0">
+        Total amount:
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ amount }}</span>
+      </p>
     </aside>
-  </main>
+  </div>
+</div>
   <script id="govuk-script-charge">
     window.chargeId = "{{ id }}"
   </script>
 {% endblock %}
 
-{% block body_end %}
+{% block bodyEnd %}
   {% include "includes/scripts.njk" %}
   <script type="text/javascript" src="/public/location-autocomplete.min.js"></script>
   <script type="text/javascript">

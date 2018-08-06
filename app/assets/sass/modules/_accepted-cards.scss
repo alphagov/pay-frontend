@@ -1,21 +1,21 @@
 .accepted-cards {
   display: block;
   width: 100%;
-  margin: 15px 0 10px;
+  margin: govuk-spacing(3) 0 govuk-spacing(2);
   padding: 0;
   float: none;
   overflow: hidden;
 
-  @include media(tablet) {
-    width: 50%;
+ @include govuk-media-query($from: tablet) {
+    width: 66.666%;
   }
 
   li {
     display: block;
-    width: 10%;
+    width: 3rem;
     height: 0;
-    margin-right: 5px;
-    padding-bottom: 6.5%;
+    margin: 0 govuk-spacing(1) govuk-spacing(1);
+    padding-bottom: 2rem;
     float: left;
     background-image: url("/images/accepted-cards-sprite.png");
     background-size: 900% 200%;
@@ -32,5 +32,9 @@
     .#{nth($cards, $i)}.selected {
       background-position: #{12.5 * ($i - 1)}% 0%;
     }
+  }
+
+  &-hint {
+    color: $govuk-secondary-text-colour;
   }
 }

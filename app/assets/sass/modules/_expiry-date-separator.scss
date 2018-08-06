@@ -1,0 +1,14 @@
+.govuk-date-input__item--with-separator {
+  position: relative;
+  margin-right: govuk-spacing(7);
+
+  &:after {
+    @include govuk-font($size: 27);
+
+    content: '/';
+    position: absolute;
+    top: 71%;
+    right: -1.5rem;
+    transform: translate(0, -50%);
+  }
+}

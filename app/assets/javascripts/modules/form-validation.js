@@ -6,7 +6,7 @@ var formValidation = function () {
     countrySelect = form.find('#address-country'),
     postcodeInput = form.find('#address-postcode'),
     cardInput = form.find('#card-no'),
-    errorSummary = $('.error-summary'),
+    errorSummary = $('.govuk-error-summary'),
     logger = { info: function () {} }, // replace with console to see output
     // window.card comes from the view
     chargeValidations = module.chargeValidation(
@@ -52,7 +52,7 @@ var formValidation = function () {
       var formGroup = getFormGroup(cardInput)
       replaceLabel(error.text, formGroup)
       prependHighlightError({ cssKey: 'card-no', value: error.text })
-      $(formGroup).addClass('error')
+      $(formGroup).addClass('govuk-form-group--error')
     },
     addAllValidations = function () {
       var fields = allFields()
@@ -62,7 +62,7 @@ var formValidation = function () {
     },
     generateHighlightBlock = function () {
       errorSummary.removeClass('hidden').attr('aria-hidden', 'false')
-      $('.error-summary-list').empty()
+      $('.govuk-error-summary__list').empty()
       appendHighlightErrors()
 
       location.hash = ''
@@ -84,7 +84,7 @@ var formValidation = function () {
       addHighlightError('prepend', error)
     },
     addHighlightError = function (addType, error) {
-      $('.error-summary-list')[addType](
+      $('.govuk-error-summary__list')[addType](
         '<li><a href="#' +
           error.cssKey +
           '-lbl" id="' +
@@ -107,7 +107,7 @@ var formValidation = function () {
         // validation happens on blur, check which input the user is on now
         focusedGroup = getFormGroup($(document.activeElement)),
         inGroup = focusedGroup.is(group),
-        groupHasError = getFormGroup(input).hasClass('error'),
+        groupHasError = getFormGroup(input).hasClass('govuk-form-group--error'),
         lastOfgroup = $(input).is('[data-last-of-form-group]'),
         required = $(input).is('[data-required]')
       if ((lastOfgroup && required) || groupHasError) { return checkValidation(input) }
@@ -118,6 +118,12 @@ var formValidation = function () {
       var formGroup = getFormGroup(input),
         validationName = getFormGroupValidation(formGroup),
         validation = validationFor(validationName)
+
+      if (validation) {
+        $(input).addClass('govuk-input--error')
+      } else {
+        $(input).removeClass('govuk-input--error')
+      }
 
       if ($(input).is(cardInput)) {
         checkCardType(validation, formGroup)
@@ -139,15 +145,18 @@ var formValidation = function () {
     replaceOnError = function (validation, formGroup) {
       var validated = validation === undefined
       replaceLabel(validation, formGroup)
-      $(formGroup).toggleClass('error', !validated)
+      $(formGroup).toggleClass('govuk-form-group--error', !validated)
     },
     replaceLabel = function (validation, formGroup) {
       var label = formGroup.find('[data-label-replace]')
+
       if (label.length === 0) return
       if (validation) {
         label.text(validation).attr('role', 'alert')
+        label.addClass('govuk-error-message')
       } else {
         label.text(label.attr('data-original-label')).removeAttr('role')
+        label.removeClass('govuk-error-message')
       }
     },
     validationFor = function (name) {
@@ -177,7 +186,7 @@ var formValidation = function () {
       return chargeValidations.verify(allFieldValues())
     },
     getFormGroup = function (input) {
-      return $(input).parents('.form-group')
+      return $(input).parents('.govuk-form-group')
     },
     getFormGroupValidation = function (formGroup) {
       return $(formGroup).attr('data-validation')

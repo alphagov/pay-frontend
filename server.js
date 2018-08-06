@@ -25,9 +25,8 @@ const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
 
 // Global constants
-const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.min.css')
+const CSS_PATH = staticify.getVersionedPath('/stylesheets/application-new.css')
 const JAVASCRIPT_PATH = staticify.getVersionedPath('/javascripts/application.js')
-const IFRAME_CSS_PATH = staticify.getVersionedPath('/stylesheets/iframe.css')
 const PORT = process.env.PORT || 3000
 const {NODE_ENV} = process.env
 const argv = require('minimist')(process.argv.slice(2))
@@ -37,7 +36,7 @@ const publicCaching = {maxAge: oneYear}
 
 // Define app views
 const APP_VIEWS = [
-  path.join(__dirname, '/govuk_modules/govuk_template/views/layouts'),
+  path.join(__dirname, 'node_modules/govuk-frontend/'),
   path.join(__dirname, '/app/views')
 ]
 
@@ -50,7 +49,7 @@ function initialiseGlobalMiddleware (app) {
   app.set('settings', {getVersionedPath: staticify.getVersionedPath})
   app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
     ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
-  app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images', 'favicon.ico')))
+  app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/assets/images', 'favicon.ico')))
   app.use(staticify.middleware)
 
   app.use(function (req, res, next) {
@@ -121,8 +120,7 @@ function initialiseTemplateEngine (app) {
 
   // Version static assets on production for better caching
   // if it's not production we want to re-evaluate the assets on each file change
-  nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application.min.css'))
-  nunjucksEnvironment.addGlobal('iframe_css_path', NODE_ENV === 'production' ? IFRAME_CSS_PATH : staticify.getVersionedPath('/stylesheets/iframe.css'))
+  nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application-new.css'))
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? JAVASCRIPT_PATH : staticify.getVersionedPath('/javascripts/application.js'))
   // Initialise internationalisation
   fs.readFile('./locales/en.json', 'utf8', (err, data) => {
@@ -136,13 +134,12 @@ function initialiseTemplateEngine (app) {
 
 function initialisePublic (app) {
   app.use('/public', express.static(path.join(__dirname, '/public'), publicCaching))
-  app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_template/assets'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/app/data'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk-country-and-territory-autocomplete'), publicCaching))
-  app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_frontend_toolkit'), publicCaching))
   app.use('/javascripts', express.static(path.join(__dirname, '/public/assets/javascripts'), publicCaching))
   app.use('/images', express.static(path.join(__dirname, '/public/images'), publicCaching))
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/assets/stylesheets'), publicCaching))
+  app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/')))
 }
 
 function initialiseRoutes (app) {

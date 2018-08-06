@@ -1,10 +1,40 @@
 {% extends "../../layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
   Your payment is in progress - GOV.UK Pay
 {% endblock %}
 
 {% block head %}
-  {% include "includes/head.njk" %}
+  {# For Internet Explorer 8, you need to compile specific stylesheet #}
+  {# see https://github.com/alphagov/govuk-frontend/blob/master/docs/installation/supporting-internet-explorer-8.md #}
+  <!--[if IE 8]>
+    <link href="/govuk-frontend/all-ie8.css" rel="stylesheet" />
+  <![endif]-->
+
+  {# For older browsers to allow them to recognise HTML5 elements such as `<header>` #}
+  <!--[if lt IE 9]>
+    <script src="/html5-shiv/html5shiv.js"></script>
+  <![endif]-->
+
+
+  {% if service and service.customBranding and service.customBranding.cssUrl  %}
+    <link href="{{ service.customBranding.cssUrl }}" media="screen" rel="stylesheet" type="text/css" />
+  {% else %}
+    <link href="{{ css_path }}" media="screen" rel="stylesheet" type="text/css" />
+  {% endif %}
+
+  {% include "includes/analytics.njk" %}
   <meta http-equiv="refresh" content="0;URL='/card_details/{{ chargeId }}/capture_waiting'" />
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">Processing card details</h1>
+    <p class="govuk-body-l lede">Your payment is being processed.</p>
+    <div id="spinner">
+      <img src="/images/spinner.gif" alt="waiting"/>
+    </div>
+  </div>
+</div>
 {% endblock %}

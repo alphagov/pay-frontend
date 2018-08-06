@@ -1,16 +1,17 @@
 {% extends "../layout.njk" %}
 
-{% block page_title %}
+{% block pageTitle %}
   Your payment was {{ status }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
-  <main id="content" class="content-wrapper error-pages grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-large {{ status }}"> Your payment was {{ status }} </h1>
-      <p class="lede">To make any changes to your payment you’ll need to contact the service.</p>
-
-      <a href="{{ returnUrl }}" id="return-url" class="lede"> View your payment summary </a>
-    </div>
-  </main>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l {{ status }}">Your payment was {{ status }}</h1>
+    <p class="govuk-body-l lede">To make any changes to your payment you’ll need to contact the service.</p>
+    <p class="govuk-body-l lede">
+      <a href="{{ returnUrl }}" id="return-url">View your payment summary</a>
+    </p>
+  </div>
+</div>
 {% endblock %}
