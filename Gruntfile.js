@@ -133,6 +133,14 @@ module.exports = function (grunt) {
     }
   }
 
+  const uglify = {
+    my_target: {
+      files: {
+        'public/javascripts/application.min.js': ['public/javascripts/application.js']
+      }
+    }
+  }
+
   const compress = {
     main: {
       options: {
@@ -142,7 +150,8 @@ module.exports = function (grunt) {
         {expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz'},
         {expand: true, src: ['public/images/*.gif'], ext: '.gif.gz'},
         {expand: true, src: ['public/images/*.png'], ext: '.png.gz'},
-        {expand: true, src: ['public/javascripts/*.js'], ext: '.js.gz'},
+        { expand: true, src: ['public/javascripts/*.js'], ext: '.js.gz' },
+        { expand: true, src: ['public/javascripts/*.min.js'], ext: '.min.js.gz' },
         {expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz'}
       ]
     }
@@ -163,6 +172,7 @@ module.exports = function (grunt) {
     browserify: browserify,
     concat: concat,
     rewrite: rewrite,
+    uglify: uglify,
     compress: compress
   });
 
@@ -176,11 +186,9 @@ module.exports = function (grunt) {
     'grunt-concurrent',
     'grunt-browserify',
     'grunt-contrib-concat',
-    'grunt-rewrite'
-
-  ].forEach(function (task) {
-    grunt.loadNpmTasks(task)
-  })
+    'grunt-rewrite',
+    'grunt-contrib-uglify'
+  ].forEach(task => grunt.loadNpmTasks(task))
 
   grunt.registerTask('generate-assets', [
     'clean',
@@ -189,6 +197,7 @@ module.exports = function (grunt) {
     'browserify',
     'concat',
     'rewrite',
+    'uglify',
     'compress'
   ])
 
