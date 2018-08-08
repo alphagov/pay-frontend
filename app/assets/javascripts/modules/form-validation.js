@@ -136,11 +136,10 @@ var formValidation = function () {
       showCardType().checkCardtypeIsAllowed().then(
         function () {
           replaceOnError(validation, formGroup)
-        },
+      }).catch(
         function (error) {
           addCardError(error)
-        }
-      )
+      })
     },
     replaceOnError = function (validation, formGroup) {
       var validated = validation === undefined

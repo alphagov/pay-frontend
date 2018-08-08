@@ -135,20 +135,31 @@ var showCardType = function() {
     };
   }
 
-  var checkCardtypeIsAllowed = function() {
-    var defer = $.Deferred();
+  var checkCardtypeIsAllowed = function () {
+    return new Promise(function (resolve, reject) {
+      var request = new XMLHttpRequest();
       var card = getCardType();
       // this should already be picked up by the other validations
-      if (card.length !== 1) return defer.resolve();
-      $.post('/check_card/' + chargeId,
-        {cardNo: cardInput.value.replace(/\D/g,'') }
-      ).then(function(data){
-        if (data.accepted) return defer.resolve();
-        return defer.reject({text: data.message});
-      })
+      if (card.length !== 1) return
+      request.open('POST', '/check_card/' + chargeId, true);
+      request.setRequestHeader('Content-type', 'application/json');
+      request.onload = function () {
+        var payload = JSON.parse(request.response)
+        if (request.status >= 200 && request.status < 400) {
+          return resolve(payload)
+        } else {
+          return reject()
+        }
+      }
+      request.onerror = function () {
+        return reject()
+      }
+      request.send(JSON.stringify({
+        cardNo: cardInput.value.replace(/\D/g, '')
+      }));
+    });
+  }
 
-    return defer.promise();
-  };
 
   return {
     init: init,
