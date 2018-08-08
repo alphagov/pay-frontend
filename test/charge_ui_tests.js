@@ -42,7 +42,7 @@ describe('The charge view', function () {
 
   it('should have a \'Continue\' button.', function () {
     var body = renderTemplate('charge', {})
-    body.should.containInputWithIdAndName('submit-card-details', 'submitCardDetails', 'submit')
+    body.should.containSelector('#submit-card-details')
   })
 
   it('should show all input fields.', function () {
