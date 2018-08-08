@@ -121,9 +121,9 @@ var showCardType = function() {
     }
   }
 
-  var cvcTrim = function() {
-    if (this.value.length > this.maxLength) {
-      this.value = this.value.slice(0, this.maxLength);
+  var cvcTrim = function(input) {
+    if (input.value.length > input.maxLength) {
+      input.value = input.value.slice(0, input.maxLength);
     }
   }
 
