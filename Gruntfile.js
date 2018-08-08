@@ -116,7 +116,7 @@ module.exports = function (grunt) {
       separator: ';'
     },
     dist: {
-      src: ['public/javascripts/browsered.js', 'app/assets/javascripts/base/*.js',
+      src: ['public/javascripts/browsered.js',
         'app/assets/javascripts/modules/*.js'],
       dest: 'public/javascripts/application.js'
     }
@@ -138,6 +138,9 @@ module.exports = function (grunt) {
       files: {
         'public/javascripts/application.min.js': ['public/javascripts/application.js']
       }
+    },
+    options: {
+      sourceMap: true
     }
   }
 
