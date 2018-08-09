@@ -1,5 +1,3 @@
-require('babel-polyfill')
-
 const inputConfim = require('./assets/javascripts/browsered/form-input-confirm')
 const analytics = require('gaap-analytics')
 

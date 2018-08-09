@@ -50,6 +50,17 @@ module.exports = function (grunt) {
     }
   }
 
+  const rewrite = {
+    'application.css': {
+      src: 'public/stylesheets/application.css',
+      editor: function (contents) {
+        const staticify = require('staticify')(path.join(__dirname, 'public'))
+
+        return staticify.replacePaths(contents)
+      }
+    }
+  }
+
   const watch = {
     assets: {
       files: ['app/assets/**/*'],
@@ -89,25 +100,22 @@ module.exports = function (grunt) {
   }
 
   const browserify = {
-    'public/javascripts/browsered.js': ['app/browsered.js'],
+    'public/javascripts/application.js': ['app/browsered.js'],
     options: {
       browserifyOptions: {
         standalone: 'module'
-      },
-      transform: [
-        [
-          'babelify',
-          {
-            presets: [
-              ['env', {
-                'targets': {
-                  'browsers': ['last 2 versions', 'safari >= 7', 'ie >= 10']
-                }
-              }]
-            ]
-          }
-        ]
-      ]
+      }
+    }
+  }
+
+  const babel = {
+    options: {
+      presets: ['@babel/preset-env']
+    },
+    dist: {
+      files: {
+        'public/javascripts/application.js': 'public/javascripts/application.js'
+      }
     }
   }
 
@@ -116,20 +124,9 @@ module.exports = function (grunt) {
       separator: ';'
     },
     dist: {
-      src: ['public/javascripts/browsered.js',
+      src: ['public/javascripts/application.js',
         'app/assets/javascripts/modules/*.js'],
       dest: 'public/javascripts/application.js'
-    }
-  }
-
-  const rewrite = {
-    'application.css': {
-      src: 'public/stylesheets/application.css',
-      editor: function (contents) {
-        const staticify = require('staticify')(path.join(__dirname, 'public'))
-
-        return staticify.replacePaths(contents)
-      }
     }
   }
 
@@ -153,9 +150,9 @@ module.exports = function (grunt) {
         {expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz'},
         {expand: true, src: ['public/images/*.gif'], ext: '.gif.gz'},
         {expand: true, src: ['public/images/*.png'], ext: '.png.gz'},
-        { expand: true, src: ['public/javascripts/*.js'], ext: '.js.gz' },
-        { expand: true, src: ['public/javascripts/*.min.js'], ext: '.min.js.gz' },
-        {expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz'}
+        {expand: true, src: ['public/javascripts/*.min.js'], ext: '.min.js.gz'},
+        {expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz'},
+        {expand: true, src: ['public/stylesheets/custom/*.css'], ext: '.css.gz'}
       ]
     }
   }
@@ -174,6 +171,7 @@ module.exports = function (grunt) {
     concurrent: concurrent,
     browserify: browserify,
     concat: concat,
+    babel: babel,
     rewrite: rewrite,
     uglify: uglify,
     compress: compress
@@ -190,16 +188,18 @@ module.exports = function (grunt) {
     'grunt-browserify',
     'grunt-contrib-concat',
     'grunt-rewrite',
-    'grunt-contrib-uglify'
+    'grunt-contrib-uglify',
+    'grunt-babel'
   ].forEach(task => grunt.loadNpmTasks(task))
 
   grunt.registerTask('generate-assets', [
     'clean',
     'copy',
     'sass',
-    'browserify',
-    'concat',
     'rewrite',
+    'browserify',
+    'babel',
+    'concat',
     'uglify',
     'compress'
   ])
