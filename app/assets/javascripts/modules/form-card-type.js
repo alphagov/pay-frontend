@@ -113,7 +113,7 @@ var showCardType = function(){
     if (this.value.length > this.maxLength) {
       this.value = this.value.slice(0, this.maxLength);
     }
-  }
+  },
 
   getSupportedChargeType = function(name){
     var card =  cards.filter('.' + name).first();
@@ -122,6 +122,7 @@ var showCardType = function(){
       credit: card.attr('data-credit')
     };
   },
+
   checkCardtypeIsAllowed = function(){
     var defer = $.Deferred();
       var card = getCardType();
