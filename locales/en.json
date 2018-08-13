@@ -118,7 +118,6 @@
     "cancelButton": "Cancel payment"
   },
   "errorViews": {
-    "inProgress": "Your payment is in progress",
     "either": "You can either:",
     "continue": "Continue with your payment",
     "tryAgain": "Go back to try the payment again",
@@ -128,9 +127,6 @@
     "paymentStatus": "Your payment was",
     "unsuccessful": "Your payment was unsuccessful",
     "noMoneyTaken": "No money has been taken from your account.",
-    "processing": "Processing card details",
-    "processingPayment": "Your payment is being processed.",
-    "spinnerAltText": "waiting",
     "toMakeChanges": "To make any changes to your payment you’ll need to contact the service.",
     "viewSummary": "View your payment summary",
     "paymentExpired": "Your Payment expired",
@@ -139,13 +135,18 @@
     "paymentCancelledTitle": "Payment cancelled",
     "paymentCancelledDescription": "Your payment has been cancelled by the government service. This may have happened for a number of reasons.",
     "error": "An error occurred",
-    "technicalProblems": "Sorry, we’re experiencing technical problems",
+    "technicalProblems": "Sorry, we’re experiencing technical problems"
+  },
+  "otherViews": {
+    "extraSteps": "You may need to complete some extra verification steps.",
+    "inProgress": "Your payment is in progress",
     "approvalNeeded": "To continue with your payment, we need your bank’s approval.",
     "approved": "The card details have been approved by the bank.",
-    "extraSteps": "You may need to complete some extra verification steps.",
     "checkingDetails": "Checking card details",
     "checkingDetailsDescription": "Your payment details are being checked.",
-    "returnToService": "Return to service",
+    "spinnerAltText": "waiting",
+    "processingPayment": "Your payment is being processed.",
+    "processing": "Processing card details",
     "userCancelledPayment": "Your payment has been cancelled",
     "goBackToService": "Go back to the service"
   }

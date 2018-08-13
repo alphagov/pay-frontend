@@ -5,7 +5,7 @@
 {% endblock %}
 <body OnLoad="OnLoadEvent();">
 <noscript>
-    <p class="govuk-body-l lede">{{ i18n.errorViews.approved }}</p>
+    <p class="govuk-body-l lede">{{ i18n.otherViews.approved }}</p>
 </noscript>
 <form name="three_ds_required" method="post" action="{{ threeDsHandlerUrl }}" target="_top">
     <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
@@ -19,7 +19,7 @@
         <input type="hidden" name="MD" value="{{ md }}"/>
     {% endif %}
     <noscript>
-        <button id="confirm" class="govuk-button">Continue</button>
+        <button id="confirm" class="govuk-button">{{ i18n.chargeView.continueButton}}</button>
     </noscript>
 </form>
 

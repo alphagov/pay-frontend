@@ -2,6 +2,7 @@
 const cheerio = require('cheerio')
 const chai = require('chai')
 const nunjucks = require('nunjucks')
+const i18n = require('../../locales/en.json')
 
 // Global initialisation
 const views = ['./app/views', './node_modules/govuk-frontend']
@@ -13,6 +14,8 @@ module.exports = {
 
 function render (templateName, templateData) {
   const pathToTemplate = templateName + '.njk'
+
+  templateData.i18n = i18n
 
   return environment.render(pathToTemplate, templateData)
 }
