@@ -5,6 +5,7 @@
 			"debit": "Credit card payments are not accepted. Please use a debit card."
 		},
 		"fieldErrors": {
+      "summary": "The following fields are missing or contain errors",
 			"missing": "is missing",
 			"invalid": "is invalid",
 			"fields": {
@@ -80,17 +81,40 @@
 		}
 	},
 	"chargeView": {
-		"expiry": "Expiry date",
-		"cvc": "Card security code",
+    "title": "Enter card details",
+    "expiry": "Expiry date",
+    "expiryHint": "For example, 10/20",
+    "expiryMonth": "Month",
+    "expiryYear": "Year",
+    "cvc": "Card security code",
+    "cvcTip": "The last 3 digits on the back of the card",
+    "amexcvcTip": "The last 4 digits after the card number on the front",
+    "amexcvcNonjs": "For American Express,",
+    "or": "or",
 		"cardNo": "Card number",
-		"cardholderName": "Name on card",
+    "cardholderName": "Name on card",
+    "billingAddress": "Billing address",
+    "billingAddressHint": "This is the address associated with the card",
 		"building": "Building number or name and street",
 		"city": "Town or city",
 		"postcode": "Postcode",
 		"country": "Country or territory",
-		"email": "Email",
-		"cvcTip": "The last 3 digits on the back of the card",
-		"amexcvcTip": "The last 4 digits after the card number on the front",
-		"amexcvcNonjs": "For American Express,"
-	}
+    "email": "Email",
+    "emailHint": "We’ll send your payment confirmation here",
+    "emailConfirmation": "An email will be sent to:",
+    "paymentSummary": "Payment summary",
+    "totalAmount": "Total amount:",
+    "continueButton": "Continue",
+    "cancelButton": "Cancel payment"
+  },
+  "confirmView": {
+    "title": "Confirm your payment",
+    "card": "Card number:",
+    "expiry": "Expiry date:",
+    "name": "Name on card:",
+    "address": "Billing address:",
+    "email": "Confirmation email:",
+    "confirmButton": "Confirm payment",
+    "cancelButton": "Cancel payment"
+  }
 }
