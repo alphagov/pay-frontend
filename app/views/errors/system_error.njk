@@ -1,20 +1,20 @@
 {% extends "../layout.njk" %}
 
 {% block pageTitle %}
-  An error occurred - GOV.UK Pay
+  {{ i18n.errorViews.error }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l system-error">Sorry, we’re experiencing technical&nbsp;problems</h1>
+    <h1 class="govuk-heading-l system-error">{{ i18n.errorViews.technicalProblems }}</h1>
     {% if returnUrl %}
-      <p class="govuk-body-l lede">No money has been taken from your account.</p>
+      <p class="govuk-body-l lede">{{ i18n.errorViews.noMoneyTaken }}</p>
       <p class="govuk-body-l lede">
-        <a href="{{ returnUrl }}" id="return-url" class="govuk-link">Go back to try the payment again</a>
+        <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ i18n.errorViews.tryAgain }}</a>
       </p>
     {% else %}
-      <p class="govuk-body-l lede">No money has been taken from your account, please try again later.</p>
+      <p class="govuk-body-l lede">{{ i18n.errorViews.noMoneyTaken }}</p>
     {% endif %}
   </div>
 </div>

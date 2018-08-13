@@ -1,16 +1,16 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  There was a problem with your payment - GOV.UK Pay
+  {{ i18n.errorViews.problem }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l qa-payment-declined">Your payment has been declined</h1>
-    <p class="govuk-body-l lede">Contact your bank for more details. No money has been taken from your account.</p>
+    <h1 class="govuk-heading-l qa-payment-declined">{{ i18n.errorViews.declined }}</h1>
+    <p class="govuk-body-l lede">{{ i18n.errorViews.contactYourBank }}</p>
 
-    <p class="govuk-body-l lede"><a href="{{ returnUrl }}" id="return-url" class="govuk-link">Go back to try the payment again</a></p>
+    <p class="govuk-body-l lede"><a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ i18n.errorViews.tryAgain }}</a></p>
   </div>
 </div>
 {% endblock %}

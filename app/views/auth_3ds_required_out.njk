@@ -5,7 +5,7 @@
 {% endblock %}
 <body OnLoad="OnLoadEvent();">
 <noscript>
-  <p class="govuk-body-l lede">To continue with your payment, we need your bank’s approval.</p>
+  <p class="govuk-body-l lede">{{ i18n.errorViews.approvalNeeded }}</p>
 </noscript>
 <form name="three_ds_required" method="post" action="{{ issuerUrl }}">
   <input type="hidden" name="PaReq" value="{{ paRequest }}"/>

@@ -1,16 +1,16 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  Your Payment was cancelled - GOV.UK Pay
+  {{ i18n.errorViews.paymentCancelled }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l system-cancel">Payment cancelled</h1>
-    <p class="govuk-body-l lede">Your payment has been cancelled by the government service. This may have happened for a number of reasons.</p>
+    <h1 class="govuk-heading-l system-cancel">{{ i18n.errorViews.paymentCancelledTitle }}</h1>
+    <p class="govuk-body-l lede">{{ i18n.errorViews.paymentCancelledDescription }}</p>
     <p class="govuk-body-l lede">
-      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">Go back to try the payment again</a>
+      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ i18n.errorViews.tryAgain }}</a>
     </p>
   </div>
 </div>
