@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% block pageTitle %}
-  {{ i18n.confirmView.title }}
+  {{ i18n.confirmDetails.title }}
 {% endblock %}
 
 {% set mainClasses = "confirm-page" %}
@@ -9,13 +9,13 @@
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ i18n.confirmView.title }}</h1>
+    <h1 class="govuk-heading-l">{{ i18n.confirmDetails.title }}</h1>
 
     <table class="govuk-table">
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ i18n.confirmView.card }}
+            {{ i18n.confirmDetails.card }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="card-number">
             {{ charge.cardDetails.cardNumber }}
@@ -23,7 +23,7 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ i18n.confirmView.expiry }}
+            {{ i18n.confirmDetails.expiry }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="expiry-date">
             {{ charge.cardDetails.expiryDate }}
@@ -31,7 +31,7 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ i18n.confirmView.name }}
+            {{ i18n.confirmDetails.name }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="cardholder-name">
             {{ charge.cardDetails.cardholderName }}
@@ -39,7 +39,7 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ i18n.confirmView.address }}
+            {{ i18n.confirmDetails.address }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="address">
             {{ charge.cardDetails.billingAddress }}
@@ -47,7 +47,7 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ i18n.confirmView.email }}
+            {{ i18n.confirmDetails.email }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="email">
             {{ charge.email }}
@@ -59,23 +59,23 @@
     <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
-      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">{{ i18n.confirmView.confirmButton }}</button>
+      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">{{ i18n.confirmDetails.confirmButton }}</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.confirmView.cancelButton }}" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.confirmDetails.cancelButton }}" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
   </div>
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
-      <h2 class="govuk-heading-m">{{ i18n.chargeView.paymentSummary }}</h2>
+      <h2 class="govuk-heading-m">{{ i18n.cardDetails.paymentSummary }}</h2>
       <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-39">
         {{ charge.description }}
       </p>
       <p class="govuk-body govuk-!-font-size-39 govuk-!-margin-bottom-0">
-        {{ i18n.chargeView.totalAmount }}
+        {{ i18n.cardDetails.totalAmount }}
         <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.amount }}</span>
       </p>
     </aside>

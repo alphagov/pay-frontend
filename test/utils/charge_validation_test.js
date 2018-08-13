@@ -11,7 +11,7 @@ i18n.configure({
 })
 const Card = require('../../app/models/card.js')()
 let result
-const validator = charge(i18n.__('chargeController.fieldErrors'), {info: () => {}}, Card)
+const validator = charge(i18n.__('fieldErrors'), {info: () => {}}, Card)
 
 describe('charge validator', () => {
   describe('Method: verify', () => {
