@@ -1,16 +1,16 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  {{ i18n.authorisation.inProgress }} - GOV.UK Pay
+  {{ i18n.commonHeadings.inProgress }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ i18n.authorisation.inProgress }}</h1>
+    <h1 class="govuk-heading-l">{{ i18n.commonHeadings.inProgress }}</h1>
     <p class="govuk-body-l lede">{{ i18n.errorViews.either }}</p>
     <a class="govuk-body-l lede" href="/card_details/{{ chargeId }}/3ds_required" id="threeds-required-link">{{ i18n.errorViews.continue }}</a>
-    <p class="govuk-body-l lede">{{ i18n.cardDetails.or }}<br/>
+    <p class="govuk-body-l lede">{{ i18n.commonConjunctions.or }}<br/>
       <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ i18n.errorViews.tryAgain }}</a>
     </p>
   </div>

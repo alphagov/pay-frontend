@@ -13,7 +13,6 @@
     "cvcTip": "The last 3 digits on the back of the card",
     "amexcvcTip": "The last 4 digits after the card number on the front",
     "amexcvcNonjs": "For American Express,",
-    "or": "or",
     "cardNo": "Card number",
     "cardholderName": "Name on card",
     "billingAddress": "Billing address",
@@ -24,11 +23,13 @@
     "country": "Country or territory",
     "email": "Email",
     "emailHint": "We’ll send your payment confirmation here",
-    "emailConfirmation": "An email will be sent to:",
-    "paymentSummary": "Payment summary",
-    "totalAmount": "Total amount:",
+    "emailConfirmation": "An email will be sent to:"
+  },
+  "commonButtons": {
     "continueButton": "Continue",
-    "cancelButton": "Cancel payment"
+    "confirmButton": "Confirm payment",
+    "cancelButton": "Cancel payment",
+    "goBackToService": "Go back to the service"
   },
   "confirmDetails": {
     "title": "Confirm your payment",
@@ -36,9 +37,17 @@
     "expiry": "Expiry date:",
     "name": "Name on card:",
     "address": "Billing address:",
-    "email": "Confirmation email:",
-    "confirmButton": "Confirm payment",
-    "cancelButton": "Cancel payment"
+    "email": "Confirmation email:"
+  },
+  "commonConjunctions": {
+    "or": "or"
+  },
+  "commonHeadings": {
+    "inProgress": "Your payment is in progress"
+  },
+  "paymentSummary": {
+    "title": "Payment summary",
+    "totalAmount": "Total amount:"
   },
   "errorViews": {
     "either": "You can either:",
@@ -62,7 +71,6 @@
   },
   "authorisation": {
     "extraSteps": "You may need to complete some extra verification steps.",
-    "inProgress": "Your payment is in progress",
     "approvalNeeded": "To continue with your payment, we need your bank’s approval.",
     "approved": "The card details have been approved by the bank.",
     "checkingDetails": "Checking card details",
@@ -70,8 +78,7 @@
     "spinnerAltText": "waiting",
     "processingPayment": "Your payment is being processed.",
     "processing": "Processing card details",
-    "userCancelledPayment": "Your payment has been cancelled",
-    "goBackToService": "Go back to the service"
+    "userCancelledPayment": "Your payment has been cancelled"
   },
   "fieldErrors": {
     "summary": "The following fields are missing or contain errors",

@@ -59,23 +59,23 @@
     <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
-      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">{{ i18n.confirmDetails.confirmButton }}</button>
+      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">{{ i18n.commonButtons.confirmButton }}</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.confirmDetails.cancelButton }}" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.commonButtons.cancelButton }}" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
   </div>
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
-      <h2 class="govuk-heading-m">{{ i18n.cardDetails.paymentSummary }}</h2>
+      <h2 class="govuk-heading-m">{{ i18n.paymentSummary.title }}</h2>
       <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-39">
         {{ charge.description }}
       </p>
       <p class="govuk-body govuk-!-font-size-39 govuk-!-margin-bottom-0">
-        {{ i18n.cardDetails.totalAmount }}
+        {{ i18n.paymentSummary.totalAmount }}
         <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.amount }}</span>
       </p>
     </aside>

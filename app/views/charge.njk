@@ -180,7 +180,7 @@
                 autocomplete="cc-csc"/>
         <img src="/images/security-code.png" class="generic-cvc" alt="{{ i18n.cardDetails.cvcTip }}"/>
         <span class="either hidden">
-          {{ i18n.cardDetails.or }}
+          {{ i18n.commonConjunctions.or }}
         </span>
         <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ i18n.cardDetails.amexcvcTip }}"/>
       </div>
@@ -338,24 +338,24 @@
           data-click-category="Typo made"
           data-click-action="Corrected email: {{ typos.domain }}"
           {% endif %}
-          >{{ i18n.cardDetails.continueButton }}</button>
+          >{{ i18n.commonButtons.continueButton }}</button>
       </div>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.cardDetails.cancelButton }}" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.commonButtons.cancelButton }}" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
   </div>
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
-      <h2 class="govuk-heading-m">{{ i18n.cardDetails.paymentSummary }}</h2>
+      <h2 class="govuk-heading-m">{{ i18n.paymentSummary.title }}</h2>
       <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-19">
         {{ description }}
       </p>
       <p class="govuk-body govuk-!-font-size-19 govuk-!-margin-bottom-0">
-        {{ i18n.cardDetails.totalAmount }}
+        {{ i18n.paymentSummary.totalAmount }}
         <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ amount }}</span>
       </p>
     </aside>
