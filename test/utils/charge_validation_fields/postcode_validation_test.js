@@ -57,17 +57,17 @@ describe('card validation: postcode', function () {
   describe('should not validate if it contains 12 or more digits', () => {
     it('and it contains only digits', () => {
       result = fields.fieldValidations.addressPostcode('012345678901', {addressCountry: 'US'})
-      expect(result).to.equal('contains_too_many_digits')
+      expect(result).to.equal('containsTooManyDigits')
     })
 
     it('and it contains both digits and text and the digits are consecutive', () => {
       result = fields.fieldValidations.addressPostcode('ABCDEF0123456789012', {addressCountry: 'US'})
-      expect(result).to.equal('contains_too_many_digits')
+      expect(result).to.equal('containsTooManyDigits')
     })
 
     it('and it contains both digits and text and the digits are not consecutive', () => {
       result = fields.fieldValidations.addressPostcode('012345AB678901', {addressCountry: 'US'})
-      expect(result).to.equal('contains_too_many_digits')
+      expect(result).to.equal('containsTooManyDigits')
     })
   })
 })

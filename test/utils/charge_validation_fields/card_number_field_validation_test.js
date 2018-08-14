@@ -20,18 +20,18 @@ describe('card validation: card number', function () {
 
     var long = fields.fieldValidations.cardNo('42424242424242424242')
 
-    expect(short).to.equal('number_incorrect_length')
+    expect(short).to.equal('numberIncorrectLength')
     expect(correct).to.equal(true)
-    expect(long).to.equal('number_incorrect_length')
+    expect(long).to.equal('numberIncorrectLength')
   })
 
   it('should return luhn invalid', function () {
     var result = fields.fieldValidations.cardNo('4242424242424241')
-    expect(result).to.equal('luhn_invalid')
+    expect(result).to.equal('luhnInvalid')
   })
 
-  it('should return card_not_supported if the card is not supported', function () {
+  it('should return cardNotSupported if the card is not supported', function () {
     var result = fields.fieldValidations.cardNo('6759649826438453')
-    expect(result).to.equal('card_not_supported')
+    expect(result).to.equal('cardNotSupported')
   })
 })

@@ -11,21 +11,21 @@ describe('card validation: cvc', function () {
 
   it('should invalid length if too long', function () {
     var result = fields.fieldValidations.cvc('12345')
-    expect(result).to.equal('invalid_length')
+    expect(result).to.equal('invalidLength')
   })
 
   it('should invalid length if too short', function () {
     var result = fields.fieldValidations.cvc('12')
-    expect(result).to.equal('invalid_length')
+    expect(result).to.equal('invalidLength')
   })
 
   it('should invalid length if undefined', function () {
     var result = fields.fieldValidations.cvc(undefined)
-    expect(result).to.equal('invalid_length')
+    expect(result).to.equal('invalidLength')
   })
 
   it('should invalid length if empty', function () {
     var result = fields.fieldValidations.cvc('')
-    expect(result).to.equal('invalid_length')
+    expect(result).to.equal('invalidLength')
   })
 })
