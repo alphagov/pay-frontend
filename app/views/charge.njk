@@ -326,13 +326,13 @@
         </div>
       {% endif %}
       <div>
-        <input id="submit-card-details" type="submit" class="govuk-button" value="Continue" name="submitCardDetails"
-        {% if typos %}
-        data-click-events
-        data-click-category="Typo made"
-        data-click-action="Corrected email: {{ typos.domain }}"
-        {% endif %}
-        />
+        <button id="submit-card-details" type="submit" class="govuk-button"
+          {% if typos %}
+          data-click-events
+          data-click-category="Typo made"
+          data-click-action="Corrected email: {{ typos.domain }}"
+          {% endif %}
+          >Continue</button>
       </div>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">

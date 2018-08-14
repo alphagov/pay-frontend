@@ -1,9 +1,6 @@
-require('babel-polyfill')
-
 const inputConfim = require('./assets/javascripts/browsered/form-input-confirm')
 const analytics = require('gaap-analytics')
 
-window.jQuery = window.$ = require('jquery')
 exports.chargeValidation = require('./utils/charge_validation')
 analytics.eventTracking.init()
 

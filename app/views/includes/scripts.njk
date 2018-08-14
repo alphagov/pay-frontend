@@ -6,22 +6,19 @@
 </script>
 <script src="{{ js_path }}"></script>
 <script id="govuk-script-analytics" type="text/javascript">
-  $(function(){
+  document.addEventListener('DOMContentLoaded', function() {
+    var mainWrap = document.getElementsByTagName('main')[0]
     GOVUK.stopDoubleSubmit.init();
-    if ($('main').hasClass('charge-new')) {
-      $( document ).ready(function() {
-        {% if cardsAsStrings %}
-        window.Card = { allowed: {{ cardsAsStrings | safe }} };
-        {% else %}
-        window.Card = { allowed: {} };
-        {% endif %}
-        formValidation();
-        showCardType().init();
-      });
-    } else if ($('main').hasClass('confirm-page')) {
-      $( document ).ready(function() {
-        analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
-      });
+    if (mainWrap.classList.contains('charge-new')) {
+      {% if cardsAsStrings %}
+      window.Card = { allowed: {{ cardsAsStrings | safe }} };
+      {% else %}
+      window.Card = { allowed: {} };
+      {% endif %}
+      formValidation();
+      showCardType().init();
+    } else if (mainWrap.classList.contains('confirm-page')) {
+      analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
   });
 </script>
