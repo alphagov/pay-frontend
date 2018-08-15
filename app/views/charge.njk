@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% block pageTitle %}
-  Enter card details
+  {{ i18n.cardDetails.title }}
 {% endblock %}
 
 {% set mainClasses = "charge-new" %}
@@ -11,7 +11,7 @@
   <div class="govuk-grid-column-two-thirds">
     <div id="error-summary" class="govuk-error-summary hidden" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
-        The following fields are missing or contain errors
+        {{ i18n.fieldErrors.summary }}
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
@@ -23,7 +23,7 @@
         </ul>
       </div>
     </div>
-    <h1 class="govuk-heading-l">Enter card details</h1>
+    <h1 class="govuk-heading-l">{{ i18n.cardDetails.title }}</h1>
 
     <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}">
       <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
@@ -37,8 +37,8 @@
               <span
                   class="card-no-label"
                   data-label-replace="cardNo"
-                  data-original-label="{{ i18n.chargeView.cardNo }}">
-              {{ i18n.chargeView.cardNo }}
+                  data-original-label="{{ i18n.cardDetails.cardNo }}">
+              {{ i18n.cardDetails.cardNo }}
               </span>
           {% if highlightErrorFields.cardNo %}
             <p class="govuk-error-message" id="error-card-no">
@@ -71,25 +71,31 @@
           {% endif %}
         </ul>
         <p class="govuk-body-s accepted-cards-hint withdrawal-text">
-          {{ withdrawalText }}
+          {% if withdrawalText === 'debit_credit' %}
+            {{ i18n.cardDetails.withdrawalText.debit_credit }}
+          {% endif %}
+          {% if withdrawalText === 'debit' %}
+            {{ i18n.cardDetails.withdrawalText.debit }}
+          {% endif %}
         </p>
       </div>
       <div class="govuk-form-group govuk-clearfix{% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
         <label class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
           <span class="expiry-date-label"
             data-label-replace="expiryMonth"
-            data-original-label="{{ i18n.chargeView.expiry }}">
-            {{ i18n.chargeView.expiry }}
+            data-original-label="{{ i18n.cardDetails.expiry }}">
+            {{ i18n.cardDetails.expiry }}
           </span>
         </label>
-        <span class="govuk-hint govuk-!-margin-bottom-2">For example, 10/20</span>
+        <span class="govuk-hint govuk-!-margin-bottom-2">
+          {{ i18n.cardDetails.expiryHint }}</span>
         {% if highlightErrorFields.expiryMonth %}
           <p class="error-message" id="error-expiry-date">
             {{ highlightErrorFields.expiryMonth }}
           </p>
         {% endif %}
         <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
-            <label class="govuk-label govuk-date-input__label" for="expiry-month">Month</label>
+            <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ i18n.cardDetails.expiryMonth }}</label>
             <input
               id="expiry-month"
               type="number"
@@ -103,7 +109,7 @@
               autocomplete="cc-exp-month"/>
         </div>
         <div class="govuk-date-input__item govuk-date-input__item--year">
-            <label for="expiry-year" class="govuk-label govuk-date-input__label">Year</label>
+            <label for="expiry-year" class="govuk-label govuk-date-input__label">{{ i18n.cardDetails.expiryYear }}</label>
             <input
               id="expiry-year"
               type="number"
@@ -122,9 +128,9 @@
         <label id="cardholder-name-lbl" for="cardholder-name" class="govuk-label govuk-label--s">
               <span
                   data-label-replace="cardholderName"
-                  data-original-label="{{ i18n.chargeView.cardholderName }}"
+                  data-original-label="{{ i18n.cardDetails.cardholderName }}"
                   class="card-holder-name-label">
-              {{ i18n.chargeView.cardholderName }}
+              {{ i18n.cardDetails.cardholderName }}
               </span>
           {% if highlightErrorFields.cardholderName %}
             <p class="govuk-error-message" id="error-cardholder-name">
@@ -145,18 +151,18 @@
           <span
             class="cvc-label"
             data-label-replace="cvc"
-            data-original-label="{{ i18n.chargeView.cvc }}">
-          {{ i18n.chargeView.cvc }}
+            data-original-label="{{ i18n.cardDetails.cvc }}">
+          {{ i18n.cardDetails.cvc }}
           </span>
           <span class="govuk-hint govuk-!-margin-bottom-2">
             <span class="generic-cvc">
-              {{ i18n.chargeView.cvcTip }}
+              {{ i18n.cardDetails.cvcTip }}
             </span>
             <span class="hidden">
-              {{ i18n.chargeView.amexcvcNonjs }}
+              {{ i18n.cardDetails.amexcvcNonjs }}
             </span>
             <span class="amex-cvc hidden">
-              {{ i18n.chargeView.amexcvcTip }}
+              {{ i18n.cardDetails.amexcvcTip }}
             </span>
           </span>
           {% if highlightErrorFields.cvc %}
@@ -172,22 +178,22 @@
                 class="govuk-input govuk-!-width-one-quarter cvc"
                 maxlength="4"
                 autocomplete="cc-csc"/>
-        <img src="/images/security-code.png" class="generic-cvc" alt="Please enter either a 3 or 4 digit card security code"/>
+        <img src="/images/security-code.png" class="generic-cvc" alt="{{ i18n.cardDetails.cvcTip }}"/>
         <span class="either hidden">
-          or
+          {{ i18n.commonConjunctions.or }}
         </span>
-        <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="Please enter either a 3 or 4 digit card security code"/>
+        <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ i18n.cardDetails.amexcvcTip }}"/>
       </div>
       <div class="govuk-form-group govuk-!-width-two-thirds {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Billing address</h2>
-        <span class="govuk-hint govuk-!-margin-bottom-2">This is the address associated with the card</span>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ i18n.cardDetails.billingAddress }}</h2>
+        <span class="govuk-hint govuk-!-margin-bottom-2">{{ i18n.cardDetails.billingAddressHint }}</span>
 
         <label id="address-country-lbl" for="address-country" class="govuk-label govuk-label--s">
               <span
                   class="address-country-label"
                   data-label-replace="addressCountry"
-                  data-original-label="{{ i18n.chargeView.country }}">
-                {{ i18n.chargeView.country }}
+                  data-original-label="{{ i18n.cardDetails.country }}">
+                {{ i18n.cardDetails.country }}
               </span>
           {% if highlightErrorFields.addressCountry %}
             <p class="govuk-error-message" id="error-address-country">
@@ -208,8 +214,8 @@
               <span
                   class="address-line-1-label"
                   data-label-replace="addressLine1"
-                  data-original-label="{{ i18n.chargeView.building }}">
-                {{ i18n.chargeView.building }}
+                  data-original-label="{{ i18n.cardDetails.building }}">
+                {{ i18n.cardDetails.building }}
               </span>
 
           {% if highlightErrorFields.addressLine1 %}
@@ -240,8 +246,8 @@
               <span
                   class="address-city-label"
                   data-label-replace="addressCity"
-                  data-original-label="{{ i18n.chargeView.city }}">
-                {{ i18n.chargeView.city }}
+                  data-original-label="{{ i18n.cardDetails.city }}">
+                {{ i18n.cardDetails.city }}
               </span>
           {% if highlightErrorFields.addressCity %}
             <p class="govuk-error-message" id="error-address-city">
@@ -262,8 +268,8 @@
               <span
                   class="address-postcode-label"
                   data-label-replace="addressPostcode"
-                  data-original-label="{{ i18n.chargeView.postcode }}">
-                {{ i18n.chargeView.postcode }}
+                  data-original-label="{{ i18n.cardDetails.postcode }}">
+                {{ i18n.cardDetails.postcode }}
               </span>
 
           {% if highlightErrorFields.addressPostcode %}
@@ -285,10 +291,10 @@
               <span
                   class="email-label"
                   data-label-replace="email"
-                  data-original-label="{{ i18n.chargeView.email }}">
-                {{ i18n.chargeView.email }}
+                  data-original-label="{{ i18n.cardDetails.email }}">
+                {{ i18n.cardDetails.email }}
               </span>
-          <span class="govuk-hint govuk-!-margin-bottom-2">We’ll send your payment confirmation here</span>
+          <span class="govuk-hint govuk-!-margin-bottom-2">{{ i18n.cardDetails.emailHint }}</span>
 
           {% if highlightErrorFields.email %}
             <p class="govuk-error-message" id="error-email">
@@ -304,13 +310,13 @@
                 value="{{ email }}"
                 autocomplete="email"
                 data-confirmation="true"
-                data-confirmation-label="An email will be sent to: "/>
+                data-confirmation-label="{{ i18n.cardDetails.emailConfirmation }} "/>
       </div>
       {% if typos %}
         <div class="govuk-form-group form-group-email-typo govuk-form-group--error">
           <legend for="email-typo" id="email-typo-lbl" class="govuk-label govuk-label--s error-label">
             <p class="govuk-error-message" id="error-typo">
-              {{ i18n.chargeController.fieldErrors.fields.email.typo }}
+              {{ i18n.fieldErrors.fields.email.typo }}
             </p>
           </legend>
           <div class="govuk-radios">
@@ -332,24 +338,24 @@
           data-click-category="Typo made"
           data-click-action="Corrected email: {{ typos.domain }}"
           {% endif %}
-          >Continue</button>
+          >{{ i18n.commonButtons.continueButton }}</button>
       </div>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="Cancel payment" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="{{ i18n.commonButtons.cancelButton }}" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
   </div>
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
-      <h2 class="govuk-heading-m">Payment summary</h2>
+      <h2 class="govuk-heading-m">{{ i18n.paymentSummary.title }}</h2>
       <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-19">
         {{ description }}
       </p>
       <p class="govuk-body govuk-!-font-size-19 govuk-!-margin-bottom-0">
-        Total amount:
+        {{ i18n.paymentSummary.totalAmount }}
         <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ amount }}</span>
       </p>
     </aside>

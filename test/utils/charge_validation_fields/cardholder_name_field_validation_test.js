@@ -38,49 +38,49 @@ describe('card validation: cardholder name', function () {
   describe('should not validate if it contains a suspected PAN', () => {
     it('and it consists entirely of an excessive amount of digits', () => {
       result = fields.fieldValidations.cardholderName('012345678901')
-      expect(result).to.equal('contains_too_many_digits')
+      expect(result).to.equal('containsTooManyDigits')
     })
 
     it('and it contains both text and excessive consecutive digits', () => {
       result = fields.fieldValidations.cardholderName('Mr Peter Griffin 01234567890121')
-      expect(result).to.equal('contains_too_many_digits')
+      expect(result).to.equal('containsTooManyDigits')
     })
 
     it('and it contains both text and excessive non-consecutive digits', () => {
       result = fields.fieldValidations.cardholderName('Mr Peter 0123-45 Gri--ffin 678901')
-      expect(result).to.equal('contains_too_many_digits')
+      expect(result).to.equal('containsTooManyDigits')
     })
   })
 
   describe('it should not validate if it contains a suspected CVV', () => {
     it('because it consists of a number that is 3 digits long', () => {
       result = fields.fieldValidations.cardholderName(170)
-      expect(result).to.equal('contains_suspected_cvv')
+      expect(result).to.equal('containsSuspectedCVC')
     })
 
     it('because it consists of a number that is 4 digits long', () => {
       result = fields.fieldValidations.cardholderName(1760)
-      expect(result).to.equal('contains_suspected_cvv')
+      expect(result).to.equal('containsSuspectedCVC')
     })
 
     it('because it consists entirely of 3 consecutive digits', () => {
       result = fields.fieldValidations.cardholderName('170')
-      expect(result).to.equal('contains_suspected_cvv')
+      expect(result).to.equal('containsSuspectedCVC')
     })
 
     it('because it consists entirely of 4 consecutive digits', () => {
       result = fields.fieldValidations.cardholderName('1760')
-      expect(result).to.equal('contains_suspected_cvv')
+      expect(result).to.equal('containsSuspectedCVC')
     })
 
     it('because it consists entirely of 3 consecutive digits surrounded by spaces', () => {
       result = fields.fieldValidations.cardholderName(' 170 ')
-      expect(result).to.equal('contains_suspected_cvv')
+      expect(result).to.equal('containsSuspectedCVC')
     })
 
     it('because it consists entirely of 4 consecutive digits surrounded by spaces', () => {
       result = fields.fieldValidations.cardholderName(' 1760 ')
-      expect(result).to.equal('contains_suspected_cvv')
+      expect(result).to.equal('containsSuspectedCVC')
     })
   })
 })

@@ -21,9 +21,9 @@ describe('card validation: expiry month', function () {
     var large = fields.fieldValidations.expiryMonth(13, {expiryYear: 16})
     var chars = fields.fieldValidations.expiryMonth('a12', {expiryYear: 16})
 
-    expect(small).to.equal('invalid_month')
-    expect(large).to.equal('invalid_month')
-    expect(chars).to.equal('invalid_month')
+    expect(small).to.equal('invalidMonth')
+    expect(large).to.equal('invalidMonth')
+    expect(chars).to.equal('invalidMonth')
   })
 
   it('should fails if year is not 2 or 4 digits', function () {
@@ -36,7 +36,7 @@ describe('card validation: expiry month', function () {
     var four = fields.fieldValidations.expiryMonth(12, {expiryYear: fullYear})
 
     expect(two).to.equal(true)
-    expect(three).to.equal('invalid_year')
+    expect(three).to.equal('invalidYear')
     expect(four).to.equal(true)
   })
 
@@ -45,9 +45,9 @@ describe('card validation: expiry month', function () {
     var year = fields.fieldValidations.expiryMonth(1, {expiryYear: 15})
     var longYear = fields.fieldValidations.expiryMonth(1, {expiryYear: '2015'})
 
-    expect(month).to.equal('in_the_past')
-    expect(year).to.equal('in_the_past')
-    expect(longYear).to.equal('in_the_past')
+    expect(month).to.equal('inThePast')
+    expect(year).to.equal('inThePast')
+    expect(longYear).to.equal('inThePast')
   })
 
   it('should fail year is not defined', function () {

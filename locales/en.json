@@ -1,96 +1,155 @@
 {
-	"chargeController": {
-		"withdrawalText": {
-			"debit_credit": "Accepted credit and debit card types",
-			"debit": "Credit card payments are not accepted. Please use a debit card."
-		},
-		"fieldErrors": {
-			"missing": "is missing",
-			"invalid": "is invalid",
-			"fields": {
-				"cardholderName": {
-					"name": "name",
-					"message": "Enter the name as it appears on the card",
-					"contains_too_many_digits": "Enter the name as it appears on the card",
-					"contains_suspected_cvv": "Enter the name as it appears on the card"
-				},
-				"cardNo": {
-					"name": "card number",
-					"message": "Enter a valid card number",
-					"number_incorrect_length": "Card number is not the correct length",
-					"luhn_invalid": "Enter a valid card number",
-					"card_not_supported": "This card type is not accepted",
-					"non_numeric": " Enter a valid card number"
-				},
-				"cvc": {
-					"name": "card security code",
-					"message": "Enter a valid card security code",
-					"invalid_length": "Enter a valid card security code"
-				},
-				"expiryDate": {
-					"name": "expiry date",
-					"message": "Enter a valid expiry date"
-				},
-				"expiryMonth": {
-					"name": "expiry date",
-					"message": "Enter a valid expiry date",
-					"invalid_month": "Enter a valid expiry date",
-					"invalid_year": "Enter a valid expiry date",
-					"in_the_past": "Enter an expiry date in the future"
-				},
-				"expiryYear": {
-					"name": "expiry year",
-					"message": "Enter a valid expiry date",
-					"invalid_year": "This expiry year is not a valid"
-				},
-				"addressLine1": {
-					"name": "building name/number and street",
-					"message": "Enter a valid billing address",
-					"contains_too_many_digits": "Enter a valid billing address"
-				},
-				"addressLine2": {
-					"name": "additional address line",
-					"message": "Enter valid address information",
-					"contains_too_many_digits": "Enter valid address information"
-				},
-				"addressCity": {
-					"name": "town/city",
-					"message": "Enter a valid town/city",
-					"contains_too_many_digits": "Enter a valid town/city"
-				},
-				"addressPostcode": {
-					"name": "postcode",
-					"message": "Enter a valid postcode",
-					"contains_too_many_digits": "Enter a valid postcode"
-				},
-				"email": {
-					"name": "email",
-					"message": "Enter a valid email",
-					"contains_too_many_digits": "Enter a valid email",
-					"typo": "There might be a mistake in the last part of your email address. Select your email address."
-				},
-				"addressCountry": {
-					"name": "country or territory",
-					"message": "Enter a valid country or territory"
-				}
-			},
-			"email": {
-				"typo": "chargeController.fieldErrors.email.typo"
-			}
-		}
-	},
-	"chargeView": {
-		"expiry": "Expiry date",
-		"cvc": "Card security code",
-		"cardNo": "Card number",
-		"cardholderName": "Name on card",
-		"building": "Building number or name and street",
-		"city": "Town or city",
-		"postcode": "Postcode",
-		"country": "Country or territory",
-		"email": "Email",
-		"cvcTip": "The last 3 digits on the back of the card",
-		"amexcvcTip": "The last 4 digits after the card number on the front",
-		"amexcvcNonjs": "For American Express,"
-	}
+  "cardDetails": {
+    "withdrawalText": {
+      "debit_credit": "Accepted credit and debit card types",
+      "debit": "Credit card payments are not accepted. Please use a debit card."
+    },
+    "title": "Enter card details",
+    "expiry": "Expiry date",
+    "expiryHint": "For example, 10/20",
+    "expiryMonth": "Month",
+    "expiryYear": "Year",
+    "cvc": "Card security code",
+    "cvcTip": "The last 3 digits on the back of the card",
+    "amexcvcTip": "The last 4 digits after the card number on the front",
+    "amexcvcNonjs": "For American Express,",
+    "cardNo": "Card number",
+    "cardholderName": "Name on card",
+    "billingAddress": "Billing address",
+    "billingAddressHint": "This is the address associated with the card",
+    "building": "Building number or name and street",
+    "city": "Town or city",
+    "postcode": "Postcode",
+    "country": "Country or territory",
+    "email": "Email",
+    "emailHint": "We’ll send your payment confirmation here",
+    "emailConfirmation": "An email will be sent to:"
+  },
+  "commonButtons": {
+    "continueButton": "Continue",
+    "confirmButton": "Confirm payment",
+    "cancelButton": "Cancel payment",
+    "goBackToService": "Go back to the service"
+  },
+  "confirmDetails": {
+    "title": "Confirm your payment",
+    "card": "Card number:",
+    "expiry": "Expiry date:",
+    "name": "Name on card:",
+    "address": "Billing address:",
+    "email": "Confirmation email:"
+  },
+  "commonConjunctions": {
+    "or": "or"
+  },
+  "commonHeadings": {
+    "inProgress": "Your payment is in progress"
+  },
+  "paymentSummary": {
+    "title": "Payment summary",
+    "totalAmount": "Total amount:"
+  },
+  "errorViews": {
+    "either": "You can either:",
+    "continue": "Continue with your payment",
+    "tryAgain": "Go back to try the payment again",
+    "problem": "There was a problem with your payment",
+    "declined": "Your payment has been declined",
+    "contactYourBank": "Contact your bank for more details. No money has been taken from your account.",
+    "paymentStatus": "Your payment was",
+    "unsuccessful": "Your payment was unsuccessful",
+    "noMoneyTaken": "No money has been taken from your account.",
+    "toMakeChanges": "To make any changes to your payment you’ll need to contact the service.",
+    "viewSummary": "View your payment summary",
+    "paymentExpired": "Your payment expired",
+    "sessionExpired": "Your payment session has expired",
+    "paymentCancelled": "Your Payment was cancelled",
+    "paymentCancelledTitle": "Payment cancelled",
+    "paymentCancelledDescription": "Your payment has been cancelled by the government service. This may have happened for a number of reasons.",
+    "error": "An error occurred",
+    "technicalProblems": "Sorry, we’re experiencing technical problems"
+  },
+  "authorisation": {
+    "extraSteps": "You may need to complete some extra verification steps.",
+    "approvalNeeded": "To continue with your payment, we need your bank’s approval.",
+    "approved": "The card details have been approved by the bank.",
+    "checkingDetails": "Checking card details",
+    "checkingDetailsDescription": "Your payment details are being checked.",
+    "spinnerAltText": "waiting",
+    "processingPayment": "Your payment is being processed.",
+    "processing": "Processing card details",
+    "userCancelledPayment": "Your payment has been cancelled"
+  },
+  "fieldErrors": {
+    "summary": "The following fields are missing or contain errors",
+    "missing": "is missing",
+    "invalid": "is invalid",
+    "fields": {
+      "cardholderName": {
+        "name": "name",
+        "message": "Enter the name as it appears on the card",
+        "containsTooManyDigits": "Enter the name as it appears on the card",
+        "containsSuspectedCVC": "Enter the name as it appears on the card"
+      },
+      "cardNo": {
+        "name": "card number",
+        "message": "Enter a valid card number",
+        "numberIncorrectLength": "Card number is not the correct length",
+        "luhnInvalid": "Enter a valid card number",
+        "cardNotSupported": "This card type is not accepted",
+        "nonNumeric": " Enter a valid card number"
+      },
+      "cvc": {
+        "name": "card security code",
+        "message": "Enter a valid card security code",
+        "invalidLength": "Enter a valid card security code"
+      },
+      "expiryDate": {
+        "name": "expiry date",
+        "message": "Enter a valid expiry date"
+      },
+      "expiryMonth": {
+        "name": "expiry date",
+        "message": "Enter a valid expiry date",
+        "invalidMonth": "Enter a valid expiry date",
+        "invalidYear": "Enter a valid expiry date",
+        "inThePast": "Enter an expiry date in the future"
+      },
+      "expiryYear": {
+        "name": "expiry year",
+        "message": "Enter a valid expiry date",
+        "invalidYear": "This expiry year is not a valid"
+      },
+      "addressLine1": {
+        "name": "building name/number and street",
+        "message": "Enter a valid billing address",
+        "containsTooManyDigits": "Enter a valid billing address"
+      },
+      "addressLine2": {
+        "name": "additional address line",
+        "message": "Enter valid address information",
+        "containsTooManyDigits": "Enter valid address information"
+      },
+      "addressCity": {
+        "name": "town/city",
+        "message": "Enter a valid town/city",
+        "containsTooManyDigits": "Enter a valid town/city"
+      },
+      "addressPostcode": {
+        "name": "postcode",
+        "message": "Enter a valid postcode",
+        "containsTooManyDigits": "Enter a valid postcode"
+      },
+      "email": {
+        "name": "email",
+        "message": "Enter a valid email",
+        "containsTooManyDigits": "Enter a valid email",
+        "typo": "There might be a mistake in the last part of your email address. Select your email address."
+      },
+      "addressCountry": {
+        "name": "country or territory",
+        "message": "Enter a valid country or territory"
+      }
+    }
+  }
 }

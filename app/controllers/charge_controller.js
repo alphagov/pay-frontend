@@ -38,8 +38,7 @@ const AUTH_3DS_EPDQ_RESULTS = {
 
 function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
-  const translation = i18n.__('chargeController.withdrawalText')
-  charge.withdrawalText = translation[cardModel.withdrawalTypes.join('_')]
+  charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
   charge.post_card_action = routeFor('create', chargeId)
@@ -95,7 +94,7 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     const authUrl = normalise.authUrl(charge)
-    const validator = chargeValidator(i18n.__('chargeController.fieldErrors'), logger, cardModel)
+    const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel)
     let cardBrand
 
     normalise.addressLines(req.body)
@@ -122,7 +121,7 @@ module.exports = {
             data.validation.hasError = true
             data.validation.errorFields.push({
               cssKey: 'email-typo',
-              value: i18n.__('chargeController.fieldErrors.fields.email.typo')
+              value: i18n.__('fieldErrors.fields.email.typo')
             })
             data.validation.typos = emailTypos
             data.validation.originalEmail = userEmail

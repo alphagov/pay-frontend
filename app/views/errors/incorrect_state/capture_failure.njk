@@ -1,16 +1,16 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  Your payment was {{ status }} - GOV.UK Pay
+  {{ i18n.errorViews.paymentStatus }} {{ status }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">Your payment was unsuccessful</h1>
-    <p class="govuk-body-l lede">No money has been taken from your account.</p>
+    <h1 class="govuk-heading-l">{{ i18n.errorViews.unsuccessful }}</h1>
+    <p class="govuk-body-l lede">{{ i18n.errorViews.noMoneyTaken }}</p>
     <p class="govuk-body-l lede">
-      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">Go back to try the payment again</a>
+      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ i18n.errorViews.tryAgain }}</a>
     </p>
   </div>
 </div>

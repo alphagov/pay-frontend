@@ -11,7 +11,7 @@ var formValidation = function () {
   var logger = { info: function () { } }// replace with console to see output
   // window.card comes from the view
   var chargeValidations = module.chargeValidation(
-    i18n.chargeController.fieldErrors,
+    i18n.fieldErrors,
     logger,
     window.Card
   )

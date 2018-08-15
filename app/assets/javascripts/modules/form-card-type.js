@@ -5,10 +5,10 @@ var showCardType = function() {
   var cards = acceptedCards.querySelectorAll('li')
   var cardNoLabel = form.querySelector('.card-no-label')
   var cardNoFormGroup = form.querySelector('.card-no-group')
-  var notSupportedString = i18n.chargeController.fieldErrors.fields.cardNo.card_not_supported
-  var nonNumberString = i18n.chargeController.fieldErrors.fields.cardNo.non_numeric
+  var notSupportedString = i18n.fieldErrors.fields.cardNo.cardNotSupported
+  var nonNumberString = i18n.fieldErrors.fields.cardNo.nonNumeric
   // window.card comes from the view
-  var validations = module.chargeValidation(i18n.chargeController.fieldErrors,console, window.Card)
+  var validations = module.chargeValidation(i18n.fieldErrors,console, window.Card)
   var cardValidation = validations.creditCardType
   var cardTypes = validations.allowedCards
   var cvcInput = form.querySelector('#cvc')

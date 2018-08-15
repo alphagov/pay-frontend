@@ -1,12 +1,12 @@
 {% extends "layout.njk" %}
 
-{% block pageTitle %}Payment in progress{% endblock %}
+{% block pageTitle %}{{ i18n.commonHeadings.inProgress }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l form-title">Payment in progress</h1>
-    <p class="govuk-body-l lede">You may need to complete some extra verification steps.</p>
+    <h1 class="govuk-heading-l form-title">{{ i18n.commonHeadings.inProgress }}</h1>
+    <p class="govuk-body-l lede">{{ i18n.authorisation.extraSteps }}</p>
     <iframe class="iframe-3ds" src="3ds_required_out">
     </iframe>
   </div>

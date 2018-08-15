@@ -22,6 +22,6 @@ describe('form validations', function () {
   })
 
   it('should deny a correctly formated email with the incorrect length', function () {
-    expect(fieldValidators.email(randomString.generate(255) + '@bobbington.cbobbjb')).to.equal('invalid_length')
+    expect(fieldValidators.email(randomString.generate(255) + '@bobbington.cbobbjb')).to.equal('invalidLength')
   })
 })
