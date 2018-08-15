@@ -1,17 +1,28 @@
 'use strict'
 
+// NPM dependencies
+const AWSXRay = require('aws-xray-sdk')
+const {getNamespace, createNamespace} = require('continuation-local-storage')
+const logger = require('winston')
+
+// Local dependencies
 const charge = require('./controllers/charge_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
 const returnCont = require('./controllers/return_controller.js')
-
 const paths = require('./paths.js')
+
+// Express middleware
 const {csrfCheck, csrfTokenGeneration} = require('./middleware/csrf.js')
 const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
 const resolveLanguage = require('./middleware/resolve_language.js')
+const xraySegmentCls = require('./middleware/x_ray')
+
+// Constants
+const clsXrayConfig = require('../config/xray-cls')
 
 // Import AB test when we need to use it
 // const abTest = require('./utils/ab_test.js')
@@ -20,7 +31,22 @@ const resolveLanguage = require('./middleware/resolve_language.js')
 exports.paths = paths
 
 exports.bind = function (app) {
-  'use strict'
+  AWSXRay.enableManualMode()
+  AWSXRay.setLogger(logger)
+  AWSXRay.middleware.setSamplingRules('aws-xray.rules')
+  AWSXRay.config([AWSXRay.plugins.ECSPlugin])
+  app.use(AWSXRay.express.openSegment('pay_frontend'))
+
+  createNamespace(clsXrayConfig.nameSpaceName)
+
+  app.use((req, res, next) => {
+    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
+    namespace.bindEmitter(req)
+    namespace.bindEmitter(res)
+    namespace.run(() => {
+      next()
+    })
+  })
 
   app.get('/healthcheck', function (req, res) {
     const data = {'ping': {'healthy': true}}
@@ -32,6 +58,8 @@ exports.bind = function (app) {
   const card = paths.card
 
   const middlewareStack = [
+    xraySegmentCls,
+    resolveLanguage,
     csrfCheck,
     csrfTokenGeneration,
     actionName,
