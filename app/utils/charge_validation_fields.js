@@ -1,5 +1,8 @@
 'use strict'
 
+// Polyfill for ZAP webdriver
+require('polyfill-array-includes')
+
 // npm dependencies
 const ukPostcode = require('uk-postcode')
 const rfc822Validator = require('rfc822-validate')
@@ -116,5 +119,5 @@ function cardNo (cardNo) {
   if (!cardNo || cardNo.length < 12 || cardNo.length > 19) return 'number_incorrect_length'
   if (!luhn.validate(cardNo)) return 'luhn_invalid'
   if (!cardType[0]) return 'card_not_supported'
-  return this.allowed.map(card => card.brand).includes(cardType[0].type) || 'card_not_supported'
+  return this.allowed.filter(card => card.brand === cardType[0].type).length > 0 || 'card_not_supported'
 }
