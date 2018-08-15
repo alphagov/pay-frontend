@@ -21,11 +21,13 @@ var formValidation = function () {
     form.addEventListener('submit', function (e) {
       checkFormSubmission(e)
     }, false)
-    formInputs.forEach(function(input) {
-      input.addEventListener('blur', function (e) {
-        checkPreviousFocused(input)
-      }, false)
-    })
+    if (formInputs) {
+      formInputs.forEach(function (input) {
+        input.addEventListener('blur', function (e) {
+          checkPreviousFocused(input)
+        }, false)
+      })
+    }
     countrySelect.addEventListener('change', function () {
       checkValidation(postcodeInput)
     }, false)
