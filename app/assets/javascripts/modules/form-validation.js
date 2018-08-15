@@ -32,6 +32,11 @@ var formValidation = function () {
   }
 
   var checkFormSubmission = function (e) {
+    // ZAP tests need to be able to post bad form fields to be able to try all the pen test stuff so this allows us to do that
+    var zapDisabler = document.getElementById('disable-for-zap')
+    if (zapDisabler !== null) {
+      return
+    }
     e.preventDefault()
     var validations = allValidations()
     if (countryAutocomplete.value === '') {
