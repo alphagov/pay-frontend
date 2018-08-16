@@ -53,6 +53,7 @@
     "memory-cache": "^0.2.0",
     "minimist": "1.2.x",
     "morgan": "1.9.x",
+    "newrelic": "^4.8.0",
     "nunjucks": "^3.1.2",
     "polyfill-array-includes": "^1.0.0",
     "q": "1.5.x",
