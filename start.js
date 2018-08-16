@@ -1,6 +1,7 @@
 (function () {
   'use strict'
 
+  require('newrelic')
   var path = require('path')
   var fs = require('fs')
   var logger = require('winston')
