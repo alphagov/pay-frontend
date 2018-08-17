@@ -4,6 +4,8 @@
 const logger = require('winston')
 const _ = require('lodash')
 const i18n = require('i18n')
+const {getNamespace} = require('continuation-local-storage')
+const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
 const logging = require('../utils/logging.js')
@@ -35,6 +37,7 @@ const AUTH_3DS_EPDQ_RESULTS = {
   declined: 'DECLINED',
   error: 'ERROR'
 }
+const clsXrayConfig = require('../../config/xray-cls')
 
 function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
@@ -170,12 +173,22 @@ module.exports = {
       })
   },
   checkCard: (req, res) => {
-    Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-      .checkCard(normalise.creditCard(req.body.cardNo))
-      .then(
-        () => res.json({'accepted': true}),
-        message => res.json({'accepted': false, message})
-      )
+    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
+    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
+    AWSXRay.captureAsyncFunc('Card_checkCard', function (subsegment) {
+      Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
+        .checkCard(normalise.creditCard(req.body.cardNo), subsegment)
+        .then(
+          () => {
+            subsegment.close()
+            return res.json({'accepted': true})
+          },
+          message => {
+            subsegment.close(message)
+            return res.json({'accepted': false, message})
+          }
+        )
+    }, clsSegment)
   },
   authWaiting: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)

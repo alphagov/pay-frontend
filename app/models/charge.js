@@ -53,7 +53,7 @@ module.exports = function (correlationId) {
     return defer.promise
   }
 
-  const find = function (chargeId) {
+  const find = function (chargeId, subSegment) {
     const defer = q.defer()
     const url = connectorurl('show', {chargeId: chargeId})
 
@@ -78,7 +78,7 @@ module.exports = function (correlationId) {
         return defer.reject(new Error('GET_FAILED'))
       }
       defer.resolve(data)
-    }).on('error', function (err) {
+    }, subSegment).on('error', function (err) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
       logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
         service: 'connector',

@@ -5,10 +5,28 @@ const path = require('path')
 const assert = require('assert')
 const nock = require('nock')
 const {unexpectedPromise} = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
+const proxyquire = require('proxyquire')
+const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
-const CardModel = require(path.join(__dirname, '/../../app/models/card.js'))
+
+const CardModel = proxyquire(path.join(__dirname, '/../../app/models/card.js'), {
+  'aws-xray-sdk': {
+    captureAsyncFunc: function (name, callback) {
+      callback(new AWSXRay.Segment('stub-subsegment'))
+    }
+  },
+  'continuation-local-storage': {
+    getNamespace: function () {
+      return {
+        get: function () {
+          return new AWSXRay.Segment('stub-segment')
+        }
+      }
+    }
+  }
+})
 
 // constants
 const aRequestId = 'unique-request-id'

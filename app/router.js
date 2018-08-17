@@ -59,7 +59,6 @@ exports.bind = function (app) {
 
   const middlewareStack = [
     xraySegmentCls,
-    resolveLanguage,
     csrfCheck,
     csrfTokenGeneration,
     actionName,
@@ -73,28 +72,30 @@ exports.bind = function (app) {
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, [csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
+  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
   app.post(card.auth3dsHandler.path, middlewareStack, charge.auth3dsHandler)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
   app.get(card.confirm.path, middlewareStack, charge.confirm)
   app.post(card.capture.path, middlewareStack, charge.capture)
   app.post(card.cancel.path, middlewareStack, charge.cancel)
-  app.post(card.checkCard.path, retrieveCharge, charge.checkCard)
-  app.get(card.return.path, retrieveCharge, returnCont.return)
+  app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, charge.checkCard)
+  app.get(card.return.path, xraySegmentCls, retrieveCharge, returnCont.return)
 
   // secure controller
-  app.get(paths.secure.get.path, secure.new)
-  app.post(paths.secure.post.path, secure.new)
+  app.get(paths.secure.get.path, xraySegmentCls, secure.new)
+  app.post(paths.secure.post.path, xraySegmentCls, secure.new)
 
   // static controller
-  app.get(paths.static.humans.path, statik.humans)
-  app.all(paths.static.naxsi_error.path, statik.naxsi_error)
+  app.get(paths.static.humans.path, xraySegmentCls, statik.humans)
+  app.all(paths.static.naxsi_error.path, xraySegmentCls, statik.naxsi_error)
 
   // route to gov.uk 404 page
   // this has to be the last route registered otherwise it will redirect other routes
   app.all('*', (req, res) => res.redirect('https://www.gov.uk/404'))
+
+  app.use(AWSXRay.express.closeSegment())
 }

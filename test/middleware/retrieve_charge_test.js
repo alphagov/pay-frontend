@@ -6,9 +6,25 @@ const assert = require('assert')
 const sinon = require('sinon')
 const {expect} = require('chai')
 const nock = require('nock')
+const proxyquire = require('proxyquire')
+const AWSXRay = require('aws-xray-sdk')
 
-// local dependencies
-const retrieveCharge = require(path.join(__dirname, '/../../app/middleware/retrieve_charge.js'))
+const retrieveCharge = proxyquire(path.join(__dirname, '/../../app/middleware/retrieve_charge.js'), {
+  'aws-xray-sdk': {
+    captureAsyncFunc: function (name, callback) {
+      callback(new AWSXRay.Segment('stub-subsegment'))
+    }
+  },
+  'continuation-local-storage': {
+    getNamespace: function () {
+      return {
+        get: function () {
+          return new AWSXRay.Segment('stub-segment')
+        }
+      }
+    }
+  }
+})
 
 const ANALYTICS_ERROR = {
   analytics: {

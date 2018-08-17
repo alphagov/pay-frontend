@@ -7,7 +7,7 @@ const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
 const request = require('requestretry')
-const getNamespace = require('continuation-local-storage').getNamespace
+const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies

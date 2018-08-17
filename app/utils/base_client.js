@@ -11,7 +11,7 @@ const urlParse = require('url')
 const logger = require('winston')
 const https = setHttpClient()
 const _ = require('lodash')
-const getNamespace = require('continuation-local-storage').getNamespace
+const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
@@ -131,8 +131,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  get: function (url, args, callback, subsegment) {
-    return _request('GET', url, args, callback, subsegment)
+  get: function (url, args, callback, subSegment) {
+    return _request('GET', url, args, callback, subSegment)
   },
 
   /**
@@ -143,8 +143,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  post: function (url, args, callback) {
-    return _request('POST', url, args, callback)
+  post: function (url, args, callback, subSegment) {
+    return _request('POST', url, args, callback, subSegment)
   },
 
   /**
