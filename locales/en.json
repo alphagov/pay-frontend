@@ -82,8 +82,7 @@
   },
   "fieldErrors": {
     "summary": "The following fields are missing or contain errors",
-    "missing": "is missing",
-    "invalid": "is invalid",
+    "generic": "Enter a valid %s",
     "fields": {
       "cardholderName": {
         "name": "name",
