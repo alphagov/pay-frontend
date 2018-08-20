@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% block pageTitle %}
-  {{ i18n.authorisation.processingPayment }}
+  {{ __("authorisation.processingPayment") }}
 {% endblock %}
 
 {% block head %}
@@ -30,10 +30,10 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l form-title">{{ i18n.authorisation.checkingDetails }}</h1>
-    <p class="govuk-body-l lede">{{ i18n.authorisation.checkingDetailsDescription }}</p>
+    <h1 class="govuk-heading-l form-title">{{ __("authorisation.checkingDetails") }}</h1>
+    <p class="govuk-body-l lede">{{ __("authorisation.checkingDetailsDescription") }}</p>
     <div id="spinner">
-      <img src="/images/spinner.gif" alt="{{ i18n.authorisation.spinnerAltText }}"/>
+      <img src="/images/spinner.gif" alt="{{ __("authorisation.spinnerAltText") }}"/>
     </div>
   </div>
 </div>

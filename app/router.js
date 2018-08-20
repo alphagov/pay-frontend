@@ -1,7 +1,5 @@
 'use strict'
 
-const i18n = require('i18n')
-
 const charge = require('./controllers/charge_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
@@ -13,6 +11,7 @@ const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
+const resolveLanguage = require('./middleware/resolve_language.js')
 
 // Import AB test when we need to use it
 // const abTest = require('./utils/ab_test.js')
@@ -33,10 +32,7 @@ exports.bind = function (app) {
   const card = paths.card
 
   const middlewareStack = [
-    function (req, res, next) {
-      i18n.setLocale('en')
-      next()
-    },
+    resolveLanguage,
     csrfCheck,
     csrfTokenGeneration,
     actionName,

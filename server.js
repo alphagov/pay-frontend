@@ -5,7 +5,6 @@ if (!process.env.DISABLE_APPMETRICS) {
 
 // Node.js core dependencies
 const path = require('path')
-const fs = require('fs')
 const v8 = require('v8')
 
 // npm dependencies
@@ -85,11 +84,12 @@ function initialiseGlobalMiddleware (app) {
 
 function initialisei18n (app) {
   i18n.configure({
-    locales: ['en'],
+    locales: ['en', 'cy'],
     directory: path.join(__dirname, '/locales'),
     objectNotation: true,
     defaultLocale: 'en',
-    register: global
+    register: global,
+    autoReload: NODE_ENV !== 'production'
   })
 
   app.use(i18n.init)
@@ -126,14 +126,6 @@ function initialiseTemplateEngine (app) {
   // if it's not production we want to re-evaluate the assets on each file change
   nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? CSS_PATH : staticify.getVersionedPath('/stylesheets/application.css'))
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? JAVASCRIPT_PATH : staticify.getVersionedPath('/javascripts/application.min.js'))
-  // Initialise internationalisation
-  fs.readFile('./locales/en.json', 'utf8', (err, data) => {
-    if (err) {
-      throw err
-    }
-    nunjucksEnvironment.addGlobal('i18n', JSON.parse(data))
-    nunjucksEnvironment.addGlobal('i18n_as_string', data)
-  })
 }
 
 function initialisePublic (app) {

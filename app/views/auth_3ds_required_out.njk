@@ -5,14 +5,14 @@
 {% endblock %}
 <body OnLoad="OnLoadEvent();">
 <noscript>
-  <p class="govuk-body-l lede">{{ i18n.authorisation.approvalNeeded }}</p>
+  <p class="govuk-body-l lede">{{ __("authorisation.approvalNeeded") }}</p>
 </noscript>
 <form name="three_ds_required" method="post" action="{{ issuerUrl }}">
   <input type="hidden" name="PaReq" value="{{ paRequest }}"/>
   <input type="hidden" name="MD" value="{{ md }}"/>
   <input type="hidden" name="TermUrl" value="{{ threeDSReturnUrl }}"/>
   <noscript>
-    <button id="confirm" class="govuk-button">{{ i18n.commonButtons.continueButton }}</button>
+    <button id="confirm" class="govuk-button">{{ __("commonButtons.continueButton") }}</button>
   </noscript>
 </form>
 
