@@ -2,11 +2,17 @@
 const cheerio = require('cheerio')
 const chai = require('chai')
 const nunjucks = require('nunjucks')
-const i18n = require('../../locales/en.json')
+const lodash = require('lodash')
 
 // Global initialisation
 const views = ['./app/views', './node_modules/govuk-frontend']
 const environment = nunjucks.configure(views)
+const strings = require('./../../locales/en.json')
+
+// Shim for i18n to make it recognise the __() function and return the English string
+environment.addGlobal('__', string => {
+  return lodash.get(strings, string)
+})
 
 module.exports = {
   render: render
@@ -14,8 +20,6 @@ module.exports = {
 
 function render (templateName, templateData) {
   const pathToTemplate = templateName + '.njk'
-
-  templateData.i18n = i18n
 
   return environment.render(pathToTemplate, templateData)
 }

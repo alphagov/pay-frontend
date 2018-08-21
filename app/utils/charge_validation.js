@@ -43,7 +43,8 @@ module.exports = (translations, logger, Card) => {
         const customValidation = fieldValidations[name] ? fieldValidations[name].bind(fieldValidations)(value, body) : true
         if (value && customValidation === true) return
         const translation = translations.fields[name]
-        const problem = value || isOptional ? translation[customValidation] : `Enter a valid ${translation.name}`
+        const messageTemplate = translations.generic
+        const problem = value || isOptional ? translation[customValidation] : messageTemplate.replace('%s', translation.name)
         // Push to Error Fields
         const customError = CUSTOM_ERRORS[name] || {}
         const cssKey = customError.cssKey || changeCase.paramCase(name)

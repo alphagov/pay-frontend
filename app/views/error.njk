@@ -1,18 +1,18 @@
 {% extends "layout.njk" %}
 
 {% block pageTitle %}
-  {{ i18n.errorViews.error }} - GOV.UK Pay
+  {{ __("errorViews.error") }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
   <main id="content" class="content-wrapper error-pages grid-row">
     <div class="column-two-thirds">
       <h1 class="heading-large general-error">
-        {{ i18n.errorViews.error }}
+        {{ __("errorViews.error") }}
       </h1>
       <p id="errorMsg" class="lede">{{ message }}</p>
       {% if returnUrl %}
-        <a id="return-url" class="govuk-link" class="lede" href="{{ returnUrl }}">{{ i18n.errorViews.tryAgain }}</a>
+        <a id="return-url" class="govuk-link" class="lede" href="{{ returnUrl }}">{{ __("errorViews.tryAgain") }}</a>
       {% endif %}
     </div>
   </main>

@@ -1,8 +1,6 @@
 <!-- Javascript -->
 <script type="text/javascript">
-  {% if i18n_as_string %}
-  var i18n = {{ i18n_as_string | safe }};
-  {% endif %}
+  var i18n = {{ translationStrings | safe }};
 </script>
 <script src="{{ js_path }}"></script>
 <script id="govuk-script-analytics" type="text/javascript">
