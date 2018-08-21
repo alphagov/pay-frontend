@@ -79,8 +79,8 @@ function initialiseGlobalMiddleware (app) {
 
   app.disable('x-powered-by')
 
-  logger.info('Heap statistics: ' + v8.getHeapStatistics())
-  logger.info('process.memoryUsage: ' + process.memoryUsage())
+  logger.info('Heap statistics: ' + JSON.stringify(v8.getHeapStatistics()))
+  logger.info('process.memoryUsage: ' + JSON.stringify(process.memoryUsage()))
 }
 
 function initialisei18n (app) {
