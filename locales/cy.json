@@ -1,0 +1,154 @@
+{
+	"cardDetails": {
+		"withdrawalText": {
+			"debit_credit": "Math o gardiau credyd a debyd y derbynnir",
+			"debit": "Ni dderbynnir taliadau cerdyn credyd. Defnyddiwch gerdyn debyd os gwelwch yn dda."
+		},
+		"title": "Rhowch fanylion y cerdyn",
+		"expiry": "Dyddiad dod i ben",
+		"expiryHint": "Er enghraifft 10/20",
+		"expiryMonth": "Mis",
+		"expiryYear": "Blwyddyn",
+		"cvc": "Cod diogelwch y cerdyn",
+		"cvcTip": "Y 3 digid olaf ar gefn y cerdyn",
+		"amexcvcTip": "Y 4 digid olaf ar flaen y cerdyn ar ôl rhif y cerdyn",
+		"amexcvcNonjs": "Am American Express,",
+		"cardNo": "Rhif cerdyn",
+		"cardholderName": "Enw ar y cerdyn",
+		"billingAddress": "Cyfeiriad bilio",
+		"billingAddressHint": "Hwn yw’r cyfeiriad sy’n gysylltiedig â’r cerdyn",
+		"building": "Rhif neu enw’r adeilad a heol",
+		"city": "Tref neu ddinas",
+		"postcode": "Cod post",
+		"country": "Gwlad neu diriogaeth",
+		"email": "E-bost",
+		"emailHint": "Byddwn yn anfon eich cadarnhad taliad yma",
+		"emailConfirmation": "Byddwn an anfon e-bost i:"
+	},
+	"commonButtons": {
+		"continueButton": "Parhau",
+		"confirmButton": "Cadarnhau’r taliad",
+		"cancelButton": "Canslo’r taliad",
+		"goBackToService": "Mynd yn ôl i’r gwasanaeth"
+	},
+	"confirmDetails": {
+		"title": "Cadarnhau eich taliad",
+		"card": "Rhif cerdyn:",
+		"expiry": "Dyddiad dod i ben:",
+		"name": "Enw ar y cerdyn:",
+		"address": "Cyfeiriad bilio:",
+		"email": "E-bost cadarnhad:"
+	},
+	"commonConjunctions": {
+		"or": "neu"
+	},
+	"commonHeadings": {
+		"inProgress": "Mae eich taliad ar y gweill"
+	},
+	"paymentSummary": {
+		"title": "Crynodeb y taliad",
+		"totalAmount": "Cyfanswm:"
+	},
+	"errorViews": {
+		"either": "Gallwch:",
+		"continue": "Parhau gyda’ch taliad",
+		"tryAgain": "Mynd yn ôl i geisio’r taliad eto",
+		"problem": "Roedd problem gyda’ch taliad",
+		"declined": "Mae eich taliad wedi cael ei wrthod",
+		"contactYourBank": "Cysylltwch â’ch banc am ragor o fanylion. Nid oes arian wedi ei gymryd o’ch cyfrif.",
+		"paymentStatus": "Roedd eich taliad yn",
+		"unsuccessful": "Nid oedd eich taliad yn llwyddiannus",
+		"noMoneyTaken": "Nid oes arian wedi ei gymryd o’r cyfrif.",
+		"toMakeChanges": "I wneud unrhyw newidiadau i’ch taliad mae angen i chi gysylltu â’r gwasanaeth.",
+		"viewSummary": "Gweld crynodeb eich taliad",
+		"paymentExpired": "Daeth eich taliad i ben",
+		"sessionExpired": "Daeth eich sesiwn taliad i ben",
+		"paymentCancelled": "Mae eich taliad wedi cael ei ganslo",
+		"paymentCancelledTitle": "Y taliad wedi ei ganslo",
+		"paymentCancelledDescription": "Mae eich taliad wedi ei ganslo gan y gwasanaeth llywodraeth. Gallai hyn fod wedi digwydd am nifer o resymau",
+		"error": "Digwyddodd gwall",
+		"technicalProblems": "Mae’n flin gennym ond rydym yn profi problemau technegol"
+	},
+	"authorisation": {
+		"extraSteps": "Efallai bydd angen i chi gwblhau camau gwirio pellach.",
+		"approvalNeeded": "I barhau â’ch taliad, mae arnom angen cymeradwyaeth eich banc.",
+		"approved": "Mae manylion y cerdyn wedi ei gymeradwyo gan y banc.",
+		"checkingDetails": "Yn gwirio manylion y cerdyn",
+		"checkingDetailsDescription": "Mae eich manylion talu yn cael eu gwirio.",
+		"spinnerAltText": "yn aros",
+		"processingPayment": "Mae eich taliad yn cael ei brosesu.",
+		"processing": "Prosesu manylion y cerdyn",
+		"userCancelledPayment": "Mae eich taliad wedi ei ganslo"
+	},
+	"fieldErrors": {
+		"summary": "Mae’r meysydd canlynol yn wag neu yn cynnwys camgymeriadau",
+		"generic": "Rhowch %s dilys",
+		"fields": {
+			"cardholderName": {
+				"name": "enw",
+				"message": "Rhowch yr enw fel y mae’n ymddangos ar y cerdyn",
+				"containsTooManyDigits": "Rhowch yr enw fel y mae’n ymddangos ar y cerdyn",
+				"containsSuspectedCVC": "Rhowch yr enw fel y mae’n ymddangos ar y cerdyn"
+			},
+			"cardNo": {
+				"name": "rif cerdyn",
+				"message": "Rhowch rif cerdyn dilys",
+				"numberIncorrectLength": "Nid yw rhif y cerdyn yr hyd cywir",
+				"luhnInvalid": "Rhowch rif cerdyn dilys",
+				"cardNotSupported": "Nid yw’r math hwn o gerdyn yn cael ei dderbyn",
+				"nonNumeric": "Rhowch rif cerdyn dilys"
+			},
+			"cvc": {
+				"name": "god diogelwch cerdyn",
+				"message": "Rhowch god diogelwch cerdyn dilys",
+				"invalidLength": "Rhowch god diogelwch cerdyn dilys"
+			},
+			"expiryDate": {
+				"name": "ddyddiad dod i ben",
+				"message": "Rhowch ddyddiad dod i ben dilys"
+			},
+			"expiryMonth": {
+				"name": "ddyddiad dod i ben",
+				"message": "Rhowch ddyddiad dod i ben dilys",
+				"invalidMonth": "Rhowch ddyddiad dod i ben dilys",
+				"invalidYear": "Rhowch ddyddiad dod i ben dilys",
+				"inThePast": "Rhowch ddyddiad dod i ben yn y dyfodol"
+			},
+			"expiryYear": {
+				"name": "blwyddyn dod i ben",
+				"message": "Rhowch ddyddiad dod i ben dilys",
+				"invalidYear": "Nid yw’r flwyddyn dod i ben hwn yn ddilys"
+			},
+			"addressLine1": {
+				"name": "enw/rhif yr adeilad a heol",
+				"message": "Rhowch gyfeiriad bilio dilys",
+				"containsTooManyDigits": "Rhowch gyfeiriad bilio dilys"
+			},
+			"addressLine2": {
+				"name": "llinell cyfeiriad ychwanegol",
+				"message": "Rhowch wybodaeth cyfeiriad dilys",
+				"containsTooManyDigits": "Rhowch wybodaeth cyfeiriad dilys"
+			},
+			"addressCity": {
+				"name": "dref/ddinas",
+				"message": "Rhowch dref/ddinas ddilys",
+				"containsTooManyDigits": "Rhowch dref/ddinas ddilys"
+			},
+			"addressPostcode": {
+				"name": "god post",
+				"message": "Rhowch god post dilys",
+				"containsTooManyDigits": "Rhowch god post dilys"
+			},
+			"email": {
+				"name": "e-bost",
+				"message": "Rhowch e-bost dilys",
+				"containsTooManyDigits": "Rhowch e-bost dilys",
+				"typo": "Efallai bod camgymeriad yn rhan olaf eich cyfeiriad e-bost. Dewiswch eich cyfeiriad e-bost."
+			},
+			"addressCountry": {
+				"name": "wlad neu diriogaeth",
+				"message": "Rhowch wlad neu diriogaeth ddilys"
+			}
+		}
+	}
+}
