@@ -32,13 +32,13 @@ exports.bind = function (app) {
   const card = paths.card
 
   const middlewareStack = [
-    resolveLanguage,
     csrfCheck,
     csrfTokenGeneration,
     actionName,
     retrieveCharge,
     resolveService,
-    stateEnforcer
+    stateEnforcer,
+    resolveLanguage
   ]
 
   app.get(card.new.path, middlewareStack, charge.new)
