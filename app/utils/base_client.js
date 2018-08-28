@@ -8,35 +8,34 @@
  */
 const urlParse = require('url')
 const logger = require('winston')
-const https = setHttpClient()
+const HttpAgent = require('agentkeepalive')
+const HttpsAgent = require('agentkeepalive').HttpsAgent
+const http = require('http')
+const https = require('https')
 
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 
-function setHttpClient () {
-  if (process.env.DISABLE_INTERNAL_HTTPS === 'true') {
-    logger.warn('DISABLE_INTERNAL_HTTPS is enabled, base_client will use http.')
-    return require('http')
-  } else {
-    return require('https')
-  }
-}
-
-var agentOptions = {
+let agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 1000,
+  maxFreeSockets: 500,
+  timeout: 60000,
+  freeSocketKeepAliveTimeout: 30000
 }
 
-if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
-  agentOptions.ca = customCertificate.getCertOptions()
-} else {
+let agent
+let httpLib
+
+if (process.env.DISABLE_INTERNAL_HTTPS === 'true') {
+  httpLib = http
+  agent = new HttpAgent(agentOptions)
   logger.warn('DISABLE_INTERNAL_HTTPS is set.')
+} else {
+  httpLib = https
+  agentOptions.ca = customCertificate.getCertOptions()
+  agent = new HttpsAgent(agentOptions)
 }
-
-/**
- * @type {https.Agent}
- */
-const agent = new https.Agent(agentOptions)
 
 /**
  *
@@ -58,7 +57,7 @@ var _request = function request (methodName, url, args, callback) {
     headers[CORRELATION_HEADER_NAME] = args.correlationId
   }
 
-  const httpsOptions = {
+  const httpOptions = {
     hostname: parsedUrl.hostname,
     port: parsedUrl.port,
     path: parsedUrl.pathname,
@@ -67,7 +66,7 @@ var _request = function request (methodName, url, args, callback) {
     headers: headers
   }
 
-  let req = https.request(httpsOptions, (res) => {
+  let req = httpLib.request(httpOptions, (res) => {
     let data = ''
     res.on('data', (chunk) => {
       data += chunk
