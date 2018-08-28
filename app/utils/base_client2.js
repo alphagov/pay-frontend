@@ -1,7 +1,7 @@
 'use strict'
 
-const https = require('https')
-const httpAgent = require('http').globalAgent
+const HttpAgent = require('agentkeepalive')
+const HttpsAgent = require('agentkeepalive').HttpsAgent
 const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
@@ -11,7 +11,10 @@ const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEAD
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 100,
+  maxFreeSockets: 10,
+  timeout: 60000,
+  freeSocketKeepAliveTimeout: 30000
 }
 
 const RETRIABLE_ERRORS = ['ECONNRESET']
@@ -25,8 +28,8 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
 } else {
   logger.warn('DISABLE_INTERNAL_HTTPS is set.')
 }
-
-const httpsAgent = new https.Agent(agentOptions)
+const httpAgent = new HttpAgent(agentOptions)
+const httpsAgent = new HttpsAgent(agentOptions)
 
 const client = request
   .defaults({
@@ -56,7 +59,9 @@ const getHeaders = function getHeaders (args) {
  * @private
  */
 const _request = function request (methodName, url, args, callback) {
-  let agent = urlParse(url).protocol === 'http:' ? httpAgent : httpsAgent
+  let agent = urlParse(url).protocol === 'http:'
+    ? httpAgent
+    : httpsAgent
 
   const requestOptions = {
     uri: url,
