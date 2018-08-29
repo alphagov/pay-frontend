@@ -17,7 +17,7 @@ class Service {
    **/
   constructor (serviceData) {
     this.externalId = serviceData.external_id
-    this.name = serviceData.name
+    this.name = serviceData.service_name
     this.gatewayAccountIds = serviceData.gateway_account_ids
     this.customBranding =
       serviceData.custom_branding ? {

@@ -270,7 +270,6 @@ module.exports = {
       hitPage: routeFor('new', charge.id) + '/success',
       charge: charge,
       confirmPath: confirmPath,
-      gatewayAccount: {serviceName: charge.gatewayAccount.serviceName},
       post_cancel_action: routeFor('cancel', charge.id)
     }, confirmPath))
   },

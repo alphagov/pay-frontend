@@ -157,6 +157,11 @@ describe('chargeTests', function () {
                 'brand': 'VISA',
                 'label': 'Visa'
               }]
+            },
+            service: {
+              name: {
+                en: 'Pranks incorporated'
+              }
             }
           })
 
@@ -787,7 +792,6 @@ describe('chargeTests', function () {
           expect($('#expiry-date').text()).to.contains('11/99')
           expect($('#cardholder-name').text()).to.contains('Test User')
           expect($('#address').text()).to.contains('line1, line2, city, postcode, United Kingdom')
-          expect($('.govuk-header__link--service-name').text()).to.contains('Pranks incorporated')
           expect($('.payment-summary #amount').text()).to.eql('£23.45')
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
         })
