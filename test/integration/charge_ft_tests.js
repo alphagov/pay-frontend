@@ -1,25 +1,64 @@
-const EMPTY_BODY = ''
+'use strict'
 
+// NPM dependencies
 const _ = require('lodash')
 const request = require('supertest')
 const nock = require('nock')
-const app = require('../../server.js').getApp()
 const chai = require('chai')
 const cheerio = require('cheerio')
+const winston = require('winston')
 const expect = chai.expect
-
+const proxyquire = require('proxyquire')
+const AWSXRay = require('aws-xray-sdk')
 const should = chai.should()
 
+// Local dependencies
+const app = proxyquire('../../server.js', {
+  'aws-xray-sdk': {
+    enableManualMode: () => {},
+    setLogger: () => {},
+    middleware: {
+      setSamplingRules: () => {}
+    },
+    config: () => {},
+    express: {
+      openSegment: () => (req, res, next) => next(),
+      closeSegment: () => (req, rest, next) => next()
+    },
+    captureAsyncFunc: (name, callback) => callback(new AWSXRay.Segment('stub-subsegment')),
+    '@global': true
+  },
+  'continuation-local-storage': {
+    getNamespace: function () {
+      return {
+        get: () => new AWSXRay.Segment('stub-segment'),
+        bindEmitter: () => {},
+        run: callback => callback(),
+        set: () => {}
+      }
+    },
+    '@global': true
+  }
+}).getApp()
 const cookie = require('../test_helpers/session.js')
 const helper = require('../test_helpers/test_helpers.js')
-
-const winston = require('winston')
-
 const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
 const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js').connectorResponseForPutCharge
 const {defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
 const State = require('../../app/models/state.js')
 const serviceFixtures = require('../fixtures/service_fixtures')
+
+// Constants
+const EMPTY_BODY = ''
+let defaultCorrelationHeader = {
+  reqheaders: {'x-request-id': 'some-unique-id'}
+}
+const gatewayAccount = {
+  gatewayAccountId: '12345',
+  paymentProvider: 'sandbox',
+  analyticsId: 'test-1234',
+  type: 'test'
+}
 
 let mockServer
 
@@ -29,17 +68,6 @@ let defaultCardID = function () {
       return true
     })
     .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
-}
-
-let defaultCorrelationHeader = {
-  reqheaders: {'x-request-id': 'some-unique-id'}
-}
-
-const gatewayAccount = {
-  gatewayAccountId: '12345',
-  paymentProvider: 'sandbox',
-  analyticsId: 'test-1234',
-  type: 'test'
 }
 
 describe('chargeTests', function () {
@@ -180,7 +208,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+                        expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
             expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
@@ -687,7 +715,7 @@ describe('chargeTests', function () {
         .expect(function (res) {
           const $ = cheerio.load(res.text)
           expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
-          expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+                    expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('.payment-summary #amount').text()).to.eql('£23.45')
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
           expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
@@ -787,7 +815,7 @@ describe('chargeTests', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+                    expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('#card-number').text()).to.contains('************1234')
           expect($('#expiry-date').text()).to.contains('11/99')
           expect($('#cardholder-name').text()).to.contains('Test User')

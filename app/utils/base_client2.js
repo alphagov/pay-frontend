@@ -1,11 +1,16 @@
 'use strict'
 
+// NPM dependencies
 const https = require('https')
 const httpAgent = require('http').globalAgent
 const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
 const request = require('requestretry')
+const {getNamespace} = require('continuation-local-storage')
+const AWSXRay = require('aws-xray-sdk')
+
+// Local dependencies
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 
@@ -14,6 +19,8 @@ const agentOptions = {
   maxSockets: process.env.MAX_SOCKETS || 100
 }
 
+// Constants
+const clsXrayConfig = require('../../config/xray-cls')
 const RETRIABLE_ERRORS = ['ECONNRESET']
 
 function retryOnEconnreset (err) {
@@ -37,11 +44,23 @@ const client = request
     retryStrategy: retryOnEconnreset
   })
 
-const getHeaders = function getHeaders (args) {
+const getHeaders = function getHeaders (args, segmentData) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
+
+  if (segmentData.clsSegment) {
+    const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
+    headers['X-Amzn-Trace-Id'] = [
+      'Root=',
+      segmentData.clsSegment.trace_id,
+      ';Parent=',
+      subSegment.id,
+      ';Sampled=1'
+    ].join('')
+  }
   _.merge(headers, args.headers)
+
   return headers
 }
 /**
@@ -55,14 +74,16 @@ const getHeaders = function getHeaders (args) {
  *
  * @private
  */
-const _request = function request (methodName, url, args, callback) {
+const _request = function request (methodName, url, args, callback, subSegment) {
   let agent = urlParse(url).protocol === 'http:' ? httpAgent : httpsAgent
+  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
+  const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
   const requestOptions = {
     uri: url,
     method: methodName,
     agent: agent,
-    headers: getHeaders(args)
+    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
   }
 
   if (args.payload) {
@@ -81,61 +102,61 @@ const _request = function request (methodName, url, args, callback) {
  */
 module.exports = {
   /**
-   *
-   * @param {string} url
-   * @param {Object} args
-   * @param {function} callback
-   *
-   * @returns {OutgoingMessage}
-   */
-  get: function (url, args, callback) {
-    return _request('GET', url, args, callback)
+     *
+     * @param {string} url
+     * @param {Object} args
+     * @param {function} callback
+     *
+     * @returns {OutgoingMessage}
+     */
+  get: function (url, args, callback, subSegment) {
+    return _request('GET', url, args, callback, subSegment)
   },
 
   /**
-   *
-   * @param {string} url
-   * @param {Object} args
-   * @param {function} callback
-   *
-   * @returns {OutgoingMessage}
-   */
+     *
+     * @param {string} url
+     * @param {Object} args
+     * @param {function} callback
+     *
+     * @returns {OutgoingMessage}
+     */
   post: function (url, args, callback) {
     return _request('POST', url, args, callback)
   },
 
   /**
-   *
-   * @param {string} url
-   * @param {Object} args
-   * @param {function} callback
-   *
-   * @returns {OutgoingMessage}
-   */
+     *
+     * @param {string} url
+     * @param {Object} args
+     * @param {function} callback
+     *
+     * @returns {OutgoingMessage}
+     */
   put: function (url, args, callback) {
     return _request('PUT', url, args, callback)
   },
 
   /**
-   *
-   * @param {string} url
-   * @param {Object} args
-   * @param {function} callback
-   *
-   * @returns {OutgoingMessage}
-   */
+     *
+     * @param {string} url
+     * @param {Object} args
+     * @param {function} callback
+     *
+     * @returns {OutgoingMessage}
+     */
   patch: function (url, args, callback) {
     return _request('PATCH', url, args, callback)
   },
 
   /**
-   *
-   * @param {string} url
-   * @param {Object} args
-   * @param {function} callback
-   *
-   * @returns {OutgoingMessage}
-   */
+     *
+     * @param {string} url
+     * @param {Object} args
+     * @param {function} callback
+     *
+     * @returns {OutgoingMessage}
+     */
   delete: function (url, args, callback) {
     return _request('DELETE', url, args, callback)
   }
