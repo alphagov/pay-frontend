@@ -63,27 +63,27 @@ exports.bind = function (app) {
     csrfTokenGeneration,
     actionName,
     retrieveCharge,
+    resolveLanguage,
     resolveService,
-    stateEnforcer,
-    resolveLanguage
+    stateEnforcer
   ]
 
   app.get(card.new.path, middlewareStack, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge], charge.auth3dsRequiredIn)
+  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredIn)
   app.post(card.auth3dsHandler.path, middlewareStack, charge.auth3dsHandler)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
   app.get(card.confirm.path, middlewareStack, charge.confirm)
   app.post(card.capture.path, middlewareStack, charge.capture)
   app.post(card.cancel.path, middlewareStack, charge.cancel)
-  app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, charge.checkCard)
-  app.get(card.return.path, xraySegmentCls, retrieveCharge, returnCont.return)
+  app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, resolveLanguage, charge.checkCard)
+  app.get(card.return.path, xraySegmentCls, retrieveCharge, resolveLanguage, returnCont.return)
 
   // secure controller
   app.get(paths.secure.get.path, xraySegmentCls, secure.new)
