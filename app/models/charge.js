@@ -228,7 +228,7 @@ module.exports = function (correlationId) {
     defer.resolve({success: 'OK'})
   }
 
-  const patch = function (chargeId, op, path, value) {
+  const patch = function (chargeId, op, path, value, subSegment) {
     const defer = q.defer()
 
     const startTime = new Date()
@@ -256,7 +256,7 @@ module.exports = function (correlationId) {
       } else {
         defer.reject()
       }
-    }).on('error', function (err) {
+    }, subSegment).on('error', function (err) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
       logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
         service: 'connector',

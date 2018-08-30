@@ -94,6 +94,8 @@ module.exports = {
       () => views.display(res, 'NOT_FOUND', withAnalyticsError()))
   },
   create: (req, res) => {
+    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
+    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     const authUrl = normalise.authUrl(charge)
@@ -105,86 +107,100 @@ module.exports = {
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
 
-    validator.verify(req)
-      .catch(() => redirect(res).toNew(req.chargeId))
-      .then(data => {
-        cardBrand = data.cardBrand
-        let emailChanged = false
-        let userEmail = req.body.email
-        if (req.body.originalemail) {
-          emailChanged = req.body.originalemail !== userEmail
-        }
-        let emailTypos = commonTypos(userEmail)
-        if (req.body['email-typo-sugestion']) {
-          userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
-          emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
-        }
-        if (data.validation.hasError || emailTypos) {
-          if (emailTypos) {
-            data.validation.hasError = true
-            data.validation.errorFields.push({
-              cssKey: 'email-typo',
-              value: i18n.__('fieldErrors.fields.email.typo')
-            })
-            data.validation.typos = emailTypos
-            data.validation.originalEmail = userEmail
+    AWSXRay.captureAsyncFunc('chargeValidator_verify', function (subSegment) {
+      validator.verify(req)
+        .catch(() => {
+          subSegment.close('error')
+          redirect(res).toNew(req.chargeId)
+        })
+        .then(data => {
+          subSegment.close()
+          cardBrand = data.cardBrand
+          let emailChanged = false
+          let userEmail = req.body.email
+          if (req.body.originalemail) {
+            emailChanged = req.body.originalemail !== userEmail
           }
-          charge.countries = countries
-          appendChargeForNewView(charge, req, charge.id)
-          _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-          return views.display(res, CHARGE_VIEW, data.validation)
-        }
-        logging.authChargePost(authUrl)
-        Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail)
-          .then(() => {
-            const startTime = new Date()
-            const correlationId = req.headers[CORRELATION_HEADER] || ''
-            baseClient.post(authUrl, { data: normalise.apiPayload(req, cardBrand), correlationId: correlationId }, (data, json) => {
-              logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
-              switch (json.statusCode) {
-                case 202:
-                case 409:
-                  logging.failedChargePost(409, authUrl)
-                  redirect(res).toAuthWaiting(req.chargeId)
-                  break
-                case 200:
-                  if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
-                    redirect(res).toAuth3dsRequired(req.chargeId)
-                  } else {
-                    redirect(res).toConfirm(req.chargeId)
+          let emailTypos = commonTypos(userEmail)
+          if (req.body['email-typo-sugestion']) {
+            userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
+            emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
+          }
+          if (data.validation.hasError || emailTypos) {
+            if (emailTypos) {
+              data.validation.hasError = true
+              data.validation.errorFields.push({
+                cssKey: 'email-typo',
+                value: i18n.__('fieldErrors.fields.email.typo')
+              })
+              data.validation.typos = emailTypos
+              data.validation.originalEmail = userEmail
+            }
+            charge.countries = countries
+            appendChargeForNewView(charge, req, charge.id)
+            _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+            return views.display(res, CHARGE_VIEW, data.validation)
+          }
+          logging.authChargePost(authUrl)
+          AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
+            Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
+              .then(() => {
+                subSegment.close()
+                const startTime = new Date()
+                const correlationId = req.headers[CORRELATION_HEADER] || ''
+                baseClient.post(authUrl, {
+                  data: normalise.apiPayload(req, cardBrand),
+                  correlationId: correlationId
+                }, (data, json) => {
+                  logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
+                  switch (json.statusCode) {
+                    case 202:
+                    case 409:
+                      logging.failedChargePost(409, authUrl)
+                      redirect(res).toAuthWaiting(req.chargeId)
+                      break
+                    case 200:
+                      if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
+                        redirect(res).toAuth3dsRequired(req.chargeId)
+                      } else {
+                        redirect(res).toConfirm(req.chargeId)
+                      }
+                      break
+                    case 500:
+                      logging.failedChargePost(409, authUrl)
+                      views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+                      break
+                    default:
+                      redirect(res).toNew(req.chargeId)
                   }
-                  break
-                case 500:
-                  logging.failedChargePost(409, authUrl)
-                  views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
-                  break
-                default:
-                  redirect(res).toNew(req.chargeId)
-              }
-            }).on('error', err => {
-              logging.failedChargePostException(err)
-              views.display(res, 'ERROR', withAnalytics(charge))
-            })
-          })
-          .catch(err => {
-            logging.failedChargePatch(err)
-            views.display(res, 'ERROR', withAnalyticsError())
-          })
-      })
+                }).on('error', err => {
+                  subSegment.close(err)
+                  logging.failedChargePostException(err)
+                  views.display(res, 'ERROR', withAnalytics(charge))
+                })
+              })
+              .catch(err => {
+                subSegment.close(err)
+                logging.failedChargePatch(err)
+                views.display(res, 'ERROR', withAnalyticsError())
+              })
+          }, clsSegment)
+        })
+    }, clsSegment)
   },
   checkCard: (req, res) => {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
-    AWSXRay.captureAsyncFunc('Card_checkCard', function (subsegment) {
+    AWSXRay.captureAsyncFunc('Card_checkCard', function (subSegment) {
       Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-        .checkCard(normalise.creditCard(req.body.cardNo), subsegment)
+        .checkCard(normalise.creditCard(req.body.cardNo), subSegment)
         .then(
           () => {
-            subsegment.close()
+            subSegment.close()
             return res.json({'accepted': true})
           },
           message => {
-            subsegment.close(message)
+            subSegment.close(message)
             return res.json({'accepted': false, message})
           }
         )
@@ -210,7 +226,7 @@ module.exports = {
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
 
-    baseClient.post(connector3dsUrl, { data: build3dsPayload(req), correlationId },
+    baseClient.post(connector3dsUrl, {data: build3dsPayload(req), correlationId},
       function (data, json) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
         switch (json.statusCode) {

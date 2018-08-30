@@ -51,7 +51,13 @@ const getHeaders = function getHeaders (args, segmentData) {
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
-    headers['X-Amzn-Trace-Id'] = 'Root=' + segmentData.clsSegment.trace_id + ';Parent=' + subSegment.id + ';Sampled=1'
+    headers['X-Amzn-Trace-Id'] = [
+      'Root=',
+      segmentData.clsSegment.trace_id,
+      ';Parent=',
+      subSegment.id,
+      ';Sampled=1'
+    ].join('')
   }
   _.merge(headers, args.headers)
 
