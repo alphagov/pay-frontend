@@ -1,23 +1,29 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const _ = require('lodash')
 const q = require('q')
 const changeCase = require('change-case')
 const logger = require('winston')
 const AWSXRay = require('aws-xray-sdk')
 const {getNamespace} = require('continuation-local-storage')
+const i18n = require('i18n')
 
-// local dependencies
+// Local dependencies
 const cardIdClient = require('../utils/cardid_client')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')
+const i18nConfig = require('../../config/i18n')
 
-const checkCard = function (cardNo, allowed, correlationId, subSegment) {
+i18n.configure(i18nConfig)
+
+const checkCard = function (cardNo, allowed, language, correlationId, subSegment) {
   const defer = q.defer()
   const startTime = new Date()
   const data = {'cardNumber': parseInt(cardNo)}
+
+  i18n.setLocale(language || 'en')
 
   // Use a subSegment if passed, otherwise get our main segment
   if (!subSegment) {
@@ -44,16 +50,16 @@ const checkCard = function (cardNo, allowed, correlationId, subSegment) {
       logger.debug(`[${correlationId}] Checking card brand - `, {'cardBrand': cardBrand, 'cardType': cardType})
 
       const brandExists = _.filter(allowed, {brand: cardBrand}).length > 0
-      if (!brandExists) defer.reject(changeCase.titleCase(cardBrand) + ' is not supported')
+      if (!brandExists) defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(cardBrand)))
 
       const cardObject = _.find(allowed, {brand: cardBrand, type: cardType})
 
       if (!cardObject) {
         switch (cardType) {
           case 'DEBIT':
-            return defer.reject(changeCase.titleCase(cardBrand) + ' debit cards are not supported')
+            return defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(cardBrand)))
           case 'CREDIT':
-            return defer.reject(changeCase.titleCase(cardBrand) + ' credit cards are not supported')
+            return defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(cardBrand)))
         }
       }
       return defer.resolve(cardBrand)
@@ -88,8 +94,8 @@ module.exports = function (allowedCards, correlationId) {
   return {
     withdrawalTypes: withdrawalTypes,
     allowed: _.clone(allowed),
-    checkCard: (cardNo, subSegment) => {
-      return checkCard(cardNo, allowed, correlationId, subSegment)
+    checkCard: (cardNo, language, subSegment) => {
+      return checkCard(cardNo, allowed, language, correlationId, subSegment)
     }
   }
 }
