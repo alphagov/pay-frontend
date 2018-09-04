@@ -32,7 +32,7 @@ describe('The /charge endpoint undealt statuses', function () {
         ))
     })
 
-    it('should error when the payment status is ' + status, function (done) {
+    it.only('should error when the payment status is ' + status, function (done) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])

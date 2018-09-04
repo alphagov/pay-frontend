@@ -5,7 +5,7 @@ const logger = require('winston')
 const q = require('q')
 
 // local dependencies
-const baseClient = require('../utils/base_client')
+const baseClient = require('../utils/base_client2')
 const paths = require('../paths.js')
 const State = require('./state.js')
 
