@@ -29,7 +29,7 @@ function setHttpClient () {
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 200
 }
 
 const clsXrayConfig = require('../../config/xray-cls')
