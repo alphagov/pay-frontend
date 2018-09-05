@@ -41,7 +41,8 @@ const client = request
     // Adding retry on ECONNRESET as a temporary fix for PP-1727
     maxAttempts: 3,
     retryDelay: 5000,
-    retryStrategy: retryOnEconnreset
+    retryStrategy: retryOnEconnreset,
+    time: true
   })
 
 const getHeaders = function getHeaders (args, segmentData) {

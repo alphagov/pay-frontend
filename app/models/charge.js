@@ -36,7 +36,7 @@ module.exports = function (correlationId) {
 
     const startTime = new Date()
 
-    baseClient.put(url, {data: data, correlationId: correlationId}, function (err, response, data) {
+    baseClient.put(url, {payload: data, correlationId: correlationId}, function (err, response, data) {
       logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime)
       if (httpCallFailed(err, response)) {
         logger.error('Calling connector to update charge status threw exception -', {
@@ -50,6 +50,7 @@ module.exports = function (correlationId) {
         clientUnavailable(err, defer)
       } else {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
+        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         updateComplete(chargeId, data, response, defer)
       }
     })
@@ -82,6 +83,7 @@ module.exports = function (correlationId) {
         })
         return defer.reject(new Error('GET_FAILED'))
       } else {
+        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         defer.resolve(data)
       }
     })
@@ -114,7 +116,7 @@ module.exports = function (correlationId) {
         })
         captureFail(err, defer)
       } else {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         captureComplete(data, response, defer)
       }
     })
@@ -145,7 +147,7 @@ module.exports = function (correlationId) {
         })
         cancelFail(err, defer)
       } else {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         cancelComplete(data, response, defer)
       }
     })
@@ -190,6 +192,7 @@ module.exports = function (correlationId) {
         })
         return clientUnavailable(err, defer)
       } else {
+        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         return defer.resolve(data)
       }
     })
@@ -232,7 +235,7 @@ module.exports = function (correlationId) {
     })
 
     const params = {
-      data: {
+      payload: {
         op: op,
         path: path,
         value: value
@@ -251,6 +254,7 @@ module.exports = function (correlationId) {
         })
         defer.reject(err)
       } else {
+        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         defer.resolve(data)
       }
     }, subSegment)
@@ -265,6 +269,7 @@ module.exports = function (correlationId) {
   const httpCallFailed = (err, response) => !!err || successStatusCodes.indexOf(_.get(response, 'statusCode')) === -1
 
   return {
+    updateStatus: updateStatus,
     updateToEnterDetails: updateToEnterDetails,
     find: find,
     capture: capture,
