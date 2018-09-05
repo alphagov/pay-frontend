@@ -32,13 +32,14 @@ describe('The /charge endpoint undealt statuses', function () {
         ))
     })
 
-    it.only('should error when the payment status is ' + status, function (done) {
+    it('should error when the payment status is ' + status, function (done) {
       request(app)
         .get(frontendCardDetailsPath + '/' + chargeId)
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
+          console.log(res)
           expect($('#errorMsg').text()).to.eql('There is a problem, please try again later')
         })
         .end(done)
