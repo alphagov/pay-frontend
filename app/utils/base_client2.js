@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const httpAgent = require('http').globalAgent
-const https = require('https')
+const {HttpsAgent} = require('agentkeepalive')
 const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
@@ -16,7 +16,7 @@ const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEAD
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 10
+  maxSockets: process.env.MAX_SOCKETS || 100
 }
 
 // Constants
@@ -33,7 +33,7 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
   logger.warn('DISABLE_INTERNAL_HTTPS is set.')
 }
 
-const httpsAgent = new https.Agent(agentOptions)
+const httpsAgent = new HttpsAgent(agentOptions)
 
 const client = request
   .defaults({
