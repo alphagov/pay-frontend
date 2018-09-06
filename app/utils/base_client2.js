@@ -1,8 +1,8 @@
 'use strict'
 
 // NPM dependencies
-const https = require('https')
 const httpAgent = require('http').globalAgent
+const https = require('https')
 const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
@@ -16,7 +16,7 @@ const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEAD
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 10
 }
 
 // Constants
