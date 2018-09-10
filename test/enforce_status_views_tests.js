@@ -119,6 +119,10 @@ describe('The /charge endpoint dealt statuses', function () {
     {
       name: 'user cancel error',
       view: 'USER_CANCEL_ERROR'
+    },
+    {
+      name: 'awaiting capture request',
+      view: 'AWAITING_CAPTURE_REQUEST'
     }
   ]
   beforeEach(function () {
@@ -249,6 +253,11 @@ describe('The /confirm endpoint dealt statuses', function () {
     {
       name: 'user cancel error',
       view: 'USER_CANCEL_ERROR'
+    },
+    {
+      name: 'awaiting capture request',
+      view: 'AWAITING_CAPTURE_REQUEST',
+      viewState: 'successful'
     }
   ]
   beforeEach(function () {

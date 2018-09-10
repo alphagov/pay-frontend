@@ -202,6 +202,12 @@ module.exports = {
 
   ENTERING_CARD_DETAILS: systemError,
 
+  AWAITING_CAPTURE_REQUEST: {
+    view: 'errors/charge_confirm_state_completed',
+    locals: {status: 'successful'},
+    analyticsPage: '/success_return'
+  },
+
   display: function (res, viewName, options) {
     let action = lodash.result(this, viewName)
     options = options || {}
