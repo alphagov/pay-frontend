@@ -1,13 +1,15 @@
-var _ = require('lodash')
-var State = require('../models/state.js')
-var paths = require('../paths.js')
+'use strict'
+
+const _ = require('lodash')
+const State = require('../models/state.js')
+const paths = require('../paths.js')
 
 module.exports = (function () {
   'use strict'
 
   // The logic will always resolve to the first successful match.
   // Changing the order of the states might have side-effects
-  var STATES = {
+  const STATES = {
     'card.new': [State.ENTERING_CARD_DETAILS, State.CREATED],
     'card.confirm': [State.AUTH_SUCCESS],
     'card.auth3dsRequired': [State.AUTH_3DS_REQUIRED],
@@ -21,20 +23,20 @@ module.exports = (function () {
     'card.cancel': [State.ENTERING_CARD_DETAILS, State.AUTH_SUCCESS]
   }
 
-  var resolveStates = function (actionName) {
-    var states = STATES[actionName]
+  const resolveStates = function (actionName) {
+    const states = STATES[actionName]
     if (!states) throw new Error('Cannot find correct states for action')
     return states
   }
 
-  var resolveActionName = function (state, verb) {
-    var possibleActionNames = _.reduce(STATES, function (result, value, key) {
-      var hasState = _.includes(value, state)
+  const resolveActionName = function (state, verb) {
+    const possibleActionNames = _.reduce(STATES, function (result, value, key) {
+      const hasState = _.includes(value, state)
       if (hasState) result.push(key)
       return result
     }, [])
 
-    var validActionNames = _.filter(possibleActionNames, function (actionName) {
+    const validActionNames = _.filter(possibleActionNames, function (actionName) {
       return _.result(paths, actionName).action === verb
     })
 
