@@ -25,7 +25,7 @@
   "scripts": {
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
-    "start": "node start.js",
+    "start": "node --nouse-idle-notification --expose-gc --max-old-space-size=4000 start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard",
     "watch-live-reload": "./node_modules/.bin/grunt watch",

@@ -103,6 +103,23 @@ function initialiseCookies (app) {
   cookies.configureSessionCookie(app)
 }
 
+function scheduleGc () {
+  if (!global.gc) {
+    return
+  }
+
+  // schedule next gc within a random interval (e.g. 15-45 minutes)
+  // tweak this based on your app's memory usage
+  var nextMinutes = Math.random() * 30 + 15
+
+  setTimeout(function () {
+    global.gc()
+    scheduleGc()
+  }, nextMinutes * 60 * 1000)
+}
+
+scheduleGc()
+
 function initialiseTemplateEngine (app) {
   // Configure nunjucks
   // see https://mozilla.github.io/nunjucks/api.html#configure
