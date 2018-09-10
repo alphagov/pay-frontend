@@ -20,7 +20,7 @@ process.env.SESSION_ENCRYPTION_KEY = 'naskjwefvwei72rjkwfmjwfi72rfkjwefmjwefiuwe
 
 describe('The /charge endpoint undealt statuses', function () {
   const chargeNotAllowedStatuses = [
-    'READY_FOR_CAPTURE'
+    'STATE NOT ALLOWED'
   ]
 
   chargeNotAllowedStatuses.forEach(function (status) {
@@ -152,7 +152,7 @@ describe('The /confirm endpoint undealt statuses', function () {
   const confirmNotAllowedStatuses = [
     'CREATED',
     'AUTHORISATION SUBMITTED',
-    'READY_FOR_CAPTURE'
+    'STATE NOT ALLOWED'
   ]
   beforeEach(function () {
     nock.cleanAll()
