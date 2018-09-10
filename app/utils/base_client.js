@@ -18,8 +18,8 @@ const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEAD
 
 let agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100,
-  maxFreeSockets: 10,
+  maxSockets: process.env.MAX_SOCKETS || 200,
+  maxFreeSockets: 100,
   timeout: 60000,
   freeSocketKeepAliveTimeout: 30000
 }
