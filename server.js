@@ -23,6 +23,7 @@ const router = require('./app/router')
 const cookies = require('./app/utils/cookies')
 const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
+const i18nConfig = require('./config/i18n')
 
 // Global constants
 const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.css')
@@ -83,15 +84,7 @@ function initialiseGlobalMiddleware (app) {
 }
 
 function initialisei18n (app) {
-  i18n.configure({
-    locales: ['en', 'cy'],
-    directory: path.join(__dirname, '/locales'),
-    objectNotation: true,
-    defaultLocale: 'en',
-    register: global,
-    autoReload: NODE_ENV !== 'production'
-  })
-
+  i18n.configure(i18nConfig)
   app.use(i18n.init)
 }
 

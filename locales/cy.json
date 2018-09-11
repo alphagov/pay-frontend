@@ -96,7 +96,10 @@
 				"numberIncorrectLength": "Nid yw rhif y cerdyn yr hyd cywir",
 				"luhnInvalid": "Rhowch rif cerdyn dilys",
 				"cardNotSupported": "Nid yw’r math hwn o gerdyn yn cael ei dderbyn",
-				"nonNumeric": "Rhowch rif cerdyn dilys"
+				"nonNumeric": "Rhowch rif cerdyn dilys",
+				"unsupportedBrand": "Ni dderbynnir %s",
+				"unsupportedDebitCard": "Ni dderbynnir cardiau debyd %s",
+				"unsupportedCreditCard": "Ni dderbynnir cardiau credyd %s"
 			},
 			"cvc": {
 				"name": "god diogelwch cerdyn",

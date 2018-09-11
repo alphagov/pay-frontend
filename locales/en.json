@@ -96,7 +96,10 @@
 				"numberIncorrectLength": "Card number is not the correct length",
 				"luhnInvalid": "Enter a valid card number",
 				"cardNotSupported": "This card type is not accepted",
-				"nonNumeric": "Enter a valid card number"
+				"nonNumeric": "Enter a valid card number",
+				"unsupportedBrand": "%s is not supported",
+				"unsupportedDebitCard": "%s debit cards are not supported",
+				"unsupportedCreditCard": "%s credit cards are not supported"
 			},
 			"cvc": {
 				"name": "card security code",

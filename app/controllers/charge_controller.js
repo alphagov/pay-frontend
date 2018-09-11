@@ -193,7 +193,7 @@ module.exports = {
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     AWSXRay.captureAsyncFunc('Card_checkCard', function (subSegment) {
       Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-        .checkCard(normalise.creditCard(req.body.cardNo), subSegment)
+        .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment)
         .then(
           () => {
             subSegment.close()
