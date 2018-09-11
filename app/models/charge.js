@@ -50,7 +50,7 @@ module.exports = function (correlationId) {
         clientUnavailable(err, defer)
       } else {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
-        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        logger.info(`[${correlationId}] PUT to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         updateComplete(chargeId, data, response, defer)
       }
     })
@@ -83,7 +83,7 @@ module.exports = function (correlationId) {
         })
         return defer.reject(new Error('GET_FAILED'))
       } else {
-        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        logger.info(`[${correlationId}] GET to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         defer.resolve(data)
       }
     })
@@ -116,7 +116,7 @@ module.exports = function (correlationId) {
         })
         captureFail(err, defer)
       } else {
-        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        logger.info(`[${correlationId}] POST to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         captureComplete(data, response, defer)
       }
     })
@@ -147,7 +147,7 @@ module.exports = function (correlationId) {
         })
         cancelFail(err, defer)
       } else {
-        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        logger.info(`[${correlationId}] POST to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         cancelComplete(data, response, defer)
       }
     })
@@ -192,7 +192,7 @@ module.exports = function (correlationId) {
         })
         return clientUnavailable(err, defer)
       } else {
-        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        logger.info(`[${correlationId}] GET to ${findByUrl} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         return defer.resolve(data)
       }
     })
@@ -254,7 +254,7 @@ module.exports = function (correlationId) {
         })
         defer.reject(err)
       } else {
-        logger.info(`[${correlationId}] HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        logger.info(`[${correlationId}] PATCH to ${chargesUrl} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
         defer.resolve(data)
       }
     }, subSegment)
