@@ -16,7 +16,9 @@ const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEAD
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 100,
+  ciphers: 'AES256-GCM-SHA384'
+
 }
 
 // Constants

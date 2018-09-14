@@ -2,7 +2,8 @@
 if (!process.env.DISABLE_APPMETRICS) {
   require('./app/utils/metrics.js').metrics()
 }
-
+// const winston = require('winston')
+// winston.remove(winston.transports.Console)
 // Node.js core dependencies
 const path = require('path')
 const v8 = require('v8')
@@ -10,10 +11,9 @@ const v8 = require('v8')
 // npm dependencies
 const express = require('express')
 const nunjucks = require('nunjucks')
-const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
 const logger = require('winston')
-const loggingMiddleware = require('morgan')
+// const loggingMiddleware = require('morgan')
 const i18n = require('i18n')
 const staticify = require('staticify')(path.join(__dirname, 'public'))
 const compression = require('compression')
@@ -28,7 +28,7 @@ const i18nConfig = require('./config/i18n')
 // Global constants
 const CSS_PATH = staticify.getVersionedPath('/stylesheets/application.css')
 const JAVASCRIPT_PATH = staticify.getVersionedPath('/javascripts/application.min.js')
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 9000
 const {NODE_ENV} = process.env
 const argv = require('minimist')(process.argv.slice(2))
 const unconfiguredApp = express()
@@ -47,11 +47,11 @@ function initialiseGlobalMiddleware (app) {
       logger.info(message)
     }
   }
-  app.set('settings', {getVersionedPath: staticify.getVersionedPath})
-  app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
-    ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
-  app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/assets/images', 'favicon.ico')))
-  app.use(staticify.middleware)
+  // app.set('settings', {getVersionedPath: staticify.getVersionedPath})
+  // app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
+  //   ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
+  // app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/assets/images', 'favicon.ico')))
+  // app.use(staticify.middleware)
 
   app.use(function (req, res, next) {
     res.locals.asset_path = '/public/'

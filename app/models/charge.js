@@ -74,6 +74,7 @@ module.exports = function (correlationId) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
       if (httpCallFailed(err, response)) {
         logger.error('[%s] Calling connector to get charge failed -', correlationId, {
+
           service: 'connector',
           method: 'GET',
           chargeId: chargeId,
