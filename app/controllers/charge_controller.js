@@ -43,7 +43,11 @@ function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
+
+  var startTime = new Date()
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
+  logger.info('elapsed time to json stringify in appendChargeForNewView: %s ms', new Date() - startTime)
+
   charge.post_card_action = routeFor('create', chargeId)
   charge.id = chargeId
   charge.post_cancel_action = routeFor('cancel', chargeId)
