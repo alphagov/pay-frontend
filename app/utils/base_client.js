@@ -98,7 +98,9 @@ const _request = function request (methodName, url, args, callback, subSegment) 
 
     res.on('end', () => {
       try {
+        var startTime = new Date()
         data = JSON.parse(data)
+        logger.info('elapsed time to json parse in base_client: %s ms', new Date() - startTime)
       } catch (e) {
         // if response exists but is not parsable, log it and carry on
         if (data) {
@@ -111,7 +113,9 @@ const _request = function request (methodName, url, args, callback, subSegment) 
   })
 
   if (args.data) {
+    var startTime = new Date()
     req.write(JSON.stringify(args.data))
+    logger.info('elapsed time to json stringify args.data in base_client: %s ms', new Date() - startTime)
   }
 
   req.on('response', (response) => {
