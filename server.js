@@ -2,7 +2,12 @@
 if (!process.env.DISABLE_APPMETRICS) {
   require('./app/utils/metrics.js').metrics()
 }
+var globalTunnel = require('global-tunnel')
 
+globalTunnel.initialize({
+  host: 'nginx',
+  port: 80
+})
 // Node.js core dependencies
 const path = require('path')
 const v8 = require('v8')

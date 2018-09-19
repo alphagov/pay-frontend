@@ -47,6 +47,7 @@
     "csrf": "3.0.x",
     "express": "4.16.x",
     "gaap-analytics": "^3.0.0",
+    "global-tunnel": "^1.2.0",
     "govuk-frontend": "^1.1.1",
     "humps": "^2.0.1",
     "i18n": "0.8.x",

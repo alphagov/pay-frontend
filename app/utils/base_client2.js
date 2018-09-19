@@ -59,6 +59,7 @@ const getHeaders = function getHeaders (args, segmentData) {
       ';Sampled=1'
     ].join('')
   }
+  headers['xhost'] = 'connector:9300'
   _.merge(headers, args.headers)
 
   return headers
