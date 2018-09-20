@@ -1,4 +1,4 @@
-var baseClient = require('../utils/base_client2')
+var baseClient = require('../utils/base_client')
 
 var q = require('q')
 var logger = require('winston')

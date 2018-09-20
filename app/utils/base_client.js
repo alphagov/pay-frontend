@@ -1,12 +1,16 @@
 'use strict'
 
+/**
+ * @Deprecated
+ *
+ * Use base_client2.js instead (which is `requestretry` based with retry support and sync with selfservice
+ * Leaving for backward compatibility.
+ */
 // NPM dependencies
-const https = require('https')
-const httpAgent = require('http').globalAgent
-const urlParse = require('url').parse
-const _ = require('lodash')
+const urlParse = require('url')
 const logger = require('winston')
-const request = require('requestretry')
+const https = setHttpClient()
+const _ = require('lodash')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
@@ -14,18 +18,21 @@ const AWSXRay = require('aws-xray-sdk')
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 
+function setHttpClient () {
+  if (process.env.DISABLE_INTERNAL_HTTPS === 'true') {
+    logger.warn('DISABLE_INTERNAL_HTTPS is enabled, base_client will use http.')
+    return require('http')
+  } else {
+    return require('https')
+  }
+}
+
 const agentOptions = {
   keepAlive: true,
   maxSockets: process.env.MAX_SOCKETS || 100
 }
 
-// Constants
 const clsXrayConfig = require('../../config/xray-cls')
-const RETRIABLE_ERRORS = ['ECONNRESET']
-
-function retryOnEconnreset (err) {
-  return err && _.includes(RETRIABLE_ERRORS, err.code)
-}
 
 if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
   agentOptions.ca = customCertificate.getCertOptions()
@@ -33,16 +40,10 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
   logger.warn('DISABLE_INTERNAL_HTTPS is set.')
 }
 
-const httpsAgent = new https.Agent(agentOptions)
-
-const client = request
-  .defaults({
-    json: true,
-    // Adding retry on ECONNRESET as a temporary fix for PP-1727
-    maxAttempts: 3,
-    retryDelay: 5000,
-    retryStrategy: retryOnEconnreset
-  })
+/**
+ * @type {https.Agent}
+ */
+const agent = new https.Agent(agentOptions)
 
 const getHeaders = function getHeaders (args, segmentData) {
   let headers = {}
@@ -63,6 +64,7 @@ const getHeaders = function getHeaders (args, segmentData) {
 
   return headers
 }
+
 /**
  *
  * @param {string} methodName
@@ -75,26 +77,52 @@ const getHeaders = function getHeaders (args, segmentData) {
  * @private
  */
 const _request = function request (methodName, url, args, callback, subSegment) {
-  let agent = urlParse(url).protocol === 'http:' ? httpAgent : httpsAgent
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
+  const parsedUrl = urlParse.parse(url)
 
-  const requestOptions = {
-    uri: url,
+  const httpsOptions = {
+    hostname: parsedUrl.hostname,
+    port: parsedUrl.port,
+    path: parsedUrl.pathname,
     method: methodName,
     agent: agent,
     headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
   }
 
-  if (args.payload) {
-    requestOptions.body = args.payload
+  let req = https.request(httpsOptions, (res) => {
+    let data = ''
+    res.on('data', (chunk) => {
+      data += chunk
+    })
+
+    res.on('end', () => {
+      try {
+        data = JSON.parse(data)
+      } catch (e) {
+        // if response exists but is not parsable, log it and carry on
+        if (data) {
+          logger.info('Response from %s in unexpected format: %s', url, data)
+        }
+        data = null
+      }
+      callback(data, {statusCode: res.statusCode})
+    })
+  })
+
+  if (args.data) {
+    req.write(JSON.stringify(args.data))
   }
 
-  if (args.qs) {
-    requestOptions.qs = args.qs
-  }
+  req.on('response', (response) => {
+    response.on('readable', () => {
+      response.read()
+    })
+  })
 
-  return client(requestOptions, callback)
+  req.end()
+
+  return req
 }
 
 /*
@@ -121,8 +149,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  post: function (url, args, callback) {
-    return _request('POST', url, args, callback)
+  post: function (url, args, callback, subSegment) {
+    return _request('POST', url, args, callback, subSegment)
   },
 
   /**
@@ -145,8 +173,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  patch: function (url, args, callback) {
-    return _request('PATCH', url, args, callback)
+  patch: function (url, args, callback, subSegment) {
+    return _request('PATCH', url, args, callback, subSegment)
   },
 
   /**

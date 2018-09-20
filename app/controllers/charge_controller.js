@@ -9,7 +9,7 @@ const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
 const logging = require('../utils/logging.js')
-const baseClient = require('../utils/base_client2')
+const baseClient = require('../utils/base_client')
 const views = require('../utils/views.js')
 const normalise = require('../services/normalise_charge.js')
 const chargeValidator = require('../utils/charge_validation_backend.js')
