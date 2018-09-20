@@ -94,35 +94,35 @@ const paths = {
   },
   connectorCharge: {
     show: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId',
       action: 'get'
     },
     updateStatus: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/status',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/status',
       action: 'put'
     },
     capture: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/capture',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/capture',
       action: 'put'
     },
     cancel: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/cancel',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/cancel',
       action: 'post'
     },
     findByToken: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId/charge',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId/charge',
       action: 'get'
     },
     token: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId',
       action: 'delete'
     },
     allCards: {
-      path: process.env.CONNECTOR_HOST + '/v1/api/card-types',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/api/card-types',
       action: 'get'
     },
     threeDs: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/3ds',
+      path: process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/3ds',
       action: 'post'
     }
   }

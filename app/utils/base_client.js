@@ -13,6 +13,7 @@ const https = setHttpClient()
 const _ = require('lodash')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
+const url = require('url')
 
 // Local dependencies
 const customCertificate = require('./custom_certificate')
@@ -45,10 +46,13 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
  */
 const agent = new https.Agent(agentOptions)
 
-const getHeaders = function getHeaders (args, segmentData) {
+const getHeaders = function getHeaders (targetUrl, args, segmentData) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
+  headers['host'] = url.parse(targetUrl).hostname + ':' + url.parse(targetUrl).port
+
+  console.debug('with headers:' + headers)
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
@@ -87,7 +91,7 @@ const _request = function request (methodName, url, args, callback, subSegment) 
     path: parsedUrl.pathname,
     method: methodName,
     agent: agent,
-    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
+    headers: getHeaders(url, args, {clsSegment: clsSegment, subSegment: subSegment})
   }
 
   let req = https.request(httpsOptions, (res) => {

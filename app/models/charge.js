@@ -232,7 +232,7 @@ module.exports = function (correlationId) {
     const defer = q.defer()
 
     const startTime = new Date()
-    const chargesUrl = process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
+    const chargesUrl = process.env.FORWARD_PROXY_URL || process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
 
     logger.debug('[%s] Calling connector to patch charge -', correlationId, {
       service: 'connector',

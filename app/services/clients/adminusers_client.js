@@ -9,7 +9,7 @@ const responseBodyToServiceTransformer = body => new Service(body)
 const SERVICE_NAME = 'adminusers'
 
 module.exports = function (clientOptions = {}) {
-  const baseUrl = clientOptions.baseUrl || process.env.ADMINUSERS_URL
+  const baseUrl = clientOptions.baseUrl || process.env.FORWARD_PROXY_URL || process.env.ADMINUSERS_URL
   const correlationId = clientOptions.correlationId || ''
   const servicesResource = `${baseUrl}/v1/api/services`
 
