@@ -44,10 +44,14 @@ const client = request
     retryStrategy: retryOnEconnreset
   })
 
-const getHeaders = function getHeaders (args, segmentData) {
+const getHeaders = function getHeaders (args, segmentData, url) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
+  if (url) {
+    headers['host'] = urlParse(url).hostname + ':' + urlParse(url).port
+  }
+  logger.debug('headers: ' + JSON.stringify(headers))
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
@@ -79,11 +83,22 @@ const _request = function request (methodName, url, args, callback, subSegment) 
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
+  var urlOrForwardProxy
+  if (process.env.FORWARD_PROXY_URL) {
+    urlOrForwardProxy = urlParse(url)
+    urlOrForwardProxy.hostname = urlParse(process.env.FORWARD_PROXY_URL).hostname
+    urlOrForwardProxy.port = urlParse(process.env.FORWARD_PROXY_URL).port
+  } else {
+    urlOrForwardProxy = url
+  }
+
+  logger.debug('base_client2 target uri: ' + urlOrForwardProxy)
+
   const requestOptions = {
-    uri: url,
+    uri: urlOrForwardProxy,
     method: methodName,
     agent: agent,
-    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
+    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
   }
 
   if (args.payload) {
