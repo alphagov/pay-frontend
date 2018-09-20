@@ -52,7 +52,7 @@ const getHeaders = function getHeaders (targetUrl, args, segmentData) {
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
   headers['host'] = url.parse(targetUrl).hostname + ':' + url.parse(targetUrl).port
 
-  console.debug('with headers:' + headers)
+  console.debug('with headers:' + JSON.stringify(headers))
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
