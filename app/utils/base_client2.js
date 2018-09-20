@@ -59,6 +59,7 @@ const getHeaders = function getHeaders (args, segmentData) {
       ';Sampled=1'
     ].join('')
   }
+  headers['host'] = 'adminusers:9700'
   _.merge(headers, args.headers)
 
   return headers

@@ -3,7 +3,7 @@ const path = require('path')
 
 const assert = require('assert')
 
-var baseClient = require(path.join(__dirname, '/../../app/utils/base_client'))
+var baseClient = require(path.join(__dirname, '/../../app/utils/base_client2'))
 
 const url = 'http://www.example.com:65535'
 const arbitraryRequestData = {foo: 'bar'}
