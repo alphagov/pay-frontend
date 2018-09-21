@@ -31,7 +31,6 @@ const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
 const AUTH_3DS_REQUIRED_HTML_OUT_VIEW = 'auth_3ds_required_html_out'
 const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
 const CAPTURE_WAITING_VIEW = 'capture_waiting'
-const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
 const AUTH_3DS_EPDQ_RESULTS = {
   success: 'AUTHORISED',
   declined: 'DECLINED',
@@ -138,7 +137,7 @@ module.exports = {
             }
             charge.countries = countries
             appendChargeForNewView(charge, req, charge.id)
-            _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+            _.merge(data.validation, withAnalytics(charge, charge), req.body)
             return views.display(res, CHARGE_VIEW, data.validation)
           }
           logging.authChargePost(authUrl)
