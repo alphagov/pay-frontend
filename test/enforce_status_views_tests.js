@@ -39,6 +39,7 @@ describe('The /charge endpoint undealt statuses', function () {
         .expect(500)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
+          console.log(res)
           expect($('#errorMsg').text()).to.eql('There is a problem, please try again later')
         })
         .end(done)

@@ -3,11 +3,12 @@
 // npm dependencies
 const logger = require('winston')
 const q = require('q')
-
+const _ = require('lodash')
 // local dependencies
-const baseClient = require('../utils/base_client')
+const baseClient = require('../utils/base_client2')
 const paths = require('../paths.js')
 const State = require('./state.js')
+const successStatusCodes = [200, 204, 303, 304]
 
 module.exports = function (correlationId) {
   correlationId = correlationId || ''
@@ -35,19 +36,23 @@ module.exports = function (correlationId) {
 
     const startTime = new Date()
 
-    baseClient.put(url, { data: data, correlationId: correlationId }, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
-      updateComplete(chargeId, data, response, defer)
-    }).on('error', function (err) {
+    baseClient.put(url, {payload: data, correlationId: correlationId}, function (err, response, data) {
       logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime)
-      logger.error('Calling connector to update charge status threw exception -', {
-        service: 'connector',
-        method: 'PUT',
-        chargeId: chargeId,
-        url: url,
-        error: err
-      })
-      clientUnavailable(err, defer)
+      if (httpCallFailed(err, response)) {
+        logger.error('Calling connector to update charge status threw exception -', {
+          service: 'connector',
+          method: 'PUT',
+          chargeId: chargeId,
+          url: url,
+          error: err,
+          statusCode: _.get(response, 'statusCode')
+        })
+        clientUnavailable(err, defer)
+      } else {
+        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
+        logger.info(`[${correlationId}] PUT to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        updateComplete(chargeId, data, response, defer)
+      }
     })
 
     return defer.promise
@@ -65,30 +70,25 @@ module.exports = function (correlationId) {
     })
 
     const startTime = new Date()
-    baseClient.get(url, {correlationId: correlationId}, function (data, response) {
-      if (response.statusCode !== 200) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-        logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
+    baseClient.get(url, {correlationId: correlationId}, function (err, response, data) {
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
+      if (httpCallFailed(err, response)) {
+        logger.error('[%s] Calling connector to get charge failed -', correlationId, {
+
           service: 'connector',
           method: 'GET',
           chargeId: chargeId,
           url: url,
-          status: response.statusCode
+          error: err,
+          statusCode: _.get(response, 'statusCode')
         })
         return defer.reject(new Error('GET_FAILED'))
+      } else {
+        logger.info(`[${correlationId}] GET to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        defer.resolve(data)
       }
-      defer.resolve(data)
-    }, subSegment).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-      logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
-        service: 'connector',
-        method: 'GET',
-        chargeId: chargeId,
-        url: url,
-        error: err
-      })
-      clientUnavailable(err, defer)
     })
+
     return defer.promise
   }
 
@@ -104,22 +104,23 @@ module.exports = function (correlationId) {
     })
 
     const startTime = new Date()
-    baseClient.post(url, { correlationId: correlationId }, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-      captureComplete(data, response, defer)
-    })
-      .on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
+    baseClient.post(url, {correlationId: correlationId}, function (err, response, data) {
+      logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
+      if (httpCallFailed(err, response)) {
         logger.error('[%s] Calling connector to do capture failed -', correlationId, {
           service: 'connector',
           method: 'POST',
           chargeId: chargeId,
           url: url,
-          error: err
+          error: err,
+          statusCode: _.get(response, 'statusCode')
         })
         captureFail(err, defer)
-      })
-
+      } else {
+        logger.info(`[${correlationId}] POST to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        captureComplete(data, response, defer)
+      }
+    })
     return defer.promise
   }
 
@@ -135,20 +136,22 @@ module.exports = function (correlationId) {
     })
 
     const startTime = new Date()
-    baseClient.post(url, { correlationId: correlationId }, function (data, response) {
+    baseClient.post(url, {correlationId: correlationId}, function (err, response, data) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-      cancelComplete(data, response, defer)
-    })
-      .on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+      if (httpCallFailed(err, response)) {
         logger.error('[%s] Calling connector cancel a charge threw exception -', correlationId, {
           service: 'connector',
           method: 'POST',
           url: url,
-          error: err
+          error: err,
+          statusCode: _.get(response, 'statusCode')
         })
         cancelFail(err, defer)
-      })
+      } else {
+        logger.info(`[${correlationId}] POST to ${url} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        cancelComplete(data, response, defer)
+      }
+    })
 
     return defer.promise
   }
@@ -179,28 +182,22 @@ module.exports = function (correlationId) {
     const startTime = new Date()
     const findByUrl = connectorurl('findByToken', {chargeTokenId: tokenId})
 
-    baseClient.get(findByUrl, {correlationId: correlationId}, function (data, response) {
+    baseClient.get(findByUrl, {correlationId: correlationId}, function (err, response, data) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
-      if (response.statusCode !== 200) {
-        logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
+      if (httpCallFailed(err, response)) {
+        logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
           service: 'connector',
           method: 'GET',
-          status: response.statusCode
+          error: err,
+          statusCode: _.get(response, 'statusCode')
         })
-        defer.reject(new Error('GET_FAILED'))
-        return
+        return clientUnavailable(err, defer)
+      } else {
+        logger.info(`[${correlationId}] GET to ${findByUrl} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        return defer.resolve(data)
       }
-
-      defer.resolve(data)
-    }).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
-      logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
-        service: 'connector',
-        method: 'GET',
-        error: err
-      })
-      clientUnavailable(err, defer)
     })
+
     return defer.promise
   }
 
@@ -222,10 +219,9 @@ module.exports = function (correlationId) {
         status: response.statusCode
       })
       defer.reject(new Error('UPDATE_FAILED'))
-      return
+    } else {
+      defer.resolve({success: 'OK'})
     }
-
-    defer.resolve({success: 'OK'})
   }
 
   const patch = function (chargeId, op, path, value, subSegment) {
@@ -240,7 +236,7 @@ module.exports = function (correlationId) {
     })
 
     const params = {
-      data: {
+      payload: {
         op: op,
         path: path,
         value: value
@@ -248,23 +244,21 @@ module.exports = function (correlationId) {
       correlationId: correlationId
     }
 
-    baseClient.patch(chargesUrl + chargeId, params, function (data, response) {
+    baseClient.patch(chargesUrl + chargeId, params, function (err, response, data) {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-      const code = response.statusCode
-      if (code === 200) {
-        defer.resolve()
+      if (httpCallFailed(err, response)) {
+        logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
+          service: 'connector',
+          method: 'PATCH',
+          error: err,
+          statusCode: _.get(response, 'statusCode')
+        })
+        defer.reject(err)
       } else {
-        defer.reject()
+        logger.info(`[${correlationId}] PATCH to ${chargesUrl} HTTP connection timings: `, _.get(response, 'timingPhases', 'NO DATA'))
+        defer.resolve(data)
       }
-    }, subSegment).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-      logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
-        service: 'connector',
-        method: 'PATCH',
-        error: err
-      })
-      defer.reject()
-    })
+    }, subSegment)
 
     return defer.promise
   }
@@ -272,6 +266,8 @@ module.exports = function (correlationId) {
   const clientUnavailable = function (error, defer) {
     defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
+
+  const httpCallFailed = (err, response) => !!err || successStatusCodes.indexOf(_.get(response, 'statusCode')) === -1
 
   return {
     updateStatus: updateStatus,

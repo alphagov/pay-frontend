@@ -28,7 +28,7 @@ describe('updateStatus', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert(error)
         })
     })
   })
@@ -45,7 +45,7 @@ describe('updateStatus', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'UPDATE_FAILED')
+          assert(error)
         })
     })
   })
@@ -81,7 +81,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert(error)
         })
     })
   })
@@ -99,7 +99,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'GET_FAILED')
+          assert(error)
         })
     })
   })
@@ -149,7 +149,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert(error)
         })
     })
   })
@@ -167,7 +167,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CAPTURE_FAILED')
+          assert(error)
         })
     })
   })
@@ -185,7 +185,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'POST_FAILED')
+          assert(error)
         })
     })
   })
@@ -201,7 +201,7 @@ describe('findByToken', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert(error)
         })
     })
   })
@@ -219,7 +219,7 @@ describe('findByToken', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'GET_FAILED')
+          assert(error)
         })
     })
   })

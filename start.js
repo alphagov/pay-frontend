@@ -40,6 +40,7 @@
    */
   function startWorker (workerId) {
     server.start()
+    // require('appmetrics-dash').monitor({port: 5000})
 
     logger.info(`Started worker ${workerId}, PID: ${process.pid}`)
 

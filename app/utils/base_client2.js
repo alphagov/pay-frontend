@@ -1,8 +1,8 @@
 'use strict'
 
 // NPM dependencies
-const https = require('https')
 const httpAgent = require('http').globalAgent
+const {HttpsAgent} = require('agentkeepalive')
 const urlParse = require('url').parse
 const _ = require('lodash')
 const logger = require('winston')
@@ -16,7 +16,9 @@ const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEAD
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 100,
+  ciphers: 'AES256-GCM-SHA384'
+
 }
 
 // Constants
@@ -33,7 +35,7 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
   logger.warn('DISABLE_INTERNAL_HTTPS is set.')
 }
 
-const httpsAgent = new https.Agent(agentOptions)
+const httpsAgent = new HttpsAgent(agentOptions)
 
 const client = request
   .defaults({
@@ -41,7 +43,8 @@ const client = request
     // Adding retry on ECONNRESET as a temporary fix for PP-1727
     maxAttempts: 3,
     retryDelay: 5000,
-    retryStrategy: retryOnEconnreset
+    retryStrategy: retryOnEconnreset,
+    time: true
   })
 
 const getHeaders = function getHeaders (args, segmentData) {
