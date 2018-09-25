@@ -1,20 +1,29 @@
-var path = require('path')
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
-var proxyquire = require('proxyquire')
-var sinon = require('sinon')
-var expect = require('chai').expect
+'use strict'
 
-var mockCharge = (function () {
-  var mock = function (shouldSuccess, error) {
+// core dependencies
+const path = require('path')
+
+// npm dependencies
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+const expect = require('chai').expect
+const q = require('q')
+const AWSXRay = require('aws-xray-sdk')
+
+// local dependencies
+require(path.join(__dirname, '/../test_helpers/html_assertions'))
+
+const mockCharge = (function () {
+  const mock = function (shouldSuccess, error) {
     return function () {
-      var updateToEnterDetails = function () {
+      const updateToEnterDetails = function () {
         return {
           then: function (success, fail) {
             return shouldSuccess ? success() : fail()
           }
         }
       }
-      var capture = function () {
+      const capture = function () {
         return {
           then: function (success, fail) {
             return shouldSuccess ? success() : fail(error)
@@ -33,8 +42,8 @@ var mockCharge = (function () {
   }
 }())
 
-var mockNormalise = (function () {
-  var mock = function (chargeObject) {
+const mockNormalise = (function () {
+  const mock = function (chargeObject) {
     return {
       charge: function (data) {
         return chargeObject
@@ -47,8 +56,8 @@ var mockNormalise = (function () {
   }
 }())
 
-var mockSession = (function () {
-  var retrieve = function () {
+const mockSession = (function () {
+  const retrieve = function () {
     return [{
       brand: 'visa',
       debit: true,
@@ -61,33 +70,53 @@ var mockSession = (function () {
   }
 }())
 
-var requireChargeController = function (mockedCharge, mockedNormalise) {
-  return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), {
-    '../models/charge.js': mockedCharge,
-    '../services/normalise_charge.js': mockedNormalise,
-    '../utils/session.js': mockSession
-  })
+const aChargeWithStatus = function (status) {
+  return {
+    'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
+    'status': status,
+    'amount': '4.99',
+    'gatewayAccount': {
+      'serviceName': 'Service Name',
+      'analyticsId': 'test-1234',
+      'type': 'test',
+      'paymentProvider': 'sandbox'
+    },
+    'id': '3'
+  }
 }
 
-describe('card details endpoint', function () {
-  var request, response
-
-  var aChargeWithStatus = function (status) {
-    return {
-      'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-      'status': status,
-      'amount': '4.99',
-      'gatewayAccount': {
-        'serviceName': 'Service Name',
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox'
-      },
-      'id': '3'
+const requireChargeController = function (mockedCharge, mockedNormalise, mockedCard) {
+  const proxyquireMocks = {
+    '../models/charge.js': mockedCharge,
+    '../services/normalise_charge.js': mockedNormalise,
+    '../utils/session.js': mockSession,
+    'aws-xray-sdk': {
+      captureAsyncFunc: function (name, callback) {
+        callback({close: () => {}}) // eslint-disable-line
+      }
+    },
+    'continuation-local-storage': {
+      getNamespace: function () {
+        return {
+          get: function () {
+            return new AWSXRay.Segment('stub-segment')
+          }
+        }
+      }
     }
   }
 
-  var aResponseWithStatus = function (status) {
+  if (mockedCard) {
+    proxyquireMocks['../models/card.js'] = mockedCard
+  }
+
+  return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
+}
+
+describe('card details endpoint', function () {
+  let request, response
+
+  const aResponseWithStatus = function (status) {
     return {
       'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
       'status': status,
@@ -120,36 +149,37 @@ describe('card details endpoint', function () {
   })
 
   it('should not call update to enter card details if charge is already in ENTERING CARD DETAILS', function () {
-    var mockedNormalisedCharge = aChargeWithStatus('ENTERING CARD DETAILS')
-    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
+    const mockedNormalisedCharge = aChargeWithStatus('ENTERING CARD DETAILS')
+    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
     // To make sure this test does not proceed to chargeModel.updateToEnterDetails.
     // That is to differentiate from next test.
-    var emptyChargeModel = {}
+    const emptyChargeModel = {}
 
-    var expectedCharge = aResponseWithStatus('ENTERING CARD DETAILS')
+    const expectedCharge = aResponseWithStatus('ENTERING CARD DETAILS')
     requireChargeController(emptyChargeModel, mockedNormalise).new(request, response)
     expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
   it('should update to enter card details if charge is in CREATED', function () {
-    var charge = mockCharge.mock(true)
+    const charge = mockCharge.mock(true)
 
-    var mockedNormalisedCharge = aChargeWithStatus('CREATED')
-    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
+    const mockedNormalisedCharge = aChargeWithStatus('CREATED')
+    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
-    var expectedCharge = aResponseWithStatus('CREATED')
+    const expectedCharge = aResponseWithStatus('CREATED')
     requireChargeController(charge, mockedNormalise).new(request, response)
     expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
   it('should display NOT FOUND if updateToEnterDetails returns error', function () {
-    var charge = mockCharge.mock(false)
+    const charge = mockCharge.mock(false)
 
-    var mockedNormalisedCharge = aChargeWithStatus('CREATED')
-    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
+    const mockedNormalisedCharge = aChargeWithStatus('CREATED')
+    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
     requireChargeController(charge, mockedNormalise).new(request, response)
-    var systemErrorObj = {'message': 'Page cannot be found',
+    const systemErrorObj = {
+      'message': 'Page cannot be found',
       'viewName': 'NOT_FOUND',
       'analytics': {
         'analyticsId': 'Service unavailable',
@@ -162,13 +192,13 @@ describe('card details endpoint', function () {
   })
 
   it('should display SYSTEM_ERROR if capture returns an error', function () {
-    var charge = mockCharge.mock(false, { message: 'some error' })
+    const charge = mockCharge.mock(false, {message: 'some error'})
 
-    var mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
-    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
+    const mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
+    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
     requireChargeController(charge, mockedNormalise).capture(request, response)
-    var systemErrorObj = {
+    const systemErrorObj = {
       'viewName': 'SYSTEM_ERROR',
       'returnUrl': '/return/3',
       'analytics': {
@@ -184,13 +214,13 @@ describe('card details endpoint', function () {
   })
 
   it('should display CAPTURE_FAILURE if capture returns a capture failed error', function () {
-    var charge = mockCharge.mock(false, { message: 'CAPTURE_FAILED' })
+    const charge = mockCharge.mock(false, {message: 'CAPTURE_FAILED'})
 
-    var mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
-    var mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
+    const mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
+    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
     requireChargeController(charge, mockedNormalise).capture(request, response)
-    var systemErrorObj = {
+    const systemErrorObj = {
       'viewName': 'CAPTURE_FAILURE',
       'analytics': {
         'analyticsId': 'test-1234',
@@ -202,5 +232,72 @@ describe('card details endpoint', function () {
       }
     }
     expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
+  })
+})
+
+describe('check card endpoint', function () {
+  const mockedCard = function (allowedCards, correlationId) {
+    let card = {
+      brand: 'VISA',
+      type: 'CREDIT',
+      corporate: true
+    }
+
+    return {
+      checkCard: (cardNo, language, subSegment) => {
+        const defer = q.defer()
+
+        defer.resolve(card)
+
+        return defer.promise
+      }
+    }
+  }
+
+  let request, response
+
+  it('should return accepted with corporate credit card', function (done) {
+    const charge = mockCharge.mock(true)
+
+    const mockedNormalisedCharge = aChargeWithStatus('CREATED')
+    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
+
+    request = {
+      'headers': {
+        'x-request-id': '1537873066.725'
+      },
+      'chargeData': {
+        'language': 'en',
+        'gateway_account': {
+          'card_types': [
+            {
+              'id': 'c2683cfc-07b3-47c4-b7ff-5552d3b2f1e6',
+              'brand': 'visa',
+              'label': 'Visa',
+              'type': 'DEBIT',
+              'requires3ds': false
+            },
+            {
+              'id': 'b41ce0fe-c381-43aa-a5d5-77af61cd9baf',
+              'brand': 'visa',
+              'label': 'Visa',
+              'type': 'CREDIT',
+              'requires3ds': false
+            }
+          ]
+        }
+      },
+      body: {
+        'cardNo': '4242424242424242'
+      }
+    }
+    response = {
+      json: (data) => {
+        expect(data).to.deep.equal({accepted: true, corporate: true, type: 'CREDIT'})
+        done()
+      }
+    }
+
+    requireChargeController(charge, mockedNormalise, mockedCard).checkCard(request, response)
   })
 })

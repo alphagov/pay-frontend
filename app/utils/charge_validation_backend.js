@@ -13,9 +13,9 @@ module.exports = (translations, logger, cardModel) => {
     verify: (req) => new Promise((resolve) => {
       const validation = validator.verify(req.body)
       cardModel.checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language)
-        .then(cardBrand => {
-          logger.debug('Card supported - ', {cardBrand})
-          resolve({validation, cardBrand})
+        .then(card => {
+          logger.debug('Card supported - ', {cardBrand: card.brand})
+          resolve({validation, cardBrand: card.brand})
         })
         .catch(err => {
           logger.error('Card not supported - ', {'err': err})

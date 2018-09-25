@@ -44,25 +44,28 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
         return defer.resolve()
       }
 
-      const cardBrand = changeCase.paramCase(data.brand)
-      const cardType = normaliseCardType(data.type)
+      const card = {
+        brand: changeCase.paramCase(data.brand),
+        type: normaliseCardType(data.type),
+        corporate: data.corporate
+      }
 
-      logger.debug(`[${correlationId}] Checking card brand - `, {'cardBrand': cardBrand, 'cardType': cardType})
+      logger.debug(`[${correlationId}] Checking card brand - `, {'cardBrand': card.brand, 'cardType': card.type})
 
-      const brandExists = _.filter(allowed, {brand: cardBrand}).length > 0
-      if (!brandExists) defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(cardBrand)))
+      if (_.filter(allowed, {brand: card.brand}).length === 0) {
+        defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(card.brand)))
+      }
 
-      const cardObject = _.find(allowed, {brand: cardBrand, type: cardType})
-
-      if (!cardObject) {
-        switch (cardType) {
+      if (!_.find(allowed, {brand: card.brand, type: card.type})) {
+        switch (card.type) {
           case 'DEBIT':
-            return defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(cardBrand)))
+            return defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(card.brand)))
           case 'CREDIT':
-            return defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(cardBrand)))
+            return defer.reject(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(card.brand)))
         }
       }
-      return defer.resolve(cardBrand)
+
+      return defer.resolve(card)
     }, postSubsegment).on('error', function (error) {
       postSubsegment.close(error)
       logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, error)

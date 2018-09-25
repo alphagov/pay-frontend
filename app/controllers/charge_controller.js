@@ -195,9 +195,13 @@ module.exports = {
       Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
         .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment)
         .then(
-          () => {
+          (card) => {
             subSegment.close()
-            return res.json({'accepted': true})
+            return res.json({
+              accepted: true,
+              corporate: card.corporate,
+              type: card.type
+            })
           },
           message => {
             subSegment.close(message)
