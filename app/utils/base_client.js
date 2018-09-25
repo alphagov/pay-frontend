@@ -41,7 +41,8 @@ const getHeaders = function getHeaders (args, segmentData, url) {
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
   if (url) {
-    headers['host'] = urlParse(url).hostname + ':' + urlParse(url).port
+    var port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
+    headers['host'] = urlParse(url).hostname + port
   }
   logger.debug('headers: ' + JSON.stringify(headers))
 
