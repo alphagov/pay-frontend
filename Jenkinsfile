@@ -46,7 +46,7 @@ pipeline {
                 }
             }
             steps {
-                runCardPaymentsE2E("frontend", null, "PP-4213")
+                runCardPaymentsE2E("frontend")
             }
         }
          stage('ZAP Tests') {
