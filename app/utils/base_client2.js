@@ -13,6 +13,7 @@ const AWSXRay = require('aws-xray-sdk')
 // Local dependencies
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
+const {addProxy} = require('./add_proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -52,7 +53,6 @@ const getHeaders = function getHeaders (args, segmentData, url) {
     var port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
     headers['host'] = urlParse(url).hostname + port
   }
-  logger.debug('headers: ' + JSON.stringify(headers))
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
@@ -84,19 +84,8 @@ const _request = function request (methodName, url, args, callback, subSegment) 
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
-  var urlOrForwardProxy
-  if (process.env.FORWARD_PROXY_URL) {
-    urlOrForwardProxy = urlParse(url)
-    urlOrForwardProxy.hostname = urlParse(process.env.FORWARD_PROXY_URL).hostname
-    urlOrForwardProxy.port = urlParse(process.env.FORWARD_PROXY_URL).port
-  } else {
-    urlOrForwardProxy = url
-  }
-
-  logger.debug('base_client2 target uri: ' + urlOrForwardProxy)
-
   const requestOptions = {
-    uri: urlOrForwardProxy,
+    uri: addProxy(url),
     method: methodName,
     agent: agent,
     headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
