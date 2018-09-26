@@ -4,7 +4,7 @@
 const baseClient = require('./base_client')
 
 // constants
-const CARD_URL = process.env.CARDID_HOST + '/v1/api/card'
+const CARD_URL = process.env.FORWARD_PROXY_URL || process.env.CARDID_HOST + '/v1/api/card'
 
 /**
  *
