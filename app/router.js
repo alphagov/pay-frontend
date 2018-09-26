@@ -10,6 +10,7 @@ const charge = require('./controllers/charge_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
 const returnCont = require('./controllers/return_controller.js')
+const {healthcheck} = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
 
 // Express middleware
@@ -48,11 +49,7 @@ exports.bind = function (app) {
     })
   })
 
-  app.get('/healthcheck', function (req, res) {
-    const data = {'ping': {'healthy': true}}
-    res.writeHead(200, {'Content-Type': 'application/json'})
-    res.end(JSON.stringify(data))
-  })
+  app.get('/healthcheck', healthcheck)
 
   // charges
   const card = paths.card
