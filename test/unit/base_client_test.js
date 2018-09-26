@@ -19,31 +19,6 @@ describe('base client', () => {
     nock.cleanAll()
   })
 
-  it('should add host header', (done) => {
-    nock(url, {
-      reqheaders: {
-        'host': 'www.example.com:65535'
-      }
-    }).post('/', arbitraryRequestData)
-      .reply(200)
-
-    // literally just making sure data is passed to mocked service correctly
-    baseClient.post(url, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
-  })
-
-  it('should add host header without port', (done) => {
-    const urlWithoutPort = 'http://www.example.com'
-    nock(urlWithoutPort, {
-      reqheaders: {
-        'host': 'www.example.com'
-      }
-    }).post('/', arbitraryRequestData)
-      .reply(200)
-
-    // literally just making sure data is passed to mocked service correctly
-    baseClient.post(urlWithoutPort, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
-  })
-
   it('should post data correctly', (done) => {
     nock(url)
       .post('/', arbitraryRequestData)
