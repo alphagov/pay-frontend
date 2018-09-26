@@ -1,6 +1,6 @@
 'use strict'
 
-//npm dependencies
+// npm dependencies
 const urlParse = require('url').parse
 const _ = require('lodash')
 
