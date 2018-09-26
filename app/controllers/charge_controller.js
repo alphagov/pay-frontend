@@ -199,8 +199,10 @@ module.exports = {
             subSegment.close()
             return res.json({
               accepted: true,
+              type: card.type,
               corporate: card.corporate,
-              type: card.type
+              corporate_credit_card_surcharge_amount: req.chargeData.gateway_account.corporate_credit_card_surcharge_amount,
+              corporate_debit_card_surcharge_amount: req.chargeData.gateway_account.corporate_debit_card_surcharge_amount
             })
           },
           message => {

@@ -157,11 +157,24 @@ var formValidation = function () {
   var checkCardType = function (validation, formGroup) {
     showCardType().checkCardtypeIsAllowed().then(
       function (result) {
+        updateCorporateSurchargeInformation(result)
         if (result.accepted === false) {
           addCardError(result)
         }
       })
     replaceOnError(validation, formGroup)
+  }
+
+  var updateCorporateSurchargeInformation = function (card) {
+    if (card.corporate) {
+      if (card.type === 'CREDIT' && card.corporate_credit_card_surcharge_amount > 0) {
+        // Display something
+      } else if (card.type === 'DEBIT' && card.corporate_debit_card_surcharge_amount > 0) {
+        // Display something
+      }
+    } else {
+      // Remove if it's there....
+    }
   }
 
   var replaceOnError = function (validation, formGroup) {
