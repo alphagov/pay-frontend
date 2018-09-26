@@ -7,9 +7,9 @@
  * Leaving for backward compatibility.
  */
 // NPM dependencies
-const urlParse = require('url')
+const urlParse = require('url').parse
 const logger = require('winston')
-const https = setHttpClient()
+const http = require('http')
 const _ = require('lodash')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
@@ -17,15 +17,7 @@ const AWSXRay = require('aws-xray-sdk')
 // Local dependencies
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
-
-function setHttpClient () {
-  if (process.env.DISABLE_INTERNAL_HTTPS === 'true') {
-    logger.warn('DISABLE_INTERNAL_HTTPS is enabled, base_client will use http.')
-    return require('http')
-  } else {
-    return require('https')
-  }
-}
+const {addProxy} = require('./add_proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -41,14 +33,18 @@ if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
 }
 
 /**
- * @type {https.Agent}
+ * @type {http.Agent}
  */
-const agent = new https.Agent(agentOptions)
+const agent = new http.Agent(agentOptions)
 
-const getHeaders = function getHeaders (args, segmentData) {
+const getHeaders = function getHeaders (args, segmentData, url) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
+  if (url) {
+    var port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
+    headers['host'] = urlParse(url).hostname + port
+  }
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
@@ -79,18 +75,18 @@ const getHeaders = function getHeaders (args, segmentData) {
 const _request = function request (methodName, url, args, callback, subSegment) {
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
-  const parsedUrl = urlParse.parse(url)
+  const proxiedUrl = addProxy(url)
 
-  const httpsOptions = {
-    hostname: parsedUrl.hostname,
-    port: parsedUrl.port,
-    path: parsedUrl.pathname,
+  const httpOptions = {
+    hostname: proxiedUrl.hostname,
+    port: proxiedUrl.port,
+    path: proxiedUrl.pathname,
     method: methodName,
     agent: agent,
-    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
+    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
   }
 
-  let req = https.request(httpsOptions, (res) => {
+  let req = http.request(httpOptions, (res) => {
     let data = ''
     res.on('data', (chunk) => {
       data += chunk
