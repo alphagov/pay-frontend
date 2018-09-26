@@ -78,6 +78,7 @@
             {{ __("cardDetails.withdrawalText").debit }}
           {% endif %}
         </p>
+        <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
       </div>
       <div class="govuk-form-group govuk-clearfix{% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
         <label class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
@@ -349,14 +350,18 @@
     </form>
   </div>
   <div class="govuk-grid-column-one-third payment-summary-wrap">
-    <aside class="payment-summary">
+    <aside class="payment-summary govuk-!-font-size-19">
       <h2 class="govuk-heading-m">{{ __("paymentSummary.title") }}</h2>
-      <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-19">
+      <p id="payment-description" class="govuk-body govuk-!-font-weight-bold">
         {{ description }}
       </p>
-      <p class="govuk-body govuk-!-font-size-19 govuk-!-margin-bottom-0">
+      <p class="govuk-body hidden" id="payment-summary-breakdown">
+        {{ __("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
+        {{ __("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
+      </p>
+      <p class="govuk-body govuk-!-margin-bottom-0">
         {{ __("paymentSummary.totalAmount") }}
-        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ amount }}</span>
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
       </p>
     </aside>
   </div>
