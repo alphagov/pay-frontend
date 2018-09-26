@@ -57,7 +57,7 @@ pipeline {
                 }
             }
             steps {
-                runZap("frontend", null, "PP-4213")
+                runZap("frontend")
             }
          }
       }
