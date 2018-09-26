@@ -13,6 +13,7 @@ const AWSXRay = require('aws-xray-sdk')
 // Local dependencies
 const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
+const {addProxy} = require('./add_proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -44,10 +45,14 @@ const client = request
     retryStrategy: retryOnEconnreset
   })
 
-const getHeaders = function getHeaders (args, segmentData) {
+const getHeaders = function getHeaders (args, segmentData, url) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
+  if (url) {
+    var port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
+    headers['host'] = urlParse(url).hostname + port
+  }
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
@@ -80,10 +85,10 @@ const _request = function request (methodName, url, args, callback, subSegment) 
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
   const requestOptions = {
-    uri: url,
+    uri: addProxy(url),
     method: methodName,
     agent: agent,
-    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
+    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
   }
 
   if (args.payload) {
