@@ -1,18 +1,16 @@
 'use strict'
 
 // NPM dependencies
-const https = require('https')
-const httpAgent = require('http').globalAgent
+const http = require('http')
 const urlParse = require('url').parse
 const _ = require('lodash')
-const logger = require('winston')
 const request = require('requestretry')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
-const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
+const {addProxy} = require('./add_proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -27,13 +25,7 @@ function retryOnEconnreset (err) {
   return err && _.includes(RETRIABLE_ERRORS, err.code)
 }
 
-if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
-  agentOptions.ca = customCertificate.getCertOptions()
-} else {
-  logger.warn('DISABLE_INTERNAL_HTTPS is set.')
-}
-
-const httpsAgent = new https.Agent(agentOptions)
+const httpAgent = new http.Agent(agentOptions)
 
 const client = request
   .defaults({
@@ -44,10 +36,14 @@ const client = request
     retryStrategy: retryOnEconnreset
   })
 
-const getHeaders = function getHeaders (args, segmentData) {
+const getHeaders = function getHeaders (args, segmentData, url) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
+  if (url) {
+    var port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
+    headers['host'] = urlParse(url).hostname + port
+  }
 
   if (segmentData.clsSegment) {
     const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
@@ -75,15 +71,14 @@ const getHeaders = function getHeaders (args, segmentData) {
  * @private
  */
 const _request = function request (methodName, url, args, callback, subSegment) {
-  let agent = urlParse(url).protocol === 'http:' ? httpAgent : httpsAgent
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
   const requestOptions = {
-    uri: url,
+    uri: addProxy(url),
     method: methodName,
-    agent: agent,
-    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment})
+    agent: httpAgent,
+    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
   }
 
   if (args.payload) {
