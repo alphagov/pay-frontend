@@ -1,17 +1,14 @@
 'use strict'
 
 // NPM dependencies
-const https = require('https')
-const httpAgent = require('http').globalAgent
+const http = require('http')
 const urlParse = require('url').parse
 const _ = require('lodash')
-const logger = require('winston')
 const request = require('requestretry')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
-const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 const {addProxy} = require('./add_proxy')
 
@@ -28,13 +25,7 @@ function retryOnEconnreset (err) {
   return err && _.includes(RETRIABLE_ERRORS, err.code)
 }
 
-if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
-  agentOptions.ca = customCertificate.getCertOptions()
-} else {
-  logger.warn('DISABLE_INTERNAL_HTTPS is set.')
-}
-
-const httpsAgent = new https.Agent(agentOptions)
+const httpAgent = new http.Agent(agentOptions)
 
 const client = request
   .defaults({
@@ -80,14 +71,13 @@ const getHeaders = function getHeaders (args, segmentData, url) {
  * @private
  */
 const _request = function request (methodName, url, args, callback, subSegment) {
-  let agent = urlParse(url).protocol === 'http:' ? httpAgent : httpsAgent
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
   const requestOptions = {
     uri: addProxy(url),
     method: methodName,
-    agent: agent,
+    agent: httpAgent,
     headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
   }
 
