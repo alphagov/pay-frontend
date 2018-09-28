@@ -12,7 +12,8 @@ module.exports.addProxy = function addProxy (url) {
 
   if (FORWARD_PROXY_URL) {
     const parsedProxyUrl = urlParse(FORWARD_PROXY_URL)
-    return _.merge(parsedUrl, _.pick(parsedProxyUrl, ['hostname', 'port']))
+    parsedUrl.protocol = parsedProxyUrl.protocol
+    return _.merge(parsedUrl, _.pick(parsedProxyUrl, ['hostname', 'port', 'protocol']))
   }
   return parsedUrl
 }

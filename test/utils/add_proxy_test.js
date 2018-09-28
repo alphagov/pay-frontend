@@ -15,6 +15,7 @@ describe('add proxy test', () => {
       const proxiedUrl = addProxy.addProxy(urlParse('http://localhost:8080'))
       expect(proxiedUrl.hostname).to.equal(forwardProxy.hostname)
       expect(proxiedUrl.port).to.equal(forwardProxy.port)
+      expect(proxiedUrl.protocol).to.equal(forwardProxy.protocol)
     })
   })
 
