@@ -74,8 +74,9 @@ const _request = function request (methodName, url, args, callback, subSegment) 
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
 
+  const proxiedUrl = addProxy(url)
   const requestOptions = {
-    uri: addProxy(url),
+    uri: proxiedUrl.protocol + '//' + proxiedUrl.hostname + ':' + proxiedUrl.port + proxiedUrl.pathname,
     method: methodName,
     agent: httpAgent,
     headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
