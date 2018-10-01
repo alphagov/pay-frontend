@@ -1,6 +1,6 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const csrf = require('csrf')
 
 // local dependencies
@@ -17,9 +17,8 @@ const {resolveActionName} = require('../services/state_service.js')
 exports.new = (req, res) => {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
   const correlationId = req.headers[CORRELATION_HEADER] || ''
-
   Charge(correlationId).findByToken(chargeTokenId)
-    .then(chargeData => Token(correlationId).destroy(chargeTokenId).then(() => Promise.resolve(chargeData)))
+    .then(chargeData => Token.destroy(chargeTokenId, correlationId).then(() => Promise.resolve(chargeData)))
     .then(chargeData => {
       const chargeId = chargeData.externalId
       setSessionVariable(req, createChargeIdSessionKey(chargeId), {csrfSecret: csrf().secretSync()})

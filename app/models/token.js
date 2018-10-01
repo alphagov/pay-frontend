@@ -1,60 +1,51 @@
-var baseClient = require('../utils/base_client')
+'use strict'
 
-var q = require('q')
-var logger = require('winston')
-var paths = require('../paths.js')
+// NPM dependencies
+const logger = require('winston')
 
-module.exports = function (correlationId) {
-  'use strict'
+// Local dependencies
+const paths = require('../paths.js')
+const baseClient = require('../utils/base_client')
 
-  correlationId = correlationId || ''
-
-  var createUrl = function (resource, params) {
+const createUrl = function (resource, params) {
     return paths.generateRoute(`connectorCharge.${resource}`, params)
-  }
+}
 
-  var destroy = function (tokenId) {
-    var defer = q.defer()
-    logger.debug('[%s] Calling connector to delete a token -', correlationId, {
-      service: 'connector',
-      method: 'DELETE',
-      url: createUrl('token', {chargeTokenId: '{tokenId}'})
-    })
-
-    var startTime = new Date()
-    var deleteUrl = createUrl('token', {chargeTokenId: tokenId})
-
-    baseClient.delete(deleteUrl, { correlationId: correlationId }, function (data, response) {
-      logger.info('[%s] - %s to %s ended - total time %dms', 'DELETE',
-        correlationId, deleteUrl, new Date() - startTime)
-
-      if (response.statusCode !== 204) {
-        logger.warn('Calling connector to delete a token failed -', {
-          service: 'connector',
-          method: 'DELETE',
-          url: createUrl('token', {chargeTokenId: '{tokenId}'})
+const destroy = function (tokenId, correlationId) {
+    return new Promise(function (resolve, reject) {
+        correlationId = correlationId || ''
+        logger.debug('[%s] Calling connector to delete a token -', correlationId, {
+            service: 'connector',
+            method: 'DELETE',
+            url: createUrl('token', {chargeTokenId: '{tokenId}'})
         })
-        return defer.reject(new Error('DELETE_FAILED'))
-      }
-      defer.resolve(data)
-    }).on('error', function (err) {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'DELETE', deleteUrl, new Date() - startTime)
-      logger.error('[%s] Calling connector to delete a token threw exception -', correlationId, {
-        service: 'connector',
-        method: 'DELETE',
-        url: createUrl('token', {chargeTokenId: '{tokenId}'}),
-        error: err
-      })
-      clientUnavailable(err, defer)
+        const startTime = new Date()
+        const deleteUrl = createUrl('token', {chargeTokenId: tokenId})
+        baseClient.delete(deleteUrl, {correlationId: correlationId}, function (data, response) {
+            logger.info('[%s] - %s to %s ended - total time %dms', 'DELETE',
+                correlationId, deleteUrl, new Date() - startTime)
+            if (response.statusCode !== 204) {
+                logger.warn('Calling connector to delete a token failed -', {
+                    service: 'connector',
+                    method: 'DELETE',
+                    url: createUrl('token', {chargeTokenId: '{tokenId}'})
+                })
+                return reject(new Error('DELETE_FAILED'))
+            }
+            resolve(data)
+        }).on('error', function (err) {
+            logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'DELETE', deleteUrl, new Date() - startTime)
+            logger.error('[%s] Calling connector to delete a token threw exception -', correlationId, {
+                service: 'connector',
+                method: 'DELETE',
+                url: createUrl('token', {chargeTokenId: '{tokenId}'}),
+                error: err
+            })
+            reject(new Error('CLIENT_UNAVAILABLE'), err)
+        })
     })
-    return defer.promise
-  }
+}
 
-  var clientUnavailable = function (error, defer) {
-    defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
-  }
-
-  return {
+module.exports = {
     destroy: destroy
-  }
 }
