@@ -18,7 +18,7 @@ module.exports = (translations, logger, cardModel) => {
           resolve({validation, cardBrand: card.brand})
         })
         .catch(err => {
-          logger.error('Card not supported - ', {'err': err})
+          logger.error('Card not supported - ', {'err': err.message})
           // add card not supported error to validation
           validation.hasError = true
           _.remove(validation.errorFields, errorField => errorField.cssKey === 'card-no')
@@ -27,7 +27,7 @@ module.exports = (translations, logger, cardModel) => {
             'key': 'cardNo',
             'value': err
           })
-          validation.highlightErrorFields.cardNo = err
+          validation.highlightErrorFields.cardNo = err.message
           resolve({validation})
         })
     })
