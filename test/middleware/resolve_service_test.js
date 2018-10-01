@@ -78,7 +78,7 @@ describe('resolve service middleware', function () {
 
   it('should log an error if it fails to retrieving service data', function (done) {
     const gatewayAccountId = Math.random()
-    const resolveService = resolveServiceMiddleware(Promise.reject())
+    const resolveService = resolveServiceMiddleware(Promise.reject(new Error('err')))
     let chargeData = {}
     _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
     _.set(chargeData, 'gateway_account.serviceName', 'Example Service Name')

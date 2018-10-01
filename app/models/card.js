@@ -18,64 +18,64 @@ const i18nConfig = require('../../config/i18n')
 i18n.configure(i18nConfig)
 
 const checkCard = function (cardNo, allowed, language, correlationId, subSegment) {
-    return new Promise(function (resolve, reject) {
-        const startTime = new Date()
-        const data = {'cardNumber': parseInt(cardNo)}
+  return new Promise(function (resolve, reject) {
+    const startTime = new Date()
+    const data = {'cardNumber': parseInt(cardNo)}
 
-        i18n.setLocale(language || 'en')
+    i18n.setLocale(language || 'en')
 
-        // Use a subSegment if passed, otherwise get our main segment
-        if (!subSegment) {
-            const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-            subSegment = namespace.get(clsXrayConfig.segmentKeyName)
+    // Use a subSegment if passed, otherwise get our main segment
+    if (!subSegment) {
+      const namespace = getNamespace(clsXrayConfig.nameSpaceName)
+      subSegment = namespace.get(clsXrayConfig.segmentKeyName)
+    }
+
+    AWSXRay.captureAsyncFunc('cardIdClient_post', function (postSubsegment) {
+      cardIdClient.post({data: data, correlationId: correlationId}, function (data, response) {
+        postSubsegment.close()
+        logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime)
+
+        if (response.statusCode === 404) {
+          return reject(new Error('Your card is not supported'))
+        }
+        // if the server is down, or returns non 500, just continue
+        if (response.statusCode !== 200) {
+          return resolve()
         }
 
-        AWSXRay.captureAsyncFunc('cardIdClient_post', function (postSubsegment) {
-            cardIdClient.post({data: data, correlationId: correlationId}, function (data, response) {
-                postSubsegment.close()
-                logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime)
+        const card = {
+          brand: changeCase.paramCase(data.brand),
+          type: normaliseCardType(data.type),
+          corporate: data.corporate
+        }
 
-                if (response.statusCode === 404) {
-                    return reject('Your card is not supported')
-                }
-                // if the server is down, or returns non 500, just continue
-                if (response.statusCode !== 200) {
-                    return resolve()
-                }
+        logger.debug(`[${correlationId}] Checking card brand - `, {
+          'cardBrand': card.brand,
+          'cardType': card.type
+        })
 
-                const card = {
-                    brand: changeCase.paramCase(data.brand),
-                    type: normaliseCardType(data.type),
-                    corporate: data.corporate
-                }
+        if (_.filter(allowed, {brand: card.brand}).length === 0) {
+          reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(card.brand))))
+        }
 
-                logger.debug(`[${correlationId}] Checking card brand - `, {
-                    'cardBrand': card.brand,
-                    'cardType': card.type
-                })
+        if (!_.find(allowed, {brand: card.brand, type: card.type})) {
+          switch (card.type) {
+            case 'DEBIT':
+              return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(card.brand))))
+            case 'CREDIT':
+              return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(card.brand))))
+          }
+        }
 
-                if (_.filter(allowed, {brand: card.brand}).length === 0) {
-                    reject(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(card.brand)))
-                }
-
-                if (!_.find(allowed, {brand: card.brand, type: card.type})) {
-                    switch (card.type) {
-                        case 'DEBIT':
-                            return reject(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(card.brand)))
-                        case 'CREDIT':
-                            return reject(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(card.brand)))
-                    }
-                }
-
-                resolve(card)
-            }, postSubsegment).on('error', function (error) {
-                postSubsegment.close(error)
-                logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, error)
-                logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime)
-                resolve()
-            })
-        }, subSegment)
-    })
+        resolve(card)
+      }, postSubsegment).on('error', function (error) {
+        postSubsegment.close(error)
+        logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, error)
+        logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime)
+        resolve()
+      })
+    }, subSegment)
+  })
 }
 
 const normaliseCardType = function (cardType) {

@@ -1,27 +1,29 @@
 'use strict'
 
-// NPM dependencies
+// Core dependencies
 const path = require('path')
+
+// NPM dependencies
 const Pact = require('pact')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
+
+// Constants
+const SERVICES_PATH = '/v1/api/services'
+const port = Math.floor(Math.random() * 48127) + 1024
 
 // Custom dependencies
 const getAdminUsersClient = require('../../../app/services/clients/adminusers_client')
 const serviceFixtures = require('../../fixtures/service_fixtures')
 const PactInteractionBuilder = require('../../fixtures/pact_interaction_builder').PactInteractionBuilder
 
-// Constants
-const port = Math.floor(Math.random() * 48127) + 1024
-const adminusersClient = getAdminUsersClient({baseUrl: `http://localhost:${port}`})
-const expect = chai.expect
-const SERVICES_PATH = '/v1/api/services'
-
 // Global setup
+const expect = chai.expect
 chai.use(chaiAsPromised)
+const adminusersClient = getAdminUsersClient({baseUrl: `http://localhost:${port}`})
 
 describe('adminusers client - services API', function () {
-  let provider = Pact({
+  const provider = Pact({
     consumer: 'frontend-to-be',
     provider: 'adminusers',
     port: port,
@@ -34,55 +36,10 @@ describe('adminusers client - services API', function () {
   before(() => provider.setup())
   after((done) => provider.finalize().then(done()))
 
-  describe('GET service', function () {
-    describe('success', () => {
-      const serviceExternalId = 'random-id'
-      const getServiceResponse = serviceFixtures.validServiceResponse({external_id: serviceExternalId})
-
-      before((done) => {
-        provider.addInteraction(
-          new PactInteractionBuilder(`${SERVICES_PATH}/${serviceExternalId}`)
-            .withState('a service exists with the given id')
-            .withMethod('GET')
-            .withUponReceiving('a valid get service request')
-            .withResponseBody(getServiceResponse.getPactified())
-            .withStatusCode(200)
-            .build()
-        ).then(() => done())
-          .catch(done)
-      })
-
-      afterEach(() => provider.verify())
-
-      // TODO : There aren't any GET service interactions on the adminusers client in frontend
-    })
-
-    describe('not found', function () {
-      const serviceExternalId = 'non-existent-random-id'
-
-      before((done) => {
-        provider.addInteraction(
-          new PactInteractionBuilder(`${SERVICES_PATH}/${serviceExternalId}`)
-            .withState('a service does not exists with the given id')
-            .withMethod('GET')
-            .withUponReceiving('a valid get service request')
-            .withStatusCode(404)
-            .build()
-        ).then(() => done())
-          .catch(done)
-      })
-
-      afterEach(() => provider.verify())
-
-      // TODO : There aren't any GET service interactions on the adminusers client in frontend
-    })
-  })
-
   describe('FIND service by gateway account id', function () {
     describe('success', function () {
-      let gatewayAccountId = '101'
-      let getServiceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]})
-
+      const gatewayAccountId = '101'
+      const getServiceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]})
       before((done) => {
         provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
@@ -94,19 +51,19 @@ describe('adminusers client - services API', function () {
             .build()
         ).then(() => done())
       })
-
       afterEach(() => provider.verify())
-
-      it('should return service successfully', function (done) {
-        adminusersClient.findServiceBy({gatewayAccountId: gatewayAccountId}).should.be.fulfilled.then(service => {
-          expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
-        }).should.notify(done)
-      })
+      setTimeout(() => {
+        it('should return service successfully', function (done) {
+          adminusersClient.findServiceBy({gatewayAccountId: gatewayAccountId}).then(service => {
+            expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
+            done()
+          }).catch((err) => done('should not be hit: ' + JSON.stringify(err)))
+        })
+      }, 2000)
     })
 
     describe('bad request', function () {
-      let invalidGatewayAccountId = 'not-a-number'
-
+      const invalidGatewayAccountId = 'not-a-number'
       beforeEach((done) => {
         provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
@@ -117,19 +74,21 @@ describe('adminusers client - services API', function () {
             .build()
         ).then(() => done())
       })
-
       afterEach(() => provider.verify())
-
-      it('error 400', function (done) {
-        adminusersClient.findServiceBy({gatewayAccountId: invalidGatewayAccountId}).should.be.rejected.then(response => {
-          expect(response.errorCode).to.be.equal(400)
-        }).should.notify(done)
-      })
+      setTimeout(() => {
+        it('error 400', function (done) {
+          adminusersClient.findServiceBy({gatewayAccountId: invalidGatewayAccountId})
+            .then(() => done('should not be hit'))
+            .catch(response => {
+              expect(response.errorCode).to.be.equal(400)
+              done()
+            })
+        })
+      }, 3000)
     })
 
     describe('not found', function () {
-      let nonAssociatedGatewayAccountId = '999'
-
+      const nonAssociatedGatewayAccountId = '999'
       beforeEach((done) => {
         provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
@@ -140,14 +99,17 @@ describe('adminusers client - services API', function () {
             .build()
         ).then(() => done())
       })
-
       afterEach(() => provider.verify())
-
-      it('error 400', function (done) {
-        adminusersClient.findServiceBy({gatewayAccountId: nonAssociatedGatewayAccountId}).should.be.rejected.then(response => {
-          expect(response.errorCode).to.be.equal(404)
-        }).should.notify(done)
-      })
+      setTimeout(() => {
+        it('error 400', function (done) {
+          adminusersClient.findServiceBy({gatewayAccountId: nonAssociatedGatewayAccountId})
+            .then(() => done('should not be hit'))
+            .catch(response => {
+              expect(response.errorCode).to.be.equal(404)
+              done()
+            })
+        })
+      }, 4000)
     })
   })
 })

@@ -47,8 +47,8 @@ describe('card', function () {
       })
 
       it('should return the correct message', function () {
-        return CardModel({}, aRequestId).checkCard(1234).then(unexpectedPromise, function (message) {
-          assert.strictEqual(message, 'Your card is not supported')
+        return CardModel({}, aRequestId).checkCard(1234).then(unexpectedPromise, function (error) {
+          assert.strictEqual(error.message, 'Your card is not supported')
         })
       })
     })
@@ -91,8 +91,8 @@ describe('card', function () {
 
       it('should reject with appropriate message', function () {
         return CardModel([{brand: 'foo', label: 'foo', type: 'CREDIT', id: 'id-0'}])
-          .checkCard(1234).then(unexpectedPromise, function (message) {
-            assert.strictEqual(message, 'Bar is not supported')
+          .checkCard(1234).then(unexpectedPromise, function (error) {
+            assert.strictEqual(error.message, 'Bar is not supported')
           })
       })
     })
@@ -107,8 +107,8 @@ describe('card', function () {
 
       it('should reject with appropriate message', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0'}], aRequestId)
-          .checkCard(1234).then(unexpectedPromise, function (message) {
-            assert.strictEqual(message, 'Bar debit cards are not supported')
+          .checkCard(1234).then(unexpectedPromise, function (error) {
+            assert.strictEqual(error.message, 'Bar debit cards are not supported')
           })
       })
     })
@@ -123,8 +123,8 @@ describe('card', function () {
 
       it('should reject with appropriate message', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'DEBIT', id: 'id-0'}])
-          .checkCard(1234).then(unexpectedPromise, function (message) {
-            assert.strictEqual(message, 'Bar credit cards are not supported')
+          .checkCard(1234).then(unexpectedPromise, function (error) {
+            assert.strictEqual(error.message, 'Bar credit cards are not supported')
           })
       })
     })
