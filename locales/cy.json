@@ -24,8 +24,8 @@
 		"email": "E-bost",
 		"emailHint": "Byddwn yn anfon eich cadarnhad taliad yma",
 		"emailConfirmation": "Byddwn an anfon e-bost i:",
-    "corporateCreditCardSurchargeMessage": "Mae ffi o £%s am ddefnyddio cerdyn credyd corfforaethol",
-    "corporateDebitCardSurchargeMessage": "Mae ffi o £%s am ddefnyddio cerdyn ddebyd corfforaethol"
+		"corporateCreditCardSurchargeMessage": "Mae ffi o £%s am ddefnyddio cerdyn credyd corfforaethol",
+		"corporateDebitCardSurchargeMessage": "Mae ffi o £%s am ddefnyddio cerdyn ddebyd corfforaethol"
 	},
 	"commonButtons": {
 		"continueButton": "Parhau",
@@ -49,8 +49,8 @@
 	},
 	"paymentSummary": {
 		"title": "Crynodeb y taliad",
-    "amount": "Swm:",
-    "corporateCardFee": "Ffi cerdyn corfforaethol:",
+		"amount": "Swm:",
+		"corporateCardFee": "Ffi cerdyn corfforaethol:",
 		"totalAmount": "Cyfanswm:"
 	},
 	"errorViews": {

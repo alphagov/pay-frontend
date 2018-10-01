@@ -24,8 +24,8 @@
 		"email": "Email",
 		"emailHint": "We’ll send your payment confirmation here",
 		"emailConfirmation": "An email will be sent to:",
-    "corporateCreditCardSurchargeMessage": "There is a fee of £%s for using a corporate credit card",
-    "corporateDebitCardSurchargeMessage": "There is a fee of £%s for using a corporate debit card"
+		"corporateCreditCardSurchargeMessage": "There is a fee of £%s for using a corporate credit card",
+		"corporateDebitCardSurchargeMessage": "There is a fee of £%s for using a corporate debit card"
 	},
 	"commonButtons": {
 		"continueButton": "Continue",
@@ -49,8 +49,8 @@
 	},
 	"paymentSummary": {
 		"title": "Payment summary",
-    "amount": "Amount:",
-    "corporateCardFee": "Corporate card fee:",
+		"amount": "Amount:",
+		"corporateCardFee": "Corporate card fee:",
 		"totalAmount": "Total amount:"
 	},
 	"errorViews": {

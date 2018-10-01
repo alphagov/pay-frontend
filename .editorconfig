@@ -111,11 +111,21 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# Ignore paths
+
 [**vendor**]
-indent_size =
-indent_style =
-charset =
-end_of_line =
-insert_final_newline =
-trim_trailing_whitespace =
-max_line_length =
+indent_size = ignore
+indent_style = ignore
+charset = ignore
+end_of_line = ignore
+insert_final_newline = ignore
+trim_trailing_whitespace = ignore
+max_line_length = ignore
+
+[/locales/**]
+indent_size = ignore
+indent_style = ignore
+charset = ignore
+end_of_line = ignore
+insert_final_newline = ignore
+trim_trailing_whitespace = ignore
