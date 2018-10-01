@@ -240,9 +240,7 @@ describe('check card endpoint', function () {
     let card = {
       brand: 'VISA',
       type: 'CREDIT',
-      corporate: true,
-      corporate_credit_card_surcharge_amount: 250,
-      corporate_debit_card_surcharge_amount: 50
+      corporate: true
     }
 
     return {
@@ -271,8 +269,6 @@ describe('check card endpoint', function () {
       'chargeData': {
         'language': 'en',
         'gateway_account': {
-          'corporate_credit_card_surcharge_amount': 250,
-          'corporate_debit_card_surcharge_amount': 50,
           'card_types': [
             {
               'id': 'c2683cfc-07b3-47c4-b7ff-5552d3b2f1e6',
@@ -300,9 +296,7 @@ describe('check card endpoint', function () {
         expect(data).to.deep.equal({
           accepted: true,
           type: 'CREDIT',
-          corporate: true,
-          corporate_credit_card_surcharge_amount: 250,
-          corporate_debit_card_surcharge_amount: 50
+          corporate: true
         })
         done()
       }

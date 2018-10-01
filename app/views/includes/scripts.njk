@@ -8,10 +8,18 @@
     var mainWrap = document.getElementsByTagName('main')[0]
     GOVUK.stopDoubleSubmit.init();
     if (mainWrap.classList.contains('charge-new')) {
+      window.Card = {
+        allowed: {},
+        corporate_surcharge_amounts: {
+          credit: 0,
+          debit: 0
+        }
+      };
       {% if cardsAsStrings %}
-      window.Card = { allowed: {{ cardsAsStrings | safe }} };
-      {% else %}
-      window.Card = { allowed: {} };
+      window.Card.allowed = {{ cardsAsStrings | safe }};
+      {% endif %}
+      {% if corporateSurchargeAmountsAsStrings %}
+      window.Card.corporate_surcharge_amounts = {{ corporateSurchargeAmountsAsStrings | safe }};
       {% endif %}
       formValidation();
       showCardType().init();
