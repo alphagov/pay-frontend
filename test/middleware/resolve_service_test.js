@@ -1,13 +1,18 @@
+'use strict'
+
+// NPM dependencies
 const path = require('path')
 const _ = require('lodash')
 const sinon = require('sinon')
-const q = require('q')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 const proxyquire = require('proxyquire')
+
+// Local dependencies
 const Service = require('../../app/models/Service.class')
 const serviceFixtures = require('../fixtures/service_fixtures')
 
+// Configure
 chai.use(chaiAsPromised)
 const expect = chai.expect
 const errorLogger = sinon.spy()
@@ -38,7 +43,7 @@ describe('resolve service middleware', function () {
   it('should resolve service from gateway account id', function (done) {
     const gatewayAccountId = '1'
     const service = new Service(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
-    const resolveService = resolveServiceMiddleware(q.resolve(service))
+    const resolveService = resolveServiceMiddleware(Promise.resolve(service))
     let chargeData = {}
     let req = {
       headers: [],
@@ -73,7 +78,7 @@ describe('resolve service middleware', function () {
 
   it('should log an error if it fails to retrieving service data', function (done) {
     const gatewayAccountId = Math.random()
-    const resolveService = resolveServiceMiddleware(q.reject())
+    const resolveService = resolveServiceMiddleware(Promise.reject())
     let chargeData = {}
     _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
     _.set(chargeData, 'gateway_account.serviceName', 'Example Service Name')
