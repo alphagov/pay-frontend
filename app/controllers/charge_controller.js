@@ -44,6 +44,10 @@ function appendChargeForNewView (charge, req, chargeId) {
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
+  charge.corporateSurchargeAmountsAsStrings = JSON.stringify({
+    credit: charge.gatewayAccount.corporateCreditCardSurchargeAmount,
+    debit: charge.gatewayAccount.corporateDebitCardSurchargeAmount
+  })
   charge.post_card_action = routeFor('create', chargeId)
   charge.id = chargeId
   charge.post_cancel_action = routeFor('cancel', chargeId)
@@ -200,9 +204,7 @@ module.exports = {
             return res.json({
               accepted: true,
               type: card.type,
-              corporate: card.corporate,
-              corporate_credit_card_surcharge_amount: req.chargeData.gateway_account.corporate_credit_card_surcharge_amount,
-              corporate_debit_card_surcharge_amount: req.chargeData.gateway_account.corporate_debit_card_surcharge_amount
+              corporate: card.corporate
             })
           },
           message => {

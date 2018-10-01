@@ -165,12 +165,30 @@ describe('card', function () {
       })
     })
 
-    describe('a card that is allowed but of unknown type', function () {
+    describe('a card that is allowed but of CD type', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
           .post('/v1/api/card')
           .reply(200, {brand: 'bar', label: 'bar', type: 'CD', corporate: false})
+      })
+
+      it('should resolve with correct card brand', function () {
+        return CardModel([{brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0'}])
+          .checkCard(1234).then((card) => {
+            assert.strictEqual(card.brand, 'bar')
+            assert.strictEqual(card.type, 'CREDIT_OR_DEBIT')
+            assert.strictEqual(card.corporate, false)
+          }, unexpectedPromise)
+      })
+    })
+
+    describe('a card that is allowed but of unknown type', function () {
+      before(function () {
+        nock.cleanAll()
+        nock(process.env.CARDID_HOST)
+          .post('/v1/api/card')
+          .reply(200, {brand: 'bar', label: 'bar', type: 'unknown', corporate: false})
       })
 
       it('should resolve with correct card brand', function () {

@@ -173,11 +173,11 @@ var formValidation = function () {
   }
 
   var updateCorporateSurchargeInformation = function (card) {
-    if (card.corporate) {
-      if (card.type === 'CREDIT' && card.corporate_credit_card_surcharge_amount > 0) {
-        showCorporateCardSurchargeInformation(card.type, card.corporate_credit_card_surcharge_amount)
-      } else if (card.type === 'DEBIT' && card.corporate_debit_card_surcharge_amount > 0) {
-        showCorporateCardSurchargeInformation(card.type, card.corporate_debit_card_surcharge_amount)
+    if (window.Card && window.Card.corporate_surcharge_amounts && card.corporate) {
+      if (card.type === 'CREDIT' && window.Card.corporate_surcharge_amounts.credit > 0) {
+        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_surcharge_amounts.credit)
+      } else if (card.type === 'DEBIT' && window.Card.corporate_surcharge_amounts.debit > 0) {
+        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_surcharge_amounts.debit)
       }
     }
   }
