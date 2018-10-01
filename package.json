@@ -1,7 +1,7 @@
 {
   "name": "pay-frontend",
   "description": "Payments Frontend application",
-  "version": "0.0.1-SNAPSHOT",
+  "version": "0.0.1",
   "private": true,
   "license": "MIT",
   "engines": {
@@ -57,7 +57,6 @@
     "morgan": "1.9.x",
     "nunjucks": "^3.1.2",
     "polyfill-array-includes": "^1.0.0",
-    "q": "1.5.x",
     "randomstring": "^1.1.5",
     "readdir": "0.1.x",
     "requestretry": "^1.13.0",
