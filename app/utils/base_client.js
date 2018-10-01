@@ -15,7 +15,6 @@ const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
-const customCertificate = require('./custom_certificate')
 const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
 const {addProxy} = require('./add_proxy')
 
@@ -25,12 +24,6 @@ const agentOptions = {
 }
 
 const clsXrayConfig = require('../../config/xray-cls')
-
-if (process.env.DISABLE_INTERNAL_HTTPS !== 'true') {
-  agentOptions.ca = customCertificate.getCertOptions()
-} else {
-  logger.warn('DISABLE_INTERNAL_HTTPS is set.')
-}
 
 /**
  * @type {http.Agent}
