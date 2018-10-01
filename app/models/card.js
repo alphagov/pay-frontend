@@ -82,6 +82,8 @@ const normaliseCardType = function (cardType) {
       return 'DEBIT'
     case 'C':
       return 'CREDIT'
+    case 'CD':
+      return 'CREDIT_OR_DEBIT'
   }
   return undefined
 }
