@@ -160,7 +160,6 @@ var showCardType = function() {
     });
   }
 
-
   return {
     init: init,
     checkCardtypeIsAllowed: checkCardtypeIsAllowed

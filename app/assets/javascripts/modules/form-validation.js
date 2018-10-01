@@ -7,6 +7,12 @@ var formValidation = function () {
   var countrySelect = document.getElementById('address-country')
   var postcodeInput = document.getElementById('address-postcode')
   var cardInput = document.getElementById('card-no')
+  var corporateCardMessageElement = document.getElementById('corporate-card-surcharge-message')
+  var paymentSummaryAmountValue = document.getElementById('amount').getAttribute('data-amount')
+  var paymentSummaryBreakdownElement = document.getElementById('payment-summary-breakdown')
+  var paymentSummaryBreakdownAmountElement = document.getElementById('payment-summary-breakdown-amount')
+  var paymentSummaryCorporateCardFeeElement = document.getElementById('payment-summary-corporate-card-fee')
+  var paymentSummaryAmountElement = document.getElementById('amount')
   var errorSummary = document.getElementsByClassName('govuk-error-summary')[0]
   var logger = { info: function () { } }// replace with console to see output
   // window.card comes from the view
@@ -155,13 +161,52 @@ var formValidation = function () {
   }
 
   var checkCardType = function (validation, formGroup) {
+    clearCorporateCardSurchargeInformation()
     showCardType().checkCardtypeIsAllowed().then(
       function (result) {
+        updateCorporateSurchargeInformation(result)
         if (result.accepted === false) {
           addCardError(result)
         }
       })
     replaceOnError(validation, formGroup)
+  }
+
+  var updateCorporateSurchargeInformation = function (card) {
+    if (card.corporate) {
+      if (card.type === 'CREDIT' && card.corporate_credit_card_surcharge_amount > 0) {
+        showCorporateCardSurchargeInformation(card.type, card.corporate_credit_card_surcharge_amount)
+      } else if (card.type === 'DEBIT' && card.corporate_debit_card_surcharge_amount > 0) {
+        showCorporateCardSurchargeInformation(card.type, card.corporate_debit_card_surcharge_amount)
+      }
+    }
+  }
+
+  var showCorporateCardSurchargeInformation = function (cardType, corporateCardSurchargeAmount) {
+    var amountNumber = parseInt(paymentSummaryAmountValue)
+    var corporateCardSurchargeAmountNumber = corporateCardSurchargeAmount / 100
+
+    // card message
+    var corporateCardSurchargeMessage = cardType === 'CREDIT' ?
+      i18n.cardDetails.corporateCreditCardSurchargeMessage : i18n.cardDetails.corporateDebitCardSurchargeMessage
+    corporateCardMessageElement.textContent = corporateCardSurchargeMessage.replace('%s', corporateCardSurchargeAmountNumber.toFixed(2))
+    corporateCardMessageElement.classList.remove('hidden')
+    // payment summary
+    paymentSummaryBreakdownAmountElement.textContent = '£' + amountNumber.toFixed(2)
+    paymentSummaryCorporateCardFeeElement.textContent = '£' + corporateCardSurchargeAmountNumber.toFixed(2)
+    paymentSummaryAmountElement.textContent = '£' + (amountNumber + corporateCardSurchargeAmountNumber).toFixed(2)
+    paymentSummaryBreakdownElement.classList.remove('hidden')
+  }
+
+  var clearCorporateCardSurchargeInformation = function() {
+    // card message
+    corporateCardMessageElement.classList.add('hidden')
+    corporateCardMessageElement.textContent = ''
+    // payment summary
+    paymentSummaryBreakdownElement.classList.add('hidden')
+    paymentSummaryBreakdownAmountElement.textContent = ''
+    paymentSummaryCorporateCardFeeElement.textContent = ''
+    paymentSummaryAmountElement.textContent = '£' + paymentSummaryAmountValue
   }
 
   var replaceOnError = function (validation, formGroup) {
