@@ -1,0 +1,11 @@
+.govuk-text-align-center {
+  text-align: center;
+}
+
+.govuk-text-align-center-s {
+  text-align: center;
+
+  @include govuk-media-query($from: tablet) {
+    text-align: left;
+  }
+}

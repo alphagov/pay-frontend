@@ -23,6 +23,15 @@
         </ul>
       </div>
     </div>
+
+    <div class="hidden">
+      <button class="govuk-button" id="payment-request">
+        Pay with paymentRequest
+      </button>
+      <p class="govuk-body govuk-text-align-center-s">or</p>
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    </div>
+
     <h1 class="govuk-heading-l">{{ __("cardDetails.title") }}</h1>
 
     <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}">

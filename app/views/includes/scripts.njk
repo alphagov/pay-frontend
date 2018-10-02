@@ -1,29 +1,42 @@
 {# Javascript #}
-<script type="text/javascript">
-  var i18n = {{ translationStrings | safe }};
-</script>
-<script src="{{ js_path }}"></script>
 <script id="govuk-script-analytics" type="text/javascript">
+  {% if translationStrings %}
+  var i18n = {{ translationStrings | safe }}
+  {% endif %}
+
+  var mainWrap = document.getElementsByTagName('main')[0]
+  if (mainWrap.classList.contains('charge-new')) {
+    window.paymentDetails = {
+      description: '{{description}}',
+      amount: '{{amount}}',
+      chargeID: '{{id}}'
+    };
+
+    window.Card = {
+      allowed:
+        {% if cardsAsStrings %}
+          {{ cardsAsStrings | safe }},
+        {% else %}
+        {},
+        {% endif %}
+      corporate_card_surcharge_amounts:
+        {% if corporateCardSurchargeAmountsAsStrings %}
+          {{ corporateCardSurchargeAmountsAsStrings | safe }}
+        {% else %}
+          {
+            credit: 0,
+            debit: 0
+          }
+        {% endif %}
+    };
+    window.Charge = {
+      email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}'
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
-    var mainWrap = document.getElementsByTagName('main')[0]
     GOVUK.stopDoubleSubmit.init();
     if (mainWrap.classList.contains('charge-new')) {
-      window.Card = {
-        allowed: {},
-        corporate_card_surcharge_amounts: {
-          credit: 0,
-          debit: 0
-        }
-      };
-      window.Charge = {
-        email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}'
-      }
-      {% if cardsAsStrings %}
-      window.Card.allowed = {{ cardsAsStrings | safe }};
-      {% endif %}
-      {% if corporateCardSurchargeAmountsAsStrings %}
-      window.Card.corporate_card_surcharge_amounts = {{ corporateCardSurchargeAmountsAsStrings | safe }};
-      {% endif %}
       formValidation();
       showCardType().init();
     } else if (mainWrap.classList.contains('confirm-page')) {
@@ -31,3 +44,4 @@
     }
   });
 </script>
+<script src="{{ js_path }}"></script>
