@@ -55,15 +55,15 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
         })
 
         if (_.filter(allowed, {brand: card.brand}).length === 0) {
-          reject(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(card.brand)))
+          reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(card.brand))))
         }
 
         if (!_.find(allowed, {brand: card.brand, type: card.type})) {
           switch (card.type) {
             case 'DEBIT':
-              return reject(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(card.brand)))
+              return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(card.brand))))
             case 'CREDIT':
-              return reject(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(card.brand)))
+              return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedCreditCard', changeCase.titleCase(card.brand))))
           }
         }
 

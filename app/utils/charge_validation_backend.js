@@ -25,7 +25,7 @@ module.exports = (translations, logger, cardModel) => {
           validation.errorFields.unshift({
             'cssKey': 'card-no',
             'key': 'cardNo',
-            'value': err
+            'value': err.message
           })
           validation.highlightErrorFields.cardNo = err.message
           resolve({validation})
