@@ -184,8 +184,8 @@ module.exports = {
                 })
               })
               .catch(err => {
-                subSegment.close(err)
-                logging.failedChargePatch(err)
+                subSegment.close(err.message)
+                logging.failedChargePatch(err.message)
                 views.display(res, 'ERROR', withAnalyticsError())
               })
           }, clsSegment)
@@ -199,7 +199,7 @@ module.exports = {
       Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
         .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment)
         .then(
-          (card) => {
+          card => {
             subSegment.close()
             return res.json({
               accepted: true,
@@ -207,9 +207,9 @@ module.exports = {
               corporate: card.corporate
             })
           },
-          message => {
-            subSegment.close(message)
-            return res.json({'accepted': false, message})
+          error => {
+            subSegment.close(error.message)
+            return res.json({'accepted': false, message: error.message})
           }
         )
     }, clsSegment)

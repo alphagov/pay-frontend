@@ -1,19 +1,31 @@
-var path = require('path')
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
-var proxyquire = require('proxyquire')
-var q = require('q')
-var sinon = require('sinon')
-var expect = require('chai').expect
-var paths = require('../../app/paths.js')
+'use strict'
 
-var mockCharge = (function () {
-  var mock = function (withSuccess, chargeObject) {
+// Core dependencies
+const path = require('path')
+
+// NPM dependencies
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+const expect = require('chai').expect
+
+// Local dependencies
+const paths = require('../../app/paths.js')
+
+// configure
+require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+
+const mockCharge = (function () {
+  const mock = function (withSuccess, chargeObject) {
     return function () {
       return {
         findByToken: function () {
-          var defer = q.defer();
-          (withSuccess) ? defer.resolve(chargeObject) : defer.reject()
-          return defer.promise
+          return new Promise(function (resolve, reject) {
+            if (withSuccess) {
+              resolve(chargeObject)
+            } else {
+              reject(new Error('err'))
+            }
+          })
         }
       }
     }
@@ -29,15 +41,17 @@ var mockCharge = (function () {
   }
 }())
 
-var mockToken = (function () {
-  var mock = function (withSuccess) {
-    return function () {
-      return {
-        destroy: function () {
-          var defer = q.defer();
-          (withSuccess) ? defer.resolve() : defer.reject()
-          return defer.promise
-        }
+const mockToken = (function () {
+  const mock = function (withSuccess) {
+    return {
+      destroy: function () {
+        return new Promise(function (resolve, reject) {
+          if (withSuccess) {
+            resolve()
+          } else {
+            reject(new Error('err'))
+          }
+        })
       }
     }
   }
@@ -52,7 +66,7 @@ var mockToken = (function () {
   }
 }())
 
-var requireSecureController = function (mockedCharge, mockedToken) {
+const requireSecureController = function (mockedCharge, mockedToken) {
   return proxyquire(path.join(__dirname, '/../../app/controllers/secure_controller.js'), {
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
@@ -68,7 +82,9 @@ var requireSecureController = function (mockedCharge, mockedToken) {
 
 describe('secure controller', function () {
   describe('get method', function () {
-    var request, response, chargeObject
+    let request
+    let response
+    let chargeObject
 
     before(function () {
       request = {
@@ -99,7 +115,7 @@ describe('secure controller', function () {
       it('should display the generic error page', function (done) {
         requireSecureController(mockCharge.withFailure(), mockToken.withSuccess()).new(request, response)
         setTimeout(function () {
-          var systemErrorObj = {
+          const systemErrorObj = {
             viewName: 'SYSTEM_ERROR',
             analytics: {
               'analyticsId': 'Service unavailable',
@@ -118,7 +134,7 @@ describe('secure controller', function () {
       describe('and not destroyed successfully', function () {
         it('should display the generic error page', function () {
           requireSecureController(mockCharge.withSuccess(), mockToken.withFailure()).new(request, response)
-          var systemErrorObj = {
+          const systemErrorObj = {
             viewName: 'SYSTEM_ERROR',
             analytics: {
               'analyticsId': 'Service unavailable',
@@ -134,15 +150,12 @@ describe('secure controller', function () {
       describe('then destroyed successfully', function () {
         it('should store the service name into the session and redirect', function (done) {
           requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess()).new(request, response)
-
           setTimeout(function () {
             expect(response.redirect.calledWith(303, paths.generateRoute('card.new', {chargeId: chargeObject.externalId}))).to.be.true // eslint-disable-line
-
             expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
             expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
               'csrfSecret': 'foo'
             })
-
             done()
           }, 0)
         })
