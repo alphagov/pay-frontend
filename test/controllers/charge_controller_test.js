@@ -7,7 +7,6 @@ const path = require('path')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = require('chai').expect
-const q = require('q')
 const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
@@ -157,7 +156,7 @@ describe('card details endpoint', function () {
 
     const expectedCharge = aResponseWithStatus('ENTERING CARD DETAILS')
     requireChargeController(emptyChargeModel, mockedNormalise).new(request, response)
-    expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
+        expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
   it('should update to enter card details if charge is in CREATED', function () {
@@ -168,7 +167,7 @@ describe('card details endpoint', function () {
 
     const expectedCharge = aResponseWithStatus('CREATED')
     requireChargeController(charge, mockedNormalise).new(request, response)
-    expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
+        expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
   it('should display NOT FOUND if updateToEnterDetails returns error', function () {
@@ -188,7 +187,7 @@ describe('card details endpoint', function () {
         'amount': '0.00'
       }
     }
-    expect(response.render.calledWith('error', systemErrorObj)).to.be.true // eslint-disable-line
+        expect(response.render.calledWith('error', systemErrorObj)).to.be.true // eslint-disable-line
   })
 
   it('should display SYSTEM_ERROR if capture returns an error', function () {
@@ -210,7 +209,7 @@ describe('card details endpoint', function () {
         'testingVariant': 'original'
       }
     }
-    expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+        expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
   })
 
   it('should display CAPTURE_FAILURE if capture returns a capture failed error', function () {
@@ -231,7 +230,7 @@ describe('card details endpoint', function () {
         'testingVariant': 'original'
       }
     }
-    expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
+        expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
   })
 })
 
@@ -245,11 +244,7 @@ describe('check card endpoint', function () {
 
     return {
       checkCard: (cardNo, language, subSegment) => {
-        const defer = q.defer()
-
-        defer.resolve(card)
-
-        return defer.promise
+        return Promise.resolve(card)
       }
     }
   }
@@ -293,11 +288,7 @@ describe('check card endpoint', function () {
     }
     response = {
       json: (data) => {
-        expect(data).to.deep.equal({
-          accepted: true,
-          type: 'CREDIT',
-          corporate: true
-        })
+        expect(data).to.deep.equal({accepted: true, corporate: true, type: 'CREDIT'})
         done()
       }
     }
