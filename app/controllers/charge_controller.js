@@ -8,6 +8,7 @@ const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
+const requestLogger = require('../utils/request_logger')
 const logging = require('../utils/logging.js')
 const baseClient = require('../utils/base_client')
 const views = require('../utils/views.js')
@@ -152,36 +153,41 @@ module.exports = {
                 subSegment.close()
                 const startTime = new Date()
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
-                baseClient.post(authUrl, {
-                  data: normalise.apiPayload(req, cardBrand),
+                const params = {
+                  payload: normalise.apiPayload(req, cardBrand),
                   correlationId: correlationId
-                }, (data, json) => {
-                  logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
-                  switch (json.statusCode) {
-                    case 202:
-                    case 409:
-                      logging.failedChargePost(409, authUrl)
-                      redirect(res).toAuthWaiting(req.chargeId)
-                      break
-                    case 200:
-                      if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
-                        redirect(res).toAuth3dsRequired(req.chargeId)
-                      } else {
-                        redirect(res).toConfirm(req.chargeId)
-                      }
-                      break
-                    case 500:
-                      logging.failedChargePost(409, authUrl)
-                      views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
-                      break
-                    default:
-                      redirect(res).toNew(req.chargeId)
-                  }
-                }).on('error', err => {
-                  subSegment.close(err)
-                  logging.failedChargePostException(err)
-                  views.display(res, 'ERROR', withAnalytics(charge))
-                })
+                }
+                const context = {
+                  url: authUrl,
+                  method: 'POST',
+                  description: 'create charge',
+                  service: 'connector'
+                }
+                requestLogger.logRequestStart(context)
+                baseClient.post(authUrl, params, null, null)
+                  .then((response) => {
+                    logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
+                    switch (response.statusCode) {
+                      case 202:
+                      case 409:
+                        logging.failedChargePost(409, authUrl)
+                        redirect(res).toAuthWaiting(req.chargeId)
+                        break
+                      case 200:
+                        if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
+                          redirect(res).toAuth3dsRequired(req.chargeId)
+                        } else {
+                          redirect(res).toConfirm(req.chargeId)
+                        }
+                        break
+                      case 500:
+                        logging.failedChargePost(409, authUrl)
+                        views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+                        break
+                      default:
+                        redirect(res).toNew(req.chargeId)
+                    }
+                  })
               })
               .catch(err => {
                 subSegment.close(err.message)
@@ -234,10 +240,10 @@ module.exports = {
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
 
-    baseClient.post(connector3dsUrl, {data: build3dsPayload(req), correlationId},
-      function (data, json) {
+    baseClient.post(connector3dsUrl, {payload: build3dsPayload(req), correlationId}, null, null)
+      .then(response => {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
-        switch (json.statusCode) {
+        switch (response.statusCode) {
           case 200:
           case 400:
             redirect(res).toConfirm(charge.id)
@@ -252,9 +258,10 @@ module.exports = {
           default:
             views.display(res, 'ERROR', withAnalytics(charge))
         }
-      }).on('error', function () {
-      views.display(res, 'ERROR', withAnalytics(charge))
-    })
+      })
+      .catch(() => {
+        views.display(res, 'ERROR', withAnalytics(charge))
+      })
   },
   auth3dsRequired: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)

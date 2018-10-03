@@ -1,10 +1,14 @@
+'use strict'
+
+// NPM dependencies
 const nock = require('nock')
 const path = require('path')
-
 const assert = require('assert')
 
-var baseClient = require(path.join(__dirname, '/../../app/utils/base_client'))
+// Local dependencies
+const baseClient = require(path.join(__dirname, '/../../app/utils/base_client'))
 
+// Constants
 const url = 'http://www.example.com:65535'
 const arbitraryRequestData = {foo: 'bar'}
 const arbitraryCorrelationId = 123
@@ -28,7 +32,12 @@ describe('base client', () => {
       .reply(200)
 
     // literally just making sure data is passed to mocked service correctly
-    baseClient.post(url, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
+    baseClient.post(url, {
+      payload: arbitraryRequestData,
+      correlationId: arbitraryCorrelationId
+    }, null, null).then(() => {
+      done()
+    })
   })
 
   it('should add host header without port', (done) => {
@@ -41,7 +50,10 @@ describe('base client', () => {
       .reply(200)
 
     // literally just making sure data is passed to mocked service correctly
-    baseClient.post(urlWithoutPort, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
+    baseClient.post(urlWithoutPort, {
+      payload: arbitraryRequestData,
+      correlationId: arbitraryCorrelationId
+    }, null, null).then(() => done())
   })
 
   it('should post data correctly', (done) => {
@@ -50,7 +62,10 @@ describe('base client', () => {
       .reply(200)
 
     // literally just making sure data is passed to mocked service correctly
-    baseClient.post(url, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
+    baseClient.post(url, {
+      payload: arbitraryRequestData,
+      correlationId: arbitraryCorrelationId
+    }, null, null).then(() => done())
   })
 
   it('should put data correctly', (done) => {
@@ -58,7 +73,10 @@ describe('base client', () => {
       .put('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.put(url, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
+    baseClient.put(url, {
+      payload: arbitraryRequestData,
+      correlationId: arbitraryCorrelationId
+    }, null, null).then(() => done())
   })
 
   it('should patch data correctly', (done) => {
@@ -66,7 +84,10 @@ describe('base client', () => {
       .patch('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.patch(url, {data: arbitraryRequestData, correlationId: arbitraryCorrelationId}, done)
+    baseClient.patch(url, {
+      payload: arbitraryRequestData,
+      correlationId: arbitraryCorrelationId
+    }, null, null).then(() => done())
   })
 
   it('should get correctly', (done) => {
@@ -74,8 +95,8 @@ describe('base client', () => {
       .get('/')
       .reply(200, arbitraryResponseData)
 
-    baseClient.get(url, {correlationId: arbitraryCorrelationId}, (data) => {
-      assert.equal(data.response, 'I am a response')
+    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
+      assert.equal(response.body.response, 'I am a response')
       done()
     })
   })
@@ -85,8 +106,8 @@ describe('base client', () => {
       .get('/')
       .reply(201, '{}')
 
-    baseClient.get(url, {correlationId: arbitraryCorrelationId}, (data, res) => {
-      assert.equal(res.statusCode, 201)
+    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
+      assert.equal(response.statusCode, 201)
       done()
     })
   })
@@ -96,8 +117,8 @@ describe('base client', () => {
       .post('/', arbitraryRequestData)
       .reply(200, arbitraryResponseData)
 
-    baseClient.post(url, {data: arbitraryRequestData, correlationId: '123'}, (data) => {
-      assert.equal(data.response, 'I am a response')
+    baseClient.post(url, {payload: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
+      assert.equal(response.body.response, 'I am a response')
       done()
     })
   })
@@ -107,31 +128,10 @@ describe('base client', () => {
       .post('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.post(url, {data: arbitraryRequestData, correlationId: '123'}, (data) => {
-      assert.equal(data, null)
+    baseClient.post(url, {payload: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
+      assert.equal(response.body, null)
       done()
     })
-  })
-
-  it('should handle non JSON response gracefully', (done) => {
-    nock(url)
-      .get('/')
-      .reply(200, '<html></html>')
-
-    baseClient.get(url, {correlationId: 'reee'}, (data) => {
-      assert.equal(data, null)
-      done()
-    })
-  })
-
-  it('should always make keep-alive connections', (done) => {
-    nock(url)
-      .get('/')
-      .reply('{}')
-
-    let req = baseClient.get(url, {correlationId: 'reee'}, done)
-
-    assert.equal(req.shouldKeepAlive, true)
   })
 
   it('should set x-request-id header correctly', (done) => {
@@ -139,9 +139,10 @@ describe('base client', () => {
       .get('/')
       .reply('{}')
 
-    let req = baseClient.get(url, {correlationId: 'reee'}, done)
-
-    assert.equal(req.headers['x-request-id'], 'reee')
+    baseClient.get(url, {correlationId: 'reee'}, null, null).then(response => {
+      assert.equal(response.request.headers['x-request-id'], 'reee')
+      done()
+    })
   })
 
   it('should always set request content-type header to application/json', (done) => {
@@ -149,9 +150,10 @@ describe('base client', () => {
       .get('/')
       .reply('{}')
 
-    let req = baseClient.get(url, {}, done)
-
-    assert.equal(req.headers['content-type'], 'application/json')
+    baseClient.get(url, {}, null, null).then(response => {
+      assert.equal(response.request.headers['Content-Type'], 'application/json')
+      done()
+    })
   })
 
   it('should ignore response content-type header and assume JSON', (done) => {
@@ -159,8 +161,8 @@ describe('base client', () => {
       .get('/')
       .reply(200, arbitraryResponseData, {'content-type': 'text/html'})
 
-    baseClient.get(url, {correlationId: arbitraryCorrelationId}, (data) => {
-      assert.equal(data.response, 'I am a response')
+    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
+      assert.equal(response.body.response, 'I am a response')
       done()
     })
   })
