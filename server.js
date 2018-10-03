@@ -5,7 +5,6 @@ if (!process.env.DISABLE_APPMETRICS) {
 
 // Node.js core dependencies
 const path = require('path')
-const v8 = require('v8')
 
 // npm dependencies
 const express = require('express')
@@ -78,9 +77,6 @@ function initialiseGlobalMiddleware (app) {
   app.use(compression())
 
   app.disable('x-powered-by')
-
-  logger.info('Heap statistics: ' + JSON.stringify(v8.getHeapStatistics()))
-  logger.info('process.memoryUsage: ' + JSON.stringify(process.memoryUsage()))
 }
 
 function initialisei18n (app) {

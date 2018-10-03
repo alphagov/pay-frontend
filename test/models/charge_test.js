@@ -1,11 +1,13 @@
 'use strict'
 
-// npm dependencies
+// core dependencies
 const path = require('path')
+
+// npm dependencies
 const assert = require('assert')
 const nock = require('nock')
 
-// custom dependencies
+// local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 const Charge = require(path.join(__dirname, '/../../app/models/charge.js'))
 const {unexpectedPromise} = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
@@ -38,15 +40,14 @@ describe('updateStatus', function () {
       nock.cleanAll()
       nock(originalHost)
         .put('/v1/frontend/charges/1/status')
-        .reply(422, '{}')
+        .reply(422, {})
     })
 
     it('should return update_failed', function () {
       const chargeModel = Charge('')
-      return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').then(unexpectedPromise,
-        function rejected (error) {
-          assert.equal(error.message, 'UPDATE_FAILED')
-        })
+      return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').catch(err => {
+        assert.equal(err.message, 'UPDATE_FAILED')
+      })
     })
   })
 
