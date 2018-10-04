@@ -1,43 +1,4 @@
-.apple-pay-button {
-  -webkit-appearance: -apple-pay-button;
-  -apple-pay-button-type: buy;
-  -apple-pay-button-style: black;
-  height: 38px;
-  text-indent: -999px;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.google-pay-button {
-  @include govuk-focusable;
-  @include govuk-font($size: 24, $line-height: 24px);
-
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  margin-bottom: govuk-spacing(3);
-  padding: govuk-spacing(2) govuk-spacing(6);
-  border-radius: .25em;
-  background-color: govuk-colour('black');
-  color: govuk-colour('white');
-  cursor: pointer;
-
-  @include govuk-media-query(tablet) {
-    width: auto;
-  }
-
-  .logo {
-    margin-left: govuk-spacing(1);
-    text-indent: -999px;
-    display: inline-block;
-    min-width: 59px;
-    background-image: url('/images/google-pay-logo.svg');
-    background-repeat: no-repeat;
-    white-space: nowrap;
-  }
-}
-
-.govuk-radios__item:not(:first-child) {
+.govuk-radios__item:not(:last-child) {
   display: none;
 }
 
