@@ -35,6 +35,29 @@ pipeline {
         }
       }
     }
+    stage('Browser Tests') {
+      steps {
+        cypress('frontend')
+      }
+    }
+    stage('Contract Tests') {
+      steps {
+        script {
+          env.PACT_TAG = gitBranchName()
+        }
+        ws('contract-tests-wp') {
+          runPactProviderTests("pay-adminusers", "${env.PACT_TAG}")
+          runPactProviderTests("pay-connector", "${env.PACT_TAG}")
+        }
+      }
+      post {
+        always {
+          ws('contract-tests-wp') {
+            deleteDir()
+          }
+        }
+      }
+    }
     stage('Tests') {
       failFast true
       parallel {
