@@ -31,7 +31,8 @@
     "watch-live-reload": "./node_modules/.bin/grunt watch",
     "test": "DISABLE_APPMETRICS=true nyc node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "accessible-autocomplete": "^1.6.1",
