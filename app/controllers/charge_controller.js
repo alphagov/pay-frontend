@@ -260,7 +260,18 @@ module.exports = {
                   if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
                     redirect(res).toAuth3dsRequired(req.chargeId)
                   } else {
-                    redirect(res).toConfirm(req.chargeId)
+                    Charge(req.headers[CORRELATION_HEADER])
+                      .capture(req.chargeId)
+                      .then(
+                        () => redirect(res).toReturn(req.chargeId),
+                        err => {
+                          if (err.message === 'CAPTURE_FAILED') return views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
+                          views.display(res, 'SYSTEM_ERROR', withAnalytics(
+                            charge,
+                            { returnUrl: routeFor('return', charge.id) }
+                          ))
+                        }
+                      )
                   }
                   break
                 case 500:

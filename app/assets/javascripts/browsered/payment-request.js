@@ -1,23 +1,30 @@
 'use strict'
 
 module.exports = () => {
-  const payButton = document.getElementById('payment-request')
   const allowedCardTypes = window.Card
+  const paymentMethodForm = document.getElementById('payment-request-container')
+  const standardMethodContainer = document.getElementById('enter-card-details-container')
 
-  if (window.PaymentRequest && payButton) {
-    document.getElementById('payment-request').addEventListener('click', makePayment, false);
+  if (window.PaymentRequest && paymentMethodForm) {
+    paymentMethodForm.classList.remove('hidden')
+    standardMethodContainer.classList.add('hidden')
 
     if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
-      payButton.classList.remove('govuk-button')
-      payButton.classList.add('apple-pay-button')
-      payButton.innerHTML = `<span class="text">Buy with</span> <span class="logo">Apple Pay</span>`
-    } else if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
-      payButton.classList.remove('govuk-button')
-      payButton.classList.add('google-pay-button')
-      payButton.innerHTML = `<span class="text">Pay with</span> <span class="logo">Google Pay</span>`
+      document.getElementById('payment-method-payment-request-apple').parentNode.style.display = 'block'
+    } else if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test) {
+      document.getElementById('payment-method-payment-request').parentNode.style.display = 'block'
     }
 
-    payButton.parentNode.classList.remove('hidden')
+    paymentMethodForm.addEventListener('submit', function(e) {
+      e.preventDefault()
+      const checkedValue = document.querySelectorAll('#payment-request-container input:checked')[0].value;
+      if (checkedValue === 'standard') {
+        standardMethodContainer.classList.remove('hidden')
+        paymentMethodForm.classList.add('hidden')
+      } else {
+        makePayment()
+      }
+    }, false)
   }
 
   function makePayment() {
