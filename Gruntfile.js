@@ -39,6 +39,14 @@ module.exports = function (grunt) {
         dest: 'public'
       }]
     },
+    applePayVerification: {
+      files: [{
+        expand: true,
+        cwd: 'app/assets/apple-pay',
+        src: ['**'],
+        dest: 'public/.well-known'
+      }]
+    },
     countryAutocompleteFiles: {
       files: [{
         expand: true,
