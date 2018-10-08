@@ -20,7 +20,8 @@ const {addProxy} = require('./add_proxy')
 
 const agentOptions = {
   keepAlive: true,
-  maxSockets: process.env.MAX_SOCKETS || 100
+  maxSockets: process.env.MAX_SOCKETS || 100,
+  ciphers: 'AES256-GCM-SHA384'
 }
 
 const clsXrayConfig = require('../../config/xray-cls')
