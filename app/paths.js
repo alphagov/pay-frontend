@@ -74,6 +74,12 @@ const paths = {
       action: 'get'
     }
   },
+  applePay: {
+    session: {
+      path: '/apple-pay-merchant-validation',
+      action: 'post'
+    }
+  },
   secure: {
     get: {
       path: '/secure/:chargeTokenId',

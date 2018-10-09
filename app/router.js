@@ -9,6 +9,7 @@ const logger = require('winston')
 const charge = require('./controllers/charge_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
+const applePay = require('./controllers/apple-pay/merchant-validation-controller')
 const returnCont = require('./controllers/return_controller.js')
 const {healthcheck} = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
@@ -82,6 +83,9 @@ exports.bind = function (app) {
   app.post(card.cancel.path, middlewareStack, charge.cancel)
   app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, resolveLanguage, charge.checkCard)
   app.get(card.return.path, xraySegmentCls, retrieveCharge, resolveLanguage, returnCont.return)
+
+  // Apple Pay endpoints
+  app.post(paths.applePay.session.path, applePay)
 
   // secure controller
   app.get(paths.secure.get.path, xraySegmentCls, secure.new)
