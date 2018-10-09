@@ -52,6 +52,7 @@ function appendChargeForNewView (charge, req, chargeId) {
   charge.post_card_action = routeFor('create', chargeId)
   charge.id = chargeId
   charge.post_cancel_action = routeFor('cancel', chargeId)
+  charge.allowWebPayments = charge.gatewayAccount.allowWebPayments
 }
 
 function routeFor (resource, chargeId) {

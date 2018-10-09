@@ -26,6 +26,7 @@
       </div>
     </div>
 
+  {% if allowWebPayments %}
     <form id="payment-request-container" class="hidden">
       {{ govukRadios({
         name: "payment-method",
@@ -65,6 +66,7 @@
         })
       }}
     </form>
+  {% endif %}
 
     <div id="enter-card-details-container">
       <h1 class="govuk-heading-l">{{ __("cardDetails.title") }}</h1>
