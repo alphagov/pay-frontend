@@ -71,18 +71,11 @@ module.exports = function (grunt) {
 
   const watch = {
     assets: {
-      files: ['app/assets/**/*'],
-      tasks: ['generate-assets'],
+      files: ['app/assets/sass/**/*.scss'],
+      tasks: ['sass'],
       options: {
         spawn: false,
         livereload: true
-      }
-    },
-    forBrowsifier: {
-      files: ['app/*', 'app/**/*'],
-      tasks: ['generate-assets'],
-      options: {
-        spawn: false
       }
     }
   }
