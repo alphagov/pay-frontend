@@ -59,19 +59,20 @@
 		"tryAgain": "Mynd yn ôl i geisio’r taliad eto",
 		"problem": "Roedd problem gyda’ch taliad",
 		"declined": "Mae eich taliad wedi cael ei wrthod",
-		"contactYourBank": "Cysylltwch â’ch banc am ragor o fanylion. Nid oes arian wedi ei gymryd o’ch cyfrif.",
+		"contactYourBank": "Nid oes arian wedi cael ei dynnu o’ch cyfrif. Cysylltwch â’ch banc am ragor o fanylion.",
 		"paymentStatus": "Roedd eich taliad yn",
 		"unsuccessful": "Nid oedd eich taliad yn llwyddiannus",
 		"noMoneyTaken": "Nid oes arian wedi ei gymryd o’r cyfrif.",
+		"sessionExpiredNoMoneyTaken": "Am eich diogelwch, bydd sesiynau talu yn dod i ben ar ôl 90 munud. Nid oes arian wedi cael ei dynnu o’ch cyfrif.",
 		"toMakeChanges": "I wneud unrhyw newidiadau i’ch taliad mae angen i chi gysylltu â’r gwasanaeth.",
 		"viewSummary": "Gweld crynodeb eich taliad",
 		"paymentExpired": "Daeth eich taliad i ben",
 		"sessionExpired": "Daeth eich sesiwn taliad i ben",
 		"paymentCancelled": "Mae eich taliad wedi cael ei ganslo",
 		"paymentCancelledTitle": "Y taliad wedi ei ganslo",
-		"paymentCancelledDescription": "Mae eich taliad wedi ei ganslo gan y gwasanaeth llywodraeth. Gallai hyn fod wedi digwydd am nifer o resymau",
+		"paymentCancelledDescription": "Mae’r gwasanaeth rydych yn ceisio ei dalu wedi cael ei ganslo. Nid oes arian wedi cael ei dynnu o’ch cyfrif.",
 		"error": "Digwyddodd gwall",
-		"technicalProblems": "Mae’n flin gennym ond rydym yn profi problemau technegol"
+		"technicalProblems": "Rydym yn profi problemau technegol."
 	},
 	"authorisation": {
 		"extraSteps": "Efallai bydd angen i chi gwblhau camau gwirio pellach.",

@@ -59,19 +59,20 @@
 		"tryAgain": "Go back to try the payment again",
 		"problem": "There was a problem with your payment",
 		"declined": "Your payment has been declined",
-		"contactYourBank": "Contact your bank for more details. No money has been taken from your account.",
+		"contactYourBank": "No money has been taken from your account. Contact your bank for more details.",
 		"paymentStatus": "Your payment was",
 		"unsuccessful": "Your payment was unsuccessful",
 		"noMoneyTaken": "No money has been taken from your account.",
+		"sessionExpiredNoMoneyTaken": "For your security, payment sessions expire after 90 minutes. No money has been taken from your account.",
 		"toMakeChanges": "To make any changes to your payment you’ll need to contact the service.",
 		"viewSummary": "View your payment summary",
 		"paymentExpired": "Your payment expired",
 		"sessionExpired": "Your payment session has expired",
 		"paymentCancelled": "Your Payment was cancelled",
 		"paymentCancelledTitle": "Payment cancelled",
-		"paymentCancelledDescription": "Your payment has been cancelled by the government service. This may have happened for a number of reasons.",
+		"paymentCancelledDescription": "The service you’re trying to pay has cancelled your payment. No money has been taken from your account.",
 		"error": "An error occurred",
-		"technicalProblems": "Sorry, we’re experiencing technical problems"
+		"technicalProblems": "We’re experiencing technical problems"
 	},
 	"authorisation": {
 		"extraSteps": "You may need to complete some extra verification steps.",
