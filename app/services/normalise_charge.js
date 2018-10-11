@@ -110,13 +110,15 @@ module.exports = (function () {
     return month.slice(-2) + '/' + year.slice(-2)
   }
 
-  var apiPayload = function (req, cardBrand) {
+  var apiPayload = function (req, card) {
     return {
       'card_number': creditCard(req.body.cardNo),
       'cvc': req.body.cvc,
-      'card_brand': cardBrand,
+      'card_brand': card.brand,
       'expiry_date': expiryDate(req.body.expiryMonth, req.body.expiryYear),
       'cardholder_name': req.body.cardholderName,
+      'card_type': card.type,
+      'corporate_card': card.corporate,
       'address': addressForApi(req.body),
       'accept_header': req.header('accept'),
       'user_agent_header': req.header('user-agent')

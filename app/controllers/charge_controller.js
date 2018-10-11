@@ -104,7 +104,7 @@ module.exports = {
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     const authUrl = normalise.authUrl(charge)
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel)
-    let cardBrand
+    let card
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
@@ -119,7 +119,7 @@ module.exports = {
         })
         .then(data => {
           subSegment.close()
-          cardBrand = data.cardBrand
+          card = data.card
           let emailChanged = false
           let userEmail = req.body.email
           if (req.body.originalemail) {
@@ -153,7 +153,7 @@ module.exports = {
                 const startTime = new Date()
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
                 baseClient.post(authUrl, {
-                  data: normalise.apiPayload(req, cardBrand),
+                  data: normalise.apiPayload(req, card),
                   correlationId: correlationId
                 }, (data, json) => {
                   logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)

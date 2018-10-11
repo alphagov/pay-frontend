@@ -62,12 +62,14 @@ const gatewayAccount = {
 
 let mockServer
 
-let defaultCardID = function () {
+let defaultCardID = {brand: 'visa', label: 'visa', type: 'D', corporate: false}
+
+let mockSuccessCardIdResponse = function (data) {
   nock(process.env.CARDID_HOST)
     .post('/v1/api/card', () => {
       return true
     })
-    .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
+    .reply(200, data)
 }
 
 describe('chargeTests', function () {
@@ -99,13 +101,15 @@ describe('chargeTests', function () {
     })
   }
 
-  function minimumConnectorCardData (cardNumber) {
+  function minimumConnectorCardData (cardNumber, cardType = 'DEBIT', corporate = false, cardBrand = 'visa') {
     return {
       card_number: cardNumber,
       cvc: '234',
-      card_brand: 'visa',
+      card_brand: cardBrand,
       expiry_date: '11/99',
       cardholder_name: 'Jimi Hendrix',
+      card_type: cardType,
+      corporate_card: corporate,
       address: {
         line1: '32 Whip Ma Whop Ma Avenue',
         city: 'Willy wonka',
@@ -208,7 +212,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-                        expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+            expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
             expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
@@ -264,7 +268,7 @@ describe('chargeTests', function () {
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('4242424242424242'))
           .reply(202)
@@ -287,7 +291,7 @@ describe('chargeTests', function () {
           .get(`${servicesResource}?gatewayAccountId=${gatewayAccountId}`)
           .reply(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
 
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('4242424242424242'))
           .reply(409)
@@ -305,9 +309,45 @@ describe('chargeTests', function () {
           .reply(200)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('4242424242424242'))
+          .reply(200, {status: State.AUTH_SUCCESS})
+
+        postChargeRequest(app, cookieValue, minimumFormCardData('4242 4242 4242 4242'), chargeId)
+          .expect(303)
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .end(done)
+      })
+
+      it('should send expected card data to connector for the case of a corporate debit card', function (done) {
+        let cookieValue = cookie.create(chargeId)
+        nock(process.env.CONNECTOR_HOST)
+          .patch('/v1/frontend/charges/23144323')
+          .reply(200)
+        defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+        mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true})
+
+        connectorExpects(minimumConnectorCardData('4000180000000002', 'DEBIT', true, 'visa'))
+          .reply(200, {status: State.AUTH_SUCCESS})
+
+        postChargeRequest(app, cookieValue, minimumFormCardData('4000 1800 0000 0002'), chargeId)
+          .expect(303)
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .end(done)
+      })
+
+      it('should send expected card data to connector for the case of a non-corporate credit card', function (done) {
+        let cookieValue = cookie.create(chargeId)
+        nock(process.env.CONNECTOR_HOST)
+          .patch('/v1/frontend/charges/23144323')
+          .reply(200)
+        defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+        mockSuccessCardIdResponse({brand: 'american-express', label: 'american-express', type: 'C', corporate: false})
+
+        connectorExpects(minimumConnectorCardData('4242424242424242', 'CREDIT', false, 'american-express'))
           .reply(200, {status: State.AUTH_SUCCESS})
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4242 4242 4242 4242'), chargeId)
@@ -323,7 +363,7 @@ describe('chargeTests', function () {
           .reply(200)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('4242424242424242'))
           .reply(200, {status: State.AUTH_3DS_REQUIRED})
@@ -406,7 +446,7 @@ describe('chargeTests', function () {
 
       it('should send card data including optional fields to connector', function (done) {
         let cookieValue = cookie.create(chargeId)
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -435,7 +475,7 @@ describe('chargeTests', function () {
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('5105105105105100'))
           .reply(400, {'message': 'This transaction was declined.'})
@@ -471,7 +511,7 @@ describe('chargeTests', function () {
         const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        defaultCardID('1111111111111111')
+        mockSuccessCardIdResponse(defaultCardID)
         postChargeRequest(app, cookieValue, minimumFormCardData('1111111111111111'), chargeId)
           .expect(200)
           .expect(function (res) {
@@ -487,7 +527,7 @@ describe('chargeTests', function () {
 
       it('should return country list when invalid fields submitted', (done) => {
         const cookieValue = cookie.create(chargeId, {})
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         postChargeRequest(app, cookieValue, missingFormCardData(), chargeId)
@@ -500,7 +540,7 @@ describe('chargeTests', function () {
 
       it('shows an error when a card is submitted with missing fields', function (done) {
         const cookieValue = cookie.create(chargeId, {})
-        defaultCardID('4242424242424242')
+        mockSuccessCardIdResponse(defaultCardID)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         postChargeRequest(app, cookieValue, missingFormCardData(), chargeId)
@@ -627,7 +667,7 @@ describe('chargeTests', function () {
 
       it('should ignore empty/null address lines when second address line populated', function (done) {
         const cookieValue = cookie.create(chargeId)
-        defaultCardID('5105105105105100')
+        mockSuccessCardIdResponse(defaultCardID)
         const cardData = minimumConnectorCardData('5105105105105100')
         cardData.address.line1 = 'bla bla'
         delete cardData.address.line3
@@ -651,7 +691,7 @@ describe('chargeTests', function () {
 
       it('should ignore empty/null address lines when only second address line populated', function (done) {
         const cookieValue = cookie.create(chargeId)
-        defaultCardID('5105105105105100')
+        mockSuccessCardIdResponse(defaultCardID)
         const cardData = minimumConnectorCardData('5105105105105100')
         cardData.address.line1 = 'bla bla'
         delete cardData.address.line2
@@ -675,7 +715,7 @@ describe('chargeTests', function () {
 
       it('show an error page when the chargeId is not found on the session', function (done) {
         const cookieValue = cookie.create()
-        defaultCardID('5105105105105100')
+        mockSuccessCardIdResponse(defaultCardID)
         mockServer.post(connectorChargePath + chargeId + '/cards', {
           'card_number': '5105105105105100',
           'cvc': '234',
@@ -715,7 +755,7 @@ describe('chargeTests', function () {
         .expect(function (res) {
           const $ = cheerio.load(res.text)
           expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
-                    expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('.payment-summary #amount').text()).to.eql('£23.45')
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
           expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
@@ -815,7 +855,7 @@ describe('chargeTests', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-                    expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('#card-number').text()).to.contains('************1234')
           expect($('#expiry-date').text()).to.contains('11/99')
           expect($('#cardholder-name').text()).to.contains('Test User')
