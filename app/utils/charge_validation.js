@@ -16,8 +16,8 @@ const CUSTOM_ERRORS = {
   }
 }
 
-module.exports = (translations, logger, Card) => {
-  const validations = chargeValidationFields(Card)
+module.exports = (translations, logger, Card, chargeOptions = {}) => {
+  const validations = chargeValidationFields(Card, chargeOptions)
   const fieldValidations = validations.fieldValidations
   return {
     required: validations.requiredFormFields,
@@ -31,17 +31,19 @@ module.exports = (translations, logger, Card) => {
         errorFields: [],
         highlightErrorFields: {}
       }
-      validations.requiredFormFields.forEach(field => checkFormField(field, body[field], false))
+      validations.requiredFormFields.forEach(field => {
+        checkFormField(field, body[field], false, chargeOptions)
+      })
       validations.optionalFormFields.forEach(field => {
-        if (body[field]) checkFormField(field, body[field])
+        if (body[field]) checkFormField(field, body[field], null, chargeOptions)
       })
 
       if (checkResult.errorFields.length > 0) checkResult.hasError = true
       return checkResult
 
-      function checkFormField (name, value, isOptional) {
-        const customValidation = fieldValidations[name] ? fieldValidations[name].bind(fieldValidations)(value, body) : true
-        if (value && customValidation === true) return
+      function checkFormField (name, value, isOptional, chargeOptions) {
+        const customValidation = fieldValidations[name] ? fieldValidations[name].bind(fieldValidations)(value, body, chargeOptions) : true
+        if ((value && customValidation === true) || (typeof customValidation === 'object' && customValidation.emptyOrCustomValidationAllowed)) return
         const translation = translations.fields[name]
         const messageTemplate = translations.generic
         const problem = value || isOptional ? translation[customValidation] : messageTemplate.replace('%s', translation.name)

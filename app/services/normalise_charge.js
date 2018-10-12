@@ -82,7 +82,9 @@ module.exports = (function () {
       address.line2,
       address.city,
       address.postcode,
-      countries.translateCountryISOtoName(address.country)].filter(function (str) { return str }).join(', ')
+      countries.translateCountryISOtoName(address.country)].filter(function (str) {
+      return str
+    }).join(', ')
   }
 
   const _normaliseGatewayAccountDetails = function (accountDetails) {
@@ -106,7 +108,9 @@ module.exports = (function () {
       body.addressLine2,
       body.addressCity,
       body.addressPostcode,
-      countries.translateCountryISOtoName(body.addressCountry)].filter(function (str) { return str }).join(', ')
+      countries.translateCountryISOtoName(body.addressCountry)].filter(function (str) {
+      return str
+    }).join(', ')
   }
 
   const creditCard = function (creditCardNo) {

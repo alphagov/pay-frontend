@@ -7,8 +7,8 @@ const _ = require('lodash')
 const chargeValidator = require('./charge_validation.js')
 const normalise = require('../services/normalise_charge.js')
 
-module.exports = (translations, logger, cardModel) => {
-  const validator = chargeValidator(translations, logger, cardModel)
+module.exports = (translations, logger, cardModel, chargeOptions) => {
+  const validator = chargeValidator(translations, logger, cardModel, chargeOptions)
   return {
     verify: (req) => new Promise((resolve) => {
       const validation = validator.verify(req.body)

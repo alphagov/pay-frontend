@@ -243,7 +243,7 @@ module.exports = function (correlationId) {
         logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
         const code = response.statusCode
         if (code === 200) {
-          resolve()
+          resolve('Charge patch was a success')
         } else {
           reject(new Error('Calling connector to patch a charge returned an unexpected status code'))
         }
