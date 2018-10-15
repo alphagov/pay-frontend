@@ -14,8 +14,12 @@ module.exports = (translations, logger, cardModel) => {
       const validation = validator.verify(req.body)
       cardModel.checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language)
         .then(card => {
-          logger.debug('Card supported - ', {cardBrand: card.brand})
-          resolve({validation, cardBrand: card.brand})
+          logger.debug('Card supported - ', {
+            cardBrand: card.brand,
+            cardType: card.type,
+            cardCorporate: card.corporate
+          })
+          resolve({validation, card})
         })
         .catch(err => {
           logger.error('Card not supported - ', {'err': err.message})
