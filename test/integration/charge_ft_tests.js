@@ -845,7 +845,7 @@ describe('chargeTests', function () {
       nock.cleanAll()
     })
 
-    it('should return the data needed for the UI', function (done) {
+    it('should return the data needed for the UI when there is no corporate card information', function (done) {
       nock(process.env.CONNECTOR_HOST)
         .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge('AUTHORISATION SUCCESS', 'http://www.example.com/service', gatewayAccountId))
       defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -862,6 +862,31 @@ describe('chargeTests', function () {
           expect($('#address').text()).to.contains('line1, line2, city, postcode, United Kingdom')
           expect($('.payment-summary #amount').text()).to.eql('£23.45')
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
+          expect($('#payment-summary-breakdown-amount').length > 0).to.equal(false)
+          expect($('#payment-summary-corporate-card-fee').length > 0).to.equal(false)
+        })
+        .end(done)
+    })
+
+    it('should return the data needed for the UI when there is corporate card information', function (done) {
+      nock(process.env.CONNECTOR_HOST)
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetChargeCorporateCardOnly('AUTHORISATION SUCCESS', 'http://www.example.com/service', gatewayAccountId))
+      defaultAdminusersResponseForGetService(gatewayAccountId)
+      const cookieValue = cookie.create(chargeId)
+
+      getChargeRequest(app, cookieValue, chargeId, '/confirm')
+        .expect(200)
+        .expect(function (res) {
+          const $ = cheerio.load(res.text)
+          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('#card-number').text()).to.contains('************1234')
+          expect($('#expiry-date').text()).to.contains('11/99')
+          expect($('#cardholder-name').text()).to.contains('Test User')
+          expect($('#address').text()).to.contains('line1, line2, city, postcode, United Kingdom')
+          expect($('.payment-summary #amount').text()).to.eql('£25.95')
+          expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
+          expect($('.payment-summary #payment-summary-breakdown #payment-summary-breakdown-amount').text()).to.contain('£23.45')
+          expect($('.payment-summary #payment-summary-breakdown #payment-summary-corporate-card-fee').text()).to.contain('£2.50')
         })
         .end(done)
     })

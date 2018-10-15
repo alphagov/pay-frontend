@@ -87,6 +87,14 @@ function cardTypes () {
   ]
 }
 
+function rawSuccessfulGetChargeCorporateCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
+  const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
+  charge.amount = 2345
+  charge.corporate_surcharge = 250
+  charge.total_amount = 2595
+  return charge
+}
+
 function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
   var charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.gateway_account.card_types = [
@@ -260,6 +268,8 @@ module.exports = {
   rawSuccessfulGetCharge: rawSuccessfulGetCharge,
 
   rawSuccessfulGetChargeDebitCardOnly: rawSuccessfulGetChargeDebitCardOnly,
+
+  rawSuccessfulGetChargeCorporateCardOnly: rawSuccessfulGetChargeCorporateCardOnly,
 
   templateValue: function (res, key, value) {
     var body = JSON.parse(res.text)
