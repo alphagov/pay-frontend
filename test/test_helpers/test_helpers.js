@@ -39,12 +39,12 @@ function connectorCaptureUrl (chargeId) {
 }
 
 function connectorRespondsWith (chargeId, charge) {
-  var connectorMock = nock(localConnector())
+  const connectorMock = nock(localConnector())
   connectorMock.get(connectorChargePath + chargeId).reply(200, charge)
 }
 
 function adminusersRespondsWith (gatewayAccountId, service) {
-  var adminusersMock = nock(localAdminusers())
+  const adminusersMock = nock(localAdminusers())
   adminusersMock.get(`${adminusersServicePath}?gatewayAccountId=${gatewayAccountId}`).reply(200, service)
 }
 
@@ -96,7 +96,7 @@ function rawSuccessfulGetChargeCorporateCardOnly (status, returnUrl, chargeId, g
 }
 
 function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
-  var charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
+  const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.gateway_account.card_types = [
     {
       'type': 'DEBIT',
@@ -108,7 +108,7 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
 }
 
 function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}) {
-  var charge = {
+  const charge = {
     'amount': 2345,
     'description': 'Payment Description',
     'status': status,
@@ -212,7 +212,7 @@ module.exports = {
             .expect(200)
             .end(function (err, res) {
               if (err) done(err)
-              var response = JSON.parse(res.text)
+              const response = JSON.parse(res.text)
               Object.keys(expectedResponse).map(function (key) {
                 expectedResponse[key].should.equal(response[key])
               })
@@ -247,9 +247,9 @@ module.exports = {
 
   connectorResponseForPutCharge: function (chargeId, statusCode, responseBody, overrideUrl) {
     initConnectorUrl()
-    var connectorMock = nock(localConnector())
-    var mockPath = connectorChargePath + chargeId + '/status'
-    var payload = {'new_status': 'ENTERING CARD DETAILS'}
+    const connectorMock = nock(localConnector())
+    const mockPath = connectorChargePath + chargeId + '/status'
+    const payload = {'new_status': 'ENTERING CARD DETAILS'}
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 
@@ -260,29 +260,29 @@ module.exports = {
 
   defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId) {
     initConnectorUrl()
-    var returnUrl = 'http://www.example.com/service'
-    var rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
+    const returnUrl = 'http://www.example.com/service'
+    const rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
     connectorRespondsWith(chargeId, rawResponse)
   },
 
-  rawSuccessfulGetCharge: rawSuccessfulGetCharge,
+  rawSuccessfulGetCharge,
 
-  rawSuccessfulGetChargeDebitCardOnly: rawSuccessfulGetChargeDebitCardOnly,
+  rawSuccessfulGetChargeDebitCardOnly,
 
-  rawSuccessfulGetChargeCorporateCardOnly: rawSuccessfulGetChargeCorporateCardOnly,
+  rawSuccessfulGetChargeCorporateCardOnly,
 
   templateValue: function (res, key, value) {
-    var body = JSON.parse(res.text)
+    const body = JSON.parse(res.text)
     return chaiExpect(_.result(body, key)).to.deep.equal(value)
   },
 
   templateValueNotUndefined: function (res, key) {
-    var body = JSON.parse(res.text)
+    const body = JSON.parse(res.text)
     return chaiExpect(_.result(body, key)).to.not.be.undefined
   },
 
   templateValueUndefined: function (res, key) {
-    var body = JSON.parse(res.text)
+    const body = JSON.parse(res.text)
     return chaiExpect(_.result(body, key)).to.be.undefined
   },
 
@@ -294,6 +294,6 @@ module.exports = {
     return csrf().create(process.env.CSRF_USER_SECRET)
   },
 
-  cardTypes: cardTypes
+  cardTypes
 
 }
