@@ -50,7 +50,7 @@ const serviceFixtures = require('../fixtures/service_fixtures')
 
 // Constants
 const EMPTY_BODY = ''
-let defaultCorrelationHeader = {
+const defaultCorrelationHeader = {
   reqheaders: {'x-request-id': 'some-unique-id'}
 }
 const gatewayAccount = {
@@ -62,9 +62,9 @@ const gatewayAccount = {
 
 let mockServer
 
-let defaultCardID = {brand: 'visa', label: 'visa', type: 'D', corporate: false}
+const defaultCardID = {brand: 'visa', label: 'visa', type: 'D', corporate: false}
 
-let mockSuccessCardIdResponse = function (data) {
+const mockSuccessCardIdResponse = function (data) {
   nock(process.env.CARDID_HOST)
     .post('/v1/api/card', () => {
       return true
@@ -73,19 +73,19 @@ let mockSuccessCardIdResponse = function (data) {
 }
 
 describe('chargeTests', function () {
-  let localServer = process.env.CONNECTOR_HOST
-  let adminUsersHost = process.env.ADMINUSERS_URL
+  const localServer = process.env.CONNECTOR_HOST
+  const adminUsersHost = process.env.ADMINUSERS_URL
 
   const servicesResource = `/v1/api/services`
-  let connectorChargePath = '/v1/frontend/charges/'
-  let chargeId = '23144323'
-  let frontendCardDetailsPath = '/card_details'
-  let frontendCardDetailsPostPath = '/card_details/' + chargeId
+  const connectorChargePath = '/v1/frontend/charges/'
+  const chargeId = '23144323'
+  const frontendCardDetailsPath = '/card_details'
+  const frontendCardDetailsPostPath = '/card_details/' + chargeId
   const gatewayAccountId = gatewayAccount.gatewayAccountId
 
-  let connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards'
-  let enteringCardDetailsState = 'ENTERING CARD DETAILS'
-  let RETURN_URL = 'http://www.example.com/service'
+  const connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards'
+  const enteringCardDetailsState = 'ENTERING CARD DETAILS'
+  const RETURN_URL = 'http://www.example.com/service'
 
   function connectorExpects (data) {
     return mockServer.post(connectorChargePath + chargeId + '/cards', body => {
@@ -120,7 +120,7 @@ describe('chargeTests', function () {
   }
 
   function fullConnectorCardData (cardNumber) {
-    let cardData = minimumConnectorCardData(cardNumber)
+    const cardData = minimumConnectorCardData(cardNumber)
     cardData.address.line2 = 'bla bla'
     cardData.address.city = 'London'
     cardData.address.country = 'GB'
@@ -128,7 +128,7 @@ describe('chargeTests', function () {
   }
 
   function fullFormCardData (cardNumber) {
-    let cardData = minimumFormCardData(cardNumber)
+    const cardData = minimumFormCardData(cardNumber)
     cardData.addressLine2 = 'bla bla'
     return cardData
   }
@@ -203,7 +203,7 @@ describe('chargeTests', function () {
 
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         return getChargeRequest(app, cookieValue, chargeId)
       }
 
@@ -280,7 +280,7 @@ describe('chargeTests', function () {
       })
 
       it('should redirect user to auth_waiting when connector returns 409', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -303,7 +303,7 @@ describe('chargeTests', function () {
       })
 
       it('should redirect user to confirm when connector returns 200 for authorisation success', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -321,7 +321,7 @@ describe('chargeTests', function () {
       })
 
       it('should send expected card data to connector for the case of a corporate debit card', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -339,7 +339,7 @@ describe('chargeTests', function () {
       })
 
       it('should send expected card data to connector for the case of a non-corporate credit card', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -357,7 +357,7 @@ describe('chargeTests', function () {
       })
 
       it('should redirect user to confirm when connector returns 200 for authorisation and 3DS is required', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
@@ -375,7 +375,7 @@ describe('chargeTests', function () {
       })
 
       it('should redirect user from /auth_waiting to /confirm when connector returns a successful status', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.AUTH_SUCCESS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -433,7 +433,7 @@ describe('chargeTests', function () {
       })
 
       it('should error without csrf', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -445,7 +445,7 @@ describe('chargeTests', function () {
       })
 
       it('should send card data including optional fields to connector', function (done) {
-        let cookieValue = cookie.create(chargeId)
+        const cookieValue = cookie.create(chargeId)
         mockSuccessCardIdResponse(defaultCardID)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
@@ -1322,7 +1322,7 @@ describe('chargeTests', function () {
     })
 
     it('should send 3ds data to connector and render an error if connector post failed', function (done) {
-      let cookieValue = cookie.create(chargeId)
+      const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).replyWithError(404)

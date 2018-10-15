@@ -1,13 +1,16 @@
-var countries = require('../services/countries')
-var humps = require('humps')
-var normaliseCards = require('../services/normalise_cards.js')
-var _ = require('lodash')
+'use strict'
+
+// NPM dependencies
+const humps = require('humps')
+const _ = require('lodash')
+
+// Local dependencies
+const countries = require('../services/countries')
+const normaliseCards = require('../services/normalise_cards.js')
 
 module.exports = (function () {
-  'use strict'
-
-  var _charge = function (charge, chargeId) {
-    var chargeObj = {
+  const _charge = function (charge, chargeId) {
+    const chargeObj = {
       id: chargeId,
       amount: penceToPounds(charge.amount),
       service_return_url: charge.return_url,
@@ -26,11 +29,11 @@ module.exports = (function () {
     return chargeObj
   }
 
-  var penceToPounds = function (pence) {
+  const penceToPounds = function (pence) {
     return (parseInt(pence) / 100).toFixed(2)
   }
 
-  var addressForApi = function (body) {
+  const addressForApi = function (body) {
     return {
       line1: body.addressLine1,
       line2: body.addressLine2,
@@ -40,14 +43,14 @@ module.exports = (function () {
     }
   }
   // body is passed by reference
-  var addressLines = function (body) {
+  const addressLines = function (body) {
     if (!body.addressLine1 && body.addressLine2) {
       body.addressLine1 = body.addressLine2
       delete body.addressLine2
     }
   }
-  var whitespace = function (body) {
-    var toIgnore = [
+  const whitespace = function (body) {
+    const toIgnore = [
       'submitCardDetails',
       'csrfToken',
       'chargeId'
@@ -60,15 +63,15 @@ module.exports = (function () {
     })
   }
 
-  var _normaliseConfirmationDetails = function (cardDetails) {
+  const _normaliseConfirmationDetails = function (cardDetails) {
     cardDetails.cardNumber = '************' + cardDetails.last_digits_card_number
     delete cardDetails.last_digits_card_number
-    var normalisedDetails = humps.camelizeKeys(cardDetails)
+    const normalisedDetails = humps.camelizeKeys(cardDetails)
     normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
     return normalisedDetails
   }
 
-  var _normaliseAddress = function (address) {
+  const _normaliseAddress = function (address) {
     return [address.line1,
       address.line2,
       address.city,
@@ -76,13 +79,13 @@ module.exports = (function () {
       countries.translateCountryISOtoName(address.country)].filter(function (str) { return str }).join(', ')
   }
 
-  var _normaliseGatewayAccountDetails = function (accountDetails) {
-    var gatewayAccountDetails = humps.camelizeKeys(accountDetails)
+  const _normaliseGatewayAccountDetails = function (accountDetails) {
+    const gatewayAccountDetails = humps.camelizeKeys(accountDetails)
     gatewayAccountDetails.cardTypes = normaliseCards(gatewayAccountDetails.cardTypes)
     return gatewayAccountDetails
   }
 
-  var _normaliseAuth3dsData = function (auth3dsData) {
+  const _normaliseAuth3dsData = function (auth3dsData) {
     return {
       paRequest: auth3dsData.paRequest,
       issuerUrl: auth3dsData.issuerUrl,
@@ -92,7 +95,7 @@ module.exports = (function () {
   }
 
   // an empty string is equal to false in soft equality used by filter
-  var addressForView = function (body) {
+  const addressForView = function (body) {
     return [body.addressLine1,
       body.addressLine2,
       body.addressCity,
@@ -100,17 +103,17 @@ module.exports = (function () {
       countries.translateCountryISOtoName(body.addressCountry)].filter(function (str) { return str }).join(', ')
   }
 
-  var creditCard = function (creditCardNo) {
+  const creditCard = function (creditCardNo) {
     creditCardNo = (creditCardNo) || ''
     return creditCardNo.replace(/\D/g, '')
   }
 
-  var expiryDate = function (month, year) {
+  const expiryDate = function (month, year) {
     month = (month.length === 1) ? '0' + month : month
     return month.slice(-2) + '/' + year.slice(-2)
   }
 
-  var apiPayload = function (req, card) {
+  const apiPayload = function (req, card) {
     return {
       'card_number': creditCard(req.body.cardNo),
       'cvc': req.body.cvc,
@@ -125,13 +128,13 @@ module.exports = (function () {
     }
   }
 
-  var authUrl = function (charge) {
-    var authLink = charge.links.find((link) => { return link.rel === 'cardAuth' })
+  const authUrl = function (charge) {
+    const authLink = charge.links.find((link) => { return link.rel === 'cardAuth' })
     return authLink.href
   }
 
-  var chargeUrl = function (charge) {
-    var selfLink = charge.links.find((link) => { return link.rel === 'self' })
+  const chargeUrl = function (charge) {
+    const selfLink = charge.links.find((link) => { return link.rel === 'self' })
     return selfLink.href
   }
 
