@@ -71,12 +71,18 @@
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
       <h2 class="govuk-heading-m">{{ __("paymentSummary.title") }}</h2>
-      <p id="payment-description" class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-39">
+      <p id="payment-description" class="govuk-body govuk-!-font-weight-bold">
         {{ charge.description }}
       </p>
-      <p class="govuk-body govuk-!-font-size-39 govuk-!-margin-bottom-0">
+      {% if charge.corporateSurcharge %}
+      <p class="govuk-body" id="payment-summary-breakdown">
+        {{ __("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
+        {{ __("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateSurcharge }}</span>
+      </p>
+      {% endif %}
+      <p class="govuk-body govuk-!-margin-bottom-0">
         {{ __("paymentSummary.totalAmount") }}
-        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.amount }}</span>
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
       </p>
     </aside>
   </div>
