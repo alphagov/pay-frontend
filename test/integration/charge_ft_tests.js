@@ -208,7 +208,7 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-                        expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+            expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('.payment-summary #amount').text()).to.eql('£23.45')
             expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')

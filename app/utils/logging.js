@@ -31,7 +31,7 @@ exports.failedChargePostException = err => {
 exports.failedChargePatch = err => {
   logger.warn('Calling connector to patch a charge failed -', {
     service: 'connector',
-    method: 'POST',
+    method: 'PATCH',
     err: err
   })
 }
