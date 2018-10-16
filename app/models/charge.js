@@ -34,20 +34,22 @@ module.exports = function (correlationId) {
 
       const startTime = new Date()
 
-      baseClient.put(url, {data: data, correlationId: correlationId}, function (data, response) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
-        updateComplete(chargeId, data, response, {resolve, reject})
-      }).on('error', function (err) {
-        logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime)
-        logger.error('Calling connector to update charge status threw exception -', {
-          service: 'connector',
-          method: 'PUT',
-          chargeId: chargeId,
-          url: url,
-          error: err
+      baseClient.put(url, {payload: data, correlationId: correlationId}, null, null)
+        .then((response) => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
+          updateComplete(response, {resolve, reject})
         })
-        clientUnavailable(err, {resolve, reject})
-      })
+        .catch(err => {
+          logger.info('[] - %s to %s ended - total time %dms', 'PUT', url, new Date() - startTime)
+          logger.error('Calling connector to update charge status threw exception -', {
+            service: 'connector',
+            method: 'PUT',
+            chargeId: chargeId,
+            url: url,
+            error: err
+          })
+          clientUnavailable(err, {resolve, reject})
+        })
     })
   }
 
@@ -63,30 +65,32 @@ module.exports = function (correlationId) {
       })
 
       const startTime = new Date()
-      baseClient.get(url, {correlationId: correlationId}, function (data, response) {
-        if (response.statusCode !== 200) {
+      baseClient.get(url, {correlationId: correlationId}, null, subSegment)
+        .then((response) => {
+          if (response.statusCode !== 200) {
+            logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
+            logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
+              service: 'connector',
+              method: 'GET',
+              chargeId: chargeId,
+              url: url,
+              status: response.statusCode
+            })
+            return reject(new Error('GET_FAILED'))
+          }
+          resolve(response.body)
+        })
+        .catch(err => {
           logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-          logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
+          logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
             service: 'connector',
             method: 'GET',
             chargeId: chargeId,
             url: url,
-            status: response.statusCode
+            error: err
           })
-          return reject(new Error('GET_FAILED'))
-        }
-        resolve(data)
-      }, subSegment).on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-        logger.error('[%s] Calling connector to get charge threw exception -', correlationId, {
-          service: 'connector',
-          method: 'GET',
-          chargeId: chargeId,
-          url: url,
-          error: err
+          clientUnavailable(err, {resolve, reject})
         })
-        clientUnavailable(err, {resolve, reject})
-      })
     })
   }
 
@@ -102,20 +106,22 @@ module.exports = function (correlationId) {
       })
 
       const startTime = new Date()
-      baseClient.post(url, {correlationId: correlationId}, function (data, response) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-        captureComplete(data, response, {resolve, reject})
-      }).on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
-        logger.error('[%s] Calling connector to do capture failed -', correlationId, {
-          service: 'connector',
-          method: 'POST',
-          chargeId: chargeId,
-          url: url,
-          error: err
+      baseClient.post(url, {correlationId: correlationId}, null, null)
+        .then((response) => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+          captureComplete(response, {resolve, reject})
         })
-        captureFail(err, {resolve, reject})
-      })
+        .catch(err => {
+          logger.info('[%s] - %s to %s ended - total time %dms', 'POST', correlationId, url, new Date() - startTime)
+          logger.error('[%s] Calling connector to do capture failed -', correlationId, {
+            service: 'connector',
+            method: 'POST',
+            chargeId: chargeId,
+            url: url,
+            error: err
+          })
+          captureFail(err, {resolve, reject})
+        })
     })
   }
 
@@ -131,23 +137,25 @@ module.exports = function (correlationId) {
       })
 
       const startTime = new Date()
-      baseClient.post(url, {correlationId: correlationId}, function (data, response) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-        cancelComplete(data, response, {resolve, reject})
-      }).on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-        logger.error('[%s] Calling connector cancel a charge threw exception -', correlationId, {
-          service: 'connector',
-          method: 'POST',
-          url: url,
-          error: err
+      baseClient.post(url, {correlationId: correlationId}, null, null)
+        .then((response) => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+          cancelComplete(response, {resolve, reject})
         })
-        cancelFail(err, {resolve, reject})
-      })
+        .catch(err => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+          logger.error('[%s] Calling connector cancel a charge threw exception -', correlationId, {
+            service: 'connector',
+            method: 'POST',
+            url: url,
+            error: err
+          })
+          cancelFail(err, {resolve, reject})
+        })
     })
   }
 
-  const cancelComplete = function (data, response, defer) {
+  const cancelComplete = function (response, defer) {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     logger.error('[%s] Calling connector cancel a charge failed -', correlationId, {
@@ -173,30 +181,32 @@ module.exports = function (correlationId) {
       const startTime = new Date()
       const findByUrl = connectorurl('findByToken', {chargeTokenId: tokenId})
 
-      baseClient.get(findByUrl, {correlationId: correlationId}, function (data, response) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
-        if (response.statusCode !== 200) {
-          logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
+      baseClient.get(findByUrl, {correlationId: correlationId}, null, null)
+        .then(response => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
+          if (response.statusCode !== 200) {
+            logger.warn('[%s] Calling connector to find a charge by token failed -', correlationId, {
+              service: 'connector',
+              method: 'GET',
+              status: response.statusCode
+            })
+            return reject(new Error('GET_FAILED'))
+          }
+          resolve(response.body)
+        })
+        .catch(err => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
+          logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
             service: 'connector',
             method: 'GET',
-            status: response.statusCode
+            error: err
           })
-          return reject(new Error('GET_FAILED'))
-        }
-        resolve(data)
-      }).on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', findByUrl, new Date() - startTime)
-        logger.error('[%s] Calling connector to find a charge by token threw exception -', correlationId, {
-          service: 'connector',
-          method: 'GET',
-          error: err
+          clientUnavailable(err, {resolve, reject})
         })
-        clientUnavailable(err, {resolve, reject})
-      })
     })
   }
 
-  const captureComplete = function (data, response, defer) {
+  const captureComplete = function (response, defer) {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'))
@@ -207,10 +217,10 @@ module.exports = function (correlationId) {
     clientUnavailable(err, defer)
   }
 
-  const updateComplete = function (chargeId, data, response, defer) {
+  const updateComplete = function (response, defer) {
     if (response.statusCode !== 204) {
       logger.error('[%s] Calling connector to update charge status failed -', correlationId, {
-        chargeId: chargeId,
+        chargeId: response.body,
         status: response.statusCode
       })
       defer.reject(new Error('UPDATE_FAILED'))
@@ -231,7 +241,7 @@ module.exports = function (correlationId) {
       })
 
       const params = {
-        data: {
+        payload: {
           op: op,
           path: path,
           value: value
@@ -239,23 +249,25 @@ module.exports = function (correlationId) {
         correlationId: correlationId
       }
 
-      baseClient.patch(chargesUrl + chargeId, params, function (data, response) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-        const code = response.statusCode
-        if (code === 200) {
-          resolve('Charge patch was a success')
-        } else {
-          reject(new Error('Calling connector to patch a charge returned an unexpected status code'))
-        }
-      }, subSegment).on('error', function (err) {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
-        logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
-          service: 'connector',
-          method: 'PATCH',
-          error: err
+      baseClient.patch(chargesUrl + chargeId, params, null, null)
+        .then((response) => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
+          const code = response.statusCode
+          if (code === 200) {
+            resolve()
+          } else {
+            reject(new Error('Calling connector to patch a charge returned an unexpected status code'))
+          }
+        }, subSegment)
+        .catch(err => {
+          logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
+          logger.error('[%s] Calling connector to patch a charge threw exception -', correlationId, {
+            service: 'connector',
+            method: 'PATCH',
+            error: err
+          })
+          reject(err)
         })
-        reject(err)
-      })
     })
   }
 

@@ -24,5 +24,7 @@ exports.new = (req, res) => {
       setSessionVariable(req, createChargeIdSessionKey(chargeId), {csrfSecret: csrf().secretSync()})
       res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), {chargeId}))
     })
-    .catch(() => views.display(res, 'SYSTEM_ERROR', withAnalyticsError()))
+    .catch(() => {
+      views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
+    })
 }
