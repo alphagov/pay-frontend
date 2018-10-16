@@ -19,7 +19,8 @@ var formValidation = function () {
   var chargeValidations = module.chargeValidation(
     i18n.fieldErrors,
     logger,
-    window.Card
+    window.Card,
+    window.Charge
   )
   var required = chargeValidations.required
 
@@ -244,7 +245,10 @@ var formValidation = function () {
   var allFields = function () {
     var fields = {}
     required.forEach(function (requiredField) {
-      fields[requiredField] = findInputByKey(requiredField)
+        var getField = findInputByKey(requiredField)
+        if (getField) {
+            fields[requiredField] = getField
+        }
     })
     return fields
   }
@@ -252,7 +256,10 @@ var formValidation = function () {
   var allFieldValues = function () {
     var values = {}
     required.forEach(function (requiredField) {
-      values[requiredField] = findInputByKey(requiredField).value.trim()
+      var getField = findInputByKey(requiredField)
+        if (getField) {
+            values[requiredField] = getField.value.trim()
+        }
     })
     return values
   }
@@ -270,7 +277,9 @@ var formValidation = function () {
   }
 
   var findInputByKey = function (key) {
-    return document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')[0]
+      var foundInput = document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')
+      // Only return inputs that exist on the form
+    return foundInput ? foundInput[0] : null
   }
 
   var getClosest = function (elem, selector) {

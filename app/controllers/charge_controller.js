@@ -103,7 +103,8 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     const authUrl = normalise.authUrl(charge)
-    const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel)
+    const chargeOptions = {email_collection_mode: charge.gatewayAccount.emailCollectionMode}
+    const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
     let card
 
     normalise.addressLines(req.body)
@@ -120,16 +121,30 @@ module.exports = {
         .then(data => {
           subSegment.close()
           card = data.card
-          let emailChanged = false
-          let userEmail = req.body.email
-          if (req.body.originalemail) {
-            emailChanged = req.body.originalemail !== userEmail
+
+          let emailTypos = false
+          let emailPatch
+          let userEmail
+
+          if (
+            charge.gatewayAccount.emailCollectionMode === 'OFF' ||
+              (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
+          ) {
+            emailPatch = Promise.resolve('Charge patch skipped as email collection mode was toggled off, or optional and not supplied')
+          } else {
+            userEmail = req.body.email
+            emailPatch = Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
+            let emailChanged = false
+            if (req.body.originalemail) {
+              emailChanged = req.body.originalemail !== userEmail
+            }
+            emailTypos = commonTypos(userEmail)
+            if (req.body['email-typo-sugestion']) {
+              userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
+              emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
+            }
           }
-          let emailTypos = commonTypos(userEmail)
-          if (req.body['email-typo-sugestion']) {
-            userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
-            emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
-          }
+
           if (data.validation.hasError || emailTypos) {
             if (emailTypos) {
               data.validation.hasError = true
@@ -146,8 +161,9 @@ module.exports = {
             return views.display(res, CHARGE_VIEW, data.validation)
           }
           logging.authChargePost(authUrl)
-          AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
-            Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
+
+          AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
+            emailPatch
               .then(() => {
                 subSegment.close()
                 const startTime = new Date()

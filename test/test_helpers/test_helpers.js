@@ -107,7 +107,7 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings) {
   const charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -170,7 +170,20 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, 
           'label': 'discover',
           'id': 'id-0'
         }
-      ]
+      ],
+      'email_collection_mode': 'MANDATORY',
+      'email_notifications': {
+        'PAYMENT_CONFIRMED': {
+          'version': 1,
+          'enabled': true,
+          'template_body': null
+        },
+        'REFUND_ISSUED': {
+          'version': 1,
+          'enabled': true,
+          'template_body': null
+        }
+      }
     }
   }
   if (status === 'AUTHORISATION SUCCESS') {
@@ -196,6 +209,10 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, 
       'htmlOut': auth3dsData.htmlOut,
       'md': auth3dsData.md
     }
+  }
+  if (emailSettings) {
+    charge.gateway_account.email_collection_mode = emailSettings.email_collection_mode
+    charge.gateway_account.email_notifications = emailSettings.email_notifications
   }
   return charge
 }
@@ -258,7 +275,7 @@ module.exports = {
     adminusersRespondsWith(gatewayAccountId, service)
   },
 
-  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId) {
+  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId, emailSettings) {
     initConnectorUrl()
     const returnUrl = 'http://www.example.com/service'
     const rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)

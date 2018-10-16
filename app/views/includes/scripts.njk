@@ -15,6 +15,9 @@
           debit: 0
         }
       };
+      window.Charge = {
+        email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}'
+      }
       {% if cardsAsStrings %}
       window.Card.allowed = {{ cardsAsStrings | safe }};
       {% endif %}

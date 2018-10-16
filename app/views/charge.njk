@@ -287,6 +287,7 @@
                 value="{{ addressPostcode }}"
                 autocomplete="billing postal-code"/>
       </div>
+      {% if (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
       <div class="govuk-form-group{% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
         <label id="email-lbl" for="email" class="govuk-label govuk-label--s">
               <span
@@ -313,6 +314,7 @@
                 data-confirmation="true"
                 data-confirmation-label="{{ __("cardDetails.emailConfirmation") }} "/>
       </div>
+        {% endif %}
       {% if typos %}
         <div class="govuk-form-group form-group-email-typo govuk-form-group--error">
           <legend for="email-typo" id="email-typo-lbl" class="govuk-label govuk-label--s error-label">
