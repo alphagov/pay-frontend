@@ -2,7 +2,7 @@
 
 var formValidation = function () {
   var form = document.getElementById('card-details')
-  var formInputs = form.querySelectorAll('input')
+  var formInputs = Array.prototype.slice.call(form.querySelectorAll('input'))
   var countryAutocomplete = document.getElementsByClassName('autocomplete__input')[0]
   var countrySelect = document.getElementById('address-country')
   var postcodeInput = document.getElementById('address-postcode')
