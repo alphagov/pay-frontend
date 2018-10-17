@@ -2,8 +2,6 @@
 <script type="text/javascript">
   var i18n = {{ translationStrings | safe }};
 </script>
-{# Promise polyfill for IE - https://github.com/taylorhakes/promise-polyfill#cdn-polyfill-use #}
-<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
 <script src="{{ js_path }}"></script>
 <script id="govuk-script-analytics" type="text/javascript">
   document.addEventListener('DOMContentLoaded', function() {
