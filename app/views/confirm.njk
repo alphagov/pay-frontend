@@ -76,10 +76,10 @@
       <p id="payment-description" class="govuk-body govuk-!-font-weight-bold">
         {{ charge.description }}
       </p>
-      {% if charge.corporateSurcharge %}
+      {% if charge.corporateCardSurcharge %}
       <p class="govuk-body" id="payment-summary-breakdown">
         {{ __("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
-        {{ __("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateSurcharge }}</span>
+        {{ __("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
       </p>
       {% endif %}
       <p class="govuk-body govuk-!-margin-bottom-0">

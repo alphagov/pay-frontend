@@ -165,7 +165,7 @@ var formValidation = function () {
     clearCorporateCardSurchargeInformation()
     showCardType().checkCardtypeIsAllowed().then(
       function (result) {
-        updateCorporateSurchargeInformation(result)
+        updateCorporateCardSurchargeInformation(result)
         if (result.accepted === false) {
           addCardError(result)
         }
@@ -173,12 +173,12 @@ var formValidation = function () {
     replaceOnError(validation, formGroup)
   }
 
-  var updateCorporateSurchargeInformation = function (card) {
-    if (window.Card && window.Card.corporate_surcharge_amounts && card.corporate) {
-      if (card.type === 'CREDIT' && window.Card.corporate_surcharge_amounts.credit > 0) {
-        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_surcharge_amounts.credit)
-      } else if (card.type === 'DEBIT' && window.Card.corporate_surcharge_amounts.debit > 0) {
-        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_surcharge_amounts.debit)
+  var updateCorporateCardSurchargeInformation = function (card) {
+    if (window.Card && window.Card.corporate_card_surcharge_amounts && card.corporate) {
+      if (card.type === 'CREDIT' && window.Card.corporate_card_surcharge_amounts.credit > 0) {
+        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.credit)
+      } else if (card.type === 'DEBIT' && window.Card.corporate_card_surcharge_amounts.debit > 0) {
+        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.debit)
       }
     }
   }
