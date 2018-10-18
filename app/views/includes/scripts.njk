@@ -10,7 +10,7 @@
     if (mainWrap.classList.contains('charge-new')) {
       window.Card = {
         allowed: {},
-        corporate_surcharge_amounts: {
+        corporate_card_surcharge_amounts: {
           credit: 0,
           debit: 0
         }
@@ -21,8 +21,8 @@
       {% if cardsAsStrings %}
       window.Card.allowed = {{ cardsAsStrings | safe }};
       {% endif %}
-      {% if corporateSurchargeAmountsAsStrings %}
-      window.Card.corporate_surcharge_amounts = {{ corporateSurchargeAmountsAsStrings | safe }};
+      {% if corporateCardSurchargeAmountsAsStrings %}
+      window.Card.corporate_card_surcharge_amounts = {{ corporateCardSurchargeAmountsAsStrings | safe }};
       {% endif %}
       formValidation();
       showCardType().init();

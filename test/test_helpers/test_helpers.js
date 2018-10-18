@@ -90,7 +90,7 @@ function cardTypes () {
 function rawSuccessfulGetChargeCorporateCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
   const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.amount = 2345
-  charge.corporate_surcharge = 250
+  charge.corporate_card_surcharge = 250
   charge.total_amount = 2595
   return charge
 }

@@ -45,7 +45,7 @@ function appendChargeForNewView (charge, req, chargeId) {
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
-  charge.corporateSurchargeAmountsAsStrings = JSON.stringify({
+  charge.corporateCardSurchargeAmountsAsStrings = JSON.stringify({
     credit: charge.gatewayAccount.corporateCreditCardSurchargeAmount,
     debit: charge.gatewayAccount.corporateDebitCardSurchargeAmount
   })

@@ -26,8 +26,8 @@ module.exports = (function () {
     if (charge.card_details) {
       chargeObj.cardDetails = _normaliseConfirmationDetails(charge.card_details)
     }
-    if (charge.corporate_surcharge) {
-      chargeObj.corporateSurcharge = penceToPounds(charge.corporate_surcharge)
+    if (charge.corporate_card_surcharge) {
+      chargeObj.corporateCardSurcharge = penceToPounds(charge.corporate_card_surcharge)
     }
     if (charge.total_amount) {
       chargeObj.totalAmount = penceToPounds(charge.total_amount)
