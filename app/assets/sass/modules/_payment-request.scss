@@ -1,0 +1,11 @@
+.govuk-radios__item:not(:last-child) {
+  display: none;
+}
+
+.payment-request-logo {
+  float: left;
+  margin-top: -.25rem;
+  margin-right: govuk-spacing(3);
+  max-height: 2rem;
+  width: auto;
+}

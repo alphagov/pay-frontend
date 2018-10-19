@@ -52,6 +52,7 @@ function appendChargeForNewView (charge, req, chargeId) {
   charge.post_card_action = routeFor('create', chargeId)
   charge.id = chargeId
   charge.post_cancel_action = routeFor('cancel', chargeId)
+  charge.allowWebPayments = charge.gatewayAccount.allowWebPayments
 }
 
 function routeFor (resource, chargeId) {
@@ -212,6 +213,87 @@ module.exports = {
               })
           }, clsSegment)
         })
+    }, clsSegment)
+  },
+  createPaymentRequest: (req, res) => {
+    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
+    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    const authUrl = normalise.authUrl(charge)
+
+    const convertedPayload = {
+      body: {
+        cardNo: req.body.details.cardNumber,
+        cvc: req.body.details.cardSecurityCode,
+        expiryMonth: req.body.details.expiryMonth,
+        expiryYear: req.body.details.expiryYear,
+        cardholderName: req.body.details.cardholderName,
+        addressLine1: req.body.details.billingAddress.addressLine[0],
+        addressLine2: req.body.details.billingAddress.addressLine[1] || '',
+        addressCity: req.body.details.billingAddress.city,
+        addressPostcode: req.body.details.billingAddress.postalCode,
+        addressCountry: req.body.details.billingAddress.country
+      }
+    }
+
+    if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
+
+    AWSXRay.captureAsyncFunc('chargeValidator_verify', function (subSegment) {
+      logging.authChargePost(authUrl)
+      AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
+        Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.payerEmail, subSegment)
+          .then(() => {
+            subSegment.close()
+            const startTime = new Date()
+            const correlationId = req.headers[CORRELATION_HEADER] || ''
+            baseClient.post(authUrl, {
+              data: normalise.apiPayload(_.merge(req, convertedPayload), 'visa'),
+              correlationId: correlationId
+            }, (data, json) => {
+              logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
+              switch (json.statusCode) {
+                case 202:
+                case 409:
+                  logging.failedChargePost(409, authUrl)
+                  redirect(res).toAuthWaiting(req.chargeId)
+                  break
+                case 200:
+                  if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
+                    redirect(res).toAuth3dsRequired(req.chargeId)
+                  } else {
+                    Charge(req.headers[CORRELATION_HEADER])
+                      .capture(req.chargeId)
+                      .then(
+                        () => redirect(res).toReturn(req.chargeId),
+                        err => {
+                          if (err.message === 'CAPTURE_FAILED') return views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
+                          views.display(res, 'SYSTEM_ERROR', withAnalytics(
+                            charge,
+                            { returnUrl: routeFor('return', charge.id) }
+                          ))
+                        }
+                      )
+                  }
+                  break
+                case 500:
+                  logging.failedChargePost(409, authUrl)
+                  views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+                  break
+                default:
+                  redirect(res).toNew(req.chargeId)
+              }
+            }).on('error', err => {
+              subSegment.close(err)
+              logging.failedChargePostException(err)
+              views.display(res, 'ERROR', withAnalytics(charge))
+            })
+          })
+          .catch(err => {
+            subSegment.close(err)
+            logging.failedChargePatch(err)
+            views.display(res, 'ERROR', withAnalyticsError())
+          })
+      }, clsSegment)
     }, clsSegment)
   },
   checkCard: (req, res) => {

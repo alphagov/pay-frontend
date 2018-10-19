@@ -21,6 +21,10 @@ const paths = {
       path: '/card_details/:chargeId',
       action: 'post'
     },
+    createPaymentRequest: {
+      path: '/payment-request/:chargeId',
+      action: 'post'
+    },
     authWaiting: {
       path: '/card_details/:chargeId/auth_waiting',
       action: 'get'
@@ -68,6 +72,12 @@ const paths = {
     return: {
       path: '/return/:chargeId',
       action: 'get'
+    }
+  },
+  applePay: {
+    session: {
+      path: '/apple-pay-merchant-validation',
+      action: 'post'
     }
   },
   secure: {
