@@ -28,6 +28,10 @@ $logo-image-height: 3em;
     }
   }
 
+  .govuk-header__link--service-name {
+    color: $custom-text-colour;
+  }
+
   .govuk-header__container {
     border-bottom-color: $custom-banner-border-colour;
   }
