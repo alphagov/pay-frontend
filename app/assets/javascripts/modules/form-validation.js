@@ -134,7 +134,7 @@ var formValidation = function () {
     // validation happens on blur, check which input the user is on now
     var focusedGroup = getFormGroup(document.activeElement)
     var inGroup = focusedGroup === group
-    var groupHasError = getFormGroup(input).classList.contains('govuk-form-group--error')
+    var groupHasError = group ? group.classList.contains('govuk-form-group--error') : false
     var lastOfgroup = input.hasAttribute('data-last-of-form-group')
     var required = input.hasAttribute('data-required')
     if ((lastOfgroup && required) || groupHasError) { return checkValidation(input) }
