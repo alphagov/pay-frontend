@@ -138,16 +138,6 @@ module.exports = (function () {
     }
   }
 
-  const authUrl = function (charge) {
-    const authLink = charge.links.find((link) => { return link.rel === 'cardAuth' })
-    return authLink.href
-  }
-
-  const chargeUrl = function (charge) {
-    const selfLink = charge.links.find((link) => { return link.rel === 'self' })
-    return selfLink.href
-  }
-
   return {
     charge: _charge,
     addressForApi: addressForApi,
@@ -156,8 +146,6 @@ module.exports = (function () {
     addressForView: addressForView,
     creditCard: creditCard,
     expiryDate: expiryDate,
-    apiPayload: apiPayload,
-    authUrl: authUrl,
-    chargeUrl: chargeUrl
+    apiPayload: apiPayload
   }
 }())
