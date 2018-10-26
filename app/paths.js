@@ -134,6 +134,10 @@ const paths = {
     threeDs: {
       path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/3ds',
       action: 'post'
+    },
+    cardAuth: {
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/cards',
+      action: 'post'
     }
   }
 }

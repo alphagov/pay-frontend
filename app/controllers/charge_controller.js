@@ -104,7 +104,7 @@ module.exports = {
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-    const authUrl = normalise.authUrl(charge)
+    const authUrl = paths.generateRoute('connectorCharge.cardAuth', {chargeId: charge.id})
     const chargeOptions = {email_collection_mode: charge.gatewayAccount.emailCollectionMode}
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
     let card
@@ -219,7 +219,7 @@ module.exports = {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    const authUrl = normalise.authUrl(charge)
+    const authUrl = paths.generateRoute('connectorCharge.cardAuth', {chargeId: charge.id})
 
     const convertedPayload = {
       body: {
