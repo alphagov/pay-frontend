@@ -54,6 +54,7 @@ describe('resolve service middleware', function () {
     let nextSpy = sinon.spy()
 
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
+      expect(res.locals.service).to.not.be.undefined // eslint-disable-line
       expect(nextSpy.called).to.be.equal(true)
     }).should.notify(done)
   })
@@ -97,6 +98,8 @@ describe('resolve service middleware', function () {
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
       expect(errorLogger.called).to.equal(true)
       expect(errorLogger.lastCall.args[0]).to.equal(`Failed to retrieve service information for service: ${chargeData.gateway_account.serviceName}`)
+      expect(res.locals.service).to.be.undefined // eslint-disable-line
+      expect(nextSpy.called).to.be.equal(true)
     }).should.notify(done)
   })
 })
