@@ -1,14 +1,16 @@
+'use strict'
+
+// NPM dependencies
 const path = require('path')
 const expect = require('chai').expect
+
+// Local dependencies
 const Service = require(path.join(__dirname, '/../../app/models/Service.class'))
+const serviceFixtures = require('../fixtures/service_fixtures')
 
 describe('Service model from service raw data', function () {
   it('should contain expected merchant details country name', function () {
-    let data = {
-      external_id: '1234',
-      name: 'service name',
-      gateway_account_ids: [1],
-      custom_branding: {css_url: 'css url', image_url: 'image url'},
+    let serviceModel = new Service(serviceFixtures.validServiceResponse({
       merchant_details: {
         name: 'Give Me Your Money',
         address_line1: 'Clive House',
@@ -17,9 +19,7 @@ describe('Service model from service raw data', function () {
         address_postcode: 'AW1H 9UX',
         address_country: 'GB'
       }
-    }
-
-    let serviceModel = new Service(data)
+    }).getPlain())
 
     expect(serviceModel.merchantDetails.countryName).to.equal('United Kingdom')
   })

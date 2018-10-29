@@ -30,7 +30,8 @@ class Service {
       addressLine2: serviceData.merchant_details.address_line2,
       city: serviceData.merchant_details.address_city,
       postcode: serviceData.merchant_details.address_postcode,
-      countryName: countries.translateCountryISOtoName(serviceData.merchant_details.address_country)
+      countryName: countries.translateCountryISOtoName(serviceData.merchant_details.address_country),
+      redirectToServiceImmediatelyOnTerminalState: serviceData.redirect_to_service_immediately_on_terminal_state
     } : undefined
   }
 
