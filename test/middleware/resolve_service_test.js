@@ -44,33 +44,34 @@ describe('resolve service middleware', function () {
     const gatewayAccountId = '1'
     const service = new Service(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
     const resolveService = resolveServiceMiddleware(Promise.resolve(service))
-    let chargeData = {}
-    let req = {
+    const chargeData = {}
+    const req = {
       headers: [],
       chargeId: '111',
       chargeData: _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
     }
-    let res = {locals: {}}
-    let nextSpy = sinon.spy()
+    const res = {locals: {}}
+    const nextSpy = sinon.spy()
 
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
+      expect(res.locals.service).to.not.be.undefined // eslint-disable-line
       expect(nextSpy.called).to.be.equal(true)
     }).should.notify(done)
   })
 
   it('should display UNAUTHORISED if charge id is missing', function () {
     const resolveService = resolveServiceMiddleware()
-    let expectedRenderData = {'analytics': analyticsDataForErrors, 'viewName': 'UNAUTHORISED'}
-    let req = {
+    const expectedRenderData = {'analytics': analyticsDataForErrors, 'viewName': 'UNAUTHORISED'}
+    const req = {
       headers: []
     }
-    let res = {
+    const res = {
       status: sinon.spy(),
       render: sinon.spy(),
       locals: {}
     }
 
-    let nextSpy = sinon.spy()
+    const nextSpy = sinon.spy()
     resolveService(req, res, nextSpy)
     expect(res.status.calledWith(403)).to.be.equal(true)
     expect(res.render.calledWith('errors/incorrect_state/session_expired', expectedRenderData)).to.be.equal(true) // eslint-disable-line
@@ -79,24 +80,26 @@ describe('resolve service middleware', function () {
   it('should log an error if it fails to retrieving service data', function (done) {
     const gatewayAccountId = Math.random()
     const resolveService = resolveServiceMiddleware(Promise.reject(new Error('err')))
-    let chargeData = {}
+    const chargeData = {}
     _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
     _.set(chargeData, 'gateway_account.serviceName', 'Example Service Name')
-    let req = {
+    const req = {
       headers: [],
       chargeId: '111',
       chargeData: chargeData
     }
-    let res = {
+    const res = {
       status: sinon.spy(),
       render: sinon.spy(),
       locals: {}
     }
 
-    let nextSpy = sinon.spy()
+    const nextSpy = sinon.spy()
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
       expect(errorLogger.called).to.equal(true)
       expect(errorLogger.lastCall.args[0]).to.equal(`Failed to retrieve service information for service: ${chargeData.gateway_account.serviceName}`)
+      expect(res.locals.service).to.be.undefined // eslint-disable-line
+      expect(nextSpy.called).to.be.equal(true)
     }).should.notify(done)
   })
 })
