@@ -25,6 +25,6 @@ exports.new = (req, res) => {
       res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), {chargeId}))
     })
     .catch(() => {
-      views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
+      views.display(req, res, 'SYSTEM_ERROR', withAnalyticsError())
     })
 }

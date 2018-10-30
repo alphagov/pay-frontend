@@ -19,10 +19,10 @@ exports.csrfCheck = (req, res, next) => {
   chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
   if (!chargeSession.csrfSecret) {
-    views.display(res, 'UNAUTHORISED')
+    views.display(req, res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined')
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    views.display(res, 'SYSTEM_ERROR')
+    views.display(req, res, 'SYSTEM_ERROR')
     logger.error('CSRF is invalid')
   } else {
     chargeSession.csrfTokens.push(csrfToken)

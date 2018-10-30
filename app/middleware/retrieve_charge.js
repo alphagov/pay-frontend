@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
   if (!chargeId) {
-    views.display(res, 'UNAUTHORISED', withAnalyticsError())
+    views.display(req, res, 'UNAUTHORISED', withAnalyticsError())
   } else {
     req.chargeId = chargeId
     AWSXRay.captureAsyncFunc('Charge_find', function (subsegment) {
@@ -31,7 +31,7 @@ module.exports = (req, res, next) => {
         })
         .catch(() => {
           subsegment.close('error')
-          views.display(res, 'SYSTEM_ERROR', withAnalyticsError())
+          views.display(req, res, 'SYSTEM_ERROR', withAnalyticsError())
         })
     }, clsSegment)
   }

@@ -38,7 +38,8 @@ const ANALYTICS_ERROR = {
 describe('retrieve param test', function () {
   const response = {
     status: function () {},
-    render: function () {}
+    render: function () {},
+    locals: {}
   }
   let status
   let render

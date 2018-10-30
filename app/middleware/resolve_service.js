@@ -17,7 +17,7 @@ const serviceCache = new Cache()
 
 module.exports = (req, res, next) => {
   const gatewayAccountId = lodash.get(req, 'chargeData.gateway_account.gateway_account_id')
-  if (!req.chargeId && !req.chargeData) return views.display(res, 'UNAUTHORISED', withAnalyticsError())
+  if (!req.chargeId && !req.chargeData) return views.display(req, res, 'UNAUTHORISED', withAnalyticsError())
   const cachedService = serviceCache.get(gatewayAccountId)
   if (cachedService) {
     res.locals.service = cachedService

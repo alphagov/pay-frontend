@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
   const currentState = req.chargeData.status
   if (!correctStates.includes(currentState)) {
     const stateName = currentState.toUpperCase().replace(/\s/g, '_')
-    views.display(res, stateName, {
+    views.display(req, res, stateName, {
       chargeId: req.chargeId,
       returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
       analytics: getGoogleAnalytics(req)
