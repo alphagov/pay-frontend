@@ -1,5 +1,9 @@
 'use strict'
+
+// NPM dependencies
 const _ = require('lodash')
+
+// Local dependencies
 const countries = require('../services/countries')
 
 /**

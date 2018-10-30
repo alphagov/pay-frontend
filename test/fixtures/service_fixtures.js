@@ -1,17 +1,16 @@
 'use strict'
 
-// Custom dependencies
+// Local dependencies
 const pactBase = require('./pact_base')
+const random = require('../../app/utils/random')
 
 // Global setup
 const pactServices = pactBase({array: ['service_ids']})
 
-let random = require('../../app/utils/random')
-
 module.exports = {
   validServiceResponse: (serviceData = {}) => {
-    let defaultCustomBranding = {css_url: 'css url', image_url: 'image url'}
-    let defaultMerchantDetails = {
+    const defaultCustomBranding = {css_url: 'css url', image_url: 'image url'}
+    const defaultMerchantDetails = {
       name: 'Give Me Your Money',
       address_line1: 'Clive House',
       address_line2: '10 Downing Street',
@@ -19,7 +18,7 @@ module.exports = {
       address_postcode: 'AW1H 9UX',
       address_country: 'GB'
     }
-    let data = {
+    const data = {
       external_id: serviceData.external_id || random.randomUuid(),
       name: serviceData.name || 'service name',
       gateway_account_ids: serviceData.gateway_account_ids || [random.randomInt()],

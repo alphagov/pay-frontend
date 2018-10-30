@@ -10,7 +10,7 @@ const serviceFixtures = require('../fixtures/service_fixtures')
 
 describe('Service model from service raw data', function () {
   it('should contain expected merchant details country name', function () {
-    let serviceModel = new Service(serviceFixtures.validServiceResponse({
+    const serviceModel = new Service(serviceFixtures.validServiceResponse({
       merchant_details: {
         name: 'Give Me Your Money',
         address_line1: 'Clive House',
@@ -25,14 +25,14 @@ describe('Service model from service raw data', function () {
   })
 
   it('should return merchant details as undefined when not in raw data', function () {
-    let data = {
+    const data = {
       external_id: '1234',
       name: 'service name',
       gateway_account_ids: [1],
       custom_branding: {css_url: 'css url', image_url: 'image url'}
     }
 
-    let serviceModel = new Service(data)
+    const serviceModel = new Service(data)
 
     expect(serviceModel.merchantDetails).to.equal(undefined)
   })
