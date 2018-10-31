@@ -7,6 +7,18 @@ const logger = require('winston')
 const baseClient = require('../utils/base_client')
 const paths = require('../paths.js')
 const State = require('./state.js')
+const StateModel = require('../models/state.js')
+
+// constants
+const CANCELABLE_STATES = [
+  StateModel.CREATED,
+  StateModel.ENTERING_CARD_DETAILS,
+  StateModel.AUTH_SUCCESS,
+  StateModel.AUTH_READY,
+  StateModel.CAPTURE_READY,
+  StateModel.AUTH_3DS_REQUIRED,
+  StateModel.AUTH_3DS_READY
+]
 
 module.exports = function (correlationId) {
   correlationId = correlationId || ''
@@ -271,6 +283,10 @@ module.exports = function (correlationId) {
     })
   }
 
+  const isCancellableCharge = function (chargeStatus) {
+    return CANCELABLE_STATES.includes(chargeStatus)
+  }
+
   const clientUnavailable = function (error, defer) {
     defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
@@ -282,6 +298,7 @@ module.exports = function (correlationId) {
     capture: capture,
     findByToken: findByToken,
     cancel: cancel,
-    patch: patch
+    patch: patch,
+    isCancellableCharge: isCancellableCharge
   }
 }
