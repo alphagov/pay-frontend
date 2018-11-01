@@ -109,7 +109,7 @@
     "node-sass": "4.9.x",
     "nyc": "11.7.x",
     "pact": "4.3.2",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.1.52/pay-product-page-2.1.52.tgz",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.1.53/pay-product-page-2.1.53.tgz",
     "proxyquire": "~2.0.1",
     "sass-lint": "^1.12.1",
     "sinon": "5.0.x",
