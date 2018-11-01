@@ -16,7 +16,9 @@
       "after",
       "afterEach",
       "it",
-      "expect"
+      "expect",
+      "cy",
+      "Cypress"
     ],
     "ignore": [
       "app/assets/**/*.js"
@@ -30,8 +32,13 @@
     "lint": "standard",
     "watch-live-reload": "./node_modules/.bin/grunt watch",
     "test": "DISABLE_APPMETRICS=true nyc node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
+    "pact-stub": "docker run -t -p 8000:8000 -v \"$(pwd)/pacts/:/app/pacts\" pactfoundation/pact-stub-server:v0.0.10 -p 8000 -d pacts",
+    "cypress:server": "DISABLE_APPMETRICS=true node --inspect -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
+    "cypress:test": "cypress run",
+    "cypress:test-headed": "cypress open",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "publish-pacts": "./bin/publish-pacts.js"
   },
   "dependencies": {
     "accessible-autocomplete": "^1.6.1",
@@ -71,13 +78,15 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.56",
     "@babel/preset-env": "^7.0.0-beta.56",
-    "@pact-foundation/pact-node": "6.16.0",
+    "@pact-foundation/pact-node": "6.16.4",
     "browserify": "16.2.x",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.2",
     "chokidar-cli": "latest",
+    "cypress": "^3.1.0",
+    "dotenv": "^5.0.1",
     "envfile": "^2.3.0",
     "eslint": "^4.19.1",
     "govuk-country-and-territory-autocomplete": "^0.4.0",
