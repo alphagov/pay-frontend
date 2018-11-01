@@ -1,15 +1,15 @@
 'use strict'
 
-// NPM dependencies
+// npm dependencies
 const AWSXRay = require('aws-xray-sdk')
 const {getNamespace} = require('continuation-local-storage')
 
 // local dependencies
-const views = require('../utils/views.js')
-const Charge = require('../models/charge.js')
-const chargeParam = require('../services/charge_param_retriever.js')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const views = require('../utils/views')
+const Charge = require('../models/charge')
+const chargeParam = require('../services/charge_param_retriever')
+const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 // constants
 const clsXrayConfig = require('../../config/xray-cls')
@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
     views.display(req, res, 'UNAUTHORISED', withAnalyticsError())
   } else {
     req.chargeId = chargeId
-    AWSXRay.captureAsyncFunc('Charge_find', function (subsegment) {
+    AWSXRay.captureAsyncFunc('Charge_find', (subsegment) => {
       Charge(req.headers[CORRELATION_HEADER]).find(chargeId)
         .then(data => {
           subsegment.close()

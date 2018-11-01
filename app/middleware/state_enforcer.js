@@ -4,10 +4,10 @@
 const lodash = require('lodash')
 
 // local dependencies
-const views = require('../utils/views.js')
-const stateService = require('../services/state_service.js')
-const paths = require('../paths.js')
-const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const views = require('../utils/views')
+const stateService = require('../services/state_service')
+const paths = require('../paths')
+const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 module.exports = (req, res, next) => {
   const correctStates = stateService.resolveStates(req.actionName)

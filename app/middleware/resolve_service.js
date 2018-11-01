@@ -6,9 +6,9 @@ const {Cache} = require('memory-cache')
 const lodash = require('lodash')
 
 // local dependencies
-const views = require('../utils/views.js')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const views = require('../utils/views')
+const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 
 // constants

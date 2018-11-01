@@ -1,10 +1,14 @@
 'use strict'
 
+// npm dependencies
 const csrf = require('csrf')
-const session = require('../utils/session.js')
-const views = require('../utils/views.js')
-const chargeParam = require('../services/charge_param_retriever.js')
 const logger = require('winston')
+
+// local dependencies
+const session = require('../utils/session')
+const views = require('../utils/views')
+const chargeParam = require('../services/charge_param_retriever')
+
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
   const chargeSession = session.retrieve(req, chargeId)

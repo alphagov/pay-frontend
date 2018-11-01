@@ -1,18 +1,18 @@
 'use strict'
 
-// NPM dependencies
+// npm dependencies
 const csrf = require('csrf')
 
 // local dependencies
-const {generateRoute} = require('../paths.js')
-const Token = require('../models/token.js')
-const Charge = require('../models/charge.js')
-const views = require('../utils/views.js')
-const {createChargeIdSessionKey} = require('../utils/session.js')
+const {generateRoute} = require('../paths')
+const Token = require('../models/token')
+const Charge = require('../models/charge')
+const views = require('../utils/views')
+const {createChargeIdSessionKey} = require('../utils/session')
 const {setSessionVariable} = require('../utils/cookies')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
-const {resolveActionName} = require('../services/state_service.js')
+const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics').withAnalyticsError
+const {resolveActionName} = require('../services/state_service')
 
 exports.new = (req, res) => {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId

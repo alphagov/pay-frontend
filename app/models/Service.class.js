@@ -1,9 +1,9 @@
 'use strict'
 
-// NPM dependencies
-const _ = require('lodash')
+// npm dependencies
+const lodash = require('lodash')
 
-// Local dependencies
+// local dependencies
 const countries = require('../services/countries')
 
 /**
@@ -46,7 +46,7 @@ class Service {
    * @returns {boolean} if the service got a non-GOV.UK branding
    */
   hasCustomBranding () {
-    return !_.isEmpty(this.customBranding)
+    return !lodash.isEmpty(this.customBranding)
   }
 
   /**
@@ -59,7 +59,7 @@ class Service {
    * @returns {boolean} if the service got merchant details specified
    */
   hasMerchantDetails () {
-    return !_.isEmpty(this.merchantDetails)
+    return !lodash.isEmpty(this.merchantDetails)
   }
 }
 

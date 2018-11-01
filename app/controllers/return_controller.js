@@ -4,10 +4,10 @@
 const logger = require('winston')
 
 // local dependencies
-const Charge = require('../models/charge.js')
-const views = require('../utils/views.js')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const Charge = require('../models/charge')
+const views = require('../utils/views')
+const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 exports.return = (req, res) => {
   const correlationId = req.headers[CORRELATION_HEADER] || ''

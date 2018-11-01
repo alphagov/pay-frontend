@@ -8,7 +8,7 @@ const lodash = require('lodash')
 // local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
 const Service = require('../../app/models/Service.class')
-const views = require('../../app/utils/views.js')
+const views = require('../../app/utils/views')
 const testHelpers = require('../test_helpers/test_helpers')
 
 // constants
@@ -64,8 +64,8 @@ describe('views helper with default behaviour of the views', () => {
   const request = {}
 
   const response = {
-    status: function () {},
-    render: function () {},
+    status: () => {},
+    render: () => {},
     locals: {
       service: new Service(service)
     }
@@ -74,12 +74,12 @@ describe('views helper with default behaviour of the views', () => {
   let status
   let render
 
-  beforeEach(function () {
+  beforeEach(() => {
     status = sinon.stub(response, 'status')
     render = sinon.stub(response, 'render')
   })
 
-  afterEach(function () {
+  afterEach(() => {
     status.restore()
     render.restore()
   })
@@ -101,7 +101,7 @@ describe('views helper with default behaviour of the views', () => {
     expect(render.lastCall.args[1]).to.have.property('custom').to.equal('local')
   })
 
-  it('should render error view when view not found', function () {
+  it('should render error view when view not found', () => {
     views.display(request, response, 'AINT_NO_VIEW_HERE')
     expect(status.lastCall.args).to.deep.equal([500])
     expect(render.lastCall.args).to.deep.equal(['error', {
@@ -148,8 +148,8 @@ describe('views helper with non-terminal view states', () => {
   const request = {}
 
   const response = {
-    status: function () {},
-    render: function () {},
+    status: () => {},
+    render: () => {},
     locals: {
       service: new Service(service)
     }
@@ -158,12 +158,12 @@ describe('views helper with non-terminal view states', () => {
   let status
   let render
 
-  beforeEach(function () {
+  beforeEach(() => {
     status = sinon.stub(response, 'status')
     render = sinon.stub(response, 'render')
   })
 
-  afterEach(function () {
+  afterEach(() => {
     status.restore()
     render.restore()
   })
@@ -190,7 +190,7 @@ describe('test views helper redirects to return URL for terminal states when red
   }
 
   const response = {
-    redirect: function () {},
+    redirect: () => {},
     locals: {
       service: new Service(service)
     }
@@ -198,11 +198,11 @@ describe('test views helper redirects to return URL for terminal states when red
 
   let redirect
 
-  beforeEach(function () {
+  beforeEach(() => {
     redirect = sinon.stub(response, 'redirect')
   })
 
-  afterEach(function () {
+  afterEach(() => {
     redirect.restore()
   })
 
@@ -222,8 +222,8 @@ describe('test views helper renders page for terminal states when redirectToServ
   const request = {}
 
   const response = {
-    status: function () {},
-    render: function () {},
+    status: () => {},
+    render: () => {},
     locals: {
       service: new Service(service)
     }
@@ -232,12 +232,12 @@ describe('test views helper renders page for terminal states when redirectToServ
   let status
   let render
 
-  beforeEach(function () {
+  beforeEach(() => {
     status = sinon.stub(response, 'status')
     render = sinon.stub(response, 'render')
   })
 
-  afterEach(function () {
+  afterEach(() => {
     status.restore()
     render.restore()
   })
