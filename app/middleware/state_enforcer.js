@@ -4,7 +4,7 @@
 const lodash = require('lodash')
 
 // local dependencies
-const views = require('../utils/views')
+const responseRouter = require('../utils/response_router')
 const stateService = require('../services/state_service')
 const paths = require('../paths')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
   const currentState = req.chargeData.status
   if (!correctStates.includes(currentState)) {
     const stateName = currentState.toUpperCase().replace(/\s/g, '_')
-    views.display(req, res, stateName, {
+    responseRouter.response(req, res, stateName, {
       chargeId: req.chargeId,
       returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
       analytics: getGoogleAnalytics(req)

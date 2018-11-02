@@ -7,7 +7,7 @@ const csrf = require('csrf')
 const {generateRoute} = require('../paths')
 const Token = require('../models/token')
 const Charge = require('../models/charge')
-const views = require('../utils/views')
+const responseRouter = require('../utils/response_router')
 const {createChargeIdSessionKey} = require('../utils/session')
 const {setSessionVariable} = require('../utils/cookies')
 const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
@@ -25,6 +25,6 @@ exports.new = (req, res) => {
       res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), {chargeId}))
     })
     .catch(() => {
-      views.display(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
     })
 }

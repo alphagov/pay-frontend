@@ -5,7 +5,7 @@ const logger = require('winston')
 
 // local dependencies
 const Charge = require('../models/charge')
-const views = require('../utils/views')
+const responseRouter = require('../utils/response_router')
 const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
@@ -18,7 +18,7 @@ exports.return = (req, res) => {
       .then(() => res.redirect(req.chargeData.return_url))
       .catch(() => {
         logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId})
-        views.display(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
       })
   } else {
     return res.redirect(req.chargeData.return_url)

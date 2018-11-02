@@ -6,7 +6,7 @@ const logger = require('winston')
 
 // local dependencies
 const session = require('../utils/session')
-const views = require('../utils/views')
+const responseRouter = require('../utils/response_router')
 const chargeParam = require('../services/charge_param_retriever')
 
 exports.csrfTokenGeneration = (req, res, next) => {
@@ -23,10 +23,10 @@ exports.csrfCheck = (req, res, next) => {
   chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
   if (!chargeSession.csrfSecret) {
-    views.display(req, res, 'UNAUTHORISED')
+    responseRouter.response(req, res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined')
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    views.display(req, res, 'SYSTEM_ERROR')
+    responseRouter.response(req, res, 'SYSTEM_ERROR')
     logger.error('CSRF is invalid')
   } else {
     chargeSession.csrfTokens.push(csrfToken)

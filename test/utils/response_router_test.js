@@ -8,7 +8,7 @@ const lodash = require('lodash')
 // local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
 const Service = require('../../app/models/Service.class')
-const views = require('../../app/utils/views')
+const responseRouter = require('../../app/utils/response_router')
 const testHelpers = require('../test_helpers/test_helpers')
 
 // constants
@@ -58,7 +58,7 @@ const terminalActions = [
   'AWAITING_CAPTURE_REQUEST'
 ]
 
-describe('views helper with default behaviour of the views', () => {
+describe('rendering behaviour', () => {
   const service = serviceFixtures.validServiceResponse().getPlain()
 
   const request = {}
@@ -85,24 +85,24 @@ describe('views helper with default behaviour of the views', () => {
   })
 
   it('should call a view correctly', () => {
-    views.display(request, response, 'NOT_FOUND')
+    responseRouter.response(request, response, 'NOT_FOUND')
     expect(status.lastCall.args).to.deep.equal([404])
     expect(render.lastCall.args).to.deep.equal(['error', {message: 'Page cannot be found', viewName: 'NOT_FOUND'}])
   })
 
   it('should return a 200 by default', () => {
-    views.display(request, response, 'CAPTURE_FAILURE')
+    responseRouter.response(request, response, 'CAPTURE_FAILURE')
     expect(status.lastCall.args).to.deep.equal([200])
     expect(render.lastCall.args).to.deep.equal(['errors/incorrect_state/capture_failure', {viewName: 'CAPTURE_FAILURE'}])
   })
 
   it('should return locals passed in', () => {
-    views.display(request, response, 'HUMANS', {custom: 'local'})
+    responseRouter.response(request, response, 'HUMANS', {custom: 'local'})
     expect(render.lastCall.args[1]).to.have.property('custom').to.equal('local')
   })
 
   it('should render error view when view not found', () => {
-    views.display(request, response, 'AINT_NO_VIEW_HERE')
+    responseRouter.response(request, response, 'AINT_NO_VIEW_HERE')
     expect(status.lastCall.args).to.deep.equal([500])
     expect(render.lastCall.args).to.deep.equal(['error', {
       message: 'There is a problem, please try again later',
@@ -130,7 +130,7 @@ describe('views helper with default behaviour of the views', () => {
 
   lodash.forEach(defaultTemplates, (objectValue, objectKey) => {
     it('should be able to render default ' + objectKey + ' page', () => {
-      views.display(request, response, objectKey)
+      responseRouter.response(request, response, objectKey)
       expect(status.lastCall.args).to.deep.equal([objectValue.code])
       expect(render.lastCall.args).to.deep.equal([objectValue.template, {
         message: objectValue.message,
@@ -140,7 +140,7 @@ describe('views helper with default behaviour of the views', () => {
   })
 })
 
-describe('views helper with non-terminal view states', () => {
+describe('behaviour of non-terminal actions with direct redirect enabled on service', () => {
   const service = serviceFixtures.validServiceResponse({
     redirect_to_service_immediately_on_terminal_state: true
   }).getPlain()
@@ -169,16 +169,14 @@ describe('views helper with non-terminal view states', () => {
   })
 
   nonTerminalActions.forEach((action) => {
-    const currentView = views[action]
-    it('should render non-terminal ' + action + ' page when redirectToServiceImmediatelyOnTerminalState is enabled', () => {
-      views.display(request, response, action)
-      expect(status.lastCall.args).to.deep.equal([currentView.code || 200])
+    it('should render non-terminal ' + action + ' page', () => {
+      responseRouter.response(request, response, action)
       expect(render.called).to.be.equal(true)
     })
   })
 })
 
-describe('test views helper redirects to return URL for terminal states when redirectToServiceImmediatelyOnTerminalState is enabled', () => {
+describe('behaviour of terminal actions with direct redirect enabled on service', () => {
   const service = serviceFixtures.validServiceResponse({
     redirect_to_service_immediately_on_terminal_state: true
   }).getPlain()
@@ -208,13 +206,13 @@ describe('test views helper redirects to return URL for terminal states when red
 
   terminalActions.forEach((action) => {
     it('should redirect to return URL on terminal ' + action + ' page', () => {
-      views.display(request, response, action)
+      responseRouter.response(request, response, action)
       expect(redirect.lastCall.args).to.deep.equal([returnUrl])
     })
   })
 })
 
-describe('test views helper renders page for terminal states when redirectToServiceImmediatelyOnTerminalState is disabled', () => {
+describe('behaviour of terminal actions with direct redirect disabled on service', () => {
   const service = serviceFixtures.validServiceResponse({
     redirect_to_service_immediately_on_terminal_state: false
   }).getPlain()
@@ -243,10 +241,8 @@ describe('test views helper renders page for terminal states when redirectToServ
   })
 
   terminalActions.forEach((action) => {
-    const currentView = views[action]
     it('should render terminal ' + action + ' page', () => {
-      views.display(request, response, action)
-      expect(status.lastCall.args).to.deep.equal([currentView.code || 200])
+      responseRouter.response(request, response, action)
       expect(render.called).to.be.equal(true)
     })
   })

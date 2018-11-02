@@ -8,18 +8,18 @@ const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
-const logging = require('../utils/logging.js')
-const views = require('../utils/views.js')
-const normalise = require('../services/normalise_charge.js')
-const chargeValidator = require('../utils/charge_validation_backend.js')
-const Charge = require('../models/charge.js')
-const Card = require('../models/card.js')
-const State = require('../models/state.js')
-const paths = require('../paths.js')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const {countries} = require('../services/countries.js')
-const {commonTypos} = require('../utils/email_tools.js')
-const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+const logging = require('../utils/logging')
+const responseRouter = require('../utils/response_router')
+const normalise = require('../services/normalise_charge')
+const chargeValidator = require('../utils/charge_validation_backend')
+const Charge = require('../models/charge')
+const Card = require('../models/card')
+const State = require('../models/state')
+const paths = require('../paths')
+const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const {countries} = require('../services/countries')
+const {commonTypos} = require('../utils/email_tools')
+const {withAnalyticsError, withAnalytics} = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
 // constants
@@ -93,10 +93,10 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     appendChargeForNewView(charge, req, charge.id)
     charge.countries = countries
-    if (charge.status === State.ENTERING_CARD_DETAILS) return views.display(req, res, CHARGE_VIEW, withAnalytics(charge, charge))
+    if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, CHARGE_VIEW, withAnalytics(charge, charge))
     Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
-      () => views.display(req, res, CHARGE_VIEW, withAnalytics(charge, charge)),
-      () => views.display(req, res, 'NOT_FOUND', withAnalyticsError()))
+      () => responseRouter.response(req, res, CHARGE_VIEW, withAnalytics(charge, charge)),
+      () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
   },
   create: (req, res) => {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
@@ -128,7 +128,7 @@ module.exports = {
 
           if (
             charge.gatewayAccount.emailCollectionMode === 'OFF' ||
-                        (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
+            (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
           ) {
             emailPatch = Promise.resolve('Charge patch skipped as email collection mode was toggled off, or optional and not supplied')
           } else {
@@ -158,7 +158,7 @@ module.exports = {
             charge.countries = countries
             appendChargeForNewView(charge, req, charge.id)
             _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-            return views.display(req, res, CHARGE_VIEW, data.validation)
+            return responseRouter.response(req, res, CHARGE_VIEW, data.validation)
           }
           AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
             emailPatch
@@ -183,7 +183,7 @@ module.exports = {
                         break
                       case 500:
                         logging.failedChargePost(409)
-                        views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+                        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
                         break
                       default:
                         redirect(res).toNew(req.chargeId)
@@ -193,7 +193,7 @@ module.exports = {
               .catch(err => {
                 subSegment.close(err.message)
                 logging.failedChargePatch(err.message)
-                views.display(req, res, 'ERROR', withAnalyticsError())
+                responseRouter.response(req, res, 'ERROR', withAnalyticsError())
               })
           }, clsSegment)
         })
@@ -243,8 +243,8 @@ module.exports = {
                     .then(
                       () => redirect(res).toReturn(req.chargeId),
                       err => {
-                        if (err.message === 'CAPTURE_FAILED') return views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
-                        views.display(res, 'SYSTEM_ERROR', withAnalytics(
+                        if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
+                        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                           charge,
                           {returnUrl: routeFor('return', charge.id)}
                         ))
@@ -254,7 +254,7 @@ module.exports = {
                 break
               case 500:
                 logging.failedChargePost(409)
-                views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+                responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
                 break
               default:
                 redirect(res).toNew(req.chargeId)
@@ -262,13 +262,13 @@ module.exports = {
           }).on('error', err => {
             subSegment.close(err)
             logging.failedChargePostException(err)
-            views.display(res, 'ERROR', withAnalytics(charge))
+            responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
           })
         })
         .catch(err => {
           subSegment.close(err)
           logging.failedChargePatch(err)
-          views.display(res, 'ERROR', withAnalyticsError())
+          responseRouter.response(req, res, 'ERROR', withAnalyticsError())
         })
     }, clsSegment)
   },
@@ -299,7 +299,7 @@ module.exports = {
     switch (charge.status) {
       case (State.AUTH_READY):
       case (State.AUTH_3DS_READY):
-        views.display(req, res, AUTH_WAITING_VIEW, withAnalytics(charge))
+        responseRouter.response(req, res, AUTH_WAITING_VIEW, withAnalytics(charge))
         break
       case (State.AUTH_3DS_REQUIRED):
         redirect(res).toAuth3dsRequired(req.chargeId)
@@ -324,19 +324,19 @@ module.exports = {
             redirect(res).toAuthWaiting(charge.id)
             break
           case 500:
-            views.display(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+            responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
             break
           default:
-            views.display(req, res, 'ERROR', withAnalytics(charge))
+            responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
         }
       })
       .catch(() => {
-        views.display(req, res, 'ERROR', withAnalytics(charge))
+        responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
       })
   },
   auth3dsRequired: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    views.display(req, res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
+    responseRouter.response(req, res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
   },
   auth3dsRequiredOut: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
@@ -354,18 +354,18 @@ module.exports = {
       if (md) {
         data.md = md
       }
-      views.display(req, res, AUTH_3DS_REQUIRED_OUT_VIEW, data)
+      responseRouter.response(req, res, AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (htmlOut) {
-      views.display(req, res, AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
+      responseRouter.response(req, res, AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
       })
     } else {
-      views.display(req, res, 'ERROR', withAnalytics(charge))
+      responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
     }
   },
   auth3dsRequiredIn: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    views.display(req, res, AUTH_3DS_REQUIRED_IN_VIEW, {
+    responseRouter.response(req, res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes'),
       md: _.get(req, 'body.MD')
@@ -373,7 +373,7 @@ module.exports = {
   },
   auth3dsRequiredInEpdq: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    views.display(req, res, AUTH_3DS_REQUIRED_IN_VIEW, {
+    responseRouter.response(req, res, AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       providerStatus: _.get(req, 'query.status', 'success')
     })
@@ -381,7 +381,7 @@ module.exports = {
   confirm: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const confirmPath = routeFor('confirm', charge.id)
-    views.display(req, res, CONFIRM_VIEW, withAnalytics(charge, {
+    responseRouter.response(req, res, CONFIRM_VIEW, withAnalytics(charge, {
       hitPage: routeFor('new', charge.id) + '/success',
       charge: charge,
       confirmPath: confirmPath,
@@ -395,8 +395,8 @@ module.exports = {
       .then(
         () => redirect(res).toReturn(req.chargeId),
         err => {
-          if (err.message === 'CAPTURE_FAILED') return views.display(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-          views.display(req, res, 'SYSTEM_ERROR', withAnalytics(
+          if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
+          responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
             charge,
             {returnUrl: routeFor('return', charge.id)}
           ))
@@ -406,9 +406,9 @@ module.exports = {
   captureWaiting: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     if (charge.status === State.CAPTURE_READY) {
-      views.display(req, res, CAPTURE_WAITING_VIEW, withAnalytics(charge))
+      responseRouter.response(req, res, CAPTURE_WAITING_VIEW, withAnalytics(charge))
     } else {
-      views.display(req, res, 'CAPTURE_SUBMITTED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      responseRouter.response(req, res, 'CAPTURE_SUBMITTED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
     }
   },
   cancel: (req, res) => {
@@ -416,8 +416,8 @@ module.exports = {
     Charge(req.headers[CORRELATION_HEADER])
       .cancel(req.chargeId)
       .then(
-        () => views.display(req, res, 'USER_CANCELLED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)})),
-        () => views.display(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+        () => responseRouter.response(req, res, 'USER_CANCELLED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)})),
+        () => responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
       )
   }
 }
