@@ -8,7 +8,6 @@ const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
-const requestLogger = require('../utils/request_logger')
 const logging = require('../utils/logging.js')
 const baseClient = require('../utils/base_client')
 const views = require('../utils/views.js')
@@ -22,6 +21,7 @@ const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION
 const {countries} = require('../services/countries.js')
 const {commonTypos} = require('../utils/email_tools.js')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics.js')
+const connectorClient = require('../services/clients/connector_client')
 
 // constants
 const CHARGE_VIEW = 'charge'
@@ -104,7 +104,6 @@ module.exports = {
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-    const authUrl = paths.generateRoute('connectorCharge.cardAuth', {chargeId: charge.id})
     const chargeOptions = {email_collection_mode: charge.gatewayAccount.emailCollectionMode}
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
     let card
@@ -130,7 +129,7 @@ module.exports = {
 
           if (
             charge.gatewayAccount.emailCollectionMode === 'OFF' ||
-              (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
+                        (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
           ) {
             emailPatch = Promise.resolve('Charge patch skipped as email collection mode was toggled off, or optional and not supplied')
           } else {
@@ -162,32 +161,18 @@ module.exports = {
             _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
             return views.display(res, CHARGE_VIEW, data.validation)
           }
-          logging.authChargePost(authUrl)
-
           AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
             emailPatch
               .then(() => {
                 subSegment.close()
-                const startTime = new Date()
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
-                const params = {
-                  payload: normalise.apiPayload(req, card),
-                  correlationId: correlationId
-                }
-                const context = {
-                  url: authUrl,
-                  method: 'POST',
-                  description: 'create charge',
-                  service: 'connector'
-                }
-                requestLogger.logRequestStart(context)
-                baseClient.post(authUrl, params, null, null)
+                const payload = normalise.apiPayload(req, card)
+                connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
                   .then((response) => {
-                    logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
                     switch (response.statusCode) {
                       case 202:
                       case 409:
-                        logging.failedChargePost(409, authUrl)
+                        logging.failedChargePost(409)
                         redirect(res).toAuthWaiting(req.chargeId)
                         break
                       case 200:
@@ -198,7 +183,7 @@ module.exports = {
                         }
                         break
                       case 500:
-                        logging.failedChargePost(409, authUrl)
+                        logging.failedChargePost(409)
                         views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
                         break
                       default:
@@ -269,7 +254,7 @@ module.exports = {
                           if (err.message === 'CAPTURE_FAILED') return views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
                           views.display(res, 'SYSTEM_ERROR', withAnalytics(
                             charge,
-                            { returnUrl: routeFor('return', charge.id) }
+                            {returnUrl: routeFor('return', charge.id)}
                           ))
                         }
                       )
@@ -277,7 +262,7 @@ module.exports = {
                   break
                 case 500:
                   logging.failedChargePost(409, authUrl)
-                  views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+                  views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
                   break
                 default:
                   redirect(res).toNew(req.chargeId)

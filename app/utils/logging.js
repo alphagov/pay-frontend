@@ -11,12 +11,11 @@ exports.authChargePost = url => {
   })
 }
 
-exports.failedChargePost = (status, url) => {
+exports.failedChargePost = status => {
   logger.warn('Calling connector to authorize a charge (post card details) failed -', {
     service: 'connector',
     method: 'POST',
-    status: status,
-    url: url
+    status: status
   })
 }
 
