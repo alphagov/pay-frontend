@@ -9,7 +9,6 @@ const AWSXRay = require('aws-xray-sdk')
 
 // local dependencies
 const logging = require('../utils/logging.js')
-const baseClient = require('../utils/base_client')
 const views = require('../utils/views.js')
 const normalise = require('../services/normalise_charge.js')
 const chargeValidator = require('../utils/charge_validation_backend.js')
@@ -168,7 +167,7 @@ module.exports = {
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
                 const payload = normalise.apiPayload(req, card)
                 connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
-                  .then((response) => {
+                  .then(response => {
                     switch (response.statusCode) {
                       case 202:
                       case 409:
@@ -204,7 +203,6 @@ module.exports = {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    const authUrl = paths.generateRoute('connectorCharge.cardAuth', {chargeId: charge.id})
 
     const convertedPayload = {
       body: {
@@ -223,62 +221,55 @@ module.exports = {
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
 
-    AWSXRay.captureAsyncFunc('chargeValidator_verify', function (subSegment) {
-      logging.authChargePost(authUrl)
-      AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
-        Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.payerEmail, subSegment)
-          .then(() => {
-            subSegment.close()
-            const startTime = new Date()
-            const correlationId = req.headers[CORRELATION_HEADER] || ''
-            baseClient.post(authUrl, {
-              data: normalise.apiPayload(_.merge(req, convertedPayload), 'visa'),
-              correlationId: correlationId
-            }, (data, json) => {
-              logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', authUrl, new Date() - startTime)
-              switch (json.statusCode) {
-                case 202:
-                case 409:
-                  logging.failedChargePost(409, authUrl)
-                  redirect(res).toAuthWaiting(req.chargeId)
-                  break
-                case 200:
-                  if (_.get(data, 'status') === State.AUTH_3DS_REQUIRED) {
-                    redirect(res).toAuth3dsRequired(req.chargeId)
-                  } else {
-                    Charge(req.headers[CORRELATION_HEADER])
-                      .capture(req.chargeId)
-                      .then(
-                        () => redirect(res).toReturn(req.chargeId),
-                        err => {
-                          if (err.message === 'CAPTURE_FAILED') return views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
-                          views.display(res, 'SYSTEM_ERROR', withAnalytics(
-                            charge,
-                            {returnUrl: routeFor('return', charge.id)}
-                          ))
-                        }
-                      )
-                  }
-                  break
-                case 500:
-                  logging.failedChargePost(409, authUrl)
-                  views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
-                  break
-                default:
-                  redirect(res).toNew(req.chargeId)
-              }
-            }).on('error', err => {
-              subSegment.close(err)
-              logging.failedChargePostException(err)
-              views.display(res, 'ERROR', withAnalytics(charge))
-            })
-          })
-          .catch(err => {
+    AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
+      Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.payerEmail, subSegment)
+        .then(() => {
+          subSegment.close()
+          const correlationId = req.headers[CORRELATION_HEADER] || ''
+          const payload = normalise.apiPayload(_.merge(req, convertedPayload), 'visa')
+          connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload}).then(response => {
+            switch (response.statusCode) {
+              case 202:
+              case 409:
+                logging.failedChargePost(409)
+                redirect(res).toAuthWaiting(req.chargeId)
+                break
+              case 200:
+                if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
+                  redirect(res).toAuth3dsRequired(req.chargeId)
+                } else {
+                  Charge(req.headers[CORRELATION_HEADER])
+                    .capture(req.chargeId)
+                    .then(
+                      () => redirect(res).toReturn(req.chargeId),
+                      err => {
+                        if (err.message === 'CAPTURE_FAILED') return views.display(res, 'CAPTURE_FAILURE', withAnalytics(charge))
+                        views.display(res, 'SYSTEM_ERROR', withAnalytics(
+                          charge,
+                          {returnUrl: routeFor('return', charge.id)}
+                        ))
+                      }
+                    )
+                }
+                break
+              case 500:
+                logging.failedChargePost(409)
+                views.display(res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+                break
+              default:
+                redirect(res).toNew(req.chargeId)
+            }
+          }).on('error', err => {
             subSegment.close(err)
-            logging.failedChargePatch(err)
-            views.display(res, 'ERROR', withAnalyticsError())
+            logging.failedChargePostException(err)
+            views.display(res, 'ERROR', withAnalytics(charge))
           })
-      }, clsSegment)
+        })
+        .catch(err => {
+          subSegment.close(err)
+          logging.failedChargePatch(err)
+          views.display(res, 'ERROR', withAnalyticsError())
+        })
     }, clsSegment)
   },
   checkCard: (req, res) => {
@@ -319,13 +310,10 @@ module.exports = {
   },
   auth3dsHandler (req, res) {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    const startTime = new Date()
     const correlationId = req.headers[CORRELATION_HEADER] || ''
-    const connector3dsUrl = paths.generateRoute('connectorCharge.threeDs', {chargeId: charge.id})
-
-    baseClient.post(connector3dsUrl, {payload: build3dsPayload(req), correlationId}, null, null)
+    const payload = build3dsPayload(req)
+    connectorClient({correlationId}).threeDs({chargeId: charge.id, payload})
       .then(response => {
-        logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', connector3dsUrl, new Date() - startTime)
         switch (response.statusCode) {
           case 200:
           case 400:
