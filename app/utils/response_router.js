@@ -6,24 +6,28 @@ const lodash = require('lodash')
 
 const expired = {
   view: 'errors/incorrect_state/session_expired',
-  analyticsPage: '/session_expired'
+  analyticsPage: '/session_expired',
+  terminal: true
 }
 
 const systemCancelled = {
   view: 'errors/incorrect_state/system_cancelled',
-  analyticsPage: '/system_cancelled'
+  analyticsPage: '/system_cancelled',
+  terminal: true
 }
 
 const userCancelled = {
   view: 'user_cancelled',
   locals: {status: 'successful'},
-  analyticsPage: '/user_cancelled'
+  analyticsPage: '/user_cancelled',
+  terminal: true
 }
 
 const systemError = {
   code: 500,
   view: 'errors/system_error',
-  analyticsPage: '/error'
+  analyticsPage: '/error',
+  terminal: true
 }
 
 const error = {
@@ -32,10 +36,11 @@ const error = {
   locals: {
     message: 'There is a problem, please try again later'
   },
-  analyticsPage: '/error'
+  analyticsPage: '/error',
+  terminal: true
 }
 
-module.exports = {
+const actions = {
   auth_3ds_required: {
     view: 'auth_3ds_required',
     analyticsPage: '/3ds_required'
@@ -67,25 +72,30 @@ module.exports = {
     view: 'capture_waiting',
     analyticsPage: '/capture_waiting'
   },
+
   NOT_FOUND: {
     code: 404,
     view: 'error',
     locals: {
       message: 'Page cannot be found'
-    }
+    },
+    terminal: true
   },
+
   ERROR: {
     code: 500,
     view: 'error',
     locals: {
       message: 'There is a problem, please try again later'
-    }
+    },
+    terminal: true
   },
 
   SESSION_INCORRECT: {
     code: 422,
     view: 'errors/incorrect_state/session_expired',
-    analyticsPage: '/problem'
+    analyticsPage: '/problem',
+    terminal: true
   },
 
   SYSTEM_ERROR: systemError,
@@ -95,7 +105,8 @@ module.exports = {
     view: 'error',
     locals: {
       message: 'Please try again later'
-    }
+    },
+    terminal: true
   },
 
   HUMANS: {
@@ -108,13 +119,15 @@ module.exports = {
 
   UNAUTHORISED: {
     code: 403,
-    view: 'errors/incorrect_state/session_expired'
+    view: 'errors/incorrect_state/session_expired',
+    terminal: true
   },
 
   CAPTURE_SUBMITTED: {
     view: 'errors/charge_confirm_state_completed',
     locals: {status: 'successful'},
-    analyticsPage: '/success_return'
+    analyticsPage: '/success_return',
+    terminal: true
   },
 
   CREATED: error,
@@ -140,29 +153,34 @@ module.exports = {
   CAPTURED: {
     view: 'errors/charge_confirm_state_completed',
     locals: {status: 'successful'},
-    analyticsPage: '/success_return'
+    analyticsPage: '/success_return',
+    terminal: true
   },
 
   CAPTURE_APPROVED: {
     view: 'errors/charge_confirm_state_completed',
     locals: {status: 'successful'},
-    analyticsPage: '/success_return'
+    analyticsPage: '/success_return',
+    terminal: true
   },
 
   CAPTURE_APPROVED_RETRY: {
     view: 'errors/charge_confirm_state_completed',
     locals: {status: 'successful'},
-    analyticsPage: '/success_return'
+    analyticsPage: '/success_return',
+    terminal: true
   },
 
   CAPTURE_ERROR: {
     view: 'errors/incorrect_state/capture_failure',
-    analyticsPage: '/capture_failure'
+    analyticsPage: '/capture_failure',
+    terminal: true
   },
 
   CAPTURE_FAILURE: {
     view: 'errors/incorrect_state/capture_failure',
-    analyticsPage: '/capture_failure'
+    analyticsPage: '/capture_failure',
+    terminal: true
   },
 
   AUTHORISATION_3DS_REQUIRED: {
@@ -177,17 +195,20 @@ module.exports = {
 
   AUTHORISATION_REJECTED: {
     view: 'errors/incorrect_state/auth_failure',
-    analyticsPage: '/auth_failure'
+    analyticsPage: '/auth_failure',
+    terminal: true
   },
 
   AUTHORISATION_CANCELLED: {
     view: 'errors/incorrect_state/auth_failure',
-    analyticsPage: '/auth_failure'
+    analyticsPage: '/auth_failure',
+    terminal: true
   },
 
   AUTHORISATION_ERROR: {
     view: 'errors/system_error',
-    analyticsPage: '/error'
+    analyticsPage: '/error',
+    terminal: true
   },
 
   AUTHORISATION_READY: {
@@ -205,24 +226,38 @@ module.exports = {
   AWAITING_CAPTURE_REQUEST: {
     view: 'errors/charge_confirm_state_completed',
     locals: {status: 'successful'},
-    analyticsPage: '/success_return'
-  },
-
-  display: function (res, viewName, options) {
-    let action = lodash.result(this, viewName)
-    options = options || {}
-    options.viewName = viewName
-    if (!action) {
-      logger.error('VIEW ' + viewName + ' NOT FOUND')
-      options = {viewName: 'error'}
-      action = this.ERROR
-    }
-    options = (action.locals) ? lodash.merge({}, action.locals, options) : options
-
-    if (lodash.get(options, 'analytics.path')) {
-      options.analytics.path = options.analytics.path + lodash.get(action, 'analyticsPage', '')
-    }
-    res.status(action.code || 200)
-    res.render(action.view, options)
+    analyticsPage: '/success_return',
+    terminal: true
   }
+}
+
+exports.response = (req, res, actionName, options) => {
+  options = options || {}
+  options.viewName = actionName
+  let action = lodash.result(actions, actionName)
+  if (!action) {
+    logger.error('Response action ' + actionName + ' NOT FOUND')
+    options = {viewName: 'error'}
+    action = actions.ERROR
+  }
+
+  if (shouldRedirect(req, res, action)) {
+    res.redirect(req.chargeData.return_url)
+  } else {
+    render(res, action, options)
+  }
+}
+
+function shouldRedirect (req, res, action) {
+  const directRedirectEnabled = lodash.get(res, 'locals.service.redirectToServiceImmediatelyOnTerminalState', false)
+  return (action.terminal && directRedirectEnabled && req.chargeData)
+}
+
+function render (res, action, options) {
+  options = (action.locals) ? lodash.merge({}, action.locals, options) : options
+  if (lodash.get(options, 'analytics.path')) {
+    options.analytics.path = options.analytics.path + lodash.get(action, 'analyticsPage', '')
+  }
+  res.status(action.code || 200)
+  res.render(action.view, options)
 }

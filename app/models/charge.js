@@ -5,22 +5,34 @@ const logger = require('winston')
 
 // local dependencies
 const baseClient = require('../utils/base_client')
-const paths = require('../paths.js')
-const State = require('./state.js')
+const paths = require('../paths')
+const State = require('./state')
+const StateModel = require('../models/state')
 
-module.exports = function (correlationId) {
+// constants
+const CANCELABLE_STATES = [
+  StateModel.CREATED,
+  StateModel.ENTERING_CARD_DETAILS,
+  StateModel.AUTH_SUCCESS,
+  StateModel.AUTH_READY,
+  StateModel.CAPTURE_READY,
+  StateModel.AUTH_3DS_REQUIRED,
+  StateModel.AUTH_3DS_READY
+]
+
+module.exports = correlationId => {
   correlationId = correlationId || ''
 
-  const connectorurl = function (resource, params) {
+  const connectorurl = (resource, params) => {
     return paths.generateRoute(`connectorCharge.${resource}`, params)
   }
 
-  const updateToEnterDetails = function (chargeId) {
+  const updateToEnterDetails = (chargeId) => {
     return updateStatus(chargeId, State.ENTERING_CARD_DETAILS)
   }
 
-  const updateStatus = function (chargeId, status) {
-    return new Promise(function (resolve, reject) {
+  const updateStatus = (chargeId, status) => {
+    return new Promise((resolve, reject) => {
       const url = connectorurl('updateStatus', {chargeId: chargeId})
       const data = {new_status: status}
 
@@ -35,7 +47,7 @@ module.exports = function (correlationId) {
       const startTime = new Date()
 
       baseClient.put(url, {payload: data, correlationId: correlationId}, null, null)
-        .then((response) => {
+        .then(response => {
           logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
           updateComplete(response, {resolve, reject})
         })
@@ -53,8 +65,8 @@ module.exports = function (correlationId) {
     })
   }
 
-  const find = function (chargeId, subSegment) {
-    return new Promise(function (resolve, reject) {
+  const find = (chargeId, subSegment) => {
+    return new Promise((resolve, reject) => {
       const url = connectorurl('show', {chargeId: chargeId})
 
       logger.debug('[%s] Calling connector to get charge -', correlationId, {
@@ -66,7 +78,7 @@ module.exports = function (correlationId) {
 
       const startTime = new Date()
       baseClient.get(url, {correlationId: correlationId}, null, subSegment)
-        .then((response) => {
+        .then(response => {
           if (response.statusCode !== 200) {
             logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
             logger.warn('[%s] Calling connector to get charge failed -', correlationId, {
@@ -94,8 +106,8 @@ module.exports = function (correlationId) {
     })
   }
 
-  const capture = function (chargeId) {
-    return new Promise(function (resolve, reject) {
+  const capture = chargeId => {
+    return new Promise((resolve, reject) => {
       const url = connectorurl('capture', {chargeId: chargeId})
 
       logger.debug('[%s] Calling connector to do capture -', correlationId, {
@@ -107,7 +119,7 @@ module.exports = function (correlationId) {
 
       const startTime = new Date()
       baseClient.post(url, {correlationId: correlationId}, null, null)
-        .then((response) => {
+        .then(response => {
           logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
           captureComplete(response, {resolve, reject})
         })
@@ -125,8 +137,8 @@ module.exports = function (correlationId) {
     })
   }
 
-  const cancel = function (chargeId) {
-    return new Promise(function (resolve, reject) {
+  const cancel = chargeId => {
+    return new Promise((resolve, reject) => {
       const url = connectorurl('cancel', {chargeId: chargeId})
 
       logger.debug('[%s] Calling connector to cancel a charge -', correlationId, {
@@ -138,7 +150,7 @@ module.exports = function (correlationId) {
 
       const startTime = new Date()
       baseClient.post(url, {correlationId: correlationId}, null, null)
-        .then((response) => {
+        .then(response => {
           logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
           cancelComplete(response, {resolve, reject})
         })
@@ -155,7 +167,7 @@ module.exports = function (correlationId) {
     })
   }
 
-  const cancelComplete = function (response, defer) {
+  const cancelComplete = (response, defer) => {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     logger.error('[%s] Calling connector cancel a charge failed -', correlationId, {
@@ -167,12 +179,12 @@ module.exports = function (correlationId) {
     return defer.reject(new Error('POST_FAILED'))
   }
 
-  const cancelFail = function (err, defer) {
+  const cancelFail = (err, defer) => {
     clientUnavailable(err, defer)
   }
 
-  const findByToken = function (tokenId) {
-    return new Promise(function (resolve, reject) {
+  const findByToken = tokenId => {
+    return new Promise((resolve, reject) => {
       logger.debug('[%s] Calling connector to find a charge by token -', correlationId, {
         service: 'connector',
         method: 'GET'
@@ -206,18 +218,18 @@ module.exports = function (correlationId) {
     })
   }
 
-  const captureComplete = function (response, defer) {
+  const captureComplete = (response, defer) => {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
   }
 
-  const captureFail = function (err, defer) {
+  const captureFail = (err, defer) => {
     clientUnavailable(err, defer)
   }
 
-  const updateComplete = function (response, defer) {
+  const updateComplete = (response, defer) => {
     if (response.statusCode !== 204) {
       logger.error('[%s] Calling connector to update charge status failed -', correlationId, {
         chargeId: response.body,
@@ -230,8 +242,8 @@ module.exports = function (correlationId) {
     defer.resolve({success: 'OK'})
   }
 
-  const patch = function (chargeId, op, path, value, subSegment) {
-    return new Promise(function (resolve, reject) {
+  const patch = (chargeId, op, path, value, subSegment) => {
+    return new Promise((resolve, reject) => {
       const startTime = new Date()
       const chargesUrl = process.env.CONNECTOR_HOST + '/v1/frontend/charges/'
 
@@ -250,7 +262,7 @@ module.exports = function (correlationId) {
       }
 
       baseClient.patch(chargesUrl + chargeId, params, null, null)
-        .then((response) => {
+        .then(response => {
           logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', chargesUrl, new Date() - startTime)
           const code = response.statusCode
           if (code === 200) {
@@ -271,17 +283,22 @@ module.exports = function (correlationId) {
     })
   }
 
-  const clientUnavailable = function (error, defer) {
+  const isCancellableCharge = chargeStatus => {
+    return CANCELABLE_STATES.includes(chargeStatus)
+  }
+
+  const clientUnavailable = (error, defer) => {
     defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
 
   return {
-    updateStatus: updateStatus,
-    updateToEnterDetails: updateToEnterDetails,
-    find: find,
-    capture: capture,
-    findByToken: findByToken,
-    cancel: cancel,
-    patch: patch
+    updateStatus,
+    updateToEnterDetails,
+    find,
+    capture,
+    findByToken,
+    cancel,
+    patch,
+    isCancellableCharge
   }
 }

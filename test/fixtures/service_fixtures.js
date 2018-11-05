@@ -21,7 +21,7 @@ module.exports = {
     const data = {
       external_id: serviceData.external_id || random.randomUuid(),
       name: serviceData.name || 'service name',
-      gateway_account_ids: serviceData.gateway_account_ids || [random.randomInt()],
+      gateway_account_ids: serviceData.gateway_account_ids || [random.randomInt(1, 9999999)],
       custom_branding: serviceData.custom_branding || defaultCustomBranding,
       merchant_details: serviceData.merchant_details || defaultMerchantDetails,
       redirect_to_service_immediately_on_terminal_state: serviceData.redirect_to_service_immediately_on_terminal_state === true

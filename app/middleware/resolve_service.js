@@ -6,9 +6,9 @@ const {Cache} = require('memory-cache')
 const lodash = require('lodash')
 
 // local dependencies
-const views = require('../utils/views.js')
-const CORRELATION_HEADER = require('../utils/correlation_header.js').CORRELATION_HEADER
-const withAnalyticsError = require('../utils/analytics.js').withAnalyticsError
+const responseRouter = require('../utils/response_router')
+const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 
 // constants
@@ -17,7 +17,7 @@ const serviceCache = new Cache()
 
 module.exports = (req, res, next) => {
   const gatewayAccountId = lodash.get(req, 'chargeData.gateway_account.gateway_account_id')
-  if (!req.chargeId && !req.chargeData) return views.display(res, 'UNAUTHORISED', withAnalyticsError())
+  if (!req.chargeId && !req.chargeData) return responseRouter.response(req, res, 'UNAUTHORISED', withAnalyticsError())
   const cachedService = serviceCache.get(gatewayAccountId)
   if (cachedService) {
     res.locals.service = cachedService

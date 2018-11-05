@@ -9,7 +9,6 @@ const nock = require('nock')
 
 // local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
-const Service = require('../../app/models/Service.class')
 const frontendCardDetailsPath = '/card_details'
 
 // constants
@@ -271,13 +270,20 @@ module.exports = {
   },
 
   defaultAdminusersResponseForGetService: function (gatewayAccountId) {
-    let service = new Service(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
-    adminusersRespondsWith(gatewayAccountId, service)
+    const serviceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain()
+    adminusersRespondsWith(gatewayAccountId, serviceResponse)
   },
 
-  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId, emailSettings) {
+  adminusersResponseForGetServiceWithDirectRedirectEnabled: function (gatewayAccountId) {
+    const serviceResponse = serviceFixtures.validServiceResponse({
+      gateway_account_ids: [gatewayAccountId],
+      redirect_to_service_immediately_on_terminal_state: true
+    }).getPlain()
+    adminusersRespondsWith(gatewayAccountId, serviceResponse)
+  },
+
+  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId, returnUrl = 'http://www.example.com/service') {
     initConnectorUrl()
-    const returnUrl = 'http://www.example.com/service'
     const rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
     connectorRespondsWith(chargeId, rawResponse)
   },

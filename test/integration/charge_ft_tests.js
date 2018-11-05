@@ -47,6 +47,7 @@ const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js')
 const {defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
 const State = require('../../app/models/state.js')
 const serviceFixtures = require('../fixtures/service_fixtures')
+const random = require('../../app/utils/random')
 
 // Constants
 const EMPTY_BODY = ''
@@ -1021,7 +1022,7 @@ describe('chargeTests', function () {
   })
 
   describe('The cancel endpoint', function () {
-    it('should take user to cancel page on successful cancel when carge in entering card details state', function (done) {
+    it('should take user to cancel page on successful cancel when charge in entering card details state', function (done) {
       const cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -1066,6 +1067,25 @@ describe('chargeTests', function () {
         .send({csrfToken: helper.csrfToken()})
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
+        .end(done)
+    })
+
+    it('should redirect user to service return_url on successful cancel when direct redirect enabled on the service', function (done) {
+      const returnUrl = 'http://www.example.com/service'
+      const gatewayAccountId = random.randomInt(1, 9999999).toString()
+      const cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
+      defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId, returnUrl)
+      helper.adminusersResponseForGetServiceWithDirectRedirectEnabled(gatewayAccountId)
+
+      nock(process.env.CONNECTOR_HOST)
+        .post('/v1/frontend/charges/' + chargeId + '/cancel').reply(204)
+
+      request(app)
+        .post(cancelEndpoint)
+        .send({csrfToken: helper.csrfToken()})
+        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
+        .expect(302)
+        .expect(res => expect(res.headers['location']).to.equal(returnUrl))
         .end(done)
     })
   })

@@ -1,9 +1,9 @@
 'use strict'
 
-// NPM dependencies
-const _ = require('lodash')
+// npm dependencies
+const lodash = require('lodash')
 
-// Local dependencies
+// local dependencies
 const countries = require('../services/countries')
 
 /**
@@ -23,19 +23,21 @@ class Service {
     this.externalId = serviceData.external_id
     this.name = serviceData.service_name
     this.gatewayAccountIds = serviceData.gateway_account_ids
+    this.redirectToServiceImmediatelyOnTerminalState = serviceData.redirect_to_service_immediately_on_terminal_state
+
     this.customBranding =
       serviceData.custom_branding ? {
         cssUrl: serviceData.custom_branding.css_url,
         imageUrl: serviceData.custom_branding.image_url
       } : undefined
+
     this.merchantDetails = serviceData.merchant_details ? {
       name: serviceData.merchant_details.name,
       addressLine1: serviceData.merchant_details.address_line1,
       addressLine2: serviceData.merchant_details.address_line2,
       city: serviceData.merchant_details.address_city,
       postcode: serviceData.merchant_details.address_postcode,
-      countryName: countries.translateCountryISOtoName(serviceData.merchant_details.address_country),
-      redirectToServiceImmediatelyOnTerminalState: serviceData.redirect_to_service_immediately_on_terminal_state
+      countryName: countries.translateCountryISOtoName(serviceData.merchant_details.address_country)
     } : undefined
   }
 
@@ -44,7 +46,7 @@ class Service {
    * @returns {boolean} if the service got a non-GOV.UK branding
    */
   hasCustomBranding () {
-    return !_.isEmpty(this.customBranding)
+    return !lodash.isEmpty(this.customBranding)
   }
 
   /**
@@ -57,7 +59,7 @@ class Service {
    * @returns {boolean} if the service got merchant details specified
    */
   hasMerchantDetails () {
-    return !_.isEmpty(this.merchantDetails)
+    return !lodash.isEmpty(this.merchantDetails)
   }
 }
 

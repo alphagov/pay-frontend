@@ -1,10 +1,14 @@
 'use strict'
 
+// npm dependencies
 const csrf = require('csrf')
-const session = require('../utils/session.js')
-const views = require('../utils/views.js')
-const chargeParam = require('../services/charge_param_retriever.js')
 const logger = require('winston')
+
+// local dependencies
+const session = require('../utils/session')
+const responseRouter = require('../utils/response_router')
+const chargeParam = require('../services/charge_param_retriever')
+
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
   const chargeSession = session.retrieve(req, chargeId)
@@ -19,10 +23,10 @@ exports.csrfCheck = (req, res, next) => {
   chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
   if (!chargeSession.csrfSecret) {
-    views.display(res, 'UNAUTHORISED')
+    responseRouter.response(req, res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined')
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    views.display(res, 'SYSTEM_ERROR')
+    responseRouter.response(req, res, 'SYSTEM_ERROR')
     logger.error('CSRF is invalid')
   } else {
     chargeSession.csrfTokens.push(csrfToken)
