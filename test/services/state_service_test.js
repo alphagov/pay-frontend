@@ -1,7 +1,12 @@
-var path = require('path')
-var expect = require('chai').expect
-var stateService = require(path.join(__dirname, '/../../app/services/state_service.js'))
-var State = require(path.join(__dirname, '/../../app/models/state.js'))
+'use strict'
+
+// NPM dependencies
+const path = require('path')
+const expect = require('chai').expect
+
+// Local dependencies
+const stateService = require(path.join(__dirname, '/../../app/services/state_service.js'))
+const State = require(path.join(__dirname, '/../../config/state.js'))
 
 describe('state service', function () {
   describe('resolveStates', function () {

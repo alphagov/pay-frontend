@@ -7,7 +7,7 @@ const lodash = require('lodash')
 
 // local dependencies
 const responseRouter = require('../utils/response_router')
-const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 

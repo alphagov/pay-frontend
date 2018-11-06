@@ -9,7 +9,7 @@ const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
-const CORRELATION_HEADER_NAME = require('../../../utils/correlation_header').CORRELATION_HEADER
+const CORRELATION_HEADER_NAME = require('../../../../config/correlation_header').CORRELATION_HEADER
 const {addProxy} = require('../../../utils/add_proxy')
 
 const agentOptions = {

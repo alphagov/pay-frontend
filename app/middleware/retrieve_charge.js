@@ -8,7 +8,7 @@ const {getNamespace} = require('continuation-local-storage')
 const responseRouter = require('../utils/response_router')
 const Charge = require('../models/charge')
 const chargeParam = require('../services/charge_param_retriever')
-const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 // constants
