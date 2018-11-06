@@ -9,8 +9,8 @@ const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
-const CORRELATION_HEADER_NAME = require('./correlation_header').CORRELATION_HEADER
-const {addProxy} = require('./add_proxy')
+const CORRELATION_HEADER_NAME = require('../../../utils/correlation_header').CORRELATION_HEADER
+const {addProxy} = require('../../../utils/add_proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -18,7 +18,7 @@ const agentOptions = {
 }
 
 // Constants
-const clsXrayConfig = require('../../config/xray-cls')
+const clsXrayConfig = require('../../../../config/xray-cls')
 const RETRIABLE_ERRORS = ['ECONNRESET']
 
 function retryOnEconnreset (err) {

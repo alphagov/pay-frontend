@@ -9,7 +9,7 @@ const {getNamespace} = require('continuation-local-storage')
 const i18n = require('i18n')
 
 // Local dependencies
-const cardIdClient = require('../utils/cardid_client')
+const cardIdClient = require('../services/clients/cardid_client')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')

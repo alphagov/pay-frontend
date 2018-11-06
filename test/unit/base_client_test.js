@@ -6,7 +6,7 @@ const path = require('path')
 const assert = require('assert')
 
 // Local dependencies
-const baseClient = require(path.join(__dirname, '/../../app/utils/base_client'))
+const baseClient = require(path.join(__dirname, '/../../app/services/clients/base_client/base_client'))
 
 // Constants
 const url = 'http://www.example.com:65535'
