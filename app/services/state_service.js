@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const State = require('../models/state.js')
+const State = require('../../config/state.js')
 const paths = require('../paths.js')
 
 module.exports = (function () {

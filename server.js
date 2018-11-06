@@ -18,7 +18,7 @@ const staticify = require('staticify')(path.join(__dirname, 'public'))
 const compression = require('compression')
 
 // Local dependencies
-const router = require('./app/router')
+const router = require('./app/routes')
 const cookies = require('./app/utils/cookies')
 const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
