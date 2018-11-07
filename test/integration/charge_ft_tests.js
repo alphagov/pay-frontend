@@ -45,7 +45,7 @@ const helper = require('../test_helpers/test_helpers.js')
 const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
 const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js').connectorResponseForPutCharge
 const {defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
-const State = require('../../app/models/state.js')
+const State = require('../../config/state.js')
 const serviceFixtures = require('../fixtures/service_fixtures')
 const random = require('../../app/utils/random')
 

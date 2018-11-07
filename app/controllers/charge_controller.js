@@ -14,32 +14,19 @@ const normalise = require('../services/normalise_charge')
 const chargeValidator = require('../utils/charge_validation_backend')
 const Charge = require('../models/charge')
 const Card = require('../models/card')
-const State = require('../models/state')
+const State = require('../../config/state')
 const paths = require('../paths')
-const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
 const {countries} = require('../services/countries')
 const {commonTypos} = require('../utils/email_tools')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
 // constants
-const CHARGE_VIEW = 'charge'
-const CONFIRM_VIEW = 'confirm'
-const AUTH_WAITING_VIEW = 'auth_waiting'
-const AUTH_3DS_REQUIRED_VIEW = 'auth_3ds_required'
-const AUTH_3DS_REQUIRED_OUT_VIEW = 'auth_3ds_required_out'
-const AUTH_3DS_REQUIRED_HTML_OUT_VIEW = 'auth_3ds_required_html_out'
-const AUTH_3DS_REQUIRED_IN_VIEW = 'auth_3ds_required_in'
-const CAPTURE_WAITING_VIEW = 'capture_waiting'
-const preserveProperties = ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
-const AUTH_3DS_EPDQ_RESULTS = {
-  success: 'AUTHORISED',
-  declined: 'DECLINED',
-  error: 'ERROR'
-}
 const clsXrayConfig = require('../../config/xray-cls')
+const {views, threeDsEPDQResults, preserveProperties} = require('../../config/charge_controller')
+const {CORRELATION_HEADER} = require('../../config/correlation_header')
 
-function appendChargeForNewView (charge, req, chargeId) {
+const appendChargeForNewView = (charge, req, chargeId) => {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
@@ -54,11 +41,9 @@ function appendChargeForNewView (charge, req, chargeId) {
   charge.allowWebPayments = charge.gatewayAccount.allowWebPayments
 }
 
-function routeFor (resource, chargeId) {
-  return paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
-}
+const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
 
-function redirect (res) {
+const redirect = res => {
   return {
     toAuth3dsRequired: (chargeId) => res.redirect(303, routeFor('auth3dsRequired', chargeId)),
     toAuthWaiting: (chargeId) => res.redirect(303, routeFor('authWaiting', chargeId)),
@@ -68,14 +53,14 @@ function redirect (res) {
   }
 }
 
-function build3dsPayload (req) {
+const build3dsPayload = req => {
   let auth3dsPayload = {}
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
   }
 
-  const providerStatus = AUTH_3DS_EPDQ_RESULTS[_.get(req, 'body.providerStatus', '')]
+  const providerStatus = threeDsEPDQResults[_.get(req, 'body.providerStatus', '')]
   if (!_.isUndefined(providerStatus)) {
     auth3dsPayload.auth_3ds_result = providerStatus
   }
@@ -88,14 +73,91 @@ function build3dsPayload (req) {
   return auth3dsPayload
 }
 
+const handleCreateResponse = (req, res, charge) => response => {
+  switch (response.statusCode) {
+    case 202:
+    case 409:
+      logging.failedChargePost(409)
+      redirect(res).toAuthWaiting(req.chargeId)
+      break
+    case 200:
+      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
+        redirect(res).toAuth3dsRequired(req.chargeId)
+      } else {
+        redirect(res).toConfirm(req.chargeId)
+      }
+      break
+    case 500:
+      logging.failedChargePost(409)
+      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      break
+    default:
+      redirect(res).toNew(req.chargeId)
+  }
+}
+
+const handleAuthResponse = (req, res, charge) => response => {
+  switch (response.statusCode) {
+    case 202:
+    case 409:
+      logging.failedChargePost(409)
+      redirect(res).toAuthWaiting(req.chargeId)
+      break
+    case 200:
+      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
+        redirect(res).toAuth3dsRequired(req.chargeId)
+      } else {
+        Charge(req.headers[CORRELATION_HEADER])
+          .capture(req.chargeId)
+          .then(
+            () => redirect(res).toReturn(req.chargeId),
+            err => {
+              if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
+              // else
+              responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+                charge,
+                {returnUrl: routeFor('return', charge.id)}
+              ))
+            }
+          )
+      }
+      break
+    case 500:
+      logging.failedChargePost(409)
+      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      break
+    default:
+      redirect(res).toNew(req.chargeId)
+  }
+}
+
+const handleThreeDsResponse = (req, res, charge) => response => {
+  switch (response.statusCode) {
+    case 200:
+    case 400:
+      redirect(res).toConfirm(charge.id)
+      break
+    case 202:
+    case 409:
+      redirect(res).toAuthWaiting(charge.id)
+      break
+    case 500:
+      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+      break
+    default:
+      responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
+  }
+}
+
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     appendChargeForNewView(charge, req, charge.id)
     charge.countries = countries
-    if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, CHARGE_VIEW, withAnalytics(charge, charge))
+    if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
+    // else
     Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
-      () => responseRouter.response(req, res, CHARGE_VIEW, withAnalytics(charge, charge)),
+      () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
       () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
   },
   create: (req, res) => {
@@ -111,7 +173,7 @@ module.exports = {
     normalise.whitespace(req.body)
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
-
+    // else
     AWSXRay.captureAsyncFunc('chargeValidator_verify', function (subSegment) {
       validator.verify(req)
         .catch(() => {
@@ -158,7 +220,7 @@ module.exports = {
             charge.countries = countries
             appendChargeForNewView(charge, req, charge.id)
             _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-            return responseRouter.response(req, res, CHARGE_VIEW, data.validation)
+            return responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
           }
           AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
             emailPatch
@@ -167,28 +229,7 @@ module.exports = {
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
                 const payload = normalise.apiPayload(req, card)
                 connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
-                  .then(response => {
-                    switch (response.statusCode) {
-                      case 202:
-                      case 409:
-                        logging.failedChargePost(409)
-                        redirect(res).toAuthWaiting(req.chargeId)
-                        break
-                      case 200:
-                        if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
-                          redirect(res).toAuth3dsRequired(req.chargeId)
-                        } else {
-                          redirect(res).toConfirm(req.chargeId)
-                        }
-                        break
-                      case 500:
-                        logging.failedChargePost(409)
-                        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
-                        break
-                      default:
-                        redirect(res).toNew(req.chargeId)
-                    }
-                  })
+                  .then(handleCreateResponse(req, res, charge))
               })
               .catch(err => {
                 subSegment.close(err.message)
@@ -227,43 +268,9 @@ module.exports = {
           subSegment.close()
           const correlationId = req.headers[CORRELATION_HEADER] || ''
           const payload = normalise.apiPayload(_.merge(req, convertedPayload), 'visa')
-          connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload}).then(response => {
-            switch (response.statusCode) {
-              case 202:
-              case 409:
-                logging.failedChargePost(409)
-                redirect(res).toAuthWaiting(req.chargeId)
-                break
-              case 200:
-                if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
-                  redirect(res).toAuth3dsRequired(req.chargeId)
-                } else {
-                  Charge(req.headers[CORRELATION_HEADER])
-                    .capture(req.chargeId)
-                    .then(
-                      () => redirect(res).toReturn(req.chargeId),
-                      err => {
-                        if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-                        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
-                          charge,
-                          {returnUrl: routeFor('return', charge.id)}
-                        ))
-                      }
-                    )
-                }
-                break
-              case 500:
-                logging.failedChargePost(409)
-                responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
-                break
-              default:
-                redirect(res).toNew(req.chargeId)
-            }
-          }).on('error', err => {
-            subSegment.close(err)
-            logging.failedChargePostException(err)
-            responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
-          })
+          connectorClient({correlationId})
+            .chargeAuth({chargeId: req.chargeId, payload})
+            .then(handleAuthResponse(req, res, charge))
         })
         .catch(err => {
           subSegment.close(err)
@@ -299,7 +306,7 @@ module.exports = {
     switch (charge.status) {
       case (State.AUTH_READY):
       case (State.AUTH_3DS_READY):
-        responseRouter.response(req, res, AUTH_WAITING_VIEW, withAnalytics(charge))
+        responseRouter.response(req, res, views.AUTH_WAITING_VIEW, withAnalytics(charge))
         break
       case (State.AUTH_3DS_REQUIRED):
         redirect(res).toAuth3dsRequired(req.chargeId)
@@ -313,30 +320,14 @@ module.exports = {
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const payload = build3dsPayload(req)
     connectorClient({correlationId}).threeDs({chargeId: charge.id, payload})
-      .then(response => {
-        switch (response.statusCode) {
-          case 200:
-          case 400:
-            redirect(res).toConfirm(charge.id)
-            break
-          case 202:
-          case 409:
-            redirect(res).toAuthWaiting(charge.id)
-            break
-          case 500:
-            responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
-            break
-          default:
-            responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
-        }
-      })
+      .then(handleThreeDsResponse(req, res, charge))
       .catch(() => {
         responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
       })
   },
   auth3dsRequired: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    responseRouter.response(req, res, AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
+    responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_VIEW, withAnalytics(charge))
   },
   auth3dsRequiredOut: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
@@ -354,9 +345,9 @@ module.exports = {
       if (md) {
         data.md = md
       }
-      responseRouter.response(req, res, AUTH_3DS_REQUIRED_OUT_VIEW, data)
+      responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (htmlOut) {
-      responseRouter.response(req, res, AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
+      responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
       })
     } else {
@@ -365,7 +356,7 @@ module.exports = {
   },
   auth3dsRequiredIn: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    responseRouter.response(req, res, AUTH_3DS_REQUIRED_IN_VIEW, {
+    responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       paResponse: _.get(req, 'body.PaRes'),
       md: _.get(req, 'body.MD')
@@ -373,7 +364,7 @@ module.exports = {
   },
   auth3dsRequiredInEpdq: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    responseRouter.response(req, res, AUTH_3DS_REQUIRED_IN_VIEW, {
+    responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       providerStatus: _.get(req, 'query.status', 'success')
     })
@@ -381,7 +372,7 @@ module.exports = {
   confirm: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const confirmPath = routeFor('confirm', charge.id)
-    responseRouter.response(req, res, CONFIRM_VIEW, withAnalytics(charge, {
+    responseRouter.response(req, res, views.CONFIRM_VIEW, withAnalytics(charge, {
       hitPage: routeFor('new', charge.id) + '/success',
       charge: charge,
       confirmPath: confirmPath,
@@ -406,7 +397,7 @@ module.exports = {
   captureWaiting: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     if (charge.status === State.CAPTURE_READY) {
-      responseRouter.response(req, res, CAPTURE_WAITING_VIEW, withAnalytics(charge))
+      responseRouter.response(req, res, views.CAPTURE_WAITING_VIEW, withAnalytics(charge))
     } else {
       responseRouter.response(req, res, 'CAPTURE_SUBMITTED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
     }

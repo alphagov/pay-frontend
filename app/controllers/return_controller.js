@@ -6,7 +6,7 @@ const logger = require('winston')
 // local dependencies
 const Charge = require('../models/charge')
 const responseRouter = require('../utils/response_router')
-const CORRELATION_HEADER = require('../utils/correlation_header').CORRELATION_HEADER
+const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 exports.return = (req, res) => {

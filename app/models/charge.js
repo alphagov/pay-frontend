@@ -5,8 +5,8 @@ const logger = require('winston')
 
 // local dependencies
 const connectorClient = require('../services/clients/connector_client')
-const State = require('./state.js')
-const StateModel = require('../models/state')
+const State = require('../../config/state.js')
+const StateModel = require('../../config/state')
 
 // constants
 const CANCELABLE_STATES = [

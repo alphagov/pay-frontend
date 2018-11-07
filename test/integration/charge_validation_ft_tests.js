@@ -2,7 +2,7 @@ const nock = require('nock')
 const app = require('../../server.js').getApp()
 const expect = require('chai').expect
 const cheerio = require('cheerio')
-const State = require('../../app/models/state.js')
+const State = require('../../config/state.js')
 const cookie = require('../test_helpers/session.js')
 
 let {postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
