@@ -10,7 +10,8 @@ const charge = require('./controllers/charge_controller.js')
 const threeDS = require('./controllers/three_d_secure_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
-const applePay = require('./controllers/apple-pay/merchant-validation-controller')
+const applePayMerchantValidation = require('./controllers/apple-pay/merchant-validation-controller')
+const applePayMakePayment = require('./controllers/apple-pay/make-payment')
 const returnCont = require('./controllers/return_controller.js')
 const {healthcheck} = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
@@ -87,7 +88,8 @@ exports.bind = function (app) {
   app.post(card.auth3dsHandler.path, middlewareStack, threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
-  app.post(paths.applePay.session.path, applePay)
+  app.post(paths.applePay.session.path, applePayMerchantValidation)
+  app.post(paths.applePay.makePayment.path, xraySegmentCls, retrieveCharge, resolveLanguage, applePayMakePayment)
 
   // secure controller
   app.get(paths.secure.get.path, xraySegmentCls, secure.new)

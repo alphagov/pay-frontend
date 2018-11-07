@@ -78,6 +78,10 @@ const paths = {
     session: {
       path: '/apple-pay-merchant-validation',
       action: 'post'
+    },
+    makePayment: {
+      path: '/make-payment/:chargeId',
+      action: 'post'
     }
   },
   secure: {
