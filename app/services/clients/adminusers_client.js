@@ -1,7 +1,7 @@
 'use strict'
 
 // Local dependencies
-const baseClient = require('../../utils/base_client')
+const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
 const createCallbackToPromiseConverter = require('../../utils/response_converter').createCallbackToPromiseConverter

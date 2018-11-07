@@ -4,7 +4,7 @@
 const logger = require('winston')
 
 // Local dependencies
-const baseClient = require('../../utils/base_client')
+const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 
 // Constants
