@@ -132,7 +132,17 @@ module.exports = () => {
         session.completeMerchantValidation(response)
       }).catch(err => {
         console.log('Couldn’t contact Apple Pay server', err)
-        return err
+        // return err
+        return fetch(`/make-payment/${window.paymentDetails.chargeID}`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            payload: "bla"
+          })
+        })
       })
     }
 
