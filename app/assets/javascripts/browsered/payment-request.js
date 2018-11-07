@@ -70,7 +70,7 @@ module.exports = () => {
         supportedNetworks: supportedNetworksAppleFormatted,
         merchantCapabilities,
         requiredShippingContactFields: ['email'],
-      }
+      } //todo email is not always required now :( sadness
     } else {
       return {
         supportedInstruments,
@@ -96,6 +96,32 @@ module.exports = () => {
       if (checkedValue === 'standard') {
         standardMethodContainer.classList.remove('hidden')
         paymentMethodForm.classList.add('hidden')
+      }
+
+      if (window.stubWebPaymentsUrl) {
+        console.log('hello')
+        return fetch(`${window.stubWebPaymentsUrl}/stub/applepay`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          return fetch(`/make-payment/${window.paymentDetails.chargeID}`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(response)
+        })
+        }).then(response => {
+          if (response.status >= 200 && response.status < 300) {
+            return response.json().then(data => {
+              console.log("RETURNING: ", data)
+              window.location.href = data.url;
+            })
+          }
+        })
       } else if (checkedValue === 'payment-request') {
         makePaymentRequest()
       } else if (checkedValue === 'payment-request-apple') {

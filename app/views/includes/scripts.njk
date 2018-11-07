@@ -35,6 +35,10 @@
       email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
       collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }}
     }
+
+    {% if isDevelopment %}
+    window.stubWebPaymentsUrl = '{{ stubsUrl }}'
+    {% endif %}
   }
 
   document.addEventListener('DOMContentLoaded', function() {

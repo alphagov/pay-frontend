@@ -5,7 +5,7 @@ const request = require('requestretry')
 const logger = require('winston')
 
 // Local constants
-const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY } = process.env
+const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY, APPLE_PAY_STUBS_URL } = process.env
 
 module.exports = (req, res) => {
   if (!req.body.url) {

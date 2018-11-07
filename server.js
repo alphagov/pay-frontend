@@ -115,6 +115,7 @@ function initialiseTemplateEngine (app) {
   // if it's not production we want to re-evaluate the assets on each file change
   nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? staticify.getVersionedPath(CSS_PATH) : CSS_PATH)
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? staticify.getVersionedPath(JAVASCRIPT_PATH) : JAVASCRIPT_PATH)
+  nunjucksEnvironment.addGlobal('isDevelopment', NODE_ENV !== 'production')
 }
 
 function initialisePublic (app) {
