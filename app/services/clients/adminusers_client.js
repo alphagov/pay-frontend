@@ -1,42 +1,34 @@
 'use strict'
 
 // Local dependencies
-const baseClient = require('./base_client/base_clientOLD')
-const requestLogger = require('../../utils/request_logger')
+const baseClient = require('./base_client/base_client')
 const Service = require('../../models/Service.class')
-const createCallbackToPromiseConverter = require('../../utils/response_converter').createCallbackToPromiseConverter
+const {baseClientResponseHandler} = require('../../utils/response_converter')
 
 // Constants
-const SERVICE_NAME = 'adminusers'
-
-const responseBodyToServiceTransformer = body => new Service(body)
+const service = 'adminusers'
+const url = '/v1/api/services'
 
 let baseUrl
 let correlationId
 
-const findServiceBy = (findOptions) => {
+const responseBodyToServiceTransformer = body => new Service(body)
+
+const findServiceBy = findOptions => {
   return new Promise(function (resolve, reject) {
-    const servicesResource = `${baseUrl}/v1/api/services`
-    const params = {
-      correlationId: correlationId,
+    const responseHandler = baseClientResponseHandler({resolve, reject}, responseBodyToServiceTransformer)
+    baseClient.get({
+      baseUrl,
+      url,
+      correlationId,
       qs: {
         gatewayAccountId: findOptions.gatewayAccountId
-      }
-    }
-    const startTime = new Date()
-    const context = {
-      url: servicesResource,
-      defer: {resolve, reject},
-      startTime: startTime,
-      correlationId: correlationId,
-      method: 'GET',
+      },
+      json: true,
       description: 'find a service',
-      service: SERVICE_NAME
-    }
-    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
-    requestLogger.logRequestStart(context)
-    baseClient.get(servicesResource, params, callbackToPromiseConverter)
-      .on('error', callbackToPromiseConverter)
+      service,
+      subSegment: null
+    }).then(responseHandler).catch(responseHandler)
   })
 }
 

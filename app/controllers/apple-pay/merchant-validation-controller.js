@@ -1,7 +1,7 @@
 'use strict'
 
 // NPM dependencies
-const request = require('requestretry')
+const request = require('request-promise-native')
 const logger = require('winston')
 
 // Local constants
