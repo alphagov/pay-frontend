@@ -127,7 +127,10 @@ module.exports = {
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-    const chargeOptions = {email_collection_mode: charge.gatewayAccount.emailCollectionMode}
+    const chargeOptions = {
+      email_collection_mode: charge.gatewayAccount.emailCollectionMode,
+      collect_billing_address: res.locals.service.collectBillingAddress
+    }
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
     let card
 
@@ -190,6 +193,9 @@ module.exports = {
                 subSegment.close()
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
                 const payload = normalise.apiPayload(req, card)
+                if (res.locals.service.collectBillingAddress === false) {
+                  delete payload.address
+                }
                 connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
                   .then(handleCreateResponse(req, res, charge))
               })

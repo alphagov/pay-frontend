@@ -73,7 +73,9 @@ module.exports = (function () {
     cardDetails.cardNumber = '************' + cardDetails.last_digits_card_number
     delete cardDetails.last_digits_card_number
     const normalisedDetails = humps.camelizeKeys(cardDetails)
-    normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
+    if (cardDetails.billing_address) {
+      normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
+    }
     return normalisedDetails
   }
 

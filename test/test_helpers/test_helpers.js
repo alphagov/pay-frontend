@@ -269,8 +269,9 @@ module.exports = {
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 
-  defaultAdminusersResponseForGetService: function (gatewayAccountId) {
-    const serviceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain()
+  defaultAdminusersResponseForGetService: function (gatewayAccountId, serviceData = {}) {
+    serviceData.gateway_account_ids = [gatewayAccountId]
+    const serviceResponse = serviceFixtures.validServiceResponse(serviceData).getPlain()
     adminusersRespondsWith(gatewayAccountId, serviceResponse)
   },
 

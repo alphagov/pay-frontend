@@ -14,24 +14,29 @@ const emailTools = require('./email_tools')
 
 // constants
 const EMAIL_MAX_LENGTH = 254
+
 const REQUIRED_FORM_FIELDS = [
   'cardNo',
   'expiryMonth',
   'expiryYear',
   'cardholderName',
   'cvc',
+  'email'
+]
+const REQUIRED_BILLING_ADDRESS_FORM_FIELDS = [
   'addressLine1',
   'addressCity',
   'addressPostcode',
-  'email',
   'addressCountry'
 ]
 
 const OPTIONAL_FORM_FIELDS = [
+]
+const OPTIONAL_BILLING_ADDRESS_FORM_FIELDS = [
   'addressLine2'
 ]
 
-module.exports = (Card) => {
+module.exports = (Card, chargeOptions = {collect_billing_address: true}) => {
   /*
      These are custom validations for each field.
      Functions should be named the same as the input name
@@ -39,10 +44,9 @@ module.exports = (Card) => {
      One is the field, second is allfields in case it is
      needed for validation.
      */
-  return {
+  const chargeValidationFields = {
     creditCardType: creditCardType,
     allowedCards: Card.allowed,
-    requiredFormFields: REQUIRED_FORM_FIELDS,
     fieldValidations: {
       cardNo: cardNo.bind(Card),
       expiryMonth,
@@ -56,8 +60,16 @@ module.exports = (Card) => {
       creditCardType: creditCardType,
       allowedCards: Card.allowed
     },
+    requiredFormFields: REQUIRED_FORM_FIELDS,
     optionalFormFields: OPTIONAL_FORM_FIELDS
   }
+
+  if (chargeOptions.collect_billing_address === true) {
+    chargeValidationFields.requiredFormFields = [...REQUIRED_FORM_FIELDS, ...REQUIRED_BILLING_ADDRESS_FORM_FIELDS]
+    chargeValidationFields.optionalFormFields = [...OPTIONAL_FORM_FIELDS, ...OPTIONAL_BILLING_ADDRESS_FORM_FIELDS]
+  }
+
+  return chargeValidationFields
 }
 
 // Validation Functions

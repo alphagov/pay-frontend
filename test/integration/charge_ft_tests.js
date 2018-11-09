@@ -120,6 +120,12 @@ describe('chargeTests', function () {
     }
   }
 
+  function connectorCardDataWithoutAddress (cardNumber, cardType = 'DEBIT', corporate = false, cardBrand = 'visa') {
+    const connectorCardData = minimumConnectorCardData(cardNumber, cardType, corporate, cardBrand)
+    delete connectorCardData.address
+    return connectorCardData
+  }
+
   function fullConnectorCardData (cardNumber) {
     const cardData = minimumConnectorCardData(cardNumber)
     cardData.address.line2 = 'bla bla'
@@ -331,6 +337,26 @@ describe('chargeTests', function () {
         mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true})
 
         connectorExpects(minimumConnectorCardData('4000180000000002', 'DEBIT', true, 'visa'))
+          .reply(200, {status: State.AUTH_SUCCESS})
+
+        postChargeRequest(app, cookieValue, minimumFormCardData('4000 1800 0000 0002'), chargeId)
+          .expect(303)
+          .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+          .end(done)
+      })
+
+      it('should not send address property to connector for services not wanting to capture it', function (done) {
+        const cookieValue = cookie.create(chargeId)
+        nock(process.env.CONNECTOR_HOST)
+          .patch('/v1/frontend/charges/23144323')
+          .reply(200)
+        defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId, {
+          collect_billing_address: false
+        })
+        mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true})
+
+        connectorExpects(connectorCardDataWithoutAddress('4000180000000002', 'DEBIT', true, 'visa'))
           .reply(200, {status: State.AUTH_SUCCESS})
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4000 1800 0000 0002'), chargeId)
@@ -761,6 +787,31 @@ describe('chargeTests', function () {
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
           expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
           expect($('.withdrawal-text').text()).to.contains('Accepted credit and debit card types')
+          expect($('#address-country').length).to.equal(1)
+        })
+        .end(done)
+    })
+
+    it('should not show billing address for services not wanting to capture it', function (done) {
+      const cookieValue = cookie.create(chargeId)
+      nock(process.env.CONNECTOR_HOST)
+        .put('/v1/frontend/charges/' + chargeId + '/status').reply(200)
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(enteringCardDetailsState, 'http://www.example.com/service', gatewayAccountId))
+      defaultAdminusersResponseForGetService(gatewayAccountId, {
+        collect_billing_address: false
+      })
+
+      getChargeRequest(app, cookieValue, chargeId)
+        .expect(200)
+        .expect(function (res) {
+          const $ = cheerio.load(res.text)
+          expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
+          expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('.payment-summary #amount').text()).to.eql('£23.45')
+          expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
+          expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
+          expect($('.withdrawal-text').text()).to.contains('Accepted credit and debit card types')
+          expect($('#address-country').length).to.equal(0)
         })
         .end(done)
     })
@@ -888,6 +939,31 @@ describe('chargeTests', function () {
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
           expect($('.payment-summary #payment-summary-breakdown #payment-summary-breakdown-amount').text()).to.contain('£23.45')
           expect($('.payment-summary #payment-summary-breakdown #payment-summary-corporate-card-fee').text()).to.contain('£2.50')
+        })
+        .end(done)
+    })
+
+    it('should not show billing address for services not wanting to capture it', function (done) {
+      nock(process.env.CONNECTOR_HOST)
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge('AUTHORISATION SUCCESS', 'http://www.example.com/service', gatewayAccountId))
+      defaultAdminusersResponseForGetService(gatewayAccountId, {
+        collect_billing_address: false
+      })
+      const cookieValue = cookie.create(chargeId)
+
+      getChargeRequest(app, cookieValue, chargeId, '/confirm')
+        .expect(200)
+        .expect(function (res) {
+          const $ = cheerio.load(res.text)
+          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
+          expect($('#card-number').text()).to.contains('************1234')
+          expect($('#expiry-date').text()).to.contains('11/99')
+          expect($('#cardholder-name').text()).to.contains('Test User')
+          expect($('#address').length).to.equal(0)
+          expect($('.payment-summary #amount').text()).to.eql('£23.45')
+          expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
+          expect($('#payment-summary-breakdown-amount').length > 0).to.equal(false)
+          expect($('#payment-summary-corporate-card-fee').length > 0).to.equal(false)
         })
         .end(done)
     })
