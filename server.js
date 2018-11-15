@@ -160,6 +160,7 @@ function initialise () {
  */
 function start () {
   listen()
+  console.log('something cool here')
 }
 
 // Immediately invoke start if -i flag set. Allows script to be run by task runner
