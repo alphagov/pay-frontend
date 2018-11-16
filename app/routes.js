@@ -7,6 +7,7 @@ const logger = require('winston')
 
 // Local dependencies
 const charge = require('./controllers/charge_controller.js')
+const threeDS = require('./controllers/three_d_secure_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
 const applePay = require('./controllers/apple-pay/merchant-validation-controller')
@@ -68,13 +69,6 @@ exports.bind = function (app) {
 
   app.get(card.new.path, middlewareStack, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
-  app.get(card.auth3dsRequired.path, middlewareStack, charge.auth3dsRequired)
-  app.get(card.auth3dsRequiredOut.path, middlewareStack, charge.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], charge.auth3dsRequiredIn)
-  app.post(card.auth3dsHandler.path, middlewareStack, charge.auth3dsHandler)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
   app.post(card.createPaymentRequest.path, middlewareStack, charge.createPaymentRequest)
@@ -83,6 +77,14 @@ exports.bind = function (app) {
   app.post(card.cancel.path, middlewareStack, charge.cancel)
   app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, resolveLanguage, charge.checkCard)
   app.get(card.return.path, xraySegmentCls, retrieveCharge, resolveLanguage, returnCont.return)
+
+  app.get(card.auth3dsRequired.path, middlewareStack, threeDS.auth3dsRequired)
+  app.get(card.auth3dsRequiredOut.path, middlewareStack, threeDS.auth3dsRequiredOut)
+  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.post(card.auth3dsHandler.path, middlewareStack, threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePay)
