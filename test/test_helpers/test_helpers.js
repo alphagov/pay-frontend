@@ -1,6 +1,6 @@
 'use strict'
 
-// NPM dependencies
+// npm dependencies
 const request = require('supertest')
 const _ = require('lodash')
 const chaiExpect = require('chai').expect

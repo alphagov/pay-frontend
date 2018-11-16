@@ -1,9 +1,15 @@
-var path = require('path')
-const _ = require('lodash')
-var renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions.js')).render
-var cheerio = require('cheerio')
-var should = require('chai').should() // eslint-disable-line
+'use strict'
 
+// npm dependencies
+const path = require('path')
+const lodash = require('lodash')
+const cheerio = require('cheerio')
+const should = require('chai').should() // eslint-disable-line
+
+// local dependencies
+const renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions')).render
+
+// constants
 const customBrandingData = {
   service: {
     hasCustomBranding: true,
@@ -35,21 +41,21 @@ const generateConfirmViewTemplateData = (templateData = {}) => {
 
 describe('The charge view', function () {
   it('should render the amount', function () {
-    var templateData = {
+    const templateData = {
       'amount': '50.00'
     }
 
-    var body = renderTemplate('charge', templateData)
+    const body = renderTemplate('charge', templateData)
     body.should.containSelector('#amount').withText('£50.00')
   })
 
   it('should have a submit form.', function () {
-    var postAction = '/post_card_path'
-    var templateData = {
+    const postAction = '/post_card_path'
+    const templateData = {
       'post_card_action': postAction
     }
 
-    var body = renderTemplate('charge', templateData)
+    const body = renderTemplate('charge', templateData)
 
     body.should.containSelector('form#card-details').withAttributes(
       {
@@ -60,12 +66,12 @@ describe('The charge view', function () {
   })
 
   it('should have a \'Continue\' button.', function () {
-    var body = renderTemplate('charge', {})
+    const body = renderTemplate('charge', {})
     body.should.containSelector('#submit-card-details')
   })
 
   it('should show all input fields.', function () {
-    var body = renderTemplate('charge', {
+    const body = renderTemplate('charge', {
       id: '1234',
       service: {
         collectBillingAddress: true
@@ -87,7 +93,7 @@ describe('The charge view', function () {
   })
 
   it('should not show billing address for services not wanting to capture it', function () {
-    var body = renderTemplate('charge', {
+    const body = renderTemplate('charge', {
       id: '1234',
       service: {
         collectBillingAddress: false
@@ -109,7 +115,7 @@ describe('The charge view', function () {
   })
 
   it('should display custom branding', () => {
-    const templateData = _.merge('charge', {'id': '1234'}, customBrandingData)
+    const templateData = lodash.merge('charge', {'id': '1234'}, customBrandingData)
     const body = renderTemplate('charge', templateData)
     body.should.containSelector('.custom-branding-image')
 
@@ -121,7 +127,7 @@ describe('The charge view', function () {
   })
 
   it('should populate form data if reserved in response', function () {
-    var responseData = {
+    const responseData = {
       id: '1234',
       cardholderName: 'J. Vardy',
       addressLine1: '1 High Street',
@@ -132,7 +138,7 @@ describe('The charge view', function () {
         collectBillingAddress: true
       }
     }
-    var body = renderTemplate('charge', responseData)
+    const body = renderTemplate('charge', responseData)
 
     body.should.containInputWithIdAndName('cardholder-name', 'cardholderName', 'text').withAttribute('value', responseData.cardholderName)
     body.should.containSelector('#address-country')
@@ -147,8 +153,8 @@ describe('The confirm view', function () {
   const successTemplateDataWithCollectBillingAddress = generateConfirmViewTemplateData()
 
   it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
-    var body = renderTemplate('confirm', successTemplateDataWithCollectBillingAddress)
-    var $ = cheerio.load(body)
+    const body = renderTemplate('confirm', successTemplateDataWithCollectBillingAddress)
+    const $ = cheerio.load(body)
     $('#payment-description').html().should.contain('Payment Description &amp; &lt;xss attack&gt; assessment')
     body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
     body.should.containSelector('#card-number').withText('************5100')
@@ -177,11 +183,11 @@ describe('The confirm view', function () {
   })
 
   it('should display custom branding', () => {
-    const templateData = _.merge(successTemplateDataWithCollectBillingAddress, customBrandingData)
-    var body = renderTemplate('confirm', templateData)
+    const templateData = lodash.merge(successTemplateDataWithCollectBillingAddress, customBrandingData)
+    const body = renderTemplate('confirm', templateData)
     body.should.containSelector('.custom-branding-image')
 
-    var $ = cheerio.load(body)
+    const $ = cheerio.load(body)
     const customBrandingCssUrl = $('link').filter((i, el) => {
       return $(el).attr('href') === 'css url'
     }).attr('href')
@@ -189,7 +195,7 @@ describe('The confirm view', function () {
   })
 
   it('should render a confirm button', function () {
-    var body = renderTemplate('confirm', {confirmPath: '/card_details/123/confirm', 'charge': {id: 1234}})
+    const body = renderTemplate('confirm', {confirmPath: '/card_details/123/confirm', 'charge': {id: 1234}})
     body.should.containSelector('form#confirmation').withAttributes(
       {
         action: '/card_details/123/confirm',
@@ -200,12 +206,12 @@ describe('The confirm view', function () {
   })
 
   it('should have a cancel form.', function () {
-    var postAction = '/post_cancel_path'
-    var templateData = {
+    const postAction = '/post_cancel_path'
+    const templateData = {
       'post_cancel_action': postAction
     }
 
-    var body = renderTemplate('charge', templateData)
+    const body = renderTemplate('charge', templateData)
 
     body.should.containSelector('form#cancel').withAttributes(
       {
@@ -216,7 +222,7 @@ describe('The confirm view', function () {
   })
 
   it('should have a \'Cancel\' button.', function () {
-    var body = renderTemplate('charge', {})
+    const body = renderTemplate('charge', {})
     body.should.containInputWithIdAndName('cancel-payment', 'cancel', 'submit')
   })
 })
