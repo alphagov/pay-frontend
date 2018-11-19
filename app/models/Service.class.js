@@ -1,9 +1,9 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const lodash = require('lodash')
 
-// local dependencies
+// Local dependencies
 const countries = require('../services/countries')
 
 /**
@@ -24,6 +24,7 @@ class Service {
     this.name = serviceData.service_name
     this.gatewayAccountIds = serviceData.gateway_account_ids
     this.redirectToServiceImmediatelyOnTerminalState = serviceData.redirect_to_service_immediately_on_terminal_state
+    this.collectBillingAddress = serviceData.collect_billing_address
 
     this.customBranding =
       serviceData.custom_branding ? {

@@ -24,7 +24,8 @@ module.exports = {
       gateway_account_ids: serviceData.gateway_account_ids || [random.randomInt(1, 9999999)],
       custom_branding: serviceData.custom_branding || defaultCustomBranding,
       merchant_details: serviceData.merchant_details || defaultMerchantDetails,
-      redirect_to_service_immediately_on_terminal_state: serviceData.redirect_to_service_immediately_on_terminal_state === true
+      redirect_to_service_immediately_on_terminal_state: serviceData.redirect_to_service_immediately_on_terminal_state === true,
+      collect_billing_address: typeof serviceData.collect_billing_address === 'undefined' || serviceData.collect_billing_address
     }
 
     return {

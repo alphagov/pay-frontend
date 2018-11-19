@@ -1,9 +1,9 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const logger = require('winston')
 
-// local dependencies
+// Local dependencies
 const responseRouter = require('../utils/response_router')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 

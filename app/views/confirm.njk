@@ -37,6 +37,7 @@
             {{ charge.cardDetails.cardholderName }}
           </td>
         </tr>
+        {% if service.collectBillingAddress %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
             {{ __("confirmDetails.address") }}
@@ -45,6 +46,7 @@
             {{ charge.cardDetails.billingAddress }}
           </td>
         </tr>
+        {% endif %}
         {% if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY') or (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' and charge.email) %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">

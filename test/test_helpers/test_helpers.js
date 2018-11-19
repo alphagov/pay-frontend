@@ -7,11 +7,11 @@ const chaiExpect = require('chai').expect
 const csrf = require('csrf')
 const nock = require('nock')
 
-// local dependencies
+// Local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
 const frontendCardDetailsPath = '/card_details'
 
-// constants
+// Constants
 const connectorChargePath = '/v1/frontend/charges/'
 const adminusersServicePath = '/v1/api/services'
 const defaultCorrelationId = 'some-unique-id'
@@ -269,8 +269,9 @@ module.exports = {
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 
-  defaultAdminusersResponseForGetService: function (gatewayAccountId) {
-    const serviceResponse = serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain()
+  defaultAdminusersResponseForGetService: function (gatewayAccountId, serviceData = {}) {
+    serviceData.gateway_account_ids = [gatewayAccountId]
+    const serviceResponse = serviceFixtures.validServiceResponse(serviceData).getPlain()
     adminusersRespondsWith(gatewayAccountId, serviceResponse)
   },
 

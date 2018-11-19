@@ -13,7 +13,21 @@ const AWSXRay = require('aws-xray-sdk')
 const should = chai.should()
 
 // Local dependencies
-const app = proxyquire('../../server.js', {
+const cookie = require('../test_helpers/session')
+const helper = require('../test_helpers/test_helpers')
+const {
+  getChargeRequest,
+  postChargeRequest,
+  defaultConnectorResponseForGetCharge,
+  defaultAdminusersResponseForGetService,
+  connectorResponseForPutCharge
+} = helper
+const State = require('../../config/state')
+const serviceFixtures = require('../fixtures/service_fixtures')
+const random = require('../../app/utils/random')
+
+// Constants
+const app = proxyquire('../../server', {
   'aws-xray-sdk': {
     enableManualMode: () => {},
     setLogger: () => {},
@@ -40,16 +54,7 @@ const app = proxyquire('../../server.js', {
     '@global': true
   }
 }).getApp()
-const cookie = require('../test_helpers/session.js')
-const helper = require('../test_helpers/test_helpers.js')
-const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
-const connectorResponseForPutCharge = require('../test_helpers/test_helpers.js').connectorResponseForPutCharge
-const {defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
-const State = require('../../config/state.js')
-const serviceFixtures = require('../fixtures/service_fixtures')
-const random = require('../../app/utils/random')
 
-// Constants
 const EMPTY_BODY = ''
 const defaultCorrelationHeader = {
   reqheaders: {'x-request-id': 'some-unique-id'}
@@ -761,6 +766,7 @@ describe('chargeTests', function () {
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
           expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
           expect($('.withdrawal-text').text()).to.contains('Accepted credit and debit card types')
+          expect($('#address-country').length).to.equal(1)
         })
         .end(done)
     })

@@ -1,17 +1,17 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const logger = require('winston')
 const {Cache} = require('memory-cache')
 const lodash = require('lodash')
 
-// local dependencies
+// Local dependencies
 const responseRouter = require('../utils/response_router')
 const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const getAdminUsersClient = require('../services/clients/adminusers_client')
 
-// constants
+// Constants
 const SERVICE_CACHE_MAX_AGE = parseInt(process.env.SERVICE_CACHE_MAX_AGE || 15 * 60 * 1000) // default to 15 mins
 const serviceCache = new Cache()
 

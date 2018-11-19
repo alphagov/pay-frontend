@@ -1,13 +1,13 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const logger = require('winston')
 const _ = require('lodash')
 const i18n = require('i18n')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
-// local dependencies
+// Local dependencies
 const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
@@ -21,7 +21,7 @@ const {commonTypos} = require('../utils/email_tools')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
-// constants
+// Constants
 const clsXrayConfig = require('../../config/xray-cls')
 const {views, preserveProperties} = require('../../config/charge_controller')
 const {CORRELATION_HEADER} = require('../../config/correlation_header')
@@ -127,7 +127,10 @@ module.exports = {
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-    const chargeOptions = {email_collection_mode: charge.gatewayAccount.emailCollectionMode}
+    const chargeOptions = {
+      email_collection_mode: charge.gatewayAccount.emailCollectionMode,
+      collect_billing_address: res.locals.service.collectBillingAddress
+    }
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
     let card
 
@@ -190,6 +193,9 @@ module.exports = {
                 subSegment.close()
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
                 const payload = normalise.apiPayload(req, card)
+                if (res.locals.service.collectBillingAddress === false) {
+                  delete payload.address
+                }
                 connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
                   .then(handleCreateResponse(req, res, charge))
               })

@@ -1,12 +1,12 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const changeCase = require('change-case')
 
-// local dependencies
+// Local dependencies
 const chargeValidationFields = require('./charge_validation_fields')
 
-// constants
+// Constants
 const CUSTOM_ERRORS = {
   expiryYear: {
     skip: true
@@ -16,7 +16,7 @@ const CUSTOM_ERRORS = {
   }
 }
 
-module.exports = (translations, logger, Card, chargeOptions = {}) => {
+module.exports = (translations, logger, Card, chargeOptions = {collect_billing_address: true}) => {
   const validations = chargeValidationFields(Card, chargeOptions)
   const fieldValidations = validations.fieldValidations
   return {

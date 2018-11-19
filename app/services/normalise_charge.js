@@ -2,14 +2,14 @@
 
 // NPM dependencies
 const humps = require('humps')
-const _ = require('lodash')
+const lodash = require('lodash')
 
 // Local dependencies
 const countries = require('../services/countries')
-const normaliseCards = require('../services/normalise_cards.js')
+const normaliseCards = require('../services/normalise_cards')
 
 module.exports = (function () {
-  const _charge = function (charge, chargeId) {
+  const charge = function (charge, chargeId) {
     const chargeObj = {
       id: chargeId,
       amount: penceToPounds(charge.amount),
@@ -62,8 +62,8 @@ module.exports = (function () {
       'chargeId'
     ]
 
-    _.forIn(body, function (value, key) {
-      if (!_.includes(toIgnore, key)) {
+    lodash.forIn(body, function (value, key) {
+      if (!lodash.includes(toIgnore, key)) {
         body[key] = value.trim()
       }
     })
@@ -73,7 +73,9 @@ module.exports = (function () {
     cardDetails.cardNumber = '************' + cardDetails.last_digits_card_number
     delete cardDetails.last_digits_card_number
     const normalisedDetails = humps.camelizeKeys(cardDetails)
-    normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
+    if (cardDetails.billing_address) {
+      normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
+    }
     return normalisedDetails
   }
 
@@ -139,13 +141,13 @@ module.exports = (function () {
   }
 
   return {
-    charge: _charge,
-    addressForApi: addressForApi,
-    addressLines: addressLines,
-    whitespace: whitespace,
-    addressForView: addressForView,
-    creditCard: creditCard,
-    expiryDate: expiryDate,
-    apiPayload: apiPayload
+    charge,
+    addressForApi,
+    addressLines,
+    whitespace,
+    addressForView,
+    creditCard,
+    expiryDate,
+    apiPayload
   }
 }())

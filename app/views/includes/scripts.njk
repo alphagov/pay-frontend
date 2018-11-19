@@ -30,7 +30,8 @@
         {% endif %}
     };
     window.Charge = {
-      email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}'
+      email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
+      collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }}
     }
   }
 

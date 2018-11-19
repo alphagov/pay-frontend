@@ -1,6 +1,6 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const path = require('path')
 const assert = require('assert')
 const nock = require('nock')
@@ -8,7 +8,7 @@ const {unexpectedPromise} = require(path.join(__dirname, '/../test_helpers/test_
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
 
-// local dependencies
+// Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 
 const CardModel = proxyquire(path.join(__dirname, '/../../app/models/card.js'), {
@@ -28,7 +28,7 @@ const CardModel = proxyquire(path.join(__dirname, '/../../app/models/card.js'), 
   }
 })
 
-// constants
+// Constants
 const aRequestId = 'unique-request-id'
 const aCorrelationHeader = {
   reqheaders: {

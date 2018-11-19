@@ -3,10 +3,10 @@ const path = require('path')
 const i18n = require('i18n')
 const assert = require('assert')
 
-// local dependencies
+// Local dependencies
 const resolveLanguage = require('../../app/middleware/resolve_language.js')
 
-// local constants
+// Local constants
 const res = {
   locals: {}
 }

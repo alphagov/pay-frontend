@@ -1,12 +1,12 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const lodash = require('lodash')
 
-// local dependencies
+// Local dependencies
 const paths = require('../paths.js')
 
-// constants
+// Constants
 const ANALYTICS_ERROR = {
   analytics: {
     analyticsId: 'Service unavailable',

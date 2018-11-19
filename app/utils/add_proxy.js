@@ -1,10 +1,10 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const urlParse = require('url').parse
 const _ = require('lodash')
 
-// constants
+// Constants
 const {FORWARD_PROXY_URL} = process.env
 
 module.exports.addProxy = function addProxy (url) {

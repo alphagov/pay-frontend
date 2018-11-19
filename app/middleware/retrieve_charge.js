@@ -1,17 +1,17 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
 const {getNamespace} = require('continuation-local-storage')
 
-// local dependencies
+// Local dependencies
 const responseRouter = require('../utils/response_router')
 const Charge = require('../models/charge')
 const chargeParam = require('../services/charge_param_retriever')
 const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
-// constants
+// Constants
 const clsXrayConfig = require('../../config/xray-cls')
 
 module.exports = (req, res, next) => {

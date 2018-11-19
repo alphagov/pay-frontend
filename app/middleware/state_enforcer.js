@@ -1,9 +1,9 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const lodash = require('lodash')
 
-// local dependencies
+// Local dependencies
 const responseRouter = require('../utils/response_router')
 const stateService = require('../services/state_service')
 const paths = require('../paths')

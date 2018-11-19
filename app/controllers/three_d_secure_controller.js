@@ -1,15 +1,15 @@
 
-// npm dependencies
+// NPM dependencies
 const _ = require('lodash')
 
-// local dependencies
+// Local dependencies
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
 const paths = require('../paths')
 const {withAnalytics} = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
-// constants
+// Constants
 const {views, threeDsEPDQResults} = require('../../config/charge_controller')
 const {CORRELATION_HEADER} = require('../../config/correlation_header')
 

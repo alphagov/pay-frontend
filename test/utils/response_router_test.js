@@ -1,17 +1,17 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const {expect} = require('chai')
 const sinon = require('sinon')
 const lodash = require('lodash')
 
-// local dependencies
+// Local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
 const Service = require('../../app/models/Service.class')
 const responseRouter = require('../../app/utils/response_router')
 const testHelpers = require('../test_helpers/test_helpers')
 
-// constants
+// Constants
 const nonTerminalActions = [
   'auth_3ds_required',
   'auth_3ds_required_in',

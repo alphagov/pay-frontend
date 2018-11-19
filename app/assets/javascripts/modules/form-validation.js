@@ -35,9 +35,11 @@ var formValidation = function () {
         }, false)
       })
     }
-    countrySelect.addEventListener('change', function () {
-      checkValidation(postcodeInput)
-    }, false)
+    if (window.Charge.collect_billing_address === true) {
+      countrySelect.addEventListener('change', function () {
+        checkValidation(postcodeInput)
+      }, false)
+    }
   }
 
   var checkFormSubmission = function (e) {
@@ -48,7 +50,7 @@ var formValidation = function () {
     }
     e.preventDefault()
     var validations = allValidations()
-    if (countryAutocomplete.value === '') {
+    if ((window.Charge.collect_billing_address === true) && (countryAutocomplete.value === '')) {
       countryAutocomplete.value = document.getElementById('address-country-select').value
     }
 
