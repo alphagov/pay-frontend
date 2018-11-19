@@ -6,7 +6,7 @@ if (!process.env.DISABLE_APPMETRICS) {
 // Node.js core dependencies
 const path = require('path')
 
-// npm dependencies
+// NPM dependencies
 const express = require('express')
 const nunjucks = require('nunjucks')
 const favicon = require('serve-favicon')

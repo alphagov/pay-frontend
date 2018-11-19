@@ -1,9 +1,9 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const _ = require('lodash')
 
-// local dependencies
+// Local dependencies
 const chargeValidator = require('./charge_validation.js')
 const normalise = require('../services/normalise_charge.js')
 

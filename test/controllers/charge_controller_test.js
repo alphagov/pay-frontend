@@ -1,15 +1,15 @@
 'use strict'
 
-// core dependencies
+// Core dependencies
 const path = require('path')
 
-// npm dependencies
+// NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = require('chai').expect
 const AWSXRay = require('aws-xray-sdk')
 
-// local dependencies
+// Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions'))
 
 const mockCharge = (function () {

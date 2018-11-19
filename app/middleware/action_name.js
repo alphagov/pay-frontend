@@ -1,6 +1,6 @@
 'use strict'
 
-// local dependencies
+// Local dependencies
 const paths = require('./../paths.js')
 const flatPaths = require('./../utils/flattened_paths.js')(paths)
 

@@ -1,4 +1,4 @@
-// npm dependencies
+// NPM dependencies
 const _ = require('lodash')
 const logger = require('winston')
 const baseClient = require('../services/clients/base_client/base_client')

@@ -1,10 +1,10 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const humps = require('humps')
 const lodash = require('lodash')
 
-// local dependencies
+// Local dependencies
 const countries = require('../services/countries')
 const normaliseCards = require('../services/normalise_cards')
 

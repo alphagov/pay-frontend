@@ -1,9 +1,9 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const {expect} = require('chai')
 
-// local dependencies
+// Local dependencies
 const abTest = require('../../app/utils/ab_test')
 
 describe('ab test helper', function () {

@@ -1,17 +1,17 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const request = require('supertest')
 const _ = require('lodash')
 const chaiExpect = require('chai').expect
 const csrf = require('csrf')
 const nock = require('nock')
 
-// local dependencies
+// Local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
 const frontendCardDetailsPath = '/card_details'
 
-// constants
+// Constants
 const connectorChargePath = '/v1/frontend/charges/'
 const adminusersServicePath = '/v1/api/services'
 const defaultCorrelationId = 'some-unique-id'

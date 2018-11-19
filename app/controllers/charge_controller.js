@@ -1,13 +1,13 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const logger = require('winston')
 const _ = require('lodash')
 const i18n = require('i18n')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
-// local dependencies
+// Local dependencies
 const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
@@ -21,7 +21,7 @@ const {commonTypos} = require('../utils/email_tools')
 const {withAnalyticsError, withAnalytics} = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
-// constants
+// Constants
 const clsXrayConfig = require('../../config/xray-cls')
 const {views, preserveProperties} = require('../../config/charge_controller')
 const {CORRELATION_HEADER} = require('../../config/correlation_header')

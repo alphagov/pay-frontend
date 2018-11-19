@@ -1,9 +1,9 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const csrf = require('csrf')
 
-// local dependencies
+// Local dependencies
 const {generateRoute} = require('../paths')
 const Token = require('../models/token')
 const Charge = require('../models/charge')

@@ -3,12 +3,12 @@
 // NPM dependencies
 const logger = require('winston')
 
-// local dependencies
+// Local dependencies
 const connectorClient = require('../services/clients/connector_client')
 const State = require('../../config/state.js')
 const StateModel = require('../../config/state')
 
-// constants
+// Constants
 const CANCELABLE_STATES = [
   StateModel.CREATED,
   StateModel.ENTERING_CARD_DETAILS,

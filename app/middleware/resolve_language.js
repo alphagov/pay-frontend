@@ -1,6 +1,6 @@
 'use strict'
 
-// local dependencies
+// Local dependencies
 const i18n = require('i18n')
 
 module.exports = function (req, res, next) {

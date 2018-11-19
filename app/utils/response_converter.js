@@ -1,9 +1,9 @@
 'use strict'
 
-// local dependencies
+// Local dependencies
 const requestLogger = require('../utils/request_logger')
 
-// constants
+// Constants
 const SUCCESS_CODES = [200, 201, 202, 204, 206]
 
 exports.createCallbackToPromiseConverter = createCallbackToPromiseConverter

@@ -1,4 +1,4 @@
-// npm dependencies
+// NPM dependencies
 const cheerio = require('cheerio')
 const chai = require('chai')
 const nunjucks = require('nunjucks')

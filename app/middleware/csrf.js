@@ -1,10 +1,10 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const csrf = require('csrf')
 const logger = require('winston')
 
-// local dependencies
+// Local dependencies
 const session = require('../utils/session')
 const responseRouter = require('../utils/response_router')
 const chargeParam = require('../services/charge_param_retriever')

@@ -1,10 +1,10 @@
 'use strict'
 
-// local dependencies
+// Local dependencies
 const pactBase = require('./pact_base')
 const random = require('../../app/utils/random')
 
-// global setup
+// Global setup
 const pactServices = pactBase({array: ['service_ids']})
 
 module.exports = {

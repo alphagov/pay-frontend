@@ -1,6 +1,6 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const {expect} = require('chai')
 const proxyquire = require('proxyquire').noPreserveCache()
 

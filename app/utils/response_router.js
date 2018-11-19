@@ -1,6 +1,6 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const logger = require('winston')
 const lodash = require('lodash')
 

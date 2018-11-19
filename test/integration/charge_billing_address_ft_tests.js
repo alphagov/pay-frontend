@@ -1,6 +1,6 @@
 'use strict'
 
-// npm dependencies
+// NPM dependencies
 const lodash = require('lodash')
 const nock = require('nock')
 const chai = require('chai')
@@ -10,7 +10,7 @@ const expect = chai.expect
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
 
-// local dependencies
+// Local dependencies
 const cookie = require('../test_helpers/session')
 const helper = require('../test_helpers/test_helpers')
 const {
@@ -21,7 +21,7 @@ const {
 } = helper
 const State = require('../../config/state')
 
-// constants
+// Constants
 const app = proxyquire('../../server', {
   'aws-xray-sdk': {
     enableManualMode: () => {},

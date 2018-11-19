@@ -1,6 +1,6 @@
 'use strict'
 
-// local dependencies
+// Local dependencies
 const cookie = require('../utils/cookies')
 
 exports.createChargeIdSessionKey = chargeId => 'ch_' + chargeId

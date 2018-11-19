@@ -3,16 +3,16 @@
 // Polyfill for ZAP webdriver
 require('polyfill-array-includes')
 
-// npm dependencies
+// NPM dependencies
 const ukPostcode = require('uk-postcode')
 const rfc822Validator = require('rfc822-validate')
 
-// local dependencies
+// Local dependencies
 const luhn = require('./luhn')
 const creditCardType = require('credit-card-type')
 const emailTools = require('./email_tools')
 
-// constants
+// Constants
 const EMAIL_MAX_LENGTH = 254
 
 const REQUIRED_FORM_FIELDS = [

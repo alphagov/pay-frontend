@@ -1,18 +1,18 @@
 'use strict'
 
-// core dependencies
+// Core dependencies
 const path = require('path')
 
-// npm dependencies
+// NPM dependencies
 const assert = require('assert')
 const nock = require('nock')
 
-// local dependencies
+// Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 const Charge = require(path.join(__dirname, '/../../app/models/charge.js'))
 const {unexpectedPromise} = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
 
-// constants
+// Constants
 const originalHost = process.env.CONNECTOR_HOST
 
 describe('updateStatus', function () {
