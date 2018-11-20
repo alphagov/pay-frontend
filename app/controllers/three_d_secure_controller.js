@@ -99,6 +99,8 @@ module.exports = {
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
       })
+    } else if (issuerUrl) {
+      res.redirect(303, issuerUrl)
     } else {
       responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
     }

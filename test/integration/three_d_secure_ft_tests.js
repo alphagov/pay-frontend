@@ -94,7 +94,6 @@ describe('chargeTests', function () {
           .end(done)
       })
     })
-
     describe('When invoked on a smartpay gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
         const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
@@ -116,6 +115,30 @@ describe('chargeTests', function () {
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('mdValue')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
+          })
+          .end(done)
+      })
+    })
+    describe('When invoked on a stripe gateway account', function () {
+      it('should redirect to the issuer URL', function (done) {
+        const issuerUrl = 'http://issuerUrl.com'
+        const chargeResponse = helper.rawSuccessfulGetCharge(
+          State.AUTH_3DS_REQUIRED,
+          'http://www.example.com/service',
+          chargeId,
+          gatewayAccountId,
+          {issuerUrl}
+        )
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        const cookieValue = cookie.create(chargeId)
+
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
+          .expect(303)
+          .expect(function (res) {
+            expect(res.headers.location).to.eql(issuerUrl)
           })
           .end(done)
       })
