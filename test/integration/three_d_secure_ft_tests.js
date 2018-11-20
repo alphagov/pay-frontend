@@ -294,6 +294,23 @@ describe('chargeTests', function () {
           .end(done)
       })
     })
+    describe('for stripe payment provider', function () {
+      it('populate page with stripe data', function (done) {
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        const cookieValue = cookie.create(chargeId)
+        getChargeRequest(app, cookieValue, chargeId, false, '/3ds_required_in/stripe?source=123')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'source\']').attr('value')).to.eql('123')
+          })
+          .end(done)
+      })
+    })
   })
 
   describe('The /card_details/charge_id/3ds_handler', function () {
