@@ -28,12 +28,12 @@ module.exports = correlationId => {
 
   const updateStatus = function (chargeId, status) {
     return new Promise(function (resolve, reject) {
-      connectorClient({correlationId}).updateStatus({chargeId, payload: {new_status: status}})
+      connectorClient({correlationId}).updateStatus({chargeId, body: {new_status: status}})
         .then(response => {
           updateComplete(response, {resolve, reject})
         })
         .catch(err => {
-          clientUnavailable(err, {resolve, reject})
+          clientError(err, {resolve, reject}, 'UPDATE')
         })
     })
   }
@@ -48,7 +48,7 @@ module.exports = correlationId => {
           resolve(response.body)
         })
         .catch(err => {
-          clientUnavailable(err, {resolve, reject})
+          clientError(err, {resolve, reject}, 'GET')
         })
     })
   }
@@ -60,7 +60,8 @@ module.exports = correlationId => {
           captureComplete(response, {resolve, reject})
         })
         .catch(err => {
-          captureFail(err, {resolve, reject})
+          const errReason = (err.statusCode && err.statusCode === 400) ? 'CAPTURE' : 'POST'
+          clientError(err, {resolve, reject}, errReason)
         })
     })
   }
@@ -72,7 +73,7 @@ module.exports = correlationId => {
           cancelComplete(response, {resolve, reject})
         })
         .catch(err => {
-          cancelFail(err, {resolve, reject})
+          clientError(err, {resolve, reject}, 'CANCEL')
         })
     })
   }
@@ -87,19 +88,19 @@ module.exports = correlationId => {
           resolve(response.body)
         })
         .catch(err => {
-          clientUnavailable(err, {resolve, reject})
+          clientError(err, {resolve, reject}, 'GET')
         })
     })
   }
 
   const patch = function (chargeId, op, path, value, subSegment) {
     return new Promise(function (resolve, reject) {
-      const payload = {
+      const body = {
         op: op,
         path: path,
         value: value
       }
-      connectorClient({correlationId}).patch({chargeId, payload}, subSegment)
+      connectorClient({correlationId}).patch({chargeId, body}, subSegment)
         .then(response => {
           const code = response.statusCode
           if (code === 200) {
@@ -126,19 +127,11 @@ module.exports = correlationId => {
     return defer.reject(new Error('POST_FAILED'))
   }
 
-  const cancelFail = function (err, defer) {
-    clientUnavailable(err, defer)
-  }
-
   const captureComplete = function (response, defer) {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
-  }
-
-  const captureFail = function (err, defer) {
-    clientUnavailable(err, defer)
   }
 
   const updateComplete = function (response, defer) {
@@ -147,8 +140,7 @@ module.exports = correlationId => {
         chargeId: response.body,
         status: response.statusCode
       })
-      defer.reject(new Error('UPDATE_FAILED'))
-      return
+      return defer.reject(new Error('UPDATE_FAILED'))
     }
     defer.resolve({success: 'OK'})
   }
@@ -157,7 +149,10 @@ module.exports = correlationId => {
     return CANCELABLE_STATES.includes(chargeStatus)
   }
 
-  const clientUnavailable = function (error, defer) {
+  const clientError = function (error, defer, failure) {
+    if (error.statusCode) {
+      return defer.reject(new Error(`${failure}_FAILED`))
+    }
     defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
 

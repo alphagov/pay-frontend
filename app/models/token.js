@@ -14,6 +14,9 @@ const destroy = function (tokenId, correlationId) {
         resolve(response.body)
       })
       .catch(err => {
+        if (err.statusCode) {
+          return reject(new Error('DELETE_FAILED'))
+        }
         reject(new Error('CLIENT_UNAVAILABLE'), err)
       })
   })

@@ -45,8 +45,8 @@ const build3dsPayload = req => {
   return auth3dsPayload
 }
 
-const handleThreeDsResponse = (req, res, charge) => response => {
-  switch (response.statusCode) {
+const handleThreeDsResponse = (req, res, charge) => responseOrErr => {
+  switch (responseOrErr.statusCode) {
     case 200:
     case 400:
       redirect(res).toConfirm(charge.id)
@@ -67,10 +67,13 @@ module.exports = {
   auth3dsHandler (req, res) {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const correlationId = req.headers[CORRELATION_HEADER] || ''
-    const payload = build3dsPayload(req)
-    connectorClient({correlationId}).threeDs({chargeId: charge.id, payload})
-      .then(handleThreeDsResponse(req, res, charge))
-      .catch(() => {
+    const body = build3dsPayload(req)
+    const handler = handleThreeDsResponse(req, res, charge)
+    connectorClient({correlationId}).threeDs({chargeId: charge.id, body})
+      .then(handler)
+      .catch(err => {
+        if (err.statusCode) return handler(err)
+        // else
         responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
       })
   },

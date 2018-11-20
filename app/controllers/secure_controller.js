@@ -10,8 +10,8 @@ const Charge = require('../models/charge')
 const responseRouter = require('../utils/response_router')
 const {createChargeIdSessionKey} = require('../utils/session')
 const {setSessionVariable} = require('../utils/cookies')
-const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
-const withAnalyticsError = require('../utils/analytics').withAnalyticsError
+const {CORRELATION_HEADER} = require('../../config/correlation_header')
+const {withAnalyticsError} = require('../utils/analytics')
 const {resolveActionName} = require('../services/state_service')
 
 exports.new = (req, res) => {
