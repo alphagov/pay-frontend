@@ -1,9 +1,4 @@
-'use strict'
-
-// NPM dependencies
 const request = require('supertest')
-
-// Local dependencies
 const app = require('../../server.js').getApp()
 const expect = require('chai').expect
 
@@ -14,8 +9,8 @@ describe('The /healthcheck endpoint returned json', function () {
       .get('/healthcheck')
       .set('Accept', 'application/json')
       .expect(200)
-      .expect(res => {
-        const response = JSON.parse(res.text)
+      .expect(function (res) {
+        var response = JSON.parse(res.text)
         expect(response).to.deep.equal(expectedResponse)
       }).end(done)
   })

@@ -164,7 +164,7 @@ describe('capture', function () {
         .reply(400)
     })
 
-    it('should return CAPTURE_FAILED', function () {
+    it('should return AUTH_FAILED', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
@@ -182,7 +182,7 @@ describe('capture', function () {
         .reply(410)
     })
 
-    it('should return POST_FAILED', function () {
+    it('should return AUTH_FAILED', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {

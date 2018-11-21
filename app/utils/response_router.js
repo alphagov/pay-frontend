@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const logger = require('winston')
-const _ = require('lodash')
+const lodash = require('lodash')
 
 const expired = {
   view: 'errors/incorrect_state/session_expired',
@@ -234,7 +234,7 @@ const actions = {
 exports.response = (req, res, actionName, options) => {
   options = options || {}
   options.viewName = actionName
-  let action = _.result(actions, actionName)
+  let action = lodash.result(actions, actionName)
   if (!action) {
     logger.error('Response action ' + actionName + ' NOT FOUND')
     options = {viewName: 'error'}
@@ -249,14 +249,14 @@ exports.response = (req, res, actionName, options) => {
 }
 
 function shouldRedirect (req, res, action) {
-  const directRedirectEnabled = _.get(res, 'locals.service.redirectToServiceImmediatelyOnTerminalState', false)
+  const directRedirectEnabled = lodash.get(res, 'locals.service.redirectToServiceImmediatelyOnTerminalState', false)
   return (action.terminal && directRedirectEnabled && req.chargeData)
 }
 
 function render (res, action, options) {
-  options = (action.locals) ? _.merge({}, action.locals, options) : options
-  if (_.get(options, 'analytics.path')) {
-    options.analytics.path = options.analytics.path + _.get(action, 'analyticsPage', '')
+  options = (action.locals) ? lodash.merge({}, action.locals, options) : options
+  if (lodash.get(options, 'analytics.path')) {
+    options.analytics.path = options.analytics.path + lodash.get(action, 'analyticsPage', '')
   }
   res.status(action.code || 200)
   res.render(action.view, options)

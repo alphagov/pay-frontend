@@ -53,15 +53,15 @@ const redirect = res => {
   }
 }
 
-const handleCreateResponse = (req, res, charge) => responseOrErr => {
-  switch (responseOrErr.statusCode) {
+const handleCreateResponse = (req, res, charge) => response => {
+  switch (response.statusCode) {
     case 202:
     case 409:
       logging.failedChargePost(409)
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
-      if (_.get(responseOrErr.body, 'status') === State.AUTH_3DS_REQUIRED) {
+      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
         redirect(res).toAuth3dsRequired(req.chargeId)
       } else {
         redirect(res).toConfirm(req.chargeId)
@@ -76,15 +76,15 @@ const handleCreateResponse = (req, res, charge) => responseOrErr => {
   }
 }
 
-const handleAuthResponse = (req, res, charge) => responseOrErr => {
-  switch (responseOrErr.statusCode) {
+const handleAuthResponse = (req, res, charge) => response => {
+  switch (response.statusCode) {
     case 202:
     case 409:
       logging.failedChargePost(409)
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
-      if (_.get(responseOrErr.body, 'status') === State.AUTH_3DS_REQUIRED) {
+      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
         redirect(res).toAuth3dsRequired(req.chargeId)
       } else {
         Charge(req.headers[CORRELATION_HEADER])
@@ -103,7 +103,7 @@ const handleAuthResponse = (req, res, charge) => responseOrErr => {
       }
       break
     case 500:
-      logging.failedChargePost(500)
+      logging.failedChargePost(409)
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
       break
     default:
@@ -188,29 +188,20 @@ module.exports = {
             return responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
           }
           AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
-            const handler = handleCreateResponse(req, res, charge)
             emailPatch
               .then(() => {
                 subSegment.close()
                 const correlationId = req.headers[CORRELATION_HEADER] || ''
-                const body = normalise.apiPayload(req, card)
+                const payload = normalise.apiPayload(req, card)
                 if (res.locals.service.collectBillingAddress === false) {
-                  delete body.address
+                  delete payload.address
                 }
-                connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, body})
-                  .then(handler)
-                  .catch(err => {
-                    subSegment.close(err.message)
-                    if (err.statusCode) return handler(err)
-                    // else
-                    responseRouter.response(req, res, 'ERROR', withAnalyticsError())
-                  })
+                connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
+                  .then(handleCreateResponse(req, res, charge))
               })
               .catch(err => {
                 subSegment.close(err.message)
                 logging.failedChargePatch(err.message)
-                if (err.statusCode) return handler(err)
-                // else
                 responseRouter.response(req, res, 'ERROR', withAnalyticsError())
               })
           }, clsSegment)
@@ -240,21 +231,18 @@ module.exports = {
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
 
     AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
-      const authResponder = handleAuthResponse(req, res, charge)
       Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.payerEmail, subSegment)
         .then(() => {
           subSegment.close()
           const correlationId = req.headers[CORRELATION_HEADER] || ''
-          const body = normalise.apiPayload(_.merge(req, convertedPayload), 'visa')
+          const payload = normalise.apiPayload(_.merge(req, convertedPayload), 'visa')
           connectorClient({correlationId})
-            .chargeAuth({chargeId: req.chargeId, body})
-            .then(authResponder)
+            .chargeAuth({chargeId: req.chargeId, payload})
+            .then(handleAuthResponse(req, res, charge))
         })
         .catch(err => {
           subSegment.close(err)
           logging.failedChargePatch(err)
-          if (err.statusCode) return authResponder(err)
-          // else
           responseRouter.response(req, res, 'ERROR', withAnalyticsError())
         })
     }, clsSegment)
@@ -274,9 +262,9 @@ module.exports = {
               corporate: card.corporate
             })
           },
-          err => {
-            subSegment.close(err.message)
-            return res.json({'accepted': false, message: err.message})
+          error => {
+            subSegment.close(error.message)
+            return res.json({'accepted': false, message: error.message})
           }
         )
     }, clsSegment)
