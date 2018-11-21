@@ -1,33 +1,16 @@
 'use strict'
 
-// local dependencies
+// Local dependencies
 const baseClient = require('./base_client/base_client')
 
-// constants
-const baseUrl = process.env.CARDID_HOST
-const url = '/v1/api/card'
-const description = 'check card'
-const service = 'cardid'
+// Constants
+const CARD_URL = process.env.CARDID_HOST + '/v1/api/card'
 
-module.exports = {
-  /**
-     *
-     * @param args
-     * @param subSegment
-     *
-     * @returns {Request}
-     */
-  post: (args, subSegment) => {
-    return baseClient.post(
-      {
-        baseUrl,
-        url,
-        body: args.body,
-        correlationId: args.correlationId,
-        json: true,
-        description,
-        service,
-        subSegment
-      })
-  }
-}
+/**
+ *
+ * @param args
+ *
+ * @returns {Request}
+ */
+exports.post = (args, subSegment) => baseClient.post(CARD_URL, args, null, subSegment)
+exports.CARD_URL = CARD_URL

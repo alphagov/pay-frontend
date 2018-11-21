@@ -32,9 +32,8 @@ describe('base client', () => {
       .reply(200)
 
     // literally just making sure data is passed to mocked service correctly
-    baseClient.post({
-      url,
-      body: arbitraryRequestData,
+    baseClient.post(url, {
+      payload: arbitraryRequestData,
       correlationId: arbitraryCorrelationId
     }, null, null).then(() => {
       done()
@@ -51,9 +50,8 @@ describe('base client', () => {
       .reply(200)
 
     // literally just making sure data is passed to mocked service correctly
-    baseClient.post({
-      url: urlWithoutPort,
-      body: arbitraryRequestData,
+    baseClient.post(urlWithoutPort, {
+      payload: arbitraryRequestData,
       correlationId: arbitraryCorrelationId
     }, null, null).then(() => done())
   })
@@ -64,9 +62,8 @@ describe('base client', () => {
       .reply(200)
 
     // literally just making sure data is passed to mocked service correctly
-    baseClient.post({
-      url,
-      body: arbitraryRequestData,
+    baseClient.post(url, {
+      payload: arbitraryRequestData,
       correlationId: arbitraryCorrelationId
     }, null, null).then(() => done())
   })
@@ -76,9 +73,8 @@ describe('base client', () => {
       .put('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.put({
-      url,
-      body: arbitraryRequestData,
+    baseClient.put(url, {
+      payload: arbitraryRequestData,
       correlationId: arbitraryCorrelationId
     }, null, null).then(() => done())
   })
@@ -88,9 +84,8 @@ describe('base client', () => {
       .patch('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.patch({
-      url,
-      body: arbitraryRequestData,
+    baseClient.patch(url, {
+      payload: arbitraryRequestData,
       correlationId: arbitraryCorrelationId
     }, null, null).then(() => done())
   })
@@ -100,7 +95,7 @@ describe('base client', () => {
       .get('/')
       .reply(200, arbitraryResponseData)
 
-    baseClient.get({url, correlationId: arbitraryCorrelationId}, null, null).then(response => {
+    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
       assert.equal(response.body.response, 'I am a response')
       done()
     })
@@ -111,7 +106,7 @@ describe('base client', () => {
       .get('/')
       .reply(201, '{}')
 
-    baseClient.get({url, correlationId: arbitraryCorrelationId}, null, null).then(response => {
+    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
       assert.equal(response.statusCode, 201)
       done()
     })
@@ -122,7 +117,7 @@ describe('base client', () => {
       .post('/', arbitraryRequestData)
       .reply(200, arbitraryResponseData)
 
-    baseClient.post({url, body: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
+    baseClient.post(url, {payload: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
       assert.equal(response.body.response, 'I am a response')
       done()
     })
@@ -133,7 +128,7 @@ describe('base client', () => {
       .post('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.post({url, body: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
+    baseClient.post(url, {payload: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
       assert.equal(response.body, null)
       done()
     })
@@ -144,7 +139,7 @@ describe('base client', () => {
       .get('/')
       .reply('{}')
 
-    baseClient.get({url, correlationId: 'reee'}, null, null).then(response => {
+    baseClient.get(url, {correlationId: 'reee'}, null, null).then(response => {
       assert.equal(response.request.headers['x-request-id'], 'reee')
       done()
     })
@@ -155,7 +150,7 @@ describe('base client', () => {
       .get('/')
       .reply('{}')
 
-    baseClient.get({url}, null, null).then(response => {
+    baseClient.get(url, {}, null, null).then(response => {
       assert.equal(response.request.headers['Content-Type'], 'application/json')
       done()
     })
@@ -166,7 +161,7 @@ describe('base client', () => {
       .get('/')
       .reply(200, arbitraryResponseData, {'content-type': 'text/html'})
 
-    baseClient.get({url, correlationId: arbitraryCorrelationId}, null, null).then(response => {
+    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
       assert.equal(response.body.response, 'I am a response')
       done()
     })
