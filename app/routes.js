@@ -84,6 +84,7 @@ exports.bind = function (app) {
   app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
   app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
   app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredInStripe.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInStripe)
   app.post(card.auth3dsHandler.path, middlewareStack, threeDS.auth3dsHandler)
 
   // Apple Pay endpoints

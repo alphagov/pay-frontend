@@ -302,7 +302,7 @@ describe('chargeTests', function () {
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
         const cookieValue = cookie.create(chargeId)
-        getChargeRequest(app, cookieValue, chargeId, false, '/3ds_required_in/stripe?source=123')
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_in/stripe?source=123')
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)

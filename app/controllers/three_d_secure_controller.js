@@ -119,5 +119,12 @@ module.exports = {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       providerStatus: _.get(req, 'query.status', 'success')
     })
+  },
+  auth3dsRequiredInStripe: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_IN_VIEW, {
+      threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
+      source: _.get(req, 'query.source')
+    })
   }
 }

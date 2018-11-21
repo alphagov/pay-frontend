@@ -18,6 +18,9 @@
     {% if md %}
         <input type="hidden" name="MD" value="{{ md }}"/>
     {% endif %}
+    {% if source %}
+        <input type="hidden" name="redirect" value="true"/>
+    {% endif %}
     <noscript>
         <button id="confirm" class="govuk-button">{{ __("commonButtons.continueButton") }}</button>
     </noscript>
