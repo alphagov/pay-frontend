@@ -10,6 +10,7 @@ const logger = require('winston')
 // Local dependencies
 const requestLogger = require('../../../utils/request_logger')
 const {CORRELATION_HEADER} = require('../../../utils/correlation_header')
+const {addProxy} = require('../../../utils/add_proxy')
 
 // Constants
 const clsXrayConfig = require('../../../../config/xray-cls')
@@ -18,16 +19,20 @@ module.exports = (method, verb) => {
   return (uri, opts) => new Promise((resolve, reject) => {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
     const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
-
     const args = [uri, opts]
     uri = args.find(arg => typeof arg === 'string')
     opts = args.find(arg => typeof arg === 'object') || {}
     if (verb) opts.method = verb.toUpperCase()
     if (uri && !opts.uri && !opts.url) opts.uri = uri
+
+    const proxiedUrl = addProxy(joinURL(_.get(opts, 'baseUrl', ''), opts.url))
+    const optionalPort = proxiedUrl.port ? ':' + proxiedUrl.port : ''
+    const finalUrl = proxiedUrl.protocol + '//' + proxiedUrl.hostname + optionalPort + proxiedUrl.pathname
+
     const context = {
       correlationId: opts.correlationId,
       startTime: new Date(),
-      url: joinURL(_.get(opts, 'baseUrl', ''), opts.url),
+      url: finalUrl,
       method: opts.method,
       description: opts.description,
       service: opts.service
