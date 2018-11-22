@@ -70,23 +70,20 @@ module.exports = function (grunt) {
   }
 
   const watch = {
-    assets: {
+    css: {
       files: ['app/assets/sass/**/*.scss'],
       tasks: ['sass'],
       options: {
         spawn: false,
         livereload: true
       }
-    }
-  }
-
-  const nodeMon = {
-    dev: {
-      script: 'server.js',
+    },
+    js: {
+      files: ['app/assets/javascripts/**/*.js', 'app/browsered.js'],
+      tasks: ['browserify', 'babel', 'concat'],
       options: {
-        ext: 'js',
-        ignore: ['node_modules/**', 'app/assets/**', 'public/**'],
-        args: ['-i=true']
+        spawn: false,
+        livereload: true
       }
     }
   }
@@ -168,8 +165,6 @@ module.exports = function (grunt) {
     copy: copy,
     // Watches assets and sass for changes
     watch: watch,
-    // nodemon watches for changes and restarts app
-    nodemon: nodeMon,
     concurrent: concurrent,
     browserify: browserify,
     concat: concat,
@@ -185,7 +180,6 @@ module.exports = function (grunt) {
     'grunt-contrib-watch',
     'grunt-contrib-clean',
     'grunt-sass',
-    'grunt-nodemon',
     'grunt-concurrent',
     'grunt-browserify',
     'grunt-contrib-concat',
