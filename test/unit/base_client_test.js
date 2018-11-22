@@ -4,6 +4,7 @@
 const nock = require('nock')
 const path = require('path')
 const assert = require('assert')
+const {expect} = require('chai')
 
 // Local dependencies
 const baseClient = require(path.join(__dirname, '/../../app/services/clients/base_client/base_client'))
@@ -168,6 +169,35 @@ describe('base client', () => {
 
     baseClient.get({url, correlationId: arbitraryCorrelationId}, null, null).then(response => {
       assert.equal(response.body.response, 'I am a response')
+      done()
+    })
+  })
+
+  it('should send to a forward proxy, if this was configured', (done) => {
+    const forwardProxyUrl = 'http://www.amazing-forward-proxy.com:12345'
+
+    nock(forwardProxyUrl, {
+      reqheaders: {
+        'host': 'www.example.com:65535'
+      }
+    }).post('/', arbitraryRequestData)
+      .reply(200)
+
+    process.env.FORWARD_PROXY_URL = forwardProxyUrl
+
+    // The intended url should end up in the host header, and the proxy called instead
+    baseClient.post({
+      url,
+      body: arbitraryRequestData,
+      correlationId: arbitraryCorrelationId
+    }, null, null).then(() => {
+      delete process.env.FORWARD_PROXY_URL
+      done('this should not be called')
+    }).catch(err => {
+      delete process.env.FORWARD_PROXY_URL
+      // We should expect a proxy tunnel socket failure when unit testing, which proves
+      // the code is doing as expected
+      expect(err.message).to.contain('Error: tunneling socket could not be established')
       done()
     })
   })

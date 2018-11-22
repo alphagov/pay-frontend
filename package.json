@@ -75,7 +75,6 @@
     "staticify": "2.0.x",
     "throng": "4.0.x",
     "uk-postcode": "0.1.x",
-    "url-join": "2.0.2",
     "winston": "2.4.x"
   },
   "devDependencies": {

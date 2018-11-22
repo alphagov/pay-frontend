@@ -2,15 +2,14 @@
 
 // NPM dependencies
 const _ = require('lodash')
-const joinURL = require('url-join')
 const {getNamespace} = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 const logger = require('winston')
+const urlParse = require('url').parse
 
 // Local dependencies
 const requestLogger = require('../../../utils/request_logger')
 const {CORRELATION_HEADER} = require('../../../utils/correlation_header')
-const {addProxy} = require('../../../utils/add_proxy')
 
 // Constants
 const clsXrayConfig = require('../../../../config/xray-cls')
@@ -25,14 +24,19 @@ module.exports = (method, verb) => {
     if (verb) opts.method = verb.toUpperCase()
     if (uri && !opts.uri && !opts.url) opts.uri = uri
 
-    const proxiedUrl = addProxy(joinURL(_.get(opts, 'baseUrl', ''), opts.url))
-    const optionalPort = proxiedUrl.port ? ':' + proxiedUrl.port : ''
-    const finalUrl = proxiedUrl.protocol + '//' + proxiedUrl.hostname + optionalPort + proxiedUrl.pathname
+    if (process.env.FORWARD_PROXY_URL) {
+      opts.proxy = process.env.FORWARD_PROXY_URL
+      opts.tunnel = true
+    }
+
+    // Normalise our url
+    const baseUrl = _.get(opts, 'baseUrl', '')
+    const url = (baseUrl.length > 0 ? baseUrl.replace(/\/?$/, '/') : '') + opts.url
 
     const context = {
       correlationId: opts.correlationId,
       startTime: new Date(),
-      url: finalUrl,
+      url: url,
       method: opts.method,
       description: opts.description,
       service: opts.service
@@ -45,6 +49,9 @@ module.exports = (method, verb) => {
       opts.headers['X-Amzn-Trace-Id'] = 'Root=' + clsSegment.trace_id + ';Parent=' + subSegment.id + ';Sampled=1'
     }
     opts.headers['Content-Type'] = opts.headers['Content-Type'] || 'application/json'
+    const port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
+    // Add host header for use with forward proxy
+    opts.headers['host'] = urlParse(url).hostname + port
 
     // start request
     requestLogger.logRequestStart(context)
