@@ -88,15 +88,6 @@ module.exports = function (grunt) {
     }
   }
 
-  const concurrent = {
-    target: {
-      tasks: ['watch', 'nodemon'],
-      options: {
-        logConcurrentOutput: true
-      }
-    }
-  }
-
   const browserify = {
     'public/javascripts/application.js': ['app/browsered.js'],
     options: {
@@ -157,21 +148,16 @@ module.exports = function (grunt) {
   }
 
   grunt.initConfig({
-    // Clean
     clean: ['public', 'govuk_modules'],
-    // Builds Sass
-    sass: sass,
-    // Copies templates and assets from external modules and dirs
-    copy: copy,
-    // Watches assets and sass for changes
-    watch: watch,
-    concurrent: concurrent,
-    browserify: browserify,
-    concat: concat,
-    babel: babel,
-    rewrite: rewrite,
-    uglify: uglify,
-    compress: compress
+    sass,
+    copy,
+    watch,
+    browserify,
+    concat,
+    babel,
+    rewrite,
+    uglify,
+    compress
   });
 
   [
@@ -180,7 +166,6 @@ module.exports = function (grunt) {
     'grunt-contrib-watch',
     'grunt-contrib-clean',
     'grunt-sass',
-    'grunt-concurrent',
     'grunt-browserify',
     'grunt-contrib-concat',
     'grunt-rewrite',
@@ -201,7 +186,6 @@ module.exports = function (grunt) {
   ])
 
   grunt.registerTask('default', [
-    'generate-assets',
-    'concurrent:target'
+    'watch'
   ])
 }
