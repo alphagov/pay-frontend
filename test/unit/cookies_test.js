@@ -4,6 +4,7 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noPreserveCache()
+const { createChargeIdSessionKey } = require('../../app/utils/session')
 
 const getCookiesUtil = clientSessionsStub => {
   if (clientSessionsStub) return proxyquire('../../app/utils/cookies', { 'client-sessions': clientSessionsStub })
@@ -135,9 +136,7 @@ describe('setting value on session', function () {
   it('should set value on frontend_state if SESSION_ENCRYPTION_KEY set', function () {
     let cookies = getCookiesUtil()
     let req = {
-      frontend_state: {
-
-      }
+      frontend_state: {}
     }
 
     cookies.setSessionVariable(req, 'foo', 'bar')
@@ -148,8 +147,7 @@ describe('setting value on session', function () {
   it('should set object on frontend_state and add to it not replace it', function () {
     let cookies = getCookiesUtil()
     let req = {
-      frontend_state: {
-      }
+      frontend_state: {}
     }
 
     cookies.setSessionVariable(req, 'foo', { a: 'f' })
@@ -166,9 +164,7 @@ describe('setting value on session', function () {
 
     let cookies = getCookiesUtil()
     let req = {
-      frontend_state_2: {
-
-      }
+      frontend_state_2: {}
     }
 
     cookies.setSessionVariable(req, 'foo', 'baz')
@@ -254,5 +250,40 @@ describe('getting value from session', function () {
     expect(cookies.getSessionVariable(req, 'foo')).to.equal('bar')
 
     delete process.env.SESSION_ENCRYPTION_KEY_2
+  })
+})
+describe('removing value from session', function () {
+  it('should remove value from frontend_state', function () {
+    process.env.SESSION_ENCRYPTION_KEY = 'key1key1key1key1'
+    process.env.SESSION_ENCRYPTION_KEY_2 = ''
+
+    const chargeId = 'chargeId'
+    const key = createChargeIdSessionKey(chargeId)
+    const cookies = getCookiesUtil()
+    const frontendState = {}
+    frontendState[key] = 'key_value'
+    const req = {
+      chargeId,
+      frontend_state: frontendState
+    }
+    cookies.deleteSessionVariable(req, key)
+    expect(req.frontend_state[key]).to.be.undefined // eslint-disable-line
+  })
+
+  it('should remove value from frontend_state_2', function () {
+    process.env.SESSION_ENCRYPTION_KEY = ''
+    process.env.SESSION_ENCRYPTION_KEY_2 = 'key2key2key2key2'
+
+    const chargeId = 'chargeId'
+    const key = createChargeIdSessionKey(chargeId)
+    const cookies = getCookiesUtil()
+    const frontendState = {}
+    frontendState[key] = 'key_value'
+    const req = {
+      chargeId,
+      frontend_state_2: frontendState
+    }
+    cookies.deleteSessionVariable(req, key)
+    expect(req.frontend_state_2[key]).to.be.undefined // eslint-disable-line
   })
 })

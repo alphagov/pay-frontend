@@ -20,11 +20,13 @@ const { countries } = require('../services/countries')
 const { commonTypos } = require('../utils/email_tools')
 const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
+const cookies = require('../utils/cookies')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')
 const { views, preserveProperties } = require('../../config/charge_controller')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const { createChargeIdSessionKey } = require('../utils/session')
 
 const appendChargeForNewView = (charge, req, chargeId) => {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
@@ -242,11 +244,12 @@ module.exports = {
   },
   capture: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
+    const cookieKey = createChargeIdSessionKey(req.chargeId)
     Charge(req.headers[CORRELATION_HEADER])
       .capture(req.chargeId)
-      .then(
-        () => redirect(res).toReturn(req.chargeId),
-        err => {
+      .then(() => redirect(res).toReturn(req.chargeId),
+        (err) => {
+          cookies.deleteSessionVariable(req, cookieKey)
           if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
             charge,
