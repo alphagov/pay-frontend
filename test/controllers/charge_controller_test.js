@@ -239,7 +239,8 @@ describe('check card endpoint', function () {
     let card = {
       brand: 'VISA',
       type: 'CREDIT',
-      corporate: true
+      corporate: true,
+      prepaid: 'NOT_PREPAID'
     }
 
     return {
@@ -288,7 +289,7 @@ describe('check card endpoint', function () {
     }
     response = {
       json: (data) => {
-        expect(data).to.deep.equal({accepted: true, corporate: true, type: 'CREDIT'})
+        expect(data).to.deep.equal({accepted: true, corporate: true, type: 'CREDIT', prepaid: 'NOT_PREPAID'})
         done()
       }
     }

@@ -177,10 +177,14 @@ var formValidation = function () {
 
   var updateCorporateCardSurchargeInformation = function (card) {
     if (window.Card && window.Card.corporate_card_surcharge_amounts && card.corporate) {
-      if (card.type === 'CREDIT' && window.Card.corporate_card_surcharge_amounts.credit > 0) {
+      if (card.type === 'CREDIT' && card.prepaid === 'NOT_PREPAID' && window.Card.corporate_card_surcharge_amounts.credit > 0) {
         showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.credit)
-      } else if (card.type === 'DEBIT' && window.Card.corporate_card_surcharge_amounts.debit > 0) {
+      } else if (card.type === 'DEBIT' && card.prepaid === 'NOT_PREPAID' && window.Card.corporate_card_surcharge_amounts.debit > 0) {
         showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.debit)
+      } else if (card.type === 'CREDIT' && card.prepaid === 'PREPAID' && window.Card.corporate_card_surcharge_amounts.prepaidCredit > 0) {
+        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.prepaidCredit)
+      } else if (card.type === 'DEBIT' && card.prepaid === 'PREPAID' && window.Card.corporate_card_surcharge_amounts.prepaidDebit > 0) {
+        showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.prepaidDebit)
       }
     }
   }

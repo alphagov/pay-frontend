@@ -134,15 +134,16 @@ describe('card', function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
           .post('/v1/api/card')
-          .reply(200, {brand: 'bar', label: 'bar', type: 'C', corporate: true})
+          .reply(200, {brand: 'bar', label: 'bar', type: 'C', corporate: true, prepaid: 'NOT_PREPAID'})
       })
 
-      it('should resolve with correct card brand, type and corporate status', function () {
+      it('should resolve with correct card brand, type, corporate status and prepaid status', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0'}])
           .checkCard(1234).then((card) => {
             assert.strictEqual(card.brand, 'bar')
             assert.strictEqual(card.type, 'CREDIT')
             assert.strictEqual(card.corporate, true)
+            assert.strictEqual(card.prepaid, 'NOT_PREPAID')
           }, unexpectedPromise)
       })
     })
@@ -152,15 +153,16 @@ describe('card', function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
           .post('/v1/api/card')
-          .reply(200, {brand: 'bar', label: 'bar', type: 'D', corporate: false})
+          .reply(200, {brand: 'bar', label: 'bar', type: 'D', corporate: false, prepaid: 'PREPAID'})
       })
 
-      it('should resolve with correct card brand, type and corporate status', function () {
+      it('should resolve with correct card brand, type, corporate status and prepaid status', function () {
         return CardModel([{brand: 'bar', label: 'bar', type: 'DEBIT', id: 'id-0'}])
           .checkCard(1234).then((card) => {
             assert.strictEqual(card.brand, 'bar')
             assert.strictEqual(card.type, 'DEBIT')
             assert.strictEqual(card.corporate, false)
+            assert.strictEqual(card.prepaid, 'PREPAID')
           }, unexpectedPromise)
       })
     })

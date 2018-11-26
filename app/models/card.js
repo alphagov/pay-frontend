@@ -49,7 +49,8 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
           const card = {
             brand: changeCase.paramCase(body.brand),
             type: normaliseCardType(body.type),
-            corporate: body.corporate
+            corporate: body.corporate,
+            prepaid: body.prepaid
           }
 
           logger.debug(`[${correlationId}] Checking card brand - `, {

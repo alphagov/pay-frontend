@@ -33,7 +33,9 @@ const appendChargeForNewView = (charge, req, chargeId) => {
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
   charge.corporateCardSurchargeAmountsAsStrings = JSON.stringify({
     credit: charge.gatewayAccount.corporateCreditCardSurchargeAmount,
-    debit: charge.gatewayAccount.corporateDebitCardSurchargeAmount
+    debit: charge.gatewayAccount.corporateDebitCardSurchargeAmount,
+    prepaidCredit: charge.gatewayAccount.corporatePrepaidCreditCardSurchargeAmount,
+    prepaidDebit: charge.gatewayAccount.corporatePrepaidDebitCardSurchargeAmount
   })
   charge.post_card_action = routeFor('create', chargeId)
   charge.id = chargeId
@@ -259,7 +261,8 @@ module.exports = {
             return res.json({
               accepted: true,
               type: card.type,
-              corporate: card.corporate
+              corporate: card.corporate,
+              prepaid: card.prepaid
             })
           },
           error => {
