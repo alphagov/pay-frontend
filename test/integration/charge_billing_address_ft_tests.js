@@ -197,7 +197,7 @@ describe('chargeTests - billing address', function () {
   describe('The /card_details/charge_id/confirm endpoint', function () {
     it('should not show billing address for services not wanting to capture it', function (done) {
       nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge('AUTHORISATION SUCCESS', 'http://www.example.com/service', gatewayAccountId))
+        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge('AUTHORISATION SUCCESS', 'http://www.example.com/service', chargeId, gatewayAccountId, {}, null, true))
       defaultAdminusersResponseForGetService(gatewayAccountId, {
         collect_billing_address: false
       })
