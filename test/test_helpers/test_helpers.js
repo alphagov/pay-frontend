@@ -106,13 +106,13 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress) {
   const charge = {
     'amount': 2345,
     'description': 'Payment Description',
     'status': status,
     'return_url': returnUrl,
-    'email': 'bob@bob.bob',
+    'email': 'bob@example.com',
     'links': [{
       'href': connectorChargeUrl(chargeId),
       'rel': 'self',
@@ -212,6 +212,9 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, 
   if (emailSettings) {
     charge.gateway_account.email_collection_mode = emailSettings.email_collection_mode
     charge.gateway_account.email_notifications = emailSettings.email_notifications
+  }
+  if (disableBillingAddress) {
+    charge.card_details.billing_address = null
   }
   return charge
 }

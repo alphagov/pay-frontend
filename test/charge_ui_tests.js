@@ -30,7 +30,7 @@ const generateConfirmViewTemplateData = (templateData = {}) => {
         cardNumber: '************5100',
         expiryDate: '11/99',
         cardholderName: 'Francisco Blaya-Gonzalvez',
-        billingAddress: '1 street lane, avenue city, AB1 3DF'
+        billingAddress: lodash.get(templateData, 'charge.cardDetails.billingAddress', '1 street lane, avenue city, AB1 3DF')
       },
       amount: templateData.amount || '10.00',
       description: 'Payment Description & <xss attack> assessment'
@@ -169,6 +169,11 @@ describe('The confirm view', function () {
     const body = renderTemplate('confirm', generateConfirmViewTemplateData({
       service: {
         collectBillingAddress: false
+      },
+      charge: {
+        cardDetails: {
+          billingAddress: null
+        }
       }
     }))
     const $ = cheerio.load(body)
