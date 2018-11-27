@@ -134,6 +134,7 @@ module.exports = (function () {
       'cardholder_name': req.body.cardholderName,
       'card_type': card.type,
       'corporate_card': card.corporate,
+      'prepaid': card.prepaid,
       'address': addressForApi(req.body),
       'accept_header': req.header('accept'),
       'user_agent_header': req.header('user-agent')
