@@ -68,7 +68,7 @@ const gatewayAccount = {
 
 let mockServer
 
-const defaultCardID = {brand: 'visa', label: 'visa', type: 'D', corporate: false}
+const defaultCardID = {brand: 'visa', label: 'visa', type: 'D', corporate: false, prepaid: 'NOT_PREPAID'}
 
 const mockSuccessCardIdResponse = function (data) {
   nock(process.env.CARDID_HOST)
@@ -107,7 +107,7 @@ describe('chargeTests', function () {
     })
   }
 
-  function minimumConnectorCardData (cardNumber, cardType = 'DEBIT', corporate = false, cardBrand = 'visa') {
+  function minimumConnectorCardData (cardNumber, cardType = 'DEBIT', corporate = false, cardBrand = 'visa', prepaid = 'NOT_PREPAID') {
     return {
       card_number: cardNumber,
       cvc: '234',
@@ -116,6 +116,7 @@ describe('chargeTests', function () {
       cardholder_name: 'Jimi Hendrix',
       card_type: cardType,
       corporate_card: corporate,
+      prepaid: prepaid,
       address: {
         line1: '32 Whip Ma Whop Ma Avenue',
         city: 'Willy wonka',
@@ -326,16 +327,16 @@ describe('chargeTests', function () {
           .end(done)
       })
 
-      it('should send expected card data to connector for the case of a corporate debit card', function (done) {
+      it('should send expected card data to connector for the case of a prepaid corporate debit card', function (done) {
         const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true})
+        mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true, prepaid: 'PREPAID'})
 
-        connectorExpects(minimumConnectorCardData('4000180000000002', 'DEBIT', true, 'visa'))
+        connectorExpects(minimumConnectorCardData('4000180000000002', 'DEBIT', true, 'visa', 'PREPAID'))
           .reply(200, {status: State.AUTH_SUCCESS})
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4000 1800 0000 0002'), chargeId)
@@ -344,14 +345,14 @@ describe('chargeTests', function () {
           .end(done)
       })
 
-      it('should send expected card data to connector for the case of a non-corporate credit card', function (done) {
+      it('should send expected card data to connector for the case of a non-prepaid non-corporate credit card', function (done) {
         const cookieValue = cookie.create(chargeId)
         nock(process.env.CONNECTOR_HOST)
           .patch('/v1/frontend/charges/23144323')
           .reply(200)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        mockSuccessCardIdResponse({brand: 'american-express', label: 'american-express', type: 'C', corporate: false})
+        mockSuccessCardIdResponse({brand: 'american-express', label: 'american-express', type: 'C', corporate: false, prepaid: 'NOT_PREPAID'})
 
         connectorExpects(minimumConnectorCardData('4242424242424242', 'CREDIT', false, 'american-express'))
           .reply(200, {status: State.AUTH_SUCCESS})

@@ -17,7 +17,8 @@ module.exports = (translations, logger, cardModel, chargeOptions) => {
           logger.debug('Card supported - ', {
             cardBrand: card.brand,
             cardType: card.type,
-            cardCorporate: card.corporate
+            cardCorporate: card.corporate,
+            prepaid: card.prepaid
           })
           resolve({validation, card})
         })
