@@ -1,8 +1,16 @@
-FROM govukpay/nodejs:alpine-3.8.1
+FROM govukpay/nodejs:10-alpine
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
-RUN cd /tmp && npm install --production
+# --no-cache: download package index on-the-fly, no need to cleanup afterwards
+# --virtual: bundle packages, remove whole bundle at once, when done
+RUN apk --no-cache --virtual build-dependencies add \
+    python \
+    make \
+    g++ \
+    && cd /tmp \
+    && npm install --production \
+    && apk del build-dependencies
 
 ENV PORT 9000
 EXPOSE 9000
