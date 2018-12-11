@@ -11,7 +11,7 @@
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
-    <div id="error-summary" class="govuk-error-summary hidden" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+    <div id="error-summary" class="govuk-error-summary {% if not hasError %}hidden{% endif %}" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
         {{ __("fieldErrors.summary") }}
       </h2>
@@ -30,6 +30,7 @@
     <form id="payment-request-container" class="hidden">
       {{ govukRadios({
         name: "payment-method",
+        classes: "payment-request-radios",
         fieldset: {
           legend: {
             text: "Choose how you want to pay",
