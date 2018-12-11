@@ -646,7 +646,7 @@ describe('chargeTests', function () {
           .end(done)
       })
 
-      it('preserve cardholder name, address lines when a card is submitted with validation errors', function (done) {
+      it('preserve card fields, cardholder name, address lines and email when a card is submitted with validation errors', function (done) {
         const cookieValue = cookie.create(chargeId, {})
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -661,13 +661,16 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
+            expect($('#card-no').attr('value')).to.eql('4242')
+            expect($('#cvc').attr('value')).to.eql('234')
+            expect($('#expiry-month').attr('value')).to.eql(cardData.expiryMonth)
+            expect($('#expiry-year').attr('value')).to.eql(cardData.expiryYear)
             expect($('#cardholder-name').attr('value')).to.eql(cardData.cardholderName)
             expect($('#address-line-1').attr('value')).to.eql(cardData.addressLine1)
             expect($('#address-line-2').attr('value')).to.eql(cardData.addressLine2)
             expect($('#address-city').attr('value')).to.eql(cardData.addressCity)
             expect($('#address-postcode').attr('value')).to.eql(cardData.addressPostcode)
-            expect($('#card-no').attr('value')).to.eql('')
-            expect($('#cvc').attr('value')).to.eql('')
+            expect($('#email').attr('value')).to.eql(cardData.email)
           })
           .end(done)
       })
