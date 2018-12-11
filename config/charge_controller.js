@@ -14,5 +14,5 @@ module.exports = {
     declined: 'DECLINED',
     error: 'ERROR'
   },
-  preserveProperties: ['cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
+  preserveProperties: ['cardNo', 'expiryMonth', 'expiryYear', 'cvc', 'cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
 }
