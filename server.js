@@ -26,7 +26,7 @@ const i18nConfig = require('./config/i18n')
 
 // Global constants
 const CSS_PATH = '/stylesheets/application.css'
-const JAVASCRIPT_PATH = '/javascripts/application.min.js'
+const JAVASCRIPT_PATH = '/javascripts/application.js'
 const PORT = process.env.PORT || 3000
 const {NODE_ENV} = process.env
 const argv = require('minimist')(process.argv.slice(2))

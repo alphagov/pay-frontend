@@ -99,20 +99,21 @@ module.exports = () => {
       }
 
       if (window.stubWebPaymentsUrl) {
-        console.log('hello')
         return fetch(`${window.stubWebPaymentsUrl}/stub/applepay`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           }
         }).then(response => {
+          return response.json()
+        }).then(payload => {
           return fetch(`/make-payment/${window.paymentDetails.chargeID}`, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(response)
+            body: JSON.stringify(payload)
         })
         }).then(response => {
           if (response.status >= 200 && response.status < 300) {
