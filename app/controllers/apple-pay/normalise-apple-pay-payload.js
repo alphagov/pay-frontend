@@ -7,7 +7,6 @@ const normaliseCardName = cardName => {
   switch (cardName) {
     case 'MasterCard':
       return 'master-card'
-    // todo doublecheck amex
     case 'amex':
       return 'american-express'
     case 'visa':

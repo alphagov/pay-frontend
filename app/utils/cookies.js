@@ -14,6 +14,7 @@ module.exports = {
   getSessionCookieName,
   setSessionVariable,
   getSessionVariable,
+  deleteSessionVariable,
   namedCookie
 }
 
@@ -128,4 +129,16 @@ function getSessionVariable (req, key) {
   const session = req[getSessionCookieName()]
 
   return session && session[key]
+}
+
+/**
+ * Delete value of key from session
+ *
+ * @param {Request} req
+ * @param {string} key
+ * @returns {*}
+ */
+function deleteSessionVariable (req, key) {
+  const session = req[getSessionCookieName()]
+  delete session[key]
 }

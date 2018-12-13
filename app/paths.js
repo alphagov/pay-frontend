@@ -82,6 +82,10 @@ const paths = {
     makePayment: {
       path: '/make-payment/:chargeId',
       action: 'post'
+    },
+    handlePaymentResponse: {
+      path: '/handle-payment-response/:chargeId',
+      action: 'get'
     }
   },
   secure: {
