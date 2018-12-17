@@ -32,4 +32,5 @@ module.exports = (req, res) => {
       .finally(() => res.status(200).send({url: `/handle-payment-response/${req.chargeId}`}))
   }, clsSegment)
 }
+
 exports.applePayAuthResponseSessionKey = applePayAuthResponseSessionKey
