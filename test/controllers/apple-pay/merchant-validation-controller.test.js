@@ -11,14 +11,6 @@ const paths = require('../../../app/paths')
 require('../../test_helpers/html_assertions')
 
 describe('Validate with Apple the merchant is legitimate', () => {
-  it('no url is provided, should return 400', done => {
-    request(getApp())
-      .post(paths.applePay.session.path)
-      .set('Accept', 'application/json')
-      .expect(400)
-      .end(done)
-  })
-
   it('should return a payload if Merchant is valid', done => {
     const url = 'https://fakeapple.url'
     const body = {
@@ -45,7 +37,13 @@ describe('Validate with Apple the merchant is legitimate', () => {
       })
       .end(done)
   })
-
+  it('should return 400 if no url is provided', done => {
+    request(getApp())
+      .post(paths.applePay.session.path)
+      .set('Accept', 'application/json')
+      .expect(400)
+      .end(done)
+  })
   it('should return an error if Merchant is invalid', done => {
     const url = 'https://fakeapple.url'
     const body = {

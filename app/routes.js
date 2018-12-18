@@ -12,7 +12,7 @@ const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
 const applePayMerchantValidation = require('./controllers/apple-pay/merchant-validation-controller')
 const applePayMakePayment = require('./controllers/apple-pay/payment-auth-request-controller')
-const applePayHandlePaymentResponse = require('./controllers/apple-pay/handle-payment-response')
+const applePayHandlePaymentResponse = require('./controllers/apple-pay/handle-auth-response-controller')
 const returnCont = require('./controllers/return_controller.js')
 const {healthcheck} = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
@@ -90,7 +90,7 @@ exports.bind = function (app) {
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePayMerchantValidation)
-  app.post(paths.applePay.makePayment.path, xraySegmentCls, retrieveCharge, resolveLanguage, applePayMakePayment)
+  app.post(paths.applePay.authRequest.path, xraySegmentCls, retrieveCharge, resolveLanguage, applePayMakePayment)
   app.get(paths.applePay.handlePaymentResponse.path, xraySegmentCls, retrieveCharge, resolveLanguage, applePayHandlePaymentResponse)
 
   // secure controller

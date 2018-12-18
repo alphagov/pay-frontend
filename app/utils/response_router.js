@@ -240,7 +240,6 @@ exports.response = (req, res, actionName, options) => {
     options = {viewName: 'error'}
     action = actions.ERROR
   }
-
   if (shouldRedirect(req, res, action)) {
     res.redirect(req.chargeData.return_url)
   } else {

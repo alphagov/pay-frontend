@@ -107,19 +107,18 @@ module.exports = () => {
         }).then(response => {
           return response.json()
         }).then(payload => {
-          return fetch(`/make-payment/${window.paymentDetails.chargeID}`, {
+          return fetch(`apple-pay-auth-request/${window.paymentDetails.chargeID}`, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload)
-        })
+          })
         }).then(response => {
           if (response.status >= 200 && response.status < 300) {
             return response.json().then(data => {
-              console.log("RETURNING: ", data)
-              window.location.href = data.url;
+              window.location.href = data.url
             })
           }
         })
@@ -131,7 +130,8 @@ module.exports = () => {
     }, false)
   }
 
-  function getApplePaySession(url) {
+  function validateMerchantSession(url) {
+    console.log('dialling...', url)
     return fetch(`/apple-pay-merchant-validation`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -155,7 +155,9 @@ module.exports = () => {
 
     session.onvalidatemerchant = event => {
       const validationURL = event.validationURL
-      getApplePaySession(event.validationURL).then(response => {
+      validateMerchantSession(event.validationURL)
+      .then(response => {
+        console.log('validated merchant', response.signature)
         session.completeMerchantValidation(response)
       }).catch(err => {
         console.log('Couldn’t contact Apple Pay server', err)
@@ -163,16 +165,34 @@ module.exports = () => {
       })
     }
 
-    session.onpaymentauthorized = event => {
-      // Send payment for processing...
-      const payment = event.payment;
-      console.log('authorisation complete', payment)
-
-      // ...return a status and redirect to a confirmation page
-      session.completePayment(ApplePaySession.STATUS_SUCCESS);
-      // window.location.href = "/success.html";
+    session.oncancel = event => {
+      console.log('Cancelled', event)
     }
 
+    session.onpaymentauthorized = event => {
+      console.log('authorisation complete', event)
+      // Send payment for processing...
+      const { payment } = event;
+      console.log('authorisation complete', payment)
+
+      session.completePayment(ApplePaySession.STATUS_SUCCESS);
+
+      return fetch(`apple-pay-auth-request/${window.paymentDetails.chargeID}`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payment)
+      }).then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json().then(data => {
+            session.completePayment(ApplePaySession.STATUS_SUCCESS);
+            window.location.href = data.url
+          })
+        }
+      })
+    }
     session.begin()
   }
 

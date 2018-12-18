@@ -79,8 +79,8 @@ const paths = {
       path: '/apple-pay-merchant-validation',
       action: 'post'
     },
-    makePayment: {
-      path: '/make-payment/:chargeId',
+    authRequest: {
+      path: '/apple-pay-auth-request/:chargeId',
       action: 'post'
     },
     handlePaymentResponse: {

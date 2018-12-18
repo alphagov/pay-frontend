@@ -38,6 +38,7 @@
 
     {% if isDevelopment %}
     window.stubWebPaymentsUrl = '{{ stubsUrl }}'
+    {# ApplePaySession.stubCanMakePaymentsWithActiveCard = true; #}
     {% endif %}
   }
 
@@ -51,4 +52,7 @@
     }
   });
 </script>
+{% if isDevelopment %}
+{# <script src="public/javascripts/apple-pay-js-stubs.js"></script> #}
+{% endif %}
 <script src="{{ js_path }}"></script>
