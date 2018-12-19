@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block content %}
-  <main id="content" class="content-wrapper error-pages grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-large general-error">
+  <main id="content" class="content-wrapper error-pages govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l general-error">
         {{ __("errorViews.error") }}
       </h1>
-      <p id="errorMsg" class="lede">{{ message }}</p>
+      <p id="errorMsg" class="govuk-body-l lede">{{ message }}</p>
       {% if returnUrl %}
-        <a id="return-url" class="govuk-link" class="lede" href="{{ returnUrl }}">{{ __("errorViews.tryAgain") }}</a>
+        <p class="govuk-body-l"><a id="return-url" class="govuk-link lede" href="{{ returnUrl }}">{{ __("errorViews.tryAgain") }}</a></p>
       {% endif %}
     </div>
   </main>
