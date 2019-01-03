@@ -71,7 +71,7 @@
     "memory-cache": "^0.2.0",
     "minimist": "1.2.x",
     "morgan": "1.9.x",
-    "nunjucks": "^3.1.2",
+    "nunjucks": "^3.1.6",
     "polyfill-array-includes": "^1.0.0",
     "promise-polyfill": "8.1.0",
     "randomstring": "^1.1.5",
@@ -87,7 +87,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.56",
     "@babel/preset-env": "^7.0.0-beta.56",
-    "@pact-foundation/pact-node": "6.16.4",
+    "@pact-foundation/pact-node": "^6.20.2",
     "browserify": "16.2.x",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
