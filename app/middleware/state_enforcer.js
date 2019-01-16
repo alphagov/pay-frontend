@@ -2,6 +2,7 @@
 
 // NPM dependencies
 const lodash = require('lodash')
+const logger = require('winston')
 
 // Local dependencies
 const responseRouter = require('../utils/response_router')
@@ -12,7 +13,9 @@ const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 module.exports = (req, res, next) => {
   const correctStates = stateService.resolveStates(req.actionName)
   const currentState = req.chargeData.status
+
   if (!correctStates.includes(currentState)) {
+    logger.error(`State enforcer status doesn't match : current charge state from connector [${currentState}], expected [${correctStates}]'`)
     const stateName = currentState.toUpperCase().replace(/\s/g, '_')
     responseRouter.response(req, res, stateName, {
       chargeId: req.chargeId,
