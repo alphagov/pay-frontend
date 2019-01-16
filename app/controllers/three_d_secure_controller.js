@@ -1,6 +1,6 @@
-
 // NPM dependencies
 const _ = require('lodash')
+const logger = require('winston')
 
 // Local dependencies
 const responseRouter = require('../utils/response_router')
@@ -70,7 +70,12 @@ module.exports = {
     const payload = build3dsPayload(req)
     connectorClient({correlationId}).threeDs({chargeId: charge.id, payload})
       .then(handleThreeDsResponse(req, res, charge))
-      .catch(() => {
+      .catch((err) => {
+        logger.error('Exception in auth3dsHandler -', {
+          chargeId: charge.id,
+          chargeStatus: charge.status,
+          error: err
+        })
         responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
       })
   },
