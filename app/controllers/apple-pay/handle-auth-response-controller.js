@@ -4,22 +4,22 @@
 const normalise = require('../../services/normalise_charge')
 const logging = require('../../utils/logging')
 const responseRouter = require('../../utils/response_router')
-const {CORRELATION_HEADER} = require('../../../config/correlation_header')
+const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const Charge = require('../../models/charge')
-const {withAnalytics} = require('../../utils/analytics')
+const { withAnalytics } = require('../../utils/analytics')
 const paths = require('../../paths')
-const {getSessionVariable, deleteSessionVariable} = require('../../utils/cookies')
+const { getSessionVariable, deleteSessionVariable } = require('../../utils/cookies')
 
 // constants
-const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
-const applePayRouteFor = (resource, chargeId) => paths.generateRoute(`applePay.${resource}`, {chargeId: chargeId})
+const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId })
+const applePayRouteFor = (resource, chargeId) => paths.generateRoute(`applePay.${resource}`, { chargeId })
 
 const redirect = res => {
   return {
-    toAuthWaiting: (chargeId) => res.redirect(303, routeFor('authWaiting', chargeId)),
-    toConfirm: (chargeId) => res.redirect(303, routeFor('confirm', chargeId)),
-    toNew: (chargeId) => res.redirect(303, routeFor('new', chargeId)),
-    toReturn: (chargeId) => res.redirect(303, routeFor('return', chargeId))
+    toAuthWaiting: chargeId => res.redirect(303, routeFor('authWaiting', chargeId)),
+    toConfirm: chargeId => res.redirect(303, routeFor('confirm', chargeId)),
+    toNew: chargeId => res.redirect(303, routeFor('new', chargeId)),
+    toReturn: chargeId => res.redirect(303, routeFor('return', chargeId))
   }
 }
 
