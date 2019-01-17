@@ -5,6 +5,9 @@ const { expect } = require('chai')
 const request = require('supertest')
 const nock = require('nock')
 
+// Local constants
+const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN } = process.env
+
 // Local dependencies
 const { getApp } = require('../../../server')
 const paths = require('../../../app/paths')
@@ -14,12 +17,12 @@ describe('Validate with Apple the merchant is legitimate', () => {
   it('should return a payload if Merchant is valid', done => {
     const url = 'https://fakeapple.url'
     const body = {
-      merchantIdentifier: 'merchantID',
+      merchantIdentifier: APPLE_PAY_MERCHANT_ID,
       displayName: 'GOV.UK Pay',
       initiative: 'web',
-      initiativeContext: 'test.payments.service.gov.uk'
+      initiativeContext: APPLE_PAY_MERCHANT_DOMAIN
     }
-    const response = { encryptedThing: 'crytoMagic' }
+    const response = { encryptedThing: 'cryptoMagic' }
 
     nock(url)
       .post('/', body)
