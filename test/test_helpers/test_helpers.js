@@ -106,7 +106,7 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, paymentProvider = 'sandbox') {
   const charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -130,7 +130,7 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, 
       'gateway_account_id': gatewayAccountId || defaultGatewayAccountId,
       'analytics_id': 'test-1234',
       'type': 'test',
-      'payment_provider': 'sandbox',
+      'payment_provider': paymentProvider,
       'service_name': 'Pranks incorporated',
       'card_types': [
         {

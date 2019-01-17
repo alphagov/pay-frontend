@@ -28,7 +28,7 @@ describe('state enforcer', function () {
   it('should call next when everything is in the correct state', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'ENTERING CARD DETAILS'}
+      chargeData: {status: 'ENTERING CARD DETAILS', gateway_account: {payment_provider: 'Test Provider'}}
     }, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
   })
@@ -36,7 +36,7 @@ describe('state enforcer', function () {
   it('should NOT call next when an invalid state is called and render an error', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'INVALID STATE'}
+      chargeData: {status: 'INVALID STATE', gateway_account: {payment_provider: 'Test Provider'}}
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(500))
