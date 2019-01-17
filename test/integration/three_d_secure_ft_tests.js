@@ -122,12 +122,13 @@ describe('chargeTests', function () {
     describe('When invoked on a stripe gateway account', function () {
       it('should redirect to the issuer URL', function (done) {
         const issuerUrl = 'http://issuerUrl.com'
-        const chargeResponse = helper.rawSuccessfulGetCharge(
+        const chargeResponse = helper.rawSuccessfulGetChargeWithPaymentProvider(
           State.AUTH_3DS_REQUIRED,
           'http://www.example.com/service',
           chargeId,
           gatewayAccountId,
-          {issuerUrl}
+          {issuerUrl},
+          'stripe'
         )
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -337,6 +338,22 @@ describe('chargeTests', function () {
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
       postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+        .expect(303)
+        .expect('Location', `${frontendCardDetailsPath}/${chargeId}/auth_waiting`)
+        .end(done)
+    })
+
+    it('should redirect to auth_waiting if connector returns a 409 for Stripe when status AUTHORISATION 3DS READY', function (done) {
+      const cookieValue = cookie.create(chargeId)
+      const stripeChargeResponse = helper.rawSuccessfulGetChargeWithPaymentProvider(
+        State.AUTH_3DS_READY, 'http://www.example.com/service', chargeId, gatewayAccountId, {}, 'stripe'
+      )
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, stripeChargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, {}).reply(409)
+      defaultAdminusersResponseForGetService(gatewayAccountId)
+
+      postChargeRequest(app, cookieValue, {}, chargeId, true, '/3ds_handler')
         .expect(303)
         .expect('Location', `${frontendCardDetailsPath}/${chargeId}/auth_waiting`)
         .end(done)
