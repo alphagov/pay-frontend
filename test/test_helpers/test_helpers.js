@@ -106,7 +106,11 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, paymentProvider = 'sandbox') {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress) {
+  return rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData, 'sandbox', emailSettings, disableBillingAddress)
+}
+
+function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress) {
   const charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -297,6 +301,8 @@ module.exports = {
   rawSuccessfulGetChargeDebitCardOnly,
 
   rawSuccessfulGetChargeCorporateCardOnly,
+
+  rawSuccessfulGetChargeWithPaymentProvider,
 
   templateValue: function (res, key, value) {
     const body = JSON.parse(res.text)

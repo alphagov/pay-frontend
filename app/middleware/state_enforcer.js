@@ -15,12 +15,13 @@ module.exports = (req, res, next) => {
   let correctStates = stateService.resolveStates(req.actionName)
   const currentState = req.chargeData.status
 
-  if (req.chargeData.gateway_account.payment_provider === 'stripe' &&
-    currentState === State.AUTH_3DS_READY) {
+  const paymentProvider = req.chargeData.gateway_account.payment_provider
+  if (paymentProvider === 'stripe' && currentState === State.AUTH_3DS_READY) {
     correctStates.push(State.AUTH_3DS_READY)
   }
   if (!correctStates.includes(currentState)) {
-    logger.error(`State enforcer status doesn't match : current charge state from connector [${currentState}], expected [${correctStates}]'`)
+    logger.error(`State enforcer status doesn't match: current charge state from connector [${currentState}], expected [${correctStates}] 
+      for charge [${req.chargeId}] with payment provider [${paymentProvider}]`)
     const stateName = currentState.toUpperCase().replace(/\s/g, '_')
     responseRouter.response(req, res, stateName, {
       chargeId: req.chargeId,

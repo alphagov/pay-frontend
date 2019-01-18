@@ -1,18 +1,20 @@
-var path = require('path')
-var assert = require('assert')
-var expect = require('chai').expect
-var stateEnforcer = require(path.join(__dirname, '/../../app/middleware/state_enforcer.js'))
+'use strict'
 
-var sinon = require('sinon')
+const path = require('path')
+const assert = require('assert')
+const expect = require('chai').expect
+const stateEnforcer = require(path.join(__dirname, '/../../app/middleware/state_enforcer.js'))
+
+const sinon = require('sinon')
 
 describe('state enforcer', function () {
-  var response = {
+  const response = {
     status: function () {},
     render: function () {}
   }
-  var status
-  var render
-  var next
+  let status
+  let render
+  let next
 
   beforeEach(function () {
     status = sinon.stub(response, 'status')
@@ -29,6 +31,14 @@ describe('state enforcer', function () {
     stateEnforcer({
       actionName: 'card.new',
       chargeData: {status: 'ENTERING CARD DETAILS', gateway_account: {payment_provider: 'Test Provider'}}
+    }, {}, next)
+    expect(next.calledOnce).to.be.true // eslint-disable-line
+  })
+
+  it('should call next when Stripe charge is in AUTH_3DS_READY', function () {
+    stateEnforcer({
+      actionName: 'card.auth3dsHandler',
+      chargeData: {status: 'AUTHORISATION 3DS READY', gateway_account: {payment_provider: 'stripe'}}
     }, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
   })
