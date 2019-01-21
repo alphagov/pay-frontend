@@ -39,6 +39,14 @@ module.exports = function (grunt) {
         dest: 'public'
       }]
     },
+    applePayStubs: {
+      files: [{
+        expand: true,
+        cwd: 'node_modules/apple-pay-js-stubs/src',
+        src: ['apple-pay-js-stubs.js'],
+        dest: 'public/javascripts'
+      }]
+    },
     applePayVerification: {
       files: [{
         expand: true,

@@ -17,10 +17,10 @@ const ANALYTICS_ERROR = {
 }
 
 exports.withAnalyticsError = () => lodash.clone(ANALYTICS_ERROR)
-exports.withAnalytics = (charge, param) => {
+exports.withAnalytics = (charge, param, path) => {
   return lodash.merge({
     analytics: {
-      path: paths.generateRoute(`card.new`, {chargeId: charge.id}),
+      path: path || paths.generateRoute(`card.new`, {chargeId: charge.id}),
       analyticsId: charge.gatewayAccount.analyticsId,
       type: charge.gatewayAccount.type,
       paymentProvider: charge.gatewayAccount.paymentProvider,

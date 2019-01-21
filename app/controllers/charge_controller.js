@@ -41,6 +41,7 @@ const appendChargeForNewView = (charge, req, chargeId) => {
   charge.id = chargeId
   charge.post_cancel_action = routeFor('cancel', chargeId)
   charge.allowWebPayments = charge.gatewayAccount.allowWebPayments
+  charge.stubsUrl = process.env.APPLE_PAY_STUBS_URL
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, {chargeId: chargeId})

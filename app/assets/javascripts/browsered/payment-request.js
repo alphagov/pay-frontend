@@ -70,7 +70,7 @@ module.exports = () => {
         supportedNetworks: supportedNetworksAppleFormatted,
         merchantCapabilities,
         requiredShippingContactFields: ['email'],
-      }
+      } //todo email is not always required now :( sadness
     } else {
       return {
         supportedInstruments,
@@ -96,6 +96,32 @@ module.exports = () => {
       if (checkedValue === 'standard') {
         standardMethodContainer.classList.remove('hidden')
         paymentMethodForm.classList.add('hidden')
+      }
+
+      if (window.stubWebPaymentsUrl) {
+        return fetch(`${window.stubWebPaymentsUrl}/stub/applepay`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          return response.json()
+        }).then(payload => {
+          return fetch(`apple-pay-auth-request/${window.paymentDetails.chargeID}`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          })
+        }).then(response => {
+          if (response.status >= 200 && response.status < 300) {
+            return response.json().then(data => {
+              window.location.href = data.url
+            })
+          }
+        })
       } else if (checkedValue === 'payment-request') {
         makePaymentRequest()
       } else if (checkedValue === 'payment-request-apple') {
@@ -104,7 +130,8 @@ module.exports = () => {
     }, false)
   }
 
-  function getApplePaySession(url) {
+  function validateMerchantSession(url) {
+    console.log('dialling...', url)
     return fetch(`/apple-pay-merchant-validation`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -128,7 +155,9 @@ module.exports = () => {
 
     session.onvalidatemerchant = event => {
       const validationURL = event.validationURL
-      getApplePaySession(event.validationURL).then(response => {
+      validateMerchantSession(event.validationURL)
+      .then(response => {
+        console.log('validated merchant', response.signature)
         session.completeMerchantValidation(response)
       }).catch(err => {
         console.log('Couldn’t contact Apple Pay server', err)
@@ -136,16 +165,34 @@ module.exports = () => {
       })
     }
 
-    session.onpaymentauthorized = event => {
-      // Send payment for processing...
-      const payment = event.payment;
-      console.log('authorisation complete', payment)
-
-      // ...return a status and redirect to a confirmation page
-      session.completePayment(ApplePaySession.STATUS_SUCCESS);
-      // window.location.href = "/success.html";
+    session.oncancel = event => {
+      console.log('Cancelled', event)
     }
 
+    session.onpaymentauthorized = event => {
+      console.log('authorisation complete', event)
+      // Send payment for processing...
+      const { payment } = event;
+      console.log('authorisation complete', payment)
+
+      session.completePayment(ApplePaySession.STATUS_SUCCESS);
+
+      return fetch(`apple-pay-auth-request/${window.paymentDetails.chargeID}`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payment)
+      }).then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json().then(data => {
+            session.completePayment(ApplePaySession.STATUS_SUCCESS);
+            window.location.href = data.url
+          })
+        }
+      })
+    }
     session.begin()
   }
 

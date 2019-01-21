@@ -1,7 +1,7 @@
-var path = require('path')
-var expect = require('chai').expect
-var normalise = require(path.join(__dirname, '/../../app/services/normalise_cards.js'))
-var testCards = [{ id: 'b29c58d8-2ab4-4ac7-adbe-f8f46ba1c27c',
+const path = require('path')
+const expect = require('chai').expect
+const normalise = require(path.join(__dirname, '/../../app/services/normalise_cards.js'))
+const testCards = [{ id: 'b29c58d8-2ab4-4ac7-adbe-f8f46ba1c27c',
   brand: 'visa',
   label: 'Visa',
   type: 'DEBIT' },
@@ -15,7 +15,7 @@ var testCards = [{ id: 'b29c58d8-2ab4-4ac7-adbe-f8f46ba1c27c',
   type: 'CREDIT' }]
 
 describe('normalise cards', function () {
-  it('shoudl return the correct format for the model', function () {
+  it('should return the correct format for the model', function () {
     expect(normalise(testCards)).to.eql([
       { brand: 'visa',
         debit: true,
