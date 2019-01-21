@@ -56,7 +56,7 @@ describe('The Apple Pay auth request controller', () => {
       statusCode: 200
     }
     nock(process.env.CONNECTOR_HOST)
-      .post(`/v1/frontend/charges/${chargeId}/wallets`)
+      .post(`/v1/frontend/charges/${chargeId}/wallets/apple`)
       .reply(200)
     requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
@@ -76,7 +76,7 @@ describe('The Apple Pay auth request controller', () => {
       setSessionVariable: sinon.spy()
     }
     nock(process.env.CONNECTOR_HOST)
-      .post(`/v1/frontend/charges/${chargeId}/wallets`)
+      .post(`/v1/frontend/charges/${chargeId}/wallets/apple`)
       .replyWithError('oops')
     requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line

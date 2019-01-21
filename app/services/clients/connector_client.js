@@ -10,7 +10,7 @@ const requestLogger = require('../../utils/request_logger')
 // Constants
 const SERVICE_NAME = 'connector'
 
-const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets'
+const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/apple'
 const CARD_AUTH_PATH = '/v1/frontend/charges/{chargeId}/cards'
 const CARD_3DS_PATH = '/v1/frontend/charges/{chargeId}/3ds'
 const CARD_STATUS_PATH = '/v1/frontend/charges/{chargeId}/status'
