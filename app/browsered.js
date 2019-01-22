@@ -1,12 +1,12 @@
 const inputConfim = require('./assets/javascripts/browsered/form-input-confirm')
-const paymentRequest = require('./assets/javascripts/browsered/payment-request')
+const webPayments = require('./assets/javascripts/browsered/web-payments')
 const analytics = require('gaap-analytics')
 
 exports.chargeValidation = require('./utils/charge_validation')
 analytics.eventTracking.init()
 
 inputConfim()
-paymentRequest()
+webPayments()
 
 // GA tracking if an email typo is spotted
 if (document.getElementById('email-uncorrected')) {
