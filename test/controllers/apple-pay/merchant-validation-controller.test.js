@@ -40,6 +40,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
       })
       .end(done)
   })
+
   it('should return 400 if no url is provided', done => {
     request(getApp())
       .post(paths.applePay.session.path)
@@ -47,13 +48,14 @@ describe('Validate with Apple the merchant is legitimate', () => {
       .expect(400)
       .end(done)
   })
-  it('should return an error if Merchant is invalid', done => {
+
+  it('should return an error if Merchant is invalid, the merchant details or crypto stuff', done => {
     const url = 'https://fakeapple.url'
     const body = {
-      merchantIdentifier: 'merchantID',
+      merchantIdentifier: APPLE_PAY_MERCHANT_ID,
       displayName: 'GOV.UK Pay',
       initiative: 'web',
-      initiativeContext: 'test.payments.service.gov.uk'
+      initiativeContext: APPLE_PAY_MERCHANT_DOMAIN
     }
 
     nock(url)
