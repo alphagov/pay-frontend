@@ -4,7 +4,7 @@
 const logger = require('winston')
 
 exports.logRequestStart = context => {
-  logger.debug(`Calling ${context.service}  ${context.description}-`, {
+  logger.info(`Calling ${context.service}  ${context.description}-`, {
     service: context.service,
     method: context.method,
     url: context.url
