@@ -87,7 +87,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.56",
-    "@babel/preset-env": "^7.0.0-beta.56",
+    "@babel/preset-env": "^7.3.1",
     "@pact-foundation/pact-node": "^6.20.2",
     "apple-pay-js-stubs": "^1.0.4",
     "browserify": "16.2.x",
