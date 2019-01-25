@@ -112,7 +112,7 @@
     "grunt-contrib-uglify": "^3.4.0",
     "grunt-contrib-watch": "1.0.x",
     "grunt-rewrite": "1.0.x",
-    "grunt-sass": "2.1.x",
+    "grunt-sass": "3.0.x",
     "mocha": "5.1.x",
     "nock": "10.0.6",
     "node-sass": "4.9.x",
