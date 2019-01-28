@@ -9,5 +9,5 @@ exports.metrics = () => {
   appmetrics.configure({'mqtt': 'off'})
   const appmetricsStatsd = require('appmetrics-statsd')
 
-  return appmetricsStatsd.StatsD(null, metricsHost, metricsPort, metricsPrefix)
+  return appmetricsStatsd.StatsD(metricsHost, metricsPort, metricsPrefix)
 }
