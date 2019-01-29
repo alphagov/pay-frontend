@@ -113,7 +113,7 @@
     "grunt-contrib-watch": "1.0.x",
     "grunt-rewrite": "1.0.x",
     "grunt-sass": "3.0.x",
-    "mocha": "5.1.x",
+    "mocha": "5.2.x",
     "nock": "10.0.6",
     "node-sass": "4.9.x",
     "nodemon": "^1.18.9",
