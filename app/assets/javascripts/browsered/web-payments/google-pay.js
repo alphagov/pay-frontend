@@ -5,11 +5,20 @@ const { email_collection_mode } = window.Charge
 
 
 const processPayment = paymentData => {
-  // show returned data in developer console for debugging
-  console.log(paymentData);
-  // @todo pass payment token to your gateway to process payment
-  const paymentToken = paymentData.details.paymentMethodData.tokenizationData.token;
-  console.log('paymentToken', paymentToken);
+  return fetch(`/web-payments-auth-request/google/${window.paymentDetails.chargeID}`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(paymentData)
+  }).then(response => {
+    if (response.status >= 200 && response.status < 300) {
+      return response.json().then(data => {
+        window.location.href = data.url
+      })
+    }
+  })
 }
 
 const createGooglePaymentRequest = () => {
