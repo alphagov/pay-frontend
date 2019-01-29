@@ -38,6 +38,6 @@ module.exports = () => {
     })
     .catch(err => {
       console.error(err);
-      showErrorSummary('There was an error contacting Google Pay, please try again')
+      showErrorSummary(i18n.fieldErrors.webPayments.google)
     });
 }

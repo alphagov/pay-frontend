@@ -32,7 +32,7 @@ module.exports = () => {
         console.log('validated merchant', response.signature)
         session.completeMerchantValidation(response)
       }).catch(err => {
-        showErrorSummary('There was an error contacting Apple Pay, please try again')
+        showErrorSummary(i18n.fieldErrors.webPayments.apple)
         return err
       })
   }
