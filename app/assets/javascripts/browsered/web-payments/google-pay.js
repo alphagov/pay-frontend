@@ -1,37 +1,43 @@
 'use strict'
 
-const { prepareRequestObject } = require('./helpers')
+const { prepareGoogleRequestObjects, showErrorSummary } = require('./helpers')
+let paymentsClient = null;
+
+const getGoogleTransactionInfo = () => {
+  return {
+    currencyCode: 'GBP',
+    totalPriceStatus: 'FINAL',
+    totalPrice: window.paymentDetails.amount
+  };
+}
+
+const processPayment = paymentData => {
+  // show returned data in developer console for debugging
+  console.log(paymentData);
+  // @todo pass payment token to your gateway to process payment
+  const paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+  console.log('paymentToken', paymentToken);
+}
+
+const paymentDataRequest = prepareGoogleRequestObjects();
+paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
+
+const getGooglePaymentsClient = () => {
+  if (paymentsClient === null) {
+    paymentsClient = new google.payments.api.PaymentsClient({ environment: 'TEST' });
+  }
+  return paymentsClient;
+}
 
 module.exports = () => {
-  const { supportedInstruments, details, options } = prepareRequestObject('standard')
-  const request = new PaymentRequest(supportedInstruments, details, options)
+  paymentsClient = getGooglePaymentsClient();
 
-  request.show()
-    .then(result => {
-      const payload = result.toJSON()
-      payload.csrfToken = document.getElementById('csrf').value
-      payload.chargeId = window.paymentDetails.chargeID
-      return fetch(`/payment-request/${window.paymentDetails.chargeID}`, {
-        method: 'POST',
-        redirect: 'follow',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      }).then(response => {
-        if (response.status === 200) {
-          result.complete('success')
-          return window.location.href = response.url
-        } else {
-          result.complete('fail')
-          return window.location.href = response.url
-        }
-      }).catch(() => {
-        result.complete('fail')
-        return window.location.href = response.url
-      })
-    }).catch(err => {
-      return err
+  paymentsClient.loadPaymentData(paymentDataRequest)
+    .then(paymentData => {
+      processPayment(paymentData);
     })
+    .catch(err => {
+      console.error(err);
+      showErrorSummary('There was an error contacting Google Pay, please try again')
+    });
 }

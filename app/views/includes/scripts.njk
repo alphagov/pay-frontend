@@ -55,4 +55,7 @@
 {% if isDevelopment %}
 {# <script src="public/javascripts/apple-pay-js-stubs.js"></script> #}
 {% endif %}
+{% if allowWebPayments %}
+  <script async src="https://pay.google.com/gp/p/js/pay.js"></script>
+{% endif %}
 <script src="{{ js_path }}"></script>

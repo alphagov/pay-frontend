@@ -1,36 +1,45 @@
 'use strict'
 
-const allowedCardTypes = window.Card
+const allowedCardTypes = window.Card.allowed
 const { email_collection_mode } = window.Charge
 
 const showErrorSummary = title => {
-const errorSummary = document.getElementById('error-summary')
-
-errorSummary.classList.remove('hidden')
-errorSummary.querySelectorAll('h2')[0].innerText = title
+  const errorSummary = document.getElementById('error-summary')
+  errorSummary.classList.remove('hidden')
+  errorSummary.querySelectorAll('h2')[0].innerText = title
 }
 
 const clearErrorSummary = () => {
   const errorSummary = document.getElementById('error-summary')
-
   errorSummary.classList.add('hidden')
 }
 
-const prepareRequestObject = brand => {
-  const supportedNetworks = allowedCardTypes.allowed.map(type => {
+const supportedNetworksFormattedByProvider = provider => {
+  const availableNetworks = allowedCardTypes.map(type => {
     if (type.debit || type.credit) {
       return type.brand
     }
   })
+  return availableNetworks
+    .filter(brand => brand !== 'diners-club')
+    .filter(brand => brand !== 'unionpay')
+    .map(brand => {
+      let formattedBrand = brand
+      if (brand === 'master-card') formattedBrand = 'masterCard'
+      if (brand === 'american-express') formattedBrand = 'amex'
+      return provider === 'google' ? formattedBrand.toUpperCase() : formattedBrand
+    })
+}
 
+const prepareAppleRequestObject = () => {
   let supportedTypes = []
   let merchantCapabilities = []
-  if (!allowedCardTypes.allowed.every(type => type.debit === false)) {
+  if (!allowedCardTypes.every(type => type.debit === false)) {
     supportedTypes.push('debit')
     merchantCapabilities.push('supportsDebit')
   }
 
-  if (!allowedCardTypes.allowed.every(type => type.credit === false)) {
+  if (!allowedCardTypes.every(type => type.credit === false)) {
     supportedTypes.push('credit')
     merchantCapabilities.push('supportsCredit')
   }
@@ -57,44 +66,71 @@ const prepareRequestObject = brand => {
     requestPayerEmail: email_collection_mode !== 'OFF'
   }
 
-  if (brand === 'apple') {
-    const supportedNetworksAppleFormatted = supportedNetworks.map(brand => {
-      if (brand === 'master-card') return 'masterCard'
-      if (brand === 'american-express') return 'amex'
-      return brand
-    }).filter(brand => brand !== 'diners-club')
-      .filter(brand => brand !== 'unionpay')
-
-    if (merchantCapabilities.length < 2) {
-      merchantCapabilities.push('supports3DS')
-    } else {
-      merchantCapabilities = ['supports3DS']
-    }
-
-    const requiredShippingContactFields = email_collection_mode !== 'OFF' ? ['email'] : []
-
-    return {
-      countryCode: 'GB',
-      currencyCode: details.total.amount.currency,
-      total: {
-        label: details.total.label,
-        amount: details.total.amount.value,
-      },
-      supportedNetworks: supportedNetworksAppleFormatted,
-      merchantCapabilities,
-      requiredShippingContactFields,
-    }
+  if (merchantCapabilities.length < 2) {
+    merchantCapabilities.push('supports3DS')
   } else {
-    return {
-      supportedInstruments,
-      details,
-      options
+    merchantCapabilities = ['supports3DS']
+  }
+
+  const requiredShippingContactFields = email_collection_mode !== 'OFF' ? ['email'] : []
+
+  return {
+    countryCode: 'GB',
+    currencyCode: details.total.amount.currency,
+    total: {
+      label: details.total.label,
+      amount: details.total.amount.value,
+    },
+    supportedNetworks: supportedNetworksFormattedByProvider('apple'),
+    merchantCapabilities,
+    requiredShippingContactFields,
+  }
+}
+
+const prepareGoogleRequestObjects = () => {
+  const baseRequest = {
+    apiVersion: 2,
+    apiVersionMinor: 0
+  };
+  const allowedCardNetworks = supportedNetworksFormattedByProvider('google')
+  const allowedCardAuthMethods = ['PAN_ONLY', 'CRYPTOGRAM_3DS']
+  const tokenizationSpecification = {
+    type: 'PAYMENT_GATEWAY',
+    parameters: {
+      gateway: 'worldpay',
+      gatewayMerchantId: 'exampleGatewayMerchantId'
     }
   }
+
+  const cardPaymentMethod = {
+    type: 'CARD',
+    parameters: {
+      allowedAuthMethods: allowedCardAuthMethods,
+      allowedCardNetworks: allowedCardNetworks,
+      billingAddressRequired : true,
+      billingAddressParameters: {
+        format: 'MIN'
+      }
+    },
+    tokenizationSpecification
+  }
+
+  const getGooglePaymentDataRequest = () => {
+    const paymentDataRequest = Object.assign({}, baseRequest)
+    paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod]
+    paymentDataRequest.merchantInfo = {
+      merchantId: 'blah',
+      merchantName: 'GOV.UK Pay'
+    };
+    return paymentDataRequest
+  }
+
+  return getGooglePaymentDataRequest()
 }
 
 module.exports = {
   showErrorSummary,
   clearErrorSummary,
-  prepareRequestObject
+  prepareAppleRequestObject,
+  prepareGoogleRequestObjects
 }
