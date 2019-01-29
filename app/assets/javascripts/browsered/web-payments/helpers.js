@@ -98,7 +98,7 @@ const prepareGoogleRequestObjects = () => {
     type: 'PAYMENT_GATEWAY',
     parameters: {
       gateway: 'worldpay',
-      gatewayMerchantId: 'exampleGatewayMerchantId'
+      gatewayMerchantId: window.googlePayGatewayMerchantID
     }
   }
 
@@ -119,7 +119,7 @@ const prepareGoogleRequestObjects = () => {
     const paymentDataRequest = Object.assign({}, baseRequest)
     paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod]
     paymentDataRequest.merchantInfo = {
-      merchantId: 'blah',
+      merchantId: window.googlePayMerchantID,
       merchantName: 'GOV.UK Pay'
     };
     return paymentDataRequest
