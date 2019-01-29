@@ -16,6 +16,6 @@ describe('The charge view', () => {
     }
     const body = render('charge', templateData)
     const $ = cheerio.load(body)
-    $('label[for="payment-method-payment-request-apple"]').text().should.contain('Apple Pay')
+    $('label[for="payment-method-apple-pay"]').text().should.contain('Apple Pay')
   })
 })

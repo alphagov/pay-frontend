@@ -1,6 +1,6 @@
 'use strict'
 
-const { prepareRequestObject, showErrorSummary } = require('./helpers')
+const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
 
 function validateMerchantSession(url) {
   console.log('dialling...', url)
@@ -23,7 +23,7 @@ function validateMerchantSession(url) {
 }
 
 module.exports = () => {
-  const session = new ApplePaySession(3, prepareRequestObject('apple'))
+  const session = new ApplePaySession(3, prepareAppleRequestObject())
 
   session.onvalidatemerchant = event => {
     const validationURL = event.validationURL
@@ -32,7 +32,7 @@ module.exports = () => {
         console.log('validated merchant', response.signature)
         session.completeMerchantValidation(response)
       }).catch(err => {
-        showErrorSummary('There was an error contacting Apple Pay, please try again')
+        showErrorSummary(i18n.fieldErrors.webPayments.apple)
         return err
       })
   }

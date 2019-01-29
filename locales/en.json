@@ -157,6 +157,10 @@
 				"name": "country or territory",
 				"message": "Enter a valid country or territory"
 			}
+		},
+		"webPayments": {
+			"apple": "There was an error contacting Apple Pay, please try again",
+			"google": "There was an error contacting Google Pay, please try again"
 		}
 	}
 }
