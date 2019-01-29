@@ -78,9 +78,11 @@ const paths = {
     session: {
       path: '/apple-pay-merchant-validation',
       action: 'post'
-    },
+    }
+  },
+  webPayments: {
     authRequest: {
-      path: '/apple-pay-auth-request/:chargeId',
+      path: '/web-payments-auth-request/:provider/:chargeId',
       action: 'post'
     },
     handlePaymentResponse: {

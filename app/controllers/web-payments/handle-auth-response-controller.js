@@ -12,7 +12,7 @@ const { getSessionVariable, deleteSessionVariable } = require('../../utils/cooki
 
 // constants
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId })
-const applePayRouteFor = (resource, chargeId) => paths.generateRoute(`applePay.${resource}`, { chargeId })
+const webPaymentsRouteFor = (resource, chargeId) => paths.generateRoute(`webPayments.${resource}`, { chargeId })
 
 const redirect = res => {
   return {
@@ -40,12 +40,12 @@ const handleAuthResponse = (req, res, charge) => response => {
               return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(
                 charge,
                 {},
-                applePayRouteFor('handlePaymentResponse', charge.id)))
+                webPaymentsRouteFor('handlePaymentResponse', charge.id)))
             } else {
               responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                 charge,
                 { returnUrl: routeFor('return', charge.id) },
-                applePayRouteFor('handlePaymentResponse', charge.id)
+                webPaymentsRouteFor('handlePaymentResponse', charge.id)
               ))
             }
           }
@@ -57,7 +57,7 @@ const handleAuthResponse = (req, res, charge) => response => {
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
         charge,
         { returnUrl: routeFor('return', charge.id) },
-        applePayRouteFor('handlePaymentResponse', charge.id))
+        webPaymentsRouteFor('handlePaymentResponse', charge.id))
       )
       break
     default:
@@ -66,16 +66,16 @@ const handleAuthResponse = (req, res, charge) => response => {
 }
 
 module.exports = (req, res) => {
-  const applePayAuthResponseSessionKey = `ch_${(req.chargeId)}.applePayAuthResponse`
+  const webPaymentAuthResponseSessionKey = `ch_${(req.chargeId)}.webPaymentAuthResponse`
   const charge = normalise.charge(req.chargeData, req.chargeId)
-  const connectorResponse = getSessionVariable(req, applePayAuthResponseSessionKey)
+  const connectorResponse = getSessionVariable(req, webPaymentAuthResponseSessionKey)
   if (!connectorResponse) {
     return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
       charge,
       { returnUrl: routeFor('return', charge.id) },
-      applePayRouteFor('handlePaymentResponse', charge.id)
+      webPaymentsRouteFor('handlePaymentResponse', charge.id)
     ))
   }
-  deleteSessionVariable(req, applePayAuthResponseSessionKey)
+  deleteSessionVariable(req, webPaymentAuthResponseSessionKey)
   return handleAuthResponse(req, res, charge)(connectorResponse)
 }
