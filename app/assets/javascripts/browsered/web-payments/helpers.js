@@ -122,6 +122,7 @@ const prepareGoogleRequestObjects = () => {
       merchantId: window.googlePayMerchantID,
       merchantName: 'GOV.UK Pay'
     };
+    paymentDataRequest.emailRequired = email_collection_mode !== 'OFF'
     return paymentDataRequest
   }
 
