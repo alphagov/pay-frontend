@@ -5,8 +5,10 @@ const analytics = require('gaap-analytics')
 exports.chargeValidation = require('./utils/charge_validation')
 analytics.eventTracking.init()
 
-inputConfim()
-webPayments()
+if (document.getElementById('main-content').classList.contains('charge-new')) {
+  inputConfim()
+  webPayments()
+}
 
 // GA tracking if an email typo is spotted
 if (document.getElementById('email-uncorrected')) {

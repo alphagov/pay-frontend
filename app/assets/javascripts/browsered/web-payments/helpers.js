@@ -1,6 +1,6 @@
 'use strict'
 
-const allowedCardTypes = window.Card
+const allowedCardTypes = window.Card || {}
 const { email_collection_mode } = window.Charge
 
 const showErrorSummary = title => {
