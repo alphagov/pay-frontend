@@ -96,7 +96,7 @@ describe('base client', () => {
       .reply(200, arbitraryResponseData)
 
     baseClient.get(url, { correlationId: arbitraryCorrelationId }, null, null).then(response => {
-      assert.strict.equal(response.body.response, 'I am a response')
+      assert.strictEqual(response.body.response, 'I am a response')
       done()
     })
   })
@@ -107,7 +107,7 @@ describe('base client', () => {
       .reply(201, '{}')
 
     baseClient.get(url, { correlationId: arbitraryCorrelationId }, null, null).then(response => {
-      assert.strict.equal(response.statusCode, 201)
+      assert.strictEqual(response.statusCode, 201)
       done()
     })
   })
@@ -118,7 +118,7 @@ describe('base client', () => {
       .reply(200, arbitraryResponseData)
 
     baseClient.post(url, { payload: arbitraryRequestData, correlationId: '123' }, null, null).then(response => {
-      assert.strict.equal(response.body.response, 'I am a response')
+      assert.strictEqual(response.body.response, 'I am a response')
       done()
     })
   })
@@ -129,7 +129,7 @@ describe('base client', () => {
       .reply(200)
 
     baseClient.post(url, { payload: arbitraryRequestData, correlationId: '123' }, null, null).then(response => {
-      assert.strict.equal(response.body, null)
+      assert.strictEqual(response.body, undefined)
       done()
     })
   })
@@ -140,7 +140,7 @@ describe('base client', () => {
       .reply('{}')
 
     baseClient.get(url, { correlationId: 'reee' }, null, null).then(response => {
-      assert.strict.equal(response.request.headers['x-request-id'], 'reee')
+      assert.strictEqual(response.request.headers['x-request-id'], 'reee')
       done()
     })
   })
@@ -151,7 +151,7 @@ describe('base client', () => {
       .reply('{}')
 
     baseClient.get(url, {}, null, null).then(response => {
-      assert.strict.equal(response.request.headers['Content-Type'], 'application/json')
+      assert.strictEqual(response.request.headers['Content-Type'], 'application/json')
       done()
     })
   })
@@ -162,7 +162,7 @@ describe('base client', () => {
       .reply(200, arbitraryResponseData, { 'content-type': 'text/html' })
 
     baseClient.get(url, { correlationId: arbitraryCorrelationId }, null, null).then(response => {
-      assert.strict.equal(response.body.response, 'I am a response')
+      assert.strictEqual(response.body.response, 'I am a response')
       done()
     })
   })
