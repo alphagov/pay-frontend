@@ -51,10 +51,10 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
     }
   }
 
-  return proxyquire('../../../app/controllers/apple-pay/handle-auth-response-controller.js', proxyquireMocks)
+  return proxyquire('../../../app/controllers/web-payments/handle-auth-response-controller', proxyquireMocks)
 }
 
-describe('The Apple Pay handle auth response controller', () => {
+describe('The web payments handle auth response controller', () => {
   it('should capture and delete connector response if connector response is in the session and status code is 200', done => {
     const mockCharge = () => {
       return {
@@ -81,7 +81,7 @@ describe('The Apple Pay handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.applePayAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     expect(res.redirect.calledWith(303, '/return/chargeId')).to.be.ok // eslint-disable-line
     done()
   })
@@ -111,7 +111,7 @@ describe('The Apple Pay handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.applePayAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     expect(res.redirect.calledWith(303, '/card_details/chargeId/auth_waiting')).to.be.ok // eslint-disable-line
     done()
   })
@@ -154,7 +154,7 @@ describe('The Apple Pay handle auth response controller', () => {
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.applePayAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     expect(res.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
@@ -179,7 +179,7 @@ describe('The Apple Pay handle auth response controller', () => {
     }
     const mockCookies = {
       getSessionVariable: (req, key) => {
-        // expect(key).to.be(`ch_${chargeId}.applePayAuthResponse`)
+        // expect(key).to.be(`ch_${chargeId}.webPaymentAuthResponse`)
         return {
           statusCode: 200
         }
@@ -199,7 +199,7 @@ describe('The Apple Pay handle auth response controller', () => {
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.applePayAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
@@ -222,7 +222,7 @@ describe('The Apple Pay handle auth response controller', () => {
     }
     const mockCookies = {
       getSessionVariable: () => {
-        // expect(key).to.be(`ch_${chargeId}.applePayAuthResponse`)
+        // expect(key).to.be(`ch_${chargeId}.webPaymentAuthResponse`)
         return {
           statusCode: 400
         }
@@ -242,7 +242,7 @@ describe('The Apple Pay handle auth response controller', () => {
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.applePayAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
@@ -270,7 +270,7 @@ describe('The Apple Pay handle auth response controller', () => {
     }
     requireHandleAuthResponseController(() => {}, mockNormaliseCharge, mockCookies)(req, res)
       expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
-      expect(mockCookies.getSessionVariable.calledWith(req, `ch_${chargeId}.applePayAuthResponse`)).to.be.ok // eslint-disable-line
+      expect(mockCookies.getSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     done()
   })
 })
