@@ -147,12 +147,12 @@ module.exports = function (grunt) {
         mode: 'gzip'
       },
       files: [
-        {expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz'},
-        {expand: true, src: ['public/images/*.gif'], ext: '.gif.gz'},
-        {expand: true, src: ['public/images/*.png'], ext: '.png.gz'},
-        {expand: true, src: ['public/javascripts/*.min.js'], ext: '.min.js.gz'},
-        {expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz'},
-        {expand: true, src: ['public/stylesheets/custom/*.css'], ext: '.css.gz'}
+        { expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz' },
+        { expand: true, src: ['public/images/*.gif'], ext: '.gif.gz' },
+        { expand: true, src: ['public/images/*.png'], ext: '.png.gz' },
+        { expand: true, src: ['public/javascripts/*.min.js'], ext: '.min.js.gz' },
+        { expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz' },
+        { expand: true, src: ['public/stylesheets/custom/*.css'], ext: '.css.gz' }
       ]
     }
   }

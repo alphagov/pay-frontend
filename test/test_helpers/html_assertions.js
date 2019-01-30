@@ -80,12 +80,12 @@ chai.use(function (_chai, utils) {
   })
 
   chai.Assertion.addMethod('containInputField', function (idAndName, type) {
-    this.containSelector('input#' + idAndName).withAttributes({name: idAndName, type: type})
+    this.containSelector('input#' + idAndName).withAttributes({ name: idAndName, type: type })
     utils.flag(this, 'inputFieldId', idAndName)
   })
 
   chai.Assertion.addMethod('containInputWithIdAndName', function (id, name, type) {
-    this.containSelector('input#' + id).withAttributes({name: name, type: type})
+    this.containSelector('input#' + id).withAttributes({ name: name, type: type })
     utils.flag(this, 'inputFieldId', id)
   })
 

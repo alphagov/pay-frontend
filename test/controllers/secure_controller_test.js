@@ -89,8 +89,8 @@ describe('secure controller', function () {
     before(function () {
       request = {
         frontend_state: {},
-        params: {chargeTokenId: 1},
-        headers: {'x-Request-id': 'unique-id'}
+        params: { chargeTokenId: 1 },
+        headers: { 'x-Request-id': 'unique-id' }
       }
 
       response = {

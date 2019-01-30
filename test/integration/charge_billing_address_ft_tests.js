@@ -156,10 +156,10 @@ describe('chargeTests - billing address', function () {
       defaultAdminusersResponseForGetService(gatewayAccountId, {
         collect_billing_address: false
       })
-      mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true})
+      mockSuccessCardIdResponse({ brand: 'visa', label: 'visa', type: 'D', corporate: true })
 
       connectorExpects(connectorCardDataWithoutAddress('4000180000000002', 'DEBIT', true, 'visa'))
-        .reply(200, {status: State.AUTH_SUCCESS})
+        .reply(200, { status: State.AUTH_SUCCESS })
 
       postChargeRequest(app, cookieValue, minimumFormCardData('4000 1800 0000 0002'), chargeId)
         .expect(303)

@@ -12,14 +12,14 @@ module.exports = function (options = {}) {
   }
 
   let pactifyNestedArray = (arr) => {
-    return matchers.eachLike(pactify(arr[0]), {min: arr.length})
+    return matchers.eachLike(pactify(arr[0]), { min: arr.length })
   }
 
   let pactify = (object) => {
     let pactified = {}
     _.forIn(object, (value, key) => {
       if (options.array && options.array.indexOf(key) !== -1) {
-        pactified[key] = matchers.eachLike(matchers.somethingLike(value[0]), {min: value.length})
+        pactified[key] = matchers.eachLike(matchers.somethingLike(value[0]), { min: value.length })
       } else if (value.constructor === Array) {
         pactified[key] = pactifySimpleArray(value)
       } else if (value.constructor === Object) {

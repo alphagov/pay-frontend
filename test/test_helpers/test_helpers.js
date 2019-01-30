@@ -272,7 +272,7 @@ module.exports = {
     initConnectorUrl()
     const connectorMock = nock(localConnector())
     const mockPath = connectorChargePath + chargeId + '/status'
-    const payload = {'new_status': 'ENTERING CARD DETAILS'}
+    const payload = { 'new_status': 'ENTERING CARD DETAILS' }
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 

@@ -134,10 +134,10 @@ describe('card details endpoint', function () {
   }
   before(function () {
     request = {
-      query: {debitOnly: false},
+      query: { debitOnly: false },
       frontend_state: {},
-      params: {chargeTokenId: 1},
-      headers: {'x-request-id': 'unique-id'}
+      params: { chargeTokenId: 1 },
+      headers: { 'x-request-id': 'unique-id' }
     }
 
     response = {
@@ -191,7 +191,7 @@ describe('card details endpoint', function () {
   })
 
   it('should display SYSTEM_ERROR if capture returns an error', function () {
-    const charge = mockCharge.mock(false, {message: 'some error'})
+    const charge = mockCharge.mock(false, { message: 'some error' })
 
     const mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
@@ -213,7 +213,7 @@ describe('card details endpoint', function () {
   })
 
   it('should display CAPTURE_FAILURE if capture returns a capture failed error', function () {
-    const charge = mockCharge.mock(false, {message: 'CAPTURE_FAILED'})
+    const charge = mockCharge.mock(false, { message: 'CAPTURE_FAILED' })
 
     const mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
@@ -289,7 +289,7 @@ describe('check card endpoint', function () {
     }
     response = {
       json: (data) => {
-        expect(data).to.deep.equal({accepted: true, corporate: true, type: 'CREDIT', prepaid: 'NOT_PREPAID'})
+        expect(data).to.deep.equal({ accepted: true, corporate: true, type: 'CREDIT', prepaid: 'NOT_PREPAID' })
         done()
       }
     }

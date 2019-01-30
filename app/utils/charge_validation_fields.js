@@ -36,7 +36,7 @@ const OPTIONAL_BILLING_ADDRESS_FORM_FIELDS = [
   'addressLine2'
 ]
 
-module.exports = (Card, chargeOptions = {collect_billing_address: true}) => {
+module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
   /*
      These are custom validations for each field.
      Functions should be named the same as the input name
@@ -104,7 +104,7 @@ function addressPostcode (postcode, allFields) {
 
 function email (email, allFields, chargeOptions = {}) {
   if (((email || '') === '' && (chargeOptions && chargeOptions.email_collection_mode === 'OPTIONAL')) ||
-      chargeOptions.email_collection_mode === 'OFF') return {emptyOrCustomValidationAllowed: true}
+      chargeOptions.email_collection_mode === 'OFF') return { emptyOrCustomValidationAllowed: true }
   if (email && email.length > EMAIL_MAX_LENGTH) return 'invalidLength'
   if (containsSuspectedPAN(email)) return 'containsTooManyDigits'
   if (!rfc822Validator(email)) return 'message'

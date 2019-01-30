@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
-const {getNamespace, createNamespace} = require('continuation-local-storage')
+const { getNamespace, createNamespace } = require('continuation-local-storage')
 const logger = require('winston')
 
 // Local dependencies
@@ -14,11 +14,11 @@ const applePayMerchantValidation = require('./controllers/apple-pay/merchant-val
 const applePayMakePayment = require('./controllers/apple-pay/payment-auth-request-controller')
 const applePayHandlePaymentResponse = require('./controllers/apple-pay/handle-auth-response-controller')
 const returnCont = require('./controllers/return_controller.js')
-const {healthcheck} = require('./controllers/healthcheck_controller.js')
+const { healthcheck } = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
 
 // Express middleware
-const {csrfCheck, csrfTokenGeneration} = require('./middleware/csrf.js')
+const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
 const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')

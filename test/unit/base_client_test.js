@@ -10,9 +10,9 @@ const baseClient = require(path.join(__dirname, '/../../app/services/clients/bas
 
 // Constants
 const url = 'http://www.example.com:65535'
-const arbitraryRequestData = {foo: 'bar'}
+const arbitraryRequestData = { foo: 'bar' }
 const arbitraryCorrelationId = 123
-const arbitraryResponseData = {response: 'I am a response'}
+const arbitraryResponseData = { response: 'I am a response' }
 
 describe('base client', () => {
   beforeEach(function () {
@@ -95,8 +95,8 @@ describe('base client', () => {
       .get('/')
       .reply(200, arbitraryResponseData)
 
-    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
-      assert.equal(response.body.response, 'I am a response')
+    baseClient.get(url, { correlationId: arbitraryCorrelationId }, null, null).then(response => {
+      assert.strictEqual(response.body.response, 'I am a response')
       done()
     })
   })
@@ -106,8 +106,8 @@ describe('base client', () => {
       .get('/')
       .reply(201, '{}')
 
-    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
-      assert.equal(response.statusCode, 201)
+    baseClient.get(url, { correlationId: arbitraryCorrelationId }, null, null).then(response => {
+      assert.strictEqual(response.statusCode, 201)
       done()
     })
   })
@@ -117,8 +117,8 @@ describe('base client', () => {
       .post('/', arbitraryRequestData)
       .reply(200, arbitraryResponseData)
 
-    baseClient.post(url, {payload: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
-      assert.equal(response.body.response, 'I am a response')
+    baseClient.post(url, { payload: arbitraryRequestData, correlationId: '123' }, null, null).then(response => {
+      assert.strictEqual(response.body.response, 'I am a response')
       done()
     })
   })
@@ -128,8 +128,8 @@ describe('base client', () => {
       .post('/', arbitraryRequestData)
       .reply(200)
 
-    baseClient.post(url, {payload: arbitraryRequestData, correlationId: '123'}, null, null).then(response => {
-      assert.equal(response.body, null)
+    baseClient.post(url, { payload: arbitraryRequestData, correlationId: '123' }, null, null).then(response => {
+      assert.strictEqual(response.body, undefined)
       done()
     })
   })
@@ -139,8 +139,8 @@ describe('base client', () => {
       .get('/')
       .reply('{}')
 
-    baseClient.get(url, {correlationId: 'reee'}, null, null).then(response => {
-      assert.equal(response.request.headers['x-request-id'], 'reee')
+    baseClient.get(url, { correlationId: 'reee' }, null, null).then(response => {
+      assert.strictEqual(response.request.headers['x-request-id'], 'reee')
       done()
     })
   })
@@ -151,7 +151,7 @@ describe('base client', () => {
       .reply('{}')
 
     baseClient.get(url, {}, null, null).then(response => {
-      assert.equal(response.request.headers['Content-Type'], 'application/json')
+      assert.strictEqual(response.request.headers['Content-Type'], 'application/json')
       done()
     })
   })
@@ -159,10 +159,10 @@ describe('base client', () => {
   it('should ignore response content-type header and assume JSON', (done) => {
     nock(url)
       .get('/')
-      .reply(200, arbitraryResponseData, {'content-type': 'text/html'})
+      .reply(200, arbitraryResponseData, { 'content-type': 'text/html' })
 
-    baseClient.get(url, {correlationId: arbitraryCorrelationId}, null, null).then(response => {
-      assert.equal(response.body.response, 'I am a response')
+    baseClient.get(url, { correlationId: arbitraryCorrelationId }, null, null).then(response => {
+      assert.strictEqual(response.body.response, 'I am a response')
       done()
     })
   })

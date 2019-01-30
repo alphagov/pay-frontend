@@ -4,7 +4,7 @@
 const clientSessions = require('client-sessions')
 
 // Constants
-const {COOKIE_MAX_AGE, SESSION_ENCRYPTION_KEY, SESSION_ENCRYPTION_KEY_2, SECURE_COOKIE_OFF} = process.env
+const { COOKIE_MAX_AGE, SESSION_ENCRYPTION_KEY, SESSION_ENCRYPTION_KEY_2, SECURE_COOKIE_OFF } = process.env
 const SESSION_COOKIE_NAME_1 = 'frontend_state'
 const SESSION_COOKIE_NAME_2 = 'frontend_state_2'
 const KEY_MIN_LENGTH = 10

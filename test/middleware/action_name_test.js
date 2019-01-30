@@ -16,7 +16,7 @@ describe('actionName', function () {
     }
     actionName(req, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
-    assert.equal(req.actionName, 'card.create')
+    assert.strict.equal(req.actionName, 'card.create')
   })
 
   it('should not append the viewname to the request if it cannot match', function () {
@@ -29,6 +29,6 @@ describe('actionName', function () {
     }
     actionName(req, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
-    assert.equal(req.actionName, undefined)
+    assert.strict.equal(req.actionName, undefined)
   })
 })

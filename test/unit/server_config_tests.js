@@ -1,7 +1,7 @@
 'use strict'
 
 const request = require('supertest')
-const {expect} = require('chai')
+const { expect } = require('chai')
 
 const app = require('../../server').getApp()
 

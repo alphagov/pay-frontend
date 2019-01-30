@@ -1,7 +1,7 @@
 'use strict'
 
 const { expect } = require('chai')
-const {commonTypos} = require('../../app/utils/email_tools')
+const { commonTypos } = require('../../app/utils/email_tools')
 // const validEmailList = require('./valid-email-list')
 const invalidEmailList = require('./invalid-email-list')
 

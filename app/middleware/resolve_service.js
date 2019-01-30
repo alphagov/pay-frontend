@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const logger = require('winston')
-const {Cache} = require('memory-cache')
+const { Cache } = require('memory-cache')
 const lodash = require('lodash')
 
 // Local dependencies
@@ -23,8 +23,8 @@ module.exports = (req, res, next) => {
     res.locals.service = cachedService
     next()
   } else {
-    return getAdminUsersClient({correlationId: req.headers[CORRELATION_HEADER]})
-      .findServiceBy({gatewayAccountId})
+    return getAdminUsersClient({ correlationId: req.headers[CORRELATION_HEADER] })
+      .findServiceBy({ gatewayAccountId })
       .then(service => {
         serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_MAX_AGE)
         res.locals.service = service

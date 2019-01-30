@@ -18,7 +18,7 @@ const systemCancelled = {
 
 const userCancelled = {
   view: 'user_cancelled',
-  locals: {status: 'successful'},
+  locals: { status: 'successful' },
   analyticsPage: '/user_cancelled',
   terminal: true
 }
@@ -125,7 +125,7 @@ const actions = {
 
   CAPTURE_SUBMITTED: {
     view: 'errors/charge_confirm_state_completed',
-    locals: {status: 'successful'},
+    locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
@@ -152,21 +152,21 @@ const actions = {
 
   CAPTURED: {
     view: 'errors/charge_confirm_state_completed',
-    locals: {status: 'successful'},
+    locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
 
   CAPTURE_APPROVED: {
     view: 'errors/charge_confirm_state_completed',
-    locals: {status: 'successful'},
+    locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
 
   CAPTURE_APPROVED_RETRY: {
     view: 'errors/charge_confirm_state_completed',
-    locals: {status: 'successful'},
+    locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
@@ -225,7 +225,7 @@ const actions = {
 
   AWAITING_CAPTURE_REQUEST: {
     view: 'errors/charge_confirm_state_completed',
-    locals: {status: 'successful'},
+    locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   }
@@ -237,7 +237,7 @@ exports.response = (req, res, actionName, options) => {
   let action = lodash.result(actions, actionName)
   if (!action) {
     logger.error('Response action ' + actionName + ' NOT FOUND')
-    options = {viewName: 'error'}
+    options = { viewName: 'error' }
     action = actions.ERROR
   }
   if (shouldRedirect(req, res, action)) {

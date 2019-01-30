@@ -1,7 +1,7 @@
 'use strict'
 
 // NPM dependencies
-const {expect} = require('chai')
+const { expect } = require('chai')
 const sinon = require('sinon')
 const lodash = require('lodash')
 
@@ -87,17 +87,17 @@ describe('rendering behaviour', () => {
   it('should call a view correctly', () => {
     responseRouter.response(request, response, 'NOT_FOUND')
     expect(status.lastCall.args).to.deep.equal([404])
-    expect(render.lastCall.args).to.deep.equal(['error', {message: 'Page cannot be found', viewName: 'NOT_FOUND'}])
+    expect(render.lastCall.args).to.deep.equal(['error', { message: 'Page cannot be found', viewName: 'NOT_FOUND' }])
   })
 
   it('should return a 200 by default', () => {
     responseRouter.response(request, response, 'CAPTURE_FAILURE')
     expect(status.lastCall.args).to.deep.equal([200])
-    expect(render.lastCall.args).to.deep.equal(['errors/incorrect_state/capture_failure', {viewName: 'CAPTURE_FAILURE'}])
+    expect(render.lastCall.args).to.deep.equal(['errors/incorrect_state/capture_failure', { viewName: 'CAPTURE_FAILURE' }])
   })
 
   it('should return locals passed in', () => {
-    responseRouter.response(request, response, 'HUMANS', {custom: 'local'})
+    responseRouter.response(request, response, 'HUMANS', { custom: 'local' })
     expect(render.lastCall.args[1]).to.have.property('custom').to.equal('local')
   })
 

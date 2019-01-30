@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
-const {getNamespace} = require('continuation-local-storage')
+const { getNamespace } = require('continuation-local-storage')
 
 // Local dependencies
 const responseRouter = require('../utils/response_router')

@@ -57,7 +57,7 @@ const app = proxyquire('../../server', {
 
 const EMPTY_BODY = ''
 const defaultCorrelationHeader = {
-  reqheaders: {'x-request-id': 'some-unique-id'}
+  reqheaders: { 'x-request-id': 'some-unique-id' }
 }
 const gatewayAccount = {
   gatewayAccountId: '12345',
@@ -68,7 +68,7 @@ const gatewayAccount = {
 
 let mockServer
 
-const defaultCardID = {brand: 'visa', label: 'visa', type: 'D', corporate: false, prepaid: 'NOT_PREPAID'}
+const defaultCardID = { brand: 'visa', label: 'visa', type: 'D', corporate: false, prepaid: 'NOT_PREPAID' }
 
 const mockSuccessCardIdResponse = function (data) {
   nock(process.env.CARDID_HOST)
@@ -296,7 +296,7 @@ describe('chargeTests', function () {
 
         nock(adminUsersHost, defaultCorrelationHeader)
           .get(`${servicesResource}?gatewayAccountId=${gatewayAccountId}`)
-          .reply(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
+          .reply(serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }).getPlain())
 
         mockSuccessCardIdResponse(defaultCardID)
 
@@ -319,7 +319,7 @@ describe('chargeTests', function () {
         mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('4242424242424242'))
-          .reply(200, {status: State.AUTH_SUCCESS})
+          .reply(200, { status: State.AUTH_SUCCESS })
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4242 4242 4242 4242'), chargeId)
           .expect(303)
@@ -334,10 +334,10 @@ describe('chargeTests', function () {
           .reply(200)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        mockSuccessCardIdResponse({brand: 'visa', label: 'visa', type: 'D', corporate: true, prepaid: 'PREPAID'})
+        mockSuccessCardIdResponse({ brand: 'visa', label: 'visa', type: 'D', corporate: true, prepaid: 'PREPAID' })
 
         connectorExpects(minimumConnectorCardData('4000180000000002', 'DEBIT', true, 'visa', 'PREPAID'))
-          .reply(200, {status: State.AUTH_SUCCESS})
+          .reply(200, { status: State.AUTH_SUCCESS })
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4000 1800 0000 0002'), chargeId)
           .expect(303)
@@ -352,10 +352,10 @@ describe('chargeTests', function () {
           .reply(200)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
-        mockSuccessCardIdResponse({brand: 'american-express', label: 'american-express', type: 'C', corporate: false, prepaid: 'NOT_PREPAID'})
+        mockSuccessCardIdResponse({ brand: 'american-express', label: 'american-express', type: 'C', corporate: false, prepaid: 'NOT_PREPAID' })
 
         connectorExpects(minimumConnectorCardData('4242424242424242', 'CREDIT', false, 'american-express'))
-          .reply(200, {status: State.AUTH_SUCCESS})
+          .reply(200, { status: State.AUTH_SUCCESS })
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4242 4242 4242 4242'), chargeId)
           .expect(303)
@@ -373,7 +373,7 @@ describe('chargeTests', function () {
         mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('4242424242424242'))
-          .reply(200, {status: State.AUTH_3DS_REQUIRED})
+          .reply(200, { status: State.AUTH_3DS_REQUIRED })
 
         postChargeRequest(app, cookieValue, minimumFormCardData('4242 4242 4242 4242'), chargeId)
           .expect(303)
@@ -485,7 +485,7 @@ describe('chargeTests', function () {
         mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('5105105105105100'))
-          .reply(400, {'message': 'This transaction was declined.'})
+          .reply(400, { 'message': 'This transaction was declined.' })
 
         postChargeRequest(app, cookieValue, minimumFormCardData('5105105105105100'), chargeId)
           .expect(303)
@@ -600,7 +600,7 @@ describe('chargeTests', function () {
           .post('/v1/api/card', () => {
             return true
           })
-          .reply(200, {brand: 'foobar', label: 'foobar', type: 'D'})
+          .reply(200, { brand: 'foobar', label: 'foobar', type: 'D' })
         postChargeRequest(app, cookieValue, minimumFormCardData('3528000700000000'), chargeId)
           .expect(200)
           .expect(function (res) {
@@ -625,7 +625,7 @@ describe('chargeTests', function () {
           .post('/v1/api/card', () => {
             return true
           })
-          .reply(200, {brand: 'american-express', label: 'american express', type: 'D'})
+          .reply(200, { brand: 'american-express', label: 'american express', type: 'D' })
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -655,7 +655,7 @@ describe('chargeTests', function () {
           .post('/v1/api/card', () => {
             return true
           })
-          .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
+          .reply(200, { brand: 'visa', label: 'visa', type: 'D' })
         const cardData = fullFormCardData('4242')
         postChargeRequest(app, cookieValue, cardData, chargeId)
           .expect(200)
@@ -730,7 +730,7 @@ describe('chargeTests', function () {
           'card_number': '5105105105105100',
           'cvc': '234',
           'expiry_date': '11/99'
-        }).reply(400, {'message': 'This transaction was declined.'})
+        }).reply(400, { 'message': 'This transaction was declined.' })
 
         request(app)
           .post(frontendCardDetailsPostPath)
@@ -808,7 +808,7 @@ describe('chargeTests', function () {
 
     it('It should show 500 page if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done) {
       const cookieValue = cookie.create(chargeId)
-      connectorResponseForPutCharge(chargeId, 400, {'message': 'some error'})
+      connectorResponseForPutCharge(chargeId, 400, { 'message': 'some error' })
 
       getChargeRequest(app, cookieValue, chargeId)
         .expect(500)
@@ -823,7 +823,7 @@ describe('chargeTests', function () {
         .post('/v1/api/card', () => {
           return true
         })
-        .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
+        .reply(200, { brand: 'visa', label: 'visa', type: 'D' })
 
       nock(process.env.CONNECTOR_HOST)
         .patch('/v1/frontend/charges/23144323')
@@ -910,7 +910,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .set('Accept', 'application/json')
         .expect(303, {})
@@ -941,7 +941,7 @@ describe('chargeTests', function () {
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .expect(500)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
@@ -959,7 +959,7 @@ describe('chargeTests', function () {
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .end(done)
     })
 
@@ -968,7 +968,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .set('Accept', 'application/json')
         .expect(500)
@@ -983,7 +983,7 @@ describe('chargeTests', function () {
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .expect(500)
         .end(done)
     })
@@ -994,7 +994,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .end(done)
@@ -1042,7 +1042,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
         .end(done)
@@ -1058,7 +1058,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
         .end(done)
@@ -1074,7 +1074,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .end(done)
@@ -1092,7 +1092,7 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({csrfToken: helper.csrfToken()})
+        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(302)
         .expect(res => expect(res.headers['location']).to.equal(returnUrl))

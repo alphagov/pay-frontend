@@ -4,7 +4,7 @@ const expect = require('chai').expect
 
 describe('The /healthcheck endpoint returned json', function () {
   it('should return 200 and be healthy', function (done) {
-    const expectedResponse = {'ping': {'healthy': true}}
+    const expectedResponse = { 'ping': { 'healthy': true } }
     request(app)
       .get('/healthcheck')
       .set('Accept', 'application/json')

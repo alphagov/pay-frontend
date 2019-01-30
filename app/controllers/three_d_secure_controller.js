@@ -6,14 +6,14 @@ const logger = require('winston')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
 const paths = require('../paths')
-const {withAnalytics} = require('../utils/analytics')
+const { withAnalytics } = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
 // Constants
-const {views, threeDsEPDQResults} = require('../../config/charge_controller')
-const {CORRELATION_HEADER} = require('../../config/correlation_header')
+const { views, threeDsEPDQResults } = require('../../config/charge_controller')
+const { CORRELATION_HEADER } = require('../../config/correlation_header')
 
-const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
+const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
 
 const redirect = res => {
   return {
@@ -68,7 +68,7 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const payload = build3dsPayload(req)
-    connectorClient({correlationId}).threeDs({chargeId: charge.id, payload})
+    connectorClient({ correlationId }).threeDs({ chargeId: charge.id, payload })
       .then(handleThreeDsResponse(req, res, charge))
       .catch((err) => {
         logger.error('Exception in auth3dsHandler -', {
@@ -94,7 +94,7 @@ module.exports = {
       let data = {
         issuerUrl: issuerUrl,
         paRequest: paRequest,
-        threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', {chargeId: charge.id})}`
+        threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', { chargeId: charge.id })}`
       }
       if (md) {
         data.md = md

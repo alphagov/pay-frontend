@@ -1,7 +1,7 @@
 'use strict'
 
 // NPM dependencies
-const {expect} = require('chai')
+const { expect } = require('chai')
 const proxyquire = require('proxyquire').noPreserveCache()
 
 describe('frontend cookie', function () {
@@ -20,7 +20,7 @@ describe('frontend cookie', function () {
     const cookies = proxyquire('../../app/utils/cookies.js', {})
     expect(cookies.getSessionCookieName()).to.equal('frontend_state')
     expect(cookies.namedCookie('name', 'key').proxy).to.equal(true)
-    expect(cookies.namedCookie('name', 'key').cookie).to.deep.equal({httpOnly: true, secureProxy: false, maxAge: 5400000})
+    expect(cookies.namedCookie('name', 'key').cookie).to.deep.equal({ httpOnly: true, secureProxy: false, maxAge: 5400000 })
   })
 
   it('should have secure proxy on in a secured https environment', function () {
@@ -28,6 +28,6 @@ describe('frontend cookie', function () {
     const cookies = proxyquire('../../app/utils/cookies.js', {})
     expect(cookies.getSessionCookieName()).to.equal('frontend_state')
     expect(cookies.namedCookie('name', 'key').proxy).to.equal(true)
-    expect(cookies.namedCookie('name', 'key').cookie).to.deep.equal({httpOnly: true, secureProxy: true, maxAge: 5400000})
+    expect(cookies.namedCookie('name', 'key').cookie).to.deep.equal({ httpOnly: true, secureProxy: true, maxAge: 5400000 })
   })
 })

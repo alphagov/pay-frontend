@@ -5,12 +5,12 @@ const http = require('http')
 const urlParse = require('url').parse
 const _ = require('lodash')
 const request = require('requestretry')
-const {getNamespace} = require('continuation-local-storage')
+const { getNamespace } = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
 const CORRELATION_HEADER_NAME = require('../../../../config/correlation_header').CORRELATION_HEADER
-const {addProxy} = require('../../../utils/add_proxy')
+const { addProxy } = require('../../../utils/add_proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -80,7 +80,7 @@ const _request = function request (methodName, url, args, callback, subSegment) 
     uri: proxiedUrl.protocol + '//' + proxiedUrl.hostname + optionalPort + proxiedUrl.pathname,
     method: methodName,
     agent: httpAgent,
-    headers: getHeaders(args, {clsSegment: clsSegment, subSegment: subSegment}, url)
+    headers: getHeaders(args, { clsSegment: clsSegment, subSegment: subSegment }, url)
   }
 
   if (args.payload) {

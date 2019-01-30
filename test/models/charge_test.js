@@ -10,7 +10,7 @@ const nock = require('nock')
 // Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 const Charge = require(path.join(__dirname, '/../../app/models/charge.js'))
-const {unexpectedPromise} = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
+const { unexpectedPromise } = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
 
 // Constants
 const originalHost = process.env.CONNECTOR_HOST
@@ -30,7 +30,7 @@ describe('updateStatus', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -46,7 +46,7 @@ describe('updateStatus', function () {
     it('should return update_failed', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').catch(err => {
-        assert.equal(err.message, 'UPDATE_FAILED')
+        assert.strict.equal(err.message, 'UPDATE_FAILED')
       })
     })
   })
@@ -59,14 +59,14 @@ describe('updateStatus', function () {
 
       nock(originalHost)
         .get('/v1/frontend/charges/1')
-        .reply(200, {foo: 'bar'})
+        .reply(200, { foo: 'bar' })
     })
 
     it('should return the correct json', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS')
         .then(function (data, response) {
-          assert.equal(data.success, 'OK')
+          assert.strict.equal(data.success, 'OK')
         }, unexpectedPromise)
     })
   })
@@ -82,7 +82,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -100,7 +100,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'GET_FAILED')
+          assert.strict.equal(error.message, 'GET_FAILED')
         })
     })
   })
@@ -111,13 +111,13 @@ describe('find', function () {
 
       nock(originalHost)
         .get('/v1/frontend/charges/1')
-        .reply(200, {foo: 'bar'})
+        .reply(200, { foo: 'bar' })
     })
 
     it('should return get_failed', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(function (data) {
-        assert.equal(data.foo, 'bar')
+        assert.strict.equal(data.foo, 'bar')
       }, unexpectedPromise)
     })
   })
@@ -150,7 +150,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -168,7 +168,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CAPTURE_FAILED')
+          assert.strict.equal(error.message, 'CAPTURE_FAILED')
         })
     })
   })
@@ -186,7 +186,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'POST_FAILED')
+          assert.strict.equal(error.message, 'POST_FAILED')
         })
     })
   })
@@ -202,7 +202,7 @@ describe('findByToken', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -220,7 +220,7 @@ describe('findByToken', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.equal(error.message, 'GET_FAILED')
+          assert.strict.equal(error.message, 'GET_FAILED')
         })
     })
   })
@@ -231,13 +231,13 @@ describe('findByToken', function () {
 
       nock(originalHost)
         .get('/v1/frontend/tokens/1/charge')
-        .reply(200, {foo: 'bar'})
+        .reply(200, { foo: 'bar' })
     })
 
     it('should return get_failed', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(function (data) {
-        assert.equal(data.foo, 'bar')
+        assert.strict.equal(data.foo, 'bar')
       }, unexpectedPromise)
     })
   })

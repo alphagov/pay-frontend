@@ -5,7 +5,7 @@ const path = require('path')
 const request = require('supertest')
 const nock = require('nock')
 const cheerio = require('cheerio')
-const {expect} = require('chai')
+const { expect } = require('chai')
 
 // Local dependencies
 const app = require(path.join(__dirname, '/../server.js')).getApp()

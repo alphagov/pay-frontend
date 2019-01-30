@@ -5,7 +5,7 @@ const _ = require('lodash')
 const changeCase = require('change-case')
 const logger = require('winston')
 const AWSXRay = require('aws-xray-sdk')
-const {getNamespace} = require('continuation-local-storage')
+const { getNamespace } = require('continuation-local-storage')
 const i18n = require('i18n')
 
 // Local dependencies
@@ -20,7 +20,7 @@ i18n.configure(i18nConfig)
 const checkCard = function (cardNo, allowed, language, correlationId, subSegment) {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
-    const data = {'cardNumber': parseInt(cardNo)}
+    const data = { 'cardNumber': parseInt(cardNo) }
 
     i18n.setLocale(language || 'en')
 
@@ -31,7 +31,7 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
     }
 
     AWSXRay.captureAsyncFunc('cardIdClient_post', function (postSubsegment) {
-      cardIdClient.post({payload: data, correlationId: correlationId}, postSubsegment)
+      cardIdClient.post({ payload: data, correlationId: correlationId }, postSubsegment)
         .then((response) => {
           postSubsegment.close()
           logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime)
@@ -58,11 +58,11 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
             'cardType': card.type
           })
 
-          if (_.filter(allowed, {brand: card.brand}).length === 0) {
+          if (_.filter(allowed, { brand: card.brand }).length === 0) {
             reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedBrand', changeCase.titleCase(card.brand))))
           }
 
-          if (!_.find(allowed, {brand: card.brand, type: card.type})) {
+          if (!_.find(allowed, { brand: card.brand, type: card.type })) {
             switch (card.type) {
               case 'DEBIT':
                 return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedDebitCard', changeCase.titleCase(card.brand))))
@@ -100,8 +100,8 @@ module.exports = function (allowedCards, correlationId) {
   const allowed = _.clone(allowedCards)
   correlationId = correlationId || ''
 
-  if (_.filter(allowedCards, {debit: true}).length !== 0) withdrawalTypes.push('debit')
-  if (_.filter(allowedCards, {credit: true}).length !== 0) withdrawalTypes.push('credit')
+  if (_.filter(allowedCards, { debit: true }).length !== 0) withdrawalTypes.push('debit')
+  if (_.filter(allowedCards, { credit: true }).length !== 0) withdrawalTypes.push('credit')
 
   return {
     withdrawalTypes: withdrawalTypes,

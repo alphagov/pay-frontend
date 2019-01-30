@@ -44,7 +44,7 @@ const handleAuthResponse = (req, res, charge) => response => {
             } else {
               responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                 charge,
-                {returnUrl: routeFor('return', charge.id)},
+                { returnUrl: routeFor('return', charge.id) },
                 applePayRouteFor('handlePaymentResponse', charge.id)
               ))
             }
@@ -56,7 +56,7 @@ const handleAuthResponse = (req, res, charge) => response => {
       logging.failedChargePost(409)
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
         charge,
-        {returnUrl: routeFor('return', charge.id)},
+        { returnUrl: routeFor('return', charge.id) },
         applePayRouteFor('handlePaymentResponse', charge.id))
       )
       break
@@ -72,7 +72,7 @@ module.exports = (req, res) => {
   if (!connectorResponse) {
     return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
       charge,
-      {returnUrl: routeFor('return', charge.id)},
+      { returnUrl: routeFor('return', charge.id) },
       applePayRouteFor('handlePaymentResponse', charge.id)
     ))
   }
