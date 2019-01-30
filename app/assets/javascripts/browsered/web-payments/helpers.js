@@ -1,7 +1,7 @@
 'use strict'
 
 const allowedCardTypes = window.Card || {}
-const { email_collection_mode } = window.Charge
+const { email_collection_mode } = window.Charge || {}
 
 const showErrorSummary = title => {
 const errorSummary = document.getElementById('error-summary')
