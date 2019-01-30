@@ -20,10 +20,10 @@ module.exports = (translations, logger, cardModel, chargeOptions) => {
             cardCorporate: card.corporate,
             prepaid: card.prepaid
           })
-          resolve({validation, card})
+          resolve({ validation, card })
         })
         .catch(err => {
-          logger.error('Card not supported - ', {'err': err.message})
+          logger.error('Card not supported - ', { 'err': err.message })
           // add card not supported error to validation
           validation.hasError = true
           _.remove(validation.errorFields, errorField => errorField.cssKey === 'card-no')
@@ -33,7 +33,7 @@ module.exports = (translations, logger, cardModel, chargeOptions) => {
             'value': err.message
           })
           validation.highlightErrorFields.cardNo = err.message
-          resolve({validation})
+          resolve({ validation })
         })
     })
   }

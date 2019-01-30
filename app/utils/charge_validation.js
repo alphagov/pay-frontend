@@ -16,7 +16,7 @@ const CUSTOM_ERRORS = {
   }
 }
 
-module.exports = (translations, logger, Card, chargeOptions = {collect_billing_address: true}) => {
+module.exports = (translations, logger, Card, chargeOptions = { collect_billing_address: true }) => {
   const validations = chargeValidationFields(Card, chargeOptions)
   const fieldValidations = validations.fieldValidations
   return {
@@ -50,7 +50,7 @@ module.exports = (translations, logger, Card, chargeOptions = {collect_billing_a
         // Push to Error Fields
         const customError = CUSTOM_ERRORS[name] || {}
         const cssKey = customError.cssKey || changeCase.paramCase(name)
-        if (!customError.skip) checkResult.errorFields.push({cssKey, key: name, value: problem})
+        if (!customError.skip) checkResult.errorFields.push({ cssKey, key: name, value: problem })
         // Push to Highlight Fields
         checkResult.highlightErrorFields[name] = translation.message
       }

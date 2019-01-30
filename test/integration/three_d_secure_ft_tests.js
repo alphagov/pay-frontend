@@ -40,8 +40,8 @@ const app = proxyquire('../../server.js', {
 }).getApp()
 const cookie = require('../test_helpers/session.js')
 const helper = require('../test_helpers/test_helpers.js')
-const {getChargeRequest, postChargeRequest} = require('../test_helpers/test_helpers.js')
-const {defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
+const { getChargeRequest, postChargeRequest } = require('../test_helpers/test_helpers.js')
+const { defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
 const State = require('../../config/state.js')
 
 // Constants
@@ -127,7 +127,7 @@ describe('chargeTests', function () {
           'http://www.example.com/service',
           chargeId,
           gatewayAccountId,
-          {issuerUrl},
+          { issuerUrl },
           'stripe'
         )
         defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -308,10 +308,10 @@ describe('chargeTests', function () {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(200)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(200)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
         .expect(303)
         .expect('Location', `${frontendCardDetailsPath}/${chargeId}/confirm`)
         .end(done)
@@ -321,10 +321,10 @@ describe('chargeTests', function () {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(202)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(202)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
         .expect(303)
         .expect('Location', `${frontendCardDetailsPath}/${chargeId}/auth_waiting`)
         .end(done)
@@ -334,10 +334,10 @@ describe('chargeTests', function () {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(409)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(409)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
         .expect(303)
         .expect('Location', `${frontendCardDetailsPath}/${chargeId}/auth_waiting`)
         .end(done)
@@ -363,10 +363,10 @@ describe('chargeTests', function () {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(500)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(500)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
         .expect(500)
         .end(done)
     })
@@ -375,10 +375,10 @@ describe('chargeTests', function () {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).reply(404)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(404)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
         .expect(500)
         .end(done)
     })
@@ -387,10 +387,10 @@ describe('chargeTests', function () {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
-        .post(`${connectorChargePath}${chargeId}/3ds`, {pa_response: 'aPaResponse'}).replyWithError(404)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).replyWithError(404)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
-      postChargeRequest(app, cookieValue, {PaRes: 'aPaResponse'}, chargeId, true, '/3ds_handler')
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
         .expect(500)
         .end(done)
     })

@@ -42,7 +42,7 @@ const analyticsDataForErrors = {
 describe('resolve service middleware', function () {
   it('should resolve service from gateway account id', function (done) {
     const gatewayAccountId = '1'
-    const service = new Service(serviceFixtures.validServiceResponse({gateway_account_ids: [gatewayAccountId]}).getPlain())
+    const service = new Service(serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }).getPlain())
     const resolveService = resolveServiceMiddleware(Promise.resolve(service))
     const chargeData = {}
     const req = {
@@ -50,7 +50,7 @@ describe('resolve service middleware', function () {
       chargeId: '111',
       chargeData: _.set(chargeData, 'gateway_account.gateway_account_id', gatewayAccountId)
     }
-    const res = {locals: {}}
+    const res = { locals: {} }
     const nextSpy = sinon.spy()
 
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
@@ -61,7 +61,7 @@ describe('resolve service middleware', function () {
 
   it('should display UNAUTHORISED if charge id is missing', function () {
     const resolveService = resolveServiceMiddleware()
-    const expectedRenderData = {'analytics': analyticsDataForErrors, 'viewName': 'UNAUTHORISED'}
+    const expectedRenderData = { 'analytics': analyticsDataForErrors, 'viewName': 'UNAUTHORISED' }
     const req = {
       headers: []
     }

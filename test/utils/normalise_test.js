@@ -95,16 +95,16 @@ describe('normalise', function () {
 
   describe('addresslines', function () {
     it('should return the body with adressline 2 moved to address line 1 if filled', function () {
-      var passedByReference = {addressLine2: 'foo'}
+      var passedByReference = { addressLine2: 'foo' }
       normalise.addressLines(passedByReference)
-      expect(passedByReference).to.deep.equal({addressLine1: 'foo'})
+      expect(passedByReference).to.deep.equal({ addressLine1: 'foo' })
       expect(passedByReference.addressLine2).to.be.undefined // eslint-disable-line
     })
 
     it('should do nothing if there is addressLine1', function () {
-      var passedByReference = {addressLine1: 'bar', addressLine2: 'foo'}
+      var passedByReference = { addressLine1: 'bar', addressLine2: 'foo' }
       normalise.addressLines(passedByReference)
-      expect(passedByReference).to.deep.equal({addressLine1: 'bar', addressLine2: 'foo'})
+      expect(passedByReference).to.deep.equal({ addressLine1: 'bar', addressLine2: 'foo' })
     })
   })
 

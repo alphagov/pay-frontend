@@ -29,7 +29,7 @@ describe('Service model from service raw data', function () {
       external_id: '1234',
       name: 'service name',
       gateway_account_ids: [1],
-      custom_branding: {css_url: 'css url', image_url: 'image url'}
+      custom_branding: { css_url: 'css url', image_url: 'image url' }
     }
 
     const serviceModel = new Service(data)

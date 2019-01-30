@@ -28,19 +28,19 @@ module.exports = correlationId => {
 
   const updateStatus = function (chargeId, status) {
     return new Promise(function (resolve, reject) {
-      connectorClient({correlationId}).updateStatus({chargeId, payload: {new_status: status}})
+      connectorClient({ correlationId }).updateStatus({ chargeId, payload: { new_status: status } })
         .then(response => {
-          updateComplete(response, {resolve, reject})
+          updateComplete(response, { resolve, reject })
         })
         .catch(err => {
-          clientUnavailable(err, {resolve, reject})
+          clientUnavailable(err, { resolve, reject })
         })
     })
   }
 
   const find = function (chargeId) {
     return new Promise(function (resolve, reject) {
-      connectorClient({correlationId}).findCharge({chargeId})
+      connectorClient({ correlationId }).findCharge({ chargeId })
         .then(response => {
           if (response.statusCode !== 200) {
             return reject(new Error('GET_FAILED'))
@@ -48,38 +48,38 @@ module.exports = correlationId => {
           resolve(response.body)
         })
         .catch(err => {
-          clientUnavailable(err, {resolve, reject})
+          clientUnavailable(err, { resolve, reject })
         })
     })
   }
 
   const capture = function (chargeId) {
     return new Promise(function (resolve, reject) {
-      connectorClient({correlationId}).capture({chargeId})
+      connectorClient({ correlationId }).capture({ chargeId })
         .then(response => {
-          captureComplete(response, {resolve, reject})
+          captureComplete(response, { resolve, reject })
         })
         .catch(err => {
-          captureFail(err, {resolve, reject})
+          captureFail(err, { resolve, reject })
         })
     })
   }
 
   const cancel = function (chargeId) {
     return new Promise(function (resolve, reject) {
-      connectorClient({correlationId}).cancel({chargeId})
+      connectorClient({ correlationId }).cancel({ chargeId })
         .then(response => {
-          cancelComplete(response, {resolve, reject})
+          cancelComplete(response, { resolve, reject })
         })
         .catch(err => {
-          cancelFail(err, {resolve, reject})
+          cancelFail(err, { resolve, reject })
         })
     })
   }
 
   const findByToken = function (tokenId) {
     return new Promise(function (resolve, reject) {
-      connectorClient({correlationId}).findByToken({tokenId})
+      connectorClient({ correlationId }).findByToken({ tokenId })
         .then(response => {
           if (response.statusCode !== 200) {
             return reject(new Error('GET_FAILED'))
@@ -87,7 +87,7 @@ module.exports = correlationId => {
           resolve(response.body)
         })
         .catch(err => {
-          clientUnavailable(err, {resolve, reject})
+          clientUnavailable(err, { resolve, reject })
         })
     })
   }
@@ -99,7 +99,7 @@ module.exports = correlationId => {
         path: path,
         value: value
       }
-      connectorClient({correlationId}).patch({chargeId, payload}, subSegment)
+      connectorClient({ correlationId }).patch({ chargeId, payload }, subSegment)
         .then(response => {
           const code = response.statusCode
           if (code === 200) {
@@ -150,7 +150,7 @@ module.exports = correlationId => {
       defer.reject(new Error('UPDATE_FAILED'))
       return
     }
-    defer.resolve({success: 'OK'})
+    defer.resolve({ success: 'OK' })
   }
 
   const isCancellableCharge = chargeStatus => {

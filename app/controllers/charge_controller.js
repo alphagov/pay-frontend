@@ -4,7 +4,7 @@
 const logger = require('winston')
 const _ = require('lodash')
 const i18n = require('i18n')
-const {getNamespace} = require('continuation-local-storage')
+const { getNamespace } = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
@@ -16,15 +16,15 @@ const Charge = require('../models/charge')
 const Card = require('../models/card')
 const State = require('../../config/state')
 const paths = require('../paths')
-const {countries} = require('../services/countries')
-const {commonTypos} = require('../utils/email_tools')
-const {withAnalyticsError, withAnalytics} = require('../utils/analytics')
+const { countries } = require('../services/countries')
+const { commonTypos } = require('../utils/email_tools')
+const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')
-const {views, preserveProperties} = require('../../config/charge_controller')
-const {CORRELATION_HEADER} = require('../../config/correlation_header')
+const { views, preserveProperties } = require('../../config/charge_controller')
+const { CORRELATION_HEADER } = require('../../config/correlation_header')
 
 const appendChargeForNewView = (charge, req, chargeId) => {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
@@ -44,7 +44,7 @@ const appendChargeForNewView = (charge, req, chargeId) => {
   charge.stubsUrl = process.env.APPLE_PAY_STUBS_URL
 }
 
-const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, {chargeId: chargeId})
+const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
 
 const redirect = res => {
   return {
@@ -72,7 +72,7 @@ const handleCreateResponse = (req, res, charge) => response => {
       break
     case 500:
       logging.failedChargePost(409)
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
       redirect(res).toNew(req.chargeId)
@@ -99,7 +99,7 @@ const handleAuthResponse = (req, res, charge) => response => {
               // else
               responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                 charge,
-                {returnUrl: routeFor('return', charge.id)}
+                { returnUrl: routeFor('return', charge.id) }
               ))
             }
           )
@@ -107,7 +107,7 @@ const handleAuthResponse = (req, res, charge) => response => {
       break
     case 500:
       logging.failedChargePost(409)
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
       redirect(res).toNew(req.chargeId)
@@ -199,7 +199,7 @@ module.exports = {
                 if (res.locals.service.collectBillingAddress === false) {
                   delete payload.address
                 }
-                connectorClient({correlationId}).chargeAuth({chargeId: req.chargeId, payload})
+                connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload })
                   .then(handleCreateResponse(req, res, charge))
               })
               .catch(err => {
@@ -239,8 +239,8 @@ module.exports = {
           subSegment.close()
           const correlationId = req.headers[CORRELATION_HEADER] || ''
           const payload = normalise.apiPayload(_.merge(req, convertedPayload), 'visa')
-          connectorClient({correlationId})
-            .chargeAuth({chargeId: req.chargeId, payload})
+          connectorClient({ correlationId })
+            .chargeAuth({ chargeId: req.chargeId, payload })
             .then(handleAuthResponse(req, res, charge))
         })
         .catch(err => {
@@ -268,7 +268,7 @@ module.exports = {
           },
           error => {
             subSegment.close(error.message)
-            return res.json({'accepted': false, message: error.message})
+            return res.json({ 'accepted': false, message: error.message })
           }
         )
     }, clsSegment)
@@ -307,7 +307,7 @@ module.exports = {
           if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
             charge,
-            {returnUrl: routeFor('return', charge.id)}
+            { returnUrl: routeFor('return', charge.id) }
           ))
         }
       )
@@ -317,7 +317,7 @@ module.exports = {
     if (charge.status === State.CAPTURE_READY) {
       responseRouter.response(req, res, views.CAPTURE_WAITING_VIEW, withAnalytics(charge))
     } else {
-      responseRouter.response(req, res, 'CAPTURE_SUBMITTED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+      responseRouter.response(req, res, 'CAPTURE_SUBMITTED', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
     }
   },
   cancel: (req, res) => {
@@ -325,8 +325,8 @@ module.exports = {
     Charge(req.headers[CORRELATION_HEADER])
       .cancel(req.chargeId)
       .then(
-        () => responseRouter.response(req, res, 'USER_CANCELLED', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)})),
-        () => responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, {returnUrl: routeFor('return', charge.id)}))
+        () => responseRouter.response(req, res, 'USER_CANCELLED', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) })),
+        () => responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       )
   }
 }

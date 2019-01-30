@@ -6,7 +6,7 @@ const metricsPort = process.env.METRICS_PORT || 8125
 const metricsPrefix = 'frontend.'
 
 exports.metrics = () => {
-  appmetrics.configure({'mqtt': 'off'})
+  appmetrics.configure({ 'mqtt': 'off' })
   const appmetricsStatsd = require('appmetrics-statsd')
 
   return appmetricsStatsd.StatsD(metricsHost, metricsPort, metricsPrefix)

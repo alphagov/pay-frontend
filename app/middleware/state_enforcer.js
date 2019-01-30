@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
     const stateName = currentState.toUpperCase().replace(/\s/g, '_')
     responseRouter.response(req, res, stateName, {
       chargeId: req.chargeId,
-      returnUrl: paths.generateRoute('card.return', {chargeId: req.chargeId}),
+      returnUrl: paths.generateRoute('card.return', { chargeId: req.chargeId }),
       analytics: getGoogleAnalytics(req)
     })
   } else {
@@ -38,7 +38,7 @@ function getGoogleAnalytics (req) {
   if (gatewayAccount) {
     return {
       // The state enforcer will append the correct analytics page to the base charge path
-      'path': paths.generateRoute(`card.new`, {chargeId: req.chargeId}),
+      'path': paths.generateRoute(`card.new`, { chargeId: req.chargeId }),
       'analyticsId': gatewayAccount.analytics_id,
       'type': gatewayAccount.type,
       'paymentProvider': gatewayAccount.payment_provider

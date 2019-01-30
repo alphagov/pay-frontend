@@ -5,14 +5,14 @@ const cheerio = require('cheerio')
 const State = require('../../config/state.js')
 const cookie = require('../test_helpers/session.js')
 
-let {postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService} = require('../test_helpers/test_helpers.js')
+let { postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
 
 let defaultCardID = function () {
   nock(process.env.CARDID_HOST)
     .post('/v1/api/card', () => {
       return true
     })
-    .reply(200, {brand: 'visa', label: 'visa', type: 'D'})
+    .reply(200, { brand: 'visa', label: 'visa', type: 'D' })
 }
 let localServer = process.env.CONNECTOR_HOST
 

@@ -40,5 +40,5 @@ mailcheck.topLevelThreshold = 1
 
 module.exports = {
   validEmail,
-  commonTypos: email => mailcheck.run({email})
+  commonTypos: email => mailcheck.run({ email })
 }

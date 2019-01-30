@@ -1,7 +1,7 @@
 'use strict'
 
 // NPM dependencies
-const {expect} = require('chai')
+const { expect } = require('chai')
 
 // Local dependencies
 const abTest = require('../../app/utils/ab_test')
@@ -12,22 +12,22 @@ describe('ab test helper', function () {
     expect(uniformModNumber).to.not.be.null  // eslint-disable-line
   })
   it('should GET a session', () => {
-    const req = {frontend_state: {abTestId: 12345}}
+    const req = { frontend_state: { abTestId: 12345 } }
     const sessionVal = abTest._getSession(req)
     expect(sessionVal).to.equal(req.frontend_state.abTestId)
   })
   it('should SET a session', () => {
-    const req = {frontend_state: {}}
+    const req = { frontend_state: {} }
     abTest._setSession(req)
     expect(req.frontend_state.abTestId).to.not.be.undefined  // eslint-disable-line
   })
   it('should GET or SET a session', () => {
-    const req = {frontend_state: {}}
+    const req = { frontend_state: {} }
     abTest._getOrSetSession(req)
     expect(req.frontend_state.abTestId).to.not.be.undefined  // eslint-disable-line
   })
   it('should switch to a default variant, when the right conditions are in place', () => {
-    const req = {frontend_state: {}, query: {abTestNotHere: true}}
+    const req = { frontend_state: {}, query: { abTestNotHere: true } }
     const opts = {
       threshold: 100,
       defaultVariant: function () {
@@ -43,7 +43,7 @@ describe('ab test helper', function () {
     expect(switchResult).to.equal('defaultVariant')
   })
   it('should switch to a testing variant, when the right conditions are in place', () => {
-    const req = {frontend_state: {}, query: {abTest: 'yes'}}
+    const req = { frontend_state: {}, query: { abTest: 'yes' } }
     const opts = {
       defaultVariant: function () {
         return 'defaultVariant'

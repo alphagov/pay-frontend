@@ -28,11 +28,11 @@ const i18nConfig = require('./config/i18n')
 const CSS_PATH = '/stylesheets/application.css'
 const JAVASCRIPT_PATH = '/javascripts/application.js'
 const PORT = process.env.PORT || 3000
-const {NODE_ENV} = process.env
+const { NODE_ENV } = process.env
 const argv = require('minimist')(process.argv.slice(2))
 const unconfiguredApp = express()
 const oneYear = 86400000 * 365
-const publicCaching = {maxAge: oneYear}
+const publicCaching = { maxAge: oneYear }
 
 // Define app views
 const APP_VIEWS = [
@@ -46,7 +46,7 @@ function initialiseGlobalMiddleware (app) {
       logger.info(message)
     }
   }
-  app.set('settings', {getVersionedPath: staticify.getVersionedPath})
+  app.set('settings', { getVersionedPath: staticify.getVersionedPath })
   app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
     ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
   app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/assets/images', 'favicon.ico')))
@@ -72,7 +72,7 @@ function initialiseGlobalMiddleware (app) {
   })
 
   app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({extended: true}))
+  app.use(bodyParser.urlencoded({ extended: true }))
 
   app.use(compression())
 

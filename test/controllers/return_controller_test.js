@@ -31,7 +31,7 @@ describe('return controller', function () {
   beforeEach(function () {
     request = {
       chargeId: 'aChargeId',
-      headers: {'x-Request-id': 'unique-id'}
+      headers: { 'x-Request-id': 'unique-id' }
     }
 
     response = {

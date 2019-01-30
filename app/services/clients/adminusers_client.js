@@ -26,7 +26,7 @@ const findServiceBy = (findOptions) => {
     const startTime = new Date()
     const context = {
       url: servicesResource,
-      defer: {resolve, reject},
+      defer: { resolve, reject },
       startTime: startTime,
       correlationId: correlationId,
       method: 'GET',

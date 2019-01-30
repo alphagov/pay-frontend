@@ -14,10 +14,10 @@ exports.return = (req, res) => {
   const charge = Charge(correlationId)
   if (charge.isCancellableCharge(req.chargeData.status)) {
     return charge.cancel(req.chargeId)
-      .then(() => logger.warn('Return controller cancelled payment', {'chargeId': req.chargeId}))
+      .then(() => logger.warn('Return controller cancelled payment', { 'chargeId': req.chargeId }))
       .then(() => res.redirect(req.chargeData.return_url))
       .catch(() => {
-        logger.error('Return controller failed to cancel payment', {'chargeId': req.chargeId})
+        logger.error('Return controller failed to cancel payment', { 'chargeId': req.chargeId })
         responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
       })
   } else {

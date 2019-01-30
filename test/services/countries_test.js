@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const {countries, translateCountryISOtoName} = require('../../app/services/countries.js')
+const { countries, translateCountryISOtoName } = require('../../app/services/countries.js')
 
 describe('countries', function () {
   it('should list of countries ordered', function () {

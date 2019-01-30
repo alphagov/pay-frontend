@@ -1,12 +1,12 @@
 'use strict'
 
 // NPM dependencies
-const {expect} = require('chai')
+const { expect } = require('chai')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noPreserveCache()
 
 const getCookiesUtil = clientSessionsStub => {
-  if (clientSessionsStub) return proxyquire('../../app/utils/cookies', {'client-sessions': clientSessionsStub})
+  if (clientSessionsStub) return proxyquire('../../app/utils/cookies', { 'client-sessions': clientSessionsStub })
   return proxyquire('../../app/utils/cookies', {})
 }
 
@@ -45,7 +45,7 @@ describe('cookie configuration', function () {
   })
   it('should configure two cookies if two session keys are set', function () {
     const SESSION_ENCRYPTION_KEY_2 = process.env.SESSION_ENCRYPTION_KEY_2 = 'bobbobbobbob'
-    const app = {use: sinon.spy()}
+    const app = { use: sinon.spy() }
     const clientSessionsStub = sinon.stub()
     const cookies = getCookiesUtil(clientSessionsStub)
 
@@ -152,10 +152,10 @@ describe('setting value on session', function () {
       }
     }
 
-    cookies.setSessionVariable(req, 'foo', {a: 'f'})
-    cookies.setSessionVariable(req, 'foo', {b: 'o'})
+    cookies.setSessionVariable(req, 'foo', { a: 'f' })
+    cookies.setSessionVariable(req, 'foo', { b: 'o' })
 
-    expect(req.frontend_state.foo).to.deep.equal({a: 'f', b: 'o'})
+    expect(req.frontend_state.foo).to.deep.equal({ a: 'f', b: 'o' })
   })
 
   it('should set value on frontend_state_2 if SESSION_ENCRYPTION_KEY_2 set', function () {

@@ -4,7 +4,7 @@
 const path = require('path')
 const assert = require('assert')
 const sinon = require('sinon')
-const {expect} = require('chai')
+const { expect } = require('chai')
 const nock = require('nock')
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
@@ -45,10 +45,10 @@ describe('retrieve param test', () => {
   let render
   let next
   const validRequest = {
-    params: {chargeId: 'foo'},
+    params: { chargeId: 'foo' },
     body: {},
     method: 'GET',
-    frontend_state: {ch_foo: true},
+    frontend_state: { ch_foo: true },
     headers: {}
   }
   const chargeId = 'foo'
@@ -68,7 +68,7 @@ describe('retrieve param test', () => {
   // We don't need to test all states as they are tested in
   // the charge param retriever tests
   it('should call not found view if charge param does not return an id', () => {
-    retrieveCharge({params: {}, body: {}}, response, next)
+    retrieveCharge({ params: {}, body: {} }, response, next)
     assert(status.calledWith(403))
     assert(render.calledWith('errors/incorrect_state/session_expired', {
       viewName: 'UNAUTHORISED',
@@ -97,7 +97,7 @@ describe('retrieve param test', () => {
   })
 
   it('should set chargeData chargeID and call next on success', done => {
-    const chargeData = {foo: 'bar'}
+    const chargeData = { foo: 'bar' }
     nock(process.env.CONNECTOR_HOST)
       .get(`/v1/frontend/charges/${chargeId}`)
       .reply(200, chargeData)

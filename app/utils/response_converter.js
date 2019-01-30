@@ -26,7 +26,7 @@ function createCallbackToPromiseConverter (context, transformer) {
 
     if (error) {
       requestLogger.logRequestError(context, error)
-      defer.reject({error: error})
+      defer.reject({ error: error })
     } else if (response && SUCCESS_CODES.includes(response.statusCode)) {
       if (body && typeof transformer === 'function') {
         defer.resolve(transformer(body))

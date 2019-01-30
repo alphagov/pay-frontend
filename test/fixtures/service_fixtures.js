@@ -5,11 +5,11 @@ const pactBase = require('./pact_base')
 const random = require('../../app/utils/random')
 
 // Global setup
-const pactServices = pactBase({array: ['service_ids']})
+const pactServices = pactBase({ array: ['service_ids'] })
 
 module.exports = {
   validServiceResponse: (serviceData = {}) => {
-    const defaultCustomBranding = {css_url: 'css url', image_url: 'image url'}
+    const defaultCustomBranding = { css_url: 'css url', image_url: 'image url' }
     const defaultMerchantDetails = {
       name: 'Give Me Your Money',
       address_line1: 'Clive House',

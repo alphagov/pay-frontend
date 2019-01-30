@@ -6,7 +6,7 @@ var expect = require('chai').expect
 var nock = require('nock')
 var helper = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
 
-var {csrfCheck, csrfTokenGeneration} = require(path.join(__dirname, '/../../app/middleware/csrf.js'))
+var { csrfCheck, csrfTokenGeneration } = require(path.join(__dirname, '/../../app/middleware/csrf.js'))
 
 describe('retrieve param test', function () {
   var response = {
@@ -19,9 +19,9 @@ describe('retrieve param test', function () {
   var next
   var validGetRequest = {
     method: 'GET',
-    params: {chargeId: 'foo'},
+    params: { chargeId: 'foo' },
     body: {},
-    route: {methods: {get: true}},
+    route: { methods: { get: true } },
     frontend_state: {
       ch_foo: {
         csrfSecret: process.env.CSRF_USER_SECRET
@@ -102,7 +102,7 @@ describe('retrieve param test', function () {
     csrfCheck(validPost, resp, next)
     csrfTokenGeneration(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
-    assert.equal(validPost.frontend_state.ch_foo.csrfTokens[0], validPost.body.csrfToken)
+    assert.strict.equal(validPost.frontend_state.ch_foo.csrfTokens[0], validPost.body.csrfToken)
   })
 
   it('should be unsuccessful on post if token is already used', function () {

@@ -66,7 +66,7 @@ const _putConnector = (url, payload, description, subSegment) => {
     requestLogger.logRequestStart(context)
     baseClient.put(
       url,
-      {payload, correlationId},
+      { payload, correlationId },
       null,
       subSegment
     ).then(response => {
@@ -98,7 +98,7 @@ const _postConnector = (url, payload, description) => {
     requestLogger.logRequestStart(context)
     baseClient.post(
       url,
-      {payload, correlationId},
+      { payload, correlationId },
       null,
       null
     ).then(response => {
@@ -130,7 +130,7 @@ const _patchConnector = (url, payload, description) => {
     requestLogger.logRequestStart(context)
     baseClient.patch(
       url,
-      {payload, correlationId},
+      { payload, correlationId },
       null,
       null
     ).then(response => {
@@ -162,7 +162,7 @@ const _getConnector = (url, description) => {
     requestLogger.logRequestStart(context)
     baseClient.get(
       url,
-      {correlationId},
+      { correlationId },
       null,
       null
     ).then(response => {
@@ -201,7 +201,7 @@ const _deleteConnector = (url, description) => {
     requestLogger.logRequestStart(context)
     baseClient.delete(
       url,
-      {correlationId},
+      { correlationId },
       null,
       null
     ).then(response => {

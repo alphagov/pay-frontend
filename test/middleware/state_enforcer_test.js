@@ -30,7 +30,7 @@ describe('state enforcer', function () {
   it('should call next when everything is in the correct state', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'ENTERING CARD DETAILS', gateway_account: {payment_provider: 'Test Provider'}}
+      chargeData: { status: 'ENTERING CARD DETAILS', gateway_account: { payment_provider: 'Test Provider' } }
     }, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
   })
@@ -38,7 +38,7 @@ describe('state enforcer', function () {
   it('should call next when Stripe charge is in AUTH_3DS_READY', function () {
     stateEnforcer({
       actionName: 'card.auth3dsHandler',
-      chargeData: {status: 'AUTHORISATION 3DS READY', gateway_account: {payment_provider: 'stripe'}}
+      chargeData: { status: 'AUTHORISATION 3DS READY', gateway_account: { payment_provider: 'stripe' } }
     }, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
   })
@@ -46,7 +46,7 @@ describe('state enforcer', function () {
   it('should NOT call next when an invalid state is called and render an error', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'INVALID STATE', gateway_account: {payment_provider: 'Test Provider'}}
+      chargeData: { status: 'INVALID STATE', gateway_account: { payment_provider: 'Test Provider' } }
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(500))
@@ -59,7 +59,7 @@ describe('state enforcer', function () {
   it('should NOT call next when the object is in the wrong state is called and render the appropriate error view', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'AUTHORISATION_SUCCESS', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'AUTHORISATION_SUCCESS', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -80,7 +80,7 @@ describe('state enforcer', function () {
   it('should render the auth_waiting view the correct analytics when auth is rejected', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'AUTHORISATION_READY', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'AUTHORISATION_READY', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -101,7 +101,7 @@ describe('state enforcer', function () {
     expect(function () {
       stateEnforcer({
         actionName: 'hellothere',
-        chargeData: {status: 'AUTHORISATION_SUCCESS', return_url: 'foo'},
+        chargeData: { status: 'AUTHORISATION_SUCCESS', return_url: 'foo' },
         chargeId: 1
       }, response, next)
     }).to.throw(/Cannot find correct states for action/)
@@ -110,7 +110,7 @@ describe('state enforcer', function () {
   it('should render the confirm view when coming back from the service with the correct analytics', function () {
     stateEnforcer({
       actionName: 'card.confirm',
-      chargeData: {status: 'CAPTURED', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'CAPTURED', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -132,7 +132,7 @@ describe('state enforcer', function () {
   it('should render the auth_failure view the correct analytics when auth is rejected', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'AUTHORISATION_REJECTED', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'AUTHORISATION_REJECTED', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -153,7 +153,7 @@ describe('state enforcer', function () {
   it('should render the auth_failure view the correct analytics when auth is cancelled', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'AUTHORISATION_CANCELLED', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'AUTHORISATION_CANCELLED', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -173,7 +173,7 @@ describe('state enforcer', function () {
   it('should render the capture_failure view the correct analytics when capture fails', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'CAPTURE_FAILURE', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'CAPTURE_FAILURE', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -193,7 +193,7 @@ describe('state enforcer', function () {
   it('should render the capture_failure view the correct analytics when capture errors', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'CAPTURE_ERROR', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'CAPTURE_ERROR', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
@@ -214,7 +214,7 @@ describe('state enforcer', function () {
   it('should render the capture_waiting view the correct analytics when capture is ready', function () {
     stateEnforcer({
       actionName: 'card.new',
-      chargeData: {status: 'CAPTURE_READY', return_url: 'foo', gateway_account: {analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider'}},
+      chargeData: { status: 'CAPTURE_READY', return_url: 'foo', gateway_account: { analytics_id: 'Test AnalyticsID', type: 'Test Type', payment_provider: 'Test Provider' } },
       chargeId: 1
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line 
