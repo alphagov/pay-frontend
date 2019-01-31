@@ -39,6 +39,13 @@ pipeline {
       steps {
         cypress('frontend')
       }
+      post { 
+        always { 
+          script { 
+            cypress.cleanUp()
+          }
+        }
+      }
     }
     stage('Contract Tests') {
       steps {
