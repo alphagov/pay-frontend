@@ -4,44 +4,42 @@
   var i18n = {{ translationStrings | safe }}
   {% endif %}
 
-  var mainWrap = document.getElementsByTagName('main')[0]
-  if (mainWrap.classList.contains('charge-new')) {
-    window.paymentDetails = {
-      description: '{{description}}',
-      amount: '{{amount}}',
-      chargeID: '{{id}}'
-    };
+  window.paymentDetails = {
+    description: '{{description}}',
+    amount: '{{amount}}',
+    chargeID: '{{id}}'
+  };
 
-    window.Card = {
-      allowed:
-        {% if cardsAsStrings %}
-          {{ cardsAsStrings | safe }},
-        {% else %}
-        {},
-        {% endif %}
-      corporate_card_surcharge_amounts:
-        {% if corporateCardSurchargeAmountsAsStrings %}
-          {{ corporateCardSurchargeAmountsAsStrings | safe }}
-        {% else %}
-          {
-            credit: 0,
-            debit: 0,
-            prepaidCredit: 0,
-            prepaidDebit: 0
-          }
-        {% endif %}
-    };
-    window.Charge = {
-      email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
-      collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }}
-    }
-
-    {% if isDevelopment %}
-    window.stubWebPaymentsUrl = '{{ stubsUrl }}'
-    {# ApplePaySession.stubCanMakePaymentsWithActiveCard = true; #}
-    {% endif %}
+  window.Card = {
+    allowed:
+      {% if cardsAsStrings %}
+        {{ cardsAsStrings | safe }},
+      {% else %}
+      {},
+      {% endif %}
+    corporate_card_surcharge_amounts:
+      {% if corporateCardSurchargeAmountsAsStrings %}
+        {{ corporateCardSurchargeAmountsAsStrings | safe }}
+      {% else %}
+        {
+          credit: 0,
+          debit: 0,
+          prepaidCredit: 0,
+          prepaidDebit: 0
+        }
+      {% endif %}
+  };
+  window.Charge = {
+    email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
+    collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }}
   }
 
+  {% if isDevelopment %}
+  window.stubWebPaymentsUrl = '{{ stubsUrl }}'
+  {# ApplePaySession.stubCanMakePaymentsWithActiveCard = true; #}
+  {% endif %}
+
+  var mainWrap = document.getElementsByTagName('main')[0]
   document.addEventListener('DOMContentLoaded', function() {
     GOVUK.stopDoubleSubmit.init();
     if (mainWrap.classList.contains('charge-new')) {
