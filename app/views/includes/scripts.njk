@@ -51,6 +51,10 @@
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
   });
+  {% if allowWebPayments %}
+    window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
+    window.googlePayMerchantID = '{{ googlePayMerchantID }}';
+  {% endif %}
 </script>
 {% if isDevelopment %}
 {# <script src="public/javascripts/apple-pay-js-stubs.js"></script> #}
