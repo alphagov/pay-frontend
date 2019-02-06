@@ -9,9 +9,9 @@ const nock = require('nock')
 const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN } = process.env
 
 // Local dependencies
-const { getApp } = require('../../../server')
-const paths = require('../../../app/paths')
-require('../../test_helpers/html_assertions')
+const { getApp } = require('../../../../server')
+const paths = require('../../../../app/paths')
+require('../../../test_helpers/html_assertions')
 
 describe('Validate with Apple the merchant is legitimate', () => {
   it('should return a payload if Merchant is valid', done => {

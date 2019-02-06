@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const normalise = require('../../../app/controllers/apple-pay/normalise-apple-pay-payload.js')
+const normalise = require('../../../../app/controllers/web-payments/apple-pay/normalise-apple-pay-payload')
 
 describe('normalise apple pay payload', function () {
   it('should return the correct format for the payload', function () {

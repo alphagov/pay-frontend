@@ -10,9 +10,9 @@ const charge = require('./controllers/charge_controller.js')
 const threeDS = require('./controllers/three_d_secure_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
-const applePayMerchantValidation = require('./controllers/apple-pay/merchant-validation-controller')
-const applePayMakePayment = require('./controllers/apple-pay/payment-auth-request-controller')
-const applePayHandlePaymentResponse = require('./controllers/apple-pay/handle-auth-response-controller')
+const applePayMerchantValidation = require('./controllers/web-payments/apple-pay/merchant-validation-controller')
+const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-request-controller')
+const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response-controller')
 const returnCont = require('./controllers/return_controller.js')
 const { healthcheck } = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
@@ -90,8 +90,10 @@ exports.bind = function (app) {
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePayMerchantValidation)
-  app.post(paths.applePay.authRequest.path, xraySegmentCls, retrieveCharge, resolveLanguage, applePayMakePayment)
-  app.get(paths.applePay.handlePaymentResponse.path, xraySegmentCls, retrieveCharge, resolveLanguage, applePayHandlePaymentResponse)
+
+  // Generic Web payments endpoint
+  app.post(paths.webPayments.authRequest.path, xraySegmentCls, retrieveCharge, resolveLanguage, webPaymentsMakePayment)
+  app.get(paths.webPayments.handlePaymentResponse.path, xraySegmentCls, retrieveCharge, resolveLanguage, webPaymentsHandlePaymentResponse)
 
   // secure controller
   app.get(paths.secure.get.path, xraySegmentCls, secure.new)

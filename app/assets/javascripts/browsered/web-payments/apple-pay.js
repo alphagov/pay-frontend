@@ -49,7 +49,7 @@ module.exports = () => {
 
     session.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-    return fetch(`apple-pay-auth-request/${window.paymentDetails.chargeID}`, {
+    return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {

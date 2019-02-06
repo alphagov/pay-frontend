@@ -10,7 +10,7 @@ const requestLogger = require('../../utils/request_logger')
 // Constants
 const SERVICE_NAME = 'connector'
 
-const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/apple'
+const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/{provider}'
 const CARD_AUTH_PATH = '/v1/frontend/charges/{chargeId}/cards'
 const CARD_3DS_PATH = '/v1/frontend/charges/{chargeId}/3ds'
 const CARD_STATUS_PATH = '/v1/frontend/charges/{chargeId}/status'
@@ -30,7 +30,7 @@ const _getFindChargeUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{ch
 const _getAuthUrlFor = chargeId => baseUrl + CARD_AUTH_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _getWalletAuthUrlFor = chargeId => baseUrl + WALLET_AUTH_PATH.replace('{chargeId}', chargeId)
+const _getWalletAuthUrlFor = (chargeId, provider) => baseUrl + WALLET_AUTH_PATH.replace('{chargeId}', chargeId).replace('{provider}', provider)
 
 /** @private */
 const _getThreeDsFor = chargeId => baseUrl + CARD_3DS_PATH.replace('{chargeId}', chargeId)
@@ -239,7 +239,7 @@ const chargeAuth = chargeOptions => {
 }
 
 const chargeAuthWithWallet = chargeOptions => {
-  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId)
+  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.provider)
   return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment')
 }
 
