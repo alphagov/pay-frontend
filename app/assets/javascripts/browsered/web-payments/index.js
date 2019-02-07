@@ -1,33 +1,41 @@
 'use strict'
 
+// Local dependencies
 const { clearErrorSummary } = require('./helpers')
 const makeApplePayRequest = require('./apple-pay')
 const { createGooglePaymentRequest, googlePayNow } = require('./google-pay')
 
-module.exports = () => {
-  const paymentMethodForm = document.getElementById('payment-request-container')
-  const standardMethodContainer = document.getElementById('enter-card-details-container')
+// Browser elements
+const paymentMethodForm = document.getElementById('payment-request-container')
+const standardMethodContainer = document.getElementById('enter-card-details-container')
 
-  if (window.PaymentRequest && paymentMethodForm) {
-    if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
-      paymentMethodForm.classList.remove('hidden')
-      standardMethodContainer.classList.add('hidden')
-      document.getElementById('payment-method-apple-pay').parentNode.style.display = 'block'
-      document.getElementById('payment-method-apple-pay').checked = true
-    } else {
-      console.log('payment request API is available')
-      const request = createGooglePaymentRequest();
-      request.canMakePayment()
-        .then(result => {
-          if (result) {
-            console.log('Google Pay is available')
-            paymentMethodForm.classList.remove('hidden')
-            standardMethodContainer.classList.add('hidden')
-            document.getElementById('payment-method-google-pay').parentNode.style.display = 'block'
-          }
-        })
-    }
+const initApplePayIfAvailable = () => {
+  if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
+    paymentMethodForm.classList.remove('hidden')
+    standardMethodContainer.classList.add('hidden')
+    document.getElementById('payment-method-apple-pay').parentNode.style.display = 'block'
+    document.getElementById('payment-method-apple-pay').checked = true
+  }
+}
 
+const initGooglePayIfAvailable = () => {
+  if (window.PaymentRequest) {
+    console.log('payment request API is available')
+    const request = createGooglePaymentRequest();
+    request.canMakePayment()
+      .then(result => {
+        if (result) {
+          console.log('Google Pay is available')
+          paymentMethodForm.classList.remove('hidden')
+          standardMethodContainer.classList.add('hidden')
+          document.getElementById('payment-method-google-pay').parentNode.style.display = 'block'
+        }
+      })
+  }
+}
+
+const setupEventListener = () => {
+  if (window.PaymentRequest) {
     paymentMethodForm.addEventListener('submit', function (e) {
       e.preventDefault()
       clearErrorSummary()
@@ -44,4 +52,24 @@ module.exports = () => {
       }
     }, false)
   }
+}
+
+const init = provider => {
+  switch (provider) {
+    case 'apple':
+      initApplePayIfAvailable()
+      break;
+    case 'google':
+      initGooglePayIfAvailable()
+      break;
+    default:
+      initApplePayIfAvailable()
+      initGooglePayIfAvailable()
+      break;
+  }
+  setupEventListener()
+}
+
+module.exports = {
+  init
 }

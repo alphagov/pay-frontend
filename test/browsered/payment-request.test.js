@@ -10,7 +10,7 @@ const { render } = require('../test_helpers/html_assertions')
 describe('The charge view', () => {
   it('should render apple pay button', () => {
     const templateData = {
-      'allowWebPayments': true,
+      'allowApplePay': true,
       'isDevelopment': true,
       'amount': '50.00'
     }
