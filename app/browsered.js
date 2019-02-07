@@ -1,13 +1,14 @@
-const inputConfim = require('./assets/javascripts/browsered/form-input-confirm')
+const inputConfirm = require('./assets/javascripts/browsered/form-input-confirm')
 const webPayments = require('./assets/javascripts/browsered/web-payments')
 const analytics = require('gaap-analytics')
 
 exports.chargeValidation = require('./utils/charge_validation')
 analytics.eventTracking.init()
 
-if (document.getElementById('main-content').classList.contains('charge-new')) {
-  inputConfim()
-  webPayments()
+// Place functions into scope so can trigger in scripts.njk
+window.payScripts = { // eslint-disable-line no-unused-vars
+  inputConfirm,
+  webPayments
 }
 
 // GA tracking if an email typo is spotted

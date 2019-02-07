@@ -1,4 +1,3 @@
-{# Javascript #}
 <script id="govuk-script-analytics" type="text/javascript">
   {% if translationStrings %}
   var i18n = {{ translationStrings | safe }}
@@ -45,14 +44,16 @@
     if (mainWrap.classList.contains('charge-new')) {
       formValidation();
       showCardType().init();
+      window.payScripts.inputConfirm.init();
     } else if (mainWrap.classList.contains('confirm-page')) {
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
+    {% if allowWebPayments %}
+      window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
+      window.googlePayMerchantID = '{{ googlePayMerchantID }}';
+      window.payScripts.webPayments.init();
+    {% endif %}
   });
-  {% if allowWebPayments %}
-    window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
-    window.googlePayMerchantID = '{{ googlePayMerchantID }}';
-  {% endif %}
 </script>
 {% if isDevelopment %}
 {# <script src="public/javascripts/apple-pay-js-stubs.js"></script> #}

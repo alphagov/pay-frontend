@@ -4,7 +4,7 @@ const { clearErrorSummary } = require('./helpers')
 const makeApplePayRequest = require('./apple-pay')
 const { createGooglePaymentRequest, googlePayNow } = require('./google-pay')
 
-module.exports = () => {
+const init = () => {
   const paymentMethodForm = document.getElementById('payment-request-container')
   const standardMethodContainer = document.getElementById('enter-card-details-container')
 
@@ -44,4 +44,8 @@ module.exports = () => {
       }
     }, false)
   }
+}
+
+module.exports = {
+  init
 }
