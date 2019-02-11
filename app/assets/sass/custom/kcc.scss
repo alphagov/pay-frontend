@@ -14,6 +14,10 @@ $logo-image-height: 2.5rem;
   @if $logo-image-height != null {
     .custom-branding-image {
       max-height: $logo-image-height;
+
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        width: 100%;
+      }
     }
   }
 

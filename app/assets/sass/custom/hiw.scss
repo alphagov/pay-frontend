@@ -17,7 +17,10 @@ $logo-image-width-from-tablet: 350px;
   @if $logo-image-height != null {
     .custom-branding-image {
       width: $logo-image-width;
-      max-width: 100%;
+
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        width: 100%;
+      }
     }
   }
 
