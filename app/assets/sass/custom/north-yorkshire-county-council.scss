@@ -14,7 +14,10 @@ $logo-image-height: 2em;
   @if $logo-image-height != null {
     .custom-branding-image {
       max-height: $logo-image-height;
-      max-width: 100%;
+
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        width: 100%;
+      }
     }
   }
 
@@ -22,7 +25,7 @@ $logo-image-height: 2em;
     background-color: $custom-banner-colour;
   }
 
-  .govuk-header__link{
+  .govuk-header__link {
     &:link,
     &:visited {
       color: $custom-text-colour;
