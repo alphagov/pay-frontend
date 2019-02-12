@@ -25,7 +25,7 @@ const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 
 // Global constants
-const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_GATEWAY_MERCHANT_ID, GOOGLE_PAY_MERCHANT_ID } = process.env
+const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID } = process.env
 const CSS_PATH = '/stylesheets/application.css'
 const JAVASCRIPT_PATH = '/javascripts/application.js'
 const argv = require('minimist')(process.argv.slice(2))
@@ -53,7 +53,6 @@ function initialiseGlobalMiddleware (app) {
 
   app.use(function (req, res, next) {
     res.locals.asset_path = '/public/'
-    res.locals.googlePayGatewayMerchantID = GOOGLE_PAY_GATEWAY_MERCHANT_ID
     res.locals.googlePayMerchantID = GOOGLE_PAY_MERCHANT_ID
     if (typeof ANALYTICS_TRACKING_ID === 'undefined') {
       logger.warn('Google Analytics Tracking ID [ANALYTICS_TRACKING_ID] is not set')

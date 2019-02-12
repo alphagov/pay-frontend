@@ -42,6 +42,7 @@ const appendChargeForNewView = (charge, req, chargeId) => {
   charge.post_cancel_action = routeFor('cancel', chargeId)
   charge.allowApplePay = charge.gatewayAccount.allow_apple_pay
   charge.allowGooglePay = charge.gatewayAccount.allow_google_pay
+  charge.googlePayGatewayMerchantID = charge.gatewayAccount.gateway_merchant_id
   charge.stubsUrl = process.env.APPLE_PAY_STUBS_URL
 }
 
