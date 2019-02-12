@@ -18,6 +18,8 @@ const processPayment = paymentData => {
         window.location.href = data.url
       })
     }
+  }).catch(err => {
+    console.log('something went wrong', err)
   })
 }
 
