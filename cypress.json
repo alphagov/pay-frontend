@@ -9,6 +9,6 @@
   "integrationFolder": "./test/cypress/integration",
   "pluginsFile": "./test/cypress/plugins",
   "screenshotsFolder": "./test/cypress/screenshots",
-  "supportFile": false,
+  "supportFile": "./test/cypress/support",
   "videosFolder": "./test/cypress/videos"
 }
