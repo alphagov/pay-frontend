@@ -30,7 +30,7 @@ describe('updateStatus', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -46,7 +46,7 @@ describe('updateStatus', function () {
     it('should return update_failed', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS').catch(err => {
-        assert.strict.equal(err.message, 'UPDATE_FAILED')
+        assert.strictEqual(err.message, 'UPDATE_FAILED')
       })
     })
   })
@@ -66,7 +66,7 @@ describe('updateStatus', function () {
       const chargeModel = Charge('')
       return chargeModel.updateStatus(1, 'ENTERING CARD DETAILS')
         .then(function (data, response) {
-          assert.strict.equal(data.success, 'OK')
+          assert.strictEqual(data.success, 'OK')
         }, unexpectedPromise)
     })
   })
@@ -82,7 +82,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -100,7 +100,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'GET_FAILED')
+          assert.strictEqual(error.message, 'GET_FAILED')
         })
     })
   })
@@ -117,7 +117,7 @@ describe('find', function () {
     it('should return get_failed', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(function (data) {
-        assert.strict.equal(data.foo, 'bar')
+        assert.strictEqual(data.foo, 'bar')
       }, unexpectedPromise)
     })
   })
@@ -150,7 +150,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -168,7 +168,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'CAPTURE_FAILED')
+          assert.strictEqual(error.message, 'CAPTURE_FAILED')
         })
     })
   })
@@ -186,7 +186,7 @@ describe('capture', function () {
       const chargeModel = Charge('')
       return chargeModel.capture(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'POST_FAILED')
+          assert.strictEqual(error.message, 'POST_FAILED')
         })
     })
   })
@@ -202,7 +202,7 @@ describe('findByToken', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'CLIENT_UNAVAILABLE')
+          assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -220,7 +220,7 @@ describe('findByToken', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strict.equal(error.message, 'GET_FAILED')
+          assert.strictEqual(error.message, 'GET_FAILED')
         })
     })
   })
@@ -237,7 +237,7 @@ describe('findByToken', function () {
     it('should return get_failed', function () {
       const chargeModel = Charge('')
       return chargeModel.findByToken(1).then(function (data) {
-        assert.strict.equal(data.foo, 'bar')
+        assert.strictEqual(data.foo, 'bar')
       }, unexpectedPromise)
     })
   })
