@@ -102,7 +102,7 @@ describe('retrieve param test', function () {
     csrfCheck(validPost, resp, next)
     csrfTokenGeneration(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
-    assert.strict.equal(validPost.frontend_state.ch_foo.csrfTokens[0], validPost.body.csrfToken)
+    assert.strictEqual(validPost.frontend_state.ch_foo.csrfTokens[0], validPost.body.csrfToken)
   })
 
   it('should be unsuccessful on post if token is already used', function () {
