@@ -48,15 +48,15 @@
     } else if (mainWrap.classList.contains('confirm-page')) {
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
-    {% if allowGooglePay and googlePayGatewayMerchantID%}
+    {% if allowGooglePay%}
       window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
       window.googlePayMerchantID = '{{ googlePayMerchantID }}';
     {% endif %}
-    {% if allowApplePay and allowGooglePay and googlePayGatewayMerchantID%}
+    {% if allowApplePay and allowGooglePay%}
       window.payScripts.webPayments.init('all');
     {% elif allowApplePay %}
       window.payScripts.webPayments.init('apple');
-    {% elif allowGooglePay and googlePayGatewayMerchantID %}
+    {% elif allowGooglePay %}
       window.payScripts.webPayments.init('google');
     {% endif %}
   });
