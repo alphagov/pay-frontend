@@ -33,7 +33,6 @@
     "watch-live-reload": "./node_modules/.bin/grunt watch",
     "apple-pay-stubs": "grunt apple-pay-stubs",
     "test": "DISABLE_APPMETRICS=true node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
-    "pact-stub": "docker run -t -p 8000:8000 -v \"$(pwd)/pacts/:/app/pacts\" pactfoundation/pact-stub-server:v0.0.10 -p 8000 -d pacts",
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
