@@ -27,4 +27,9 @@ public/javascripts/browsered.js
 .nyc_output
 coverage
 pacts
+ 
+# Cypress test runner files
+/cypress
+/test/cypress/screenshots
+/test/cypress/videos
 

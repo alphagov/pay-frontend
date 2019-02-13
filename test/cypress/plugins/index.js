@@ -1,14 +1,36 @@
-// ***********************************************************
-// This example plugins/index.js can be used to load plugins
-//
-// You can change the location of this file or turn off loading
-// the plugins file with the 'pluginsFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/plugins-guide
-// ***********************************************************
+const util = require('util')
+const request = require('request')
+const lodash = require('lodash')
 
-// This function is called when a project is opened or re-opened (e.g. due to
-// the project's config changing)
+const requestPromise = util.promisify(request)
 
-module.exports = (on, config) => config
+const stubGenerators = require('./stubs')
+
+module.exports = (on, config) => {
+  const stubServerURL = `${config.env.MOUNTEBANK_URL}/imposters`
+
+  // common task definitions - used by all test specs
+  on('task', {
+    setupStubs (specs) {
+      // spec has name and options - passed into stub generator for a given name
+      // @TODO(sfount) clearly define what this method expects, consider how this name lookup works
+      const stubs = lodash.flatMap(specs, spec => stubGenerators[spec.name](spec.opts))
+
+      return requestPromise({
+        method: 'POST',
+        url: stubServerURL,
+        json: true,
+        body: {
+          port: config.env.MOUNTEBANK_IMPOSTERS_PORT,
+          protocol: 'http',
+          stubs
+        }
+      })
+    },
+
+    clearStubs () {
+      return requestPromise.delete(stubServerURL)
+    }
+  })
+  return config
+}
