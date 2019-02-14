@@ -49,27 +49,6 @@ module.exports = {
     return [ stub ]
   },
 
-  getValidInitialCharge: (opts = {}) => {
-    const body = paymentFixtures.validInitialCharge()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
-  },
-
   putValidInitialChargeStatus: (opts = {}) => {
     const body = paymentFixtures.putValidInitialChargeUpdate()
     const stub = {
@@ -101,6 +80,106 @@ module.exports = {
         equals: {
           method: 'GET',
           path: '/v1/api/services',
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // first returns initial state, then returns updated state as you are now
+  // partly thorugh an interaction
+  // not this returns different stubs on subsequent calls
+  getValidCharges: (opts = {}) => {
+    const initialStatusBody = paymentFixtures.validInitialCharge()
+    const enteringCardDetailsBody = paymentFixtures.validEnteringCardDetailsCharge()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'GET',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: initialStatusBody
+        },
+        _behaviours: {
+          repeat: 1
+        }
+      }, {
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: enteringCardDetailsBody
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // @FIXME(sfount) no longer needed?
+  getValidInitialCharge: (opts = {}) => {
+    const body = paymentFixtures.validInitialCharge()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'GET',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // @FIXME(sfount) no longer needed?
+  getValidEnteringCardDetailsCharge: (opts = {}) => {
+    const body = paymentFixtures.validEnteringCardDetailsCharge()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'GET',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // this is going to Card ID
+  getValidCardDetails: (opts = {}) => {
+    const body = paymentFixtures.validCardDetails()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'POST',
+          path: '/v1/api/card',
           headers: JSONRequestHeader
         }
       }],

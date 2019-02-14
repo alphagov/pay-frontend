@@ -1,17 +1,8 @@
-// ***********************************************
-// https://on.cypress.io/custom-commands
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+Cypress.Commands.add('sessionCookie', (chargeId) => {
+  cy.task('generateSessionCookie', chargeId)
+    .then((cookie) => {
+
+      console.log('got cookie', cookie)
+      cy.setCookie('frontend_state', cookie)
+    })
+})
