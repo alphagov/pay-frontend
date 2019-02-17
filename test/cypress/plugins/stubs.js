@@ -97,6 +97,7 @@ module.exports = {
   // first returns initial state, then returns updated state as you are now
   // partly thorugh an interaction
   // not this returns different stubs on subsequent calls
+  // @FIXME(sfount) this method is no longer used
   getValidCharges: (opts = {}) => {
     const initialStatusBody = paymentFixtures.validInitialCharge()
     const enteringCardDetailsBody = paymentFixtures.validEnteringCardDetailsCharge()
@@ -188,6 +189,160 @@ module.exports = {
           statusCode: 200,
           headers: JSONResponseHeader,
           body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  patchValidConfirmChargeDetails: (opts = {}) => {
+    const body = paymentFixtures.validPatchToConfirmChargeDetails()
+
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'PATCH',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  postValidChargeCardDetailsAuthorisation: (opts = {}) => {
+    const body = paymentFixtures.validChargeCardDetailsAuthorised()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'POST',
+          path: `/v1/frontend/charges/${opts.chargeId}/cards`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // @FIXME(sfount) this method should no longer be needed
+  getValidChargeDetailsAfterAuthorisation: (opts = {}) => {
+    const body = paymentFixtures.validChargeDetailsAfterAuthorised()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'GET',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // 1. first request - charge is in CARD_DETAILS state as was before
+  // 2. second request - charge is now AUTHORISED SUCCESS
+  getValidChargeDetailsForConfirmation: (opts = {}) => {
+    const beforeAuthorisedChargeDetails = paymentFixtures.validEnteringCardDetailsCharge()
+    const afterAuthorisedChargeDetails = paymentFixtures.validChargeDetailsAfterAuthorised()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'GET',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: beforeAuthorisedChargeDetails
+        },
+        _behaviours: {
+          repeat: 1
+        }
+      }, {
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: afterAuthorisedChargeDetails
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+
+
+  postValidCaptureCharge: (opts = {}) => {
+    const body = paymentFixtures.validCaptureChargePostBody()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'POST',
+          path: `/v1/frontend/charges/${opts.chargeId}/capture`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body
+        }
+      }]
+    }
+    return [ stub ]
+  },
+
+  // 1. first request - charge is in AUTHORISED SUCCESS
+  // 2. second request - charge is now CAPTURED
+  getValidChargeDetailsForCaptureSubmission: (opts = {}) => {
+    const beforeCaptureSubmissionDetails = paymentFixtures.validChargeDetailsAfterAuthorised()
+    const afterCaptureSubmissionDetails = paymentFixtures.validChargeDetailsCapturedSuccess()
+    const stub = {
+      predicates: [{
+        equals: {
+          method: 'GET',
+          path: `/v1/frontend/charges/${opts.chargeId}`,
+          headers: JSONRequestHeader
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: beforeCaptureSubmissionDetails
+        },
+        _behaviours: {
+          repeat: 1
+        }
+      }, {
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: afterCaptureSubmissionDetails
         }
       }]
     }
