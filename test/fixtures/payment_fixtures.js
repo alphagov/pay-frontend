@@ -132,7 +132,7 @@ const fixtures = {
       'providerSessionId': null,
       'reference': 'my payment reference',
       'refunds': [],
-      'returnUrl': 'https://www.payments.service.gov.uk',
+      'returnUrl': '/?confirm',
       'status': 'CREATED',
       'version': 1,
       'walletType': null
@@ -146,6 +146,9 @@ const fixtures = {
     // returns a valid repsonse with no body
     return undefined
   },
+
+  // @FIXME(sfount) replace all charge ids with templated in values
+  // @FIXME(sfount) replace ?confirm with confirm + charge ID
 
   // GET to http://connector:9300/v1/frontend/charges/ub8de8r5mh4pb49rgm1ismaqfv
   validInitialCharge: () => {
@@ -176,7 +179,7 @@ const fixtures = {
         }
       ],
       'charge_id': 'ub8de8r5mh4pb49rgm1ismaqfv',
-      'return_url': 'https://www.payments.service.gov.uk',
+      'return_url': '/?confirm',
       'created_date': '2019-02-12T17:53:31.307Z',
       'delayed_capture': false,
       'gateway_account': {
@@ -350,7 +353,7 @@ const fixtures = {
         }
       ],
       'charge_id': 'ub8de8r5mh4pb49rgm1ismaqfv',
-      'return_url': 'https://www.payments.service.gov.uk',
+      'return_url': '/?confirm',
       'created_date': '2019-02-13T13:13:28.153Z',
       'delayed_capture': false,
       'gateway_account': {
@@ -497,7 +500,7 @@ const fixtures = {
         }
       ],
       'charge_id': 'ub8de8r5mh4pb49rgm1ismaqfv',
-      'return_url': 'https://www.payments.service.gov.uk',
+      'return_url': '/?confirm',
       'email': 'validpayingemail@example.com',
       'created_date': '2019-02-17T11:44:55.369Z',
       'delayed_capture': false,
@@ -638,7 +641,7 @@ const fixtures = {
       ],
       'charge_id': 'ub8de8r5mh4pb49rgm1ismaqfv',
       'gateway_transaction_id': '8bc86eb3-3f15-43ff-81a8-1c17da9631a5',
-      'return_url': 'https://www.payments.service.gov.uk',
+      'return_url': '/?confirm',
       'email': 'validpayingemail@example.com',
       'created_date': '2019-02-17T11:44:55.369Z',
       'card_details': {
@@ -776,22 +779,22 @@ const fixtures = {
         {
           'rel': 'self',
           'method': 'GET',
-          'href': 'https://connector:9300/v1/frontend/charges/lgcrqprrtbsnul0rp0entlggug'
+          'href': 'https://connector:9300/v1/frontend/charges/ub8de8r5mh4pb49rgm1ismaqfv'
         },
         {
           'rel': 'cardAuth',
           'method': 'POST',
-          'href': 'https://connector:9300/v1/frontend/charges/lgcrqprrtbsnul0rp0entlggug/cards'
+          'href': 'https://connector:9300/v1/frontend/charges/ub8de8r5mh4pb49rgm1ismaqfv/cards'
         },
         {
           'rel': 'cardCapture',
           'method': 'POST',
-          'href': 'https://connector:9300/v1/frontend/charges/lgcrqprrtbsnul0rp0entlggug/capture'
+          'href': 'https://connector:9300/v1/frontend/charges/ub8de8r5mh4pb49rgm1ismaqfv/capture'
         }
       ],
-      'charge_id': 'lgcrqprrtbsnul0rp0entlggug',
+      'charge_id': 'ub8de8r5mh4pb49rgm1ismaqfv',
       'gateway_transaction_id': '8bc86eb3-3f15-43ff-81a8-1c17da9631a5',
-      'return_url': 'https://www.payments.service.gov.uk',
+      'return_url': '/?confirm',
       'email': 'validpayingemail@example.com',
       'created_date': '2019-02-17T11:44:55.369Z',
       'card_details': {

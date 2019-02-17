@@ -307,7 +307,7 @@ module.exports = {
       }],
       responses: [{
         is: {
-          statusCode: 200,
+          statusCode: 204,
           headers: JSONResponseHeader,
           body
         }

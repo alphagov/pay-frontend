@@ -15,8 +15,7 @@ describe('Standard card payment flow', () => {
     email: 'validpayingemail@example.com'
   }
 
-  // @TODO(sfount) valid cookie session will have to specify the service that was associated with the charge created as well
-
+  // @TODO(sfount) return url will need to accept the port of the running server
   // @TODO(sfount) when making fixtures for charges include the return URL that you expect to successfully test against
   const createPaymentChargeStubs = [
     { name: 'getValidChargeCreated', opts: { tokenId } },
@@ -186,10 +185,14 @@ describe('Standard card payment flow', () => {
     it('Confirming payment should successfully redirect to configured next_url', () => {
       cy.task('setupStubs', submitPaymentCaptureStubs)
 
+      console.log(Cypress.env())
       cy.get('#confirm').click()
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
+
+      cy.location('pathname').should('eq', `/`)
+      cy.location('search').should('eq', `?confirm`)
     })
   })
 })
