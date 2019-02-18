@@ -63,7 +63,7 @@
     "csrf": "3.0.x",
     "express": "4.16.x",
     "gaap-analytics": "^3.0.0",
-    "govuk-frontend": "^2.6.0",
+    "govuk-frontend": "^2.7.0",
     "humps": "^2.0.1",
     "i18n": "0.8.x",
     "lodash": "4.17.x",
