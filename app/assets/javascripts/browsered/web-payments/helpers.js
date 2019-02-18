@@ -110,12 +110,18 @@ const getGooglePaymentsConfiguration = () => {
   }
 
   return {
+    // environment: window.googlePayMerchantID.length > 0 ? 'PRODUCTION' : 'TEST',
     environment: 'TEST',
     apiVersion: 2,
     apiVersionMinor: 0,
     merchantInfo: {
       merchantId: window.googlePayMerchantID,
       merchantName: 'GOV.UK Pay'
+    },
+    transactionInfo: {
+      totalPriceStatus: 'FINAL',
+      totalPrice: window.paymentDetails.amount,
+      currencyCode: 'GBP'
     },
     allowedPaymentMethods: [cardPaymentMethod]
   }
