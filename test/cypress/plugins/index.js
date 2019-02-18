@@ -5,6 +5,7 @@ const lodash = require('lodash')
 const requestPromise = util.promisify(request)
 
 const stubGenerators = require('./stubs')
+const cookieMonster = require('./cookie-monster')
 
 module.exports = (on, config) => {
   const stubServerURL = `${config.env.MOUNTEBANK_URL}/imposters`
@@ -30,6 +31,11 @@ module.exports = (on, config) => {
 
     clearStubs () {
       return requestPromise.delete(stubServerURL)
+    },
+
+    generateSessionCookie (chargeId) {
+      const encryptedCookie = cookieMonster.getCookie('frontend_state', config.env.TEST_SESSION_ENCRYPTION_KEY, `ch_${chargeId}`)
+      return encryptedCookie
     }
   })
   return config
