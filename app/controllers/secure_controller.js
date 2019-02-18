@@ -21,12 +21,7 @@ exports.new = (req, res) => {
     .then(chargeData => Token.destroy(chargeTokenId, correlationId).then(() => Promise.resolve(chargeData)))
     .then(chargeData => {
       const chargeId = chargeData.externalId
-
-      // @FIXME(sfount) this shouldn't get anywhere near a PR
-      const someval = createChargeIdSessionKey(chargeId)
-      setSessionVariable(req, someval, { csrfSecret: csrf().secretSync() })
-
-      console.log('setting session variable', req, someval)
+      setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
       res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), { chargeId }))
     })
     .catch(() => {

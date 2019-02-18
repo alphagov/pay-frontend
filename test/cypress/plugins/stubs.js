@@ -1,180 +1,64 @@
-// get fixture definitions
 const paymentFixtures = require('./../../fixtures/payment_fixtures')
 
 const JSONRequestHeader = { 'Accept': 'application/json' }
 const JSONResponseHeader = { 'Content-Type': 'application/json' }
 
+const simpleStubBuilder = function simpleStubBuilder (method, statusCode, path, body) {
+  return [{
+    predicates: [{
+      equals: {
+        method,
+        path,
+        headers: JSONRequestHeader
+      }
+    }],
+    responses: [{
+      is: {
+        statusCode,
+        headers: JSONResponseHeader,
+        body
+      }
+    }]
+  }]
+}
+
 module.exports = {
-  getValidChargeCreated: (opts = {}) => {
-    const body = paymentFixtures.validChargeCreatedByToken()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/tokens/${opts.tokenId}/charge`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+  connectorCreateChargeFromToken: (opts = {}) => {
+    const path = `/v1/frontend/tokens/${opts.tokenId}/charge`
+    const body = paymentFixtures.validChargeCreatedByToken(opts)
+
+    return simpleStubBuilder('GET', 200, path, body)
   },
 
-  // @TODO(sfount) helper method for removing predicates code would be helpful
-  // formatStub(method, url, reponseStatus, responseBody)
-  getValidTokenDeleted: (opts = {}) => {
-    const body = paymentFixtures.validDeleteToken()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'DELETE',
-          path: `/v1/frontend/tokens/${opts.tokenId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 204,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+  connectorDeleteToken: (opts = {}) => {
+    const path = `/v1/frontend/tokens/${opts.tokenId}`
+
+    return simpleStubBuilder('DELETE', 204, path, undefined)
   },
 
-  putValidInitialChargeStatus: (opts = {}) => {
-    const body = paymentFixtures.putValidInitialChargeUpdate()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'PUT',
-          path: `/v1/frontend/charges/${opts.chargeId}/status`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 204,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+  connectorUpdateChargeStatus: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}/status`
+
+    return simpleStubBuilder('PUT', 204, path, undefined)
   },
 
-  // @TODO(sfount) this should only match the query string with the
-  // service ID provided
-  // @TODO(sfount) this is to admin users - should it be somewhere else?
-  getValidInitialService: (opts = {}) => {
-    const body = paymentFixtures.validInitialService()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: '/v1/api/services',
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+  // @TODO(sfount) this should only match the query string with the - service ID provided
+  adminUsersGetService: (opts = {}) => {
+    const path = '/v1/api/services'
+    const body = paymentFixtures.validService()
+
+    return simpleStubBuilder('GET', 200, path, body)
   },
 
-  // first returns initial state, then returns updated state as you are now
-  // partly thorugh an interaction
-  // not this returns different stubs on subsequent calls
-  // @FIXME(sfount) this method is no longer used
-  getValidCharges: (opts = {}) => {
-    const initialStatusBody = paymentFixtures.validInitialCharge()
-    const enteringCardDetailsBody = paymentFixtures.validEnteringCardDetailsCharge()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: initialStatusBody
-        },
-        _behaviours: {
-          repeat: 1
-        }
-      }, {
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: enteringCardDetailsBody
-        }
-      }]
-    }
-    return [ stub ]
-  },
+  connectorGetChargeDetails: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}`
+    const body = paymentFixtures.validChargeDetails(opts)
 
-  // @FIXME(sfount) no longer needed?
-  getValidInitialCharge: (opts = {}) => {
-    const body = paymentFixtures.validInitialCharge()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
-  },
-
-  // @FIXME(sfount) no longer needed?
-  getValidEnteringCardDetailsCharge: (opts = {}) => {
-    const body = paymentFixtures.validEnteringCardDetailsCharge()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+    return simpleStubBuilder('GET', 200, path, body)
   },
 
   // this is going to Card ID
-  getValidCardDetails: (opts = {}) => {
+  cardIdValidCardDetails: (opts = {}) => {
     const body = paymentFixtures.validCardDetails()
     const stub = {
       predicates: [{
@@ -195,57 +79,33 @@ module.exports = {
     return [ stub ]
   },
 
-  patchValidConfirmChargeDetails: (opts = {}) => {
-    const body = paymentFixtures.validPatchToConfirmChargeDetails()
+  connectorValidPatchConfirmedChargeDetails: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}`
+    const body = paymentFixtures.validChargeDetails({
+      chargeId: opts.chargeId,
+      status: 'ENTERING CARD DETAILS',
+      state: { finished: false, status: 'started' }
+    })
 
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'PATCH',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+    return simpleStubBuilder('PATCH', 200, path, body)
   },
 
-  postValidChargeCardDetailsAuthorisation: (opts = {}) => {
+  connectorPostValidChargeCardDetailsAuthorisation: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeid}/cards`
     const body = paymentFixtures.validChargeCardDetailsAuthorised()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'POST',
-          path: `/v1/frontend/charges/${opts.chargeId}/cards`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
+
+    return simpleStubBuilder('POST', 200, path, body)
   },
 
-  // @FIXME(sfount) this method should no longer be needed
-  getValidChargeDetailsAfterAuthorisation: (opts = {}) => {
-    const body = paymentFixtures.validChargeDetailsAfterAuthorised()
+  connectorMultipleSubsequentChargeDetails: ([ firstChargeOpts, secondChargeOpts ]) => {
+    const firstChargeBody = paymentFixtures.validChargeDetails(firstChargeOpts)
+    const secondChargeBody = paymentFixtures.validChargeDetails(secondChargeOpts)
+
     const stub = {
       predicates: [{
         equals: {
           method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
+          path: `/v1/frontend/charges/${firstChargeOpts.chargeId}`,
           headers: JSONRequestHeader
         }
       }],
@@ -253,31 +113,7 @@ module.exports = {
         is: {
           statusCode: 200,
           headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
-  },
-
-  // 1. first request - charge is in CARD_DETAILS state as was before
-  // 2. second request - charge is now AUTHORISED SUCCESS
-  getValidChargeDetailsForConfirmation: (opts = {}) => {
-    const beforeAuthorisedChargeDetails = paymentFixtures.validEnteringCardDetailsCharge()
-    const afterAuthorisedChargeDetails = paymentFixtures.validChargeDetailsAfterAuthorised()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: beforeAuthorisedChargeDetails
+          body: firstChargeBody
         },
         _behaviours: {
           repeat: 1
@@ -286,66 +122,16 @@ module.exports = {
         is: {
           statusCode: 200,
           headers: JSONResponseHeader,
-          body: afterAuthorisedChargeDetails
+          body: secondChargeBody
         }
       }]
     }
     return [ stub ]
   },
 
+  connectorPostValidCaptureCharge: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}/capture`
 
-
-  postValidCaptureCharge: (opts = {}) => {
-    const body = paymentFixtures.validCaptureChargePostBody()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'POST',
-          path: `/v1/frontend/charges/${opts.chargeId}/capture`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 204,
-          headers: JSONResponseHeader,
-          body
-        }
-      }]
-    }
-    return [ stub ]
-  },
-
-  // 1. first request - charge is in AUTHORISED SUCCESS
-  // 2. second request - charge is now CAPTURED
-  getValidChargeDetailsForCaptureSubmission: (opts = {}) => {
-    const beforeCaptureSubmissionDetails = paymentFixtures.validChargeDetailsAfterAuthorised()
-    const afterCaptureSubmissionDetails = paymentFixtures.validChargeDetailsCapturedSuccess()
-    const stub = {
-      predicates: [{
-        equals: {
-          method: 'GET',
-          path: `/v1/frontend/charges/${opts.chargeId}`,
-          headers: JSONRequestHeader
-        }
-      }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: beforeCaptureSubmissionDetails
-        },
-        _behaviours: {
-          repeat: 1
-        }
-      }, {
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: afterCaptureSubmissionDetails
-        }
-      }]
-    }
-    return [ stub ]
+    return simpleStubBuilder('POST', 204, path, undefined)
   }
 }
