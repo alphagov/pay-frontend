@@ -32,7 +32,7 @@
     "lint": "standard",
     "watch-live-reload": "./node_modules/.bin/grunt watch",
     "apple-pay-stubs": "grunt apple-pay-stubs",
-    "test": "DISABLE_APPMETRICS=true node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
+    "test": "rm -rf ./pacts && DISABLE_APPMETRICS=true node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
