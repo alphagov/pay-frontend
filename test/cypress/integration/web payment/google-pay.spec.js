@@ -94,7 +94,13 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Payment Request API
-          cy.stub(win, 'PaymentRequest', mockPaymentRequest)
+          if (win.PaymentRequest) {
+            // If we’re running in headed mode
+            cy.stub(win, 'PaymentRequest', mockPaymentRequest)
+          } else {
+            // else headless
+            win.PaymentRequest = mockPaymentRequest
+          }
           // Stub fetch so we can simulate auth call to connector
           cy.stub(win, 'fetch', mockPaymentAuthResponse)
         }
