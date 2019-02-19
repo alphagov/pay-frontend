@@ -21,7 +21,8 @@ const processPayment = paymentData => {
     }
   })
   .catch(err => {
-    console.log('something went wrong', err)
+    showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
+    ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture');
   })
 }
 
@@ -54,11 +55,10 @@ const googlePayNow = () => {
     .show()
     .then(response => {
       response.complete('success');
-      console.log('payment data', response)
       processPayment(response);
     })
-    .catch(err => {
-      console.error('uh oh', err)
+    .catch(dismissed => {
+      ga('send', 'event', 'Google Pay', 'Aborted', 'by user');
     })
 }
 

@@ -20,12 +20,10 @@ const initApplePayIfAvailable = () => {
 
 const initGooglePayIfAvailable = () => {
   if (window.PaymentRequest) {
-    console.log('payment request API is available')
     createGooglePaymentRequest()
       .canMakePayment()
       .then(result => {
         if (result) {
-          console.log('Google Pay is available')
           paymentMethodForm.classList.remove('hidden')
           standardMethodContainer.classList.add('hidden')
           document.getElementById('payment-method-google-pay').parentNode.style.display = 'block'
