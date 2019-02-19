@@ -31,7 +31,6 @@ module.exports = payload => {
   }
 
   const paymentData = humps.decamelizeKeys(JSON.parse(payload.details.paymentMethodData.tokenizationData.token))
-  console.log(paymentData)
   delete payload.details.paymentMethodData
 
   return {

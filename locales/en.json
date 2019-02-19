@@ -160,7 +160,8 @@
 		},
 		"webPayments": {
 			"apple": "There was an error contacting Apple Pay, please try again",
-			"google": "There was an error contacting Google Pay, please try again"
+			"failureTitle": "There was a problem processing your payment.",
+			"failureBody": "No money has been taken from your account, please try again"
 		}
 	}
 }

@@ -4,10 +4,15 @@ const allowedCardTypes = window.Card.allowed || {}
 const { email_collection_mode } = window.Charge || {}
 const { collect_billing_address } = window.Charge || {}
 
-const showErrorSummary = title => {
+const showErrorSummary = (title, body) => {
   const errorSummary = document.getElementById('error-summary')
   errorSummary.classList.remove('hidden')
   errorSummary.querySelectorAll('h2')[0].innerText = title
+  if (body) {
+    const error = document.createElement('li')
+    error.innerText = body
+    errorSummary.querySelectorAll('ul')[0].appendChild(error)
+  }
 }
 
 const clearErrorSummary = () => {
