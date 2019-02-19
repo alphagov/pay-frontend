@@ -12,13 +12,15 @@ const processPayment = paymentData => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(paymentData)
-  }).then(response => {
+  })
+  .then(response => {
     if (response.status >= 200 && response.status < 300) {
       return response.json().then(data => {
         window.location.href = data.url
       })
     }
-  }).catch(err => {
+  })
+  .catch(err => {
     console.log('something went wrong', err)
   })
 }

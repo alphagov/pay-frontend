@@ -21,8 +21,8 @@ const initApplePayIfAvailable = () => {
 const initGooglePayIfAvailable = () => {
   if (window.PaymentRequest) {
     console.log('payment request API is available')
-    const request = createGooglePaymentRequest();
-    request.canMakePayment()
+    createGooglePaymentRequest()
+      .canMakePayment()
       .then(result => {
         if (result) {
           console.log('Google Pay is available')
