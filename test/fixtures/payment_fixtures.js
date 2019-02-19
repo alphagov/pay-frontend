@@ -2,9 +2,10 @@
 const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
   const structure = {
     'gateway_account_id': opts.gatewayAccountId || 6,
-    'allowWebPayments': false,
-    'allow_apple_pay': false,
-    'allow_google_pay': false,
+    'allowWebPayments': opts.allowWebPayments || false,
+    'allowApplePay': opts.allowApplePay || false,
+    'allowGooglePay': opts.allowGooglePay || false,
+    'gatewayMerchantId': opts.gatewayMerchantId || '',
     'analytics_id': null,
     card_types: buildStandardSupportedCardTypes(),
     'corporate_credit_card_surcharge_amount': 0, // are these needed?
@@ -199,7 +200,7 @@ const fixtures = {
       'description': opts.description || 'Example fixture payment',
       'email': null,
       'externalId': opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv',
-      gatewayAccount: buildGatewayAccount(opts),
+      'gatewayAccount': buildGatewayAccount(opts),
       'gatewayTransactionId': null,
       'language': 'ENGLISH',
       'paymentGatewayName': 'SANDBOX',
