@@ -111,12 +111,22 @@ pipeline {
         branch 'master'
       }
       steps {
+        checkPactCompatibility("frontend", gitCommit(), "test")
         deployEcs("frontend")
       }
     }
     stage('Card Smoke Test') {
       when { branch 'master' }
       steps { runCardSmokeTest() }
+    }
+    stage('Pact Tag') {
+      when {
+          branch 'master'
+      }
+      steps {
+          echo 'Tagging consumer pact with "test"'
+          tagPact("frontend", gitCommit(), "test")
+      }
     }
     stage('Complete') {
       failFast true
