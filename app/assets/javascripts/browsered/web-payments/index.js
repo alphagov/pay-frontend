@@ -10,7 +10,7 @@ const paymentMethodForm = document.getElementById('payment-request-container')
 const standardMethodContainer = document.getElementById('enter-card-details-container')
 
 const initApplePayIfAvailable = () => {
-  if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
+  if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
     paymentMethodForm.classList.remove('hidden')
     standardMethodContainer.classList.add('hidden')
     document.getElementById('payment-method-apple-pay').parentNode.style.display = 'block'
