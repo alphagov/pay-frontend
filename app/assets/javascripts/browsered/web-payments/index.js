@@ -33,7 +33,7 @@ const initGooglePayIfAvailable = () => {
 }
 
 const setupEventListener = () => {
-  if (window.PaymentRequest) {
+  if (window.PaymentRequest || window.ApplePaySession) {
     paymentMethodForm.addEventListener('submit', function (e) {
       e.preventDefault()
       clearErrorSummary()

@@ -26,7 +26,6 @@ module.exports = () => {
   const session = new ApplePaySession(3, prepareAppleRequestObject())
 
   session.onvalidatemerchant = event => {
-    const validationURL = event.validationURL
     validateMerchantSession(event.validationURL)
       .then(response => {
         console.log('validated merchant', response.signature)
@@ -35,10 +34,6 @@ module.exports = () => {
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         return err
       })
-  }
-
-  session.oncancel = event => {
-    console.log('Cancelled', event)
   }
 
   session.onpaymentauthorized = event => {
