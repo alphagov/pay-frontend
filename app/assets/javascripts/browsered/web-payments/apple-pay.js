@@ -3,7 +3,6 @@
 const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
 
 function validateMerchantSession(url) {
-  console.log('dialling...', url)
   return fetch(`/apple-pay-merchant-validation`, {
     method: 'POST',
     credentials: 'same-origin',
@@ -28,7 +27,6 @@ module.exports = () => {
   session.onvalidatemerchant = event => {
     validateMerchantSession(event.validationURL)
       .then(response => {
-        console.log('validated merchant', response.signature)
         session.completeMerchantValidation(response)
       }).catch(err => {
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
@@ -37,10 +35,8 @@ module.exports = () => {
   }
 
   session.onpaymentauthorized = event => {
-    console.log('authorisation complete', event)
     // Send payment for processing...
     const { payment } = event;
-    console.log('authorisation complete', payment)
 
     session.completePayment(ApplePaySession.STATUS_SUCCESS);
 
