@@ -33,11 +33,6 @@
     collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }}
   }
 
-  {% if isDevelopment %}
-  window.stubWebPaymentsUrl = '{{ stubsUrl }}'
-  {# ApplePaySession.stubCanMakePaymentsWithActiveCard = true; #}
-  {% endif %}
-
   var mainWrap = document.getElementsByTagName('main')[0]
   document.addEventListener('DOMContentLoaded', function() {
     GOVUK.stopDoubleSubmit.init();
@@ -61,7 +56,4 @@
     {% endif %}
   });
 </script>
-{% if isDevelopment %}
-{# <script src="public/javascripts/apple-pay-js-stubs.js"></script> #}
-{% endif %}
 <script src="{{ js_path }}"></script>
