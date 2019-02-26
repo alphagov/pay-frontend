@@ -16,7 +16,8 @@ function validateMerchantSession(url) {
         return data
       })
     } else {
-      return session.abort();
+      ga('send', 'event', 'Apple Pay', 'Error', 'Merchant ID not valid')
+      return session.abort()
     }
   })
 }
@@ -30,15 +31,15 @@ module.exports = () => {
         session.completeMerchantValidation(response)
       }).catch(err => {
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
+        ga('send', 'event', 'Apple Pay', 'Error', 'Error completing Merchant validation')
         return err
       })
   }
 
   session.onpaymentauthorized = event => {
-    // Send payment for processing...
-    const { payment } = event;
+    const { payment } = event
 
-    session.completePayment(ApplePaySession.STATUS_SUCCESS);
+    session.completePayment(ApplePaySession.STATUS_SUCCESS)
 
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
       method: 'POST',
@@ -50,7 +51,7 @@ module.exports = () => {
     }).then(response => {
       if (response.status >= 200 && response.status < 300) {
         return response.json().then(data => {
-          session.completePayment(ApplePaySession.STATUS_SUCCESS);
+          session.completePayment(ApplePaySession.STATUS_SUCCESS)
           window.location.href = data.url
         })
       }
