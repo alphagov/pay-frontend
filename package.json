@@ -59,7 +59,7 @@
     "client-sessions": "0.8.x",
     "compression": "1.7.x",
     "continuation-local-storage": "^3.2.1",
-    "credit-card-type": "6.3.x",
+    "credit-card-type": "8.1.x",
     "csrf": "3.0.x",
     "express": "4.16.x",
     "gaap-analytics": "^3.0.0",
