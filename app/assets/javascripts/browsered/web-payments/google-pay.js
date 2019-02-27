@@ -22,7 +22,7 @@ const processPayment = paymentData => {
   })
   .catch(err => {
     showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
-    ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture');
+    ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
   })
 }
 
@@ -30,7 +30,7 @@ const createGooglePaymentRequest = () => {
   const methodData = [{
     supportedMethods: 'https://google.com/pay',
     data: getGooglePaymentsConfiguration()
-  }];
+  }]
 
   const details = {
     total: {
@@ -40,25 +40,25 @@ const createGooglePaymentRequest = () => {
         value: window.paymentDetails.amount
       }
     }
-  };
+  }
 
   const options = {
     requestPayerEmail: email_collection_mode !== 'OFF',
     requestPayerName: true
-  };
+  }
 
-  return new PaymentRequest(methodData, details, options);
+  return new PaymentRequest(methodData, details, options)
 }
 
 const googlePayNow = () => {
   createGooglePaymentRequest()
     .show()
     .then(response => {
-      response.complete('success');
-      processPayment(response);
+      response.complete('success')
+      processPayment(response)
     })
     .catch(dismissed => {
-      ga('send', 'event', 'Google Pay', 'Aborted', 'by user');
+      ga('send', 'event', 'Google Pay', 'Aborted', 'by user')
     })
 }
 
