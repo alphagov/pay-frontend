@@ -81,41 +81,6 @@ const handleCreateResponse = (req, res, charge) => response => {
   }
 }
 
-const handleAuthResponse = (req, res, charge) => response => {
-  switch (response.statusCode) {
-    case 202:
-    case 409:
-      logging.failedChargePost(409)
-      redirect(res).toAuthWaiting(req.chargeId)
-      break
-    case 200:
-      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
-        redirect(res).toAuth3dsRequired(req.chargeId)
-      } else {
-        Charge(req.headers[CORRELATION_HEADER])
-          .capture(req.chargeId)
-          .then(
-            () => redirect(res).toReturn(req.chargeId),
-            err => {
-              if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-              // else
-              responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
-                charge,
-                { returnUrl: routeFor('return', charge.id) }
-              ))
-            }
-          )
-      }
-      break
-    case 500:
-      logging.failedChargePost(409)
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
-      break
-    default:
-      redirect(res).toNew(req.chargeId)
-  }
-}
-
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
