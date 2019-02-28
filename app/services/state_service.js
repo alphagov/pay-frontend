@@ -18,7 +18,6 @@ module.exports = (function () {
     'card.auth3dsRequiredOut': [State.AUTH_3DS_REQUIRED],
     'card.authWaiting': [State.AUTH_READY, State.AUTH_3DS_REQUIRED, State.AUTH_3DS_READY, State.AUTH_SUCCESS],
     'card.create': [State.AUTH_READY, State.ENTERING_CARD_DETAILS],
-    'card.createPaymentRequest': [State.AUTH_READY, State.ENTERING_CARD_DETAILS],
     'card.capture': [State.AUTH_SUCCESS],
     'card.captureWaiting': [State.CAPTURE_READY, State.CAPTURE_SUBMITTED],
     'card.cancel': [State.ENTERING_CARD_DETAILS, State.AUTH_SUCCESS]

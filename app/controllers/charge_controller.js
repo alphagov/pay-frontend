@@ -81,41 +81,6 @@ const handleCreateResponse = (req, res, charge) => response => {
   }
 }
 
-const handleAuthResponse = (req, res, charge) => response => {
-  switch (response.statusCode) {
-    case 202:
-    case 409:
-      logging.failedChargePost(409)
-      redirect(res).toAuthWaiting(req.chargeId)
-      break
-    case 200:
-      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
-        redirect(res).toAuth3dsRequired(req.chargeId)
-      } else {
-        Charge(req.headers[CORRELATION_HEADER])
-          .capture(req.chargeId)
-          .then(
-            () => redirect(res).toReturn(req.chargeId),
-            err => {
-              if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-              // else
-              responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
-                charge,
-                { returnUrl: routeFor('return', charge.id) }
-              ))
-            }
-          )
-      }
-      break
-    case 500:
-      logging.failedChargePost(409)
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
-      break
-    default:
-      redirect(res).toNew(req.chargeId)
-  }
-}
-
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
@@ -210,45 +175,6 @@ module.exports = {
                 responseRouter.response(req, res, 'ERROR', withAnalyticsError())
               })
           }, clsSegment)
-        })
-    }, clsSegment)
-  },
-  createPaymentRequest: (req, res) => {
-    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
-    const charge = normalise.charge(req.chargeData, req.chargeId)
-
-    const convertedPayload = {
-      body: {
-        cardNo: req.body.details.cardNumber,
-        cvc: req.body.details.cardSecurityCode,
-        expiryMonth: req.body.details.expiryMonth,
-        expiryYear: req.body.details.expiryYear,
-        cardholderName: req.body.details.cardholderName,
-        addressLine1: req.body.details.billingAddress.addressLine[0],
-        addressLine2: req.body.details.billingAddress.addressLine[1] || '',
-        addressCity: req.body.details.billingAddress.city,
-        addressPostcode: req.body.details.billingAddress.postalCode,
-        addressCountry: req.body.details.billingAddress.country
-      }
-    }
-
-    if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
-
-    AWSXRay.captureAsyncFunc('Charge_patch', function (subSegment) {
-      Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', req.body.payerEmail, subSegment)
-        .then(() => {
-          subSegment.close()
-          const correlationId = req.headers[CORRELATION_HEADER] || ''
-          const payload = normalise.apiPayload(_.merge(req, convertedPayload), 'visa')
-          connectorClient({ correlationId })
-            .chargeAuth({ chargeId: req.chargeId, payload })
-            .then(handleAuthResponse(req, res, charge))
-        })
-        .catch(err => {
-          subSegment.close(err)
-          logging.failedChargePatch(err)
-          responseRouter.response(req, res, 'ERROR', withAnalyticsError())
         })
     }, clsSegment)
   },
