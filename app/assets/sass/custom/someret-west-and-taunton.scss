@@ -1,0 +1,55 @@
+$govuk-font-family: -apple-system,BlinkMacSystemFont,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif; // Override font as so not to use New Transport
+@import "../application";
+
+// CUSTOM BRANDING
+// Use the variables below to control the style
+// Make sure banner colours meet minimum colour contrast levels
+
+$custom-banner-colour: #ffffff;
+$custom-banner-border-colour: #07818C;
+$custom-text-colour: #0b0c0c;
+$logo-image-height: 2em;
+
+.custom-branding {
+  @if $logo-image-height != null {
+    .custom-branding-image {
+      max-height: $logo-image-height;
+
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        width: 100%;
+      }
+    }
+  }
+
+  .govuk-header {
+    background-color: $custom-banner-colour;
+  }
+
+  .govuk-header__link{
+    &:link,
+    &:visited {
+      color: $custom-text-colour;
+    }
+  }
+
+  .govuk-header__link--service-name {
+    color: $custom-text-colour;
+  }
+
+  .govuk-header__container {
+    border-bottom-color: $custom-banner-border-colour;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    .govuk-header__content {
+      width: 66%;
+      vertical-align: bottom;
+      margin-bottom: 7px;
+    }
+  }
+
+  .govuk-button {
+    padding: 7px 15px 6px;
+    padding: .368421053em .842105263em .315789474em;
+  }
+}
