@@ -106,11 +106,11 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress) {
-  return rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData, 'sandbox', emailSettings, disableBillingAddress)
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, walletType) {
+  return rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData, 'sandbox', emailSettings, disableBillingAddress, walletType)
 }
 
-function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress) {
+function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress, walletType) {
   const charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -220,6 +220,9 @@ function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId,
   if (disableBillingAddress) {
     charge.card_details.billing_address = null
   }
+  if (walletType) {
+    charge.wallet_type = walletType
+  }
   return charge
 }
 
@@ -290,9 +293,9 @@ module.exports = {
     adminusersRespondsWith(gatewayAccountId, serviceResponse)
   },
 
-  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId, returnUrl = 'http://www.example.com/service') {
+  defaultConnectorResponseForGetCharge: function (chargeId, status, gatewayAccountId, returnUrl = 'http://www.example.com/service', walletType = null) {
     initConnectorUrl()
-    const rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
+    const rawResponse = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId, {}, '', '', walletType)
     connectorRespondsWith(chargeId, rawResponse)
   },
 
