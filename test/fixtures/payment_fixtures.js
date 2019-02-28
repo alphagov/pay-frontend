@@ -2,7 +2,6 @@
 const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
   const structure = {
     'gateway_account_id': opts.gatewayAccountId || 6,
-    'allowWebPayments': opts.allowWebPayments || false,
     'allowApplePay': opts.allowApplePay || false,
     'allowGooglePay': opts.allowGooglePay || false,
     'gatewayMerchantId': opts.gatewayMerchantId || '',
