@@ -14,7 +14,6 @@ const CANCELABLE_STATES = [
   StateModel.ENTERING_CARD_DETAILS,
   StateModel.AUTH_SUCCESS,
   StateModel.AUTH_READY,
-  StateModel.CAPTURE_READY,
   StateModel.AUTH_3DS_REQUIRED,
   StateModel.AUTH_3DS_READY
 ]
