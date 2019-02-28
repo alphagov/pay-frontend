@@ -1,3 +1,3 @@
 require('./commands')
 
-afterEach(() => { cy.task('clearStubs') })
+beforeEach(() => { cy.task('clearStubs') })
