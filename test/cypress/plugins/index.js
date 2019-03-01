@@ -14,7 +14,6 @@ module.exports = (on, config) => {
   on('task', {
     setupStubs (specs) {
       // spec has name and options - passed into stub generator for a given name
-      // @TODO(sfount) clearly define what this method expects, consider how this name lookup works
       const stubs = lodash.flatMap(specs, spec => stubGenerators[spec.name](spec.opts))
 
       return requestPromise({
