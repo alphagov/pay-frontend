@@ -71,6 +71,10 @@ const paths = {
     }
   },
   applePay: {
+    merchantidDomainAssociation: {
+      path: '/.well-known/apple-developer-merchantid-domain-association.txt',
+      action: 'get'
+    },
     session: {
       path: '/apple-pay-merchant-validation',
       action: 'post'

@@ -10,6 +10,7 @@ const charge = require('./controllers/charge_controller.js')
 const threeDS = require('./controllers/three_d_secure_controller.js')
 const secure = require('./controllers/secure_controller.js')
 const statik = require('./controllers/static_controller.js')
+const applePayDomainAssociation = require('./controllers/web-payments/apple-pay/merchantid-domain-association-controller')
 const applePayMerchantValidation = require('./controllers/web-payments/apple-pay/merchant-validation-controller')
 const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-request-controller')
 const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response-controller')
@@ -88,6 +89,7 @@ exports.bind = function (app) {
   app.post(card.auth3dsHandler.path, middlewareStack, threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
+  app.get(paths.applePay.merchantidDomainAssociation.path, applePayDomainAssociation)
   app.post(paths.applePay.session.path, applePayMerchantValidation)
 
   // Generic Web payments endpoint

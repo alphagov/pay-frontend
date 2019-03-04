@@ -12,6 +12,14 @@ GOV.UK Pay Frontend application (Node.js)
 | SECURE_COOKIE_OFF           |   | false/undefined | To switch off generating secure cookies. Set this to `true` only if you are running self service in a `non HTTPS` environment. |
 | NODE_WORKER_COUNT           |   | 1 | The number of worker threads started by node cluster when run in production mode |
 
+## Other environment variables
+
+**This list is very incomplete:**
+
+| variable                                 | required | default value | Description                                                                                             |
+| ---------------------------------------- |:--------:|:-------------:| ------------------------------------------------------------------------------------------------------- |
+| APPLE_PAY_MERCHANT_ID_DOMAIN_ASSOCIATION |          |               | The domain validation text to serve at `/.well-known/apple-developer-merchantid-domain-association.txt` |
+
 ## Licence
 
 [MIT License](LICENSE)
