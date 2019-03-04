@@ -396,6 +396,25 @@ describe('chargeTests', function () {
           .end(done)
       })
 
+      it('should redirect user from /auth_waiting to the returnURL when connector returns a successful status and is web payment (Apple/Google Pay)', function (done) {
+        const cookieValue = cookie.create(chargeId)
+        const walletType = 'apple-pay'
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, defaultConnectorResponseForGetCharge(chargeId, State.AUTH_SUCCESS, gatewayAccountId, 'http://www.example.com/service', walletType))
+          .post('/v1/frontend/charges/' + chargeId + '/capture').reply(204)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        request(app)
+          .get(frontendCardDetailsPath + '/' + chargeId + '/auth_waiting')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+          .set('Cookie', ['frontend_state=' + cookieValue])
+          .set('Accept', 'application/json')
+          .expect(303)
+          .expect('Location', '/return/' + chargeId)
+          .end(done)
+      })
+
       it('should redirect user from /auth_waiting to /3ds_required when connector returns that 3DS is required for authorisation', function (done) {
         const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.AUTH_3DS_REQUIRED, gatewayAccountId)

@@ -212,7 +212,22 @@ module.exports = {
         redirect(res).toAuth3dsRequired(req.chargeId)
         break
       default:
-        redirect(res).toConfirm(req.chargeId)
+        if (charge.walletType !== undefined) {
+          Charge(req.headers[CORRELATION_HEADER])
+            .capture(req.chargeId)
+            .then(
+              () => redirect(res).toReturn(req.chargeId),
+              err => {
+                if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
+                responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+                  charge,
+                  { returnUrl: routeFor('return', charge.id) }
+                ))
+              }
+            )
+        } else {
+          redirect(res).toConfirm(req.chargeId)
+        }
     }
   },
   confirm: (req, res) => {

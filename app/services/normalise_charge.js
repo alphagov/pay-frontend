@@ -32,6 +32,9 @@ module.exports = (function () {
     if (charge.total_amount) {
       chargeObj.totalAmount = penceToPounds(charge.total_amount)
     }
+    if (charge.wallet_type) {
+      chargeObj.walletType = charge.wallet_type
+    }
     return chargeObj
   }
 
