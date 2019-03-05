@@ -30,6 +30,7 @@ module.exports = () => {
       .then(response => {
         session.completeMerchantValidation(response)
       }).catch(err => {
+        session.abort()
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'Error completing Merchant validation')
         return err
@@ -57,5 +58,6 @@ module.exports = () => {
       }
     })
   }
+
   session.begin()
 }
