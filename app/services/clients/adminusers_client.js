@@ -4,7 +4,7 @@
 const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
-const createCallbackToPromiseConverter = require('../../utils/response_converter').createCallbackToPromiseConverter
+const { createCallbackToPromiseConverter } = require('../../utils/response_converter')
 
 // Constants
 const SERVICE_NAME = 'adminusers'
@@ -14,7 +14,7 @@ const responseBodyToServiceTransformer = body => new Service(body)
 let baseUrl
 let correlationId
 
-const findServiceBy = (findOptions) => {
+const findServiceBy = function findServiceBy (findOptions) {
   return new Promise(function (resolve, reject) {
     const servicesResource = `${baseUrl}/v1/api/services`
     const params = {
@@ -24,6 +24,10 @@ const findServiceBy = (findOptions) => {
       }
     }
     const startTime = new Date()
+
+    // @FIXME(sfount) we should NOT be passing the resolve/ reject of a promise
+    //                down through 'cotext' - this tightly couples the code and
+    //                gives us no control of when our code handles errors
     const context = {
       url: servicesResource,
       defer: { resolve, reject },
