@@ -40,8 +40,6 @@ module.exports = () => {
   session.onpaymentauthorized = event => {
     const { payment } = event
 
-    session.completePayment(ApplePaySession.STATUS_SUCCESS)
-
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -55,7 +53,15 @@ module.exports = () => {
           session.completePayment(ApplePaySession.STATUS_SUCCESS)
           window.location.href = data.url
         })
+      } else {
+        session.abort()
+        console.error('Status:', response.status)
+        console.error('Response:', response)
       }
+    }).catch(err => {
+      session.abort()
+      showErrorSummary(i18n.fieldErrors.webPayments.apple)
+      console.log(err)
     })
   }
 
