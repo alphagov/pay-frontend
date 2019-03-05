@@ -9,7 +9,14 @@ const { createCallbackToPromiseConverter } = require('../../utils/response_conve
 // Constants
 const SERVICE_NAME = 'adminusers'
 
-const responseBodyToServiceTransformer = body => new Service(body)
+const responseBodyToServiceTransformer = function responseBodyToServiceTransformer (body) {
+  try {
+    const service = new Service(body)
+    return Promise.resolve(service)
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
 
 let baseUrl
 let correlationId
