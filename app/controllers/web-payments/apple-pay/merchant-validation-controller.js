@@ -7,6 +7,13 @@ const logger = require('winston')
 // Local constants
 const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY } = process.env
 
+const APPLE_PAY_MERCHANT_ID_CERTIFICATE_MULTILINE = `-----BEGIN CERTIFICATE-----
+${APPLE_PAY_MERCHANT_ID_CERTIFICATE}
+-----END CERTIFICATE-----`
+const APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY_MULTILINE = `-----BEGIN PRIVATE KEY-----
+${APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY}
+-----END PRIVATE KEY-----`
+
 // When an Apple payment is initiated in Safari, it must check that the request
 // is coming from an registered and authoriesed Apple Merchant Account. The
 // browser will produce a url which we should dial with our certificates server side.
@@ -17,8 +24,8 @@ module.exports = (req, res) => {
 
   const options = {
     url: req.body.url,
-    cert: APPLE_PAY_MERCHANT_ID_CERTIFICATE,
-    key: APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY,
+    cert: APPLE_PAY_MERCHANT_ID_CERTIFICATE_MULTILINE,
+    key: APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY_MULTILINE,
     method: 'post',
     body: {
       merchantIdentifier: APPLE_PAY_MERCHANT_ID,
