@@ -28,6 +28,8 @@ const initGooglePayIfAvailable = () => {
           standardMethodContainer.classList.add('hidden')
           document.getElementById('payment-method-google-pay').parentNode.style.display = 'block'
         }
+      }).catch(err => {
+        ga('send', 'event', 'Google Pay', 'Error', 'Failed to check if Google Pay available')
       })
   }
 }
