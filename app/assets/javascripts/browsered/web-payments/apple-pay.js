@@ -55,13 +55,10 @@ module.exports = () => {
         })
       } else {
         session.abort()
-        console.error('Status:', response.status)
-        console.error('Response:', response)
       }
     }).catch(err => {
       session.abort()
       showErrorSummary(i18n.fieldErrors.webPayments.apple)
-      console.log(err)
     })
   }
 
