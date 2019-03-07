@@ -30,6 +30,7 @@ const initGooglePayIfAvailable = () => {
         }
       }).catch(err => {
         ga('send', 'event', 'Google Pay', 'Error', 'Failed to check if Google Pay available')
+        return err
       })
   }
 }
@@ -58,14 +59,14 @@ const init = provider => {
   switch (provider) {
     case 'apple':
       initApplePayIfAvailable()
-      break;
+      break
     case 'google':
       initGooglePayIfAvailable()
-      break;
+      break
     default:
       initApplePayIfAvailable()
       initGooglePayIfAvailable()
-      break;
+      break
   }
   setupEventListener()
 }
