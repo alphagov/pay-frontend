@@ -55,10 +55,13 @@ module.exports = () => {
         })
       } else {
         session.abort()
+        showErrorSummary(i18n.fieldErrors.webPayments.apple)
+        ga('send', 'event', 'Apple Pay', 'Error', 'During authorisation/capture')
       }
     }).catch(err => {
       session.abort()
       showErrorSummary(i18n.fieldErrors.webPayments.apple)
+      ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
     })
   }
 
