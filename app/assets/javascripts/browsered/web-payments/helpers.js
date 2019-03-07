@@ -1,8 +1,7 @@
 'use strict'
 
 const allowedCardTypes = window.Card.allowed || {}
-const { email_collection_mode } = window.Charge || {}
-const { collect_billing_address } = window.Charge || {}
+const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
 const showErrorSummary = (title, body) => {
   const errorSummary = document.getElementById('error-summary')
@@ -51,14 +50,6 @@ const prepareAppleRequestObject = () => {
     merchantCapabilities.push('supportsCredit')
   }
 
-  const supportedInstruments = [{
-    supportedMethods: ['basic-card'],
-    data: {
-      supportedNetworks: supportedNetworksFormattedByProvider('apple'),
-      supportedTypes
-    }
-  }]
-
   const details = {
     total: {
       label: window.paymentDetails.description,
@@ -69,17 +60,13 @@ const prepareAppleRequestObject = () => {
     }
   }
 
-  const options = {
-    requestPayerEmail: email_collection_mode !== 'OFF'
-  }
-
   if (merchantCapabilities.length < 2) {
     merchantCapabilities.push('supports3DS')
   } else {
     merchantCapabilities = ['supports3DS']
   }
 
-  const requiredShippingContactFields = email_collection_mode !== 'OFF' ? ['email'] : []
+  const requiredShippingContactFields = email_collection_mode !== 'OFF' ? ['email'] : [] // eslint-disable-line camelcase
 
   return {
     countryCode: 'GB',

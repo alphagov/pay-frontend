@@ -30,6 +30,7 @@ const initGooglePayIfAvailable = () => {
         }
       }).catch(err => {
         ga('send', 'event', 'Google Pay', 'Error', 'Failed to check if Google Pay available')
+        return err
       })
   }
 }

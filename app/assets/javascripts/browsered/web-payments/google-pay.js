@@ -1,7 +1,7 @@
 'use strict'
 
 const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers')
-const { email_collection_mode } = window.Charge
+const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 
 const processPayment = paymentData => {
   return fetch(`/web-payments-auth-request/google/${window.paymentDetails.chargeID}`, {
@@ -22,6 +22,7 @@ const processPayment = paymentData => {
     .catch(err => {
       showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
       ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
+      return err
     })
 }
 
@@ -42,7 +43,7 @@ const createGooglePaymentRequest = () => {
   }
 
   const options = {
-    requestPayerEmail: email_collection_mode !== 'OFF',
+    requestPayerEmail: email_collection_mode !== 'OFF', // eslint-disable-line camelcase
     requestPayerName: true
   }
 
