@@ -18,10 +18,15 @@
       "it",
       "expect",
       "cy",
-      "Cypress"
+      "Cypress",
+      "i18n",
+      "PaymentRequest",
+      "ApplePaySession",
+      "ga",
+      "fetch"
     ],
     "ignore": [
-      "app/assets/**/*.js"
+      "app/assets/javascripts/modules/*.js"
     ]
   },
   "scripts": {
