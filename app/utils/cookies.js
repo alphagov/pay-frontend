@@ -14,8 +14,8 @@ module.exports = {
   getSessionCookieName,
   setSessionVariable,
   getSessionVariable,
-  deleteSessionVariable,
-  namedCookie
+  namedCookie,
+  deleteSessionVariable
 }
 
 /**
@@ -33,6 +33,18 @@ function setValueOnCookie (req, key, value, cookieName) {
   } else {
     req[cookieName][key] = value
   }
+}
+
+/**
+ * @private
+ *
+ * @param {object} req
+ * @param {string} key
+ * @param {string} cookieName
+ */
+function deleteValueOnCookie (req, key, cookieName) {
+  if (typeof req[cookieName] !== 'object') return
+  delete req[cookieName][key]
 }
 
 /**
@@ -101,6 +113,22 @@ function getSessionCookieName () {
 }
 
 /**
+ * Deletes session[key] for all valid sessions, based on existence of encryption key,
+ * and the existence of relevant cookie on the request
+ *
+ * @param {Request} req
+ * @param {string} key
+ */
+function deleteSessionVariable (req, key) {
+  if (SESSION_ENCRYPTION_KEY) {
+    deleteValueOnCookie(req, key, SESSION_COOKIE_NAME_1)
+  }
+  if (SESSION_ENCRYPTION_KEY_2) {
+    deleteValueOnCookie(req, key, SESSION_COOKIE_NAME_2)
+  }
+}
+
+/**
  * Sets session[key] = value for all valid sessions, based on existence of encryption key,
  * and the existence of relevant cookie on the request
  *
@@ -127,18 +155,5 @@ function setSessionVariable (req, key, value) {
  */
 function getSessionVariable (req, key) {
   const session = req[getSessionCookieName()]
-
   return session && session[key]
-}
-
-/**
- * Delete value of key from session
- *
- * @param {Request} req
- * @param {string} key
- * @returns {*}
- */
-function deleteSessionVariable (req, key) {
-  const session = req[getSessionCookieName()]
-  delete session[key]
 }
