@@ -3,7 +3,6 @@
 const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers')
 const { email_collection_mode } = window.Charge
 
-
 const processPayment = paymentData => {
   return fetch(`/web-payments-auth-request/google/${window.paymentDetails.chargeID}`, {
     method: 'POST',
@@ -13,17 +12,17 @@ const processPayment = paymentData => {
     },
     body: JSON.stringify(paymentData)
   })
-  .then(response => {
-    if (response.status >= 200 && response.status < 300) {
-      return response.json().then(data => {
-        window.location.href = data.url
-      })
-    }
-  })
-  .catch(err => {
-    showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
-    ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
-  })
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json().then(data => {
+          window.location.href = data.url
+        })
+      }
+    })
+    .catch(err => {
+      showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
+      ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
+    })
 }
 
 const createGooglePaymentRequest = () => {

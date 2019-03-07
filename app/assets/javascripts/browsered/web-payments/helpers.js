@@ -86,11 +86,11 @@ const prepareAppleRequestObject = () => {
     currencyCode: details.total.amount.currency,
     total: {
       label: details.total.label,
-      amount: details.total.amount.value,
+      amount: details.total.amount.value
     },
     supportedNetworks: supportedNetworksFormattedByProvider('apple'),
     merchantCapabilities,
-    requiredShippingContactFields,
+    requiredShippingContactFields
   }
 }
 
@@ -109,7 +109,7 @@ const getGooglePaymentsConfiguration = () => {
     type: 'CARD',
     parameters: {
       allowedAuthMethods: allowedCardAuthMethods,
-      allowedCardNetworks: allowedCardNetworks,
+      allowedCardNetworks: allowedCardNetworks
     },
     tokenizationSpecification
   }

@@ -58,14 +58,14 @@ const init = provider => {
   switch (provider) {
     case 'apple':
       initApplePayIfAvailable()
-      break;
+      break
     case 'google':
       initGooglePayIfAvailable()
-      break;
+      break
     default:
       initApplePayIfAvailable()
       initGooglePayIfAvailable()
-      break;
+      break
   }
   setupEventListener()
 }

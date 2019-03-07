@@ -2,7 +2,7 @@
 
 const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
 
-function validateMerchantSession(url) {
+function validateMerchantSession (url) {
   return fetch(`/apple-pay-merchant-validation`, {
     method: 'POST',
     credentials: 'same-origin',
