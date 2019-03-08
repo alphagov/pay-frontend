@@ -1,3 +1,5 @@
+const cardPaymentStubs = require('../../utils/card-payment-stubs')
+
 describe('Standard card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
@@ -14,21 +16,7 @@ describe('Standard card payment flow', () => {
     email: 'validpayingemail@example.com'
   }
 
-  const createPaymentChargeStubs = [
-    { name: 'connectorCreateChargeFromToken', opts: { tokenId } },
-    { name: 'connectorDeleteToken', opts: { tokenId } },
-    { name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'CREATED',
-        state: { finished: false, status: 'created' }
-      }
-    },
-    { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
-
-    // @TODO(sfount) this should pass the service to be queried relative to the charge - right now it just returns a default service
-    { name: 'adminUsersGetService' }
-  ]
+  const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId)
 
   const checkCardDetailsStubs = [
     { name: 'connectorGetChargeDetails',

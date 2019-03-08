@@ -88,12 +88,12 @@
               </a>
             </li>
           </ul>
-          {% if service and service.merchantDetails %}
+          {% if service and service.merchantDetails and service.merchantDetails.name %}
             <ul class="govuk-footer__inline-list merchant-details">
               <li class="govuk-footer__inline-list-item merchant-details-line-1">Service provided by {{ service.merchantDetails.name }}</li>
-              <li class="govuk-footer__inline-list-item merchant-details-line-2">{{ service.merchantDetails.addressLine1 }},
-                {% if service.merchantDetails.addressLine2 %} {{ service.merchantDetails.addressLine2 }}, {% endif %}
-                {{ service.merchantDetails.city }} {{ service.merchantDetails.postcode }} {{ service.merchantDetails.countryName }}</li>
+              {% if service.hasCompleteMerchantDetailsAddress %}
+              <li class="govuk-footer__inline-list-item merchant-details-line-2">{{ service.merchantDetails.addressLine1 }}, {% if service.merchantDetails.addressLine2 -%} {{ service.merchantDetails.addressLine2 }}, {% endif -%} {{ service.merchantDetails.city }} {{ service.merchantDetails.postcode }} {{ service.merchantDetails.countryName }}</li>
+              {% endif %}
             </ul>
           {% endif %}
           <svg role="presentation" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 483.2 195.7" height="17" width="41">

@@ -163,31 +163,6 @@ const buildChargeDetails = function buildChargeDetails (opts) {
   return structure
 }
 
-const buildService = function buildService (opts = {}) {
-  const gatewayAccountIds = opts.gateway_account_ids || [ '6' ]
-  const externalId = opts.external_id || 'c0e046482d034c2e8392e543d5f4914e'
-  const structure = {
-    'id': opts.id || 6,
-    external_id: externalId,
-    'name': 'System Generated',
-    gateway_account_ids: gatewayAccountIds,
-    '_links': [
-      {
-        'rel': 'self',
-        'method': 'GET',
-        'href': `http://localhost:8080/v1/api/services/${externalId}`
-      }
-    ],
-    'service_name': {
-      'en': (opts.service_name && opts.service_name.en) || 'Default fixture service'
-    },
-    'redirect_to_service_immediately_on_terminal_state': false,
-    'collect_billing_address': true,
-    'current_go_live_stage': 'NOT_STARTED'
-  }
-  return structure
-}
-
 const fixtures = {
   // intitial charge details returned have different API surface than charge others
   validChargeCreatedByToken: (opts = {}) => {
@@ -220,7 +195,6 @@ const fixtures = {
   },
 
   validChargeDetails: (opts = {}) => buildChargeDetails(opts),
-  validService: (opts = {}) => buildService(opts),
   validChargeCardDetailsAuthorised: () => ({ 'status': 'AUTHORISATION SUCCESS' }),
 
   validCardDetails: () => {
