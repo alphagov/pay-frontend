@@ -1,4 +1,5 @@
 const paymentFixtures = require('./../../fixtures/payment_fixtures')
+const serviceFixtures = require('./../../fixtures/service_fixtures')
 
 const JSONRequestHeader = { 'Accept': 'application/json' }
 const JSONResponseHeader = { 'Content-Type': 'application/json' }
@@ -45,7 +46,7 @@ module.exports = {
   // @TODO(sfount) this should only match the query string with the - service ID provided
   adminUsersGetService: (opts = {}) => {
     const path = '/v1/api/services'
-    const body = paymentFixtures.validService()
+    const body = serviceFixtures.validServiceResponse(opts).getPlain()
 
     return simpleStubBuilder('GET', 200, path, body)
   },

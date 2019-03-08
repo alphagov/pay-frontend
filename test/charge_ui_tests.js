@@ -12,7 +12,6 @@ const renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertio
 // Constants
 const customBrandingData = {
   service: {
-    hasCustomBranding: true,
     customBranding: {
       cssUrl: 'css url',
       imageUrl: 'image url'
