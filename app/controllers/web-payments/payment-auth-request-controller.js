@@ -26,6 +26,7 @@ module.exports = (req, res) => {
         setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
           statusCode: data.statusCode
         })
+        logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`)
         res.status(200)
         res.send({ url: `/handle-payment-response/${chargeId}` })
       })
