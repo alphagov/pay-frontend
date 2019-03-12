@@ -14,13 +14,22 @@ module.exports = function (grunt) {
         ],
         outputStyle: 'compressed'
       },
-      files: [{
-        expand: true,
-        cwd: 'app/assets/sass',
-        src: ['*.scss', 'custom/*.scss'],
-        dest: 'public/stylesheets/',
-        ext: '.css'
-      }]
+      files: [
+        {
+          expand: true,
+          cwd: 'app/assets/sass',
+          src: ['*.scss', 'custom/*.scss'],
+          dest: 'public/stylesheets/',
+          ext: '.css'
+        },
+        {
+          expand: true,
+          cwd: 'app/assets/sass',
+          src: ['*.scss', 'custom/*.scss'],
+          dest: 'public/stylesheets/',
+          ext: '.min.css'
+        }
+      ]
     }
   }
 
@@ -147,12 +156,11 @@ module.exports = function (grunt) {
         mode: 'gzip'
       },
       files: [
-        { expand: true, src: ['public/images/*.jpg'], ext: '.jpg.gz' },
-        { expand: true, src: ['public/images/*.gif'], ext: '.gif.gz' },
-        { expand: true, src: ['public/images/*.png'], ext: '.png.gz' },
+        { expand: true, src: ['public/images/**/*.jpg'], ext: '.jpg.gz' },
+        { expand: true, src: ['public/images/**/*.gif'], ext: '.gif.gz' },
+        { expand: true, src: ['public/images/**/*.png'], ext: '.png.gz' },
         { expand: true, src: ['public/javascripts/*.min.js'], ext: '.min.js.gz' },
-        { expand: true, src: ['public/stylesheets/*.css'], ext: '.css.gz' },
-        { expand: true, src: ['public/stylesheets/custom/*.css'], ext: '.css.gz' }
+        { expand: true, src: ['public/stylesheets/**/*.min.css'], ext: '.min.css.gz' }
       ]
     }
   }
