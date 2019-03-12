@@ -3,6 +3,7 @@
 // NPM dependencies
 const normalise = require('../../services/normalise_charge')
 const logging = require('../../utils/logging')
+const logger = require('winston')
 const responseRouter = require('../../utils/response_router')
 const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const Charge = require('../../models/charge')
@@ -34,7 +35,10 @@ const handleAuthResponse = (req, res, charge) => response => {
       Charge(req.headers[CORRELATION_HEADER])
         .capture(req.chargeId)
         .then(
-          () => redirect(res).toReturn(req.chargeId),
+          () => {
+            logger.info(`Successful capture for digital wallet payment. ChargeID: ${charge.id}`)
+            return redirect(res).toReturn(req.chargeId)
+          },
           err => {
             if (err.message === 'CAPTURE_FAILED') {
               return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(
