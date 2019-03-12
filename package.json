@@ -136,7 +136,7 @@
     "nodemon": "^1.18.10",
     "nyc": "13.3.x",
     "pact": "4.3.2",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.1.62/pay-product-page-2.1.62.tgz",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/2.1.62.2/pay-product-page-2.1.62.2.tgz",
     "proxyquire": "~2.1.0",
     "sass-lint": "^1.12.1",
     "sinon": "7.2.x",
