@@ -4,9 +4,9 @@
 
 {% block head %}
   {% if service and service.customBranding and service.customBranding.cssUrl  %}
-    <link href="{{ service.customBranding.cssUrl }}" media="screen" rel="stylesheet" type="text/css" />
+    <link href="{{ service.customBranding.cssUrl }}" media="all" rel="stylesheet" />
   {% else %}
-    <link href="{{ css_path }}" media="screen" rel="stylesheet" type="text/css" />
+    <link href="{{ css_path }}" media="all" rel="stylesheet" />
   {% endif %}
 
   {% include "includes/analytics.njk" %}
