@@ -34,7 +34,7 @@ describe('adminusers client - services API', function () {
   })
 
   before(() => provider.setup())
-  after((done) => provider.finalize().then(done()))
+  after((done) => provider.finalize().then(() => { done() }))
 
   describe('FIND service by gateway account id', function () {
     describe('success', function () {
