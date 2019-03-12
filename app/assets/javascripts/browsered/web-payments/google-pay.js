@@ -13,6 +13,7 @@ const processPayment = paymentData => {
     body: JSON.stringify(paymentData)
   })
     .then(response => {
+      ga('send', 'event', 'Google Pay', 'Sucessful', 'auth/capture request')
       if (response.status >= 200 && response.status < 300) {
         return response.json().then(data => {
           window.location.href = data.url
