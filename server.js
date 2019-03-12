@@ -27,7 +27,7 @@ const i18nConfig = require('./config/i18n')
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID } = process.env
 const CSS_PATH = '/stylesheets/application.css'
-const JAVASCRIPT_PATH = '/javascripts/application.js'
+const JAVASCRIPT_PATH = '/javascripts/application.min.js'
 const argv = require('minimist')(process.argv.slice(2))
 const unconfiguredApp = express()
 const oneYear = 86400000 * 365
