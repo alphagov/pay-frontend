@@ -126,6 +126,7 @@ function initialisePublic (app) {
   app.use('/images', express.static(path.join(__dirname, '/public/images'), publicCaching))
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/assets/stylesheets'), publicCaching))
   app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/')))
+  app.use('/public', express.static(path.join(__dirname, '/node_modules/@govuk-pay/pay-js-commons/')))
 }
 
 function initialiseRoutes (app) {
