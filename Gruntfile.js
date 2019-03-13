@@ -20,13 +20,6 @@ module.exports = function (grunt) {
           cwd: 'app/assets/sass',
           src: ['*.scss', 'custom/*.scss'],
           dest: 'public/stylesheets/',
-          ext: '.css'
-        },
-        {
-          expand: true,
-          cwd: 'app/assets/sass',
-          src: ['*.scss', 'custom/*.scss'],
-          dest: 'public/stylesheets/',
           ext: '.min.css'
         }
       ]
