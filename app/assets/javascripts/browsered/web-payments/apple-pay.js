@@ -39,7 +39,7 @@ module.exports = () => {
 
   session.onpaymentauthorized = event => {
     const { payment } = event
-
+    console.log(payment)
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
       method: 'POST',
       credentials: 'same-origin',
