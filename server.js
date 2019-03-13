@@ -26,7 +26,7 @@ const i18nConfig = require('./config/i18n')
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID } = process.env
-const CSS_PATH = '/stylesheets/application.css'
+const CSS_PATH = '/stylesheets/application.min.css'
 const JAVASCRIPT_PATH = '/javascripts/application.min.js'
 const argv = require('minimist')(process.argv.slice(2))
 const unconfiguredApp = express()
@@ -126,6 +126,7 @@ function initialisePublic (app) {
   app.use('/images', express.static(path.join(__dirname, '/public/images'), publicCaching))
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/assets/stylesheets'), publicCaching))
   app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/')))
+  app.use('/public', express.static(path.join(__dirname, '/node_modules/@govuk-pay/pay-js-commons/')))
 }
 
 function initialiseRoutes (app) {
