@@ -12,7 +12,7 @@ const normaliseCardName = cardName => {
     case 'visa':
       return 'visa'
     default:
-      throw new Error('Unrecognised card brand in apple pay payload')
+      throw new Error('Unrecognised card brand in Apple Pay payload: ' + cardName)
   }
 }
 const nullable = word => {
