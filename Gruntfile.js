@@ -101,7 +101,7 @@ module.exports = function (grunt) {
     },
     js: {
       files: ['app/assets/javascripts/**/*.js', 'app/browsered.js'],
-      tasks: ['browserify', 'babel', 'concat'],
+      tasks: ['browserify', 'babel', 'concat', 'uglify'],
       options: {
         spawn: false,
         livereload: true
