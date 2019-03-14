@@ -1,7 +1,3 @@
-.payment-request-radios .govuk-radios__item:not(:last-child) {
-  display: none;
-}
-
 .payment-request-logo {
   float: left;
   margin-top: -.25rem;
@@ -9,3 +5,42 @@
   max-height: 2rem;
   width: auto;
 }
+
+.web-payments-container {
+  display: none;
+}
+
+// Toggle Apple Pay
+.apple-pay-available {
+  #web-payments-container {
+    display: block;
+  }
+
+  #enter-card-details-container {
+    display: none;
+  }
+}
+
+.apple-pay-unavailable {
+  .payment-request-radios .govuk-radios__item:first-child {
+    display: none;
+  }
+}
+
+// Toggle Google Pay
+.google-pay-available {
+  #web-payments-container {
+    display: block;
+  }
+
+  #enter-card-details-container {
+    display: none;
+  }
+}
+
+.google-pay-unavailable {
+  .payment-request-radios .govuk-radios__item:nth-child(2) {
+    display: none;
+  }
+}
+

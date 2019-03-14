@@ -6,7 +6,20 @@
   {{ __("cardDetails.title") }}
 {% endblock %}
 
+{% set bodyClasses = "google-pay-unavailable" %}
 {% set mainClasses = "charge-new" %}
+
+{% if allowApplePay%}
+  {% block bodyStart %}
+    <script>
+      if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+        document.body.classList.add('apple-pay-available')
+      } else {
+        document.body.classList.add('apple-pay-unavailable')
+      }
+    </script>
+  {% endblock %}
+{% endif %}
 
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
@@ -27,7 +40,7 @@
     </div>
 
   {% if allowApplePay or allowGooglePay %}
-    <form id="payment-request-container" class="hidden">
+    <form id="web-payments-container">
       {{ govukRadios({
         name: "payment-method",
         classes: "payment-request-radios",
