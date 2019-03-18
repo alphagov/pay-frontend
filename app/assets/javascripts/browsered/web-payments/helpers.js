@@ -25,10 +25,16 @@ const supportedNetworksFormattedByProvider = provider => {
       return type.brand
     }
   })
-  return availableNetworks
+
+  let filteredAvailableNetworks = availableNetworks
     .filter(brand => brand !== 'diners-club')
     .filter(brand => brand !== 'unionpay')
-    .filter(brand => brand !== 'maestro')
+
+  if (provider === 'google') {
+    filteredAvailableNetworks = filteredAvailableNetworks.filter(brand => brand !== 'maestro')
+  }
+
+  return filteredAvailableNetworks
     .map(brand => {
       let formattedBrand = brand
       if (brand === 'master-card') formattedBrand = 'masterCard'
