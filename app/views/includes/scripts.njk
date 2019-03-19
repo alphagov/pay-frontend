@@ -46,6 +46,7 @@
     {% if allowGooglePay%}
       window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
       window.googlePayMerchantID = '{{ googlePayMerchantID }}';
+      window.gatewayAccountType = '{{ gatewayAccount.type }}'
     {% endif %}
     {% if allowApplePay and allowGooglePay%}
       window.payScripts.webPayments.init('all');
