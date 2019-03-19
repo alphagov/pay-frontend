@@ -108,7 +108,7 @@ const getGooglePaymentsConfiguration = () => {
   }
 
   return {
-    environment: window.googlePayMerchantID.length > 0 ? 'PRODUCTION' : 'TEST',
+    environment: (window.googlePayMerchantID.length > 0 && window.gatewayAccountType === 'live') ? 'PRODUCTION' : 'TEST',
     apiVersion: 2,
     apiVersionMinor: 0,
     merchantInfo: {
