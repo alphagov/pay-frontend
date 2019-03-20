@@ -26,7 +26,9 @@ module.exports = function resolveServiceMiddleware (req, res, next) {
     res.locals.service = cachedService
     next()
   } else {
-    getAdminUsersClient({ correlationId: req.headers[CORRELATION_HEADER] })
+    // @FIXME(sfount) tests shouldn't rely on middleware returning a value if
+    //                it is not used by the middleware stack - revisit this structure
+    return getAdminUsersClient({ correlationId: req.headers[CORRELATION_HEADER] })
       .findServiceBy({ gatewayAccountId })
       .then(service => {
         serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_MAX_AGE)
