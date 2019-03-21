@@ -17,6 +17,13 @@
       } else {
         document.body.classList.add('apple-pay-unavailable')
       }
+
+      {# If our JS bundle fails to load we need to undo the above Apple Pay check #}
+      document.addEventListener('DOMContentLoaded', function(event) {
+        if (!window.payScripts.webPayments) {
+          document.body.classList.remove('apple-pay-available')
+        }
+      })
     </script>
   {% endblock %}
 {% endif %}

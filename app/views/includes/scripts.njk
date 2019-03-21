@@ -58,19 +58,3 @@
   });
 </script>
 <script src="{{ js_path }}"></script>
-<script>
-{# If our JS bundle fails to load we need to undo Apple Pay check #}
-function ready(fn) {
-  if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
-    fn();
-  } else {
-    document.addEventListener('DOMContentLoaded', fn);
-  }
-}
-
-ready(function() {
-  if (!window.payScripts.webPayments) {
-    document.body.classList.remove('apple-pay-available')
-  }
-})
-</script>
