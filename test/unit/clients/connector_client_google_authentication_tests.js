@@ -40,7 +40,7 @@ describe('connectors client - google authentication API', function () {
   describe('Authenticate google payment', function () {
     describe('authorisation success', function () {
       const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails()
-      const authorisationSuccessResponse = fixtures.googleAuthSuccessResponse()
+      const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before((done) => {
         provider.addInteraction(
