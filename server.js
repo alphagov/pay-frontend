@@ -23,6 +23,7 @@ const cookies = require('./app/utils/cookies')
 const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
+const i18nPayTranslation = require('./config/pay-translation')
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID } = process.env
@@ -82,6 +83,7 @@ function initialiseGlobalMiddleware (app) {
 function initialisei18n (app) {
   i18n.configure(i18nConfig)
   app.use(i18n.init)
+  app.use(i18nPayTranslation)
 }
 
 function initialiseProxy (app) {
