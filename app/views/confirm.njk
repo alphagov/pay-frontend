@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("confirmDetails.title") }}
+  {{ __p("confirmDetails.title") }}
 {% endblock %}
 
 {% set mainClasses = "confirm-page" %}
@@ -9,13 +9,13 @@
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ __("confirmDetails.title") }}</h1>
+    <h1 class="govuk-heading-l">{{ __p("confirmDetails.title") }}</h1>
 
     <table class="govuk-table">
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ __("confirmDetails.card") }}
+            {{ __p("confirmDetails.card") }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="card-number">
             {{ charge.cardDetails.cardNumber }}
@@ -23,7 +23,7 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ __("confirmDetails.expiry") }}
+            {{ __p("confirmDetails.expiry") }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="expiry-date">
             {{ charge.cardDetails.expiryDate }}
@@ -31,7 +31,7 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ __("confirmDetails.name") }}
+            {{ __p("confirmDetails.name") }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="cardholder-name">
             {{ charge.cardDetails.cardholderName }}
@@ -40,7 +40,7 @@
         {% if charge.cardDetails.billingAddress %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ __("confirmDetails.address") }}
+            {{ __p("confirmDetails.address") }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="address">
             {{ charge.cardDetails.billingAddress }}
@@ -50,7 +50,7 @@
         {% if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY') or (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' and charge.email) %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third govuk-!-padding-top-3 govuk-!-padding-bottom-3" scope="row">
-            {{ __("confirmDetails.email") }}
+            {{ __p("confirmDetails.email") }}
           </th>
           <td class="govuk-table__cell govuk-!-font-weight-bold" id="email">
             {{ charge.email }}
@@ -63,29 +63,29 @@
     <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
-      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">{{ __("commonButtons.confirmButton") }}</button>
+      <button id="confirm" class="govuk-button govuk-!-margin-top-6" data-module="stop-double-submit">{{ __p("commonButtons.confirmButton") }}</button>
     </form>
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="{{ __("commonButtons.cancelButton") }}" name="cancel">
+        <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
   </div>
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
-      <h2 class="govuk-heading-m">{{ __("paymentSummary.title") }}</h2>
+      <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
       <p id="payment-description" class="govuk-body govuk-!-font-weight-bold">
         {{ charge.description }}
       </p>
       {% if charge.corporateCardSurcharge %}
       <p class="govuk-body" id="payment-summary-breakdown">
-        {{ __("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
-        {{ __("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
+        {{ __p("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
+        {{ __p("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
       </p>
       {% endif %}
       <p class="govuk-body govuk-!-margin-bottom-0">
-        {{ __("paymentSummary.totalAmount") }}
+        {{ __p("paymentSummary.totalAmount") }}
         <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
       </p>
     </aside>

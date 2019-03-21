@@ -1,17 +1,17 @@
 {% extends "layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("errorViews.error") }} - GOV.UK Pay
+  {{ __p("errorViews.error") }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h3 class="govuk-heading-l">
-      {{ __("errorViews.error") }}:
+      {{ __p("errorViews.error") }}:
     </h3>
     <p class="govuk-body-l lede">
-      <a id="return-url" class="govuk-link" href="{{ returnUrl }}">{{ __("commonButtons.goBackToService") }}</a>
+      <a id="return-url" class="govuk-link" href="{{ returnUrl }}">{{ __p("commonButtons.goBackToService") }}</a>
     </p>
     <div class="govuk-body" id="errorMsg">{{ message }}</div>
   </div>

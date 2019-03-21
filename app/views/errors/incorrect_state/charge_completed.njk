@@ -1,16 +1,16 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("errorViews.paymentStatus") }} {{ status }}
+  {{ __p("errorViews.paymentStatus") }} {{ status }}
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l {{ status }}">{{ __("errorViews.paymentStatus") }} {{ status }}</h1>
-    <p class="govuk-body-l lede">{{ __("errorViews.toMakeChanges") }}</p>
+    <h1 class="govuk-heading-l {{ status }}">{{ __p("errorViews.paymentStatus") }} {{ status }}</h1>
+    <p class="govuk-body-l lede">{{ __p("errorViews.toMakeChanges") }}</p>
     <p class="govuk-body-l lede">
-      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __("errorViews.viewSummary") }}</a>
+      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __p("errorViews.viewSummary") }}</a>
     </p>
   </div>
 </div>

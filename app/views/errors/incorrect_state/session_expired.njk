@@ -1,17 +1,17 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("errorViews.paymentExpired") }} - GOV.UK Pay
+  {{ __p("errorViews.paymentExpired") }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l session-expired">{{ __("errorViews.sessionExpired") }}</h1>
-    <p class="govuk-body-l lede">{{ __("errorViews.sessionExpiredNoMoneyTaken") }}</p>
+    <h1 class="govuk-heading-l session-expired">{{ __p("errorViews.sessionExpired") }}</h1>
+    <p class="govuk-body-l lede">{{ __p("errorViews.sessionExpiredNoMoneyTaken") }}</p>
     {% if returnUrl %}
       <p class="govuk-body-l lede">
-        <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __("errorViews.tryAgain") }}</a>
+        <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __p("errorViews.tryAgain") }}</a>
       </p>
     {% endif %}
   </div>

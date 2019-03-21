@@ -1,20 +1,20 @@
 {% extends "../layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("errorViews.error") }} - GOV.UK Pay
+  {{ __p("errorViews.error") }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l system-error">{{ __("errorViews.technicalProblems") }}</h1>
+    <h1 class="govuk-heading-l system-error">{{ __p("errorViews.technicalProblems") }}</h1>
     {% if returnUrl %}
-      <p class="govuk-body-l lede">{{ __("errorViews.noMoneyTaken") }}</p>
+      <p class="govuk-body-l lede">{{ __p("errorViews.noMoneyTaken") }}</p>
       <p class="govuk-body-l lede">
-        <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __("errorViews.tryAgain") }}</a>
+        <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __p("errorViews.tryAgain") }}</a>
       </p>
     {% else %}
-      <p class="govuk-body-l lede">{{ __("errorViews.noMoneyTaken") }}</p>
+      <p class="govuk-body-l lede">{{ __p("errorViews.noMoneyTaken") }}</p>
     {% endif %}
   </div>
 </div>

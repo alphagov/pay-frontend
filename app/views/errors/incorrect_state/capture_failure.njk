@@ -1,16 +1,16 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("errorViews.paymentStatus") }} {{ status }} - GOV.UK Pay
+  {{ __p("errorViews.paymentStatus") }} {{ status }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ __("errorViews.unsuccessful") }}</h1>
-    <p class="govuk-body-l lede">{{ __("errorViews.noMoneyTaken") }}</p>
+    <h1 class="govuk-heading-l">{{ __p("errorViews.unsuccessful") }}</h1>
+    <p class="govuk-body-l lede">{{ __p("errorViews.noMoneyTaken") }}</p>
     <p class="govuk-body-l lede">
-      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __("errorViews.tryAgain") }}</a>
+      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __p("errorViews.tryAgain") }}</a>
     </p>
   </div>
 </div>

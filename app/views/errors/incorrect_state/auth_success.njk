@@ -1,18 +1,18 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("commonHeadings.inProgress") }} - GOV.UK Pay
+  {{ __p("commonHeadings.inProgress") }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ __("commonHeadings.inProgress") }}</h1>
-    <p class="govuk-body-l lede">{{ __("errorViews.either") }}<br/>
-      <a href="/card_details/{{chargeId}}/confirm" id="confirm-link">{{ __("errorViews.continue") }}</a>
+    <h1 class="govuk-heading-l">{{ __p("commonHeadings.inProgress") }}</h1>
+    <p class="govuk-body-l lede">{{ __p("errorViews.either") }}<br/>
+      <a href="/card_details/{{chargeId}}/confirm" id="confirm-link">{{ __p("errorViews.continue") }}</a>
     </p>
-    <p class="govuk-body-l lede">{{ __("commonConjunctions.or") }}<br/>
-      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __("errorViews.tryAgain") }}</a>
+    <p class="govuk-body-l lede">{{ __p("commonConjunctions.or") }}<br/>
+      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __p("errorViews.tryAgain") }}</a>
     </p>
   </div>
 </div>
