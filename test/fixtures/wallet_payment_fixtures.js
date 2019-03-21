@@ -39,7 +39,7 @@ const fixtures = {
       }
     }
   },
-  googleAuthFailedResponse: (message) => {
+  webPaymentFailedResponse: (message) => {
     const data = {
       message: message
     }

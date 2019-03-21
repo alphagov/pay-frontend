@@ -73,7 +73,7 @@ describe('connectors client - google authentication API', function () {
 
     describe('authorisation declined', function () {
       const declinedGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '0002' })
-      const authorisationDeclinedResponse = fixtures.googleAuthFailedResponse('This transaction was declined.')
+      const authorisationDeclinedResponse = fixtures.webPaymentFailedResponse('This transaction was declined.')
 
       before((done) => {
         provider.addInteraction(
@@ -104,7 +104,7 @@ describe('connectors client - google authentication API', function () {
     })
     describe('authorisation error', function () {
       const errorGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '0119' })
-      const authorisationErrorResponse = fixtures.googleAuthFailedResponse('This transaction could be not be processed.')
+      const authorisationErrorResponse = fixtures.webPaymentFailedResponse('This transaction could be not be processed.')
 
       before((done) => {
         provider.addInteraction(
