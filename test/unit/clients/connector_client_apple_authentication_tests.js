@@ -65,7 +65,7 @@ describe('connectors client - apple authentication API', function () {
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
-        }).catch((err) => done('should not be hit: ' + JSON.stringify(err)))
+        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })
     })
   })
@@ -96,7 +96,7 @@ describe('connectors client - apple authentication API', function () {
       }).then(res => {
         expect(res.body.message).to.be.equal('This transaction was declined.')
         done()
-      }).catch((err) => done('should not be hit: ' + JSON.stringify(err)))
+      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
     })
   })
 
@@ -126,7 +126,7 @@ describe('connectors client - apple authentication API', function () {
       }).then(res => {
         expect(res.body.message).to.be.equal('This transaction could be not be processed.')
         done()
-      }).catch((err) => done('should not be hit: ' + JSON.stringify(err)))
+      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
     })
   })
 })
