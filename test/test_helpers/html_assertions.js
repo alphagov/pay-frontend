@@ -9,7 +9,11 @@ const views = ['./app/views', './node_modules/govuk-frontend']
 const environment = nunjucks.configure(views)
 const strings = require('./../../locales/en.json')
 
-// Shim for i18n to make it recognise the __() function and return the English string
+// Shim for i18n to make it recognise the `__p()`` and `__()` function and return the English string
+environment.addGlobal('__p', string => {
+  return lodash.get(strings, string)
+})
+
 environment.addGlobal('__', string => {
   return lodash.get(strings, string)
 })
