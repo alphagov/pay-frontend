@@ -137,9 +137,12 @@ function containsSuspectedCVV (input) {
 function cardNo (cardNo) {
   if (!cardNo) return 'message' // default message
   cardNo = cardNo.replace(/\D/g, '')
-  const cardType = creditCardType(cardNo)
+  let cardType = creditCardType(cardNo)
   if (!cardNo || cardNo.length < 12 || cardNo.length > 19) return 'numberIncorrectLength'
   if (!luhn.validate(cardNo)) return 'luhnInvalid'
   if (!cardType[0]) return 'cardNotSupported'
+  if (cardType[0].type === 'mastercard') {
+    cardType[0].type = 'master-card'
+  }
   return this.allowed.filter(card => card.brand === cardType[0].type).length > 0 || 'cardNotSupported'
 }
