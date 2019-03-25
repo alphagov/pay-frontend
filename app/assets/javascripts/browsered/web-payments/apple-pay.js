@@ -3,7 +3,7 @@
 const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
 
 module.exports = () => {
-  const session = new ApplePaySession(3, prepareAppleRequestObject())
+  const session = new ApplePaySession(4, prepareAppleRequestObject())
 
   function validateMerchantSession (url) {
     return fetch(`/apple-pay-merchant-validation`, {
