@@ -6,14 +6,11 @@ const makeApplePayRequest = require('./apple-pay')
 const { createGooglePaymentRequest, googlePayNow } = require('./google-pay')
 
 // Browser elements
-const paymentMethodForm = document.getElementById('payment-request-container')
+const paymentMethodForm = document.getElementById('web-payments-container')
 const standardMethodContainer = document.getElementById('enter-card-details-container')
 
 const initApplePayIfAvailable = () => {
-  if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
-    paymentMethodForm.classList.remove('hidden')
-    standardMethodContainer.classList.add('hidden')
-    document.getElementById('payment-method-apple-pay').parentNode.style.display = 'block'
+  if (document.body.classList.contains('apple-pay-available')) {
     document.getElementById('payment-method-apple-pay').checked = true
   }
 }
@@ -24,8 +21,8 @@ const initGooglePayIfAvailable = () => {
       .canMakePayment()
       .then(result => {
         if (result) {
-          paymentMethodForm.classList.remove('hidden')
-          standardMethodContainer.classList.add('hidden')
+          document.body.classList.remove('google-pay-unavailable')
+          document.body.classList.add('google-pay-available')
           document.getElementById('payment-method-google-pay').parentNode.style.display = 'block'
         }
       }).catch(err => {
@@ -40,7 +37,7 @@ const setupEventListener = () => {
     paymentMethodForm.addEventListener('submit', function (e) {
       e.preventDefault()
       clearErrorSummary()
-      const checkedValue = document.querySelectorAll('#payment-request-container input:checked')[0].value
+      const checkedValue = document.querySelectorAll('#web-payments-container input:checked')[0].value
 
       switch (checkedValue) {
         case 'apple-pay':

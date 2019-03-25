@@ -19,6 +19,12 @@ const clearErrorSummary = () => {
   errorSummary.classList.add('hidden')
 }
 
+const toggleWaiting = status => {
+  const button = document.getElementById('payment-method-submit')
+  button[button.getAttribute('disabled') ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled')
+  document.getElementById('spinner').classList.toggle('hidden')
+}
+
 const supportedNetworksFormattedByProvider = provider => {
   const availableNetworks = allowedCardTypes.map(type => {
     if (type.debit || type.credit) {
@@ -127,6 +133,7 @@ const getGooglePaymentsConfiguration = () => {
 module.exports = {
   showErrorSummary,
   clearErrorSummary,
+  toggleWaiting,
   prepareAppleRequestObject,
   getGooglePaymentsConfiguration
 }

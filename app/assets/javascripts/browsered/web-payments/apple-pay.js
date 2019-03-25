@@ -1,6 +1,6 @@
 'use strict'
 
-const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
+const { prepareAppleRequestObject, showErrorSummary, toggleWaiting } = require('./helpers')
 
 module.exports = () => {
   const session = new ApplePaySession(4, prepareAppleRequestObject())
@@ -39,6 +39,7 @@ module.exports = () => {
 
   session.onpaymentauthorized = event => {
     const { payment } = event
+    toggleWaiting()
 
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
       method: 'POST',
@@ -56,11 +57,13 @@ module.exports = () => {
         })
       } else {
         session.abort()
+        toggleWaiting()
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'During authorisation/capture')
       }
     }).catch(err => {
       session.abort()
+      toggleWaiting()
       showErrorSummary(i18n.fieldErrors.webPayments.apple)
       ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
       return err
