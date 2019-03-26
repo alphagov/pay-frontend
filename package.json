@@ -93,7 +93,7 @@
     "randomstring": "^1.1.5",
     "readdir": "0.1.x",
     "request": "^2.88.0",
-    "requestretry": "^3.1.0",
+    "requestretry": "^4.0.0",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.5.0",
     "staticify": "3.3.x",
