@@ -9,24 +9,24 @@
 {% set bodyClasses = "google-pay-unavailable" %}
 {% set mainClasses = "charge-new" %}
 
-{% if allowApplePay%}
   {% block bodyStart %}
-    <script>
-      if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
-        document.body.classList.add('apple-pay-available')
-      } else {
-        document.body.classList.add('apple-pay-unavailable')
-      }
-
-      {# If our JS bundle fails to load we need to undo the above Apple Pay check #}
-      document.addEventListener('DOMContentLoaded', function(event) {
-        if (!window.payScripts.webPayments) {
-          document.body.classList.remove('apple-pay-available')
+    {% if allowApplePay %}
+      <script>
+        if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+          document.body.classList.add('apple-pay-available')
+        } else {
+          document.body.classList.add('apple-pay-unavailable')
         }
-      })
-    </script>
+
+        {# If our JS bundle fails to load we need to undo the above Apple Pay check #}
+        document.addEventListener('DOMContentLoaded', function(event) {
+          if (!window.payScripts.webPayments) {
+            document.body.classList.remove('apple-pay-available')
+          }
+        })
+      </script>
+    {% endif %}
   {% endblock %}
-{% endif %}
 
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
