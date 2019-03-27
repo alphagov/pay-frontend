@@ -12,7 +12,7 @@
   {% block bodyStart %}
     {% if allowApplePay %}
       <script>
-        if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+        if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
           document.body.classList.add('apple-pay-available')
         } else {
           document.body.classList.add('apple-pay-unavailable')
