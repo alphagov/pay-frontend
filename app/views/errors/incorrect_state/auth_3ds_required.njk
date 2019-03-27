@@ -1,17 +1,17 @@
 {% extends "../../layout.njk" %}
 
 {% block pageTitle %}
-  {{ __("commonHeadings.inProgress") }} - GOV.UK Pay
+  {{ __p("commonHeadings.inProgress") }} - GOV.UK Pay
 {% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ __("commonHeadings.inProgress") }}</h1>
-    <p class="govuk-body-l lede">{{ __("errorViews.either") }}</p>
-    <a class="govuk-body-l lede" href="/card_details/{{ chargeId }}/3ds_required" id="threeds-required-link">{{ __("errorViews.continue") }}</a>
-    <p class="govuk-body-l lede">{{ __("commonConjunctions.or") }}<br/>
-      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __("errorViews.tryAgain") }}</a>
+    <h1 class="govuk-heading-l">{{ __p("commonHeadings.inProgress") }}</h1>
+    <p class="govuk-body-l lede">{{ __p("errorViews.either") }}</p>
+    <a class="govuk-body-l lede" href="/card_details/{{ chargeId }}/3ds_required" id="threeds-required-link">{{ __p("errorViews.continue") }}</a>
+    <p class="govuk-body-l lede">{{ __p("commonConjunctions.or") }}<br/>
+      <a href="{{ returnUrl }}" id="return-url" class="govuk-link">{{ __p("errorViews.tryAgain") }}</a>
     </p>
   </div>
 </div>
