@@ -9,7 +9,7 @@
 // NPM dependencies
 const i18n = require('i18n')
 
-module.exports = function (req, res, next) {
+module.exports = function payGetTranslation (req, res, next) {
   res.locals.__p = res.__p = function () {
     const translation = i18n.__.apply(req, arguments)
     if (arguments[0] === translation) {
