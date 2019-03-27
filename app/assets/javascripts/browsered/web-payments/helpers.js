@@ -40,6 +40,10 @@ const supportedNetworksFormattedByProvider = provider => {
     filteredAvailableNetworks = filteredAvailableNetworks.filter(brand => brand !== 'maestro')
   }
 
+  if (provider === 'apple' && filteredAvailableNetworks.includes('visa')) {
+    filteredAvailableNetworks.push('electron')
+  }
+
   return filteredAvailableNetworks
     .map(brand => {
       let formattedBrand = brand
