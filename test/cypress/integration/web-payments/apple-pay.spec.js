@@ -95,6 +95,7 @@ describe('Apple Pay payment flow', () => {
 
   // Mock function to trick JS into thinking Apple Pay is available
   MockApplePaySession.canMakePayments = () => true
+  MockApplePaySession.supportsVersion = () => true
 
   const mockFetchAPI = path => {
     // Mock merchant validation controller response
