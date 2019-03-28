@@ -1,6 +1,7 @@
 'use strict'
 
 const { prepareAppleRequestObject, showErrorSummary, toggleWaiting } = require('./helpers')
+const rfc822Validator = require('rfc822-validate')
 
 module.exports = () => {
   const session = new ApplePaySession(4, prepareAppleRequestObject())
@@ -30,7 +31,6 @@ module.exports = () => {
       .then(response => {
         session.completeMerchantValidation(response)
       }).catch(err => {
-        session.abort()
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'Error completing Merchant validation')
         return err
@@ -68,6 +68,13 @@ module.exports = () => {
       ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
       return err
     })
+  }
+
+  session.onshippingcontactselected = function (event) {
+    console.log(event)
+    const { email } = event.shippingContact
+
+    session.completeShippingContactSelection(rfc822Validator(email) ? ApplePaySession.STATUS_SUCCESS : ApplePaySession.STATUS_INVALID_SHIPPING_CONTACT)
   }
 
   session.begin()
