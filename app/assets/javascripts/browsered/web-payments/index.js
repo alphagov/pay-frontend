@@ -45,8 +45,8 @@ const setupEventListener = () => {
         case 'google-pay':
           return googlePayNow()
         default:
-          standardMethodContainer.classList.remove('hidden')
-          paymentMethodForm.classList.add('hidden')
+          standardMethodContainer.style.display = 'block'
+          paymentMethodForm.style.display = 'none'
       }
     }, false)
   }
