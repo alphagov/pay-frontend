@@ -41,6 +41,12 @@ module.exports = () => {
     const { payment } = event
     toggleWaiting()
 
+    if (!rfc822Validator(payment.shippingContact.emailAddress)) {
+      toggleWaiting()
+      showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
+      return new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
+    }
+
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -68,13 +74,6 @@ module.exports = () => {
       ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
       return err
     })
-  }
-
-  session.onshippingcontactselected = function (event) {
-    console.log(event)
-    const { email } = event.shippingContact
-
-    session.completeShippingContactSelection(rfc822Validator(email) ? ApplePaySession.STATUS_SUCCESS : ApplePaySession.STATUS_INVALID_SHIPPING_CONTACT)
   }
 
   session.begin()

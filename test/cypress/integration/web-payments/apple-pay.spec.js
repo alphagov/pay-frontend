@@ -3,31 +3,33 @@ describe('Apple Pay payment flow', () => {
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const returnURL = '?success'
 
-  const validPaymentRequestResponse = {
-    shippingContact: {
-      emailAddress: 'jonheslop@bla.test',
-      familyName: 'payment',
-      givenName: 'mr',
-      phoneticFamilyName: '',
-      phoneticGivenName: ''
-    },
-    token: {
-      paymentData: {
-        version: 'EC_v1',
-        data: 'MLHhOn2BXhNw9wLLDR48DyeUcuSmRJ6KnAIGTMGqsgiMpc+AoJ…LUQ6UovkfSnW0sFH6NGZ0jhoap6LYnThYb9WT6yKfEm/rDhM=',
-        signature: 'MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFAD…ZuQFfsLJ+Nb3+7bpjfBsZAhA1sIT1XmHoGFdoCUT3AAAAAAAA',
-        header: {
-          ephemeralPublicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5/Qc6z4TY5HQ5n…KC3kJ4DtIWedPQ70N35PBZzJUrFjtvDZFUvs80uo2ynu+lw==',
-          publicKeyHash: 'Xzn7W3vsrlKlb0QvUAviASubdtW4BotWrDo5mGG+UWY=',
-          transactionId: '372c3858122b6bc39c6095eca2f994a8aa012f3b025d0d72ecfd449c2a5877f9'
-        }
+  const validPaymentRequestResponse = email => {
+    return {
+      shippingContact: {
+        emailAddress: email || 'jonheslop@bla.test',
+        familyName: 'payment',
+        givenName: 'mr',
+        phoneticFamilyName: '',
+        phoneticGivenName: ''
       },
-      paymentMethod: {
-        displayName: 'MasterCard 1358',
-        network: 'MasterCard',
-        type: 'debit'
-      },
-      transactionIdentifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
+      token: {
+        paymentData: {
+          version: 'EC_v1',
+          data: 'MLHhOn2BXhNw9wLLDR48DyeUcuSmRJ6KnAIGTMGqsgiMpc+AoJ…LUQ6UovkfSnW0sFH6NGZ0jhoap6LYnThYb9WT6yKfEm/rDhM=',
+          signature: 'MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFAD…ZuQFfsLJ+Nb3+7bpjfBsZAhA1sIT1XmHoGFdoCUT3AAAAAAAA',
+          header: {
+            ephemeralPublicKey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5/Qc6z4TY5HQ5n…KC3kJ4DtIWedPQ70N35PBZzJUrFjtvDZFUvs80uo2ynu+lw==',
+            publicKeyHash: 'Xzn7W3vsrlKlb0QvUAviASubdtW4BotWrDo5mGG+UWY=',
+            transactionId: '372c3858122b6bc39c6095eca2f994a8aa012f3b025d0d72ecfd449c2a5877f9'
+          }
+        },
+        paymentMethod: {
+          displayName: 'MasterCard 1358',
+          network: 'MasterCard',
+          type: 'debit'
+        },
+        transactionIdentifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
+      }
     }
   }
 
@@ -61,41 +63,47 @@ describe('Apple Pay payment flow', () => {
   ]
 
   // Mock class for Apple Pay
-  class MockApplePaySession {
-    completePayment () {
-      return true
-    }
-
-    completeMerchantValidation () {
-      return true
-    }
-
-    begin () {
-      if (this._onvalidatemerchant) {
-        this._onvalidatemerchant(
-          { validationURL: 'https://fakeapple.url' }
-        )
+  const getMockApplePayClass = email => {
+    class MockApplePaySession {
+      completePayment () {
+        return true
       }
 
-      if (this._onpaymentauthorized) {
-        this._onpaymentauthorized(
-          { payment: validPaymentRequestResponse }
-        )
+      completeMerchantValidation () {
+        return true
+      }
+
+      begin () {
+        if (this._onvalidatemerchant) {
+          this._onvalidatemerchant(
+            { validationURL: 'https://fakeapple.url' }
+          )
+        }
+
+        if (this._onpaymentauthorized) {
+          this._onpaymentauthorized(
+            { payment: validPaymentRequestResponse(email) }
+          )
+        }
+      }
+
+      set onvalidatemerchant (value) {
+        this._onvalidatemerchant = value
+      }
+
+      set onpaymentauthorized (value) {
+        this._onpaymentauthorized = value
       }
     }
 
-    set onvalidatemerchant (value) {
-      this._onvalidatemerchant = value
-    }
+    // Mock function to trick JS into thinking Apple Pay is available
+    MockApplePaySession.canMakePayments = () => true
+    MockApplePaySession.supportsVersion = () => true
 
-    set onpaymentauthorized (value) {
-      this._onpaymentauthorized = value
-    }
+    return MockApplePaySession
   }
 
-  // Mock function to trick JS into thinking Apple Pay is available
-  MockApplePaySession.canMakePayments = () => true
-  MockApplePaySession.supportsVersion = () => true
+  const MockApplePayError = () => true
 
   const mockFetchAPI = path => {
     // Mock merchant validation controller response
@@ -137,7 +145,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
-          win.ApplePaySession = MockApplePaySession
+          win.ApplePaySession = getMockApplePayClass('jonheslop@bla.test')
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
@@ -177,7 +185,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
-          win.ApplePaySession = MockApplePaySession
+          win.ApplePaySession = getMockApplePayClass('jonheslop@bla.test')
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
@@ -195,6 +203,43 @@ describe('Apple Pay payment flow', () => {
       // 8. User should see normal payment form
       cy.get('#enter-card-details-container').should('be.visible')
       cy.get('#card-no').should('be.visible')
+    })
+
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be deleted (DELETE)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show Apple Pay but error because a bad email was entered', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          // Stub Apple Pay API (which only exists within Safari)
+          win.ApplePaySession = getMockApplePayClass('badEmail')
+          win.ApplePayError = MockApplePayError
+          // Stub fetch so we can simulate
+          // 1. The merchant validation call to Apple
+          // 2. The auth call to connector
+          cy.stub(win, 'fetch', mockFetchAPI)
+        }
+      })
+
+      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
+      cy.get('#payment-method-apple-pay').should('be.visible')
+      cy.get('#payment-method-apple-pay').click()
+      cy.get('#payment-method-submit').should('be.visible')
+      cy.get('#payment-method-submit').click()
+
+      // 8. User clicks though the native payment UI but the email is invalid and we throw an error
+      cy.get('#error-summary').should('be.visible')
     })
   })
 })
