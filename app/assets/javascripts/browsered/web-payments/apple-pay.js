@@ -44,7 +44,12 @@ module.exports = () => {
     if (!rfc822Validator(payment.shippingContact.emailAddress)) {
       toggleWaiting()
       showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
-      return new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
+
+      const emailError = new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
+      return session.completePayment({
+        status: ApplePaySession.STATUS_FAILURE,
+        errors: [emailError]
+      })
     }
 
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {
