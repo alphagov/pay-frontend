@@ -132,7 +132,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     })
 
-    it('Should show Apple Pay as a payment option', () => {
+    it('Should show Apple Pay as a payment option and user chooses Apple Pay', () => {
       cy.task('setupStubs', checkCardDetailsStubs)
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -157,6 +157,44 @@ describe('Apple Pay payment flow', () => {
         expect(loc.pathname).to.eq('/')
         expect(loc.search).to.eq(returnURL)
       })
+    })
+
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be deleted (DELETE)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show Apple Pay as a payment option but the user chooses to pay normally', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          // Stub Apple Pay API (which only exists within Safari)
+          win.ApplePaySession = MockApplePaySession
+          // Stub fetch so we can simulate
+          // 1. The merchant validation call to Apple
+          // 2. The auth call to connector
+          cy.stub(win, 'fetch', mockFetchAPI)
+        }
+      })
+
+      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
+      cy.get('#payment-method-apple-pay').should('be.visible')
+      cy.get('#payment-method-standard').should('be.visible')
+      cy.get('#payment-method-standard').click()
+      cy.get('#payment-method-submit').should('be.visible')
+      cy.get('#payment-method-submit').click()
+
+      // 8. User should see normal payment form
+      cy.get('#enter-card-details-container').should('be.visible')
+      cy.get('#card-no').should('be.visible')
     })
   })
 })
