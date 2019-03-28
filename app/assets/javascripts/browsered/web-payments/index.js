@@ -23,7 +23,6 @@ const initGooglePayIfAvailable = () => {
         if (result) {
           document.body.classList.remove('google-pay-unavailable')
           document.body.classList.add('google-pay-available')
-          document.getElementById('payment-method-google-pay').parentNode.style.display = 'block'
         }
       }).catch(err => {
         ga('send', 'event', 'Google Pay', 'Error', 'Failed to check if Google Pay available')
@@ -45,8 +44,8 @@ const setupEventListener = () => {
         case 'google-pay':
           return googlePayNow()
         default:
-          standardMethodContainer.classList.remove('hidden')
-          paymentMethodForm.classList.add('hidden')
+          standardMethodContainer.style.display = 'block'
+          paymentMethodForm.style.display = 'none'
       }
     }, false)
   }

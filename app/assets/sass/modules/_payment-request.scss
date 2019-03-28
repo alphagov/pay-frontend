@@ -10,10 +10,18 @@
   display: none;
 }
 
+.payment-request-radios .govuk-radios__item:not(:last-child ){
+  display: none;
+}
+
 // Toggle Apple Pay
 .apple-pay-available {
   #web-payments-container {
     display: block;
+
+    .payment-request-radios .govuk-radios__item:first-child {
+      display: block;
+    }
   }
 
   #enter-card-details-container {
@@ -31,6 +39,10 @@
 .google-pay-available {
   #web-payments-container {
     display: block;
+
+    .payment-request-radios .govuk-radios__item:nth-child(2) {
+      display: block;
+    }
   }
 
   #enter-card-details-container {
