@@ -22,6 +22,7 @@
       "i18n",
       "PaymentRequest",
       "ApplePaySession",
+      "ApplePayError",
       "ga",
       "fetch"
     ],
