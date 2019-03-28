@@ -1,8 +1,6 @@
 // Please leave here even though it looks unused - this enables Node.js metrics to be pushed to Hosted Graphite
 if (process.env.DISABLE_APPMETRICS !== 'true') {
-  const metrics = require('./app/utils/metrics.js')
-  metrics.configureAppMetrics()
-  metrics.sendInitialCertificateMetric()
+  require('./app/utils/metrics.js').metrics()
 }
 
 // Node.js core dependencies
