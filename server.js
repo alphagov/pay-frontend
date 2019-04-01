@@ -16,6 +16,7 @@ const loggingMiddleware = require('morgan')
 const i18n = require('i18n')
 const staticify = require('staticify')(path.join(__dirname, 'public'))
 const compression = require('compression')
+const certinfo = require('cert-info')
 
 // Local dependencies
 const router = require('./app/routes')
@@ -26,7 +27,7 @@ const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 
 // Global constants
-const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID } = process.env
+const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
 const CSS_PATH = '/stylesheets/application.min.css'
 const JAVASCRIPT_PATH = '/javascripts/application.min.js'
 const argv = require('minimist')(process.argv.slice(2))
@@ -141,6 +142,14 @@ function listen () {
   logger.log('Listening on port ' + PORT || 3000)
 }
 
+function logApplePayCertificateTimeToExpiry () {
+  if (APPLE_PAY_MERCHANT_ID_CERTIFICATE !== undefined) {
+    const merchantIdCert = certinfo.info(APPLE_PAY_MERCHANT_ID_CERTIFICATE)
+    const certificateTimeToExpiry = Math.floor((merchantIdCert.expiresAt - Date.now()) / 1000 / 60 / 60 / 24)
+    logger.info(`The Apple Pay Merchant identity cert will expire in ${certificateTimeToExpiry} days`)
+  }
+}
+
 /**
  * Configures app
  * @return app
@@ -155,6 +164,7 @@ function initialise () {
   initialiseTemplateEngine(app)
   initialisePublic(app)
   initialiseRoutes(app) // This contains the 404 override and so should be last
+  logApplePayCertificateTimeToExpiry()
 
   return app
 }
