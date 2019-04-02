@@ -40,8 +40,8 @@
     "watch-live-reload": "./node_modules/.bin/grunt watch",
     "test": "rm -rf ./pacts && DISABLE_APPMETRICS=true node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
-    "cypress:test": "cypress run",
-    "cypress:test-headed": "cypress open",
+    "cypress:test": "./scripts/run-cypress",
+    "cypress:test-headed": "./scripts/run-cypress headed",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
     "publish-pacts": "./bin/publish-pacts.js"
@@ -114,7 +114,6 @@
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.3",
     "chokidar-cli": "latest",
-    "cypress": "^3.1.5",
     "dotenv": "^7.0.0",
     "envfile": "^3.0.0",
     "eslint": "^5.16.0",

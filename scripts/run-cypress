@@ -1,0 +1,15 @@
+#!/bin/sh
+if ! [ -x "$(command -v cypress)" ]; then 
+  echo "Cypress not found in this environment"
+  echo "For development, Cypress can be added with \`npm i -g cypress\`"
+  echo "For CI Cypress should be available through the container node"
+  exit 1
+fi
+
+if [ "$1" == "headed" ]; then
+  echo "Cypress found in environment, executing open"
+  cypress open --project $PWD
+else
+  echo "Cypress found in environment, executing run"
+  cypress run
+fi
