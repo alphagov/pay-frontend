@@ -12,6 +12,7 @@ const standardMethodContainer = document.getElementById('enter-card-details-cont
 const initApplePayIfAvailable = () => {
   if (document.body.classList.contains('apple-pay-available')) {
     document.getElementById('payment-method-apple-pay').checked = true
+    ga('send', 'event', 'Apple Pay', 'Enabled', 'Apple pay available on this device')
   }
 }
 
@@ -23,6 +24,7 @@ const initGooglePayIfAvailable = () => {
         if (result) {
           document.body.classList.remove('google-pay-unavailable')
           document.body.classList.add('google-pay-available')
+          ga('send', 'event', 'Google Pay', 'Enabled', 'Google pay available on this device')
         }
       }).catch(err => {
         ga('send', 'event', 'Google Pay', 'Error', 'Failed to check if Google Pay available')
@@ -38,10 +40,12 @@ const setupEventListener = () => {
       clearErrorSummary()
       const checkedValue = document.querySelectorAll('#web-payments-container input:checked')[0].value
 
+      ga('send', 'event', checkedValue, 'Selection', `User chose ${checkedValue} method`)
+
       switch (checkedValue) {
-        case 'apple-pay':
+        case 'Apple Pay':
           return makeApplePayRequest()
-        case 'google-pay':
+        case 'Google Pay':
           return googlePayNow()
         default:
           standardMethodContainer.style.display = 'block'
