@@ -31,6 +31,10 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
     }
 
     AWSXRay.captureAsyncFunc('cardIdClient_post', function (postSubsegment) {
+      if (cardNo.length > 0 && cardNo.length < 11) {
+        postSubsegment.close()
+        return reject(new Error(i18n.__('fieldErrors.fields.cardNo.numberIncorrectLength')))
+      }
       cardIdClient.post({ payload: data, correlationId: correlationId }, postSubsegment)
         .then((response) => {
           postSubsegment.close()

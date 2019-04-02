@@ -4,6 +4,7 @@ const cardPaymentStubs = require('../../utils/card-payment-stubs')
 describe('The footer displayed on payment pages', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
+  const language = 'en'
 
   beforeEach(() => {
     cy.sessionCookie(chargeId)
@@ -24,7 +25,7 @@ describe('The footer displayed on payment pages', () => {
       }
     }
 
-    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, gatewayAccountId, serviceOpts))
+    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, language, gatewayAccountId, serviceOpts))
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('exist')
@@ -45,7 +46,7 @@ describe('The footer displayed on payment pages', () => {
       }
     }
 
-    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, gatewayAccountId, serviceOpts))
+    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, language, gatewayAccountId, serviceOpts))
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('exist')
@@ -65,7 +66,7 @@ describe('The footer displayed on payment pages', () => {
       }
     }
 
-    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, gatewayAccountId, serviceOpts))
+    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, language, gatewayAccountId, serviceOpts))
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('exist')
@@ -80,7 +81,7 @@ describe('The footer displayed on payment pages', () => {
       merchant_details: null
     }
 
-    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, gatewayAccountId, serviceOpts))
+    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, language, gatewayAccountId, serviceOpts))
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('not.exist')
@@ -98,7 +99,7 @@ describe('The footer displayed on payment pages', () => {
       }
     }
 
-    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, gatewayAccountId, serviceOpts))
+    cy.task('setupStubs', cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, language, gatewayAccountId, serviceOpts))
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('not.exist')

@@ -139,8 +139,7 @@ var showCardType = function() {
     return new Promise(function (resolve, reject) {
       var request = new XMLHttpRequest();
       var card = getCardType();
-      // this should already be picked up by the other validations
-      if (card.length !== 1) return
+      if (card.length !== 1 && cardInput.value.replace(/\D/g,'').length < 11) return
       request.open('POST', '/check_card/' + chargeId, true);
       request.setRequestHeader('Content-type', 'application/json');
       request.onload = function () {

@@ -132,7 +132,7 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     'amount': opts.amount || 1000,
     'state': opts.state,
     'description': opts.description || 'Example fixture payment',
-    'language': 'en',
+    'language': opts.language || 'en',
     'status': opts.status,
     'links': [{
       'rel': 'self',
