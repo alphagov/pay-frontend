@@ -16,7 +16,8 @@ describe('Standard card payment flow', () => {
     email: 'validpayingemail@example.com'
   }
 
-  const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId)
+  const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
+  const createPaymentChargeStubsWelsh = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'cy')
 
   const checkCardDetailsStubs = [
     { name: 'connectorGetChargeDetails',
@@ -75,7 +76,7 @@ describe('Standard card payment flow', () => {
 
   describe('Secure card payment page', () => {
     it('Should setup the payment and load the page', () => {
-      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
@@ -146,6 +147,62 @@ describe('Standard card payment flow', () => {
       // 16. Get charge status following post - should show capture success (GET)
       cy.location('pathname').should('eq', `/`)
       cy.location('search').should('eq', `?confirm`)
+    })
+  })
+
+  describe('Secure card payment page should show error', () => {
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubsEnglish)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be deleted (DELETE)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show error when card number is less than 11 digits', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.server()
+      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.get('#card-no').type('1234567890')
+      cy.get('#card-no').blur()
+
+      cy.get('#card-no').should('have.class', 'govuk-input--error')
+      cy.get('#card-no-lbl').should('contain', 'Card number is not the correct length')
+    })
+  })
+
+  describe('Secure card payment page should show error', () => {
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubsWelsh)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be deleted (DELETE)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show error when card number is less than 11 digits', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.server()
+      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.get('#card-no').type('1234567890')
+      cy.get('#card-no').blur()
+
+      cy.get('#card-no').should('have.class', 'govuk-input--error')
+      cy.get('#card-no-lbl').should('contain', 'Nid yw rhif y cerdyn yr hyd cywir')
     })
   })
 })

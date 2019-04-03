@@ -1,6 +1,6 @@
 'use strict'
 
-const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, gatewayAccountId = 42, serviceOpts = {}) {
+const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language, gatewayAccountId = 42, serviceOpts = {}) {
   return [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId } },
     { name: 'connectorDeleteToken', opts: { tokenId } },
@@ -10,7 +10,8 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         chargeId,
         gatewayAccountId,
         status: 'CREATED',
-        state: { finished: false, status: 'created' }
+        state: { finished: false, status: 'created' },
+        language: language || 'en'
       }
     },
     { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
