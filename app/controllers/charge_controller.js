@@ -132,7 +132,6 @@ module.exports = {
             emailPatch = Promise.resolve('Charge patch skipped as email collection mode was toggled off, or optional and not supplied')
           } else {
             userEmail = req.body.email
-            emailPatch = Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
             let emailChanged = false
             if (req.body.originalemail) {
               emailChanged = req.body.originalemail !== userEmail
@@ -142,6 +141,7 @@ module.exports = {
               userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
               emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
             }
+            emailPatch = Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
           }
 
           if (data.validation.hasError || emailTypos) {
