@@ -1,3 +1,5 @@
+const { getMockApplePayClass, MockApplePayError } = require('../../utils/apple-pay-js-api-stubs')
+
 describe('Apple Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
@@ -62,49 +64,6 @@ describe('Apple Pay payment flow', () => {
     { name: 'cardIdValidCardDetails' }
   ]
 
-  // Mock class for Apple Pay
-  const getMockApplePayClass = email => {
-    class MockApplePaySession {
-      completePayment () {
-        return true
-      }
-
-      completeMerchantValidation () {
-        return true
-      }
-
-      begin () {
-        if (this._onvalidatemerchant) {
-          this._onvalidatemerchant(
-            { validationURL: 'https://fakeapple.url' }
-          )
-        }
-
-        if (this._onpaymentauthorized) {
-          this._onpaymentauthorized(
-            { payment: validPaymentRequestResponse(email) }
-          )
-        }
-      }
-
-      set onvalidatemerchant (value) {
-        this._onvalidatemerchant = value
-      }
-
-      set onpaymentauthorized (value) {
-        this._onpaymentauthorized = value
-      }
-    }
-
-    // Mock function to trick JS into thinking Apple Pay is available
-    MockApplePaySession.canMakePayments = () => true
-    MockApplePaySession.supportsVersion = () => true
-
-    return MockApplePaySession
-  }
-
-  const MockApplePayError = () => true
-
   const mockFetchAPI = path => {
     // Mock merchant validation controller response
     if (path === '/apple-pay-merchant-validation') {
@@ -145,7 +104,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
-          win.ApplePaySession = getMockApplePayClass('jonheslop@bla.test')
+          win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, 'jonheslop@bla.test')
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
@@ -185,7 +144,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
-          win.ApplePaySession = getMockApplePayClass('jonheslop@bla.test')
+          win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, 'jonheslop@bla.test')
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
@@ -223,7 +182,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
-          win.ApplePaySession = getMockApplePayClass('badEmail')
+          win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, 'badEmail')
           win.ApplePayError = MockApplePayError
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
