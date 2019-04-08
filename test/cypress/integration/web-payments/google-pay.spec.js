@@ -43,19 +43,21 @@ describe('Google Pay payment flow', () => {
     { name: 'adminUsersGetService' }
   ]
 
-  const checkCardDetailsStubs = [
-    {
-      name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' },
-        allowGooglePay: true,
-        gatewayMerchantId: 'SMTHG12345UP'
-      }
-    },
-    { name: 'cardIdValidCardDetails' }
-  ]
+  const checkCardDetailsStubsWithGooglePay = googlePayEnabled => {
+    return [
+      {
+        name: 'connectorGetChargeDetails',
+        opts: {
+          chargeId,
+          status: 'ENTERING CARD DETAILS',
+          state: { finished: false, status: 'started' },
+          allowGooglePay: googlePayEnabled,
+          gatewayMerchantId: 'SMTHG12345UP'
+        }
+      },
+      { name: 'cardIdValidCardDetails' }
+    ]
+  }
 
   const mockPaymentAuthResponse = () => {
     return new Promise(resolve => resolve({
@@ -85,7 +87,7 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option and user chooses it', () => {
-      cy.task('setupStubs', checkCardDetailsStubs)
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(true))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Payment Request API
@@ -129,7 +131,7 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option but user chooses to pay normally', () => {
-      cy.task('setupStubs', checkCardDetailsStubs)
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(true))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Payment Request API
@@ -173,7 +175,7 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option and user chooses standard method', () => {
-      cy.task('setupStubs', checkCardDetailsStubs)
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(true))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Payment Request API
@@ -195,6 +197,19 @@ describe('Google Pay payment flow', () => {
       cy.get('#payment-method-standard').click()
       cy.get('#payment-method-submit').should('be.visible')
       cy.get('#payment-method-submit').click()
+
+      // 8. User should see normal payment form
+      cy.get('#enter-card-details-container').should('be.visible')
+      cy.get('#card-no').should('be.visible')
+    })
+
+    it('Should not show Google Pay as browser doesn’t support it', () => {
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(false))
+      cy.visit(`/card_details/${chargeId}`)
+
+      // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
+      cy.get('#payment-method-google-pay').should('not.be.visible')
+      cy.get('#payment-method-submit').should('not.be.visible')
 
       // 8. User should see normal payment form
       cy.get('#enter-card-details-container').should('be.visible')
