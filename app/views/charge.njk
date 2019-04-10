@@ -47,13 +47,16 @@
     </div>
 
   {% if allowApplePay or allowGooglePay %}
+    {% set standardPaymentHTML %}
+      <img alt='Card logo' class='payment-request-logo' src='/images/card-mark.svg'/> {{ __p("cardDetails.webPayments.standard") }}
+    {% endset %}
     <form id="web-payments-container">
       {{ govukRadios({
         name: "payment-method",
         classes: "payment-request-radios",
         fieldset: {
           legend: {
-            text: "Choose how you want to pay",
+            text: __p("cardDetails.webPayments.choose"),
             isPageHeading: true,
             classes: "govuk-fieldset__legend--l"
           }
@@ -72,14 +75,14 @@
           {
             id: "payment-method-standard",
             value: "Standard",
-            html: "<img alt='Card logo' class='payment-request-logo' src='/images/card-mark.svg'/> Debit or credit card"
+            html: standardPaymentHTML
           }
         ]
       }) }}
 
       {{
         govukButton({
-          text: "Continue to payment",
+          text: __p("cardDetails.webPayments.continue"),
           attributes: {
             id: "payment-method-submit"
           }
