@@ -105,7 +105,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-env": "^7.4.3",
     "@pact-foundation/pact-node": "^8.1.1",
     "browserify": "16.2.x",
     "chai": "^4.1.2",
