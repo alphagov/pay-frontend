@@ -1,5 +1,10 @@
 {
 	"cardDetails": {
+		"webPayments": {
+			"choose": "Choose how you want to pay",
+			"standard": "Debit or credit card",
+			"continue": "Continue to payment"
+		},
 		"withdrawalText": {
 			"debit_credit": "Math o gardiau credyd a debyd y derbynnir",
 			"debit": "Ni dderbynnir taliadau cerdyn credyd. Defnyddiwch gerdyn debyd os gwelwch yn dda."
@@ -157,6 +162,11 @@
 				"name": "wlad neu diriogaeth",
 				"message": "Rhowch wlad neu diriogaeth ddilys"
 			}
+		},
+		"webPayments": {
+			"apple": "There was an error contacting Apple Pay, please try again",
+			"failureTitle": "There was a problem processing your payment.",
+			"failureBody": "No money has been taken from your account, please try again"
 		}
 	}
 }

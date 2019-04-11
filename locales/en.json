@@ -1,5 +1,10 @@
 {
 	"cardDetails": {
+		"webPayments": {
+			"choose": "Choose how you want to pay",
+			"standard": "Debit or credit card",
+			"continue": "Continue to payment"
+		},
 		"withdrawalText": {
 			"debit_credit": "Accepted credit and debit card types",
 			"debit": "Credit card payments are not accepted. Please use a debit card."
