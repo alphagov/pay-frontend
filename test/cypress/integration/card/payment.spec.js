@@ -284,7 +284,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page on Google Pay enabled browser but not Google Pay enabled service', () => {
+  describe('Secure card payment page on Apple Pay enabled browser but not Apple Pay enabled service', () => {
     it('Should setup the payment and load the page', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
