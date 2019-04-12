@@ -3,7 +3,7 @@
 		"webPayments": {
 			"choose": "Dewiswch sut yr hoffech dalu",
 			"standard": "Cerdyn debyd neu gredyd",
-			"continue": "Parhau i'r taliad"
+			"continue": "Parhau i’r taliad"
 		},
 		"withdrawalText": {
 			"debit_credit": "Math o gardiau credyd a debyd y derbynnir",
@@ -166,7 +166,7 @@
 		"webPayments": {
 			"apple": "Roedd gwall wrth gysylltu ag Apple Pay, rhowch gynnig arall arni",
 			"failureTitle": "Roedd problem wrth brosesu eich taliad",
-			"failureBody": "Nid oes unrhyw arian wedi cael ei gymryd o'ch cyfrif, rhowch gynnig arall arni"
+			"failureBody": "Nid oes unrhyw arian wedi cael ei gymryd o’ch cyfrif, rhowch gynnig arall arni"
 		}
 	}
 }
