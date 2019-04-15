@@ -45,51 +45,52 @@
         </ul>
       </div>
     </div>
-
-  {% if allowApplePay or allowGooglePay %}
-    {% set standardPaymentHTML %}
-      <img alt='Card logo' class='payment-request-logo' src='/images/card-mark.svg'/> {{ __p("cardDetails.webPayments.standard") }}
-    {% endset %}
-    <form id="web-payments-container">
-      {{ govukRadios({
-        name: "payment-method",
-        classes: "payment-request-radios",
-        fieldset: {
-          legend: {
-            text: __p("cardDetails.webPayments.choose"),
-            isPageHeading: true,
-            classes: "govuk-fieldset__legend--l"
-          }
-        },
-        items: [
-          {
-            id: "payment-method-apple-pay",
-            value: "Apple Pay",
-            html: "<img alt='Apple Pay logo' class='payment-request-logo' src='/images/apple-pay-mark.svg'/> Apple Pay"
+  {% if not hasError %}
+    {% if allowApplePay or allowGooglePay %}
+      {% set standardPaymentHTML %}
+        <img alt='Card logo' class='payment-request-logo' src='/images/card-mark.svg'/> {{ __p("cardDetails.webPayments.standard") }}
+      {% endset %}
+      <form id="web-payments-container">
+        {{ govukRadios({
+          name: "payment-method",
+          classes: "payment-request-radios",
+          fieldset: {
+            legend: {
+              text: __p("cardDetails.webPayments.choose"),
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
           },
-          {
-            id: "payment-method-google-pay",
-            value: "Google Pay",
-            html: "<img alt='Google Pay logo' class='payment-request-logo' src='/images/google-pay-mark.svg'/> Google Pay"
-          },
-          {
-            id: "payment-method-standard",
-            value: "Standard",
-            html: standardPaymentHTML
-          }
-        ]
-      }) }}
+          items: [
+            {
+              id: "payment-method-apple-pay",
+              value: "Apple Pay",
+              html: "<img alt='Apple Pay logo' class='payment-request-logo' src='/images/apple-pay-mark.svg'/> Apple Pay"
+            },
+            {
+              id: "payment-method-google-pay",
+              value: "Google Pay",
+              html: "<img alt='Google Pay logo' class='payment-request-logo' src='/images/google-pay-mark.svg'/> Google Pay"
+            },
+            {
+              id: "payment-method-standard",
+              value: "Standard",
+              html: standardPaymentHTML
+            }
+          ]
+        }) }}
 
-      {{
-        govukButton({
-          text: __p("cardDetails.webPayments.continue"),
-          attributes: {
-            id: "payment-method-submit"
-          }
-        })
-      }}
-      <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
-    </form>
+        {{
+          govukButton({
+            text: __p("cardDetails.webPayments.continue"),
+            attributes: {
+              id: "payment-method-submit"
+            }
+          })
+        }}
+        <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
+      </form>
+    {% endif %}
   {% endif %}
 
     <div id="enter-card-details-container">
