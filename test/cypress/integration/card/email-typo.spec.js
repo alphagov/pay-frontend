@@ -1,4 +1,5 @@
 const cardPaymentStubs = require('../../utils/card-payment-stubs')
+const { getMockApplePayClass } = require('../../utils/apple-pay-js-api-stubs')
 const lodash = require('lodash')
 
 describe('Standard card payment flow', () => {
@@ -84,7 +85,12 @@ describe('Standard card payment flow', () => {
   describe('Secure card payment page', () => {
     it('Should setup the payment and load the page', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
-      cy.visit(`/secure/${tokenId}`)
+      cy.visit(`/secure/${tokenId}`, {
+        onBeforeLoad: win => {
+          // Stub Apple Pay API (which only exists within Safari)
+          win.ApplePaySession = getMockApplePayClass(likelyDoubleTypoEmailFix)
+        }
+      })
 
       // 1. Charge will be created using this id as a token (GET)
       // 2. Token will be deleted (DELETE)
