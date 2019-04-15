@@ -31,6 +31,7 @@
     ]
   },
   "scripts": {
+    "postinstall": "npm run compile",
     "compile": "grunt generate-assets",
     "clean": "grunt clean",
     "start": "node start.js",
@@ -38,7 +39,7 @@
     "lint": "standard --fix",
     "watch-live-reload": "./node_modules/.bin/grunt watch",
     "test": "rm -rf ./pacts && DISABLE_APPMETRICS=true node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
-    "cypress:server": "npm run compile && mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
+    "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
     "snyk-protect": "snyk protect",
