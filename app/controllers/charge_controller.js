@@ -21,6 +21,8 @@ const { commonTypos } = require('../utils/email_tools')
 const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector_client')
 const cookies = require('../utils/cookies')
+const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
+const supportedNetworksFormattedByProvider = require('../assets/javascripts/browsered/web-payments/format-card-types')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')
@@ -45,6 +47,12 @@ const appendChargeForNewView = (charge, req, chargeId) => {
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
+  charge.googlePayRequestMethodData = getGooglePayMethodData({
+    allowedCardTypes: supportedNetworksFormattedByProvider(cardModel.allowed, 'google'),
+    merchantId: process.env.GOOGLE_PAY_MERCHANT_ID,
+    gatewayMerchantId: charge.gatewayAccount.gatewayMerchantId
+  })
+  charge.googlePayRequestDetails = googlePayDetails
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
