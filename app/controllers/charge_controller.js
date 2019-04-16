@@ -45,7 +45,6 @@ const appendChargeForNewView = (charge, req, chargeId) => {
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
-  charge.stubsUrl = process.env.APPLE_PAY_STUBS_URL
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
