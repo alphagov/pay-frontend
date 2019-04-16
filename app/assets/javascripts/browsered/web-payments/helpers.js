@@ -1,5 +1,7 @@
 'use strict'
 
+const supportedNetworksFormattedByProvider = require('./format-card-types')
+
 const allowedCardTypes = window.Card.allowed || {}
 const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
@@ -23,34 +25,6 @@ const toggleWaiting = status => {
   const button = document.getElementById('payment-method-submit')
   button[button.getAttribute('disabled') ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled')
   document.getElementById('spinner').classList.toggle('hidden')
-}
-
-const supportedNetworksFormattedByProvider = provider => {
-  const availableNetworks = allowedCardTypes.map(type => {
-    if (type.debit || type.credit) {
-      return type.brand
-    }
-  })
-
-  let filteredAvailableNetworks = availableNetworks
-    .filter(brand => brand !== 'diners-club')
-    .filter(brand => brand !== 'unionpay')
-
-  if (provider === 'google') {
-    filteredAvailableNetworks = filteredAvailableNetworks.filter(brand => brand !== 'maestro')
-  }
-
-  if (provider === 'apple' && filteredAvailableNetworks.includes('visa')) {
-    filteredAvailableNetworks.push('electron')
-  }
-
-  return filteredAvailableNetworks
-    .map(brand => {
-      let formattedBrand = brand
-      if (brand === 'master-card') formattedBrand = 'masterCard'
-      if (brand === 'american-express') formattedBrand = 'amex'
-      return provider === 'google' ? formattedBrand.toUpperCase() : formattedBrand
-    })
 }
 
 const prepareAppleRequestObject = () => {
@@ -91,14 +65,14 @@ const prepareAppleRequestObject = () => {
       label: details.total.label,
       amount: details.total.amount.value
     },
-    supportedNetworks: supportedNetworksFormattedByProvider('apple'),
+    supportedNetworks: supportedNetworksFormattedByProvider(allowedCardTypes, 'apple'),
     merchantCapabilities,
     requiredShippingContactFields
   }
 }
 
 const getGooglePaymentsConfiguration = () => {
-  const allowedCardNetworks = supportedNetworksFormattedByProvider('google')
+  const allowedCardNetworks = supportedNetworksFormattedByProvider(allowedCardTypes, 'google')
   const allowedCardAuthMethods = ['PAN_ONLY', 'CRYPTOGRAM_3DS']
   const tokenizationSpecification = {
     type: 'PAYMENT_GATEWAY',
