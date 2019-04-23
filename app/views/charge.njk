@@ -289,10 +289,13 @@
             {% endif %}
           </label>
           <select name="addressCountry" class="govuk-select" id="address-country" autocomplete="billing country-name">
+            {% if not countryCode | length %}
+              {% set countryCode = 'GB' %}
+            {% endif %}
             {% for country in countries %}
-              <option
-                  value="{{ country[1].split(':')[1] }}"
-                  {% if country[1].split(':')[1] === 'GB' %} selected="selected"{% endif %}>{{ country[0] }}</option>
+                <option
+                    value="{{ country[1].split(':')[1] }}"
+                    {% if country[1].split(':')[1] ===  countryCode %} selected="selected"{% endif %}>{{ country[0] }}</option>
             {% endfor %}
           </select>
         </div>

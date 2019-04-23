@@ -352,4 +352,74 @@ describe('Standard card payment flow', () => {
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
     })
   })
+
+  describe('Secure card payment page with prefilled cardholder details', () => {
+    it('should load all cardholder details to page', () => {
+      const opts = {
+        email: 'joe.bogs@example.org',
+        cardholderName: 'Joe Bogs',
+        line1: '13 Rogue Avenue',
+        postcode: 'AB1 CD2',
+        city: 'London',
+        country: 'GB'
+      }
+      const createPaymentChargeStubsPrefilledCardDetails = cardPaymentStubs.buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs(tokenId, chargeId, 42, opts)
+      cy.task('setupStubs', createPaymentChargeStubsPrefilledCardDetails)
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.get('#cardholder-name').should('have.value', opts.cardholderName)
+      cy.get('#address-line-1').should('have.value', opts.line1)
+      cy.get('#address-line-2').should('have.value', '')
+      cy.get('#address-city').should('have.value', opts.city)
+      cy.get('#address-postcode').should('have.value', opts.postcode)
+      cy.get('#address-country').should('have.value', 'United Kingdom')
+      cy.get('#email').should('have.value', opts.email)
+    })
+
+    it('should load partial cardholder details to page', () => {
+      const opts = {
+        cardholderName: 'Joe Bogs',
+        line1: '13 Rogue Avenue',
+        city: 'London',
+        country: 'GB'
+      }
+      const createPaymentChargeStubsPrefilledCardDetails = cardPaymentStubs.buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs(tokenId, chargeId, 42, opts)
+      cy.task('setupStubs', createPaymentChargeStubsPrefilledCardDetails)
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.get('#address-country').should('have.value', 'United Kingdom')
+    })
+
+    it('should load country to page', () => {
+      const opts = {
+        country: 'IE'
+      }
+      const createPaymentChargeStubsPrefilledCardDetails = cardPaymentStubs.buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs(tokenId, chargeId, 42, opts)
+      cy.task('setupStubs', createPaymentChargeStubsPrefilledCardDetails)
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.get('#address-country').should('have.value', 'Ireland')
+    })
+
+    it('should load United Kingdom when invalid country code', () => {
+      const opts = {
+        country: 'QQ'
+      }
+      const createPaymentChargeStubsPrefilledCardDetails = cardPaymentStubs.buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs(tokenId, chargeId, 42, opts)
+      cy.task('setupStubs', createPaymentChargeStubsPrefilledCardDetails)
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.get('#address-country').should('have.value', 'United Kingdom')
+    })
+
+    it('should load United Kingdom when no country code', () => {
+      const opts = {
+      }
+      const createPaymentChargeStubsPrefilledCardDetails = cardPaymentStubs.buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs(tokenId, chargeId, 42, opts)
+      cy.task('setupStubs', createPaymentChargeStubsPrefilledCardDetails)
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.get('#address-country').should('have.value', 'United Kingdom')
+    })
+  })
 })
