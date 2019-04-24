@@ -25,6 +25,7 @@ module.exports = (function () {
     }
     if (charge.card_details) {
       chargeObj.cardDetails = _normaliseConfirmationDetails(charge.card_details)
+      _normalisePrefilledCardDetails(chargeObj, charge.card_details)
     }
     if (charge.corporate_card_surcharge) {
       chargeObj.corporateCardSurcharge = penceToPounds(charge.corporate_card_surcharge)
@@ -80,6 +81,19 @@ module.exports = (function () {
       normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
     }
     return normalisedDetails
+  }
+
+  const _normalisePrefilledCardDetails = (chargeObj, cardDetails) => {
+    if (cardDetails.cardholder_name) {
+      chargeObj.cardholderName = cardDetails.cardholder_name
+    }
+    if (cardDetails.billing_address) {
+      chargeObj.addressLine1 = cardDetails.billing_address.line1
+      chargeObj.addressLine2 = cardDetails.billing_address.line2
+      chargeObj.addressPostcode = cardDetails.billing_address.postcode
+      chargeObj.addressCity = cardDetails.billing_address.city
+      chargeObj.countryCode = countries.checkOrDefaultCountryCode(cardDetails.billing_address.country)
+    }
   }
 
   const _normaliseAddress = function (address) {

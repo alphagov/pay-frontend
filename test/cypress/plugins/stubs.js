@@ -58,6 +58,12 @@ module.exports = {
     return simpleStubBuilder('GET', 200, path, body)
   },
 
+  connectorGetChargeDetailsWithPrefilledCardholderDetails: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}`
+    const body = paymentFixtures.validChargeDetailsWithPrefilledCardHolderDetails(opts)
+    return simpleStubBuilder('GET', 200, path, body)
+  },
+
   // this is going to Card ID
   cardIdValidCardDetails: (opts = {}) => {
     const body = paymentFixtures.validCardDetails()

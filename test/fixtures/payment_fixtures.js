@@ -126,6 +126,22 @@ const utilFormatPaymentDetails = function utilFormatPaymentDetails (details) {
   return structure
 }
 
+const utilFormatPrefilledCardHolderDetails = (details) => {
+  const structure = {
+    'cardholder_name': details.cardholderName || null,
+    'billing_address': {
+      'line1': details.billingAddress.addressLine1 || null,
+      'line2': details.billingAddress.addressLine2 || null,
+      'postcode': details.billingAddress.postcode || null,
+      'city': details.billingAddress.city || null,
+      'county': null,
+      'country': details.billingAddress.country || null
+    },
+    'card_brand': ''
+  }
+  return structure
+}
+
 const buildChargeDetails = function buildChargeDetails (opts) {
   const chargeId = opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv'
   const structure = {
@@ -163,6 +179,43 @@ const buildChargeDetails = function buildChargeDetails (opts) {
   return structure
 }
 
+const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
+  const chargeId = opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv'
+  const structure = {
+    'amount': opts.amount || 1000,
+    'state': opts.state,
+    'description': opts.description || 'Example fixture payment',
+    'language': opts.language || 'en',
+    'status': opts.status,
+    'links': [{
+      'rel': 'self',
+      'method': 'GET',
+      'href': `https://connector:9300/v1/frontend/charges/${chargeId}`
+    }, {
+      'rel': 'cardAuth',
+      'method': 'POST',
+      'href': `https://connector:9300/v1/frontend/charges/${chargeId}/cards`
+    }, {
+      'rel': 'cardCapture',
+      'method': 'POST',
+      'href': `https://connector:9300/v1/frontend/charges/${chargeId}/capture`
+    }],
+    charge_id: chargeId,
+    'return_url': opts.returnUrl || '/?confirm',
+    // 'created_date': '2019-02-12T17:53:31.307Z',
+    'delayed_capture': false,
+    'gateway_account': buildGatewayAccount(opts)
+  }
+
+  if (opts.state) { structure.state = opts.state }
+
+  if (opts.paymentDetails) {
+    structure.email = opts.paymentDetails.email
+    structure.card_details = utilFormatPrefilledCardHolderDetails(opts.paymentDetails)
+  }
+  return structure
+}
+
 const fixtures = {
   // intitial charge details returned have different API surface than charge others
   validChargeCreatedByToken: (opts = {}) => {
@@ -196,6 +249,7 @@ const fixtures = {
 
   validChargeDetails: (opts = {}) => buildChargeDetails(opts),
   validChargeCardDetailsAuthorised: () => ({ 'status': 'AUTHORISATION SUCCESS' }),
+  validChargeDetailsWithPrefilledCardHolderDetails: (opts = {}) => buildChargeDetailsWithPrefilledCardHolderDeatils(opts),
 
   validCardDetails: () => {
     const data = {
