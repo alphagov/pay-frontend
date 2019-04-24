@@ -10,20 +10,34 @@
 {% set mainClasses = "charge-new" %}
 
   {% block bodyStart %}
-    {% if allowApplePay %}
+    {% if allowApplePay or allowGooglePay %}
       <script>
-        if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
-          document.body.classList.add('apple-pay-available')
-        } else {
-          document.body.classList.add('apple-pay-unavailable')
-        }
-
-        {# If our JS bundle fails to load we need to undo the above Apple Pay check #}
-        document.addEventListener('DOMContentLoaded', function(event) {
-          if (!window.payScripts.webPayments) {
-            document.body.classList.remove('apple-pay-available')
+      {% if allowApplePay %}
+          if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
+            document.body.classList.add('apple-pay-available')
+          } else {
+            document.body.classList.add('apple-pay-unavailable')
           }
-        })
+      {% endif %}
+      {% if allowGooglePay %}
+          if (window.PaymentRequest) {
+            var canMakeGooglePayPayment = new PaymentRequest({{ googlePayRequestMethodData | dump | safe }}, {{ googlePayRequestDetails | dump | safe }}).canMakePayment()
+            if (canMakeGooglePayPayment) {
+              document.body.classList.add('google-pay-available')
+            } else {
+              document.body.classList.add('google-pay-unavailable')
+            }
+          }
+      {% endif %}
+      {% if allowApplePay or allowGooglePay %}
+          {# If our JS bundle fails to load we need to undo the above Apple/Google Pay checks #}
+          document.addEventListener('DOMContentLoaded', function(event) {
+            if (!window.payScripts.webPayments) {
+              document.body.classList.remove('apple-pay-available')
+              document.body.classList.remove('google-pay-available')
+            }
+          })
+      {% endif %}
       </script>
     {% endif %}
   {% endblock %}

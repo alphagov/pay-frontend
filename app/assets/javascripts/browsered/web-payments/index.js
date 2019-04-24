@@ -3,7 +3,7 @@
 // Local dependencies
 const { clearErrorSummary } = require('./helpers')
 const makeApplePayRequest = require('./apple-pay')
-const { createGooglePaymentRequest, googlePayNow } = require('./google-pay')
+const { googlePayNow } = require('./google-pay')
 
 // Browser elements
 const paymentMethodForm = document.getElementById('web-payments-container')
@@ -17,19 +17,9 @@ const initApplePayIfAvailable = () => {
 }
 
 const initGooglePayIfAvailable = () => {
-  if (window.PaymentRequest) {
-    createGooglePaymentRequest()
-      .canMakePayment()
-      .then(result => {
-        if (result) {
-          document.body.classList.remove('google-pay-unavailable')
-          document.body.classList.add('google-pay-available')
-          ga('send', 'event', 'Google Pay', 'Enabled', 'Google pay available on this device')
-        }
-      }).catch(err => {
-        ga('send', 'event', 'Google Pay', 'Error', 'Failed to check if Google Pay available')
-        return err
-      })
+  if (document.body.classList.contains('google-pay-available')) {
+    document.getElementById('payment-method-google-pay').checked = true
+    ga('send', 'event', 'Google Pay', 'Enabled', 'Google pay available on this device')
   }
 }
 
