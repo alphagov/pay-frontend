@@ -71,7 +71,7 @@
     "accessible-autocomplete": "^1.6.2",
     "appmetrics": "4.0.x",
     "appmetrics-statsd": "3.0.x",
-    "aws-xray-sdk": "^2.2.0",
+    "aws-xray-sdk": "^2.3.2",
     "body-parser": "1.18.x",
     "cert-info": "^1.5.1",
     "change-case": "2.3.x",
