@@ -72,7 +72,6 @@ describe('connectors client - apple authentication API', function () {
 
   describe('authorisation declined', function () {
     const appleAuthRequest = fixtures.appleAuthRequestDetails({ lastDigitsCardNumber: '0002' })
-    const authorisationDeclinedResponse = fixtures.webPaymentFailedResponse('This transaction was declined.')
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
@@ -80,7 +79,6 @@ describe('connectors client - apple authentication API', function () {
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid apple pay auth request which should be declined')
-        .withResponseBody(authorisationDeclinedResponse.getPactified())
         .withStatusCode(400)
         .build()
       return provider.addInteraction(builder)
@@ -93,8 +91,7 @@ describe('connectors client - apple authentication API', function () {
         chargeId: TEST_CHARGE_ID,
         provider: 'apple',
         payload: appleAuthRequest.getPlain()
-      }).then(res => {
-        expect(res.body.message).to.be.equal('This transaction was declined.')
+      }).then(() => {
         done()
       }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
     })
@@ -102,7 +99,6 @@ describe('connectors client - apple authentication API', function () {
 
   describe('authorisation error', function () {
     const appleAuthRequest = fixtures.appleAuthRequestDetails({ lastDigitsCardNumber: '0119' })
-    const authorisationErrorResponse = fixtures.webPaymentFailedResponse('This transaction could be not be processed.')
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
@@ -110,7 +106,6 @@ describe('connectors client - apple authentication API', function () {
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid apple pay auth request which should return an error')
-        .withResponseBody(authorisationErrorResponse.getPactified())
         .withStatusCode(400)
         .build()
       return provider.addInteraction(builder)
@@ -123,8 +118,7 @@ describe('connectors client - apple authentication API', function () {
         chargeId: TEST_CHARGE_ID,
         provider: 'apple',
         payload: appleAuthRequest.getPlain()
-      }).then(res => {
-        expect(res.body.message).to.be.equal('This transaction could be not be processed.')
+      }).then(() => {
         done()
       }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
     })
