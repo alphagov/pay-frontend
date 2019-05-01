@@ -39,19 +39,6 @@ const fixtures = {
       }
     }
   },
-  webPaymentFailedResponse: (message) => {
-    const data = {
-      message: message
-    }
-    return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
-    }
-  },
   appleAuthRequestDetails: (ops = {}) => {
     const data = {
       payment_info: {
