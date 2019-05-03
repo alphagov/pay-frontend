@@ -21,12 +21,14 @@
       {% endif %}
       {% if allowGooglePay %}
           if (window.PaymentRequest) {
-            var canMakeGooglePayPayment = new PaymentRequest({{ googlePayRequestMethodData | dump | safe }}, {{ googlePayRequestDetails | dump | safe }}).canMakePayment()
-            if (canMakeGooglePayPayment) {
-              document.body.classList.add('google-pay-available')
-            } else {
-              document.body.classList.add('google-pay-unavailable')
-            }
+            var googleAvailableRequest = new PaymentRequest({{ googlePayRequestMethodData | dump | safe }}, {{ googlePayRequestDetails | dump | safe }}).canMakePayment()
+            googleAvailableRequest.then(function (canMakeGooglePayPayment) { 
+              if (canMakeGooglePayPayment) {
+                document.body.classList.add('google-pay-available')
+              } else {
+                document.body.classList.add('google-pay-unavailable')
+              }
+            }) 
           }
       {% endif %}
       {% if allowApplePay or allowGooglePay %}
