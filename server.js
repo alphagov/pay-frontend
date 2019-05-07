@@ -139,7 +139,7 @@ function initialiseRoutes (app) {
 function listen () {
   const app = initialise()
   app.listen(PORT || 3000)
-  logger.log('Listening on port ' + PORT || 3000)
+  logger.info('Listening on port ' + PORT || 3000)
 }
 
 function logApplePayCertificateTimeToExpiry () {
