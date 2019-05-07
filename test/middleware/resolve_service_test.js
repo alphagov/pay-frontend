@@ -26,7 +26,7 @@ const resolveServiceMiddleware = function (findServicePromise) {
         }
       }
     },
-    'winston': {
+    '../../config/logger': {
       error: errorLogger
     }
   })
@@ -96,10 +96,10 @@ describe('resolve service middleware', function () {
 
     const nextSpy = sinon.spy()
     resolveService(req, res, nextSpy).should.be.fulfilled.then(() => {
-      expect(errorLogger.called).to.equal(true)
+      expect(errorLogger.called, 'errorLogger.called').to.equal(true)
       expect(errorLogger.lastCall.args[0]).to.equal(`Failed to retrieve service information for service: ${chargeData.gateway_account.serviceName}`)
-      expect(res.locals.service).to.be.undefined // eslint-disable-line
-      expect(nextSpy.called).to.be.equal(true)
+      expect(res.locals.service, 'res.locals.service').to.be.undefined // eslint-disable-line
+      expect(nextSpy.called, 'nextSpy.called').to.be.equal(true)
     }).should.notify(done)
   })
 })

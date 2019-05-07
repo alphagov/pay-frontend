@@ -1,9 +1,7 @@
 'use strict'
 
-// NPM dependencies
-const logger = require('winston')
-
 // Local dependencies
+const logger = require('../../config/logger')
 const connectorClient = require('../services/clients/connector_client')
 const State = require('../../config/state.js')
 const StateModel = require('../../config/state')

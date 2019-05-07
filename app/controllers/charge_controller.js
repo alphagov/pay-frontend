@@ -1,13 +1,13 @@
 'use strict'
 
 // NPM dependencies
-const logger = require('winston')
 const _ = require('lodash')
 const i18n = require('i18n')
 const { getNamespace } = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
+const logger = require('../../config/logger')
 const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')

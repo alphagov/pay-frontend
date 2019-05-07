@@ -1,9 +1,7 @@
 'use strict'
 
-// NPM dependencies
-const logger = require('winston')
-
 // Local dependencies
+const logger = require('../../config/logger')
 const Charge = require('../models/charge')
 const responseRouter = require('../utils/response_router')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')

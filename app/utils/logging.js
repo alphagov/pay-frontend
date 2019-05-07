@@ -1,7 +1,6 @@
 'use strict'
 
-// NPM dependencies
-const logger = require('winston')
+const logger = require('../../config/logger')
 
 exports.authChargePost = url => {
   logger.debug('Calling connector to authorize a charge (post card details) -', {

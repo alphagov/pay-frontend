@@ -1,6 +1,7 @@
 // NPM dependencies
 const _ = require('lodash')
-const logger = require('winston')
+
+const logger = require('../../config/logger')
 const baseClient = require('../services/clients/base_client/base_client')
 
 const healthyPingResponse = { 'ping': { 'healthy': true } }

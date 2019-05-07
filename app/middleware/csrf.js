@@ -2,9 +2,9 @@
 
 // NPM dependencies
 const csrf = require('csrf')
-const logger = require('winston')
 
 // Local dependencies
+const logger = require('../../config/logger')
 const session = require('../utils/session')
 const responseRouter = require('../utils/response_router')
 const chargeParam = require('../services/charge_param_retriever')

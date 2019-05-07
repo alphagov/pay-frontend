@@ -3,8 +3,8 @@
 
   var path = require('path')
   var fs = require('fs')
-  var logger = require('winston')
   var throng = require('throng')
+  var logger = require('./config/logger')
   var server = require('./server')
   var environment = require('./app/services/environment')
   var pidFile = path.join(__dirname, '/.start.pid')

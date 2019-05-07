@@ -1,9 +1,7 @@
 'use strict'
 
-// NPM dependencies
-const logger = require('winston')
-
 // Local dependencies
+const logger = require('../../../config/logger')
 const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 

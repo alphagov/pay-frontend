@@ -2,7 +2,8 @@
 
 // NPM dependencies
 const request = require('requestretry')
-const logger = require('winston')
+
+const logger = require('../../../../config/logger')
 
 // Local constants
 const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY } = process.env

@@ -1,8 +1,9 @@
 'use strict'
 
 // NPM dependencies
-const logger = require('winston')
 const lodash = require('lodash')
+
+const logger = require('../../config/logger')
 
 const expired = {
   view: 'errors/incorrect_state/session_expired',
