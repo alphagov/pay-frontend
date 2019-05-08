@@ -72,7 +72,7 @@
     "appmetrics": "4.0.x",
     "appmetrics-statsd": "3.0.x",
     "aws-xray-sdk": "^2.3.3",
-    "body-parser": "1.18.x",
+    "body-parser": "1.19.x",
     "cert-info": "^1.5.1",
     "change-case": "2.3.x",
     "client-sessions": "0.8.x",
