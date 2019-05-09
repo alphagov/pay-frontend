@@ -83,6 +83,7 @@ const handleCreateResponse = (req, res, charge) => response => {
       break
     case 500:
       logging.failedChargePost(409)
+      logging.systemError('Charge create response', req.headers[CORRELATION_HEADER], charge.id)
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
@@ -228,6 +229,7 @@ module.exports = {
               () => redirect(res).toReturn(req.chargeId),
               err => {
                 if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
+                logging.systemError('Capturing charge for wallet payment', req.headers[CORRELATION_HEADER], charge.id)
                 responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                   charge,
                   { returnUrl: routeFor('return', charge.id) }
@@ -258,6 +260,7 @@ module.exports = {
         (err) => {
           cookies.deleteSessionVariable(req, cookieKey)
           if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
+          logging.systemError('Capturing charge', req.headers[CORRELATION_HEADER], charge.id)
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
             charge,
             { returnUrl: routeFor('return', charge.id) }
@@ -275,11 +278,17 @@ module.exports = {
   },
   cancel: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
+    // @FIXME(sfount) use `catch` syntax in favour of passing multiple callbacks
+    //                to `then`--
+    //                Charge.cancel().then('USER_CANCELLED').catch('SYSTEM_ERROR')
     Charge(req.headers[CORRELATION_HEADER])
       .cancel(req.chargeId)
       .then(
         () => responseRouter.response(req, res, 'USER_CANCELLED', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) })),
-        () => responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+        () => {
+          logging.systemError('Cancelling charge', req.headers[CORRELATION_HEADER], charge.id)
+          responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+        }
       )
   }
 }

@@ -4,6 +4,7 @@
 const logger = require('winston')
 
 // Local dependencies
+const logging = require('../utils/logging')
 const Charge = require('../models/charge')
 const responseRouter = require('../utils/response_router')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
@@ -23,6 +24,7 @@ exports.return = (req, res) => {
       .then(() => res.redirect(req.chargeData.return_url))
       .catch(() => {
         logger.error('Return controller failed to cancel payment', { 'chargeId': req.chargeId })
+        logging.systemError('Cancelling charge on return', correlationId, req.chargeId)
         responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
       })
   } else {
