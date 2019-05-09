@@ -57,11 +57,11 @@ const handleThreeDsResponse = (req, res, charge) => response => {
       redirect(res).toAuthWaiting(charge.id)
       break
     case 500:
-      logging.systemError('3DS response 500', req.headers[CORRELATION_HEADER], charge.id)
+      logging.systemError('3DS response 500', req.headers && req.headers[CORRELATION_HEADER], charge.id)
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       break
     default:
-      logging.systemError('3DS unknown response (`ERROR` used)', req.headers[CORRELATION_HEADER], charge.id)
+      logging.systemError('3DS unknown response (`ERROR` used)', req.headers && req.headers[CORRELATION_HEADER], charge.id)
       responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
   }
 }

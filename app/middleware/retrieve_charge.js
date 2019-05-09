@@ -32,7 +32,7 @@ module.exports = (req, res, next) => {
         })
         .catch(() => {
           subsegment.close('error')
-          logging.systemError('Charge search middleware, finding charge', req.headers[CORRELATION_HEADER], chargeId)
+          logging.systemError('Charge search middleware, finding charge', req.headers && req.headers[CORRELATION_HEADER], chargeId)
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
         })
     }, clsSegment)

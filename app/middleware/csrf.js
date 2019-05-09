@@ -28,7 +28,7 @@ exports.csrfCheck = (req, res, next) => {
     responseRouter.response(req, res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined')
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    logging.systemError('CSRF is invalid', req.headers[CORRELATION_HEADER], chargeId)
+    logging.systemError('CSRF is invalid', req.headers && req.headers[CORRELATION_HEADER], chargeId)
     responseRouter.response(req, res, 'SYSTEM_ERROR')
   } else {
     chargeSession.csrfTokens.push(csrfToken)
