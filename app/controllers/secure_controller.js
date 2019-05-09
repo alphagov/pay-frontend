@@ -4,6 +4,7 @@
 const csrf = require('csrf')
 
 // Local dependencies
+const logging = require('../utils/logging')
 const { generateRoute } = require('../paths')
 const Token = require('../models/token')
 const Charge = require('../models/charge')
@@ -25,6 +26,7 @@ exports.new = (req, res) => {
       res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), { chargeId }))
     })
     .catch(() => {
+      logging.systemError('Secure controller token', correlationId, chargeTokenId)
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
     })
 }

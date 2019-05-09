@@ -5,9 +5,11 @@ const csrf = require('csrf')
 const logger = require('winston')
 
 // Local dependencies
+const logging = require('../utils/logging')
 const session = require('../utils/session')
 const responseRouter = require('../utils/response_router')
 const chargeParam = require('../services/charge_param_retriever')
+const { CORRELATION_HEADER } = require('../../config/correlation_header')
 
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
@@ -26,8 +28,8 @@ exports.csrfCheck = (req, res, next) => {
     responseRouter.response(req, res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined')
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
+    logging.systemError('CSRF is invalid', req.headers[CORRELATION_HEADER], chargeId)
     responseRouter.response(req, res, 'SYSTEM_ERROR')
-    logger.error('CSRF is invalid')
   } else {
     chargeSession.csrfTokens.push(csrfToken)
     next()
