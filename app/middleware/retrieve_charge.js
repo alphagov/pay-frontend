@@ -5,10 +5,11 @@ const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
 
 // Local dependencies
+const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const Charge = require('../models/charge')
 const chargeParam = require('../services/charge_param_retriever')
-const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
+const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 // Constants
@@ -31,6 +32,7 @@ module.exports = (req, res, next) => {
         })
         .catch(() => {
           subsegment.close('error')
+          logging.systemError('Charge search middleware, finding charge', req.headers && req.headers[CORRELATION_HEADER], chargeId)
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
         })
     }, clsSegment)

@@ -34,3 +34,11 @@ exports.failedChargePatch = err => {
     err: err
   })
 }
+
+exports.systemError = function logSystemError (message, correlationId, chargeId) {
+  const correlationID = correlationId || 'no-correlation-id'
+  const chargeID = chargeId || 'no-charge-id'
+  const context = { correlationID, chargeID }
+
+  logger.error(`System error thrown, rendering technical problems page: ${message}`, context)
+}
