@@ -7,7 +7,8 @@
 		},
 		"withdrawalText": {
 			"debit_credit": "Math o gardiau credyd a debyd y derbynnir",
-			"debit": "Ni dderbynnir taliadau cerdyn credyd. Defnyddiwch gerdyn debyd os gwelwch yn dda."
+			"debit": "Ni dderbynnir taliadau cerdyn credyd. Defnyddiwch gerdyn debyd os gwelwch yn dda.",
+			"credit": "Ni dderbynnir taliadau cerdyn debyd. Defnyddiwch gerdyn credyd os gwelwch yn dda."
 		},
 		"title": "Rhowch fanylion y cerdyn",
 		"expiry": "Dyddiad dod i ben",

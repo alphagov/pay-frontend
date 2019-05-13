@@ -164,6 +164,9 @@
             {% if withdrawalText === 'debit' %}
               {{ __p("cardDetails.withdrawalText").debit }}
             {% endif %}
+            {% if withdrawalText === 'credit' %}
+              {{ __p("cardDetails.withdrawalText").credit }}
+            {% endif %}
           </p>
           <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
         </div>

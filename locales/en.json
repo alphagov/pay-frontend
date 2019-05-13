@@ -7,7 +7,8 @@
 		},
 		"withdrawalText": {
 			"debit_credit": "Accepted credit and debit card types",
-			"debit": "Credit card payments are not accepted. Please use a debit card."
+			"debit": "Credit card payments are not accepted. Please use a debit card.",
+			"credit": "Debit card payments are not accepted. Please use a credit card."
 		},
 		"title": "Enter card details",
 		"expiry": "Expiry date",
