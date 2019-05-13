@@ -2,43 +2,40 @@
   display: none;
 }
 
-body:not(.js-enabled) .govuk-form-group.cvc .hidden {
-  display: block;
-  visibility: visible;
-  margin-right: 3px;
-  float: left;
-}
+body:not(.js-enabled) {
+  .generic-cvc {
+    display: block;
+  }
 
-body:not(.js-enabled) .govuk-form-group.cvc .amex-cvc {
-  text-transform: lowercase;
-}
+  .govuk-form-group.cvc .hidden {
+    display: inline;
+  }
 
-body:not(.js-enabled) .govuk-form-group.cvc .amex-cvc {
-  margin-left: 10px;
+  .no-js-lowercase {
+    display: inline;
+    text-transform: lowercase;
+  }
 }
 
 .govuk-form-group.cvc {
   .cvc {
-    margin-right: govuk-spacing(3);
     float: left;
+    margin-right: govuk-spacing(3);
   }
 
   img {
     position: relative;
     top: -1px;
     max-height: 38px;
-    margin-right: govuk-spacing(3);
     float: left;
+    margin-right: govuk-spacing(3);
   }
 
   .either {
-    margin-right: govuk-spacing(3);
-    float: left;
+    @include govuk-font($size: 19);
+    line-height: 37px!important;
     color: $govuk-secondary-text-colour;
-    line-height: 38px;
-  }
-
-  .form-hint {
-    overflow: hidden;
+    float: left;
+    margin-right: govuk-spacing(3);
   }
 }
