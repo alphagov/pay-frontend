@@ -22,13 +22,13 @@
       {% if allowGooglePay %}
           if (window.PaymentRequest) {
             var googleAvailableRequest = new PaymentRequest({{ googlePayRequestMethodData | dump | safe }}, {{ googlePayRequestDetails | dump | safe }}).canMakePayment()
-            googleAvailableRequest.then(function (canMakeGooglePayPayment) { 
+            googleAvailableRequest.then(function (canMakeGooglePayPayment) {
               if (canMakeGooglePayPayment) {
                 document.body.classList.add('google-pay-available')
               } else {
                 document.body.classList.add('google-pay-unavailable')
               }
-            }) 
+            })
           }
       {% endif %}
       {% if allowApplePay or allowGooglePay %}
@@ -246,11 +246,13 @@
               <span class="generic-cvc">
                 {{ __p("cardDetails.cvcTip") }}
               </span>
-              <span class="hidden">
-                {{ __p("cardDetails.amexcvcNonjs") }}
-              </span>
               <span class="amex-cvc hidden">
-                {{ __p("cardDetails.amexcvcTip") }}
+                <span class="hidden">
+                  {{ __p("cardDetails.amexcvcNonjs") }}
+                </span>
+                <span class="no-js-lowercase">
+                  {{ __p("cardDetails.amexcvcTip") }}
+                </span>
               </span>
             </span>
             {% if highlightErrorFields.cvc %}
