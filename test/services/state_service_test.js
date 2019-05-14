@@ -40,7 +40,6 @@ describe('state service', function () {
     expect(stateService.resolveActionName(State.AUTH_3DS_REQUIRED, 'get')).to.eql('card.auth3dsRequired')
     expect(stateService.resolveActionName(State.AUTH_3DS_READY, 'get')).to.eql('card.authWaiting')
 
-    expect(stateService.resolveActionName(State.AUTH_SUCCESS, 'post')).to.eql('card.capture')
     expect(stateService.resolveActionName(State.CREATED, 'get')).to.eql('card.new')
 
     expect(stateService.resolveActionName(State.CAPTURE_READY, 'get')).to.eql('card.captureWaiting')
