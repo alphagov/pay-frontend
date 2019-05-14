@@ -13,7 +13,7 @@ const init = () => {
   const addFor = (input, confirmation) => {
     const formGroup = input.closest('.govuk-form-group')
 
-    formGroup.after(confirmation)
+    formGroup.parentNode.insertBefore(confirmation, formGroup.nextSibling)
   }
 
   function update (e) {
