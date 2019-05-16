@@ -279,9 +279,10 @@
         </div>
         {% if service.collectBillingAddress %}
         <div class="govuk-form-group govuk-!-width-two-thirds {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
-          <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h2>
-          <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.billingAddressHint") }}</span>
-
+          <legend for="address-country" class="govuk-!-margin-bottom-6">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h2>
+            <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.billingAddressHint") }}</span>
+          </legend>
           <label id="address-country-lbl" for="address-country" class="govuk-label">
                 <span
                     class="address-country-label"
