@@ -115,9 +115,7 @@ describe('Apple Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
-      cy.get('#payment-method-apple-pay').should('be.visible')
-      cy.get('#payment-method-apple-pay').click()
-      cy.get('#payment-method-submit').should('be.visible')
+      cy.get('#payment-method-submit.apple-pay').should('be.visible')
       cy.get('#payment-method-submit').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
@@ -155,14 +153,9 @@ describe('Apple Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
-      cy.get('#payment-method-apple-pay').should('be.visible')
-      cy.get('#payment-method-standard').should('be.visible')
-      cy.get('#payment-method-standard').click()
-      cy.get('#payment-method-submit').should('be.visible')
-      cy.get('#payment-method-submit').click()
+      cy.get('#payment-method-submit.apple-pay').should('be.visible')
 
       // 8. User should see normal payment form
-      cy.get('#enter-card-details-container').should('be.visible')
       cy.get('#card-no').should('be.visible')
     })
 
@@ -194,9 +187,7 @@ describe('Apple Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
-      cy.get('#payment-method-apple-pay').should('be.visible')
-      cy.get('#payment-method-apple-pay').click()
-      cy.get('#payment-method-submit').should('be.visible')
+      cy.get('#payment-method-submit.apple-pay').should('be.visible')
       cy.get('#payment-method-submit').click()
 
       // 8. User clicks though the native payment UI but the email is invalid and we throw an error
@@ -221,11 +212,9 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
-      cy.get('#payment-method-apple-pay').should('not.be.visible')
-      cy.get('#payment-method-submit').should('not.be.visible')
+      cy.get('#payment-method-submit.apple-pay').should('be.not.visible')
 
       // 8. User should see normal payment form
-      cy.get('#enter-card-details-container').should('be.visible')
       cy.get('#card-no').should('be.visible')
     })
   })

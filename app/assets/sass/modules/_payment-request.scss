@@ -1,16 +1,4 @@
-.payment-request-logo {
-  float: left;
-  margin-top: -.25rem;
-  margin-right: govuk-spacing(3);
-  max-height: 2rem;
-  width: auto;
-}
-
 #web-payments-container {
-  display: none;
-}
-
-.payment-request-radios .govuk-radios__item:not(:last-child ){
   display: none;
 }
 
@@ -18,20 +6,6 @@
 .apple-pay-available {
   #web-payments-container {
     display: block;
-
-    .payment-request-radios .govuk-radios__item:first-child {
-      display: block;
-    }
-  }
-
-  #enter-card-details-container {
-    display: none;
-  }
-}
-
-.apple-pay-unavailable {
-  .payment-request-radios .govuk-radios__item:first-child {
-    display: none;
   }
 }
 
@@ -39,20 +13,21 @@
 .google-pay-available {
   #web-payments-container {
     display: block;
-
-    .payment-request-radios .govuk-radios__item:nth-child(2) {
-      display: block;
-    }
-  }
-
-  #enter-card-details-container {
-    display: none;
   }
 }
 
-.google-pay-unavailable {
-  .payment-request-radios .govuk-radios__item:nth-child(2) {
-    display: none;
+.web-payments-button {
+  background: govuk-colour("black");
+  box-shadow: none;
+  width: 100%;
+
+  &:hover {
+    background: black;
   }
 }
 
+.web-payments-logo {
+  display: inline-block;
+  width: 3rem;
+  margin: 0 0 -.25rem .25rem;
+}
