@@ -432,13 +432,28 @@
           </div>
         {% endif %}
         <div>
-          <input id="submit-card-details" type="submit" class="govuk-button" value="{{ __p("commonButtons.continueButton") }}" name="submitCardDetails"
           {% if typos %}
-          data-click-events
-          data-click-category="Typo made"
-          data-click-action="Corrected email: {{ typos.domain }}"
+            {{
+              govukButton({
+                text: __p("commonButtons.continueButton"),
+                attributes: {
+                  id: "submit-card-details",
+                  "data-click-events": "true",
+                  "data-click-category":"Typo made",
+                  "data-click-action": "Corrected email: " + typos.domain
+                }
+              })
+            }}
+          {% else %}
+            {{
+              govukButton({
+                text: __p("commonButtons.continueButton"),
+                attributes: {
+                  id: "submit-card-details"
+                }
+              })
+            }}
           {% endif %}
-          />
         </div>
       </form>
       <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
