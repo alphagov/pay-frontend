@@ -27,6 +27,7 @@
 		"city": "Town or city",
 		"postcode": "Postcode",
 		"country": "Country or territory",
+		"contactDetails": "Contact details",
 		"email": "Email",
 		"emailHint": "We’ll send your payment confirmation here",
 		"emailConfirmation": "An email will be sent to:",

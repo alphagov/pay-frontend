@@ -27,6 +27,7 @@
 		"city": "Tref neu ddinas",
 		"postcode": "Cod post",
 		"country": "Gwlad neu diriogaeth",
+		"contactDetails": "Manylion cyswllt",
 		"email": "E-bost",
 		"emailHint": "Byddwn yn anfon eich cadarnhad taliad yma",
 		"emailConfirmation": "Byddwn an anfon e-bost i:",

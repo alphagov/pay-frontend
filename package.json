@@ -63,7 +63,8 @@
       "assets/*",
       "Gruntfile.js",
       "app/browsered.js",
-      "public/js/*"
+      "public/js/*",
+      "locales/*"
     ]
   },
   "dependencies": {
