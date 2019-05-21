@@ -36,17 +36,20 @@
 	},
 	"commonButtons": {
 		"continueButton": "Parhau",
-		"confirmButton": "Cadarnhau’r taliad",
 		"cancelButton": "Canslo’r taliad",
 		"goBackToService": "Mynd yn ôl i’r gwasanaeth"
 	},
 	"confirmDetails": {
+		"description": "Disgrifiad",
+		"cardDetails": "Manylion cerdyn",
 		"title": "Cadarnhau eich taliad",
-		"card": "Rhif cerdyn:",
-		"expiry": "Dyddiad dod i ben:",
-		"name": "Enw ar y cerdyn:",
-		"address": "Cyfeiriad bilio:",
-		"email": "E-bost cadarnhad:"
+		"card": "Rhif cerdyn",
+		"expiry": "Dyddiad dod i ben",
+		"name": "Enw ar y cerdyn",
+		"address": "Cyfeiriad bilio",
+		"email": "E-bost cadarnhad",
+		"pay": "Talu",
+		"now": "nawr"
 	},
 	"commonConjunctions": {
 		"or": "neu"
@@ -56,7 +59,7 @@
 	},
 	"paymentSummary": {
 		"title": "Crynodeb y taliad",
-		"amount": "Swm:",
+		"amount": "Swm",
 		"corporateCardFee": "Ffi cerdyn corfforaethol:",
 		"totalAmount": "Cyfanswm:"
 	},

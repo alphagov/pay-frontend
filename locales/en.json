@@ -34,17 +34,20 @@
 	},
 	"commonButtons": {
 		"continueButton": "Continue",
-		"confirmButton": "Confirm payment",
 		"cancelButton": "Cancel payment",
 		"goBackToService": "Go back to the service"
 	},
 	"confirmDetails": {
+		"description": "Description",
+		"cardDetails": "Card details",
 		"title": "Confirm your payment",
-		"card": "Card number:",
-		"expiry": "Expiry date:",
-		"name": "Name on card:",
-		"address": "Billing address:",
-		"email": "Confirmation email:"
+		"card": "Card number",
+		"expiry": "Expiry date",
+		"name": "Name on card",
+		"address": "Billing address",
+		"email": "Confirmation email",
+		"pay": "Pay",
+		"now": "now"
 	},
 	"commonConjunctions": {
 		"or": "or"
@@ -54,7 +57,7 @@
 	},
 	"paymentSummary": {
 		"title": "Payment summary",
-		"amount": "Amount:",
+		"amount": "Amount",
 		"corporateCardFee": "Corporate card fee:",
 		"totalAmount": "Total amount:"
 	},

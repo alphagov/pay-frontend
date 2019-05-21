@@ -199,13 +199,14 @@ describe('The confirm view', function () {
   })
 
   it('should render a confirm button', function () {
-    const body = renderTemplate('confirm', { confirmPath: '/card_details/123/confirm', 'charge': { id: 1234 } })
+    const body = renderTemplate('confirm', { confirmPath: '/card_details/123/confirm', 'charge': { id: 1234, amount: 50 } })
+    const $ = cheerio.load(body)
     body.should.containSelector('form#confirmation').withAttributes(
       {
         action: '/card_details/123/confirm',
         method: 'POST'
       })
-    body.should.containSelector('button#confirm').withText('Confirm')
+    $('#confirm').text().replace(/\s+/g, ' ').trim().should.contain('Pay £50 now')
     body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234')
   })
 
