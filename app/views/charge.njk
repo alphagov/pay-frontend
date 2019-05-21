@@ -396,23 +396,28 @@
       </div>
       {% endif %}
       {% if typos %}
-      <div class="govuk-form-group form-group-email-typo govuk-form-group--error">
-        <legend for="email-typo" id="email-typo-lbl" class="govuk-label govuk-label--s error-label">
-          <p class="govuk-error-message" id="error-typo">
-            {{ __p("fieldErrors.fields.email.typo") }}
-          </p>
-        </legend>
-        <div class="govuk-radios">
-          <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="email-corrected" type="radio" name="email-typo-sugestion" value="{{ typos.full }}" checked>
-            <label class="govuk-label govuk-radios__label" for="email-corrected">{{ typos.address }}@<strong>{{ typos.domain }}</strong></label>
-          </div>
-          <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="email-uncorrected" type="radio" name="email-typo-sugestion" value="{{ email }}">
-            <label class="govuk-label govuk-radios__label" for="email-uncorrected">{{ email }}</label>
-          </div>
-        </div>
-      </div>
+        {{
+          govukRadios({
+            name: 'email-typo-sugestion',
+            errorMessage: {
+              text: __p("fieldErrors.fields.email.typo"),
+              classes: 'govuk-!-width-two-thirds'
+            },
+            items: [
+              {
+                id: 'email-corrected',
+                value: typos.full,
+                html: typos.address + '@<strong>' + typos.domain + '</strong>',
+                checked: true
+              },
+              {
+                id: 'email-uncorrected',
+                value: email,
+                text: email
+              }
+            ]
+          })
+        }}
       {% endif %}
       <div>
       {% if typos %}

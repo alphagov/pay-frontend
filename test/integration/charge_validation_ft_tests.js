@@ -144,7 +144,7 @@ describe('checks for PAN-like numbers', () => {
         if (err) return done(err)
         const $ = cheerio.load(res.text)
         const typoErrorText = 'There might be a mistake in the last part of your email address. Select your email address.'
-        expect($('#email-typo-lbl').text()).to.contains(typoErrorText)
+        expect($('#email-typo-sugestion-error').text()).to.contains(typoErrorText)
         done()
       })
   })
