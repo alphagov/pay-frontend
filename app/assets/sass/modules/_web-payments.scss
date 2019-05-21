@@ -1,0 +1,34 @@
+#web-payments-container {
+  display: none;
+}
+
+// Toggle Apple Pay
+.apple-pay-available {
+  #web-payments-container {
+    display: block;
+  }
+}
+
+// Toggle Google Pay
+.google-pay-available {
+  #web-payments-container {
+    display: block;
+  }
+}
+
+.web-payments-button {
+  background: govuk-colour("black");
+  box-shadow: none;
+  width: 100%;
+
+  &:focus,
+  &:hover {
+    background: black;
+  }
+}
+
+.web-payments-logo {
+  display: inline-block;
+  width: 3rem;
+  margin: 0 0 -.25rem .25rem;
+}

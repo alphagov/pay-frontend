@@ -7,18 +7,16 @@ const { googlePayNow } = require('./google-pay')
 
 // Browser elements
 const paymentMethodForm = document.getElementById('web-payments-container')
-const standardMethodContainer = document.getElementById('enter-card-details-container')
+const standardMethodForm = document.getElementById('card-details')
 
 const initApplePayIfAvailable = () => {
   if (document.body.classList.contains('apple-pay-available')) {
-    document.getElementById('payment-method-apple-pay').checked = true
     ga('send', 'event', 'Apple Pay', 'Enabled', 'Apple pay available on this device')
   }
 }
 
 const initGooglePayIfAvailable = () => {
   if (document.body.classList.contains('google-pay-available')) {
-    document.getElementById('payment-method-google-pay').checked = true
     ga('send', 'event', 'Google Pay', 'Enabled', 'Google pay available on this device')
   }
 }
@@ -28,20 +26,21 @@ const setupEventListener = () => {
     paymentMethodForm.addEventListener('submit', function (e) {
       e.preventDefault()
       clearErrorSummary()
-      const checkedValue = document.querySelectorAll('#web-payments-container input:checked')[0].value
+      const webPaymentMethod = e.target[0].value
 
-      ga('send', 'event', checkedValue, 'Selection', `User chose ${checkedValue} method`)
+      ga('send', 'event', webPaymentMethod, 'Selection', `User chose ${webPaymentMethod} method`)
 
-      switch (checkedValue) {
+      switch (webPaymentMethod) {
         case 'Apple Pay':
           return makeApplePayRequest()
         case 'Google Pay':
           return googlePayNow()
-        default:
-          standardMethodContainer.style.display = 'block'
-          paymentMethodForm.style.display = 'none'
       }
     }, false)
+
+    standardMethodForm.addEventListener('submit', function (e) {
+      ga('send', 'event', 'Standard', 'Selection', `User chose Standard method`)
+    })
   }
 }
 

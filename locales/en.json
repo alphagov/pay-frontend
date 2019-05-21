@@ -1,9 +1,7 @@
 {
 	"cardDetails": {
 		"webPayments": {
-			"choose": "Choose how you want to pay",
-			"standard": "Debit or credit card",
-			"continue": "Continue to payment"
+			"payWith": "Pay with"
 		},
 		"withdrawalText": {
 			"debit_credit": "Accepted credit and debit card types",
