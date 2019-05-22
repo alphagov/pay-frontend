@@ -28,7 +28,7 @@ describe('Frontend analytics', function () {
 
   it('should be enabled in confirm view', function () {
     var templateData = {
-      'cardNumber': '************5100',
+      'cardNumber': '●●●●●●●●●●●●5100',
       'expiryDate': '11/99',
       'amount': '10.00',
       'description': 'Payment Description',

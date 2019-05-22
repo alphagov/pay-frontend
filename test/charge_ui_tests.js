@@ -26,7 +26,7 @@ const generateConfirmViewTemplateData = (templateData = {}) => {
   return {
     charge: {
       cardDetails: {
-        cardNumber: '************5100',
+        cardNumber: '●●●●●●●●●●●●5100',
         expiryDate: '11/99',
         cardholderName: 'Francisco Blaya-Gonzalvez',
         billingAddress: lodash.get(templateData, 'charge.cardDetails.billingAddress', '1 street lane, avenue city, AB1 3DF')
@@ -156,7 +156,7 @@ describe('The confirm view', function () {
     const $ = cheerio.load(body)
     $('#payment-description').html().should.contain('Payment Description &amp; &lt;xss attack&gt; assessment')
     body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
-    body.should.containSelector('#card-number').withText('************5100')
+    body.should.containSelector('#card-number').withText('●●●●●●●●●●●●5100')
     body.should.containSelector('#expiry-date').withText('11/99')
     body.should.containSelector('#amount').withText('£10.00')
     body.should.containSelector('#payment-description').withText('Payment Description')
@@ -178,7 +178,7 @@ describe('The confirm view', function () {
     const $ = cheerio.load(body)
     $('#payment-description').html().should.contain('Payment Description &amp; &lt;xss attack&gt; assessment')
     body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
-    body.should.containSelector('#card-number').withText('************5100')
+    body.should.containSelector('#card-number').withText('●●●●●●●●●●●●5100')
     body.should.containSelector('#expiry-date').withText('11/99')
     body.should.containSelector('#cardholder-name').withText('Francisco Blaya-Gonzalvez')
     body.should.not.containSelector('#address').withText('1 street lane, avenue city, AB1 3DF')
