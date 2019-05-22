@@ -11,8 +11,7 @@
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ __p("confirmDetails.title") }}</h1>
-
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ __p("confirmDetails.title") }}</h1>
     <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
@@ -24,6 +23,7 @@
       {{
         govukButton({
           html: confirmButtonHTML,
+          classes: "govuk-!-font-size-24 pay-button--custom",
           attributes: {
             id: 'confirm',
             'data-module': 'stop-double-submit'
@@ -40,6 +40,7 @@
           },
           {
             text: charge.description,
+            classes: 'govuk-!-width-two-thirds',
             attributes: {
               id: 'payment-description'
             }
@@ -51,6 +52,7 @@
           },
           {
             text: '£' + charge.amount,
+            classes: 'govuk-!-width-two-thirds',
             attributes: {
               id: 'payment-summary-breakdown-amount'
             }
@@ -62,6 +64,7 @@
           },
           {
             text: '£' + charge.corporateCardSurcharge,
+            classes: 'govuk-!-width-two-thirds',
             attributes: {
               id: 'payment-summary-corporate-card-fee'
             }
@@ -73,6 +76,7 @@
           },
           {
             text: '£' + charge.totalAmount,
+            classes: 'govuk-!-width-two-thirds',
             attributes: {
               id: 'amount'
             }
@@ -87,6 +91,7 @@
           },
           {
             text: charge.description,
+            classes: 'govuk-!-width-two-thirds',
             attributes: {
               id: 'payment-description'
             }
@@ -98,6 +103,7 @@
           },
           {
             text: '£' + charge.amount,
+            classes: 'govuk-!-width-two-thirds',
             attributes: {
               id: 'amount'
             }
@@ -122,6 +128,7 @@
         },
         {
           text: charge.cardDetails.cardNumber,
+          classes: 'govuk-!-width-two-thirds',
           attributes: {
             id: 'card-number'
           }
@@ -133,6 +140,7 @@
         },
         {
           text: charge.cardDetails.expiryDate,
+          classes: 'govuk-!-width-two-thirds',
           attributes: {
             id: 'expiry-date'
           }
@@ -145,6 +153,7 @@
         },
         {
           text: charge.cardDetails.cardholderName,
+          classes: 'govuk-!-width-two-thirds',
           attributes: {
             id: 'cardholder-name'
           }
@@ -161,10 +170,10 @@
           },
           {
             text: charge.cardDetails.billingAddress,
-          attributes: {
-            id: 'address'
-          }
-
+            classes: 'govuk-!-width-two-thirds',
+            attributes: {
+              id: 'address'
+            }
           }
         ]
       ] %}
@@ -178,10 +187,10 @@
           },
           {
             text: charge.email,
-          attributes: {
-            id: 'email'
-          }
-
+            classes: 'govuk-!-width-two-thirds',
+            attributes: {
+              id: 'email'
+            }
           }
         ]
       ] %}

@@ -1,7 +1,7 @@
 .accepted-cards {
   display: block;
   width: 100%;
-  margin: govuk-spacing(3) 0 govuk-spacing(2);
+  margin: govuk-spacing(3) 0 govuk-spacing(1);
   padding: 0;
   float: none;
   overflow: hidden;
@@ -14,7 +14,7 @@
     display: block;
     width: 3rem;
     height: 0;
-    margin: 0 govuk-spacing(1) govuk-spacing(1);
+    margin: 0 govuk-spacing(2) govuk-spacing(1) 0;
     padding-bottom: 2rem;
     float: left;
     background-image: url("/images/accepted-cards-sprite.png");

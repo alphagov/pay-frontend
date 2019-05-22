@@ -3,7 +3,8 @@
 		"webPayments": {
 			"choose": "Dewiswch sut yr hoffech dalu",
 			"standard": "Cerdyn debyd neu gredyd",
-			"continue": "Parhau i’r taliad"
+			"continue": "Parhau i’r taliad",
+			"payWith": "Talu gyda"
 		},
 		"withdrawalText": {
 			"debit_credit": "Math o gardiau credyd a debyd y derbynnir",
