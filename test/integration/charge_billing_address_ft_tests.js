@@ -208,7 +208,7 @@ describe('chargeTests - billing address', function () {
         .expect(function (res) {
           const $ = cheerio.load(res.text)
           expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
-          expect($('#card-number').text()).to.contains('************1234')
+          expect($('#card-number').text()).to.contains('●●●●●●●●●●●●1234')
           expect($('#expiry-date').text()).to.contains('11/99')
           expect($('#cardholder-name').text()).to.contains('Test User')
           expect($('#address').length).to.equal(0)

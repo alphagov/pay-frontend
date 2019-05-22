@@ -146,7 +146,7 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
 
       // TD inner values are padded with white space - generic match
-      cy.get('#card-number').should(($td) => expect($td).to.contain(`************${lastFourCardDigits}`))
+      cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
     })
@@ -226,7 +226,7 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
 
       // TD inner values are padded with white space - generic match
-      cy.get('#card-number').should(($td) => expect($td).to.contain(`************${lastFourCardDigits}`))
+      cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(likelyTypoEmail))
     })
@@ -306,7 +306,7 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
 
       // TD inner values are padded with white space - generic match
-      cy.get('#card-number').should(($td) => expect($td).to.contain(`************${lastFourCardDigits}`))
+      cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
     })

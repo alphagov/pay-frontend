@@ -74,7 +74,7 @@ module.exports = (function () {
   }
 
   const _normaliseConfirmationDetails = function (cardDetails) {
-    cardDetails.cardNumber = '************' + cardDetails.last_digits_card_number
+    cardDetails.cardNumber = '●●●●●●●●●●●●' + cardDetails.last_digits_card_number
     delete cardDetails.last_digits_card_number
     const normalisedDetails = humps.camelizeKeys(cardDetails)
     if (cardDetails.billing_address) {
