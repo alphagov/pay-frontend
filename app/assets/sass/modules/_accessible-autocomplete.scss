@@ -1,3 +1,8 @@
+.autocomplete__input,
 .autocomplete__menu {
   @include govuk-font($size: 19);
+}
+
+.autocomplete__input {
+  @extend .govuk-\!-width-three-quarters;
 }
