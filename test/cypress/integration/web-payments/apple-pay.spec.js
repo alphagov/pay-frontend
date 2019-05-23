@@ -118,7 +118,7 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#payment-method-submit.apple-pay').should('be.visible')
-      cy.get('#payment-method-submit').click()
+      cy.get('#payment-method-submit.apple-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
@@ -248,7 +248,7 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#payment-method-submit.apple-pay').should('be.visible')
-      cy.get('#payment-method-submit').click()
+      cy.get('#payment-method-submit.apple-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
