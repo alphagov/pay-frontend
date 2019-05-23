@@ -25,6 +25,10 @@
   &:hover {
     background: black;
   }
+
+  &[disabled] {
+    background: $govuk-secondary-text-colour;
+  }
 }
 
 .web-payments-logo {
