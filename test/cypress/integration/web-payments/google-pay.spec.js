@@ -43,7 +43,7 @@ describe('Google Pay payment flow', () => {
     { name: 'adminUsersGetService' }
   ]
 
-  const checkCardDetailsStubsWithGooglePay = googlePayEnabled => {
+  const checkCardDetailsStubsWithGooglePayorApplePay = (googlePayEnabled, applePayEnabled) => {
     return [
       {
         name: 'connectorGetChargeDetails',
@@ -51,6 +51,7 @@ describe('Google Pay payment flow', () => {
           chargeId,
           status: 'ENTERING CARD DETAILS',
           state: { finished: false, status: 'started' },
+          allowApplePay: applePayEnabled,
           allowGooglePay: googlePayEnabled,
           gatewayMerchantId: 'SMTHG12345UP'
         }
@@ -87,7 +88,7 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option and user chooses it', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(true))
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePayorApplePay(true, false))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Payment Request API
@@ -105,7 +106,7 @@ describe('Google Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
       cy.get('#payment-method-submit.google-pay').should('be.visible')
-      cy.get('#payment-method-submit').click()
+      cy.get('#payment-method-submit.google-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
@@ -129,7 +130,7 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option and user chooses standard method', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(true))
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePayorApplePay(true, false))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Payment Request API
@@ -153,7 +154,7 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should not show Google Pay as browser doesn’t support it', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithGooglePay(false))
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePayorApplePay(false, false))
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
@@ -161,6 +162,48 @@ describe('Google Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+    })
+
+    it('Should setup the payment and load the page and Apple Pay is enabled for service as well', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be deleted (DELETE)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show Google Pay as a payment option and user chooses it', () => {
+      cy.task('setupStubs', checkCardDetailsStubsWithGooglePayorApplePay(true, true))
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          // Stub Payment Request API
+          if (win.PaymentRequest) {
+            // If we’re running in headed mode
+            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+          } else {
+            // else headless
+            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+          }
+          // Stub fetch so we can simulate auth call to connector
+          cy.stub(win, 'fetch', mockPaymentAuthResponse)
+        }
+      })
+
+      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
+      cy.get('#payment-method-submit.google-pay').should('be.visible')
+      cy.get('#payment-method-submit.google-pay').click()
+
+      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
+      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq('/')
+        expect(loc.search).to.eq(returnURL)
+      })
     })
   })
 })

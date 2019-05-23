@@ -51,7 +51,7 @@ describe('Apple Pay payment flow', () => {
     { name: 'adminUsersGetService' }
   ]
 
-  const checkCardDetailsStubsWithApplePay = applePayEnabled => {
+  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled) => {
     return [
       {
         name: 'connectorGetChargeDetails',
@@ -59,7 +59,9 @@ describe('Apple Pay payment flow', () => {
           chargeId,
           status: 'ENTERING CARD DETAILS',
           state: { finished: false, status: 'started' },
-          allowApplePay: applePayEnabled
+          allowApplePay: applePayEnabled,
+          allowGooglePay: googlePayEnabled,
+          gatewayMerchantId: 'SMTHG12345UP'
         }
       },
       { name: 'cardIdValidCardDetails' }
@@ -102,7 +104,7 @@ describe('Apple Pay payment flow', () => {
     })
 
     it('Should show Apple Pay as a payment option and user chooses Apple Pay', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePay(true))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -116,7 +118,7 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#payment-method-submit.apple-pay').should('be.visible')
-      cy.get('#payment-method-submit').click()
+      cy.get('#payment-method-submit.apple-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
@@ -140,7 +142,7 @@ describe('Apple Pay payment flow', () => {
     })
 
     it('Should show Apple Pay as a payment option but the user chooses to pay normally', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePay(true))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -173,7 +175,7 @@ describe('Apple Pay payment flow', () => {
     })
 
     it('Should show Apple Pay but error because a bad email was entered', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePay(true))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -208,7 +210,7 @@ describe('Apple Pay payment flow', () => {
     })
 
     it('Should not show Apple Pay as browser doesn’t support it', () => {
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePay(false))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(false, false))
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
@@ -216,6 +218,44 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+    })
+
+    it('Should setup the payment and load the page and Google Pay is enabled for service as well', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be deleted (DELETE)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show Apple Pay as a payment option and user chooses Apple Pay', () => {
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, true))
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          // Stub Apple Pay API (which only exists within Safari)
+          win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, 'jonheslop@bla.test')
+          // Stub fetch so we can simulate
+          // 1. The merchant validation call to Apple
+          // 2. The auth call to connector
+          cy.stub(win, 'fetch', mockFetchAPI)
+        }
+      })
+
+      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
+      cy.get('#payment-method-submit.apple-pay').should('be.visible')
+      cy.get('#payment-method-submit.apple-pay').click()
+
+      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
+      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq('/')
+        expect(loc.search).to.eq(returnURL)
+      })
     })
   })
 })
