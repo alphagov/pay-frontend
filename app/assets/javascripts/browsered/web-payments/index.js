@@ -6,7 +6,7 @@ const makeApplePayRequest = require('./apple-pay')
 const { googlePayNow } = require('./google-pay')
 
 // Browser elements
-const paymentMethodForm = document.getElementById('web-payments-container')
+const paymentMethodForms = Array.prototype.slice.call(document.getElementsByClassName('web-payments-container'))
 const standardMethodForm = document.getElementById('card-details')
 
 const initApplePayIfAvailable = () => {
@@ -23,20 +23,22 @@ const initGooglePayIfAvailable = () => {
 
 const setupEventListener = () => {
   if (window.PaymentRequest || window.ApplePaySession) {
-    paymentMethodForm.addEventListener('submit', function (e) {
-      e.preventDefault()
-      clearErrorSummary()
-      const webPaymentMethod = e.target[0].value
+    paymentMethodForms.forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        clearErrorSummary()
+        const webPaymentMethod = e.target[0].value
 
-      ga('send', 'event', webPaymentMethod, 'Selection', `User chose ${webPaymentMethod} method`)
+        ga('send', 'event', webPaymentMethod, 'Selection', `User chose ${webPaymentMethod} method`)
 
-      switch (webPaymentMethod) {
-        case 'Apple Pay':
-          return makeApplePayRequest()
-        case 'Google Pay':
-          return googlePayNow()
-      }
-    }, false)
+        switch (webPaymentMethod) {
+          case 'Apple Pay':
+            return makeApplePayRequest()
+          case 'Google Pay':
+            return googlePayNow()
+        }
+      }, false)
+    })
 
     standardMethodForm.addEventListener('submit', function (e) {
       ga('send', 'event', 'Standard', 'Selection', `User chose Standard method`)
