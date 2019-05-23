@@ -17,6 +17,10 @@
 }
 
 .web-payments-button {
+  @include govuk-media-query($until: desktop) {
+    margin-top: govuk-spacing(2);
+  }
+
   background: govuk-colour("black");
   box-shadow: none;
   width: 100%;
