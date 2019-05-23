@@ -56,32 +56,39 @@
         </ul>
       </div>
     </div>
-    {% if allowApplePay or allowGooglePay %}
-      {% if allowApplePay %}
-        {% set buttonHTML %}
-            {{ __p("cardDetails.webPayments.payWith") }}
-            <span class="govuk-visually-hidden">Apple Pay</span>
-            <img role="presentation" class="web-payments-logo" src="/images/apple-pay-logo.svg"/>
-        {% endset %}
-        {% set webPaymentValue = 'Apple Pay'%}
-        {% set webPaymentClass = 'apple-pay'%}
-      {% endif %}
-      {% if allowGooglePay %}
-        {% set buttonHTML %}
-            {{ __p("cardDetails.webPayments.payWith") }}
-            <span class="govuk-visually-hidden">Google Pay</span>
-            <img role="presentation" class="web-payments-logo" src="/images/google-pay-logo.svg"/>
-        {% endset %}
-        {% set webPaymentValue = 'Google Pay'%}
-        {% set webPaymentClass = 'google-pay'%}
-      {% endif %}
-
-      <form id="web-payments-container" class="govuk-!-width-three-quarters">
-          <input type="hidden" name="payment-method" value="{{webPaymentValue}}"/>
+    {% if allowApplePay %}
+      {% set ApplePayButtonHTML %}
+          {{ __p("cardDetails.webPayments.payWith") }}
+          <span class="govuk-visually-hidden">Apple Pay</span>
+          <img role="presentation" class="web-payments-logo" src="/images/apple-pay-logo.svg"/>
+      {% endset %}
+      <form id="apple-pay-container" class="govuk-!-width-three-quarters web-payments-container">
+        <input type="hidden" name="payment-method" value="Apple Pay"/>
           {{
             govukButton({
-              html: buttonHTML,
-              classes: "web-payments-button " + webPaymentClass,
+              html: ApplePayButtonHTML,
+              classes: "web-payments-button apple-pay",
+              attributes: {
+                id: "payment-method-submit"
+              }
+            })
+          }}
+        <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
+        <span class="pay-divider"><span class="pay-divider--word">or</span></span>
+      </form>
+    {% endif %}
+    {% if allowGooglePay %}
+      {% set GooglePayButtonHTML %}
+          {{ __p("cardDetails.webPayments.payWith") }}
+          <span class="govuk-visually-hidden">Google Pay</span>
+          <img role="presentation" class="web-payments-logo" src="/images/google-pay-logo.svg"/>
+      {% endset %}
+      <form id="google-pay-container" class="govuk-!-width-three-quarters web-payments-container">
+          <input type="hidden" name="payment-method" value="Google Pay"/>
+          {{
+            govukButton({
+              html: GooglePayButtonHTML,
+              classes: "web-payments-button google-pay",
               attributes: {
                 id: "payment-method-submit"
               }

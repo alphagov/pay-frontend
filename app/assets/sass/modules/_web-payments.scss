@@ -1,17 +1,18 @@
-#web-payments-container {
+#apple-pay-container,
+#google-pay-container {
   display: none;
 }
 
 // Toggle Apple Pay
 .apple-pay-available {
-  #web-payments-container {
+  #apple-pay-container {
     display: block;
   }
 }
 
 // Toggle Google Pay
 .google-pay-available {
-  #web-payments-container {
+  #google-pay-container {
     display: block;
   }
 }
