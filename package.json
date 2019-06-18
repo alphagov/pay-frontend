@@ -93,7 +93,7 @@
     "morgan": "1.9.x",
     "nunjucks": "^3.2.0",
     "polyfill-array-includes": "^2.0.0",
-    "promise-polyfill": "8.1.0",
+    "promise-polyfill": "8.1.3",
     "randomstring": "^1.1.5",
     "readdir": "0.1.x",
     "request": "^2.88.0",
