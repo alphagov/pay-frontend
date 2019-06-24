@@ -132,7 +132,7 @@
     "grunt-contrib-watch": "1.1.x",
     "grunt-rewrite": "1.0.x",
     "grunt-sass": "3.0.x",
-    "husky": "^2.3.0",
+    "husky": "^2.4.1",
     "lint-staged": "^8.2.1",
     "mocha": "6.1.x",
     "mountebank": "2.0.0",
