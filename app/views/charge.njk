@@ -123,7 +123,9 @@
           {% endif %}
         </label>
         <input id="card-no"
-                type="tel"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 name="cardNo"
                 maxlength="26"
                 class="govuk-input govuk-!-width-three-quarters"
@@ -178,12 +180,12 @@
             <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ __p("cardDetails.expiryMonth") }}</label>
             <input
               id="expiry-month"
-              type="number"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
               name="expiryMonth"
               value="{{expiryMonth}}"
               class="govuk-input govuk-date-input__input govuk-input--width-3"
-              min="1"
-              max="12"
               minlength="1"
               maxlength="2"
               autocomplete="cc-exp-month"/>
@@ -192,7 +194,9 @@
             <label for="expiry-year" class="govuk-label govuk-date-input__label">{{ __p("cardDetails.expiryYear") }}</label>
             <input
               id="expiry-year"
-              type="number"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
               name="expiryYear"
               value="{{expiryYear}}"
               minlength="2"
@@ -254,7 +258,9 @@
           {% endif %}
         </label>
         <input id="cvc"
-                type="number"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 value="{{cvc}}"
                 name="cvc"
                 class="govuk-input govuk-input--width-3 cvc"
