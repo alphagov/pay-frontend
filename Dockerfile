@@ -8,7 +8,7 @@ RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/
 
 RUN ["apk", "--no-cache", "upgrade"]
 
-RUN ["apk", "add", "--no-cache", "nodejs", "npm"]
+RUN ["apk", "add", "--no-cache", "nodejs", "npm", "tini"]
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
@@ -22,4 +22,6 @@ ADD . /app
 ENV LD_LIBRARY_PATH /app/node_modules/appmetrics
 RUN ["ln", "-s", "/tmp/node_modules", "/app/node_modules"]
 
-CMD npm start
+ENTRYPOINT ["tini", "--"]
+
+CMD ["npm", "start"]
