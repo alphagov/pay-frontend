@@ -101,7 +101,7 @@
 
     <h1 class="govuk-heading-l">{{ __p("cardDetails.title") }}</h1>
 
-    <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}">
+    <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
       <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
       <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       {% if (originalEmail) %}
@@ -125,6 +125,7 @@
         <input id="card-no"
                 type="text"
                 inputmode="numeric"
+                pattern="[0-9]*"
                 name="cardNo"
                 maxlength="26"
                 class="govuk-input govuk-!-width-three-quarters"
