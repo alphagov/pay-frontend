@@ -50,7 +50,7 @@ function initialiseGlobalMiddleware (app) {
   app.set('settings', { getVersionedPath: staticify.getVersionedPath })
   app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
     ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
-  app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/assets/images', 'favicon.ico')))
+  app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/govuk/assets/images', 'favicon.ico')))
   app.use(staticify.middleware)
 
   app.use(function (req, res, next) {
@@ -128,7 +128,7 @@ function initialisePublic (app) {
   app.use('/javascripts', express.static(path.join(__dirname, '/public/assets/javascripts'), publicCaching))
   app.use('/images', express.static(path.join(__dirname, '/public/images'), publicCaching))
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/assets/stylesheets'), publicCaching))
-  app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/')))
+  app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/govuk/')))
   app.use('/public', express.static(path.join(__dirname, '/node_modules/@govuk-pay/pay-js-commons/')))
 }
 
