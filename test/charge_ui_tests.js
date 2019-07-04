@@ -206,7 +206,7 @@ describe('The confirm view', function () {
         action: '/card_details/123/confirm',
         method: 'POST'
       })
-    $('#confirm').text().replace(/\s+/g, ' ').trim().should.contain('Pay £50 now')
+    $('#confirm').text().replace(/\s+/g, ' ').trim().should.contain('Confirm payment')
     body.should.containInputField('chargeId', 'hidden').withAttribute('value', '1234')
   })
 
