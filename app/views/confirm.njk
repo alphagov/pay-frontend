@@ -12,114 +12,6 @@
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ __p("confirmDetails.title") }}</h1>
-    <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
-      <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
-      <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
-      {% set confirmButtonHTML %}
-        {{ __p("confirmDetails.pay") }}
-        <span class="govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
-        {{ __p("confirmDetails.now") }}
-      {% endset %}
-      {{
-        govukButton({
-          html: confirmButtonHTML,
-          classes: "govuk-!-font-size-24 pay-button--custom",
-          attributes: {
-            id: 'confirm',
-            'data-module': 'stop-double-submit'
-          }
-        })
-      }}
-    </form>
-
-    {% if charge.corporateCardSurcharge %}
-      {% set chargeDetailsArray = [
-        [
-          {
-            text: __p('confirmDetails.description')
-          },
-          {
-            text: charge.description,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'payment-description'
-            }
-          }
-        ],
-        [
-          {
-            text: __p('paymentSummary.amount')
-          },
-          {
-            text: '£' + charge.amount,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'payment-summary-breakdown-amount'
-            }
-          }
-        ],
-        [
-          {
-            text: __p('paymentSummary.corporateCardFee')
-          },
-          {
-            text: '£' + charge.corporateCardSurcharge,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'payment-summary-corporate-card-fee'
-            }
-          }
-        ],
-        [
-          {
-            text: __p('paymentSummary.totalAmount')
-          },
-          {
-            text: '£' + charge.totalAmount,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'amount'
-            }
-          }
-        ]
-      ] %}
-    {% else %}
-      {% set chargeDetailsArray = [
-        [
-          {
-            text: __p('confirmDetails.description')
-          },
-          {
-            text: charge.description,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'payment-description'
-            }
-          }
-        ],
-        [
-          {
-            text: __p('paymentSummary.amount')
-          },
-          {
-            text: '£' + charge.amount,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'amount'
-            }
-          }
-        ]
-      ] %}
-    {% endif %}
-
-    {{
-      govukTable({
-        caption: __p('paymentSummary.title'),
-        captionClasses: 'govuk-!-font-size-24 govuk-!-margin-top-3 govuk-!-margin-bottom-3',
-        firstCellIsHeader: true,
-        rows: chargeDetailsArray
-      })
-    }}
 
     {% set cardDetailsArray = [
       [
@@ -198,12 +90,27 @@
 
     {{
       govukTable({
-        caption: __p('confirmDetails.cardDetails'),
-        captionClasses: 'govuk-!-font-size-24 govuk-!-margin-top-3 govuk-!-margin-bottom-3',
         firstCellIsHeader: true,
         rows: cardDetailsArray.concat(billingAddressArray).concat(emailArray)
       })
     }}
+
+    <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
+      <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+      <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
+      {% set confirmButtonHTML %}
+        {{ __p("commonButtons.confirmButton") }}
+      {% endset %}
+      {{
+        govukButton({
+          html: confirmButtonHTML,
+          attributes: {
+            id: 'confirm',
+            'data-module': 'stop-double-submit'
+          }
+        })
+      }}
+    </form>
 
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
@@ -211,6 +118,24 @@
         <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
+  </div>
+  <div class="govuk-grid-column-one-third payment-summary-wrap">
+    <aside class="payment-summary">
+      <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
+      <p id="payment-description" class="govuk-body">
+        {{ charge.description }}
+      </p>
+      {% if charge.corporateCardSurcharge %}
+      <p class="govuk-body" id="payment-summary-breakdown">
+        {{ __p("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
+        {{ __p("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
+      </p>
+      {% endif %}
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        {{ __p("paymentSummary.totalAmount") }}
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
+      </p>
+    </aside>
   </div>
 </div>
 {% endblock %}

@@ -36,6 +36,7 @@
 		"corporateDebitCardSurchargeMessage": "Mae ffi o £%s am ddefnyddio cerdyn ddebyd corfforaethol"
 	},
 	"commonButtons": {
+		"confirmButton": "Cadarnhau’r taliad",
 		"continueButton": "Parhau",
 		"cancelButton": "Canslo’r taliad",
 		"goBackToService": "Mynd yn ôl i’r gwasanaeth"

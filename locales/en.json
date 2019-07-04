@@ -33,6 +33,7 @@
 		"corporateDebitCardSurchargeMessage": "There is a fee of £%s for using a corporate debit card"
 	},
 	"commonButtons": {
+		"confirmButton": "Confirm payment",
 		"continueButton": "Continue",
 		"cancelButton": "Cancel payment",
 		"goBackToService": "Go back to the service"
