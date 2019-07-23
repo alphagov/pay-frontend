@@ -48,8 +48,6 @@
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
-    "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect",
     "publish-pacts": "./bin/publish-pacts.js"
   },
   "husky": {
@@ -152,7 +150,6 @@
     "proxyquire": "~2.1.3",
     "sass-lint": "^1.13.1",
     "sinon": "9.0.x",
-    "snyk": "^1.311.x",
     "standard": "^14.3.x",
     "superagent": "^5.2.2",
     "supertest": "^4.0.2"
@@ -165,6 +162,5 @@
     "statements": 85,
     "functions": 85,
     "branches": 85
-  },
-  "snyk": true
+  }
 }
