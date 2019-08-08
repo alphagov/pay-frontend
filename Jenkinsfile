@@ -5,7 +5,6 @@ pipeline {
 
   parameters {
     booleanParam(defaultValue: false, description: '', name: 'runEndToEndTestsOnPR')
-    booleanParam(defaultValue: false, description: '', name: 'runZapTestsOnPR')
   }
 
   options {
@@ -17,7 +16,6 @@ pipeline {
   }
   environment {
     RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"
-    RUN_ZAP_ON_PR = "${params.runZapTestsOnPR}"
     JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
   }
 
@@ -77,20 +75,9 @@ pipeline {
                 }
             }
             steps {
-                runCardPaymentsE2E("frontend")
+                runAppE2E("frontend", "card,zap")
             }
         }
-         stage('ZAP Tests') {
-            when {
-                anyOf {
-                  branch 'master'
-                  environment name: 'RUN_ZAP_ON_PR', value: 'true'
-                }
-            }
-            steps {
-                runZap("frontend")
-            }
-         }
       }
     }
     stage('Docker Tag') {
