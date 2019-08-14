@@ -2,7 +2,7 @@
   margin-top: govuk-spacing(6);
   border-top: 2px solid $govuk-brand-colour;
   padding: govuk-spacing(3);
-  background-color: govuk-colour('grey-4');
+  background-color: govuk-colour('light-grey');
 
   @include govuk-media-query($from: tablet) {
     margin-top: 0;

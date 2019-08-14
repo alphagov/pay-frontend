@@ -15,6 +15,10 @@
   &:hover {
     color: $govuk-link-hover-colour;
   }
+
+  &:focus {
+    @include govuk-focused-text;
+  }
 }
 
 .pay-button--custom {
