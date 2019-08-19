@@ -53,7 +53,7 @@ module.exports = {
 
   connectorGetChargeDetails: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeId}`
-    const body = paymentFixtures.validChargeDetails(opts)
+    const body = paymentFixtures.validChargeDetails(opts).getPlain()
 
     return simpleStubBuilder('GET', 200, path, body)
   },
@@ -92,7 +92,7 @@ module.exports = {
       chargeId: opts.chargeId,
       status: 'ENTERING CARD DETAILS',
       state: { finished: false, status: 'started' }
-    })
+    }).getPlain()
 
     return simpleStubBuilder('PATCH', 200, path, body)
   },
@@ -105,8 +105,8 @@ module.exports = {
   },
 
   connectorMultipleSubsequentChargeDetails: ([ firstChargeOpts, secondChargeOpts ]) => {
-    const firstChargeBody = paymentFixtures.validChargeDetails(firstChargeOpts)
-    const secondChargeBody = paymentFixtures.validChargeDetails(secondChargeOpts)
+    const firstChargeBody = paymentFixtures.validChargeDetails(firstChargeOpts).getPlain()
+    const secondChargeBody = paymentFixtures.validChargeDetails(secondChargeOpts).getPlain()
 
     const stub = {
       predicates: [{
