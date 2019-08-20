@@ -19,6 +19,7 @@ const CARD_CANCEL_PATH = '/v1/frontend/charges/{chargeId}/cancel'
 const CARD_FIND_BY_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}/charge'
 const CARD_DELETE_CHARGE_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}'
 const CARD_CHARGE_PATH = '/v1/frontend/charges/{chargeId}'
+const WORLDPAY_3DS_FLEX_JWT_PATH = '/v1/frontend/charges/{chargeId}/worldpay/3ds-flex/ddc'
 
 let baseUrl
 let correlationId
@@ -52,6 +53,9 @@ const _getDeleteTokenUrlFor = tokenId => baseUrl + CARD_DELETE_CHARGE_TOKEN_PATH
 
 /** @private */
 const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeId}', chargeId)
+
+/** @private */
+const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
 const _putConnector = (url, payload, description, subSegment) => {
@@ -276,6 +280,11 @@ const findByToken = chargeOptions => {
   return _getConnector(findByTokenUrl, 'find by token')
 }
 
+const getWorldpay3dsFlexJwt = chargeOptions => {
+  const getWorldpay3dsFlexJwtUrl = _getWorldpay3dsFlexUrlFor(chargeOptions.chargeId)
+  return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT')
+}
+
 // DELETE functions
 const deleteToken = chargeOptions => {
   const deleteTokenUrl = _getDeleteTokenUrlFor(chargeOptions.tokenId)
@@ -295,6 +304,7 @@ module.exports = function (clientOptions = {}) {
     cancel,
     findByToken,
     patch,
-    deleteToken
+    deleteToken,
+    getWorldpay3dsFlexJwt
   }
 }
