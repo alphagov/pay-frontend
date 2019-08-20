@@ -98,14 +98,19 @@ const handleCreateResponse = (req, res, charge) => response => {
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    return appendChargeForNewView(charge, req, charge.id).then(() => {
-      charge.countries = countries
-      if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
-      // else
-      Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
-        () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
-        () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
-    })
+    return appendChargeForNewView(charge, req, charge.id).then(
+      () => {
+        charge.countries = countries
+        if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
+        // else
+        Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
+          () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
+          () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
+      },
+      err => {
+        logging.failedGetWorldpayDdcJwt(err)
+        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+      })
   },
   create: (req, res) => {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
@@ -168,10 +173,16 @@ module.exports = {
               data.validation.originalEmail = userEmail
             }
             charge.countries = countries
-            return appendChargeForNewView(charge, req, charge.id).then(() => {
-              _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-              responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
-            })
+            return appendChargeForNewView(charge, req, charge.id).then(
+              () => {
+                _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+                responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
+              },
+              err => {
+                logging.failedGetWorldpayDdcJwt(err)
+                responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+              }
+            )
           }
           AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
             emailPatch

@@ -19,18 +19,22 @@ describe('Worldpay 3DS Flex service', () => {
   let connectorClientStub
   let getWorldpay3dsFlexJwtStub
 
-  beforeEach(() => {
-    const jwtResponse = validDdcJwt(TEST_JWT).getPlain()
-    getWorldpay3dsFlexJwtStub = sinon.stub().resolves({ body: jwtResponse })
-    connectorClientStub = sinon.stub().callsFake(() => {
-      return {
-        getWorldpay3dsFlexJwt: getWorldpay3dsFlexJwtStub
-      }
+  describe('get DDC JWT success', () => {
+    beforeEach(() => {
+      const jwtResponse = validDdcJwt(TEST_JWT).getPlain()
+      getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
+        {
+          statusCode: 200,
+          body: jwtResponse
+        })
+      connectorClientStub = sinon.stub().callsFake(() => {
+        return {
+          getWorldpay3dsFlexJwt: getWorldpay3dsFlexJwtStub
+        }
+      })
+      service = requireService(connectorClientStub)
     })
-    service = requireService(connectorClientStub)
-  })
 
-  describe('get DDC JWT', () => {
     describe('payment provider is Worldpay, 3DS is enabled and integration version is 2', () => {
       it('should call connector to get a JWT', async () => {
         const charge = {
@@ -98,6 +102,36 @@ describe('Worldpay 3DS Flex service', () => {
 
         expect(jwt).to.equal(null)
         expect(connectorClientStub.notCalled).to.be.true // eslint-disable-line
+      })
+    })
+  })
+
+  describe('Get DDC JWT error', () => {
+    beforeEach(() => {
+      getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
+        {
+          statusCode: 409
+        })
+      connectorClientStub = sinon.stub().callsFake(() => {
+        return {
+          getWorldpay3dsFlexJwt: getWorldpay3dsFlexJwtStub
+        }
+      })
+      service = requireService(connectorClientStub)
+    })
+
+    describe('connector returns a non 200 response', () => {
+      it('should throw an error', async () => {
+        const charge = {
+          id: 'a-charge-id',
+          gatewayAccount: {
+            paymentProvider: 'worldpay',
+            requires3ds: true,
+            integrationVersion3ds: 2
+          }
+        }
+        const correlationId = 'a-correlation-id'
+        await expect(service.getDdcJwt(charge, correlationId)).to.be.rejectedWith(Error)
       })
     })
   })

@@ -35,6 +35,14 @@ exports.failedChargePatch = err => {
   })
 }
 
+exports.failedGetWorldpayDdcJwt = err => {
+  logger.error('Calling connector to get a Worldpay 3DS Flex DDC JWT threw exception -', {
+    service: 'connector',
+    method: 'GET',
+    error: err
+  })
+}
+
 exports.systemError = function logSystemError (message, correlationId, chargeId) {
   const correlationID = correlationId || 'no-correlation-id'
   const chargeID = chargeId || 'no-charge-id'
