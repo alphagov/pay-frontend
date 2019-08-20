@@ -30,7 +30,8 @@
   };
   window.Charge = {
     email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
-    collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }}
+    collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }},
+    worldpay_3ds_flex_ddc_jwt: '{{ worldpay3dsFlexDdcJwt | safe }}'
   }
 
   var mainWrap = document.getElementsByTagName('main')[0]

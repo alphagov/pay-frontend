@@ -23,6 +23,7 @@ const connectorClient = require('../services/clients/connector_client')
 const cookies = require('../utils/cookies')
 const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
 const supportedNetworksFormattedByProvider = require('../assets/javascripts/browsered/web-payments/format-card-types')
+const worlpay3dsFlexService = require('../services/worldpay_3ds_flex_service')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')
@@ -30,7 +31,7 @@ const { views, preserveProperties } = require('../../config/charge_controller')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { createChargeIdSessionKey } = require('../utils/session')
 
-const appendChargeForNewView = (charge, req, chargeId) => {
+const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
@@ -53,6 +54,9 @@ const appendChargeForNewView = (charge, req, chargeId) => {
     gatewayMerchantId: charge.gatewayAccount.gatewayMerchantId
   })
   charge.googlePayRequestDetails = googlePayDetails
+
+  const correlationId = req.headers[CORRELATION_HEADER] || ''
+  charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId)
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
@@ -94,13 +98,14 @@ const handleCreateResponse = (req, res, charge) => response => {
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    appendChargeForNewView(charge, req, charge.id)
-    charge.countries = countries
-    if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
-    // else
-    Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
-      () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
-      () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
+    return appendChargeForNewView(charge, req, charge.id).then(() => {
+      charge.countries = countries
+      if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
+      // else
+      Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
+        () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
+        () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
+    })
   },
   create: (req, res) => {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
@@ -163,9 +168,10 @@ module.exports = {
               data.validation.originalEmail = userEmail
             }
             charge.countries = countries
-            appendChargeForNewView(charge, req, charge.id)
-            _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-            return responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
+            return appendChargeForNewView(charge, req, charge.id).then(() => {
+              _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+              responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
+            })
           }
           AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
             emailPatch

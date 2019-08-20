@@ -89,9 +89,12 @@ const requireChargeController = function (mockedCharge, mockedNormalise, mockedC
     '../models/charge.js': mockedCharge,
     '../services/normalise_charge.js': mockedNormalise,
     '../utils/session.js': mockSession,
+    '../services/worldpay_3ds_flex_service': {
+      getDdcJwt: () => Promise.resolve('a-jwt')
+    },
     'aws-xray-sdk': {
       captureAsyncFunc: function (name, callback) {
-        callback({close: () => {}}) // eslint-disable-line
+        callback({ close: () => { } }) // eslint-disable-line
       }
     },
     'continuation-local-storage': {
@@ -129,7 +132,8 @@ describe('card details endpoint', function () {
         'analyticsId': 'test-1234',
         'type': 'test',
         'paymentProvider': 'sandbox'
-      }
+      },
+      'worldpay3dsFlexDdcJwt': 'a-jwt'
     }
   }
   before(function () {
@@ -147,7 +151,7 @@ describe('card details endpoint', function () {
     }
   })
 
-  it('should not call update to enter card details if charge is already in ENTERING CARD DETAILS', function () {
+  it('should not call update to enter card details if charge is already in ENTERING CARD DETAILS', async function () {
     const mockedNormalisedCharge = aChargeWithStatus('ENTERING CARD DETAILS')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
     // To make sure this test does not proceed to chargeModel.updateToEnterDetails.
@@ -155,28 +159,29 @@ describe('card details endpoint', function () {
     const emptyChargeModel = {}
 
     const expectedCharge = aResponseWithStatus('ENTERING CARD DETAILS')
-    requireChargeController(emptyChargeModel, mockedNormalise).new(request, response)
-        expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
+    await requireChargeController(emptyChargeModel, mockedNormalise).new(request, response)
+    expect(response.render.called).to.be.true // eslint-disable-line
+    expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
-  it('should update to enter card details if charge is in CREATED', function () {
+  it('should update to enter card details if charge is in CREATED', async function () {
     const charge = mockCharge.mock(true)
 
     const mockedNormalisedCharge = aChargeWithStatus('CREATED')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
     const expectedCharge = aResponseWithStatus('CREATED')
-    requireChargeController(charge, mockedNormalise).new(request, response)
-        expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
+    await requireChargeController(charge, mockedNormalise).new(request, response)
+    expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
-  it('should display NOT FOUND if updateToEnterDetails returns error', function () {
+  it('should display NOT FOUND if updateToEnterDetails returns error', async function () {
     const charge = mockCharge.mock(false)
 
     const mockedNormalisedCharge = aChargeWithStatus('CREATED')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
-    requireChargeController(charge, mockedNormalise).new(request, response)
+    await requireChargeController(charge, mockedNormalise).new(request, response)
     const systemErrorObj = {
       'message': 'Page cannot be found',
       'viewName': 'NOT_FOUND',
@@ -187,7 +192,7 @@ describe('card details endpoint', function () {
         'amount': '0.00'
       }
     }
-        expect(response.render.calledWith('error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(response.render.calledWith('error', systemErrorObj)).to.be.true // eslint-disable-line
   })
 
   it('should display SYSTEM_ERROR if capture returns an error', function () {
@@ -209,7 +214,7 @@ describe('card details endpoint', function () {
         'testingVariant': 'original'
       }
     }
-        expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
   })
 
   it('should display CAPTURE_FAILURE if capture returns a capture failed error', function () {
@@ -230,7 +235,7 @@ describe('card details endpoint', function () {
         'testingVariant': 'original'
       }
     }
-        expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
   })
 })
 
