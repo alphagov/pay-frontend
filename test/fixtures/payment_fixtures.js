@@ -249,7 +249,47 @@ const fixtures = {
   },
 
   validChargeDetails: (opts = {}) => buildChargeDetails(opts),
-  validChargeCardDetailsAuthorised: () => ({ 'status': 'AUTHORISATION SUCCESS' }),
+
+  validChargeCardDetailsAuthorised: () => {
+    const data = { 'status': 'AUTHORISATION SUCCESS' }
+    return {
+      getPactified: () => {
+        return pactBase.pactify(data)
+      },
+      getPlain: () => {
+        return data
+      }
+    }
+  },
+
+  validAuthorisationRequest: () => {
+    const data = {
+      'card_number': '371449635398431',
+      'cvc': '1234',
+      'expiry_date': '11/99',
+      'card_brand': 'american-express',
+      'cardholder_name': 'Scrooge McDuck',
+      'accept_header': 'text/html',
+      'user_agent_header': 'Mozilla/5.0',
+      'prepaid': 'NOT_PREPAID',
+      'worldpay_3ds_flex_ddc_result': '96c3fcf6-d90a-467e-a224-107f70052528',
+      'address': {
+        'line1': 'The Money Pool',
+        'city': 'London',
+        'postcode': 'DO11 4RS',
+        'country': 'GB'
+      }
+    }
+    return {
+      getPactified: () => {
+        return pactBase.pactify(data)
+      },
+      getPlain: () => {
+        return data
+      }
+    }
+  },
+
   validChargeDetailsWithPrefilledCardHolderDetails: (opts = {}) => buildChargeDetailsWithPrefilledCardHolderDeatils(opts),
 
   validCardDetails: () => {
