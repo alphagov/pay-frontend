@@ -99,7 +99,7 @@ module.exports = {
 
   connectorPostValidChargeCardDetailsAuthorisation: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeid}/cards`
-    const body = paymentFixtures.validChargeCardDetailsAuthorised()
+    const body = paymentFixtures.validChargeCardDetailsAuthorised().getPlain()
 
     return simpleStubBuilder('POST', 200, path, body)
   },
