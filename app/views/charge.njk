@@ -491,7 +491,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  {% include "includes/scripts.njk" %}
   {% if service.collectBillingAddress %}
   <script type="text/javascript" src="/public/location-autocomplete.min.js"></script>
   <script type="text/javascript">
@@ -503,4 +502,5 @@
     })
   </script>
   {% endif %}
+  {% include "includes/scripts.njk" %}
 {% endblock %}

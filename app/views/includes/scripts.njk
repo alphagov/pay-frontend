@@ -38,9 +38,9 @@
   document.addEventListener('DOMContentLoaded', function() {
     GOVUK.stopDoubleSubmit.init();
     if (mainWrap.classList.contains('charge-new')) {
-      formValidation();
       showCardType().init();
       window.payScripts.inputConfirm.init();
+      window.payScripts.formValidation.init();
     } else if (mainWrap.classList.contains('confirm-page')) {
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }

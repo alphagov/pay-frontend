@@ -1,6 +1,8 @@
 'use strict'
 
-var formValidation = function () {
+const chargeValidation = require('../../../utils/charge_validation')
+
+var init = function () {
   var form = document.getElementById('card-details')
   var formInputs = Array.prototype.slice.call(form.querySelectorAll('input'))
   var countryAutocomplete = document.getElementsByClassName('autocomplete__input')[0]
@@ -16,7 +18,8 @@ var formValidation = function () {
   var errorSummary = document.getElementsByClassName('govuk-error-summary')[0]
   var logger = { info: function () { } }// replace with console to see output
   // window.card comes from the view
-  var chargeValidations = module.chargeValidation(
+
+  const chargeValidations = chargeValidation(
     i18n.fieldErrors,
     logger,
     window.Card,
@@ -24,22 +27,20 @@ var formValidation = function () {
   )
   var required = chargeValidations.required
 
-  var init = function () {
-    form.addEventListener('submit', function (e) {
-      checkFormSubmission(e)
-    }, false)
-    if (formInputs) {
-      formInputs.forEach(function (input) {
-        input.addEventListener('blur', function (e) {
-          checkPreviousFocused(input)
-        }, false)
-      })
-    }
-    if (window.Charge.collect_billing_address === true) {
-      countrySelect.addEventListener('change', function () {
-        checkValidation(postcodeInput)
+  form.addEventListener('submit', function (e) {
+    checkFormSubmission(e)
+  }, false)
+  if (formInputs) {
+    formInputs.forEach(function (input) {
+      input.addEventListener('blur', function (e) {
+        checkPreviousFocused(input)
       }, false)
-    }
+    })
+  }
+  if (window.Charge.collect_billing_address === true) {
+    countrySelect.addEventListener('change', function () {
+      checkValidation(postcodeInput)
+    }, false)
   }
 
   var checkFormSubmission = function (e) {
@@ -311,6 +312,8 @@ var formValidation = function () {
     }
     return null;
   };
+}
 
-  init()
+module.exports = {
+  init
 }
