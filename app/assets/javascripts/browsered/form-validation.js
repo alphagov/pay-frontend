@@ -146,9 +146,11 @@ var init = function () {
   }
 
   var checkValidation = function (input) {
-    var formGroup = getFormGroup(input),
-      validationName = getFormGroupValidation(formGroup),
-      validation = validationFor(validationName)
+    var formGroup = getFormGroup(input)
+
+    var validationName = getFormGroupValidation(formGroup)
+
+    var validation = validationFor(validationName)
 
     if (validation) {
       input.classList.add('govuk-input--error')
@@ -195,8 +197,8 @@ var init = function () {
     var corporateCardSurchargeAmountNumber = corporateCardSurchargeAmount / 100
 
     // card message
-    var corporateCardSurchargeMessage = cardType === 'CREDIT' ?
-      i18n.cardDetails.corporateCreditCardSurchargeMessage : i18n.cardDetails.corporateDebitCardSurchargeMessage
+    var corporateCardSurchargeMessage = cardType === 'CREDIT'
+      ? i18n.cardDetails.corporateCreditCardSurchargeMessage : i18n.cardDetails.corporateDebitCardSurchargeMessage
     corporateCardMessageElement.textContent = corporateCardSurchargeMessage.replace('%s', corporateCardSurchargeAmountNumber.toFixed(2))
     corporateCardMessageElement.classList.remove('hidden')
     // payment summary
@@ -206,7 +208,7 @@ var init = function () {
     paymentSummaryBreakdownElement.classList.remove('hidden')
   }
 
-  var clearCorporateCardSurchargeInformation = function() {
+  var clearCorporateCardSurchargeInformation = function () {
     // card message
     corporateCardMessageElement.classList.add('hidden')
     corporateCardMessageElement.textContent = ''
@@ -242,7 +244,7 @@ var init = function () {
   }
 
   var validationFor = function (name) {
-    var validation = allValidations().errorFields.filter(function(validation) {
+    var validation = allValidations().errorFields.filter(function (validation) {
       return validation.key === name
     })
     if (!validation[0]) return
@@ -252,10 +254,10 @@ var init = function () {
   var allFields = function () {
     var fields = {}
     required.forEach(function (requiredField) {
-        var getField = findInputByKey(requiredField)
-        if (getField) {
-            fields[requiredField] = getField
-        }
+      var getField = findInputByKey(requiredField)
+      if (getField) {
+        fields[requiredField] = getField
+      }
     })
     return fields
   }
@@ -264,9 +266,9 @@ var init = function () {
     var values = {}
     required.forEach(function (requiredField) {
       var getField = findInputByKey(requiredField)
-        if (getField) {
-            values[requiredField] = getField.value.trim()
-        }
+      if (getField) {
+        values[requiredField] = getField.value.trim()
+      }
     })
     return values
   }
@@ -284,8 +286,8 @@ var init = function () {
   }
 
   var findInputByKey = function (key) {
-      var foundInput = document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')
-      // Only return inputs that exist on the form
+    var foundInput = document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')
+    // Only return inputs that exist on the form
     return foundInput ? foundInput[0] : null
   }
 
@@ -299,19 +301,20 @@ var init = function () {
         Element.prototype.oMatchesSelector ||
         Element.prototype.webkitMatchesSelector ||
         function (s) {
-          var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-            i = matches.length;
+          var matches = (this.document || this.ownerDocument).querySelectorAll(s)
+
+          var i = matches.length
           while (--i >= 0 && matches.item(i) !== this) { }
-          return i > -1;
-        };
+          return i > -1
+        }
     }
 
     // Get the closest matching element
     for (; elem && elem !== document; elem = elem.parentNode) {
-      if (elem.matches(selector)) return elem;
+      if (elem.matches(selector)) return elem
     }
-    return null;
-  };
+    return null
+  }
 }
 
 module.exports = {

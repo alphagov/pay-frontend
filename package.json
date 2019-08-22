@@ -24,7 +24,12 @@
       "ApplePaySession",
       "ApplePayError",
       "ga",
-      "fetch"
+      "fetch",
+      "Element",
+      "location",
+      "Charge",
+      "parent",
+      "showCardType"
     ],
     "ignore": [
       "app/assets/javascripts/modules/*.js"
