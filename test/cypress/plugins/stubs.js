@@ -1,5 +1,6 @@
 const paymentFixtures = require('./../../fixtures/payment_fixtures')
 const serviceFixtures = require('./../../fixtures/service_fixtures')
+const worldPay3dsFlexDdcJwtFixtures = require('./../../fixtures/worldpay_3ds_flex_fixtures')
 
 const JSONRequestHeader = { 'Accept': 'application/json' }
 const JSONResponseHeader = { 'Content-Type': 'application/json' }
@@ -145,5 +146,76 @@ module.exports = {
     const path = `/v1/frontend/charges/${opts.chargeId}/capture`
 
     return simpleStubBuilder('POST', 204, path, undefined)
+  },
+
+  connectorWorldPay3dsFlexDdcJwt: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}/worldpay/3ds-flex/ddc`
+
+    const body = worldPay3dsFlexDdcJwtFixtures.validDdcJwt().getPlain()
+
+    return simpleStubBuilder('GET', 200, path, body)
+  },
+
+  worldpay3dsflexddcIframePost: (opts = {}) => {
+    const body = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Cardinal DDC Sim</title>
+    </head>
+    <body>
+    <script>
+        sendNotification(true, "${opts.sessionId}");
+
+        function sendNotification(status, sessionId){
+            try{
+                var message = {
+                    MessageType: 'profile.completed',
+                    SessionId: sessionId,
+                    Status: status
+                };
+                window.parent.postMessage(JSON.stringify(message), '*');
+            } catch(error){
+                console.error('Failed to notify parent', error)
+            }
+        }
+    </script>
+    </body>
+    </html>`
+
+    return [{
+      predicates: [{
+        equals: {
+          method: 'POST',
+          path: '/shopper/3ds/ddc.html'
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'text/html;charset=ISO-8859-1'
+          },
+          body
+        }
+      }]
+    }]
+  },
+
+  frontendCardDetailsPost: (opts = {}) => {
+    return [{
+      predicates: [{
+        equals: {
+          method: 'POST',
+          path: `/card_details/${opts.chargeId}`
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: ''
+        }
+      }]
+    }]
   }
 }
