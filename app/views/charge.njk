@@ -97,377 +97,383 @@
         <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
         <span class="pay-divider"><span class="pay-divider--word">or</span></span>
       </form>
+    {% else %}
+      <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
     {% endif %}
+    <div id="card-details-wrap">
+      <h1 class="govuk-heading-l">{{ __p("cardDetails.title") }}</h1>
 
-    <h1 class="govuk-heading-l">{{ __p("cardDetails.title") }}</h1>
-
-    <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
-      <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
-      <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
-      {% if (originalEmail) %}
-        <input name="originalemail" type="hidden" value="{{ originalEmail }}"/>
-      {% endif %}
-
-      <div class="govuk-form-group{% if highlightErrorFields.cardNo %} govuk-form-group--error{% endif %} card-no-group" data-validation="cardNo">
-        <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-font-size-24 govuk-!-width-three-quarters">
-              <span
-                  class="card-no-label"
-                  data-label-replace="cardNo"
-                  data-original-label="{{ __p("cardDetails.cardNo") }}">
-                {{ __p("cardDetails.cardNo") }}
-              </span>
-          {% if highlightErrorFields.cardNo %}
-            <p class="govuk-error-message" id="error-card-no">
-              {{ highlightErrorFields.cardNo }}
-            </p>
-          {% endif %}
-        </label>
-        <input id="card-no"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                name="cardNo"
-                maxlength="26"
-                class="govuk-input govuk-!-width-three-quarters"
-                autocomplete="cc-number"
-                value="{{cardNo}}"
-        />
-        <ul class="accepted-cards field-empty">
-          {% if allowedCards %}
-            {% for currentAllowedCard in allowedCards %}
-              <li
-                  class="{{ currentAllowedCard.brand }}"
-                  data-key="{{ currentAllowedCard.brand }}"
-                  data-credit="{{ currentAllowedCard.credit }}"
-                  data-debit="{{ currentAllowedCard.debit }}"
-              >
-                  <span class="govuk-warning-text__assistive">
-                    {{ currentAllowedCard.brand }}
-                  </span>
-              </li>
-            {% endfor %}
-          {% endif %}
-        </ul>
-        <p class="govuk-body-s accepted-cards-hint withdrawal-text">
-          {% if withdrawalText === 'debit_credit' %}
-            {{ __p("cardDetails.withdrawalText").debit_credit }}
-          {% endif %}
-          {% if withdrawalText === 'debit' %}
-            {{ __p("cardDetails.withdrawalText").debit }}
-          {% endif %}
-          {% if withdrawalText === 'credit' %}
-            {{ __p("cardDetails.withdrawalText").credit }}
-          {% endif %}
-        </p>
-        <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
-      </div>
-      <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7 {% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
-        <label class="govuk-label govuk-label--s govuk-!-font-size-24" id="expiry-date-lbl" for="expiry-month">
-          <span class="expiry-date-label"
-            data-label-replace="expiryMonth"
-            data-original-label="{{ __p("cardDetails.expiry") }}">
-            {{ __p("cardDetails.expiry") }}
-          </span>
-        </label>
-        <span class="govuk-hint govuk-!-margin-bottom-2">
-          {{ __p("cardDetails.expiryHint") }}</span>
-        {% if highlightErrorFields.expiryMonth %}
-          <p class="govuk-error-message" id="error-expiry-date">
-            {{ highlightErrorFields.expiryMonth }}
-          </p>
+      <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
+        <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
+        <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+        {% if (originalEmail) %}
+          <input name="originalemail" type="hidden" value="{{ originalEmail }}"/>
         {% endif %}
-        <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
-            <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ __p("cardDetails.expiryMonth") }}</label>
-            <input
-              id="expiry-month"
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              name="expiryMonth"
-              value="{{expiryMonth}}"
-              class="govuk-input govuk-date-input__input govuk-input--width-3"
-              minlength="1"
-              maxlength="2"
-              autocomplete="cc-exp-month"/>
-        </div>
-        <div class="govuk-date-input__item govuk-date-input__item--year">
-            <label for="expiry-year" class="govuk-label govuk-date-input__label">{{ __p("cardDetails.expiryYear") }}</label>
-            <input
-              id="expiry-year"
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              name="expiryYear"
-              value="{{expiryYear}}"
-              minlength="2"
-              maxlength="4"
-              class="govuk-input govuk-date-input__input govuk-input--width-3"
-              autocomplete="cc-exp-year"
-              data-last-of-form-group
-              data-required
-            />
-          </div>
-      </div>
-      <div class="govuk-form-group{% if highlightErrorFields.cardholderName %} govuk-form-group--error{% endif %}" data-validation="cardholderName">
-        <label id="cardholder-name-lbl" for="cardholder-name" class="govuk-label govuk-label--s govuk-!-font-size-24">
-              <span
-                  data-label-replace="cardholderName"
-                  data-original-label="{{ __p("cardDetails.cardholderName") }}"
-                  class="card-holder-name-label">
-                {{ __p("cardDetails.cardholderName") }}
-              </span>
-          {% if highlightErrorFields.cardholderName %}
-            <p class="govuk-error-message" id="error-cardholder-name">
-              {{ highlightErrorFields.cardholderName }}
-            </p>
-          {% endif %}
-        </label>
-        <input id="cardholder-name"
-                type="text"
-                name="cardholderName"
-                maxlength="200"
-                class="govuk-input govuk-!-width-three-quarters"
-                value="{{ cardholderName }}"
-                autocomplete="cc-name"/>
-      </div>
-      <div class="govuk-form-group{% if highlightErrorFields.cvc %} govuk-form-group--error{% endif %} cvc govuk-clearfix" data-validation="cvc">
-        <label id="cvc-lbl" for="cvc" class="govuk-label govuk-label--s govuk-!-font-size-24">
-          <span
-            class="cvc-label"
-            data-label-replace="cvc"
-            data-original-label="{{ __p("cardDetails.cvc") }}">
-            {{ __p("cardDetails.cvc") }}
-          </span>
-          <span class="govuk-hint govuk-!-margin-bottom-2">
-            <span class="generic-cvc">
-              {{ __p("cardDetails.cvcTip") }}
-            </span>
-            <span class="amex-cvc hidden">
-              <span class="hidden">
-                {{ __p("cardDetails.amexcvcNonjs") }}
-              </span>
-              <span class="no-js-lowercase">
-                {{ __p("cardDetails.amexcvcTip") }}
-              </span>
-            </span>
-          </span>
-          {% if highlightErrorFields.cvc %}
-            <p class="govuk-error-message" id="error-cvc">
-              {{ highlightErrorFields.cvc }}
-            </p>
-          {% endif %}
-        </label>
-        <input id="cvc"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                value="{{cvc}}"
-                name="cvc"
-                class="govuk-input govuk-input--width-3 cvc"
-                maxlength="4"
-                autocomplete="cc-csc"/>
-        <img src="/images/security-code.png" class="generic-cvc" alt="{{ __p("cardDetails.cvcTip") }}"/>
-        <span class="either hidden">
-          {{ __p("commonConjunctions.or") }}
-        </span>
-        <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ __p("cardDetails.amexcvcTip") }}"/>
-      </div>
-      {% if service.collectBillingAddress %}
-        <div class="govuk-form-group govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
-          <legend for="address-country" class="govuk-!-margin-bottom-6">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h2>
-            <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.billingAddressHint") }}</span>
-          </legend>
-          <label id="address-country-lbl" for="address-country" class="govuk-label">
-              <span
-                  class="address-country-label"
-                  data-label-replace="addressCountry"
-                  data-original-label="{{ __p("cardDetails.country") }}">
-                {{ __p("cardDetails.country") }}
-              </span>
-          {% if highlightErrorFields.addressCountry %}
-            <p class="govuk-error-message" id="error-address-country">
-              {{ highlightErrorFields.addressCountry }}
-            </p>
-          {% endif %}
-        </label>
-        <select name="addressCountry" class="govuk-select" id="address-country" autocomplete="billing country-name">
-          {% if not countryCode | length %}
-            {% set countryCode = 'GB' %}
-          {% endif %}
-          {% for country in countries %}
-              <option
-                  value="{{ country[1].split(':')[1] }}"
-                  {% if country[1].split(':')[1] ===  countryCode %} selected="selected"{% endif %}>{{ country[0] }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="govuk-form-group address{% if highlightErrorFields.addressLine1 %} govuk-form-group--error{% endif %}" data-validation="addressLine1">
-        <label id="address-line-1-lbl" for="address-line-1" class="govuk-label">
-              <span
-                  class="address-line-1-label"
-                  data-label-replace="addressLine1"
-                  data-original-label="{{ __p("cardDetails.building") }}">
-                {{ __p("cardDetails.building") }}
-              </span>
 
-          {% if highlightErrorFields.addressLine1 %}
-            <p class="govuk-error-message" id="error-address-line-1">
-              {{ highlightErrorFields.addressLine1 }}
-            </p>
-          {% endif %}
-        </label>
-        <input id="address-line-1"
-                type="text"
-                name="addressLine1"
-                maxlength="100"
-                class="govuk-input govuk-!-width-three-quarters"
-                value="{{ addressLine1 }}"
-                autocomplete="billing address-line1"/>
-        <input id="address-line-2"
-                type="text"
-                name="addressLine2"
-                maxlength="100"
-                class="govuk-input govuk-!-width-three-quarters govuk-!-margin-top-2"
-                data-last-of-form-group
-                value="{{ addressLine2 }}"
-                aria-label="Enter address line 2"
-                autocomplete="billing address-line2"/>
-      </div>
-      <div class="govuk-form-group{% if highlightErrorFields.addressCity %} govuk-form-group--error{% endif %} govuk-!-width-three-quarters" data-validation="addressCity">
-        <label id="address-city-lbl" for="address-city" class="govuk-label">
-              <span
-                  class="address-city-label"
-                  data-label-replace="addressCity"
-                  data-original-label="{{ __p("cardDetails.city") }}">
-                {{ __p("cardDetails.city") }}
-              </span>
-          {% if highlightErrorFields.addressCity %}
-            <p class="govuk-error-message" id="error-address-city">
-              {{ highlightErrorFields.addressCity }}
-            </p>
-          {% endif %}
-        </label>
-        <input id="address-city"
-                type="text"
-                name="addressCity"
-                maxlength="100"
-                class="govuk-input govuk-!-width-three-quarters"
-                value="{{ addressCity }}"
-                autocomplete="billing address-level2"/>
-      </div>
-      <div class="govuk-form-group{% if highlightErrorFields.addressPostcode %} govuk-form-group--error{% endif %}" data-validation="addressPostcode">
-        <label id="address-postcode-lbl" for="address-postcode" class="govuk-label">
-              <span
-                  class="address-postcode-label"
-                  data-label-replace="addressPostcode"
-                  data-original-label="{{ __p("cardDetails.postcode") }}">
-                {{ __p("cardDetails.postcode") }}
-              </span>
-
-          {% if highlightErrorFields.addressPostcode %}
-            <p class="govuk-error-message" id="error-address-postcode">
-              {{ highlightErrorFields.addressPostcode }}
-            </p>
-          {% endif %}
-        </label>
-        <input id="address-postcode"
-                type="text"
-                name="addressPostcode"
-                maxlength="10"
-                class="govuk-input govuk-!-width-one-quarter"
-                value="{{ addressPostcode }}"
-                autocomplete="billing postal-code"/>
-      </div>
-      {% endif %}
-      {% if (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
-      <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
-          <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
-            <legend for="email" class="govuk-!-margin-bottom-6">
-              <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.contactDetails") }}</h2>
-              <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</span>
-            </legend>
-            <label id="email-lbl" for="email" class="govuk-label">
-              <span
-                  class="email-label"
-                  data-label-replace="email"
-                  data-original-label="{{ __p("cardDetails.email") }}">
-                {{ __p("cardDetails.email") }}
-              </span>
-            {% if highlightErrorFields.email %}
-              <p class="govuk-error-message" id="error-email">
-                {{ highlightErrorFields.email }}
+        <div class="govuk-form-group{% if highlightErrorFields.cardNo %} govuk-form-group--error{% endif %} card-no-group" data-validation="cardNo">
+          <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-font-size-24 govuk-!-width-three-quarters">
+                <span
+                    class="card-no-label"
+                    data-label-replace="cardNo"
+                    data-original-label="{{ __p("cardDetails.cardNo") }}">
+                  {{ __p("cardDetails.cardNo") }}
+                </span>
+            {% if highlightErrorFields.cardNo %}
+              <p class="govuk-error-message" id="error-card-no">
+                {{ highlightErrorFields.cardNo }}
               </p>
             {% endif %}
           </label>
-          <input id="email"
-                  type="email"
-                  name="email"
-                  maxlength="254"
-                  class="govuk-input govuk-!-width-full"
-                  value="{{ email }}"
-                  autocomplete="email"
-                  data-confirmation="true"
-                  data-confirmation-label="{{ __p("cardDetails.emailConfirmation") }} "/>
+          <input id="card-no"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  name="cardNo"
+                  maxlength="26"
+                  class="govuk-input govuk-!-width-three-quarters"
+                  autocomplete="cc-number"
+                  value="{{cardNo}}"
+          />
+          <ul class="accepted-cards field-empty">
+            {% if allowedCards %}
+              {% for currentAllowedCard in allowedCards %}
+                <li
+                    class="{{ currentAllowedCard.brand }}"
+                    data-key="{{ currentAllowedCard.brand }}"
+                    data-credit="{{ currentAllowedCard.credit }}"
+                    data-debit="{{ currentAllowedCard.debit }}"
+                >
+                    <span class="govuk-warning-text__assistive">
+                      {{ currentAllowedCard.brand }}
+                    </span>
+                </li>
+              {% endfor %}
+            {% endif %}
+          </ul>
+          <p class="govuk-body-s accepted-cards-hint withdrawal-text">
+            {% if withdrawalText === 'debit_credit' %}
+              {{ __p("cardDetails.withdrawalText").debit_credit }}
+            {% endif %}
+            {% if withdrawalText === 'debit' %}
+              {{ __p("cardDetails.withdrawalText").debit }}
+            {% endif %}
+            {% if withdrawalText === 'credit' %}
+              {{ __p("cardDetails.withdrawalText").credit }}
+            {% endif %}
+          </p>
+          <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
         </div>
-      </div>
-      {% endif %}
-      {% if typos %}
-        {{
-          govukRadios({
-            name: 'email-typo-sugestion',
-            errorMessage: {
-              text: __p("fieldErrors.fields.email.typo"),
-              classes: 'govuk-!-width-three-quarters'
-            },
-            items: [
-              {
-                id: 'email-corrected',
-                value: typos.full,
-                html: typos.address + '@<strong>' + typos.domain + '</strong>',
-                checked: true
+        <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7 {% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
+          <label class="govuk-label govuk-label--s govuk-!-font-size-24" id="expiry-date-lbl" for="expiry-month">
+            <span class="expiry-date-label"
+              data-label-replace="expiryMonth"
+              data-original-label="{{ __p("cardDetails.expiry") }}">
+              {{ __p("cardDetails.expiry") }}
+            </span>
+          </label>
+          <span class="govuk-hint govuk-!-margin-bottom-2">
+            {{ __p("cardDetails.expiryHint") }}</span>
+          {% if highlightErrorFields.expiryMonth %}
+            <p class="govuk-error-message" id="error-expiry-date">
+              {{ highlightErrorFields.expiryMonth }}
+            </p>
+          {% endif %}
+          <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
+              <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ __p("cardDetails.expiryMonth") }}</label>
+              <input
+                id="expiry-month"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                name="expiryMonth"
+                value="{{expiryMonth}}"
+                class="govuk-input govuk-date-input__input govuk-input--width-3"
+                minlength="1"
+                maxlength="2"
+                autocomplete="cc-exp-month"/>
+          </div>
+          <div class="govuk-date-input__item govuk-date-input__item--year">
+              <label for="expiry-year" class="govuk-label govuk-date-input__label">{{ __p("cardDetails.expiryYear") }}</label>
+              <input
+                id="expiry-year"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                name="expiryYear"
+                value="{{expiryYear}}"
+                minlength="2"
+                maxlength="4"
+                class="govuk-input govuk-date-input__input govuk-input--width-3"
+                autocomplete="cc-exp-year"
+                data-last-of-form-group
+                data-required
+              />
+            </div>
+        </div>
+        <div class="govuk-form-group{% if highlightErrorFields.cardholderName %} govuk-form-group--error{% endif %}" data-validation="cardholderName">
+          <label id="cardholder-name-lbl" for="cardholder-name" class="govuk-label govuk-label--s govuk-!-font-size-24">
+                <span
+                    data-label-replace="cardholderName"
+                    data-original-label="{{ __p("cardDetails.cardholderName") }}"
+                    class="card-holder-name-label">
+                  {{ __p("cardDetails.cardholderName") }}
+                </span>
+            {% if highlightErrorFields.cardholderName %}
+              <p class="govuk-error-message" id="error-cardholder-name">
+                {{ highlightErrorFields.cardholderName }}
+              </p>
+            {% endif %}
+          </label>
+          <input id="cardholder-name"
+                  type="text"
+                  name="cardholderName"
+                  maxlength="200"
+                  class="govuk-input govuk-!-width-three-quarters"
+                  value="{{ cardholderName }}"
+                  autocomplete="cc-name"/>
+        </div>
+        <div class="govuk-form-group{% if highlightErrorFields.cvc %} govuk-form-group--error{% endif %} cvc govuk-clearfix" data-validation="cvc">
+          <label id="cvc-lbl" for="cvc" class="govuk-label govuk-label--s govuk-!-font-size-24">
+            <span
+              class="cvc-label"
+              data-label-replace="cvc"
+              data-original-label="{{ __p("cardDetails.cvc") }}">
+              {{ __p("cardDetails.cvc") }}
+            </span>
+            <span class="govuk-hint govuk-!-margin-bottom-2">
+              <span class="generic-cvc">
+                {{ __p("cardDetails.cvcTip") }}
+              </span>
+              <span class="amex-cvc hidden">
+                <span class="hidden">
+                  {{ __p("cardDetails.amexcvcNonjs") }}
+                </span>
+                <span class="no-js-lowercase">
+                  {{ __p("cardDetails.amexcvcTip") }}
+                </span>
+              </span>
+            </span>
+            {% if highlightErrorFields.cvc %}
+              <p class="govuk-error-message" id="error-cvc">
+                {{ highlightErrorFields.cvc }}
+              </p>
+            {% endif %}
+          </label>
+          <input id="cvc"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  value="{{cvc}}"
+                  name="cvc"
+                  class="govuk-input govuk-input--width-3 cvc"
+                  maxlength="4"
+                  autocomplete="cc-csc"/>
+          <img src="/images/security-code.png" class="generic-cvc" alt="{{ __p("cardDetails.cvcTip") }}"/>
+          <span class="either hidden">
+            {{ __p("commonConjunctions.or") }}
+          </span>
+          <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ __p("cardDetails.amexcvcTip") }}"/>
+        </div>
+        {% if service.collectBillingAddress %}
+          <div class="govuk-form-group govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
+            <legend for="address-country" class="govuk-!-margin-bottom-6">
+              <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h2>
+              <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.billingAddressHint") }}</span>
+            </legend>
+            <label id="address-country-lbl" for="address-country" class="govuk-label">
+                <span
+                    class="address-country-label"
+                    data-label-replace="addressCountry"
+                    data-original-label="{{ __p("cardDetails.country") }}">
+                  {{ __p("cardDetails.country") }}
+                </span>
+            {% if highlightErrorFields.addressCountry %}
+              <p class="govuk-error-message" id="error-address-country">
+                {{ highlightErrorFields.addressCountry }}
+              </p>
+            {% endif %}
+          </label>
+          <select name="addressCountry" class="govuk-select" id="address-country" autocomplete="billing country-name">
+            {% if not countryCode | length %}
+              {% set countryCode = 'GB' %}
+            {% endif %}
+            {% for country in countries %}
+                <option
+                    value="{{ country[1].split(':')[1] }}"
+                    {% if country[1].split(':')[1] ===  countryCode %} selected="selected"{% endif %}>{{ country[0] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="govuk-form-group address{% if highlightErrorFields.addressLine1 %} govuk-form-group--error{% endif %}" data-validation="addressLine1">
+          <label id="address-line-1-lbl" for="address-line-1" class="govuk-label">
+                <span
+                    class="address-line-1-label"
+                    data-label-replace="addressLine1"
+                    data-original-label="{{ __p("cardDetails.building") }}">
+                  {{ __p("cardDetails.building") }}
+                </span>
+
+            {% if highlightErrorFields.addressLine1 %}
+              <p class="govuk-error-message" id="error-address-line-1">
+                {{ highlightErrorFields.addressLine1 }}
+              </p>
+            {% endif %}
+          </label>
+          <input id="address-line-1"
+                  type="text"
+                  name="addressLine1"
+                  maxlength="100"
+                  class="govuk-input govuk-!-width-three-quarters"
+                  value="{{ addressLine1 }}"
+                  autocomplete="billing address-line1"/>
+          <input id="address-line-2"
+                  type="text"
+                  name="addressLine2"
+                  maxlength="100"
+                  class="govuk-input govuk-!-width-three-quarters govuk-!-margin-top-2"
+                  data-last-of-form-group
+                  value="{{ addressLine2 }}"
+                  aria-label="Enter address line 2"
+                  autocomplete="billing address-line2"/>
+        </div>
+        <div class="govuk-form-group{% if highlightErrorFields.addressCity %} govuk-form-group--error{% endif %} govuk-!-width-three-quarters" data-validation="addressCity">
+          <label id="address-city-lbl" for="address-city" class="govuk-label">
+                <span
+                    class="address-city-label"
+                    data-label-replace="addressCity"
+                    data-original-label="{{ __p("cardDetails.city") }}">
+                  {{ __p("cardDetails.city") }}
+                </span>
+            {% if highlightErrorFields.addressCity %}
+              <p class="govuk-error-message" id="error-address-city">
+                {{ highlightErrorFields.addressCity }}
+              </p>
+            {% endif %}
+          </label>
+          <input id="address-city"
+                  type="text"
+                  name="addressCity"
+                  maxlength="100"
+                  class="govuk-input govuk-!-width-three-quarters"
+                  value="{{ addressCity }}"
+                  autocomplete="billing address-level2"/>
+        </div>
+        <div class="govuk-form-group{% if highlightErrorFields.addressPostcode %} govuk-form-group--error{% endif %}" data-validation="addressPostcode">
+          <label id="address-postcode-lbl" for="address-postcode" class="govuk-label">
+                <span
+                    class="address-postcode-label"
+                    data-label-replace="addressPostcode"
+                    data-original-label="{{ __p("cardDetails.postcode") }}">
+                  {{ __p("cardDetails.postcode") }}
+                </span>
+
+            {% if highlightErrorFields.addressPostcode %}
+              <p class="govuk-error-message" id="error-address-postcode">
+                {{ highlightErrorFields.addressPostcode }}
+              </p>
+            {% endif %}
+          </label>
+          <input id="address-postcode"
+                  type="text"
+                  name="addressPostcode"
+                  maxlength="10"
+                  class="govuk-input govuk-!-width-one-quarter"
+                  value="{{ addressPostcode }}"
+                  autocomplete="billing postal-code"/>
+        </div>
+        {% endif %}
+        {% if (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
+        <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
+            <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
+              <legend for="email" class="govuk-!-margin-bottom-6">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.contactDetails") }}</h2>
+                <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</span>
+              </legend>
+              <label id="email-lbl" for="email" class="govuk-label">
+                <span
+                    class="email-label"
+                    data-label-replace="email"
+                    data-original-label="{{ __p("cardDetails.email") }}">
+                  {{ __p("cardDetails.email") }}
+                </span>
+              {% if highlightErrorFields.email %}
+                <p class="govuk-error-message" id="error-email">
+                  {{ highlightErrorFields.email }}
+                </p>
+              {% endif %}
+            </label>
+            <input id="email"
+                    type="email"
+                    name="email"
+                    maxlength="254"
+                    class="govuk-input govuk-!-width-full"
+                    value="{{ email }}"
+                    autocomplete="email"
+                    data-confirmation="true"
+                    data-confirmation-label="{{ __p("cardDetails.emailConfirmation") }} "/>
+          </div>
+        </div>
+        {% endif %}
+        {% if typos %}
+          {{
+            govukRadios({
+              name: 'email-typo-sugestion',
+              errorMessage: {
+                text: __p("fieldErrors.fields.email.typo"),
+                classes: 'govuk-!-width-three-quarters'
               },
-              {
-                id: 'email-uncorrected',
-                value: email,
-                text: email
+              items: [
+                {
+                  id: 'email-corrected',
+                  value: typos.full,
+                  html: typos.address + '@<strong>' + typos.domain + '</strong>',
+                  checked: true
+                },
+                {
+                  id: 'email-uncorrected',
+                  value: email,
+                  text: email
+                }
+              ]
+            })
+          }}
+        {% endif %}
+        <div>
+        {% if typos %}
+          {{
+            govukButton({
+              text: __p("commonButtons.continueButton"),
+              attributes: {
+                id: "submit-card-details",
+                "data-click-events": "true",
+                "data-click-category":"Typo made",
+                "data-click-action": "Corrected email: " + typos.domain
               }
-            ]
-          })
-        }}
-      {% endif %}
-      <div>
-      {% if typos %}
-        {{
-          govukButton({
-            text: __p("commonButtons.continueButton"),
-            attributes: {
-              id: "submit-card-details",
-              "data-click-events": "true",
-              "data-click-category":"Typo made",
-              "data-click-action": "Corrected email: " + typos.domain
-            }
-          })
-        }}
-      {% else %}
-        {{
-          govukButton({
-            text: __p("commonButtons.continueButton"),
-            attributes: {
-              id: "submit-card-details"
-            }
-          })
-        }}
-      {% endif %}
-      </div>
-    </form>
-    <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
-      <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
-        <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
-      </div>
-    </form>
+            })
+          }}
+        {% else %}
+          {{
+            govukButton({
+              text: __p("commonButtons.continueButton"),
+              attributes: {
+                id: "submit-card-details"
+              }
+            })
+          }}
+        {% endif %}
+        </div>
+      </form>
+      <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
+        <div>
+          <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
+          <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+        </div>
+      </form>
+    </div>
   </div>
+  {% if worldpay3dsFlexDdcJwt %}
+  <div id="worldPay3DSFlexWrap"></div>
+  {% endif %}
   <div class="govuk-grid-column-one-third payment-summary-wrap">
     <aside class="payment-summary">
       <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
