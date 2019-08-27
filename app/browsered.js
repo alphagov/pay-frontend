@@ -1,6 +1,7 @@
 const inputConfirm = require('./assets/javascripts/browsered/form-input-confirm')
 const webPayments = require('./assets/javascripts/browsered/web-payments')
 const analytics = require('gaap-analytics')
+const formValidation = require('./assets/javascripts/browsered/form-validation')
 
 exports.chargeValidation = require('./utils/charge_validation')
 analytics.eventTracking.init()
@@ -8,7 +9,8 @@ analytics.eventTracking.init()
 // Place functions into scope so can trigger in scripts.njk
 window.payScripts = { // eslint-disable-line no-unused-vars
   inputConfirm,
-  webPayments
+  webPayments,
+  formValidation
 }
 
 // GA tracking if an email typo is spotted

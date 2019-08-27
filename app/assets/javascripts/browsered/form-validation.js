@@ -1,6 +1,8 @@
 'use strict'
 
-var formValidation = function () {
+const chargeValidation = require('../../../utils/charge_validation')
+
+var init = function () {
   var form = document.getElementById('card-details')
   var formInputs = Array.prototype.slice.call(form.querySelectorAll('input'))
   var countryAutocomplete = document.getElementsByClassName('autocomplete__input')[0]
@@ -16,7 +18,8 @@ var formValidation = function () {
   var errorSummary = document.getElementsByClassName('govuk-error-summary')[0]
   var logger = { info: function () { } }// replace with console to see output
   // window.card comes from the view
-  var chargeValidations = module.chargeValidation(
+
+  const chargeValidations = chargeValidation(
     i18n.fieldErrors,
     logger,
     window.Card,
@@ -24,22 +27,20 @@ var formValidation = function () {
   )
   var required = chargeValidations.required
 
-  var init = function () {
-    form.addEventListener('submit', function (e) {
-      checkFormSubmission(e)
-    }, false)
-    if (formInputs) {
-      formInputs.forEach(function (input) {
-        input.addEventListener('blur', function (e) {
-          checkPreviousFocused(input)
-        }, false)
-      })
-    }
-    if (window.Charge.collect_billing_address === true) {
-      countrySelect.addEventListener('change', function () {
-        checkValidation(postcodeInput)
+  form.addEventListener('submit', function (e) {
+    checkFormSubmission(e)
+  }, false)
+  if (formInputs) {
+    formInputs.forEach(function (input) {
+      input.addEventListener('blur', function (e) {
+        checkPreviousFocused(input)
       }, false)
-    }
+    })
+  }
+  if (window.Charge.collect_billing_address === true) {
+    countrySelect.addEventListener('change', function () {
+      checkValidation(postcodeInput)
+    }, false)
   }
 
   var checkFormSubmission = function (e) {
@@ -145,9 +146,11 @@ var formValidation = function () {
   }
 
   var checkValidation = function (input) {
-    var formGroup = getFormGroup(input),
-      validationName = getFormGroupValidation(formGroup),
-      validation = validationFor(validationName)
+    var formGroup = getFormGroup(input)
+
+    var validationName = getFormGroupValidation(formGroup)
+
+    var validation = validationFor(validationName)
 
     if (validation) {
       input.classList.add('govuk-input--error')
@@ -194,8 +197,8 @@ var formValidation = function () {
     var corporateCardSurchargeAmountNumber = corporateCardSurchargeAmount / 100
 
     // card message
-    var corporateCardSurchargeMessage = cardType === 'CREDIT' ?
-      i18n.cardDetails.corporateCreditCardSurchargeMessage : i18n.cardDetails.corporateDebitCardSurchargeMessage
+    var corporateCardSurchargeMessage = cardType === 'CREDIT'
+      ? i18n.cardDetails.corporateCreditCardSurchargeMessage : i18n.cardDetails.corporateDebitCardSurchargeMessage
     corporateCardMessageElement.textContent = corporateCardSurchargeMessage.replace('%s', corporateCardSurchargeAmountNumber.toFixed(2))
     corporateCardMessageElement.classList.remove('hidden')
     // payment summary
@@ -205,7 +208,7 @@ var formValidation = function () {
     paymentSummaryBreakdownElement.classList.remove('hidden')
   }
 
-  var clearCorporateCardSurchargeInformation = function() {
+  var clearCorporateCardSurchargeInformation = function () {
     // card message
     corporateCardMessageElement.classList.add('hidden')
     corporateCardMessageElement.textContent = ''
@@ -241,7 +244,7 @@ var formValidation = function () {
   }
 
   var validationFor = function (name) {
-    var validation = allValidations().errorFields.filter(function(validation) {
+    var validation = allValidations().errorFields.filter(function (validation) {
       return validation.key === name
     })
     if (!validation[0]) return
@@ -251,10 +254,10 @@ var formValidation = function () {
   var allFields = function () {
     var fields = {}
     required.forEach(function (requiredField) {
-        var getField = findInputByKey(requiredField)
-        if (getField) {
-            fields[requiredField] = getField
-        }
+      var getField = findInputByKey(requiredField)
+      if (getField) {
+        fields[requiredField] = getField
+      }
     })
     return fields
   }
@@ -263,9 +266,9 @@ var formValidation = function () {
     var values = {}
     required.forEach(function (requiredField) {
       var getField = findInputByKey(requiredField)
-        if (getField) {
-            values[requiredField] = getField.value.trim()
-        }
+      if (getField) {
+        values[requiredField] = getField.value.trim()
+      }
     })
     return values
   }
@@ -283,8 +286,8 @@ var formValidation = function () {
   }
 
   var findInputByKey = function (key) {
-      var foundInput = document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')
-      // Only return inputs that exist on the form
+    var foundInput = document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')
+    // Only return inputs that exist on the form
     return foundInput ? foundInput[0] : null
   }
 
@@ -298,19 +301,22 @@ var formValidation = function () {
         Element.prototype.oMatchesSelector ||
         Element.prototype.webkitMatchesSelector ||
         function (s) {
-          var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-            i = matches.length;
+          var matches = (this.document || this.ownerDocument).querySelectorAll(s)
+
+          var i = matches.length
           while (--i >= 0 && matches.item(i) !== this) { }
-          return i > -1;
-        };
+          return i > -1
+        }
     }
 
     // Get the closest matching element
     for (; elem && elem !== document; elem = elem.parentNode) {
-      if (elem.matches(selector)) return elem;
+      if (elem.matches(selector)) return elem
     }
-    return null;
-  };
+    return null
+  }
+}
 
-  init()
+module.exports = {
+  init
 }
