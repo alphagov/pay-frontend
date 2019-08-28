@@ -201,14 +201,35 @@ describe('chargeTests', function () {
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
         const cookieValue = cookie.create(chargeId)
         const data = {
-          PaRes: 'aPaRes'
+          PaRes: 'aPaRes',
+          MD: 'aMD'
         }
         postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
+            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('aMD')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+
+      it('should not return UI elements for which there is no data', function (done) {
+        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        const cookieValue = cookie.create(chargeId)
+        const data = {
+        }
+        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').length).to.equal(0)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').length).to.equal(0)
           })
           .end(done)
       })
