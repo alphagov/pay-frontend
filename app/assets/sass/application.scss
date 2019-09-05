@@ -1,4 +1,5 @@
 @import "govuk-frontend/govuk/all";
+@import "govuk-country-and-territory-autocomplete/location-autocomplete";
 
 @import "modules/3ds";
 @import "modules/accepted-cards";
@@ -13,5 +14,3 @@
 @import "modules/text-align";
 @import "modules/borders";
 @import "modules/divider";
-
-@import "govuk-country-and-territory-autocomplete/location-autocomplete";
