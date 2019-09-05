@@ -24,3 +24,7 @@
     }
   }
 }
+
+.autocomplete__hint {
+  @include govuk-font($size: 19);
+}
