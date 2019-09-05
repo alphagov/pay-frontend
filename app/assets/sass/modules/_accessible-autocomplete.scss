@@ -26,5 +26,10 @@
 }
 
 .autocomplete__hint {
+  width: 75%;
   @include govuk-font($size: 19);
+}
+
+.autocomplete__menu {
+  width: calc(75% - 4px);
 }
