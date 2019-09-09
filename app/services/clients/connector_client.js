@@ -17,6 +17,7 @@ const CARD_STATUS_PATH = '/v1/frontend/charges/{chargeId}/status'
 const CARD_CAPTURE_PATH = '/v1/frontend/charges/{chargeId}/capture'
 const CARD_CANCEL_PATH = '/v1/frontend/charges/{chargeId}/cancel'
 const CARD_FIND_BY_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}/charge'
+const CARD_FIND_BY_TOKEN_2_PATH = '/v1/frontend/tokens/{chargeTokenId}'
 const CARD_DELETE_CHARGE_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}'
 const CARD_CHARGE_PATH = '/v1/frontend/charges/{chargeId}'
 const WORLDPAY_3DS_FLEX_JWT_PATH = '/v1/frontend/charges/{chargeId}/worldpay/3ds-flex/ddc'
@@ -47,6 +48,9 @@ const _getCancelUrlFor = chargeId => baseUrl + CARD_CANCEL_PATH.replace('{charge
 
 /** @private */
 const _getFindByTokenUrlFor = tokenId => baseUrl + CARD_FIND_BY_TOKEN_PATH.replace('{chargeTokenId}', tokenId)
+
+/** @private */
+const _getFindByToken2UrlFor = tokenId => baseUrl + CARD_FIND_BY_TOKEN_2_PATH.replace('{chargeTokenId}', tokenId)
 
 /** @private */
 const _getDeleteTokenUrlFor = tokenId => baseUrl + CARD_DELETE_CHARGE_TOKEN_PATH.replace('{chargeTokenId}', tokenId)
@@ -280,6 +284,11 @@ const findByToken = chargeOptions => {
   return _getConnector(findByTokenUrl, 'find by token')
 }
 
+const findByToken2 = chargeOptions => {
+  const findByTokenUrl = _getFindByToken2UrlFor(chargeOptions.tokenId)
+  return _getConnector(findByTokenUrl, 'find by token')
+}
+
 const getWorldpay3dsFlexJwt = chargeOptions => {
   const getWorldpay3dsFlexJwtUrl = _getWorldpay3dsFlexUrlFor(chargeOptions.chargeId)
   return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT')
@@ -303,6 +312,7 @@ module.exports = function (clientOptions = {}) {
     capture,
     cancel,
     findByToken,
+    findByToken2,
     patch,
     deleteToken,
     getWorldpay3dsFlexJwt

@@ -218,6 +218,23 @@ const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
 }
 
 const fixtures = {
+  tokenResponse: (opts = {}) => {
+    const data = {
+      'used': opts.used,
+      'charge': {
+        'externalId': opts.chargeExternalId
+      }
+    }
+    return {
+      getPactified: () => {
+        return pactBase.pactify(data)
+      },
+      getPlain: () => {
+        return data
+      }
+    }
+  },
+
   // intitial charge details returned have different API surface than charge others
   validChargeCreatedByToken: (opts = {}) => {
     const data = {
