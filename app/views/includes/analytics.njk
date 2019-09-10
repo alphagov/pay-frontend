@@ -1,3 +1,4 @@
+{% if analyticsTrackingId %}
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function()
             { (i[r].q=i[r].q||[]).push(arguments)}
@@ -6,7 +7,7 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
     {# GOV.UK Pay google analytics #}
-    ga('create', '{{analyticsTrackingId}}', 'auto');
+    ga('create', '{{ analyticsTrackingId }}', 'auto');
     ga('set', 'anonymizeIp', true);
     ga('set', 'transport', 'beacon');
     ga('send', 'pageview', {
@@ -19,10 +20,13 @@
       'dimension4': '{{ analytics.testingVariant }}',
     });
 
-    {# X-Gov google analtyics #}
-    ga('create', 'UA-145652997-1', 'auto', 'govuk_shared', {'allowLinker': true});
-    ga('govuk_shared.require', 'linker');
-    ga('govuk_shared.linker.set', 'anonymizeIp', true);
-    ga('govuk_shared.linker:autoLink', ['www.gov.uk']);
-    ga('govuk_shared.send', 'pageview');
+    {# X-Gov google analytics #}
+    {% if analyticsTrackingIdXGov %}
+      ga('create', '{{ analyticsTrackingIdXGov }}', 'auto', 'govuk_shared', {'allowLinker': true});
+      ga('govuk_shared.require', 'linker');
+      ga('govuk_shared.linker.set', 'anonymizeIp', true);
+      ga('govuk_shared.linker:autoLink', ['www.gov.uk']);
+      ga('govuk_shared.send', 'pageview');
+    {% endif %}
 </script>
+{% endif %}
