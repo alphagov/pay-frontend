@@ -45,7 +45,7 @@ describe('connector client - tokens', function () {
     afterEach(() => provider.verify())
 
     it('should return chargeId and used indicator', async function () {
-      const res = await connectorClient({ baseUrl: BASE_URL }).findByToken2({
+      const res = await connectorClient({ baseUrl: BASE_URL }).findByToken({
         tokenId: TOKEN
       })
       expect(res.body.used).to.be.equal(false)
