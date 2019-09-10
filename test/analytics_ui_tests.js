@@ -3,6 +3,7 @@ var renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions
 var should = require('chai').should() // eslint-disable-line
 
 describe('Frontend analytics', function () {
+  var testGoogleAnalyticsID = 'UA-NOT-REAL-ID'
   var googleAnalyticsScript = '//www.google-analytics.com/analytics.js'
   var googleAnalyticsCustomDimensions = {
     'analyticsId': 'testId',
@@ -19,7 +20,8 @@ describe('Frontend analytics', function () {
   it('should be enabled in charge view', function () {
     var templateData = {
       'amount': '50.00',
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     }
     var body = renderTemplate('charge', templateData)
     body.should.containSelector('script').withText(googleAnalyticsScript)
@@ -35,7 +37,8 @@ describe('Frontend analytics', function () {
       'cardholderName': 'Random dude',
       'address': '1 street lane, avenue city, AB1 3DF',
       'serviceName': 'Service 1',
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     }
 
     var body = renderTemplate('confirm', templateData)
@@ -47,7 +50,8 @@ describe('Frontend analytics', function () {
     var msg = 'error processing your payment!'
     var body = renderTemplate('error', {
       'message': msg,
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     })
     body.should.containSelector('script').withText(googleAnalyticsScript)
     checkGACustomDimensions(body)
@@ -59,7 +63,8 @@ describe('Frontend analytics', function () {
     var body = renderTemplate('error_with_return_url', {
       'message': msg,
       'return_url': returnUrl,
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     })
     body.should.containSelector('script').withText(googleAnalyticsScript)
     checkGACustomDimensions(body)
@@ -67,7 +72,8 @@ describe('Frontend analytics', function () {
 
   it('should be enabled when waiting for auth', function () {
     var body = renderTemplate('auth_waiting', {
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     })
     body.should.containSelector('script').withText(googleAnalyticsScript)
     checkGACustomDimensions(body)
@@ -75,7 +81,8 @@ describe('Frontend analytics', function () {
 
   it('should be enabled when waiting for capture', function () {
     var body = renderTemplate('capture_waiting', {
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     })
     body.should.containSelector('script').withText(googleAnalyticsScript)
     checkGACustomDimensions(body)
@@ -83,9 +90,18 @@ describe('Frontend analytics', function () {
 
   it('should be enabled when user cancels a payment', function () {
     var body = renderTemplate('user_cancelled', {
-      'analytics': googleAnalyticsCustomDimensions
+      'analytics': googleAnalyticsCustomDimensions,
+      analyticsTrackingId: testGoogleAnalyticsID
     })
     body.should.containSelector('script').withText(googleAnalyticsScript)
     checkGACustomDimensions(body)
+  })
+
+  it('should not be enabled if no tracking ID', function () {
+    var templateData = {
+      'amount': '50.00'
+    }
+    var body = renderTemplate('charge', templateData)
+    body.should.containSelector('script').withoutText(googleAnalyticsScript)
   })
 })

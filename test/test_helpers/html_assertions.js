@@ -57,6 +57,16 @@ chai.use(function (_chai, utils) {
     )
   })
 
+  chai.Assertion.addMethod('withoutText', function (msg) {
+    const actual = this._obj.length > 1 ? this._obj.toString() : this._obj.text()
+    this.assert(actual.indexOf(msg) === -1,
+      'Expected #{act} to contain \'' + msg + '\'.',
+      'Did not expect #{act} to contain \'' + msg + '\'.',
+      msg,
+      actual
+    )
+  })
+
   chai.Assertion.addMethod('withAttribute', function (expectedAttr, expectedValue) {
     this.assert(this._obj.attr(expectedAttr) !== undefined,
       'Expected #{act} to contain \'' + expectedAttr + '\'',
