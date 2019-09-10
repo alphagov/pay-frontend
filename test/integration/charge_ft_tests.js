@@ -582,7 +582,7 @@ describe('chargeTests', function () {
             const errorMessages = {
               cardNo: 'Enter a valid card number',
               expiryDate: 'Enter a valid expiry date',
-              cvc: 'Enter a valid card security code',
+              cvc: "The security code you've used is incorrect or has expired.",
               city: 'Enter a valid town/city',
               postcode: 'Enter a valid postcode',
               email: 'Enter a valid email',
