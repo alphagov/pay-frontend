@@ -27,7 +27,14 @@ const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 
 // Global constants
-const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
+const {
+  NODE_ENV,
+  PORT,
+  ANALYTICS_TRACKING_ID,
+  ANALYTICS_TRACKING_ID_XGOV,
+  GOOGLE_PAY_MERCHANT_ID,
+  APPLE_PAY_MERCHANT_ID_CERTIFICATE
+} = process.env
 const CSS_PATH = '/stylesheets/application.min.css'
 const JAVASCRIPT_PATH = '/javascripts/application.min.js'
 const argv = require('minimist')(process.argv.slice(2))
@@ -61,6 +68,7 @@ function initialiseGlobalMiddleware (app) {
       res.locals.analyticsTrackingId = '' // to not break the app
     } else {
       res.locals.analyticsTrackingId = ANALYTICS_TRACKING_ID
+      res.locals.analyticsTrackingIdXGov = ANALYTICS_TRACKING_ID_XGOV
     }
     res.locals.session = function () {
       return session.retrieve(req, req.chargeId)
