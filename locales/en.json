@@ -117,8 +117,8 @@
 			},
 			"cvc": {
 				"name": "card security code",
-				"message": "Enter a valid card security code",
-				"invalidLength": "Enter a valid card security code"
+				"message": "The security code you've used is incorrect or has expired. Try again with a new code.",
+				"invalidLength": "The security code you've used is incorrect or has expired. Try again with a new code."
 			},
 			"expiryDate": {
 				"name": "expiry date",
