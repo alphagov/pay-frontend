@@ -78,7 +78,7 @@ module.exports = correlationId => {
 
   const findByToken = function (tokenId) {
     return new Promise(function (resolve, reject) {
-      connectorClient({ correlationId }).findByToken({ tokenId })
+      connectorClient({ correlationId }).findByToken2({ tokenId })
         .then(response => {
           if (response.statusCode !== 200) {
             return reject(new Error('GET_FAILED'))

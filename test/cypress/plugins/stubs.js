@@ -25,7 +25,7 @@ const simpleStubBuilder = function simpleStubBuilder (method, statusCode, path, 
 
 module.exports = {
   connectorCreateChargeFromToken: (opts = {}) => {
-    const path = `/v1/frontend/tokens/${opts.tokenId}/charge`
+    const path = `/v1/frontend/tokens/${opts.tokenId}`
     const body = paymentFixtures.validChargeCreatedByToken(opts)
 
     return simpleStubBuilder('GET', 200, path, body)
