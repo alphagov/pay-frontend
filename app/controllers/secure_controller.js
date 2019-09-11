@@ -21,9 +21,9 @@ exports.new = (req, res) => {
   Charge(correlationId).findByToken(chargeTokenId)
     .then(chargeData => Token.destroy(chargeTokenId, correlationId).then(() => Promise.resolve(chargeData)))
     .then(chargeData => {
-      const chargeId = chargeData.externalId
+      const chargeId = chargeData.charge.externalId
       setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
-      res.redirect(303, generateRoute(resolveActionName(chargeData.status, 'get'), { chargeId }))
+      res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
     })
     .catch(() => {
       logging.systemError('Secure controller token', correlationId, chargeTokenId)
