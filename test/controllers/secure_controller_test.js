@@ -163,6 +163,24 @@ describe('secure controller', function () {
           }, 0)
         })
       })
+
+      describe('but the token has been used', function () {
+        it('should display the generic error page', function () {
+          requireSecureController(mockCharge.withSuccess({
+            'used': true
+          }), mockToken.withSuccess()).new(request, response)
+          const systemErrorObj = {
+            viewName: 'SYSTEM_ERROR',
+            analytics: {
+              'analyticsId': 'Service unavailable',
+              'type': 'Service unavailable',
+              'paymentProvider': 'Service unavailable',
+              'amount': '0.00'
+            }
+          }
+          expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+        })
+      })
     })
   })
 })
