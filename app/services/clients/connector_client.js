@@ -17,7 +17,7 @@ const CARD_STATUS_PATH = '/v1/frontend/charges/{chargeId}/status'
 const CARD_CAPTURE_PATH = '/v1/frontend/charges/{chargeId}/capture'
 const CARD_CANCEL_PATH = '/v1/frontend/charges/{chargeId}/cancel'
 const CARD_FIND_BY_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}'
-const CARD_DELETE_CHARGE_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}'
+const TOKEN_USED_PATH = '/v1/frontend/tokens/{chargeTokenId}/used'
 const CARD_CHARGE_PATH = '/v1/frontend/charges/{chargeId}'
 const WORLDPAY_3DS_FLEX_JWT_PATH = '/v1/frontend/charges/{chargeId}/worldpay/3ds-flex/ddc'
 
@@ -49,7 +49,7 @@ const _getCancelUrlFor = chargeId => baseUrl + CARD_CANCEL_PATH.replace('{charge
 const _getFindByTokenUrlFor = tokenId => baseUrl + CARD_FIND_BY_TOKEN_PATH.replace('{chargeTokenId}', tokenId)
 
 /** @private */
-const _getDeleteTokenUrlFor = tokenId => baseUrl + CARD_DELETE_CHARGE_TOKEN_PATH.replace('{chargeTokenId}', tokenId)
+const _markUsedTokenUrl = tokenId => baseUrl + TOKEN_USED_PATH.replace('{chargeTokenId}', tokenId)
 
 /** @private */
 const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeId}', chargeId)
@@ -192,45 +192,6 @@ const _getConnector = (url, description) => {
   })
 }
 
-/** @private */
-const _deleteConnector = (url, description) => {
-  return new Promise(function (resolve, reject) {
-    const startTime = new Date()
-    const context = {
-      url: url,
-      method: 'DELETE',
-      description: description,
-      service: SERVICE_NAME
-    }
-    requestLogger.logRequestStart(context)
-    baseClient.delete(
-      url,
-      { correlationId },
-      null,
-      null
-    ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'DELETE', url, new Date() - startTime)
-      if (response.statusCode !== 204) {
-        logger.warn('[%s] Calling connector to DELETE something returned a non http 204 response', correlationId, {
-          service: 'connector',
-          method: 'DELETE',
-          status: response.statusCode
-        })
-      }
-      resolve(response)
-    }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'DELETE', url, new Date() - startTime)
-      logger.error('Calling connector threw exception -', {
-        service: 'connector',
-        method: 'DELETE',
-        url: url,
-        error: err
-      })
-      reject(err)
-    })
-  })
-}
-
 // POST functions
 const threeDs = chargeOptions => {
   const threeDsUrl = _getThreeDsFor(chargeOptions.chargeId)
@@ -285,10 +246,9 @@ const getWorldpay3dsFlexJwt = chargeOptions => {
   return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT')
 }
 
-// DELETE functions
-const deleteToken = chargeOptions => {
-  const deleteTokenUrl = _getDeleteTokenUrlFor(chargeOptions.tokenId)
-  return _deleteConnector(deleteTokenUrl, 'delete token')
+const markTokenAsUsed = chargeOptions => {
+  const markUsedTokenUrl = _markUsedTokenUrl(chargeOptions.tokenId)
+  return _postConnector(markUsedTokenUrl, undefined, 'mark token as used')
 }
 
 module.exports = function (clientOptions = {}) {
@@ -304,7 +264,7 @@ module.exports = function (clientOptions = {}) {
     cancel,
     findByToken,
     patch,
-    deleteToken,
+    markTokenAsUsed,
     getWorldpay3dsFlexJwt
   }
 }

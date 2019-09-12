@@ -3,13 +3,13 @@
 // Local dependencies
 const connectorClient = require('../services/clients/connector_client')
 
-const destroy = function (tokenId, correlationId) {
+const markTokenAsUsed = function (tokenId, correlationId) {
   return new Promise(function (resolve, reject) {
     correlationId = correlationId || ''
-    connectorClient({ correlationId }).deleteToken({ tokenId })
+    connectorClient({ correlationId }).markTokenAsUsed({ tokenId })
       .then(response => {
         if (response.statusCode !== 204) {
-          return reject(new Error('DELETE_FAILED'))
+          return reject(new Error('MARKING_TOKEN_AS_USED_FAILED'))
         }
         resolve(response.body)
       })
@@ -20,5 +20,5 @@ const destroy = function (tokenId, correlationId) {
 }
 
 module.exports = {
-  destroy: destroy
+  markTokenAsUsed: markTokenAsUsed
 }

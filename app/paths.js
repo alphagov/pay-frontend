@@ -130,8 +130,8 @@ const paths = {
       action: 'get'
     },
     token: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId',
-      action: 'delete'
+      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId/used',
+      action: 'post'
     },
     allCards: {
       path: process.env.CONNECTOR_HOST + '/v1/api/card-types',

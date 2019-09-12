@@ -31,10 +31,10 @@ module.exports = {
     return simpleStubBuilder('GET', 200, path, body)
   },
 
-  connectorDeleteToken: (opts = {}) => {
-    const path = `/v1/frontend/tokens/${opts.tokenId}`
+  connectorMarkTokenAsUsed: (opts = {}) => {
+    const path = `/v1/frontend/tokens/${opts.tokenId}/used`
 
-    return simpleStubBuilder('DELETE', 204, path, undefined)
+    return simpleStubBuilder('POST', 204, path, undefined)
   },
 
   connectorUpdateChargeStatus: (opts = {}) => {

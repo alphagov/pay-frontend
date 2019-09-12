@@ -25,7 +25,7 @@ exports.new = (req, res) => {
       }
       return Promise.resolve(chargeData)
     })
-    .then(chargeData => Token.destroy(chargeTokenId, correlationId).then(() => Promise.resolve(chargeData)))
+    .then(chargeData => Token.markTokenAsUsed(chargeTokenId, correlationId).then(() => Promise.resolve(chargeData)))
     .then(chargeData => {
       const chargeId = chargeData.charge.externalId
       setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
