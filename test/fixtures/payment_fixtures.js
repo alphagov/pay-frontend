@@ -238,29 +238,32 @@ const fixtures = {
   // intitial charge details returned have different API surface than charge others
   validChargeCreatedByToken: (opts = {}) => {
     const data = {
-      'amount': opts.amount || 1000,
-      'cardDetails': null,
-      'corporateSurcharge': null,
-      'delayedCapture': false,
-      'description': opts.description || 'Example fixture payment',
-      'email': null,
-      'externalId': opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv',
-      'gatewayAccount': buildGatewayAccount(opts),
-      'gatewayTransactionId': null,
-      'language': 'ENGLISH',
-      'paymentGatewayName': 'SANDBOX',
-      'providerSessionId': null,
-      'reference': 'my payment reference',
-      'refunds': [],
-      'returnUrl': '/?confirm',
-      'status': 'CREATED',
-      'version': 1,
-      'walletType': null,
-      'events': [{
-        'gatewayEventDate': null,
+      'used': false,
+      'charge': {
+        'amount': opts.amount || 1000,
+        'cardDetails': null,
+        'corporateSurcharge': null,
+        'delayedCapture': false,
+        'description': opts.description || 'Example fixture payment',
+        'email': null,
+        'externalId': opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv',
+        'gatewayAccount': buildGatewayAccount(opts),
+        'gatewayTransactionId': null,
+        'language': 'ENGLISH',
+        'paymentGatewayName': 'SANDBOX',
+        'providerSessionId': null,
+        'reference': 'my payment reference',
+        'refunds': [],
+        'returnUrl': '/?confirm',
         'status': 'CREATED',
-        'version': 1
-      }]
+        'version': 1,
+        'walletType': null,
+        'events': [{
+          'gatewayEventDate': null,
+          'status': 'CREATED',
+          'version': 1
+        }]
+      }
     }
     return data
   },

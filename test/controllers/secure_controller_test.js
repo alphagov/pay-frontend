@@ -100,13 +100,16 @@ describe('secure controller', function () {
       }
 
       chargeObject = {
-        'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-        'status': 'CREATED',
-        'gatewayAccount': {
-          'service_name': 'Service Name',
-          'analytics_id': 'bla-1234',
-          'type': 'live',
-          'payment_provider': 'worldpay'
+        'used': false,
+        'charge': {
+          'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
+          'status': 'CREATED',
+          'gatewayAccount': {
+            'service_name': 'Service Name',
+            'analytics_id': 'bla-1234',
+            'type': 'live',
+            'payment_provider': 'worldpay'
+          }
         }
       }
     })
@@ -151,13 +154,31 @@ describe('secure controller', function () {
         it('should store the service name into the session and redirect', function (done) {
           requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess()).new(request, response)
           setTimeout(function () {
-            expect(response.redirect.calledWith(303, paths.generateRoute('card.new', {chargeId: chargeObject.externalId}))).to.be.true // eslint-disable-line
+            expect(response.redirect.calledWith(303, paths.generateRoute('card.new', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
             expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
             expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
               'csrfSecret': 'foo'
             })
             done()
           }, 0)
+        })
+      })
+
+      describe('but the token has been used', function () {
+        it('should display the generic error page', function () {
+          requireSecureController(mockCharge.withSuccess({
+            'used': true
+          }), mockToken.withSuccess()).new(request, response)
+          const systemErrorObj = {
+            viewName: 'SYSTEM_ERROR',
+            analytics: {
+              'analyticsId': 'Service unavailable',
+              'type': 'Service unavailable',
+              'paymentProvider': 'Service unavailable',
+              'amount': '0.00'
+            }
+          }
+          expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
         })
       })
     })

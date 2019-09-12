@@ -212,7 +212,7 @@ describe('findByToken', function () {
       nock.cleanAll()
 
       nock(originalHost)
-        .get('/v1/frontend/tokens/1/charge')
+        .get('/v1/frontend/tokens/1')
         .reply(404, '{}')
     })
 
@@ -230,7 +230,7 @@ describe('findByToken', function () {
       nock.cleanAll()
 
       nock(originalHost)
-        .get('/v1/frontend/tokens/1/charge')
+        .get('/v1/frontend/tokens/1')
         .reply(200, { foo: 'bar' })
     })
 
