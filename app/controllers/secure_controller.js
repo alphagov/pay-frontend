@@ -10,7 +10,7 @@ const Token = require('../models/token')
 const Charge = require('../models/charge')
 const responseRouter = require('../utils/response_router')
 const { createChargeIdSessionKey } = require('../utils/session')
-const { setSessionVariable } = require('../utils/cookies')
+const { setSessionVariable, getSessionVariable } = require('../utils/cookies')
 const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const { resolveActionName } = require('../services/state_service')
@@ -20,7 +20,7 @@ exports.new = (req, res) => {
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   Charge(correlationId).findByToken(chargeTokenId)
     .then(chargeData => {
-      if (chargeData.used === true) {
+      if (chargeData.used === true && !getSessionVariable(req, createChargeIdSessionKey(chargeData.charge.externalId))) {
         throw new Error()
       }
       return Promise.resolve(chargeData)

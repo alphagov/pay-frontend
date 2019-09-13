@@ -164,7 +164,7 @@ describe('secure controller', function () {
         })
       })
 
-      describe('but the token has been used', function () {
+      describe('and the token has been used and the frontend_state cookie is empty', function () {
         it('should display the generic error page', function () {
           requireSecureController(mockCharge.withSuccess({
             'used': true
@@ -179,6 +179,41 @@ describe('secure controller', function () {
             }
           }
           expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+        })
+      })
+
+      describe('and the token has been used and the frontend_state cookie is not empty', function () {
+        it('should redirect to the appropriate page based on the charge state', function (done) {
+          const requestWithFrontendStateCookie = {
+            frontend_state: {
+              'ch_dh6kpbb4k82oiibbe4b9haujjk': {
+                'csrfSecret': 'foo'
+              }
+            },
+            params: { chargeTokenId: 1 },
+            headers: { 'x-Request-id': 'unique-id' }
+          }
+          requireSecureController(mockCharge.withSuccess({
+            'used': true,
+            'charge': {
+              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
+              'status': 'AUTHORISATION SUCCESS',
+              'gatewayAccount': {
+                'service_name': 'Service Name',
+                'analytics_id': 'bla-1234',
+                'type': 'live',
+                'payment_provider': 'worldpay'
+              }
+            }
+          }), mockToken.withSuccess()).new(requestWithFrontendStateCookie, response)
+          setTimeout(function () {
+            expect(response.redirect.calledWith(303, paths.generateRoute('card.confirm', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
+            expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
+            expect(requestWithFrontendStateCookie.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
+              'csrfSecret': 'foo'
+            })
+            done()
+          }, 0)
         })
       })
     })
