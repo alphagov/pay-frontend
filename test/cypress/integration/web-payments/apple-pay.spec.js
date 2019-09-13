@@ -37,7 +37,7 @@ describe('Apple Pay payment flow', () => {
 
   const createPaymentChargeStubs = [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId } },
-    { name: 'connectorDeleteToken', opts: { tokenId } },
+    { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     { name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
@@ -95,7 +95,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -133,7 +133,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -166,7 +166,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -201,7 +201,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -225,7 +225,7 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)

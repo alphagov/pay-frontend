@@ -16,13 +16,13 @@ const originalHost = process.env.CONNECTOR_HOST
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 
 describe('token model', function () {
-  describe('destroy', function () {
+  describe('mark token as used', function () {
     describe('when connector is unavailable', function () {
       before(function () {
         nock.cleanAll()
       })
       it('should return client unavailable', function () {
-        return Token.destroy(1, 'blah').then(wrongPromise,
+        return Token.markTokenAsUsed(1, 'blah').then(wrongPromise,
           function rejected (error) {
             assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
           })
@@ -36,14 +36,14 @@ describe('token model', function () {
           reqheaders: {
             'x-request-id': 'blah'
           }
-        }).delete('/v1/frontend/tokens/1')
+        }).post('/v1/frontend/tokens/1/used')
           .reply(404, '{}')
       })
 
       it('should return delete_failed', function () {
-        return Token.destroy(1, 'blah').then(wrongPromise,
+        return Token.markTokenAsUsed(1, 'blah').then(wrongPromise,
           function rejected (error) {
-            assert.strictEqual(error.message, 'DELETE_FAILED')
+            assert.strictEqual(error.message, 'MARKING_TOKEN_AS_USED_FAILED')
           })
       })
     })
@@ -55,12 +55,12 @@ describe('token model', function () {
           reqheaders: {
             'x-request-id': 'unique-request-id'
           }
-        }).delete('/v1/frontend/tokens/1')
+        }).post('/v1/frontend/tokens/1/used')
           .reply(204)
       })
 
       it('should return delete_failed', function () {
-        return Token.destroy(1, 'unique-request-id').then(function (data) {
+        return Token.markTokenAsUsed(1, 'unique-request-id').then(function (data) {
         }, wrongPromise)
       })
     })

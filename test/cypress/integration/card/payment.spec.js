@@ -104,7 +104,7 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -180,7 +180,7 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -208,7 +208,7 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -236,7 +236,7 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
@@ -290,7 +290,7 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be deleted (DELETE)
+      // 2. Token will be marked as used (POST)
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)

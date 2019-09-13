@@ -44,7 +44,7 @@ const mockCharge = (function () {
 const mockToken = (function () {
   const mock = function (withSuccess) {
     return {
-      destroy: function () {
+      markTokenAsUsed: function () {
         return new Promise(function (resolve, reject) {
           if (withSuccess) {
             resolve()

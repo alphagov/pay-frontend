@@ -3,7 +3,7 @@
 const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language, gatewayAccountId = 42, serviceOpts = {}) {
   return [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId } },
-    { name: 'connectorDeleteToken', opts: { tokenId } },
+    { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',
       opts: {
@@ -24,7 +24,7 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
 const buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs = (tokenId, chargeId, gatewayAccountId = 42, chargeOpts = {}, serviceOpts = {}) => {
   return [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId } },
-    { name: 'connectorDeleteToken', opts: { tokenId } },
+    { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetailsWithPrefilledCardholderDetails',
       opts: {
