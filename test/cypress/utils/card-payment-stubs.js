@@ -1,8 +1,8 @@
 'use strict'
 
-const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language, gatewayAccountId = 42, serviceOpts = {}) {
+const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42, serviceOpts = {}) {
   return [
-    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId } },
+    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, 'status': 'CREATED' } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',
@@ -12,6 +12,27 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         status: 'CREATED',
         state: { finished: false, status: 'created' },
         language: language || 'en'
+      }
+    },
+    { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
+
+    // @TODO(sfount) this should pass the service to be queried relative to the charge - right now it just returns a default service
+    { name: 'adminUsersGetService', opts: serviceOpts }
+  ]
+}
+
+const buildReuseTokenAndReturnPaymentChargeStubs = function buildReuseTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
+  return [
+    { name: 'connectorCreateChargeFromToken', opts: { 'tokenId': tokenId, 'gatewayAccountId': gatewayAccountId, 'used': true, 'status': status } },
+    { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
+    {
+      name: 'connectorGetChargeDetails',
+      opts: {
+        chargeId,
+        gatewayAccountId,
+        status: status,
+        state: { finished: false, status },
+        language: 'en'
       }
     },
     { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
@@ -55,5 +76,6 @@ const buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs = (tokenId, ch
 
 module.exports = {
   buildCreatePaymentChargeStubs,
-  buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs
+  buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs,
+  buildReuseTokenAndReturnPaymentChargeStubs
 }

@@ -232,6 +232,7 @@ const actions = {
 }
 
 exports.response = (req, res, actionName, options) => {
+  console.log('actionName is ' + actionName)
   options = options || {}
   options.viewName = actionName
   let action = lodash.result(actions, actionName)
@@ -240,9 +241,12 @@ exports.response = (req, res, actionName, options) => {
     options = { viewName: 'error' }
     action = actions.ERROR
   }
+  console.log('action is ' + JSON.stringify(action))
   if (shouldRedirect(req, res, action)) {
+    console.log('response router redirect')
     res.redirect(req.chargeData.return_url)
   } else {
+    console.log('response router render')
     render(res, action, options)
   }
 }
@@ -258,5 +262,6 @@ function render (res, action, options) {
     options.analytics.path = options.analytics.path + lodash.get(action, 'analyticsPage', '')
   }
   res.status(action.code || 200)
+  console.log('rendering for ' + action.view)
   res.render(action.view, options)
 }

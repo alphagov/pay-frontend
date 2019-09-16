@@ -236,9 +236,10 @@ const fixtures = {
   },
 
   // intitial charge details returned have different API surface than charge others
-  validChargeCreatedByToken: (opts = {}) => {
+  validChargeCreatedByToken: (opts = { 'used': false }) => {
+    console.log('state passed in: ' + opts.status)
     const data = {
-      'used': false,
+      'used': opts.used,
       'charge': {
         'amount': opts.amount || 1000,
         'cardDetails': null,
@@ -255,7 +256,7 @@ const fixtures = {
         'reference': 'my payment reference',
         'refunds': [],
         'returnUrl': '/?confirm',
-        'status': 'CREATED',
+        'status': opts.status || 'CREATED',
         'version': 1,
         'walletType': null,
         'events': [{
