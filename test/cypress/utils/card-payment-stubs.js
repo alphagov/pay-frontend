@@ -21,7 +21,7 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
 
     // @TODO(sfount) this should pass the service to be queried relative to the charge - right now it just returns a default service
     { name: 'adminUsersGetService', opts: serviceOpts },
-    { name: 'connectorWorldPay3dsFlexDdcJwt', opts: { chargeId } }
+    { name: 'connectorWorldpay3dsFlexDdcJwt', opts: { chargeId } }
   ]
 }
 

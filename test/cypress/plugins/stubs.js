@@ -1,6 +1,6 @@
 const paymentFixtures = require('./../../fixtures/payment_fixtures')
 const serviceFixtures = require('./../../fixtures/service_fixtures')
-const worldPay3dsFlexDdcJwtFixtures = require('./../../fixtures/worldpay_3ds_flex_fixtures')
+const worldpay3dsFlexDdcJwtFixtures = require('./../../fixtures/worldpay_3ds_flex_fixtures')
 
 const JSONRequestHeader = { 'Accept': 'application/json' }
 const JSONResponseHeader = { 'Content-Type': 'application/json' }
@@ -148,15 +148,15 @@ module.exports = {
     return simpleStubBuilder('POST', 204, path, undefined)
   },
 
-  connectorWorldPay3dsFlexDdcJwt: (opts = {}) => {
+  connectorWorldpay3dsFlexDdcJwt: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeId}/worldpay/3ds-flex/ddc`
 
-    const body = worldPay3dsFlexDdcJwtFixtures.validDdcJwt().getPlain()
+    const body = worldpay3dsFlexDdcJwtFixtures.validDdcJwt().getPlain()
 
     return simpleStubBuilder('GET', 200, path, body)
   },
 
-  worldpay3dsflexddcIframePost: (opts = {}) => {
+  worldpay3dsFlexDdcIframePost: (opts = {}) => {
     const body = `<!DOCTYPE html>
     <html>
     <head>
@@ -164,7 +164,7 @@ module.exports = {
     </head>
     <body>
     <script>
-        sendNotification(true, "${opts.sessionId}");
+        sendNotification(${opts.status || true}, "${opts.sessionId}");
 
         function sendNotification(status, sessionId){
             try{

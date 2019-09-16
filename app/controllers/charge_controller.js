@@ -10,7 +10,6 @@ const AWSXRay = require('aws-xray-sdk')
 // Local dependencies
 const {
   GOOGLE_PAY_MERCHANT_ID,
-  NODE_ENV,
   WORLDPAY_3DS_FLEX_DDC_TEST_URL,
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 } = process.env
@@ -63,7 +62,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
 
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId)
-  charge.worldpay3dsFlexDdcUrl = NODE_ENV !== 'production' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
+  charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
