@@ -3,7 +3,7 @@ const cardPaymentStubs = require('../../utils/card-payment-stubs')
 describe('Worldpay 3ds flex card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
-  const sessionId = 'test session Id'
+  const worldpaySessionId = 'test session Id'
   const gatewayAccountId = 42
   const sessionOpts = {}
   const providerOpts = {
@@ -59,7 +59,15 @@ describe('Worldpay 3ds flex card payment flow', () => {
   ]
 
   const worldpay3dsFlexDdcStub = {
-    name: 'worldpay3dsflexddcIframePost', opts: { sessionId }
+    name: 'worldpay3dsFlexDdcIframePost', opts: { sessionId: worldpaySessionId }
+  }
+
+  const worldpay3dsFlexDdcStubFailure = {
+    name: 'worldpay3dsFlexDdcIframePost',
+    opts: {
+      sessionId: worldpaySessionId,
+      status: false
+    }
   }
 
   beforeEach(() => {
@@ -113,19 +121,31 @@ describe('Worldpay 3ds flex card payment flow', () => {
 
   setUpAndCheckCardPaymentPage()
   describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details and a JWT present should cause worldpay iFrame to pass extra input when submitting with the session ID', () => {
+    it('Submitting confirmation with valid details and a JWT should cause worldpay iFrame result to post a message with the session ID', () => {
       cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStub])
 
       cy.get('#card-details').submit().should($form => {
         const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
-        expect(formVal).to.eq(sessionId)
+        expect(formVal).to.eq(worldpaySessionId)
       })
     })
   })
 
   setUpAndCheckCardPaymentPage()
   describe('Secure confirmation page', () => {
-    it('Submitting confirmation when Worldpay does not respond to iframe post should submit the form without the sessionId', () => {
+    it('If Worldpay were to respond with status=false, submitting confirmation should not include the hidden input containing the session ID', () => {
+      cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStubFailure])
+
+      cy.get('#card-details').submit().should($form => {
+        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult
+        expect(formVal).to.eq(undefined)
+      })
+    })
+  })
+
+  setUpAndCheckCardPaymentPage()
+  describe('Secure confirmation page', () => {
+    it('Submitting confirmation when Worldpay times out after  iframe post should still submit the form but without the worldpaySessionId', () => {
       confirmPaymentDetailsStubs.pop()
       cy.task('setupStubs', confirmPaymentDetailsStubs)
 
