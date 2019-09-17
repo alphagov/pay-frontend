@@ -14,7 +14,7 @@ const addWorldpaySessionIdToForm = (form, worldpaySessionId) => {
 }
 
 const checkOriginHostName = origin => {
-  return Charge.worldpay_3ds_flex_ddc_url.startsWith(origin)
+  return Charge.worldpay_3ds_flex_ddc_url.lastIndexOf(origin, 0) === 0
 }
 
 const submitWithWorldpay3dsFlex = form => {
@@ -35,34 +35,23 @@ const submitWithWorldpay3dsFlex = form => {
 
   toggleWaiting()
 
-  const worldpayIframe = document.createElement('iframe')
-  const worldpayForm = document.createElement('form')
-  const worldpayInputBin = document.createElement('input')
-  const worldpayInputJwt = document.createElement('input')
-  const worldpayScript = document.createElement('script')
-  worldpayIframe.id = 'worldpayIframe'
-  worldpayInputBin.name = 'Bin'
-  worldpayInputJwt.name = 'Jwt'
-  worldpayInputBin.type = 'hidden'
-  worldpayInputJwt.type = 'hidden'
-  worldpayForm.action = Charge.worldpay_3ds_flex_ddc_url
-  worldpayForm.id = 'collectionForm'
-  worldpayForm.method = 'POST'
-  worldpayForm.name = 'devicedata'
-  worldpayInputBin.value = form.elements['cardNo'].value
-  worldpayInputJwt.value = Charge.worldpay_3ds_flex_ddc_jwt
-  worldpayScript.innerHTML = `
-      document.getElementById('collectionForm').submit();
-    ;`
-  worldpayIframe.style.display = 'none'
-  worldpayForm.appendChild(worldpayInputBin)
-  worldpayForm.appendChild(worldpayInputJwt)
+  const iFrame = document.getElementById('worldpayIframe')
+  const innerDoc = iFrame.contentWindow.document
+  const post3dsCheck = iFrameContent => {
+    const innerForm = iFrameContent.getElementById('collectionForm')
+    iFrameContent.getElementById('input-jwt').value = Charge.worldpay_3ds_flex_ddc_jwt
+    innerForm.action = Charge.worldpay_3ds_flex_ddc_url
+    iFrameContent.getElementById('input-bin').value = form.elements['cardNo'].value
+    innerForm.submit()
+  }
 
-  const worldpayWrap = document.createElement('div')
-  worldpayWrap.appendChild(worldpayForm)
-  worldpayWrap.appendChild(worldpayScript)
-  worldpayIframe.src = `data:text/html;charset=utf-8,${encodeURIComponent(worldpayWrap.innerHTML)}`
-  document.getElementById('worldpay3DSFlexWrap').appendChild(worldpayIframe)
+  if (innerDoc.readyState === 'complete') {
+    post3dsCheck(innerDoc)
+  } else {
+    innerDoc.addEventListener('readystatechange', function () {
+      post3dsCheck(innerDoc)
+    }, false)
+  }
 }
 
 module.exports = {
