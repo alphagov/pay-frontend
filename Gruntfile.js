@@ -60,6 +60,14 @@ module.exports = function (grunt) {
         dest: 'public/.well-known'
       }]
     },
+    worldpayIframe: {
+      files: [{
+        expand: true,
+        cwd: 'app/assets/iframe',
+        src: ['**'],
+        dest: 'public/worldpay'
+      }]
+    },
     countryAutocompleteFiles: {
       files: [{
         expand: true,
