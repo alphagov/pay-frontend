@@ -444,7 +444,7 @@ describe('chargeTests', function () {
           .end(done)
       })
 
-      it('should give an error page if user is in entering card details state', function (done) {
+      it('should give enter_card_details view page if user is in entering card details state', function (done) {
         const cookieValue = cookie.create(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -454,7 +454,7 @@ describe('chargeTests', function () {
           .set('Content-Type', 'application/x-www-form-urlencoded')
           .set('Cookie', ['frontend_state=' + cookieValue])
           .set('Accept', 'application/json')
-          .expect(500)
+          .expect(200)
           .end(done)
       })
 
