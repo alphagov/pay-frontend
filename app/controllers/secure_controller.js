@@ -14,6 +14,7 @@ const { setSessionVariable, getSessionVariable } = require('../utils/cookies')
 const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const { resolveActionName } = require('../services/state_service')
+const paths = require('../paths')
 
 exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
@@ -26,7 +27,8 @@ exports.new = async function (req, res) {
       }
       const stateName = chargeData.charge.status.toUpperCase().replace(/\s/g, '_')
       responseRouter.response(req, res, stateName, {
-        chargeId: chargeData.charge.externalId
+        chargeId: chargeData.charge.externalId,
+        returnUrl: paths.generateRoute('card.return', { chargeId: chargeData.charge.externalId })
       })
     } else {
       await Token.markTokenAsUsed(chargeTokenId, correlationId)

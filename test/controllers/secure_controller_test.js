@@ -204,7 +204,8 @@ describe('secure controller', function () {
             .new(requestWithFrontendStateCookie, response)
           setTimeout(function () {
             const opts = {
-              chargeId: 'dh6kpbb4k82oiibbe4b9haujjk'
+              chargeId: 'dh6kpbb4k82oiibbe4b9haujjk',
+              returnUrl: '/return/dh6kpbb4k82oiibbe4b9haujjk'
             }
             expect(responseRouter.response.calledWith(requestWithFrontendStateCookie, response, 'AUTHORISATION_SUCCESS', opts)).to.be.true // eslint-disable-line
             expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
