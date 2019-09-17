@@ -27,7 +27,7 @@ exports.new = async function (req, res) {
     const gatewayAccountType = chargeData.charge.gatewayAccount.type
     if (chargeData.used === true) {
       if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
-        throw new Error()
+        throw new Error('UNAUTHORISED')
       }
       logger.info('Token being reused for chargeId %s, gatewayAccountId %s, gateway account type %s', chargeId, gatewayAccountId, gatewayAccountType)
       const stateName = chargeData.charge.status.toUpperCase().replace(/\s/g, '_')
@@ -42,7 +42,11 @@ exports.new = async function (req, res) {
       res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
     }
   } catch (err) {
+    var actionName = 'SYSTEM_ERROR'
+    if (err.message === 'UNAUTHORISED') {
+      actionName = 'UNAUTHORISED'
+    }
     logging.systemError('Secure controller token', correlationId, chargeTokenId)
-    responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+    responseRouter.response(req, res, actionName, withAnalyticsError())
   }
 }

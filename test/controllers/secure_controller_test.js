@@ -158,22 +158,62 @@ describe('secure controller', function () {
       })
 
       describe('and the token has been used and the frontend state cookie is empty', function () {
-        it('should display the generic error page', async function () {
+        it('should display the "Your payment session has expired" page', async function () {
           let responseRouter = {
             response: sinon.spy()
           }
-          await requireSecureController(mockCharge.withSuccess({
-            'used': true
-          }),
-          mockToken.withSuccess(),
-          responseRouter)
-            .new(request, response)
-          expect(responseRouter.response.calledWith(request, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
+          const requestWithEmptyCookie = {
+            frontend_state: {},
+            params: { chargeTokenId: 1 },
+            headers: { 'x-Request-id': 'unique-id' }
+          }
+          const charge = {
+            'used': true,
+            'charge': {
+              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
+              'status': 'AUTHORISATION SUCCESS',
+              'gatewayAccount': {
+                'service_name': 'Service Name',
+                'analytics_id': 'bla-1234',
+                'type': 'live',
+                'payment_provider': 'worldpay'
+              }
+            }
+          }
+          await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithEmptyCookie, response)
+          expect(responseRouter.response.calledWith(requestWithEmptyCookie, response, 'UNAUTHORISED', withAnalyticsError())).to.be.true // eslint-disable-line
+        })
+      })
+
+      describe('and the token has been used and the frontend state cookie is not present', function () {
+        it('should display the "Your payment session has expired" page', async function () {
+          let responseRouter = {
+            response: sinon.spy()
+          }
+          const requestWithoutCookie = {
+            params: { chargeTokenId: 1 },
+            headers: { 'x-Request-id': 'unique-id' }
+          }
+          const charge = {
+            'used': true,
+            'charge': {
+              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
+              'status': 'AUTHORISATION SUCCESS',
+              'gatewayAccount': {
+                'service_name': 'Service Name',
+                'analytics_id': 'bla-1234',
+                'type': 'live',
+                'payment_provider': 'worldpay'
+              }
+            }
+          }
+          await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithoutCookie, response)
+          expect(responseRouter.response.calledWith(requestWithoutCookie, response, 'UNAUTHORISED', withAnalyticsError())).to.be.true // eslint-disable-line
         })
       })
 
       describe('and the token has been used and the frontend state cookie has the wrong value', function () {
-        it('should display the generic error page', async function () {
+        it('should display the "Your payment session has expired" page', async function () {
           let responseRouter = {
             response: sinon.spy()
           }
@@ -200,7 +240,7 @@ describe('secure controller', function () {
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithWrongCookie, response)
-          expect(responseRouter.response.calledWith(requestWithWrongCookie, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
+          expect(responseRouter.response.calledWith(requestWithWrongCookie, response, 'UNAUTHORISED', withAnalyticsError())).to.be.true // eslint-disable-line
         })
       })
 
