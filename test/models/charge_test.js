@@ -6,6 +6,10 @@ const path = require('path')
 // NPM dependencies
 const assert = require('assert')
 const nock = require('nock')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const { expect } = chai
 
 // Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
@@ -199,11 +203,7 @@ describe('findByToken', function () {
     })
 
     it('should return client unavailable', function () {
-      const chargeModel = Charge('')
-      return chargeModel.findByToken(1).then(unexpectedPromise,
-        function rejected (error) {
-          assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
-        })
+      return expect(Charge('').findByToken(1)).to.be.rejectedWith(Error, 'CLIENT_UNAVAILABLE')
     })
   })
 
@@ -217,11 +217,7 @@ describe('findByToken', function () {
     })
 
     it('should return get_failed', function () {
-      const chargeModel = Charge('')
-      return chargeModel.findByToken(1).then(unexpectedPromise,
-        function rejected (error) {
-          assert.strictEqual(error.message, 'GET_FAILED')
-        })
+      return expect(Charge('').findByToken(1)).to.be.rejectedWith(Error, 'GET_FAILED')
     })
   })
 
@@ -234,11 +230,9 @@ describe('findByToken', function () {
         .reply(200, { foo: 'bar' })
     })
 
-    it('should return get_failed', function () {
-      const chargeModel = Charge('')
-      return chargeModel.findByToken(1).then(function (data) {
-        assert.strictEqual(data.foo, 'bar')
-      }, unexpectedPromise)
+    it('should return get_failed', async function () {
+      const responseBody = await Charge('').findByToken(1)
+      return expect(responseBody.foo).to.be.eql('bar')
     })
   })
 })

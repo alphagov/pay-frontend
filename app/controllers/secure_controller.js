@@ -15,33 +15,27 @@ const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATIO
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const { resolveActionName } = require('../services/state_service')
 
-exports.new = (req, res) => {
+exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
   const correlationId = req.headers[CORRELATION_HEADER] || ''
-  Charge(correlationId).findByToken(chargeTokenId)
-    .then(chargeData => {
-      if (chargeData.used === true) {
-        if (!getSessionVariable(req, createChargeIdSessionKey(chargeData.charge.externalId))) {
-          throw new Error()
-        }
-        // TODO use code below but things need to be refactored into async await paradigm first
-        // console.log('charge: ' + JSON.stringify(chargeData))
-        // const stateName = chargeData.charge.status.toUpperCase().replace(/\s/g, '_')
-        // responseRouter.response(req, res, stateName, {
-        //   chargeId: chargeData.charge.externalId
-        // })
+  try {
+    const chargeData = await Charge(correlationId).findByToken(chargeTokenId)
+    if (chargeData.used === true) {
+      if (!getSessionVariable(req, createChargeIdSessionKey(chargeData.charge.externalId))) {
+        throw new Error()
       }
-      return Promise.resolve(chargeData)
-    })
-    .then(chargeData => Token.markTokenAsUsed(chargeTokenId, correlationId).then(() => Promise.resolve(chargeData)))
-    .then(chargeData => {
+      const stateName = chargeData.charge.status.toUpperCase().replace(/\s/g, '_')
+      responseRouter.response(req, res, stateName, {
+        chargeId: chargeData.charge.externalId
+      })
+    } else {
+      await Token.markTokenAsUsed(chargeTokenId, correlationId)
       const chargeId = chargeData.charge.externalId
       setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
-      console.log('redirecting')
       res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
-    })
-    .catch(() => {
-      logging.systemError('Secure controller token', correlationId, chargeTokenId)
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
-    })
+    }
+  } catch (err) {
+    logging.systemError('Secure controller token', correlationId, chargeTokenId)
+    responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+  }
 }

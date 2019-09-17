@@ -221,7 +221,10 @@ const actions = {
     analyticsPage: '/in_progress'
   },
 
-  ENTERING_CARD_DETAILS: systemError,
+  ENTERING_CARD_DETAILS: {
+    view: 'errors/incorrect_state/enter_card_details',
+    analyticsPage: '/in_progress'
+  },
 
   AWAITING_CAPTURE_REQUEST: {
     view: 'errors/charge_confirm_state_completed',

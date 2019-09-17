@@ -80,6 +80,12 @@ describe('Re-use token flow', () => {
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/secure/${tokenId}`)
+
+      cy.get('#card-details-link').should(($a) => expect($a).to.contain(`Continue with your payment`))
+      cy.get('#return-url').should(($a) => expect($a).to.contain(`Go back to try the payment again`))
+      cy.get('#card-details-link').click()
+
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     })
 
@@ -132,7 +138,7 @@ describe('Re-use token flow', () => {
       cy.task('setupStubs', reuseTokenAndReturnPaymentAuthSuccessChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
-      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.location('pathname').should('eq', `/secure/${tokenId}`)
 
       cy.get('#confirm-link').should(($a) => expect($a).to.contain(`Continue with your payment`))
       cy.get('#return-url').should(($a) => expect($a).to.contain(`Go back to try the payment again`))

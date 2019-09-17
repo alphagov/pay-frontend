@@ -10,6 +10,7 @@ const expect = require('chai').expect
 
 // Local dependencies
 const paths = require('../../app/paths.js')
+const withAnalyticsError = require('../../app/utils/analytics').withAnalyticsError
 
 // configure
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
@@ -66,8 +67,9 @@ const mockToken = (function () {
   }
 }())
 
-const requireSecureController = function (mockedCharge, mockedToken) {
+const requireSecureController = function (mockedCharge, mockedToken, mockedResponseRouter) {
   return proxyquire(path.join(__dirname, '/../../app/controllers/secure_controller.js'), {
+    '../utils/response_router': mockedResponseRouter,
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
     'csrf': function () {
@@ -116,18 +118,12 @@ describe('secure controller', function () {
 
     describe('when the token is invalid', function () {
       it('should display the generic error page', function (done) {
-        requireSecureController(mockCharge.withFailure(), mockToken.withSuccess()).new(request, response)
+        let responseRouter = {
+          response: sinon.spy()
+        }
+        requireSecureController(mockCharge.withFailure(), mockToken.withSuccess(), responseRouter).new(request, response)
         setTimeout(function () {
-          const systemErrorObj = {
-            viewName: 'SYSTEM_ERROR',
-            analytics: {
-              'analyticsId': 'Service unavailable',
-              'type': 'Service unavailable',
-              'paymentProvider': 'Service unavailable',
-              'amount': '0.00'
-            }
-          }
-          expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+          expect(responseRouter.response.calledWith(request, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
           done()
         }, 0)
       })
@@ -135,24 +131,21 @@ describe('secure controller', function () {
 
     describe('when the token is valid', function () {
       describe('and not destroyed successfully', function () {
-        it('should display the generic error page', function () {
-          requireSecureController(mockCharge.withSuccess(), mockToken.withFailure()).new(request, response)
-          const systemErrorObj = {
-            viewName: 'SYSTEM_ERROR',
-            analytics: {
-              'analyticsId': 'Service unavailable',
-              'type': 'Service unavailable',
-              'paymentProvider': 'Service unavailable',
-              'amount': '0.00'
-            }
+        it('should display the generic error page', async function () {
+          let responseRouter = {
+            response: sinon.spy()
           }
-          expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+          await requireSecureController(mockCharge.withSuccess(), mockToken.withFailure(), responseRouter).new(request, response)
+          expect(responseRouter.response.calledWith(request, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
         })
       })
 
       describe('then destroyed successfully', function () {
         it('should store the service name into the session and redirect', function (done) {
-          requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess()).new(request, response)
+          let responseRouter = {
+            response: sinon.spy()
+          }
+          requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess(), responseRouter).new(request, response)
           setTimeout(function () {
             expect(response.redirect.calledWith(303, paths.generateRoute('card.new', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
             expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
@@ -165,25 +158,25 @@ describe('secure controller', function () {
       })
 
       describe('and the token has been used and the frontend_state cookie is empty', function () {
-        it('should display the generic error page', function () {
-          requireSecureController(mockCharge.withSuccess({
-            'used': true
-          }), mockToken.withSuccess()).new(request, response)
-          const systemErrorObj = {
-            viewName: 'SYSTEM_ERROR',
-            analytics: {
-              'analyticsId': 'Service unavailable',
-              'type': 'Service unavailable',
-              'paymentProvider': 'Service unavailable',
-              'amount': '0.00'
-            }
+        it('should display the generic error page', async function () {
+          let responseRouter = {
+            response: sinon.spy()
           }
-          expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+          await requireSecureController(mockCharge.withSuccess({
+            'used': true
+          }),
+          mockToken.withSuccess(),
+          responseRouter)
+            .new(request, response)
+          expect(responseRouter.response.calledWith(request, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
         })
       })
 
       describe('and the token has been used and the frontend_state cookie is not empty', function () {
         it('should redirect to the appropriate page based on the charge state', function (done) {
+          let responseRouter = {
+            response: sinon.spy()
+          }
           const requestWithFrontendStateCookie = {
             frontend_state: {
               'ch_dh6kpbb4k82oiibbe4b9haujjk': {
@@ -205,9 +198,15 @@ describe('secure controller', function () {
                 'payment_provider': 'worldpay'
               }
             }
-          }), mockToken.withSuccess()).new(requestWithFrontendStateCookie, response)
+          }),
+          mockToken.withSuccess(),
+          responseRouter)
+            .new(requestWithFrontendStateCookie, response)
           setTimeout(function () {
-            expect(response.redirect.calledWith(303, paths.generateRoute('card.confirm', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
+            const opts = {
+              chargeId: 'dh6kpbb4k82oiibbe4b9haujjk'
+            }
+            expect(responseRouter.response.calledWith(requestWithFrontendStateCookie, response, 'AUTHORISATION_SUCCESS', opts)).to.be.true // eslint-disable-line
             expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
             expect(requestWithFrontendStateCookie.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
               'csrfSecret': 'foo'
