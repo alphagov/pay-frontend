@@ -2,6 +2,7 @@
 
 // NPM dependencies
 const csrf = require('csrf')
+const logger = require('winston')
 
 // Local dependencies
 const logging = require('../utils/logging')
@@ -21,18 +22,22 @@ exports.new = async function (req, res) {
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   try {
     const chargeData = await Charge(correlationId).findByToken(chargeTokenId)
+    const chargeId = chargeData.charge.externalId
+    const gatewayAccountId = chargeData.charge.gatewayAccount.gateway_account_id
+    const gatewayAccountType = chargeData.charge.gatewayAccount.type
     if (chargeData.used === true) {
-      if (!getSessionVariable(req, createChargeIdSessionKey(chargeData.charge.externalId))) {
+      if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
         throw new Error()
       }
+      logger.info('Token being reused for chargeId %s, gatewayAccountId %s, gateway account type %s', chargeId, gatewayAccountId, gatewayAccountType)
       const stateName = chargeData.charge.status.toUpperCase().replace(/\s/g, '_')
       responseRouter.response(req, res, stateName, {
-        chargeId: chargeData.charge.externalId,
-        returnUrl: paths.generateRoute('card.return', { chargeId: chargeData.charge.externalId })
+        chargeId: chargeId,
+        returnUrl: paths.generateRoute('card.return', { chargeId })
       })
     } else {
+      logger.info('Token used for the first time for chargeId %s, gatewayAccountId %s, gateway account type %s', chargeId, gatewayAccountId, gatewayAccountType)
       await Token.markTokenAsUsed(chargeTokenId, correlationId)
-      const chargeId = chargeData.charge.externalId
       setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
       res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
     }

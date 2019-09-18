@@ -130,7 +130,7 @@ describe('secure controller', function () {
     })
 
     describe('when the token is valid', function () {
-      describe('and not destroyed successfully', function () {
+      describe('and not marked as used successfully', function () {
         it('should display the generic error page', async function () {
           let responseRouter = {
             response: sinon.spy()
@@ -140,7 +140,7 @@ describe('secure controller', function () {
         })
       })
 
-      describe('then destroyed successfully', function () {
+      describe('then mark as used successfully', function () {
         it('should store the service name into the session and redirect', function (done) {
           let responseRouter = {
             response: sinon.spy()
@@ -157,7 +157,7 @@ describe('secure controller', function () {
         })
       })
 
-      describe('and the token has been used and the frontend_state cookie is empty', function () {
+      describe('and the token has been used and the frontend state cookie is empty', function () {
         it('should display the generic error page', async function () {
           let responseRouter = {
             response: sinon.spy()
@@ -172,7 +172,7 @@ describe('secure controller', function () {
         })
       })
 
-      describe('and the token has been used and the frontend_state cookie is not empty', function () {
+      describe('and the token has been used and the frontend state cookie contains the ID of the payment associated with the token', function () {
         it('should redirect to the appropriate page based on the charge state', function (done) {
           let responseRouter = {
             response: sinon.spy()
