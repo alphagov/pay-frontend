@@ -42,11 +42,12 @@ exports.new = async function (req, res) {
       res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
     }
   } catch (err) {
-    var actionName = 'SYSTEM_ERROR'
     if (err.message === 'UNAUTHORISED') {
-      actionName = 'UNAUTHORISED'
+      logger.info('Call to /secure/{tokenId} is Unauthorised. This could be due to the token not existing, ' +
+        'the frontend state cookie not existing, or the frontend state cookie containing an invalid value.')
+      return responseRouter.response(req, res, 'UNAUTHORISED')
     }
     logging.systemError('Secure controller token', correlationId, chargeTokenId)
-    responseRouter.response(req, res, actionName, withAnalyticsError())
+    responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
   }
 }

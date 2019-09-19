@@ -24,7 +24,7 @@ const mockCharge = (function () {
             if (withSuccess) {
               resolve(chargeObject)
             } else {
-              reject(new Error('err'))
+              reject(new Error('UNAUTHORISED'))
             }
           })
         }
@@ -122,9 +122,9 @@ describe('secure controller', function () {
     })
 
     describe('when the token is invalid', function () {
-      it('should display the generic error page', async function () {
+      it('should display the "Your payment session has expired" page', async function () {
         await requireSecureController(mockCharge.withFailure(), mockToken.withSuccess(), responseRouter).new(request, response)
-        expect(responseRouter.response.calledWith(request, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
+        expect(responseRouter.response.calledWith(request, response, 'UNAUTHORISED')).to.be.true // eslint-disable-line
       })
     })
 
@@ -168,7 +168,7 @@ describe('secure controller', function () {
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithEmptyCookie, response)
-          expect(responseRouter.response.calledWith(requestWithEmptyCookie, response, 'UNAUTHORISED', withAnalyticsError())).to.be.true // eslint-disable-line
+          expect(responseRouter.response.calledWith(requestWithEmptyCookie, response, 'UNAUTHORISED')).to.be.true // eslint-disable-line
         })
       })
 
@@ -192,7 +192,7 @@ describe('secure controller', function () {
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithoutCookie, response)
-          expect(responseRouter.response.calledWith(requestWithoutCookie, response, 'UNAUTHORISED', withAnalyticsError())).to.be.true // eslint-disable-line
+          expect(responseRouter.response.calledWith(requestWithoutCookie, response, 'UNAUTHORISED')).to.be.true // eslint-disable-line
         })
       })
 
@@ -221,7 +221,7 @@ describe('secure controller', function () {
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithWrongCookie, response)
-          expect(responseRouter.response.calledWith(requestWithWrongCookie, response, 'UNAUTHORISED', withAnalyticsError())).to.be.true // eslint-disable-line
+          expect(responseRouter.response.calledWith(requestWithWrongCookie, response, 'UNAUTHORISED')).to.be.true // eslint-disable-line
         })
       })
 
