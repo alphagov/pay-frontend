@@ -172,6 +172,38 @@ describe('secure controller', function () {
         })
       })
 
+      describe.only('and the token has been used and the frontend state cookie has the wrong value', function () {
+        it('should display the generic error page', async function () {
+          let responseRouter = {
+            response: sinon.spy()
+          }
+          const requestWithWrongCookie = {
+            frontend_state: {
+              'ch_xxxx': {
+                'csrfSecret': 'foo'
+              }
+            },
+            params: { chargeTokenId: 1 },
+            headers: { 'x-Request-id': 'unique-id' }
+          }
+          const charge = {
+            'used': true,
+            'charge': {
+              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
+              'status': 'AUTHORISATION SUCCESS',
+              'gatewayAccount': {
+                'service_name': 'Service Name',
+                'analytics_id': 'bla-1234',
+                'type': 'live',
+                'payment_provider': 'worldpay'
+              }
+            }
+          }
+          await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithWrongCookie, response)
+          expect(responseRouter.response.calledWith(requestWithWrongCookie, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
+        })
+      })
+
       describe('and the token has been used and the frontend state cookie contains the ID of the payment associated with the token', function () {
         it('should redirect to the appropriate page based on the charge state', function (done) {
           let responseRouter = {
@@ -186,7 +218,7 @@ describe('secure controller', function () {
             params: { chargeTokenId: 1 },
             headers: { 'x-Request-id': 'unique-id' }
           }
-          requireSecureController(mockCharge.withSuccess({
+          const charge = {
             'used': true,
             'charge': {
               'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
@@ -198,10 +230,8 @@ describe('secure controller', function () {
                 'payment_provider': 'worldpay'
               }
             }
-          }),
-          mockToken.withSuccess(),
-          responseRouter)
-            .new(requestWithFrontendStateCookie, response)
+          }
+          requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithFrontendStateCookie, response)
           setTimeout(function () {
             const opts = {
               chargeId: 'dh6kpbb4k82oiibbe4b9haujjk',
