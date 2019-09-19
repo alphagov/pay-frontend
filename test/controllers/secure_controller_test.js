@@ -172,7 +172,7 @@ describe('secure controller', function () {
         })
       })
 
-      describe.only('and the token has been used and the frontend state cookie has the wrong value', function () {
+      describe('and the token has been used and the frontend state cookie has the wrong value', function () {
         it('should display the generic error page', async function () {
           let responseRouter = {
             response: sinon.spy()

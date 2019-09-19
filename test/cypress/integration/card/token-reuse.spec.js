@@ -70,7 +70,7 @@ describe('Re-use token flow', () => {
     })
   })
 
-  describe('Visiting the secure url again', () => {
+  describe('Visiting the secure url again when state is ENTERING CARD DETAILS', () => {
     it('should load the "Your payment is in progress" page with a link to the "Enter card details" page', () => {
       cy.task('setupStubs', usedTokenAndReturnPaymentCreatedChargeStubs)
       cy.visit(`/secure/${tokenId}`)
@@ -137,7 +137,7 @@ describe('Re-use token flow', () => {
     })
   })
 
-  describe('Visiting the secure url again', () => {
+  describe('Visiting the secure url again when state is AUTHORISATION SUCCESS', () => {
     it('should show the "Your Payment Is In Progress" page with a link to the "Confirm your payment" page', () => {
       cy.task('setupStubs', usedTokenAndReturnPaymentAuthSuccessChargeStubs)
       cy.visit(`/secure/${tokenId}`)
@@ -153,7 +153,7 @@ describe('Re-use token flow', () => {
     })
   })
 
-  describe('Visiting the secure url again', () => {
+  describe('Visiting the secure url again when state is EXPIRED', () => {
     it('should show the "Your payment session has expired" page', () => {
       cy.task('setupStubs', usedTokenAndReturnPaymentExpiredChargeStubs)
       cy.visit(`/secure/${tokenId}`)
