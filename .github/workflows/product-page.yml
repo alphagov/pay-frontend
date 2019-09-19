@@ -1,0 +1,43 @@
+name: product-pages
+
+on:
+  repository_dispatch:
+    types: product-page-release
+
+jobs:
+  build:
+    name: update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+
+      - name: Update package.json
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            const release = await github.repos.getLatestRelease({
+              'owner': 'alphagov',
+              'repo': 'pay-product-page'
+            })
+            const url = release.assets[0].browser_download_url
+            let package = JSON.parse(fs.readFileSync('package.json'))
+            package['devDependencies']['pay-product-page'] = url
+            fs.writeFileSync('package.json', package)
+
+      - name: Update npm
+        run: npm install
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v1.1.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_MESSAGE: "[Action] Update version of pay-product-page"
+          PULL_REQUEST_TITLE: "ACTION: Update pay-product-page"
+          PULL_REQUEST_BODY: "This is an automatic PR triggered by a new pay-product-page release"
+          PULL_REQUEST_BRANCH: action/update-product-page
