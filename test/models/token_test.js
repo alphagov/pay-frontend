@@ -2,8 +2,11 @@
 
 // NPM dependencies
 const path = require('path')
-const assert = require('assert')
 const nock = require('nock')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const { expect } = chai
 
 // Local dependencies
 const Token = require(path.join(__dirname, '/../../app/models/token.js'))
@@ -22,10 +25,7 @@ describe('token model', function () {
         nock.cleanAll()
       })
       it('should return client unavailable', function () {
-        return Token.markTokenAsUsed(1, 'blah').then(wrongPromise,
-          function rejected (error) {
-            assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
-          })
+        return expect(Token.markTokenAsUsed(1, 'blah')).to.be.rejectedWith(Error, 'CLIENT_UNAVAILABLE')
       })
     })
 
@@ -41,10 +41,7 @@ describe('token model', function () {
       })
 
       it('should return delete_failed', function () {
-        return Token.markTokenAsUsed(1, 'blah').then(wrongPromise,
-          function rejected (error) {
-            assert.strictEqual(error.message, 'MARKING_TOKEN_AS_USED_FAILED')
-          })
+        return expect(Token.markTokenAsUsed(1, 'blah')).to.be.rejectedWith(Error, 'MARKING_TOKEN_AS_USED_FAILED')
       })
     })
 

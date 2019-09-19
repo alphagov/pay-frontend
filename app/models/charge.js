@@ -76,19 +76,17 @@ module.exports = correlationId => {
     })
   }
 
-  const findByToken = function (tokenId) {
-    return new Promise(function (resolve, reject) {
-      connectorClient({ correlationId }).findByToken({ tokenId })
-        .then(response => {
-          if (response.statusCode !== 200) {
-            return reject(new Error('GET_FAILED'))
-          }
-          resolve(response.body)
-        })
-        .catch(err => {
-          clientUnavailable(err, { resolve, reject })
-        })
-    })
+  const findByToken = async function (tokenId) {
+    let response
+    try {
+      response = await connectorClient({ correlationId }).findByToken({ tokenId })
+    } catch (err) {
+      throw new Error('CLIENT_UNAVAILABLE', err)
+    }
+    if (response.statusCode !== 200) {
+      throw new Error('GET_FAILED')
+    }
+    return response.body
   }
 
   const patch = function (chargeId, op, path, value, subSegment) {
