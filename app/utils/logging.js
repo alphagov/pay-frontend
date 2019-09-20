@@ -43,10 +43,12 @@ exports.failedGetWorldpayDdcJwt = err => {
   })
 }
 
-exports.systemError = function logSystemError (message, correlationId, chargeId) {
+exports.systemError = function logSystemError (message, correlationId, chargeId, gatewayAccountId, gatewayAccountType) {
   const correlationID = correlationId || 'no-correlation-id'
   const chargeID = chargeId || 'no-charge-id'
-  const context = { correlationID, chargeID }
+  const gatewayAccountID = gatewayAccountId || 'no-gateway-account-id'
+  const type = gatewayAccountType || 'no-gateway-account-type'
+  const context = { correlationID, chargeID, gatewayAccountID, type }
 
   logger.error(`System error thrown, rendering technical problems page: ${message}`, context)
 }

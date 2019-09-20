@@ -20,11 +20,14 @@ const paths = require('../paths')
 exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
   const correlationId = req.headers[CORRELATION_HEADER] || ''
+  var chargeId
+  var gatewayAccountId
+  var gatewayAccountType
   try {
     const chargeData = await Charge(correlationId).findByToken(chargeTokenId)
-    const chargeId = chargeData.charge.externalId
-    const gatewayAccountId = chargeData.charge.gatewayAccount.gateway_account_id
-    const gatewayAccountType = chargeData.charge.gatewayAccount.type
+    chargeId = chargeData.charge.externalId
+    gatewayAccountId = chargeData.charge.gatewayAccount.gateway_account_id
+    gatewayAccountType = chargeData.charge.gatewayAccount.type
     if (chargeData.used === true) {
       if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
         throw new Error('UNAUTHORISED')
@@ -47,7 +50,7 @@ exports.new = async function (req, res) {
         'the frontend state cookie not existing, or the frontend state cookie containing an invalid value.')
       return responseRouter.response(req, res, 'UNAUTHORISED')
     }
-    logging.systemError('Secure controller token', correlationId, chargeTokenId)
+    logging.systemError('Secure controller token', correlationId, chargeId, gatewayAccountId, gatewayAccountType)
     responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
   }
 }
