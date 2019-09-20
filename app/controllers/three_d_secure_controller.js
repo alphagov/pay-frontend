@@ -92,6 +92,7 @@ module.exports = {
     const paRequest = _.get(charge, 'auth3dsData.paRequest')
     const md = _.get(charge, 'auth3dsData.md')
     const htmlOut = _.get(charge, 'auth3dsData.htmlOut')
+    const worldpayChallengeJwt = _.get(charge, 'auth3dsData.worldpayChallengeJwt')
 
     if (issuerUrl && paRequest) {
       let data = {
@@ -107,6 +108,10 @@ module.exports = {
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
       })
+    } else if (worldpayChallengeJwt) {
+      let data = {
+        issuerUrl: process.env.
+      }
     } else if (issuerUrl) {
       res.redirect(303, issuerUrl)
     } else {
