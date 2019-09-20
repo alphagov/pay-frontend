@@ -8,9 +8,18 @@
   <p class="govuk-body-l lede">{{ __p("authorisation.approvalNeeded") }}</p>
 </noscript>
 <form name="three_ds_required" method="post" action="{{ issuerUrl }}">
+  {% if paRequest %}
   <input type="hidden" name="PaReq" value="{{ paRequest }}"/>
+  {% endif %}
+  {% if md %}
   <input type="hidden" name="MD" value="{{ md }}"/>
+  {% endif %}
+  {% if threeDSReturnUrl %}
   <input type="hidden" name="TermUrl" value="{{ threeDSReturnUrl }}"/>
+  {% endif %}
+  {% if worldpayChallengeJwt %}
+  <input type="hidden" name="JWT" value="{{ worldpayChallengeJwt }}"/>
+  {% endif %}
   <noscript>
     <button id="confirm" class="govuk-button">{{ __p("commonButtons.continueButton") }}</button>
   </noscript>

@@ -117,7 +117,8 @@ module.exports = (function () {
       paRequest: auth3dsData.paRequest,
       issuerUrl: auth3dsData.issuerUrl,
       htmlOut: auth3dsData.htmlOut,
-      md: auth3dsData.md
+      md: auth3dsData.md,
+      worldpayChallengeJwt: auth3dsData.worldpayChallengeJwt
     }
   }
 

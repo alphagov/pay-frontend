@@ -21,7 +21,7 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     'payment_provider': 'sandbox',
     'requires3ds': false,
     'service_name': 'My service',
-    'type': 'test',
+    'type': opts.gatewayAccountType || 'test',
     'version': 1,
     'integration_version_3ds': opts.integrationVersion3ds || 1,
     card_types: cardTypes
@@ -145,6 +145,27 @@ const utilFormatPrefilledCardHolderDetails = (details) => {
   return structure
 }
 
+const buildAuth3dsDetails = function buildAuth3dsDetails (opts) {
+  const data = {}
+  if (opts.worldpayChallengeJwt) {
+    data.worldpayChallengeJwt = opts.worldpayChallengeJwt
+  }
+  if (opts.paRequest) {
+    data.paRequest = opts.paRequest
+  }
+  if (opts.issuerUrl) {
+    data.issuerUrl = opts.issuerUrl
+  }
+  if (opts.htmlOut) {
+    data.htmlOut = opts.htmlOut
+  }
+  if (opts.md) {
+    data.md = opts.md
+  }
+
+  return data
+}
+
 const buildChargeDetails = function buildChargeDetails (opts) {
   const chargeId = opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv'
   const data = {
@@ -170,10 +191,8 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     data.card_details = utilFormatPaymentDetails(opts.paymentDetails)
   }
 
-  if (opts.auth3dsData && opts.auth3dsData.worldpayChallengeJwt) {
-    data.auth_3ds_data = {
-      worldpayChallengeJwt: opts.auth3dsData.worldpayChallengeJwt
-    }
+  if (opts.auth3dsData) {
+    data.auth_3ds_data = buildAuth3dsDetails(opts.auth3dsData)
   }
 
   return {
