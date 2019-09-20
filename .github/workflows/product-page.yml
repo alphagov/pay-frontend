@@ -24,7 +24,7 @@ jobs:
           mv tmp package.json
 
       - name: Update npm
-        run: npm install
+        run: npm install --save-dev pay-product-page
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v1.2.0
