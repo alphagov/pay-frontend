@@ -21,6 +21,12 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
   ]
 }
 
+const buildChargeFromTokenNotFound = function buildChargeFromTokenNotFound (tokenId) {
+  return [
+    { name: 'connectorChargeFromTokenNotFound', opts: { tokenId } }
+  ]
+}
+
 const buildUsedTokenAndReturnPaymentChargeStubs = function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
   return [
     { name: 'connectorCreateChargeFromToken', opts: { 'tokenId': tokenId, 'gatewayAccountId': gatewayAccountId, 'used': true, 'status': status } },
@@ -77,5 +83,6 @@ const buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs = (tokenId, ch
 module.exports = {
   buildCreatePaymentChargeStubs,
   buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs,
-  buildUsedTokenAndReturnPaymentChargeStubs: buildUsedTokenAndReturnPaymentChargeStubs
+  buildUsedTokenAndReturnPaymentChargeStubs: buildUsedTokenAndReturnPaymentChargeStubs,
+  buildChargeFromTokenNotFound
 }

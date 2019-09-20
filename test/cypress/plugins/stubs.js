@@ -31,6 +31,11 @@ module.exports = {
     return simpleStubBuilder('GET', 200, path, body)
   },
 
+  connectorChargeFromTokenNotFound: (opts = {}) => {
+    const path = `/v1/frontend/tokens/${opts.tokenId}`
+    return simpleStubBuilder('GET', 404, path)
+  },
+
   connectorMarkTokenAsUsed: (opts = {}) => {
     const path = `/v1/frontend/tokens/${opts.tokenId}/used`
 

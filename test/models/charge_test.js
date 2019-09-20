@@ -216,8 +216,8 @@ describe('findByToken', function () {
         .reply(404, '{}')
     })
 
-    it('should return get_failed', function () {
-      return expect(Charge('').findByToken(1)).to.be.rejectedWith(Error, 'GET_FAILED')
+    it('should return unauthorised', function () {
+      return expect(Charge('').findByToken(1)).to.be.rejectedWith(Error, 'UNAUTHORISED')
     })
   })
 
