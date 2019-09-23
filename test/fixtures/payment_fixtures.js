@@ -277,8 +277,8 @@ const fixtures = {
 
   validChargeDetails: (opts = {}) => buildChargeDetails(opts),
 
-  validChargeCardDetailsAuthorised: () => {
-    const data = { 'status': 'AUTHORISATION SUCCESS' }
+  validChargeCardDetailsAuthorisationResponse: (opts = {}) => {
+    const data = { 'status': opts.status || 'AUTHORISATION SUCCESS' }
     return {
       getPactified: () => {
         return pactBase.pactify(data)

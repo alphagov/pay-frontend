@@ -4,6 +4,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const worldpaySessionId = 'test session Id'
+  const worldpayChallengeJwt = 'test-jwt'
   const gatewayAccountId = 42
   const sessionOpts = {}
   const providerOpts = {
@@ -71,7 +72,10 @@ describe('Worldpay 3ds flex card payment flow', () => {
         paymentDetails: validPayment,
         status: 'AUTHORISATION 3DS REQUIRED',
         state: { finished: false, status: 'submitted' },
-        
+        auth3dsData: {
+          worldpayChallengeJwt: worldpayChallengeJwt
+        },
+        repeat: 3
       }]
     },
     { name: 'cardIdValidCardDetails' },
@@ -87,6 +91,14 @@ describe('Worldpay 3ds flex card payment flow', () => {
     opts: {
       sessionId: worldpaySessionId,
       status: false
+    }
+  }
+
+  const cardAuth3dsRequiredStub = {
+    name: 'connectorPostValidChargeCardDetailsAuthorisation',
+    opts: {
+      chargeid: chargeId,
+      status: 'AUTHORISATION 3DS REQUIRED'
     }
   }
 
@@ -139,16 +151,22 @@ describe('Worldpay 3ds flex card payment flow', () => {
     })
   }
 
-  describe('DDC success with 3D secure required', () => {
+  describe.only('DDC success with 3D secure required', () => {
     setUpAndCheckCardPaymentPage()
-    describe('Secure confirmation page', () => {
+    describe('Redirects to 3ds-required page', () => {
       it('Submitting confirmation with valid details and a JWT should cause worldpay iFrame result to post a message with the session ID', () => {
-        cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStub])
+        cy.task('setupStubs', [
+          ...submitPaymentDetailsRespondsWith3dsRequiredStubs,
+          worldpay3dsFlexDdcStub,
+          cardAuth3dsRequiredStub
+        ])
 
         cy.get('#card-details').submit().should($form => {
           const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
           expect(formVal).to.eq(worldpaySessionId)
         })
+
+        cy.location('pathname').should('eq', `/card_details/${chargeId}/3ds-required`)
       })
     })
   })

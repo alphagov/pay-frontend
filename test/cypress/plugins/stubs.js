@@ -105,7 +105,7 @@ module.exports = {
 
   connectorPostValidChargeCardDetailsAuthorisation: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeid}/cards`
-    const body = paymentFixtures.validChargeCardDetailsAuthorised().getPlain()
+    const body = paymentFixtures.validChargeCardDetailsAuthorisationResponse(opts).getPlain()
 
     return simpleStubBuilder('POST', 200, path, body)
   },
@@ -128,14 +128,17 @@ module.exports = {
           headers: JSONResponseHeader,
           body: firstChargeBody
         },
-        _behaviours: {
-          repeat: 1
+        _behaviors: {
+          repeat: firstChargeOpts.repeat || 1
         }
       }, {
         is: {
           statusCode: 200,
           headers: JSONResponseHeader,
           body: secondChargeBody
+        },
+        _behaviors: {
+          repeat: secondChargeOpts.repeat || 1
         }
       }]
     }

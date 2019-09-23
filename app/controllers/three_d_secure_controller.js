@@ -94,6 +94,9 @@ module.exports = {
     const htmlOut = _.get(charge, 'auth3dsData.htmlOut')
     const worldpayChallengeJwt = _.get(charge, 'auth3dsData.worldpayChallengeJwt')
 
+    console.log('GOT HERE 1')
+    console.log('CHARGE ' + JSON.stringify(charge))
+    console.log('JWT ' + worldpayChallengeJwt)
     if (issuerUrl && paRequest) {
       let data = {
         issuerUrl: issuerUrl,
@@ -105,6 +108,7 @@ module.exports = {
       }
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (worldpayChallengeJwt) {
+      console.log('GOT HERE 2')
       const challengeUrl = charge.gatewayAccount.type === 'live'
         ? process.env.WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL
         : process.env.WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL
@@ -112,6 +116,7 @@ module.exports = {
         issuerUrl: challengeUrl,
         worldpayChallengeJwt: worldpayChallengeJwt
       }
+      console.log('RENDERING VIEW')
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (htmlOut) {
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
