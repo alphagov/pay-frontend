@@ -204,6 +204,36 @@ module.exports = {
     }]
   },
 
+  worldpay3dsRequiredOutPost: (opts = {}) => {
+    const body = `<!DOCTYPE html>
+    <html>
+    <body>
+      <h2>This is a mock 3DS challenge page, it should auto-submit</h2>
+      <form name="mock-challenge-form" method="post" action="/card_details/${opts.chargeId}/3ds_required_in">
+        <button type="submit">Continue</button>
+      </form>
+    </body>
+    </html>`
+
+    return [{
+      predicates: [{
+        equals: {
+          method: 'POST',
+          path: '/shopper/3ds/challenge.html'
+        }
+      }],
+      responses: [{
+        is: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'text/html;charset=ISO-8859-1'
+          },
+          body
+        }
+      }]
+    }]
+  },
+
   frontendCardDetailsPost: (opts = {}) => {
     return [{
       predicates: [{

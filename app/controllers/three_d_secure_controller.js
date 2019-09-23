@@ -129,6 +129,7 @@ module.exports = {
     }
   },
   auth3dsRequiredIn: (req, res) => {
+    console.log('COMING IN')
     const charge = normalise.charge(req.chargeData, req.chargeId)
     responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),

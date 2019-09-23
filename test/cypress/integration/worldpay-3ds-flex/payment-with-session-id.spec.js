@@ -102,6 +102,13 @@ describe('Worldpay 3ds flex card payment flow', () => {
     }
   }
 
+  const worldpay3dsRequiredOutStub = {
+    name: 'worldpay3dsRequiredOutPost',
+    opts: {
+      chargeId
+    }
+  }
+
   beforeEach(() => {
     // this test is for the full process, the session should be maintained
     // as it would for an actual payment flow
@@ -153,20 +160,27 @@ describe('Worldpay 3ds flex card payment flow', () => {
 
   describe.only('DDC success with 3D secure required', () => {
     setUpAndCheckCardPaymentPage()
-    describe('Redirects to 3ds-required page', () => {
-      it('Submitting confirmation with valid details and a JWT should cause worldpay iFrame result to post a message with the session ID', () => {
+    describe('3DS required out', () => {
+      it('Should receive a message from the worldpay iframe with the session ID when submitting confirmation with valid details and a JWT', () => {
         cy.task('setupStubs', [
           ...submitPaymentDetailsRespondsWith3dsRequiredStubs,
           worldpay3dsFlexDdcStub,
-          cardAuth3dsRequiredStub
+          cardAuth3dsRequiredStub,
+          worldpay3dsRequiredOutStub
         ])
 
-        cy.get('#card-details').submit().should($form => {
-          const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
-          expect(formVal).to.eq(worldpaySessionId)
-        })
+        cy.get('#card-details').submit()
+        // .should($form => {
+        //   const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
+        //   expect(formVal).to.eq(worldpaySessionId)
+        // })
 
-        cy.location('pathname').should('eq', `/card_details/${chargeId}/3ds-required`)
+        cy.location('pathname').should('eq', `/card_details/${chargeId}/3ds_required`)
+
+        cy.get('.iframe-3ds').then($iframe => {
+          // cy.log(JSON.stringify($iframe.contents()))
+          cy.wrap($iframe.contents().find('body')).find('#mock-challenge-form').submit()
+        })
       })
     })
   })
@@ -174,7 +188,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
   describe('DDC unsucessful', () => {
     setUpAndCheckCardPaymentPage()
     describe('Secure confirmation page', () => {
-      it('If Worldpay were to respond with status=false, submitting confirmation should not include the hidden input containing the session ID', () => {
+      it('should not include the hidden input containing the session ID when Worldpay DDC responds with status=false', () => {
         cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStubFailure])
 
         cy.get('#card-details').submit().should($form => {
