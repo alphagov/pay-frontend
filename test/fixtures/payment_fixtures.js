@@ -170,6 +170,12 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     data.card_details = utilFormatPaymentDetails(opts.paymentDetails)
   }
 
+  if (opts.auth3dsData && opts.auth3dsData.worldpayChallengeJwt) {
+    data.auth_3ds_data = {
+      worldpayChallengeJwt: opts.auth3dsData.worldpayChallengeJwt
+    }
+  }
+
   return {
     getPactified: () => {
       return pactBase.pactify(data)
