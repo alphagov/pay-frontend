@@ -58,6 +58,26 @@ describe('Worldpay 3ds flex card payment flow', () => {
     { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
   ]
 
+  const submitPaymentDetailsRespondsWith3dsRequiredStubs = [
+    { name: 'adminUsersGetService', opts: {} },
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
+      opts: [{
+        chargeId,
+        status: 'ENTERING CARD DETAILS',
+        state: { finished: false, status: 'started' }
+      }, {
+        chargeId,
+        paymentDetails: validPayment,
+        status: 'AUTHORISATION 3DS REQUIRED',
+        state: { finished: false, status: 'submitted' },
+        
+      }]
+    },
+    { name: 'cardIdValidCardDetails' },
+    { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
+  ]
+
   const worldpay3dsFlexDdcStub = {
     name: 'worldpay3dsFlexDdcIframePost', opts: { sessionId: worldpaySessionId }
   }
@@ -119,39 +139,45 @@ describe('Worldpay 3ds flex card payment flow', () => {
     })
   }
 
-  setUpAndCheckCardPaymentPage()
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details and a JWT should cause worldpay iFrame result to post a message with the session ID', () => {
-      cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStub])
+  describe('DDC success with 3D secure required', () => {
+    setUpAndCheckCardPaymentPage()
+    describe('Secure confirmation page', () => {
+      it('Submitting confirmation with valid details and a JWT should cause worldpay iFrame result to post a message with the session ID', () => {
+        cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStub])
 
-      cy.get('#card-details').submit().should($form => {
-        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
-        expect(formVal).to.eq(worldpaySessionId)
+        cy.get('#card-details').submit().should($form => {
+          const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
+          expect(formVal).to.eq(worldpaySessionId)
+        })
       })
     })
   })
 
-  setUpAndCheckCardPaymentPage()
-  describe('Secure confirmation page', () => {
-    it('If Worldpay were to respond with status=false, submitting confirmation should not include the hidden input containing the session ID', () => {
-      cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStubFailure])
+  describe('DDC unsucessful', () => {
+    setUpAndCheckCardPaymentPage()
+    describe('Secure confirmation page', () => {
+      it('If Worldpay were to respond with status=false, submitting confirmation should not include the hidden input containing the session ID', () => {
+        cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStubFailure])
 
-      cy.get('#card-details').submit().should($form => {
-        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult
-        expect(formVal).to.eq(undefined)
+        cy.get('#card-details').submit().should($form => {
+          const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult
+          expect(formVal).to.eq(undefined)
+        })
       })
     })
   })
 
-  setUpAndCheckCardPaymentPage()
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation when Worldpay times out after  iframe post should still submit the form but without the worldpaySessionId', () => {
-      confirmPaymentDetailsStubs.pop()
-      cy.task('setupStubs', confirmPaymentDetailsStubs)
+  describe('DDC request times out', () => {
+    setUpAndCheckCardPaymentPage()
+    describe('Secure confirmation page', () => {
+      it('Submitting confirmation when Worldpay times out after  iframe post should still submit the form but without the worldpaySessionId', () => {
+        confirmPaymentDetailsStubs.pop()
+        cy.task('setupStubs', confirmPaymentDetailsStubs)
 
-      cy.get('#card-details').submit().should($form => {
-        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult
-        expect(formVal).to.eq(undefined)
+        cy.get('#card-details').submit().should($form => {
+          const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult
+          expect(formVal).to.eq(undefined)
+        })
       })
     })
   })
