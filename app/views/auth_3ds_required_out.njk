@@ -18,7 +18,7 @@
   <input type="hidden" name="TermUrl" value="{{ threeDSReturnUrl }}"/>
   {% endif %}
   {% if worldpayChallengeJwt %}
-  <input type="hidden" name="JWT" value="{{worldpayChallengeJwt}}"/>
+  <input type="hidden" name="JWT" value="{{ worldpayChallengeJwt }}"/>
   {% endif %}
   <noscript>
     <button id="confirm" class="govuk-button">{{ __p("commonButtons.continueButton") }}</button>

@@ -104,14 +104,19 @@ module.exports = {
         data.md = md
       }
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
+    } else if (worldpayChallengeJwt) {
+      const challengeUrl = charge.gatewayAccount.type === 'live'
+        ? process.env.WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL
+        : process.env.WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL
+      let data = {
+        issuerUrl: challengeUrl,
+        worldpayChallengeJwt: worldpayChallengeJwt
+      }
+      responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (htmlOut) {
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
         htmlOut: Buffer.from(htmlOut, 'base64').toString('utf8')
       })
-    } else if (worldpayChallengeJwt) {
-      let data = {
-        issuerUrl: process.env.
-      }
     } else if (issuerUrl) {
       res.redirect(303, issuerUrl)
     } else {
