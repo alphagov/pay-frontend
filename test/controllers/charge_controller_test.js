@@ -84,8 +84,9 @@ const aChargeWithStatus = function (status) {
   }
 }
 
-const requireChargeController = function (mockedCharge, mockedNormalise, mockedCard) {
+const requireChargeController = function (mockedCharge, mockedNormalise, mockedConnectorClient, mockedCard) {
   const proxyquireMocks = {
+    '../services/clients/connector_client': mockedConnectorClient,
     '../models/charge.js': mockedCharge,
     '../services/normalise_charge.js': mockedNormalise,
     '../utils/session.js': mockSession,
@@ -116,7 +117,7 @@ const requireChargeController = function (mockedCharge, mockedNormalise, mockedC
 }
 
 describe('card details endpoint', function () {
-  let request, response
+  let request, response, mockedConnectorClient
 
   const aResponseWithStatus = function (status) {
     return {
@@ -149,6 +150,84 @@ describe('card details endpoint', function () {
       render: sinon.spy(),
       status: sinon.spy()
     }
+
+    mockedConnectorClient = sinon.stub()
+  })
+
+  describe('POST /card_details/{chargeId}', function () {
+    it('worldpay 3ds flex ddc result sent to connector when present in the post body', async function () {
+
+    })
+
+    it('worldpay 3ds flex ddc result not present', async function () {
+      request = {
+        chargeData: {
+          'amount': 100,
+          'return_url': 'https://example.com',
+          'description': 'a description',
+          'language': 'en',
+          'links': [],
+          'status': 'ENTERING CARD DETAILS',
+          'gateway_account': {
+            'version': 1,
+            'requires3ds': false,
+            'live': false,
+            'gateway_account_id': 1,
+            'payment_provider': 'sandbox',
+            'type': 'test',
+            'service_name': 'My service',
+            'allow_google_pay': false,
+            'allow_apple_pay': false,
+            'corporate_prepaid_credit_card_surcharge_amount': 0,
+            'corporate_prepaid_debit_card_surcharge_amount': 0,
+            'allow_zero_amount': false,
+            'integration_version_3ds': 1,
+            'email_notifications': {
+              'REFUND_ISSUED': {
+                'version': 1,
+                'enabled': true,
+                'template_body': null
+              },
+              'PAYMENT_CONFIRMED': {
+                'version': 1,
+                'enabled': true,
+                'template_body': null
+              }
+            },
+            'email_collection_mode': 'MANDATORY',
+            'card_types': [
+              {
+                'id': '9827003e-a9a6-42c3-806c-f8530ad5cf19',
+                'brand': 'visa',
+                'label': 'Visa',
+                'type': 'DEBIT',
+                'requires3ds': false
+              }
+            ],
+            'gateway_merchant_id': null,
+            'corporate_credit_card_surcharge_amount': 0,
+            'corporate_debit_card_surcharge_amount': 0
+          }
+        },
+        body: {
+          'chargeId': '42mdrsshtsk4chpeoifhlgf4lk',
+          'csrfToken': 'C6E5AySO-LdcOqTOK4LleMCVViBmlkzmiCt4',
+          'cardNo': '4242424242424242',
+          'expiryMonth': '01',
+          'expiryYear': '20',
+          'cardholderName': 'Joe Bloggs',
+          'cvc': '111',
+          'addressCountry': 'GB',
+          'addressLine1': '1 Horse Guards',
+          'addressCity': 'London',
+          'addressPostcode': 'SE16 4JR',
+          'email': 'oswald.quek@digital.cabinet-office.gov.uk'
+        }
+      }
+
+      // const charge = mockCharge.mock(true)
+      // await requireChargeController(charge, mockedNormalise, mockedConnectorClient).create(request, response)
+    })
   })
 
   it('should not call update to enter card details if charge is already in ENTERING CARD DETAILS', async function () {
@@ -159,7 +238,7 @@ describe('card details endpoint', function () {
     const emptyChargeModel = {}
 
     const expectedCharge = aResponseWithStatus('ENTERING CARD DETAILS')
-    await requireChargeController(emptyChargeModel, mockedNormalise).new(request, response)
+    await requireChargeController(emptyChargeModel, mockedNormalise, mockedConnectorClient).new(request, response)
     expect(response.render.called).to.be.true // eslint-disable-line
     expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
@@ -171,7 +250,7 @@ describe('card details endpoint', function () {
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
     const expectedCharge = aResponseWithStatus('CREATED')
-    await requireChargeController(charge, mockedNormalise).new(request, response)
+    await requireChargeController(charge, mockedNormalise, mockedConnectorClient).new(request, response)
     expect(response.render.calledWithMatch('charge', expectedCharge)).to.be.true // eslint-disable-line
   })
 
@@ -181,7 +260,7 @@ describe('card details endpoint', function () {
     const mockedNormalisedCharge = aChargeWithStatus('CREATED')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
-    await requireChargeController(charge, mockedNormalise).new(request, response)
+    await requireChargeController(charge, mockedNormalise, mockedConnectorClient).new(request, response)
     const systemErrorObj = {
       'message': 'Page cannot be found',
       'viewName': 'NOT_FOUND',
@@ -201,7 +280,7 @@ describe('card details endpoint', function () {
     const mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
-    requireChargeController(charge, mockedNormalise).capture(request, response)
+    requireChargeController(charge, mockedNormalise, mockedConnectorClient).capture(request, response)
     const systemErrorObj = {
       'viewName': 'SYSTEM_ERROR',
       'returnUrl': '/return/3',
@@ -223,7 +302,7 @@ describe('card details endpoint', function () {
     const mockedNormalisedCharge = aChargeWithStatus('CAPTURE_READY')
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
-    requireChargeController(charge, mockedNormalise).capture(request, response)
+    requireChargeController(charge, mockedNormalise, mockedConnectorClient).capture(request, response)
     const systemErrorObj = {
       'viewName': 'CAPTURE_FAILURE',
       'analytics': {
@@ -299,6 +378,6 @@ describe('check card endpoint', function () {
       }
     }
 
-    requireChargeController(charge, mockedNormalise, mockedCard).checkCard(request, response)
+    requireChargeController(charge, mockedNormalise, sinon.stub(), mockedCard).checkCard(request, response)
   })
 })
