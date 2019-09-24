@@ -17,7 +17,8 @@ var unNormalisedCharge = {
     paRequest: 'paRequest',
     issuerUrl: 'issuerUrl',
     htmlOut: 'html',
-    md: 'md'
+    md: 'md',
+    worldpayChallengeJwt: 'worldpayChallengeJwt'
   },
   gateway_account: {
     analytics_id: 'bla-1234',
@@ -47,7 +48,8 @@ var normalisedCharge = {
     paRequest: 'paRequest',
     issuerUrl: 'issuerUrl',
     htmlOut: 'html',
-    md: 'md'
+    md: 'md',
+    worldpayChallengeJwt: 'worldpayChallengeJwt'
   },
   gatewayAccount: {
     analyticsId: 'bla-1234',

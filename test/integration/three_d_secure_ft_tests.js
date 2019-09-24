@@ -1,7 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const _ = require('lodash')
 const nock = require('nock')
 const chai = require('chai')
 const cheerio = require('cheerio')
@@ -11,14 +10,16 @@ const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
+const paymentFixtures = require('../fixtures/payment_fixtures')
+
 const app = proxyquire('../../server.js', {
   'aws-xray-sdk': {
-    enableManualMode: () => {},
-    setLogger: () => {},
+    enableManualMode: () => { },
+    setLogger: () => { },
     middleware: {
-      setSamplingRules: () => {}
+      setSamplingRules: () => { }
     },
-    config: () => {},
+    config: () => { },
     express: {
       openSegment: () => (req, res, next) => next(),
       closeSegment: () => (req, rest, next) => next()
@@ -30,34 +31,32 @@ const app = proxyquire('../../server.js', {
     getNamespace: function () {
       return {
         get: () => new AWSXRay.Segment('stub-segment'),
-        bindEmitter: () => {},
+        bindEmitter: () => { },
         run: callback => callback(),
-        set: () => {}
+        set: () => { }
       }
     },
     '@global': true
   }
 }).getApp()
 const cookie = require('../test_helpers/session.js')
-const helper = require('../test_helpers/test_helpers.js')
 const { getChargeRequest, postChargeRequest } = require('../test_helpers/test_helpers.js')
 const { defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
 const State = require('../../config/state.js')
 
 // Constants
-const gatewayAccount = {
-  gatewayAccountId: '12345',
-  paymentProvider: 'sandbox',
-  analyticsId: 'test-1234',
-  type: 'test'
+const connectorChargePath = '/v1/frontend/charges/'
+const chargeId = '23144323'
+const frontendCardDetailsPath = '/card_details'
+const gatewayAccountId = '12345'
+
+const chargeOptionsWith3dsRequired = {
+  status: State.AUTH_3DS_REQUIRED,
+  chargeId,
+  gatewayAccountId
 }
 
 describe('chargeTests', function () {
-  const connectorChargePath = '/v1/frontend/charges/'
-  const chargeId = '23144323'
-  const frontendCardDetailsPath = '/card_details'
-  const gatewayAccountId = gatewayAccount.gatewayAccountId
-
   beforeEach(function () {
     nock.cleanAll()
   })
@@ -68,16 +67,18 @@ describe('chargeTests', function () {
   })
 
   describe('The /card_details/charge_id/3ds_required', function () {
-    beforeEach(function () {
-      nock.cleanAll()
-    })
     describe('When invoked on a worldpay gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
-          {
-            'paRequest': 'aPaRequest',
-            'issuerUrl': 'http://issuerUrl.com'
-          })
+        const paRequest = 'aPaRequest'
+        const issuerUrl = 'http://issuerUrl.test'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          auth3dsData: {
+            paRequest,
+            issuerUrl
+          }
+        }).getPlain()
+
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -88,20 +89,77 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
-            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql(paRequest)
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(issuerUrl)
+          })
+          .end(done)
+      })
+    })
+    describe('When invoked on a worldpay gateway account using 3DS Flex', function () {
+      it('should return the data needed for the iframe UI for a test gateway account', function (done) {
+        const worldpayChallengeJwt = 'aChallengeJwt'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          auth3dsData: {
+            worldpayChallengeJwt
+          },
+          gatewayAccountType: 'test'
+        }).getPlain()
+
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        const cookieValue = cookie.create(chargeId)
+
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'JWT\']').attr('value')).to.eql(worldpayChallengeJwt)
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(process.env.WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL)
+          })
+          .end(done)
+      })
+      it('should return the data needed for the iframe UI for a live gateway account', function (done) {
+        const worldpayChallengeJwt = 'aChallengeJwt'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          auth3dsData: {
+            worldpayChallengeJwt
+          },
+          gatewayAccountType: 'live'
+        }).getPlain()
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+        const cookieValue = cookie.create(chargeId)
+
+        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_out')
+          .expect(200)
+          .expect(function (res) {
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'JWT\']').attr('value')).to.eql(worldpayChallengeJwt)
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(process.env.WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL)
           })
           .end(done)
       })
     })
     describe('When invoked on a smartpay gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
-          {
-            'paRequest': 'aPaRequest',
-            'md': 'mdValue',
-            'issuerUrl': 'http://issuerUrl.com'
-          })
+        const paRequest = 'aPaRequest'
+        const md = 'mdValue'
+        const issuerUrl = 'http://issuerUrl.test'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          auth3dsData: {
+            paRequest,
+            md,
+            issuerUrl
+          }
+        }).getPlain()
+
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -114,22 +172,20 @@ describe('chargeTests', function () {
             const $ = cheerio.load(res.text)
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('mdValue')
-            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.test')
           })
           .end(done)
       })
     })
     describe('When invoked on a stripe gateway account', function () {
       it('should redirect to the issuer URL', function (done) {
-        const issuerUrl = 'http://issuerUrl.com'
-        const chargeResponse = helper.rawSuccessfulGetChargeWithPaymentProvider(
-          State.AUTH_3DS_REQUIRED,
-          'http://www.example.com/service',
-          chargeId,
-          gatewayAccountId,
-          { issuerUrl },
-          'stripe'
-        )
+        const issuerUrl = 'http://issuerUrl.test'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          auth3dsData: {
+            issuerUrl
+          }
+        }).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -147,10 +203,13 @@ describe('chargeTests', function () {
 
     describe('When invoked on an epdq gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId,
-          {
-            'htmlOut': Buffer.from('<form> epdq data </form>').toString('base64')
-          })
+        const htmlOut = Buffer.from('<form> epdq data </form>').toString('base64')
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          auth3dsData: {
+            htmlOut
+          }
+        }).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -169,7 +228,7 @@ describe('chargeTests', function () {
 
     describe('When required information not found for auth 3ds out view', function () {
       it('should display error in iframe UI', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', chargeId, gatewayAccountId, {})
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -188,13 +247,9 @@ describe('chargeTests', function () {
   })
 
   describe('The /card_details/charge_id/3ds_required_in', function () {
-    beforeEach(function () {
-      nock.cleanAll()
-    })
-
     describe('for worldpay payment provider', function () {
       it('should return the data needed for the UI', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -216,7 +271,7 @@ describe('chargeTests', function () {
       })
 
       it('should not return UI elements for which there is no data', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -237,8 +292,10 @@ describe('chargeTests', function () {
 
     describe('for epdq payment provider', function () {
       it('should return the data needed for the UI when POST', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
-        chargeResponse.gateway_account.payment_provider = 'epdq'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'epdq'
+        }).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -256,8 +313,10 @@ describe('chargeTests', function () {
       })
 
       it('should return the data needed for the UI when GET', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
-        chargeResponse.gateway_account.payment_provider = 'epdq'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'epdq'
+        }).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -274,8 +333,10 @@ describe('chargeTests', function () {
       })
 
       it('should return error when POST', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
-        chargeResponse.gateway_account.payment_provider = 'epdq'
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'epdq'
+        }).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -295,7 +356,7 @@ describe('chargeTests', function () {
 
     describe('for smartpay payment provider', function () {
       it('should return the data needed for the UI when GET', function (done) {
-        const chargeResponse = helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId)
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -319,11 +380,7 @@ describe('chargeTests', function () {
   })
 
   describe('The /card_details/charge_id/3ds_handler', function () {
-    beforeEach(function () {
-      nock.cleanAll()
-    })
-    const chargeResponse = _.extend(
-      helper.rawSuccessfulGetCharge(State.AUTH_3DS_REQUIRED, 'http://www.example.com/service', gatewayAccountId))
+    const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
 
     it('should send 3ds data to connector and redirect to confirm', function (done) {
       const cookieValue = cookie.create(chargeId)
@@ -366,9 +423,11 @@ describe('chargeTests', function () {
 
     it('should redirect to auth_waiting if connector returns a 409 for Stripe when status AUTHORISATION 3DS READY', function (done) {
       const cookieValue = cookie.create(chargeId)
-      const stripeChargeResponse = helper.rawSuccessfulGetChargeWithPaymentProvider(
-        State.AUTH_3DS_READY, 'http://www.example.com/service', chargeId, gatewayAccountId, {}, 'stripe'
-      )
+      const stripeChargeResponse = paymentFixtures.validChargeDetails(
+        {
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'stripe'
+        }).getPlain()
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, stripeChargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {}).reply(409)
