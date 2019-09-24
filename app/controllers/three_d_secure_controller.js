@@ -96,7 +96,7 @@ module.exports = {
 
     if (issuerUrl && paRequest) {
       let data = {
-        issuerUrl: issuerUrl,
+        postUrl: issuerUrl,
         paRequest: paRequest,
         threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', { chargeId: charge.id })}`
       }
@@ -109,7 +109,7 @@ module.exports = {
         ? process.env.WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL
         : process.env.WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL
       let data = {
-        issuerUrl: challengeUrl,
+        postUrl: challengeUrl,
         worldpayChallengeJwt: worldpayChallengeJwt
       }
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)

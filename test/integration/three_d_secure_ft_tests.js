@@ -70,7 +70,7 @@ describe('chargeTests', function () {
     describe('When invoked on a worldpay gateway account', function () {
       it('should return the data needed for the iframe UI', function (done) {
         const paRequest = 'aPaRequest'
-        const issuerUrl = 'http://issuerUrl.com'
+        const issuerUrl = 'http://issuerUrl.test'
         const chargeResponse = paymentFixtures.validChargeDetails({
           ...chargeOptionsWith3dsRequired,
           auth3dsData: {
@@ -150,7 +150,7 @@ describe('chargeTests', function () {
       it('should return the data needed for the iframe UI', function (done) {
         const paRequest = 'aPaRequest'
         const md = 'mdValue'
-        const issuerUrl = 'http://issuerUrl.com'
+        const issuerUrl = 'http://issuerUrl.test'
         const chargeResponse = paymentFixtures.validChargeDetails({
           ...chargeOptionsWith3dsRequired,
           auth3dsData: {
@@ -172,14 +172,14 @@ describe('chargeTests', function () {
             const $ = cheerio.load(res.text)
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaReq\']').attr('value')).to.eql('aPaRequest')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('mdValue')
-            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.com')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql('http://issuerUrl.test')
           })
           .end(done)
       })
     })
     describe('When invoked on a stripe gateway account', function () {
       it('should redirect to the issuer URL', function (done) {
-        const issuerUrl = 'http://issuerUrl.com'
+        const issuerUrl = 'http://issuerUrl.test'
         const chargeResponse = paymentFixtures.validChargeDetails({
           ...chargeOptionsWith3dsRequired,
           auth3dsData: {
