@@ -71,7 +71,7 @@ const redirect = res => {
   }
 }
 
-const handleCreateResponse = (req, res, charge) => response => {
+const handleCreateResponse = (req, res, charge, response) => {
   switch (response.statusCode) {
     case 202:
     case 409:
@@ -135,20 +135,16 @@ module.exports = {
           subSegment.close('error')
           redirect(res).toNew(req.chargeId)
         })
-        .then(data => {
+        .then(async data => {
           subSegment.close()
           card = data.card
 
           let emailTypos = false
-          let emailPatch
           let userEmail
 
-          if (
-            charge.gatewayAccount.emailCollectionMode === 'OFF' ||
-            (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
+          if (charge.gatewayAccount.emailCollectionMode !== 'OFF' ||
+            (charge.gatewayAccount.emailCollectionMode !== 'OPTIONAL' && req.body.email && req.body.email !== '')
           ) {
-            emailPatch = Promise.resolve('Charge patch skipped as email collection mode was toggled off, or optional and not supplied')
-          } else {
             userEmail = req.body.email
             let emailChanged = false
             if (req.body.originalemail) {
@@ -159,7 +155,11 @@ module.exports = {
               userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
               emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
             }
-            emailPatch = Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
+            try {
+              await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
+            } catch (err) {
+              return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+            }
           }
 
           if (data.validation.hasError || emailTypos) {
@@ -184,24 +184,20 @@ module.exports = {
               }
             )
           }
-          AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
-            emailPatch
-              .then(() => {
-                subSegment.close()
-                const correlationId = req.headers[CORRELATION_HEADER] || ''
-                const payload = normalise.apiPayload(req, card)
-                if (res.locals.service.collectBillingAddress === false) {
-                  delete payload.address
-                }
-                connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload })
-                  .then(handleCreateResponse(req, res, charge))
-              })
-              .catch(err => {
-                subSegment.close(err.message)
-                logging.failedChargePatch(err.message)
-                responseRouter.response(req, res, 'ERROR', withAnalyticsError())
-              })
-          }, clsSegment)
+
+          const correlationId = req.headers[CORRELATION_HEADER] || ''
+          const payload = normalise.apiPayload(req, card)
+          if (res.locals.service.collectBillingAddress === false) {
+            delete payload.address
+          }
+          try {
+            const response = await connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload })
+            handleCreateResponse(req, res, charge, response)
+          } catch (err) {
+            subSegment.close(err.message)
+            logging.failedChargePatch(err.message)
+            responseRouter.response(req, res, 'ERROR', withAnalyticsError())
+          }
         })
     }, clsSegment)
   },

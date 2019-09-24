@@ -14,6 +14,13 @@ let defaultCardID = function () {
     })
     .reply(200, { brand: 'visa', label: 'visa', type: 'D' })
 }
+const mockSuccessPatchEmail = function (chargeId) {
+  nock(process.env.CONNECTOR_HOST)
+    .patch(`/v1/frontend/charges/${chargeId}`, () => {
+      return true
+    })
+    .reply(200)
+}
 let localServer = process.env.CONNECTOR_HOST
 
 const connectorChargePath = '/v1/frontend/charges/'
@@ -47,6 +54,7 @@ describe('checks for PAN-like numbers', () => {
     }
     const cookieValue = cookie.create(chargeId, {})
 
+    mockSuccessPatchEmail(chargeId)
     defaultCardID('4242424242424242')
     defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
     defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -98,6 +106,7 @@ describe('checks for PAN-like numbers', () => {
     }
     const cookieValue = cookie.create(chargeId, {})
 
+    mockSuccessPatchEmail(chargeId)
     defaultCardID('4242424242424242')
     defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
     defaultAdminusersResponseForGetService(gatewayAccountId)
@@ -134,6 +143,7 @@ describe('checks for PAN-like numbers', () => {
     }
     const cookieValue = cookie.create(chargeId, {})
 
+    mockSuccessPatchEmail(chargeId)
     defaultCardID('4242424242424242')
     defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
     defaultAdminusersResponseForGetService(gatewayAccountId)
