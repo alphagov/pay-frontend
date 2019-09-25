@@ -87,7 +87,7 @@
     "credit-card-type": "6.3.x",
     "csrf": "3.1.x",
     "express": "4.17.x",
-    "gaap-analytics": "^3.0.0",
+    "gaap-analytics": "^3.1.0",
     "govuk-frontend": "^3.2.0",
     "humps": "^2.0.1",
     "i18n": "0.8.x",
