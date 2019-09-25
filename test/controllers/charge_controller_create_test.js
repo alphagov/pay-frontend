@@ -77,21 +77,7 @@ const mockedChargeValidationBackend = function () {
   }
 }
 
-const mockNormalise = (function () {
-  const mock = function (chargeObject) {
-    return {
-      charge: function (data) {
-        return chargeObject
-      }
-    }
-  }
-
-  return {
-    withCharge: mock
-  }
-}())
-
-const requireChargeController = function (mockedNormalise, mockedConnectorClient) {
+const requireChargeController = function (mockedConnectorClient) {
   const proxyquireMocks = {
     '../utils/charge_validation_backend': mockedChargeValidationBackend,
     '../services/clients/connector_client': mockedConnectorClient
@@ -99,25 +85,11 @@ const requireChargeController = function (mockedNormalise, mockedConnectorClient
   return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
 }
 
-const aCharge = function (gatewayAccount) {
-  return {
-    'externalId': chargeId,
-    'status': 'ENTERING CARD DETAILS',
-    'amount': '100',
-    'gatewayAccount': {
-      'serviceName': gatewayAccount.service_name,
-      'type': gatewayAccount.type,
-      'paymentProvider': gatewayAccount.payment_provider,
-      'emailCollectionMode': gatewayAccount.email_collection_mode
-    },
-    'id': '3'
-  }
-}
-
 describe('POST /card_details/{chargeId} endpoint', function () {
   let response
   let chargeAuthStub
   let mockedConnectorClient
+  let paymentDetails
 
   beforeEach(() => {
     chargeAuthStub = sinon.stub().resolves(
@@ -141,16 +113,8 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
       }
     }
-  })
-
-  it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
-
-  })
-
-  it('should not send worldpay_3ds_flex_ddc_result to connector when the request does not include a worldpay3dsFlexDdcResult parameter', async function () {
-    const paymentDetails = {
+    paymentDetails = {
       'chargeId': chargeId,
-      'csrfToken': 'C6E5AySO-LdcOqTOK4LleMCVViBmlkzmiCt4',
       'cardNo': '4242424242424242',
       'expiryMonth': '01',
       'expiryYear': '20',
@@ -161,6 +125,10 @@ describe('POST /card_details/{chargeId} endpoint', function () {
       'addressCity': 'London',
       'addressPostcode': 'E1 8QS'
     }
+  })
+
+  it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
+    paymentDetails['worldpay3dsFlexDdcResult'] = 'a-worldpay-3ds-flex-ddc-result'
     const request = {
       chargeData: chargeData,
       body: paymentDetails,
@@ -170,9 +138,42 @@ describe('POST /card_details/{chargeId} endpoint', function () {
         'x-request-id': 'unique-id'
       }
     }
-    const mockedNormalisedCharge = aCharge(chargeData.gateway_account)
-    const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
-    await requireChargeController(mockedNormalise, mockedConnectorClient).create(request, response)
+    await requireChargeController(mockedConnectorClient).create(request, response)
+    expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
+      {
+        'chargeId': chargeId,
+        'payload': {
+          'card_number': paymentDetails.cardNo,
+          'cvc': paymentDetails.cvc,
+          'card_brand': card.brand,
+          'expiry_date': `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
+          'cardholder_name': paymentDetails.cardholderName,
+          'card_type': card.type,
+          'corporate_card': card.corporate,
+          'prepaid': card.prepaid,
+          'address': {
+            'line1': paymentDetails.addressLine1,
+            'city': paymentDetails.addressCity,
+            'postcode': paymentDetails.addressPostcode,
+            'country': paymentDetails.addressCountry
+          },
+          'worldpay_3ds_flex_ddc_result': paymentDetails.worldpay3dsFlexDdcResult
+        }
+      }
+    ))).to.be.true // eslint-disable-line
+  })
+
+  it('should not send worldpay_3ds_flex_ddc_result to connector when the request does not include a worldpay3dsFlexDdcResult parameter', async function () {
+    const request = {
+      chargeData: chargeData,
+      body: paymentDetails,
+      chargeId: chargeId,
+      header: sinon.spy(),
+      headers: {
+        'x-request-id': 'unique-id'
+      }
+    }
+    await requireChargeController(mockedConnectorClient).create(request, response)
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
         'chargeId': chargeId,
@@ -193,6 +194,6 @@ describe('POST /card_details/{chargeId} endpoint', function () {
           }
         }
       }
-      ))).to.be.true // eslint-disable-line
+    ))).to.be.true // eslint-disable-line
   })
 })
