@@ -71,7 +71,7 @@ const redirect = res => {
   }
 }
 
-const handleCreateResponse = (req, res, charge) => response => {
+const handleCreateResponse = (req, res, charge, response) => {
   switch (response.statusCode) {
     case 202:
     case 409:
@@ -112,9 +112,7 @@ module.exports = {
         responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       })
   },
-  create: (req, res) => {
-    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
+  create: async (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
     const chargeOptions = {
@@ -122,88 +120,76 @@ module.exports = {
       collect_billing_address: res.locals.service.collectBillingAddress
     }
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
-    let card
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
     // else
-    AWSXRay.captureAsyncFunc('chargeValidator_verify', function (subSegment) {
-      validator.verify(req)
-        .catch(() => {
-          subSegment.close('error')
-          redirect(res).toNew(req.chargeId)
+    let data
+    try {
+      data = await validator.verify(req)
+    } catch (err) {
+      return redirect(res).toNew(req.chargeId)
+    }
+    const card = data.card
+
+    let emailTypos = false
+    let userEmail
+
+    if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY' ||
+      (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && req.body.email)
+    ) {
+      userEmail = req.body.email
+      let emailChanged = false
+      if (req.body.originalemail) {
+        emailChanged = req.body.originalemail !== userEmail
+      }
+      emailTypos = commonTypos(userEmail)
+      if (req.body['email-typo-sugestion']) {
+        userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
+        emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
+      }
+      try {
+        await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail)
+      } catch (err) {
+        return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+      }
+    }
+
+    if (data.validation.hasError || emailTypos) {
+      if (emailTypos) {
+        data.validation.hasError = true
+        data.validation.errorFields.push({
+          cssKey: 'email-typo',
+          value: i18n.__('fieldErrors.fields.email.typo')
         })
-        .then(data => {
-          subSegment.close()
-          card = data.card
+        data.validation.typos = emailTypos
+        data.validation.originalEmail = userEmail
+      }
+      charge.countries = countries
+      try {
+        await appendChargeForNewView(charge, req, charge.id)
+      } catch (err) {
+        logging.failedGetWorldpayDdcJwt(err)
+        return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+      }
+      _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+      return responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
+    }
 
-          let emailTypos = false
-          let emailPatch
-          let userEmail
-
-          if (
-            charge.gatewayAccount.emailCollectionMode === 'OFF' ||
-            (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' && (!req.body.email || req.body.email === ''))
-          ) {
-            emailPatch = Promise.resolve('Charge patch skipped as email collection mode was toggled off, or optional and not supplied')
-          } else {
-            userEmail = req.body.email
-            let emailChanged = false
-            if (req.body.originalemail) {
-              emailChanged = req.body.originalemail !== userEmail
-            }
-            emailTypos = commonTypos(userEmail)
-            if (req.body['email-typo-sugestion']) {
-              userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
-              emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
-            }
-            emailPatch = Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, subSegment)
-          }
-
-          if (data.validation.hasError || emailTypos) {
-            if (emailTypos) {
-              data.validation.hasError = true
-              data.validation.errorFields.push({
-                cssKey: 'email-typo',
-                value: i18n.__('fieldErrors.fields.email.typo')
-              })
-              data.validation.typos = emailTypos
-              data.validation.originalEmail = userEmail
-            }
-            charge.countries = countries
-            return appendChargeForNewView(charge, req, charge.id).then(
-              () => {
-                _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
-                responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
-              },
-              err => {
-                logging.failedGetWorldpayDdcJwt(err)
-                responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
-              }
-            )
-          }
-          AWSXRay.captureAsyncFunc('Charge_email_patch', function (subSegment) {
-            emailPatch
-              .then(() => {
-                subSegment.close()
-                const correlationId = req.headers[CORRELATION_HEADER] || ''
-                const payload = normalise.apiPayload(req, card)
-                if (res.locals.service.collectBillingAddress === false) {
-                  delete payload.address
-                }
-                connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload })
-                  .then(handleCreateResponse(req, res, charge))
-              })
-              .catch(err => {
-                subSegment.close(err.message)
-                logging.failedChargePatch(err.message)
-                responseRouter.response(req, res, 'ERROR', withAnalyticsError())
-              })
-          }, clsSegment)
-        })
-    }, clsSegment)
+    const correlationId = req.headers[CORRELATION_HEADER] || ''
+    const payload = normalise.apiPayload(req, card)
+    if (res.locals.service.collectBillingAddress === false) {
+      delete payload.address
+    }
+    try {
+      const response = await connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload })
+      handleCreateResponse(req, res, charge, response)
+    } catch (err) {
+      logging.failedChargePatch(err.message)
+      responseRouter.response(req, res, 'ERROR', withAnalyticsError())
+    }
   },
   checkCard: (req, res) => {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)

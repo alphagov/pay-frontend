@@ -78,6 +78,14 @@ const mockSuccessCardIdResponse = function (data) {
     .reply(200, data)
 }
 
+const mockSuccessPatchEmail = function (chargeId) {
+  nock(process.env.CONNECTOR_HOST)
+    .patch(`/v1/frontend/charges/${chargeId}`, () => {
+      return true
+    })
+    .reply(200)
+}
+
 describe('chargeTests', function () {
   const localServer = process.env.CONNECTOR_HOST
   const adminUsersHost = process.env.ADMINUSERS_URL
@@ -538,6 +546,7 @@ describe('chargeTests', function () {
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         mockSuccessCardIdResponse(defaultCardID)
+        mockSuccessPatchEmail(chargeId)
         postChargeRequest(app, cookieValue, minimumFormCardData('1111111111111111'), chargeId)
           .expect(200)
           .expect(function (res) {
@@ -554,6 +563,7 @@ describe('chargeTests', function () {
       it('should return country list when invalid fields submitted', (done) => {
         const cookieValue = cookie.create(chargeId, {})
         mockSuccessCardIdResponse(defaultCardID)
+        mockSuccessPatchEmail(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         postChargeRequest(app, cookieValue, missingFormCardData(), chargeId)
@@ -567,6 +577,7 @@ describe('chargeTests', function () {
       it('shows an error when a card is submitted with missing fields', function (done) {
         const cookieValue = cookie.create(chargeId, {})
         mockSuccessCardIdResponse(defaultCardID)
+        mockSuccessPatchEmail(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         postChargeRequest(app, cookieValue, missingFormCardData(), chargeId)
@@ -613,6 +624,7 @@ describe('chargeTests', function () {
       it('shows an error when a card is submitted that is not supported', function (done) {
         const cookieValue = cookie.create(chargeId, {})
         nock.cleanAll()
+        mockSuccessPatchEmail(chargeId)
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
         nock(process.env.CARDID_HOST)
@@ -647,6 +659,7 @@ describe('chargeTests', function () {
           .reply(200, { brand: 'american-express', label: 'american express', type: 'D' })
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
+        mockSuccessPatchEmail(chargeId)
 
         postChargeRequest(app, cookieValue, minimumFormCardData('3528000700000000'), chargeId)
           .expect(200)
@@ -669,6 +682,7 @@ describe('chargeTests', function () {
         const cookieValue = cookie.create(chargeId, {})
         defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
         defaultAdminusersResponseForGetService(gatewayAccountId)
+        mockSuccessPatchEmail(chargeId)
 
         nock(process.env.CARDID_HOST)
           .post('/v1/api/card', () => {

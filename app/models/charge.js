@@ -89,26 +89,16 @@ module.exports = correlationId => {
     return response.body
   }
 
-  const patch = function (chargeId, op, path, value, subSegment) {
-    return new Promise(function (resolve, reject) {
-      const payload = {
-        op: op,
-        path: path,
-        value: value
-      }
-      connectorClient({ correlationId }).patch({ chargeId, payload }, subSegment)
-        .then(response => {
-          const code = response.statusCode
-          if (code === 200) {
-            resolve()
-          } else {
-            reject(new Error('Calling connector to patch a charge returned an unexpected status code'))
-          }
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
+  const patch = async function (chargeId, op, path, value, subSegment) {
+    const payload = {
+      op: op,
+      path: path,
+      value: value
+    }
+    const response = await connectorClient({ correlationId }).patch({ chargeId, payload }, subSegment)
+    if (response.statusCode !== 200) {
+      throw new Error('Calling connector to patch a charge returned an unexpected status code')
+    }
   }
 
   const cancelComplete = function (response, defer) {
