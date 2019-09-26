@@ -120,7 +120,6 @@ module.exports = {
       collect_billing_address: res.locals.service.collectBillingAddress
     }
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
-    let card
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
@@ -133,7 +132,7 @@ module.exports = {
     } catch (err) {
       return redirect(res).toNew(req.chargeId)
     }
-    card = data.card
+    const card = data.card
 
     let emailTypos = false
     let userEmail
