@@ -3,68 +3,17 @@
 // Core dependencies
 const path = require('path')
 
+// Local dependencies
+const paymentFixtures = require('../fixtures/payment_fixtures')
+
 // NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = require('chai').expect
 
 const chargeId = '42mdrsshtsk4chpeoifhlgf4lk'
-
-const card = {
-  'brand': 'visa',
-  'type': 'CREDIT',
-  'corporate': false,
-  'prepaid': 'NOT_PREPAID'
-}
-
-const chargeData = {
-  'amount': 100,
-  'return_url': 'https://example.com',
-  'description': 'a description',
-  'language': 'en',
-  'links': [],
-  'status': 'ENTERING CARD DETAILS',
-  'gateway_account': {
-    'version': 1,
-    'requires3ds': false,
-    'live': false,
-    'gateway_account_id': 1,
-    'payment_provider': 'sandbox',
-    'type': 'test',
-    'service_name': 'My service',
-    'allow_google_pay': false,
-    'allow_apple_pay': false,
-    'corporate_prepaid_credit_card_surcharge_amount': 0,
-    'corporate_prepaid_debit_card_surcharge_amount': 0,
-    'allow_zero_amount': false,
-    'integration_version_3ds': 1,
-    'email_notifications': {
-      'REFUND_ISSUED': {
-        'version': 1,
-        'enabled': true,
-        'template_body': null
-      },
-      'PAYMENT_CONFIRMED': {
-        'version': 1,
-        'enabled': true,
-        'template_body': null
-      }
-    },
-    'email_collection_mode': 'OFF',
-    'card_types': [
-      {
-        'id': '9827003e-a9a6-42c3-806c-f8530ad5cf19',
-        'brand': 'visa',
-        'label': 'Visa',
-        'type': 'DEBIT',
-        'requires3ds': false
-      }
-    ],
-    'gateway_merchant_id': null,
-    'corporate_credit_card_surcharge_amount': 0,
-    'corporate_debit_card_surcharge_amount': 0
-  }
-}
+const card = paymentFixtures.validCardDetails()
+const chargeData = paymentFixtures.validChargeDetails({ emailCollectionMode: 'OFF' }).getPlain()
 
 const mockedChargeValidationBackend = function () {
   const validation = {
@@ -138,27 +87,32 @@ describe('POST /card_details/{chargeId} endpoint', function () {
         'x-request-id': 'unique-id'
       }
     }
+
     await requireChargeController(mockedConnectorClient).create(request, response)
+
+    const payload = paymentFixtures.validAuthorisationRequest({
+      cardNumber: paymentDetails.cardNo,
+      cvc: paymentDetails.cvc,
+      cardBrand: card.brand,
+      expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
+      cardholderName: paymentDetails.cardholderName,
+      cardType: card.type,
+      corporateCard: card.corporate,
+      prepaid: card.prepaid,
+      addressLine1: paymentDetails.addressLine1,
+      addressCity: paymentDetails.addressCity,
+      addressPostcode: paymentDetails.addressPostcode,
+      addressCountry: paymentDetails.addressCountry,
+      worldpay3dsFlexDdcResult: paymentDetails.worldpay3dsFlexDdcResult
+    }).getPlain()
+
+    delete payload.accept_header
+    delete payload.user_agent_header
+
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
         'chargeId': chargeId,
-        'payload': {
-          'card_number': paymentDetails.cardNo,
-          'cvc': paymentDetails.cvc,
-          'card_brand': card.brand,
-          'expiry_date': `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
-          'cardholder_name': paymentDetails.cardholderName,
-          'card_type': card.type,
-          'corporate_card': card.corporate,
-          'prepaid': card.prepaid,
-          'address': {
-            'line1': paymentDetails.addressLine1,
-            'city': paymentDetails.addressCity,
-            'postcode': paymentDetails.addressPostcode,
-            'country': paymentDetails.addressCountry
-          },
-          'worldpay_3ds_flex_ddc_result': paymentDetails.worldpay3dsFlexDdcResult
-        }
+        'payload': payload
       }
     ))).to.be.true // eslint-disable-line
   })
@@ -174,25 +128,30 @@ describe('POST /card_details/{chargeId} endpoint', function () {
       }
     }
     await requireChargeController(mockedConnectorClient).create(request, response)
+
+    const payload = paymentFixtures.validAuthorisationRequest({
+      cardNumber: paymentDetails.cardNo,
+      cvc: paymentDetails.cvc,
+      cardBrand: card.brand,
+      expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
+      cardholderName: paymentDetails.cardholderName,
+      cardType: card.type,
+      corporateCard: card.corporate,
+      prepaid: card.prepaid,
+      addressLine1: paymentDetails.addressLine1,
+      addressCity: paymentDetails.addressCity,
+      addressPostcode: paymentDetails.addressPostcode,
+      addressCountry: paymentDetails.addressCountry
+    }).getPlain()
+
+    delete payload.accept_header
+    delete payload.user_agent_header
+    delete payload.worldpay_3ds_flex_ddc_result
+
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
         'chargeId': chargeId,
-        'payload': {
-          'card_number': paymentDetails.cardNo,
-          'cvc': paymentDetails.cvc,
-          'card_brand': card.brand,
-          'expiry_date': `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
-          'cardholder_name': paymentDetails.cardholderName,
-          'card_type': card.type,
-          'corporate_card': card.corporate,
-          'prepaid': card.prepaid,
-          'address': {
-            'line1': paymentDetails.addressLine1,
-            'city': paymentDetails.addressCity,
-            'postcode': paymentDetails.addressPostcode,
-            'country': paymentDetails.addressCountry
-          }
-        }
+        'payload': payload
       }
     ))).to.be.true // eslint-disable-line
   })
