@@ -16,7 +16,7 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     'corporate_debit_card_surcharge_amount': 0,
     'corporate_prepaid_credit_card_surcharge_amount': 0,
     'corporate_prepaid_debit_card_surcharge_amount': 0,
-    'email_collection_mode': 'MANDATORY',
+    'email_collection_mode': opts.emailCollectionMode || 'MANDATORY',
     'live': false,
     'payment_provider': 'sandbox',
     'requires3ds': false,
@@ -308,22 +308,24 @@ const fixtures = {
     }
   },
 
-  validAuthorisationRequest: () => {
+  validAuthorisationRequest: (opts = {}) => {
     const data = {
-      'card_number': '371449635398431',
-      'cvc': '1234',
-      'expiry_date': '11/99',
-      'card_brand': 'american-express',
-      'cardholder_name': 'Scrooge McDuck',
+      'card_number': opts.cardNumber || '371449635398431',
+      'cvc': opts.cvc || '1234',
+      'expiry_date': opts.expiryDate || '11/99',
+      'card_brand': opts.cardBrand || 'american-express',
+      'card_type': opts.cardType || 'CREDIT',
+      'corporate_card': opts.corporateCard || false,
+      'cardholder_name': opts.cardholderName || 'Scrooge McDuck',
       'accept_header': 'text/html',
       'user_agent_header': 'Mozilla/5.0',
-      'prepaid': 'NOT_PREPAID',
-      'worldpay_3ds_flex_ddc_result': '96c3fcf6-d90a-467e-a224-107f70052528',
+      'prepaid': opts.prepaid || 'NOT_PREPAID',
+      'worldpay_3ds_flex_ddc_result': opts.worldpay3dsFlexDdcResult || '96c3fcf6-d90a-467e-a224-107f70052528',
       'address': {
-        'line1': 'The Money Pool',
-        'city': 'London',
-        'postcode': 'DO11 4RS',
-        'country': 'GB'
+        'line1': opts.addressLine1 || 'The Money Pool',
+        'city': opts.addressCity || 'London',
+        'postcode': opts.addressPostcode || 'DO11 4RS',
+        'country': opts.addressCountry || 'GB'
       }
     }
     return {

@@ -144,7 +144,7 @@ module.exports = (function () {
   }
 
   const apiPayload = function (req, card) {
-    return {
+    const payload = {
       'card_number': creditCard(req.body.cardNo),
       'cvc': req.body.cvc,
       'card_brand': card.brand,
@@ -157,6 +157,10 @@ module.exports = (function () {
       'accept_header': req.header('accept'),
       'user_agent_header': req.header('user-agent')
     }
+    if (req.body.worldpay3dsFlexDdcResult) {
+      payload['worldpay_3ds_flex_ddc_result'] = req.body.worldpay3dsFlexDdcResult
+    }
+    return payload
   }
 
   return {
