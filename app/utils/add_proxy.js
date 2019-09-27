@@ -1,7 +1,7 @@
 'use strict'
 
 // NPM dependencies
-const urlParse = require('url').parse
+const urlParse = require('url').parse // eslint-disable-line
 const _ = require('lodash')
 
 // Constants

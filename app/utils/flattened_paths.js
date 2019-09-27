@@ -5,11 +5,11 @@
 module.exports = paths => {
   const flattenedPaths = {}
   for (const controllerName in paths) {
-    if (paths.hasOwnProperty(controllerName)) {
+    if (paths.hasOwnProperty(controllerName)) { // eslint-disable-line
       const controller = paths[controllerName]
       if (typeof controller !== 'object') continue
       for (const actionName in controller) {
-        if (controller.hasOwnProperty(actionName)) {
+        if (controller.hasOwnProperty(actionName)) { // eslint-disable-line
           const action = controller[actionName]
           flattenedPaths[`${action.path}_${action.action}`] = `${controllerName}.${actionName}`
         }

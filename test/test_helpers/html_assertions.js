@@ -77,7 +77,7 @@ chai.use(function (_chai, utils) {
 
   chai.Assertion.addMethod('withAttributes', function (attributes) {
     for (const attr in attributes) {
-      if (attributes.hasOwnProperty(attr)) {
+      if (attributes.hasOwnProperty(attr)) { // eslint-disable-line
         this.withAttribute(attr, attributes[attr])
       }
     }
