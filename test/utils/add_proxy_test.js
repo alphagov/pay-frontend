@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const { expect } = require('chai')
-const urlParse = require('url').parse
+const urlParse = require('url').parse // eslint-disable-line
 const proxyquire = require('proxyquire').noPreserveCache()
 
 describe('add proxy test', () => {
