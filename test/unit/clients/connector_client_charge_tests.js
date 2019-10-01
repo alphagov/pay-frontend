@@ -33,7 +33,7 @@ describe('connector client - charge tests', function () {
 
   describe('making auth request', function () {
     const authRequest = fixtures.validAuthorisationRequest()
-    
+
     before(() => {
       const response = fixtures.validChargeCardDetailsAuthorised()
       const builder = new PactInteractionBuilder(AUTHORISE_CHARGE_URL)

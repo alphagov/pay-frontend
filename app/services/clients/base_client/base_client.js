@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const http = require('http')
-const urlParse = require('url').parse
+const urlParse = require('url').parse // eslint-disable-line
 const _ = require('lodash')
 const request = require('requestretry')
 const { getNamespace } = require('continuation-local-storage')
