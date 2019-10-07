@@ -90,7 +90,7 @@ describe('chargeTests', function () {
   const localServer = process.env.CONNECTOR_HOST
   const adminUsersHost = process.env.ADMINUSERS_URL
 
-  const servicesResource = `/v1/api/services`
+  const servicesResource = '/v1/api/services'
   const connectorChargePath = '/v1/frontend/charges/'
   const chargeId = '23144323'
   const frontendCardDetailsPath = '/card_details'
@@ -150,26 +150,26 @@ describe('chargeTests', function () {
 
   function minimumFormCardData (cardNumber) {
     return {
-      'returnUrl': RETURN_URL,
-      'cardUrl': connectorAuthUrl,
-      'chargeId': chargeId,
-      'cardNo': cardNumber,
-      'cvc': '234',
-      'expiryMonth': '11',
-      'expiryYear': '99',
-      'cardholderName': 'Jimi Hendrix',
-      'addressLine1': '32 Whip Ma Whop Ma Avenue',
-      'addressPostcode': 'Y1 1YN',
-      'addressCity': 'Willy wonka',
-      'email': 'willy@wonka.com',
-      'addressCountry': 'GB'
+      returnUrl: RETURN_URL,
+      cardUrl: connectorAuthUrl,
+      chargeId: chargeId,
+      cardNo: cardNumber,
+      cvc: '234',
+      expiryMonth: '11',
+      expiryYear: '99',
+      cardholderName: 'Jimi Hendrix',
+      addressLine1: '32 Whip Ma Whop Ma Avenue',
+      addressPostcode: 'Y1 1YN',
+      addressCity: 'Willy wonka',
+      email: 'willy@wonka.com',
+      addressCountry: 'GB'
     }
   }
 
   function missingFormCardData () {
     return {
-      'chargeId': chargeId,
-      'returnUrl': RETURN_URL
+      chargeId: chargeId,
+      returnUrl: RETURN_URL
     }
   }
 
@@ -189,20 +189,20 @@ describe('chargeTests', function () {
         nock(process.env.CONNECTOR_HOST, defaultCorrelationHeader)
           .get('/v1/frontend/charges/23144323')
           .reply(200, {
-            'amount': 2345,
-            'description': 'Payment Description',
-            'status': status,
-            'return_url': 'http://www.example.com/service',
-            'gateway_account': {
-              'gateway_account_id': gatewayAccountId,
-              'analytics_id': 'test-1234',
-              'type': 'test',
-              'payment_provider': 'sandbox',
-              'service_name': 'Pranks incorporated',
-              'card_types': [{
-                'type': 'CREDIT',
-                'brand': 'VISA',
-                'label': 'Visa'
+            amount: 2345,
+            description: 'Payment Description',
+            status: status,
+            return_url: 'http://www.example.com/service',
+            gateway_account: {
+              gateway_account_id: gatewayAccountId,
+              analytics_id: 'test-1234',
+              type: 'test',
+              payment_provider: 'sandbox',
+              service_name: 'Pranks incorporated',
+              card_types: [{
+                type: 'CREDIT',
+                brand: 'VISA',
+                label: 'Visa'
               }]
             },
             service: {
@@ -304,7 +304,7 @@ describe('chargeTests', function () {
 
         nock(adminUsersHost, defaultCorrelationHeader)
           .get(`${servicesResource}?gatewayAccountId=${gatewayAccountId}`)
-          .reply(serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }).getPlain())
+          .reply(200, serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }).getPlain())
 
         mockSuccessCardIdResponse(defaultCardID)
 
@@ -512,7 +512,7 @@ describe('chargeTests', function () {
         mockSuccessCardIdResponse(defaultCardID)
 
         connectorExpects(minimumConnectorCardData('5105105105105100'))
-          .reply(400, { 'message': 'This transaction was declined.' })
+          .reply(400, { message: 'This transaction was declined.' })
 
         postChargeRequest(app, cookieValue, minimumFormCardData('5105105105105100'), chargeId)
           .expect(303)
@@ -760,19 +760,19 @@ describe('chargeTests', function () {
         const cookieValue = cookie.create()
         mockSuccessCardIdResponse(defaultCardID)
         mockServer.post(connectorChargePath + chargeId + '/cards', {
-          'card_number': '5105105105105100',
-          'cvc': '234',
-          'expiry_date': '11/99'
-        }).reply(400, { 'message': 'This transaction was declined.' })
+          card_number: '5105105105105100',
+          cvc: '234',
+          expiry_date: '11/99'
+        }).reply(400, { message: 'This transaction was declined.' })
 
         request(app)
           .post(frontendCardDetailsPostPath)
           .set('Cookie', ['frontend_state=' + cookieValue])
           .send({
-            'chargeId': chargeId,
-            'cardNo': '5105 1051 0510 5100',
-            'cvc': '234',
-            'expiryDate': '11/99'
+            chargeId: chargeId,
+            cardNo: '5105 1051 0510 5100',
+            cvc: '234',
+            expiryDate: '11/99'
           })
           .set('Content-Type', 'application/x-www-form-urlencoded')
           .set('Accept', 'application/json')
@@ -841,7 +841,7 @@ describe('chargeTests', function () {
 
     it('It should show 500 page if charge status cant be updated to "ENTERING CARD DETAILS" state with a 400 connector response', function (done) {
       const cookieValue = cookie.create(chargeId)
-      connectorResponseForPutCharge(chargeId, 400, { 'message': 'some error' })
+      connectorResponseForPutCharge(chargeId, 400, { message: 'some error' })
 
       getChargeRequest(app, cookieValue, chargeId)
         .expect(500)
@@ -1128,7 +1128,7 @@ describe('chargeTests', function () {
         .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(302)
-        .expect(res => expect(res.headers['location']).to.equal(returnUrl))
+        .expect(res => expect(res.headers.location).to.equal(returnUrl))
         .end(done)
     })
   })

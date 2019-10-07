@@ -26,7 +26,7 @@ describe('base client', () => {
   it('should add host header', (done) => {
     nock(url, {
       reqheaders: {
-        'host': 'www.example.com:65535'
+        host: 'www.example.com:65535'
       }
     }).post('/', arbitraryRequestData)
       .reply(200)
@@ -44,7 +44,7 @@ describe('base client', () => {
     const urlWithoutPort = 'http://www.example.com'
     nock(urlWithoutPort, {
       reqheaders: {
-        'host': 'www.example.com'
+        host: 'www.example.com'
       }
     }).post('/', arbitraryRequestData)
       .reply(200)
@@ -137,7 +137,7 @@ describe('base client', () => {
   it('should set x-request-id header correctly', (done) => {
     nock(url)
       .get('/')
-      .reply('{}')
+      .reply(200, '{}')
 
     baseClient.get(url, { correlationId: 'reee' }, null, null).then(response => {
       assert.strictEqual(response.request.headers['x-request-id'], 'reee')
@@ -148,7 +148,7 @@ describe('base client', () => {
   it('should always set request content-type header to application/json', (done) => {
     nock(url)
       .get('/')
-      .reply('{}')
+      .reply(200, '{}')
 
     baseClient.get(url, {}, null, null).then(response => {
       assert.strictEqual(response.request.headers['Content-Type'], 'application/json')
