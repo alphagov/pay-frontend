@@ -124,7 +124,7 @@
     "dotenv": "^8.2.0",
     "envfile": "^3.0.0",
     "eslint": "^6.6.0",
-    "govuk-country-and-territory-autocomplete": "^0.5.3",
+    "govuk-country-and-territory-autocomplete": "^1.0.0",
     "grunt": "1.0.x",
     "grunt-babel": "^8.0.0-beta.0",
     "grunt-browserify": "5.3.x",
