@@ -59,7 +59,11 @@ describe('Worldpay 3ds flex card payment flow', () => {
   ]
 
   const worldpay3dsFlexDdcStub = {
-    name: 'worldpay3dsFlexDdcIframePost', opts: { sessionId: worldpaySessionId }
+    name: 'worldpay3dsFlexDdcIframePost',
+    opts: {
+      sessionId: worldpaySessionId,
+      status: true
+    }
   }
 
   const worldpay3dsFlexDdcStubFailure = {

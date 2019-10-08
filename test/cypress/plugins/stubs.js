@@ -164,7 +164,7 @@ module.exports = {
     </head>
     <body>
     <script>
-        sendNotification(${opts.status || true}, "${opts.sessionId}");
+        sendNotification(${opts.status}, "${opts.sessionId}");
 
         function sendNotification(status, sessionId){
             try{
