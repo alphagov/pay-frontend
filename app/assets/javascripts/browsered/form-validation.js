@@ -1,6 +1,7 @@
 'use strict'
 
 const chargeValidation = require('../../../utils/charge_validation')
+const { submitWithWorldpay3dsFlexDdcResult } = require('./worldpay-3ds-flex-ddc')
 
 var init = function () {
   var form = document.getElementById('card-details')
@@ -57,9 +58,14 @@ var init = function () {
 
     if (!validations.hasError) {
       document.getElementById('submit-card-details').setAttribute('disabled', 'disabled')
-      return form.submit()
+      if (typeof Charge.worldpay_3ds_flex_ddc_jwt === 'string' && Charge.worldpay_3ds_flex_ddc_jwt !== '') {
+        submitWithWorldpay3dsFlexDdcResult(e.target)
+      } else {
+        form.submit()
+      }
+    } else {
+      addValidationsErrors()
     }
-    addValidationsErrors()
   }
 
   var addValidationsErrors = function () {

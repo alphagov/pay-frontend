@@ -8,6 +8,11 @@ const { getNamespace } = require('continuation-local-storage')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
+const {
+  GOOGLE_PAY_MERCHANT_ID,
+  WORLDPAY_3DS_FLEX_DDC_TEST_URL,
+  WORLDPAY_3DS_FLEX_DDC_LIVE_URL
+} = process.env
 const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
@@ -50,13 +55,14 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
   charge.googlePayRequestMethodData = getGooglePayMethodData({
     allowedCardTypes: supportedNetworksFormattedByProvider(cardModel.allowed, 'google'),
-    merchantId: process.env.GOOGLE_PAY_MERCHANT_ID,
+    merchantId: GOOGLE_PAY_MERCHANT_ID,
     gatewayMerchantId: charge.gatewayAccount.gatewayMerchantId
   })
   charge.googlePayRequestDetails = googlePayDetails
 
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId)
+  charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })

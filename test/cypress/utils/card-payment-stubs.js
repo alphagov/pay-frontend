@@ -1,6 +1,6 @@
 'use strict'
 
-const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42, serviceOpts = {}) {
+const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42, serviceOpts = {}, providerOpts = {}) {
   return [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, 'status': 'CREATED' } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
@@ -11,13 +11,17 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         gatewayAccountId,
         status: 'CREATED',
         state: { finished: false, status: 'created' },
-        language: language || 'en'
+        language: language || 'en',
+        paymentProvider: providerOpts.paymentProvider,
+        requires3ds: providerOpts.requires3ds,
+        integrationVersion3ds: providerOpts.integrationVersion3ds
       }
     },
     { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
 
     // @TODO(sfount) this should pass the service to be queried relative to the charge - right now it just returns a default service
-    { name: 'adminUsersGetService', opts: serviceOpts }
+    { name: 'adminUsersGetService', opts: serviceOpts },
+    { name: 'connectorWorldpay3dsFlexDdcJwt', opts: { chargeId } }
   ]
 }
 
