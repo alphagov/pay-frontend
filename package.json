@@ -137,7 +137,7 @@
     "grunt-rewrite": "1.0.x",
     "grunt-sass": "3.1.x",
     "husky": "^3.0.8",
-    "lint-staged": "^9.4.1",
+    "lint-staged": "^9.4.2",
     "mocha": "6.2.x",
     "mountebank": "2.1.0",
     "nock": "11.3.6",
