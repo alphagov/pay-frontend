@@ -498,7 +498,7 @@
 
 {% block bodyEnd %}
   {% if service.collectBillingAddress %}
-  <script type="text/javascript" src="/public/location-autocomplete.min.js"></script>
+  <script type="text/javascript" src="{{ cdn_url }}/public/location-autocomplete.min.js"></script>
   <script type="text/javascript">
     openregisterLocationPicker({
       selectElement: document.getElementById('address-country'),
