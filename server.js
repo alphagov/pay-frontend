@@ -27,7 +27,7 @@ const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 
 // Global constants
-const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
+const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE, CDN_URL } = process.env
 const CSS_PATH = '/stylesheets/application.min.css'
 const JAVASCRIPT_PATH = '/javascripts/application.min.js'
 const argv = require('minimist')(process.argv.slice(2))
@@ -119,6 +119,7 @@ function initialiseTemplateEngine (app) {
   nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? staticify.getVersionedPath(CSS_PATH) : CSS_PATH)
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? staticify.getVersionedPath(JAVASCRIPT_PATH) : JAVASCRIPT_PATH)
   nunjucksEnvironment.addGlobal('isDevelopment', NODE_ENV !== 'production')
+  nunjucksEnvironment.addGlobal('cdn_url', NODE_ENV === 'production' ? CDN_URL : '')
 }
 
 function initialisePublic (app) {

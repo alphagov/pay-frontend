@@ -2,11 +2,15 @@
 
 {% set htmlLang = language %}
 
+{% if cdn_url %}
+  {% set assetPath = cdn_url %}
+{% endif %}
+
 {% block head %}
   {% if service and service.customBranding and service.customBranding.cssUrl  %}
     <link href="{{ service.customBranding.cssUrl }}" media="all" rel="stylesheet" />
   {% else %}
-    <link href="{{ css_path }}" media="all" rel="stylesheet" />
+    <link href="{{ cdn_url }}{{ css_path }}" media="all" rel="stylesheet" />
   {% endif %}
 
   {% include "includes/analytics.njk" %}
@@ -57,7 +61,7 @@
 
 {% block bodyEnd %}
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
-  <script src="/all.js"></script>
+  <script src="{{ cdn_url }}/all.js"></script>
   <script>window.GOVUKFrontend.initAll()</script>
   {% include "includes/scripts.njk" %}
 {% endblock %}
