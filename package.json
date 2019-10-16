@@ -142,7 +142,7 @@
     "mountebank": "2.1.1",
     "nock": "11.4.0",
     "node-sass": "4.12.x",
-    "nodemon": "^1.19.3",
+    "nodemon": "^1.19.4",
     "nyc": "14.1.x",
     "pact": "4.3.2",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/3.0.0-1f2776f/pay-product-page-3.0.0-1f2776f.tgz",
