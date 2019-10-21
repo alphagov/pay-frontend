@@ -3,12 +3,12 @@
 // NPM dependencies
 const _ = require('lodash')
 const changeCase = require('change-case')
-const logger = require('winston')
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
 const i18n = require('i18n')
 
 // Local dependencies
+const logger = require('../utils/logger')(__filename)
 const cardIdClient = require('../services/clients/cardid_client')
 
 // Constants

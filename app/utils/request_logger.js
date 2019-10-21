@@ -1,7 +1,6 @@
 'use strict'
 
-// NPM dependencies
-const logger = require('winston')
+const logger = require('./logger')(__filename)
 
 exports.logRequestStart = context => {
   logger.info(`Calling ${context.service}  ${context.description}-`, {

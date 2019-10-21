@@ -1,11 +1,11 @@
 'use strict'
 
 // NPM dependencies
-const logger = require('winston')
 const { Cache } = require('memory-cache')
 const lodash = require('lodash')
 
 // Local dependencies
+const logger = require('../utils/logger')(__filename)
 const responseRouter = require('../utils/response_router')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { withAnalyticsError } = require('../utils/analytics')

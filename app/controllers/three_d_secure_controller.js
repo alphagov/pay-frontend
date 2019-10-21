@@ -1,8 +1,8 @@
 // NPM dependencies
 const _ = require('lodash')
-const logger = require('winston')
 
 // Local dependencies
+const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')

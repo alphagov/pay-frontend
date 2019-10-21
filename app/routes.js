@@ -3,9 +3,9 @@
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace, createNamespace } = require('continuation-local-storage')
-const logger = require('winston')
 
 // Local dependencies
+const logger = require('./utils/logger')(__filename)
 const charge = require('./controllers/charge_controller.js')
 const threeDS = require('./controllers/three_d_secure_controller.js')
 const secure = require('./controllers/secure_controller.js')

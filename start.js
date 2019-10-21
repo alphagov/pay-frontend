@@ -3,7 +3,7 @@
 
   var path = require('path')
   var fs = require('fs')
-  var logger = require('winston')
+  const logger = require('./app/utils/logger')(__filename)
   var throng = require('throng')
   var server = require('./server')
   var environment = require('./app/services/environment')

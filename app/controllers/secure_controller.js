@@ -2,9 +2,9 @@
 
 // NPM dependencies
 const csrf = require('csrf')
-const logger = require('winston')
 
 // Local dependencies
+const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
 const { generateRoute } = require('../paths')
 const Token = require('../models/token')

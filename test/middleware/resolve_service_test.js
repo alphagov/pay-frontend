@@ -26,8 +26,10 @@ const resolveServiceMiddleware = function (findServicePromise) {
         }
       }
     },
-    'winston': {
-      error: errorLogger
+    '../utils/logger': () => {
+      return {
+        error: errorLogger
+      }
     }
   })
 }

@@ -4,12 +4,12 @@
 const nock = require('nock')
 const chai = require('chai')
 const cheerio = require('cheerio')
-const winston = require('winston')
 const expect = chai.expect
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
+const logger = require('../../app/utils/logger')(__filename)
 const paymentFixtures = require('../fixtures/payment_fixtures')
 
 const app = proxyquire('../../server.js', {
@@ -63,7 +63,7 @@ describe('chargeTests', function () {
 
   before(function () {
     // Disable logging.
-    winston.level = 'none'
+    logger.level = 'none'
   })
 
   describe('The /card_details/charge_id/3ds_required', function () {

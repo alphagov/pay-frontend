@@ -1,7 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const logger = require('winston')
 const _ = require('lodash')
 const i18n = require('i18n')
 const { getNamespace } = require('continuation-local-storage')
@@ -13,6 +12,7 @@ const {
   WORLDPAY_3DS_FLEX_DDC_TEST_URL,
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 } = process.env
+const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
