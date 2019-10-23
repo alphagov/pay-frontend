@@ -2,9 +2,9 @@
 
 // NPM dependencies
 const lodash = require('lodash')
-const logger = require('winston')
 
 // Local dependencies
+const logger = require('../utils/logger')(__filename)
 const responseRouter = require('../utils/response_router')
 const stateService = require('../services/state_service')
 const State = require('../../config/state.js')

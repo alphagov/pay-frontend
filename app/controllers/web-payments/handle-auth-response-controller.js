@@ -3,7 +3,7 @@
 // NPM dependencies
 const normalise = require('../../services/normalise_charge')
 const logging = require('../../utils/logging')
-const logger = require('winston')
+const logger = require('../../utils/logger')(__filename)
 const responseRouter = require('../../utils/response_router')
 const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const Charge = require('../../models/charge')

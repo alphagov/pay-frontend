@@ -5,12 +5,12 @@ const lodash = require('lodash')
 const nock = require('nock')
 const chai = require('chai')
 const cheerio = require('cheerio')
-const winston = require('winston')
 const expect = chai.expect
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
+const logger = require('../../app/utils/logger')(__filename)
 const cookie = require('../test_helpers/session')
 const helper = require('../test_helpers/test_helpers')
 const {
@@ -143,7 +143,7 @@ describe('chargeTests - billing address', function () {
 
   before(function () {
     // Disable logging.
-    winston.level = 'none'
+    logger.level = 'none'
   })
 
   describe('The /charge endpoint', function () {

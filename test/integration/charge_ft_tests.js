@@ -6,7 +6,7 @@ const request = require('supertest')
 const nock = require('nock')
 const chai = require('chai')
 const cheerio = require('cheerio')
-const winston = require('winston')
+const logger = require('../../app/utils/logger')(__filename)
 const expect = chai.expect
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
@@ -180,7 +180,7 @@ describe('chargeTests', function () {
 
   before(function () {
     // Disable logging.
-    winston.level = 'none'
+    logger.level = 'none'
   })
 
   describe('The /charge endpoint', function () {

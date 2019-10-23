@@ -3,7 +3,7 @@
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
-const logger = require('winston')
+const logger = require('../../utils/logger')(__filename)
 const connectorClient = require('../../services/clients/connector_client')
 const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payload')
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')

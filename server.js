@@ -11,7 +11,7 @@ const express = require('express')
 const nunjucks = require('nunjucks')
 const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
-const logger = require('winston')
+const logger = require('./app/utils/logger')(__filename)
 const loggingMiddleware = require('morgan')
 const i18n = require('i18n')
 const staticify = require('staticify')(path.join(__dirname, 'public'))
@@ -139,7 +139,7 @@ function initialiseRoutes (app) {
 function listen () {
   const app = initialise()
   app.listen(PORT || 3000)
-  logger.log('Listening on port ' + PORT || 3000)
+  logger.info('Listening on port ' + PORT || 3000)
 }
 
 function logApplePayCertificateTimeToExpiry () {
