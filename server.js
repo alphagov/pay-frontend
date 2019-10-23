@@ -11,14 +11,14 @@ const express = require('express')
 const nunjucks = require('nunjucks')
 const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
-const logger = require('./app/utils/logger')(__filename)
-const loggingMiddleware = require('morgan')
 const i18n = require('i18n')
 const staticify = require('staticify')(path.join(__dirname, 'public'))
 const compression = require('compression')
 const certinfo = require('cert-info')
 
 // Local dependencies
+const logger = require('./app/utils/logger')(__filename)
+const loggingMiddleware = require('./app/middleware/logging_middleware')
 const router = require('./app/routes')
 const cookies = require('./app/utils/cookies')
 const noCache = require('./app/utils/no_cache')
@@ -48,8 +48,8 @@ function initialiseGlobalMiddleware (app) {
     }
   }
   app.set('settings', { getVersionedPath: staticify.getVersionedPath })
-  app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware(
-    ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'))
+
+  app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware())
   app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/govuk/assets/images', 'favicon.ico')))
   app.use(staticify.middleware)
 
