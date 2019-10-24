@@ -25,6 +25,7 @@ const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
+const Sentry = require('./app/utils/sentry.js').initialiseSentry()
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
@@ -156,6 +157,7 @@ function logApplePayCertificateTimeToExpiry () {
  */
 function initialise () {
   const app = unconfiguredApp
+  app.use(Sentry.Handlers.requestHandler())
   initialiseProxy(app)
 
   initialiseGlobalMiddleware(app)
@@ -165,6 +167,7 @@ function initialise () {
   initialisePublic(app)
   initialiseRoutes(app) // This contains the 404 override and so should be last
   logApplePayCertificateTimeToExpiry()
+  app.use(Sentry.Handlers.errorHandler())
 
   return app
 }
