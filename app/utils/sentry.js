@@ -14,13 +14,13 @@ function initialiseSentry () {
   return Sentry
 }
 
-const addSentryToErrorLevel = (originalLogger) => {
+const addSentryToErrorLevel = originalLogger => {
   const sentryLogger = Object.create(originalLogger)
-  sentryLogger.error = msg => {
+  sentryLogger.error = function () {
     try {
-      Sentry.captureException(new Error(msg))
+      Sentry.captureException(new Error(JSON.stringify(arguments)))
     } finally {
-      originalLogger.error(msg)
+      originalLogger.error(...arguments)
     }
   }
   return sentryLogger
