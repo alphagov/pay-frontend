@@ -142,7 +142,7 @@
     "mocha": "6.2.x",
     "mountebank": "2.1.2",
     "nock": "11.5.0",
-    "node-sass": "4.12.x",
+    "node-sass": "4.13.x",
     "nodemon": "^1.19.4",
     "nyc": "14.1.x",
     "pact": "4.3.2",
