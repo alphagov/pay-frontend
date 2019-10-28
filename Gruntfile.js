@@ -143,6 +143,7 @@ module.exports = function (grunt) {
     dist: {
       src: ['public/javascripts/application.js',
         'node_modules/promise-polyfill/dist/polyfill.min.js',
+        'node_modules/govuk-frontend/govuk/all.js',
         'app/assets/javascripts/modules/*.js'],
       dest: 'public/javascripts/application.js'
     }
