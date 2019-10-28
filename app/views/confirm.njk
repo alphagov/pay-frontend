@@ -104,9 +104,9 @@
       {{
         govukButton({
           html: confirmButtonHTML,
+          preventDoubleClick: true,
           attributes: {
-            id: 'confirm',
-            'data-module': 'stop-double-submit'
+            id: 'confirm'
           }
         })
       }}

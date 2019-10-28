@@ -37,7 +37,7 @@
 
   var mainWrap = document.getElementsByTagName('main')[0]
   document.addEventListener('DOMContentLoaded', function() {
-    GOVUK.stopDoubleSubmit.init();
+    window.GOVUKFrontend.initAll();
     if (mainWrap.classList.contains('charge-new')) {
       showCardType().init();
       window.payScripts.inputConfirm.init();
