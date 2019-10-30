@@ -23,14 +23,14 @@ module.exports = (translations, logger, cardModel, chargeOptions) => {
           resolve({ validation, card })
         })
         .catch(err => {
-          logger.error('Card not supported - ', { 'err': err.message })
+          logger.debug('Card not supported - ', { err: err.message })
           // add card not supported error to validation
           validation.hasError = true
           _.remove(validation.errorFields, errorField => errorField.cssKey === 'card-no')
           validation.errorFields.unshift({
-            'cssKey': 'card-no',
-            'key': 'cardNo',
-            'value': err.message
+            cssKey: 'card-no',
+            key: 'cardNo',
+            value: err.message
           })
           validation.highlightErrorFields.cardNo = err.message
           resolve({ validation })
