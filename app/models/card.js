@@ -20,7 +20,7 @@ i18n.configure(i18nConfig)
 const checkCard = function (cardNo, allowed, language, correlationId, subSegment) {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
-    const data = { 'cardNumber': parseInt(cardNo) }
+    const data = { cardNumber: parseInt(cardNo) }
 
     i18n.setLocale(language || 'en')
 
@@ -43,6 +43,9 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
           if (response.statusCode === 404) {
             return reject(new Error('Your card is not supported'))
           }
+          if (response.statusCode === 422) {
+            return reject(new Error(i18n.__('fieldErrors.fields.cardNo.message')))
+          }
           // if the server is down, or returns non 500, just continue
           if (response.statusCode !== 200) {
             return resolve()
@@ -58,8 +61,8 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
           }
 
           logger.debug(`[${correlationId}] Checking card brand - `, {
-            'cardBrand': card.brand,
-            'cardType': card.type
+            cardBrand: card.brand,
+            cardType: card.type
           })
 
           if (_.filter(allowed, { brand: card.brand }).length === 0) {
