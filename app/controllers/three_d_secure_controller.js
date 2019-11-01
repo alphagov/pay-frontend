@@ -26,11 +26,12 @@ const redirect = res => {
   }
 }
 
-const build3dsPayload = req => {
+const build3dsPayload = (chargeId, req) => {
   let auth3dsPayload = {}
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
+    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [${paRes}]`)
   }
 
   const providerStatus = threeDsEPDQResults[_.get(req, 'body.providerStatus', '')]
@@ -70,7 +71,7 @@ module.exports = {
   auth3dsHandler (req, res) {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const correlationId = req.headers[CORRELATION_HEADER] || ''
-    const payload = build3dsPayload(req)
+    const payload = build3dsPayload(charge.id, req)
     connectorClient({ correlationId }).threeDs({ chargeId: charge.id, payload })
       .then(handleThreeDsResponse(req, res, charge))
       .catch((err) => {
