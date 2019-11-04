@@ -31,7 +31,7 @@ const build3dsPayload = (chargeId, req) => {
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
-    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [${paRes}]`)
+      logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [starts with [${paRes.substring(0,50)}] and ending with [${paRes.substring(paRes.length-50)}] ]`)
   }
 
   const providerStatus = threeDsEPDQResults[_.get(req, 'body.providerStatus', '')]
@@ -68,7 +68,7 @@ const handleThreeDsResponse = (req, res, charge) => response => {
 }
 
 module.exports = {
-  auth3dsHandler (req, res) {
+  auth3dsHandler(req, res) {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const payload = build3dsPayload(charge.id, req)
