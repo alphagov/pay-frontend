@@ -1,4 +1,4 @@
 'use strict'
 
 const logger = require('../../app/utils/logger')(__filename)
-logger.remove(logger.transports.Console)
+logger.transports.forEach(t => (t.silent = true))
