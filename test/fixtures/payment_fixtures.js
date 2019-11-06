@@ -326,7 +326,8 @@ const fixtures = {
         'city': opts.addressCity || 'London',
         'postcode': opts.addressPostcode || 'DO11 4RS',
         'country': opts.addressCountry || 'GB'
-      }
+      },
+      'ip_address': opts.ipAddress || '127.0.0.1'
     }
     return {
       getPactified: () => {
