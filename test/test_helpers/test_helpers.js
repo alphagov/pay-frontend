@@ -268,7 +268,6 @@ module.exports = {
       .set('Cookie', ['frontend_state=' + cookieValue])
       .set('Accept', 'application/json')
       .set('x-request-id', 'some-unique-id')
-      .set('x-forwarded-for', '127.0.0.1')
       .send(data)
   },
 
