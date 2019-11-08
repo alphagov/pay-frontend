@@ -7,7 +7,6 @@ const lodash = require('lodash')
 // Local dependencies
 const countries = require('../services/countries')
 const normaliseCards = require('../services/normalise_cards')
-const userIpAddress = require('../utils/user_ip_address')
 
 module.exports = (function () {
   const charge = function (charge, chargeId) {
@@ -156,8 +155,7 @@ module.exports = (function () {
       'prepaid': card.prepaid,
       'address': addressForApi(req.body),
       'accept_header': req.header('accept'),
-      'user_agent_header': req.header('user-agent'),
-      'ip_address': userIpAddress(req)
+      'user_agent_header': req.header('user-agent')
     }
     if (req.body.worldpay3dsFlexDdcResult) {
       payload['worldpay_3ds_flex_ddc_result'] = req.body.worldpay3dsFlexDdcResult

@@ -130,8 +130,7 @@ describe('chargeTests', function () {
         city: 'Willy wonka',
         postcode: 'Y1 1YN',
         country: 'GB'
-      },
-      ip_address: '127.0.0.1'
+      }
     }
   }
 
