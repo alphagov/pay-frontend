@@ -81,11 +81,11 @@ exports.bind = function (app) {
 
   app.get(card.auth3dsRequired.path, middlewareStack, threeDS.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, threeDS.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, csrfTokenGeneration, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
-  app.post(card.auth3dsHandler.path, middlewareStack, threeDS.auth3dsHandler)
+  app.post(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, [xraySegmentCls, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, [xraySegmentCls, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, [xraySegmentCls, retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.post(card.auth3dsHandler.path, [xraySegmentCls, actionName, retrieveCharge, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePayMerchantValidation)
