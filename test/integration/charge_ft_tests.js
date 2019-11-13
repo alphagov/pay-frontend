@@ -228,7 +228,6 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('#amount').text()).to.eql('£23.45')
             expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#payment-description').text()).to.contain('Payment Description')
@@ -464,18 +463,6 @@ describe('chargeTests', function () {
           .set('Cookie', ['frontend_state=' + cookieValue])
           .set('Accept', 'application/json')
           .expect(200)
-          .end(done)
-      })
-
-      it('should error without csrf', function (done) {
-        const cookieValue = cookie.create(chargeId)
-        defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
-        defaultAdminusersResponseForGetService(gatewayAccountId)
-
-        connectorExpects(minimumConnectorCardData('5105105105105100'))
-          .reply(204)
-        postChargeRequest(app, cookieValue, minimumFormCardData('5105 1051 0510 5100'), chargeId, false)
-          .expect(500)
           .end(done)
       })
 
@@ -799,7 +786,6 @@ describe('chargeTests', function () {
         .expect(function (res) {
           const $ = cheerio.load(res.text)
           expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
-          expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('#amount').text()).to.eql('£23.45')
           expect($('#payment-description').text()).to.contain('Payment Description')
           expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
@@ -900,7 +886,6 @@ describe('chargeTests', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('#card-number').text()).to.contains('●●●●●●●●●●●●1234')
           expect($('#expiry-date').text()).to.contains('11/99')
           expect($('#cardholder-name').text()).to.contains('Test User')
@@ -923,7 +908,6 @@ describe('chargeTests', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#confirmation #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('#card-number').text()).to.contains('●●●●●●●●●●●●1234')
           expect($('#expiry-date').text()).to.contains('11/99')
           expect($('#cardholder-name').text()).to.contains('Test User')
@@ -944,25 +928,10 @@ describe('chargeTests', function () {
 
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .set('Accept', 'application/json')
         .expect(303, {})
         .expect('Location', '/return/' + chargeId)
-        .end(done)
-    })
-
-    it('should error if no csrf token', function (done) {
-      nock(process.env.CONNECTOR_HOST)
-        .get('/v1/frontend/charges/' + chargeId).reply(200, helper.rawSuccessfulGetCharge(State.AUTH_SUCCESS, 'http://www.example.com/service', gatewayAccountId))
-        .post('/v1/frontend/charges/' + chargeId + '/capture').reply(200)
-      defaultAdminusersResponseForGetService(gatewayAccountId)
-
-      request(app)
-        .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-        .set('Accept', 'application/json')
-        .expect(500)
         .end(done)
     })
 
@@ -975,7 +944,6 @@ describe('chargeTests', function () {
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-        .send({ csrfToken: helper.csrfToken() })
         .expect(500)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
@@ -993,7 +961,6 @@ describe('chargeTests', function () {
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.createWithReturnUrl(chargeId, undefined, 'http://www.example.com/service')])
-        .send({ csrfToken: helper.csrfToken() })
         .end(done)
     })
 
@@ -1002,7 +969,6 @@ describe('chargeTests', function () {
 
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .set('Accept', 'application/json')
         .expect(500)
@@ -1017,7 +983,6 @@ describe('chargeTests', function () {
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
-        .send({ csrfToken: helper.csrfToken() })
         .expect(500)
         .end(done)
     })
@@ -1028,7 +993,6 @@ describe('chargeTests', function () {
 
       request(app)
         .post(frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .end(done)
@@ -1076,7 +1040,6 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
         .end(done)
@@ -1092,7 +1055,6 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(200)
         .end(done)
@@ -1108,7 +1070,6 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(500)
         .end(done)
@@ -1126,7 +1087,6 @@ describe('chargeTests', function () {
 
       request(app)
         .post(cancelEndpoint)
-        .send({ csrfToken: helper.csrfToken() })
         .set('Cookie', ['frontend_state=' + cookie.create(chargeId)])
         .expect(302)
         .expect(res => expect(res.headers.location).to.equal(returnUrl))

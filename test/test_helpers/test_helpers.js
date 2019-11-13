@@ -4,7 +4,6 @@
 const request = require('supertest')
 const _ = require('lodash')
 const chaiExpect = require('chai').expect
-const csrf = require('csrf')
 const nock = require('nock')
 
 // Local dependencies
@@ -98,9 +97,9 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.gateway_account.card_types = [
     {
-      'type': 'DEBIT',
-      'brand': 'visa',
-      'label': 'visa'
+      type: 'DEBIT',
+      brand: 'visa',
+      label: 'visa'
     }
   ]
   return charge
@@ -112,105 +111,105 @@ function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, 
 
 function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress, walletType) {
   const charge = {
-    'amount': 2345,
-    'description': 'Payment Description',
-    'status': status,
-    'return_url': returnUrl,
-    'email': 'bob@example.com',
-    'links': [{
-      'href': connectorChargeUrl(chargeId),
-      'rel': 'self',
-      'method': 'POST'
+    amount: 2345,
+    description: 'Payment Description',
+    status: status,
+    return_url: returnUrl,
+    email: 'bob@example.com',
+    links: [{
+      href: connectorChargeUrl(chargeId),
+      rel: 'self',
+      method: 'POST'
     }, {
-      'href': connectorAuthUrl(chargeId),
-      'rel': 'cardAuth',
-      'method': 'POST'
+      href: connectorAuthUrl(chargeId),
+      rel: 'cardAuth',
+      method: 'POST'
     }, {
-      'href': connectorCaptureUrl(chargeId),
-      'rel': 'cardCapture',
-      'method': 'POST'
+      href: connectorCaptureUrl(chargeId),
+      rel: 'cardCapture',
+      method: 'POST'
     }],
-    'gateway_account': {
-      'gateway_account_id': gatewayAccountId || defaultGatewayAccountId,
-      'analytics_id': 'test-1234',
-      'type': 'test',
-      'payment_provider': paymentProvider,
-      'service_name': 'Pranks incorporated',
-      'card_types': [
+    gateway_account: {
+      gateway_account_id: gatewayAccountId || defaultGatewayAccountId,
+      analytics_id: 'test-1234',
+      type: 'test',
+      payment_provider: paymentProvider,
+      service_name: 'Pranks incorporated',
+      card_types: [
         {
-          'type': 'DEBIT',
-          'brand': 'visa',
-          'label': 'visa',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'visa',
+          label: 'visa',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'master-card',
-          'label': 'master-card',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'master-card',
+          label: 'master-card',
+          id: 'id-0'
         },
         {
-          'type': 'CREDIT',
-          'brand': 'american-express',
-          'label': 'american-express',
-          'id': 'id-0'
+          type: 'CREDIT',
+          brand: 'american-express',
+          label: 'american-express',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'jcb',
-          'label': 'jcb',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'jcb',
+          label: 'jcb',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'diners-club',
-          'label': 'diners-club',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'diners-club',
+          label: 'diners-club',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'discover',
-          'label': 'discover',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'discover',
+          label: 'discover',
+          id: 'id-0'
         }
       ],
-      'email_collection_mode': 'MANDATORY',
-      'email_notifications': {
-        'PAYMENT_CONFIRMED': {
-          'version': 1,
-          'enabled': true,
-          'template_body': null
+      email_collection_mode: 'MANDATORY',
+      email_notifications: {
+        PAYMENT_CONFIRMED: {
+          version: 1,
+          enabled: true,
+          template_body: null
         },
-        'REFUND_ISSUED': {
-          'version': 1,
-          'enabled': true,
-          'template_body': null
+        REFUND_ISSUED: {
+          version: 1,
+          enabled: true,
+          template_body: null
         }
       }
     }
   }
   if (status === 'AUTHORISATION SUCCESS') {
     charge.card_details = {
-      'card_brand': 'Visa',
-      'cardholder_name': 'Test User',
-      'last_digits_card_number': '1234',
-      'expiry_date': '11/99',
-      'billing_address': {
-        'line1': 'line1',
-        'line2': 'line2',
-        'city': 'city',
-        'postcode': 'postcode',
-        'county': 'county',
-        'country': 'GB'
+      card_brand: 'Visa',
+      cardholder_name: 'Test User',
+      last_digits_card_number: '1234',
+      expiry_date: '11/99',
+      billing_address: {
+        line1: 'line1',
+        line2: 'line2',
+        city: 'city',
+        postcode: 'postcode',
+        county: 'county',
+        country: 'GB'
       }
     }
   }
   if (status === 'AUTHORISATION 3DS REQUIRED') {
     charge.auth_3ds_data = {
-      'paRequest': auth3dsData.paRequest,
-      'issuerUrl': auth3dsData.issuerUrl,
-      'htmlOut': auth3dsData.htmlOut,
-      'md': auth3dsData.md
+      paRequest: auth3dsData.paRequest,
+      issuerUrl: auth3dsData.issuerUrl,
+      htmlOut: auth3dsData.htmlOut,
+      md: auth3dsData.md
     }
   }
   if (emailSettings) {
@@ -258,10 +257,7 @@ module.exports = {
       .set('x-request-id', defaultCorrelationId)
   },
 
-  postChargeRequest (app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
-    if (sendCSRF) {
-      data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET)
-    }
+  postChargeRequest (app, cookieValue, data, chargeId, query = '') {
     return request(app)
       .post(frontendCardDetailsPath + '/' + chargeId + query)
       .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -276,7 +272,7 @@ module.exports = {
     initConnectorUrl()
     const connectorMock = nock(localConnector())
     const mockPath = connectorChargePath + chargeId + '/status'
-    const payload = { 'new_status': 'ENTERING CARD DETAILS' }
+    const payload = { new_status: 'ENTERING CARD DETAILS' }
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 
@@ -325,10 +321,6 @@ module.exports = {
 
   unexpectedPromise: function (data) {
     throw new Error('Promise was unexpectedly fulfilled.')
-  },
-
-  csrfToken: function () {
-    return csrf().create(process.env.CSRF_USER_SECRET)
   },
 
   cardTypes

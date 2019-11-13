@@ -96,7 +96,6 @@
     }}
 
     <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
-      <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
       {% set confirmButtonHTML %}
         {{ __p("commonButtons.confirmButton") }}
@@ -115,7 +114,6 @@
     <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
       <div>
         <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
-        <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
       </div>
     </form>
   </div>

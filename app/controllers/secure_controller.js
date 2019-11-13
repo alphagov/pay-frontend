@@ -1,8 +1,5 @@
 'use strict'
 
-// NPM dependencies
-const csrf = require('csrf')
-
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
@@ -41,7 +38,7 @@ exports.new = async function (req, res) {
     } else {
       logger.info('Token used for the first time for chargeId %s, gatewayAccountId %s, gateway account type %s', chargeId, gatewayAccountId, gatewayAccountType)
       await Token.markTokenAsUsed(chargeTokenId, correlationId)
-      setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
+      setSessionVariable(req, createChargeIdSessionKey(chargeId))
       res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
     }
   } catch (err) {

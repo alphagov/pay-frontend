@@ -18,7 +18,6 @@ const { healthcheck } = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
 
 // Express middleware
-const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
 const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
@@ -60,8 +59,6 @@ exports.bind = function (app) {
 
   const middlewareStack = [
     xraySegmentCls,
-    csrfCheck,
-    csrfTokenGeneration,
     actionName,
     retrieveCharge,
     resolveLanguage,

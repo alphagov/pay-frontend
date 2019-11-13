@@ -11,18 +11,8 @@ var expect = chai.expect
 
 chai.use(chaiAsPromised)
 
-let requireReturnController = function () {
-  let mocks = {
-    'csrf': function () {
-      return {
-        secretSync: function () {
-          return 'foo'
-        }
-      }
-    }
-  }
-
-  return proxyquire(path.join(__dirname, '/../../app/controllers/return_controller.js'), mocks)
+const requireReturnController = function () {
+  return proxyquire(path.join(__dirname, '/../../app/controllers/return_controller.js'))
 }
 
 describe('return controller', function () {

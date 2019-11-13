@@ -105,7 +105,6 @@
 
       <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
         <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
-        <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
         {% if (originalEmail) %}
           <input name="originalemail" type="hidden" value="{{ originalEmail }}"/>
         {% endif %}
@@ -467,7 +466,6 @@
       <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
         <div>
           <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
-          <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
         </div>
       </form>
     </div>

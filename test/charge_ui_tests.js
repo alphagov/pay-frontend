@@ -41,7 +41,7 @@ const generateConfirmViewTemplateData = (templateData = {}) => {
 describe('The charge view', function () {
   it('should render the amount', function () {
     const templateData = {
-      'amount': '50.00'
+      amount: '50.00'
     }
 
     const body = renderTemplate('charge', templateData)
@@ -51,7 +51,7 @@ describe('The charge view', function () {
   it('should have a submit form.', function () {
     const postAction = '/post_card_path'
     const templateData = {
-      'post_card_action': postAction
+      post_card_action: postAction
     }
 
     const body = renderTemplate('charge', templateData)
@@ -76,7 +76,6 @@ describe('The charge view', function () {
         collectBillingAddress: true
       }
     })
-    body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
     body.should.containInputWithIdAndName('card-no', 'cardNo', 'text').withAttribute('maxlength', '26').withLabel('card-no-lbl', 'Card number')
     body.should.containInputWithIdAndName('cvc', 'cvc', 'text').withLabel('cvc-lbl', 'Card security code')
     body.should.containInputWithIdAndName('expiry-month', 'expiryMonth', 'text')
@@ -98,7 +97,6 @@ describe('The charge view', function () {
         collectBillingAddress: false
       }
     })
-    body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
     body.should.containInputWithIdAndName('card-no', 'cardNo', 'text').withAttribute('maxlength', '26').withLabel('card-no-lbl', 'Card number')
     body.should.containInputWithIdAndName('cvc', 'cvc', 'text').withLabel('cvc-lbl', 'Card security code')
     body.should.containInputWithIdAndName('expiry-month', 'expiryMonth', 'text')
@@ -114,7 +112,7 @@ describe('The charge view', function () {
   })
 
   it('should display custom branding', () => {
-    const templateData = lodash.merge('charge', { 'id': '1234' }, customBrandingData)
+    const templateData = lodash.merge('charge', { id: '1234' }, customBrandingData)
     const body = renderTemplate('charge', templateData)
     body.should.containSelector('.custom-branding-image')
 
@@ -155,7 +153,6 @@ describe('The confirm view', function () {
     const body = renderTemplate('confirm', successTemplateDataWithCollectBillingAddress)
     const $ = cheerio.load(body)
     $('#payment-description').html().should.contain('Payment Description &amp; &lt;xss attack&gt; assessment')
-    body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
     body.should.containSelector('#card-number').withText('●●●●●●●●●●●●5100')
     body.should.containSelector('#expiry-date').withText('11/99')
     body.should.containSelector('#amount').withText('£10.00')
@@ -177,7 +174,6 @@ describe('The confirm view', function () {
     }))
     const $ = cheerio.load(body)
     $('#payment-description').html().should.contain('Payment Description &amp; &lt;xss attack&gt; assessment')
-    body.should.containInputWithIdAndName('csrf', 'csrfToken', 'hidden')
     body.should.containSelector('#card-number').withText('●●●●●●●●●●●●5100')
     body.should.containSelector('#expiry-date').withText('11/99')
     body.should.containSelector('#cardholder-name').withText('Francisco Blaya-Gonzalvez')
@@ -199,7 +195,7 @@ describe('The confirm view', function () {
   })
 
   it('should render a confirm button', function () {
-    const body = renderTemplate('confirm', { confirmPath: '/card_details/123/confirm', 'charge': { id: 1234, amount: 50 } })
+    const body = renderTemplate('confirm', { confirmPath: '/card_details/123/confirm', charge: { id: 1234, amount: 50 } })
     const $ = cheerio.load(body)
     body.should.containSelector('form#confirmation').withAttributes(
       {
@@ -213,7 +209,7 @@ describe('The confirm view', function () {
   it('should have a cancel form.', function () {
     const postAction = '/post_cancel_path'
     const templateData = {
-      'post_cancel_action': postAction
+      post_cancel_action: postAction
     }
 
     const body = renderTemplate('charge', templateData)

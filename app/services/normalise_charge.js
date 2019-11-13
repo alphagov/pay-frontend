@@ -63,7 +63,6 @@ module.exports = (function () {
   const whitespace = function (body) {
     const toIgnore = [
       'submitCardDetails',
-      'csrfToken',
       'chargeId'
     ]
 
@@ -146,21 +145,21 @@ module.exports = (function () {
 
   const apiPayload = function (req, card) {
     const payload = {
-      'card_number': creditCard(req.body.cardNo),
-      'cvc': req.body.cvc,
-      'card_brand': card.brand,
-      'expiry_date': expiryDate(req.body.expiryMonth, req.body.expiryYear),
-      'cardholder_name': req.body.cardholderName,
-      'card_type': card.type,
-      'corporate_card': card.corporate,
-      'prepaid': card.prepaid,
-      'address': addressForApi(req.body),
-      'accept_header': req.header('accept'),
-      'user_agent_header': req.header('user-agent'),
-      'ip_address': userIpAddress(req)
+      card_number: creditCard(req.body.cardNo),
+      cvc: req.body.cvc,
+      card_brand: card.brand,
+      expiry_date: expiryDate(req.body.expiryMonth, req.body.expiryYear),
+      cardholder_name: req.body.cardholderName,
+      card_type: card.type,
+      corporate_card: card.corporate,
+      prepaid: card.prepaid,
+      address: addressForApi(req.body),
+      accept_header: req.header('accept'),
+      user_agent_header: req.header('user-agent'),
+      ip_address: userIpAddress(req)
     }
     if (req.body.worldpay3dsFlexDdcResult) {
-      payload['worldpay_3ds_flex_ddc_result'] = req.body.worldpay3dsFlexDdcResult
+      payload.worldpay_3ds_flex_ddc_result = req.body.worldpay3dsFlexDdcResult
     }
     return payload
   }
