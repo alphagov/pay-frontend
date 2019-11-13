@@ -84,7 +84,8 @@ describe('POST /card_details/{chargeId} endpoint', function () {
       chargeId: chargeId,
       header: sinon.spy(),
       headers: {
-        'x-request-id': 'unique-id'
+        'x-request-id': 'unique-id',
+        'x-forwarded-for': '127.0.0.1'
       }
     }
 
@@ -124,7 +125,8 @@ describe('POST /card_details/{chargeId} endpoint', function () {
       chargeId: chargeId,
       header: sinon.spy(),
       headers: {
-        'x-request-id': 'unique-id'
+        'x-request-id': 'unique-id',
+        'x-forwarded-for': '127.0.0.1'
       }
     }
     await requireChargeController(mockedConnectorClient).create(request, response)
