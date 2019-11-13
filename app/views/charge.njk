@@ -9,6 +9,8 @@
 {% set mainClasses = "charge-new" %}
 
   {% block bodyStart %}
+    {{ super() }}
+
     {% if allowApplePay or allowGooglePay %}
       <script>
       {% if allowApplePay %}
