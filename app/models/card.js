@@ -60,7 +60,7 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
             prepaid: body.prepaid
           }
 
-          logger.debug(`[${correlationId}] Checking card brand - `, {
+          logger.debug(`[${correlationId}] Checking card brand`, {
             cardBrand: card.brand,
             cardType: card.type
           })

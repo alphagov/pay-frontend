@@ -101,7 +101,7 @@ module.exports = correlationId => {
   const cancelComplete = function (response, defer) {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
-    logger.error('[%s] Calling connector cancel a charge failed -', correlationId, {
+    logger.error('[%s] Calling connector cancel a charge failed', correlationId, {
       service: 'connector',
       method: 'POST',
       status: code
@@ -127,7 +127,7 @@ module.exports = correlationId => {
 
   const updateComplete = function (response, defer) {
     if (response.statusCode !== 204) {
-      logger.error('[%s] Calling connector to update charge status failed -', correlationId, {
+      logger.error('[%s] Calling connector to update charge status failed', correlationId, {
         chargeId: response.body,
         status: response.statusCode
       })

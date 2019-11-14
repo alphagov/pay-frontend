@@ -27,11 +27,11 @@ const redirect = res => {
 }
 
 const build3dsPayload = (chargeId, req) => {
-  let auth3dsPayload = {}
+  const auth3dsPayload = {}
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
-      logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [starts with [${paRes.substring(0,50)}] and ending with [${paRes.substring(paRes.length-50)}] ]`)
+    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [starts with [${paRes.substring(0, 50)}] and ending with [${paRes.substring(paRes.length - 50)}] ]`)
   }
 
   const providerStatus = threeDsEPDQResults[_.get(req, 'body.providerStatus', '')]
@@ -68,14 +68,14 @@ const handleThreeDsResponse = (req, res, charge) => response => {
 }
 
 module.exports = {
-  auth3dsHandler(req, res) {
+  auth3dsHandler (req, res) {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const payload = build3dsPayload(charge.id, req)
     connectorClient({ correlationId }).threeDs({ chargeId: charge.id, payload })
       .then(handleThreeDsResponse(req, res, charge))
       .catch((err) => {
-        logger.error('Exception in auth3dsHandler -', {
+        logger.error('Exception in auth3dsHandler', {
           chargeId: charge.id,
           chargeStatus: charge.status,
           error: err
@@ -96,7 +96,7 @@ module.exports = {
     const worldpayChallengeJwt = _.get(charge, 'auth3dsData.worldpayChallengeJwt')
 
     if (issuerUrl && paRequest) {
-      let data = {
+      const data = {
         postUrl: issuerUrl,
         paRequest: paRequest,
         threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', { chargeId: charge.id })}`
@@ -109,7 +109,7 @@ module.exports = {
       const challengeUrl = charge.gatewayAccount.type === 'live'
         ? process.env.WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL
         : process.env.WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL
-      let data = {
+      const data = {
         postUrl: challengeUrl,
         worldpayChallengeJwt: worldpayChallengeJwt
       }

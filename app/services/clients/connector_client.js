@@ -75,7 +75,7 @@ const _putConnector = (url, payload, description, subSegment) => {
       resolve(response)
     }).catch(err => {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
-      logger.error('Calling connector threw exception -', {
+      logger.error('Calling connector threw exception', {
         service: 'connector',
         method: 'PUT',
         url: url,
@@ -107,7 +107,7 @@ const _postConnector = (url, payload, description) => {
       resolve(response)
     }).catch(err => {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
-      logger.error('Calling connector threw exception -', {
+      logger.error('Calling connector threw exception', {
         service: 'connector',
         method: 'POST',
         url: url,
@@ -139,7 +139,7 @@ const _patchConnector = (url, payload, description) => {
       resolve(response)
     }).catch(err => {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime)
-      logger.error('Calling connector threw exception -', {
+      logger.error('Calling connector threw exception', {
         service: 'connector',
         method: 'PATCH',
         url: url,
@@ -178,7 +178,7 @@ const _getConnector = (url, description) => {
       resolve(response)
     }).catch(err => {
       logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
-      logger.error('Calling connector threw exception -', {
+      logger.error('Calling connector threw exception', {
         service: 'connector',
         method: 'GET',
         url: url,
