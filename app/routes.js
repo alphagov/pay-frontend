@@ -4,6 +4,8 @@
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace, createNamespace } = require('continuation-local-storage')
 
+const helmet = require('helmet')
+
 // Local dependencies
 const logger = require('./utils/logger')(__filename)
 const charge = require('./controllers/charge_controller.js')
@@ -69,7 +71,19 @@ exports.bind = function (app) {
     stateEnforcer
   ]
 
-  app.get(card.new.path, middlewareStack, charge.new)
+  app.get(
+    card.new.path,
+    helmet.contentSecurityPolicy({
+      directives: {
+        imgSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        reportUri: 'https://pay-sentry.cloudapps.digital/api/12/security/?sentry_key=d79c63da0f1a4e0783ab9027baae56dc&sentry_environment=CSP_Card_Payment_Test'
+      },
+      reportOnly: true
+    }),
+    middlewareStack,
+    charge.new
+  )
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
