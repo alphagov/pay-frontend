@@ -16,7 +16,7 @@ const requireHelper = function requireHelper (module) {
 
 describe('CSP middleware', () => {
   it('should not apply rules if the feature is switched off', () => {
-    process.env.CSP_USE_CARD_PAYMENT_RULES = 'false'
+    process.env.CSP_SEND_HEADER = 'false'
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
@@ -28,7 +28,7 @@ describe('CSP middleware', () => {
   })
 
   it('should apply rules if the feature is switched on', () => {
-    process.env.CSP_USE_CARD_PAYMENT_RULES = 'true'
+    process.env.CSP_SEND_HEADER = 'true'
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
