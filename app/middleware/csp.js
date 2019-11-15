@@ -1,7 +1,7 @@
 const helmet = require('helmet')
 
-const applyCspRulesEnabled = process.env.CSP_SEND_HEADER === 'true'
-const blockCspViolations = process.env.CSP_ENFORCE_VIOLATIONS === 'true'
+const sendCspHeader = process.env.CSP_SEND_HEADER === 'true'
+const enforceCsp = process.env.CSP_ENFORCE === 'true'
 const cspReportUri = process.env.CSP_REPORT_URI
 const { environment } = process.env
 
@@ -11,9 +11,9 @@ const csp = helmet.contentSecurityPolicy({
   directives: {
     reportUri: sentryCspReportUri
   },
-  reportOnly: !blockCspViolations
+  reportOnly: !enforceCsp
 })
 
-const skipCSPRules = (req, res, next) => { next() }
+const skipSendingCspHeader = (req, res, next) => { next() }
 
-module.exports = applyCspRulesEnabled ? csp : skipCSPRules
+module.exports = sendCspHeader ? csp : skipSendingCspHeader

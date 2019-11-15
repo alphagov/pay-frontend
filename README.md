@@ -16,7 +16,7 @@ GOV.UK Pay Frontend application (Node.js)
 | `WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL` |    X     | `https://secure-test.worldpay.com/shopper/3ds/challenge.html` | Pointing to Worldpay's TEST 3ds flex challenge URL.                                                                                                   |
 | `WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL` |    X     |  `https://centinelapi.cardinalcommerce.com/V2/Cruise/StepUp`  | Pointing to Worldpay's LIVE 3ds flex challenge URL.                                                                                                   |
 | `CSP_SEND_HEADER`                     |          | false/undefined                                               | Apply card payment contest security policy headers.                                                                                                   |
-| `CSP_ENFORCE_VIOLATIONS`               |          | false/undefined                                               | Browser will block content security policy violations if set to true, default is to only report on violations.                                        |
+| `CSP_ENFORCE`               |          | false/undefined                                               | Browser will block content security policy violations if set to true, default is to only report on violations.                                        |
 | `CSP_REPORT_URI`                       |          |                                                               | URI to receive CSP violation reports.                                                                                                                 |
 
 ## Licence

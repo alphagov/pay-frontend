@@ -15,7 +15,7 @@ const requireHelper = function requireHelper (module) {
 }
 
 describe('CSP middleware', () => {
-  it('should not apply rules if the feature is switched off', () => {
+  it('should not set the Content-Security-Policy header if the feature is switched off', () => {
     process.env.CSP_SEND_HEADER = 'false'
     const csp = requireHelper('../../app/middleware/csp')
 
@@ -27,15 +27,27 @@ describe('CSP middleware', () => {
     expect(response.setHeader.called).to.be.false
   })
 
-  it('should apply rules if the feature is switched on', () => {
+  it('should set Report-Only on Content-Security-Policy if enforce policy is switched off', () => {
     process.env.CSP_SEND_HEADER = 'true'
+    process.env.CSP_ENFORCE = 'false'
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
     const response = { setHeader: sinon.spy() }
     csp(mockRequest, response, next)
 
-    expect(next.called).to.be.true
-    expect(response.setHeader.called).to.be.true
+    sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy-Report-Only')
+  })
+
+  it('should set standard Content-Security-Policy header (enforced) if enforce policy is switched on', () => {
+    process.env.CSP_SEND_HEADER = 'true'
+    process.env.CSP_ENFORCE = 'true'
+    const csp = requireHelper('../../app/middleware/csp')
+
+    const next = sinon.spy()
+    const response = { setHeader: sinon.spy() }
+    csp(mockRequest, response, next)
+
+    sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy')
   })
 })
