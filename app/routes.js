@@ -19,6 +19,7 @@ const paths = require('./paths.js')
 
 // Express middleware
 const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
+const csp = require('./middleware/csp')
 const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
@@ -69,7 +70,7 @@ exports.bind = function (app) {
     stateEnforcer
   ]
 
-  app.get(card.new.path, middlewareStack, charge.new)
+  app.get(card.new.path, csp, (req, res, next) => { console.log(req); next() }, middlewareStack, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)
