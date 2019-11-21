@@ -1,7 +1,7 @@
 'use strict'
 
-// NPM dependencies
 const clientSessions = require('client-sessions')
+const logger = require('../utils/logger')(__filename)
 
 // Constants
 const { COOKIE_MAX_AGE, SESSION_ENCRYPTION_KEY, SESSION_ENCRYPTION_KEY_2, SECURE_COOKIE_OFF } = process.env
@@ -122,6 +122,9 @@ function getSessionCookieName () {
  * @param {string} key
  */
 function deleteSessionVariable (req, key) {
+  logger.info('Deleting session variable', {
+    session_variable_name: key
+  })
   if (SESSION_ENCRYPTION_KEY) {
     deleteValueOnCookie(req, key, SESSION_COOKIE_NAME_1)
   }
