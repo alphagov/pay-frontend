@@ -4,32 +4,36 @@ var assert = require('assert')
 var chargeParam = require(path.join(__dirname, '/../../app/services/charge_param_retriever.js'))
 
 describe('charge param retreiver', function () {
-  var EMPTY_RESPONSE = { params: {}, body: {} }
+  var EMPTY_RESPONSE = { params: {}, body: {}, get: () => null }
 
   var NO_SESSION_GET_RESPONSE = {
     params: { chargeId: 'foo' },
     body: {},
-    method: 'GET'
+    method: 'GET',
+    get: () => null
   }
 
   var NO_SESSION_POST_RESPONSE = {
     params: {},
     body: { chargeId: 'foo' },
-    method: 'POST'
+    method: 'POST',
+    get: () => null
   }
 
   var VALID_GET_RESPONSE = {
     params: { chargeId: 'foo' },
     body: {},
     method: 'GET',
-    frontend_state: { ch_foo: true }
+    frontend_state: { ch_foo: true },
+    get: () => null
   }
 
   var VALID_POST_RESPONSE = {
     params: {},
     body: { chargeId: 'foo' },
     method: 'POST',
-    frontend_state: { ch_foo: true }
+    frontend_state: { ch_foo: true },
+    get: () => null
   }
 
   it('should return false if the charge param is not present in params or body', function () {

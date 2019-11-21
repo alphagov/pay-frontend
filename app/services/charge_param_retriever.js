@@ -11,9 +11,21 @@ exports.retrieve = req => {
       chargeId: 'undefined'
     })
     return false
-  } else if (!(cookie.getSessionCookieName() && cookie.getSessionVariable(req, 'ch_' + chargeId))) {
+  } else if (!cookie.getSessionCookieName() || !cookie.isSessionPresent(req)) {
+    logger.error('Session cookie is not present', {
+      chargeId: chargeId,
+      referrer: req.get('Referrer'),
+      url: req.originalUrl,
+      method: req.method
+    })
+    return false
+  } else if (!cookie.getSessionVariable(req, 'ch_' + chargeId)) {
     logger.error('ChargeId was not found on the session', {
-      chargeId: chargeId
+      chargeId: chargeId,
+      referrer: req.get('Referrer'),
+      url: req.originalUrl,
+      method: req.method,
+      session_keys: cookie.getSessionVariableNames(req)
     })
     return false
   }
