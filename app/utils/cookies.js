@@ -15,7 +15,9 @@ module.exports = {
   setSessionVariable,
   getSessionVariable,
   namedCookie,
-  deleteSessionVariable
+  deleteSessionVariable,
+  isSessionPresent,
+  getSessionVariableNames
 }
 
 /**
@@ -156,4 +158,14 @@ function setSessionVariable (req, key, value) {
 function getSessionVariable (req, key) {
   const session = req[getSessionCookieName()]
   return session && session[key]
+}
+
+function isSessionPresent (req) {
+  const session = req[getSessionCookieName()]
+  return session && Object.getOwnPropertyNames(session).length > 0
+}
+
+function getSessionVariableNames (req) {
+  const session = req[getSessionCookieName()]
+  return Object.keys(session)
 }

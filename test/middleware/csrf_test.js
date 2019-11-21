@@ -26,7 +26,8 @@ describe('retrieve param test', function () {
       ch_foo: {
         csrfSecret: process.env.CSRF_USER_SECRET
       }
-    }
+    },
+    get: () => null
   }
 
   var noSession = _.cloneDeep(validGetRequest)
