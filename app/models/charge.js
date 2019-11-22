@@ -65,7 +65,7 @@ module.exports = correlationId => {
     return new Promise(function (resolve, reject) {
       connectorClient({ correlationId }).cancel({ chargeId })
         .then(response => {
-          cancelComplete(response, { resolve, reject })
+          cancelComplete(chargeId, response, { resolve, reject })
         })
         .catch(err => {
           cancelFail(err, { resolve, reject })
@@ -98,13 +98,14 @@ module.exports = correlationId => {
     }
   }
 
-  const cancelComplete = function (response, defer) {
+  const cancelComplete = function (chargeId, response, defer) {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     logger.error('[%s] Calling connector cancel a charge failed', correlationId, {
       service: 'connector',
       method: 'POST',
-      status: code
+      status: code,
+      charge_id: chargeId
     })
     if (code === 400) return defer.reject(new Error('CANCEL_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
