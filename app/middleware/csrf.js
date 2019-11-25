@@ -20,13 +20,23 @@ exports.csrfTokenGeneration = (req, res, next) => {
 
 exports.csrfCheck = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
+  if (!chargeId) {
+    logger.info('Session cookie is not present, rendering unauthorised page')
+    return responseRouter.response(req, res, 'UNAUTHORISED')
+  }
+
   const chargeSession = session.retrieve(req, chargeId) || {}
   const csrfToken = req.body.csrfToken
   chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
   if (!chargeSession.csrfSecret) {
     responseRouter.response(req, res, 'UNAUTHORISED')
-    logger.error('CSRF secret is not defined')
+    logger.error('CSRF secret is not defined', {
+      chargeId: chargeId,
+      referrer: req.get('Referrer'),
+      url: req.originalUrl,
+      method: req.method
+    })
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
     logging.systemError('CSRF is invalid', req.headers && req.headers[CORRELATION_HEADER], chargeId)
     responseRouter.response(req, res, 'SYSTEM_ERROR')
