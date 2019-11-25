@@ -12,7 +12,7 @@ exports.retrieve = req => {
     })
     return false
   } else if (!cookie.getSessionCookieName() || !cookie.isSessionPresent(req)) {
-    logger.error('Session cookie is not present', {
+    logger.info('Session cookie is not present', {
       chargeId: chargeId,
       referrer: req.get('Referrer'),
       url: req.originalUrl,
@@ -20,7 +20,7 @@ exports.retrieve = req => {
     })
     return false
   } else if (!cookie.getSessionVariable(req, 'ch_' + chargeId)) {
-    logger.error('ChargeId was not found on the session', {
+    logger.info('ChargeId was not found on the session', {
       chargeId: chargeId,
       referrer: req.get('Referrer'),
       url: req.originalUrl,
