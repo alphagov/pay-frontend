@@ -1,7 +1,7 @@
 const helmet = require('helmet')
 
-const sendCspHeader = process.env.CSP_SEND_HEADER === 'true'
-const enforceCsp = process.env.CSP_ENFORCE === 'true'
+const sendCspHeader = true
+const enforceCsp = true
 const cspReportUri = process.env.CSP_REPORT_URI
 const environment = process.env.ENVIRONMENT
 
@@ -15,7 +15,7 @@ const imgSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.go
 
 // Google analytics
 const scriptSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.google-analytics.com/',
-  "'unsafe-inline'"]
+  (req, res) => `'nonce-${res.locals.nonce}'`]
 const styleSource = ["'self'"]
 
 // Google analytics, Apple pay, Google pay uses standard Payment Request API so requires no exceptions
