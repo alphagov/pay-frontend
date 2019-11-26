@@ -6,7 +6,6 @@ const { submitWithWorldpay3dsFlexDdcResult } = require('./worldpay-3ds-flex-ddc'
 var init = function () {
   var form = document.getElementById('card-details')
   var formInputs = Array.prototype.slice.call(form.querySelectorAll('input'))
-  var countryAutocomplete = document.getElementsByClassName('autocomplete__input')[0]
   var countrySelect = document.getElementById('address-country')
   var postcodeInput = document.getElementById('address-postcode')
   var cardInput = document.getElementById('card-no')
@@ -52,6 +51,10 @@ var init = function () {
     }
     e.preventDefault()
     var validations = allValidations()
+
+    // can't get the element in init() as the object wouldn't have been initalised by helpers.js -> initialiseAddressCountryAutocomplete
+    var countryAutocomplete = document.getElementsByClassName('autocomplete__input')[0]
+
     if ((window.Charge.collect_billing_address === true) && (countryAutocomplete.value === '')) {
       countryAutocomplete.value = document.getElementById('address-country-select').value
     }

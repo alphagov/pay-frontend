@@ -492,22 +492,9 @@
     </aside>
   </div>
 </div>
-  <script id="govuk-script-charge">
-    window.chargeId = "{{ id }}"
-  </script>
+
 {% endblock %}
 
 {% block bodyEnd %}
-  {% if service.collectBillingAddress %}
-  <script type="text/javascript" src="/public/location-autocomplete.min.js"></script>
-  <script type="text/javascript">
-    openregisterLocationPicker({
-      selectElement: document.getElementById('address-country'),
-      url: '/public/countries-autocomplete-graph.json',
-      autoselect: true,
-      displayMenu: 'overlay'
-    })
-  </script>
-  {% endif %}
   {% include "includes/scripts.njk" %}
 {% endblock %}

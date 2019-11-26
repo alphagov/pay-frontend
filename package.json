@@ -29,7 +29,8 @@
       "location",
       "Charge",
       "parent",
-      "showCardType"
+      "showCardType",
+      "openregisterLocationPicker"
     ],
     "ignore": [
       "app/assets/javascripts/modules/*.js"

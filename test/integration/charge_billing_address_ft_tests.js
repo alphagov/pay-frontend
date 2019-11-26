@@ -121,19 +121,19 @@ describe('chargeTests - billing address', function () {
 
   function minimumFormCardData (cardNumber) {
     return {
-      'returnUrl': RETURN_URL,
-      'cardUrl': connectorAuthUrl,
-      'chargeId': chargeId,
-      'cardNo': cardNumber,
-      'cvc': '234',
-      'expiryMonth': '11',
-      'expiryYear': '99',
-      'cardholderName': 'Jimi Hendrix',
-      'addressLine1': '32 Whip Ma Whop Ma Avenue',
-      'addressPostcode': 'Y1 1YN',
-      'addressCity': 'Willy wonka',
-      'email': 'willy@wonka.com',
-      'addressCountry': 'GB'
+      returnUrl: RETURN_URL,
+      cardUrl: connectorAuthUrl,
+      chargeId: chargeId,
+      cardNo: cardNumber,
+      cvc: '234',
+      expiryMonth: '11',
+      expiryYear: '99',
+      cardholderName: 'Jimi Hendrix',
+      addressLine1: '32 Whip Ma Whop Ma Avenue',
+      addressPostcode: 'Y1 1YN',
+      addressCity: 'Willy wonka',
+      email: 'willy@wonka.com',
+      addressCountry: 'GB'
     }
   }
 
@@ -183,7 +183,6 @@ describe('chargeTests - billing address', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
           expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('.payment-summary #amount').text()).to.eql('£23.45')
           expect($('.payment-summary #payment-description').text()).to.contain('Payment Description')
