@@ -230,7 +230,6 @@ describe('chargeTests', function () {
             const $ = cheerio.load(res.text)
             expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('#amount').text()).to.eql('£23.45')
-            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#payment-description').text()).to.contain('Payment Description')
             expect($('#govuk-script-analytics')[0].children[0].data).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '23.45', '')`)
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
@@ -552,7 +551,6 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('#amount').text()).to.eql('£23.45')
             expect($('#card-no-error').text()).to.contains('Enter a valid card number')
@@ -585,7 +583,6 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#payment-description').text()).to.contain('Payment Description')
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('#amount').text()).to.eql('£23.45')
@@ -637,7 +634,6 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#payment-description').text()).to.contain('Payment Description')
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('#amount').text()).to.eql('£23.45')
@@ -666,7 +662,6 @@ describe('chargeTests', function () {
           .expect(200)
           .expect(function (res) {
             const $ = cheerio.load(res.text)
-            expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
             expect($('#payment-description').text()).to.contain('Payment Description')
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
             expect($('#amount').text()).to.eql('£23.45')
@@ -798,7 +793,6 @@ describe('chargeTests', function () {
         .expect(200)
         .expect(function (res) {
           const $ = cheerio.load(res.text)
-          expect($('#govuk-script-charge')[0].children[0].data).to.contains(chargeId)
           expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
           expect($('#amount').text()).to.eql('£23.45')
           expect($('#payment-description').text()).to.contain('Payment Description')

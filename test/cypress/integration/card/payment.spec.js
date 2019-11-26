@@ -44,7 +44,8 @@ describe('Standard card payment flow', () => {
   const createPaymentChargeStubsWelsh = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'cy')
 
   const checkCardDetailsStubs = [
-    { name: 'connectorGetChargeDetails',
+    {
+      name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -58,7 +59,8 @@ describe('Standard card payment flow', () => {
   // i.e - charge after or before authorisation when clicking confirm should bring up confirmation page or 'your payment is in progress' page respectively
   const confirmPaymentDetailsStubs = [
     { name: 'adminUsersGetService', opts: {} },
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -75,7 +77,8 @@ describe('Standard card payment flow', () => {
   ]
 
   const submitPaymentCaptureStubs = [
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         paymentDetails: validPayment,
@@ -108,8 +111,9 @@ describe('Standard card payment flow', () => {
       // 3. Charge will be fetched (GET)
       // 4. Service related to charge will be fetched (GET)
       // 5. Charge status will be updated (PUT)
-      // 6. Client will be redirected to /card_details/:chargeId (304)
+      // 6. Client will be redirected to /card_details/:chargeId (304) and global variable `chargeId` should be set
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.window().its('chargeId').should('eq', `${chargeId}`)
     })
 
     it('Should enter and validate a correct card', () => {
@@ -169,8 +173,8 @@ describe('Standard card payment flow', () => {
       // 14. Get charge status before continuing - should be the same as authorised success (GET)
       // 15. Post to connector capture route (POST)
       // 16. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 
