@@ -5,6 +5,7 @@ if (process.env.DISABLE_APPMETRICS !== 'true') {
 
 // Node.js core dependencies
 const path = require('path')
+const crypto = require('crypto')
 
 // NPM dependencies
 const express = require('express')
@@ -66,6 +67,7 @@ function initialiseGlobalMiddleware (app) {
     res.locals.session = function () {
       return session.retrieve(req, req.chargeId)
     }
+    res.locals.nonce = crypto.randomBytes(16).toString('hex')
     next()
   })
 
