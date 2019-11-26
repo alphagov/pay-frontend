@@ -1,11 +1,15 @@
 const helmet = require('helmet')
 
-const sendCspHeader = true
-const enforceCsp = true
+const sendCspHeader = process.env.CSP_SEND_HEADER === 'true'
+const enforceCsp = process.env.CSP_ENFORCE === 'true'
 const cspReportUri = process.env.CSP_REPORT_URI
 const environment = process.env.ENVIRONMENT
 
 const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
+
+// Script responsible for setting 'js-enabled' class, extends GOV.UK frontend `layout` which we have no control over
+// and never changes
+const govUkFrontendLayoutJsEnabledScriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
 // Worldpay 3ds flex iframe
 const frameSource = ["'self'", 'https://secure-test.worldpay.com/']
@@ -15,7 +19,7 @@ const imgSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.go
 
 // Google analytics
 const scriptSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.google-analytics.com/',
-  (req, res) => `'nonce-${res.locals.nonce}'`]
+  (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
 const styleSource = ["'self'"]
 
 // Google analytics, Apple pay, Google pay uses standard Payment Request API so requires no exceptions
