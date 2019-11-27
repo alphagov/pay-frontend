@@ -10,7 +10,7 @@
 
   {% block bodyStart %}
     {% if allowApplePay or allowGooglePay %}
-      <script>
+      <script nonce="{{ nonce }}">
       {% if allowApplePay %}
           if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
             document.body.classList.add('apple-pay-available')

@@ -15,7 +15,7 @@ const imgSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.go
 
 // Google analytics
 const scriptSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.google-analytics.com/',
-  "'unsafe-inline'"]
+  (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, "'unsafe-inline'"]
 const styleSource = ["'self'"]
 
 // Google analytics, Apple pay, Google pay uses standard Payment Request API so requires no exceptions
