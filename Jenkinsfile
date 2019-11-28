@@ -12,7 +12,7 @@ pipeline {
   }
 
   libraries {
-    lib("pay-jenkins-library@PP-5889-dont-build-frontned-one-hundred-times")
+    lib("pay-jenkins-library@master")
   }
   environment {
     RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"

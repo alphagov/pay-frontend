@@ -1,8 +1,14 @@
-FROM govukpay/nodejs:alpine-3.8
+FROM node:12.13-alpine
 
 RUN apk update &&\
-    apk upgrade &&\
-    apk add --update bash ruby
+    apk upgrade
+
+RUN ["apk", "add", "--no-cache", "--update", "bash", "make", "g++", "python", "git", "ruby"]
+
+RUN  apk --no-cache add ca-certificates wget bash \
+&& wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+&& wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk \
+&& apk add glibc-2.29-r0.apk
 
 # add package.json before source for node_module cache layer
 ADD package.json /tmp/package.json
