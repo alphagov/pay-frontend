@@ -11,6 +11,8 @@
   var fileOptions = { encoding: 'utf-8' }
   var pid
 
+  logger.info(`[process.version=${process.version}] [NODE_VERSION=${process.env.NODE_VERSION}]`)
+
   /**
    * throng is a wrapper around node cluster
    * https://github.com/hunterloftis/throng
@@ -29,7 +31,7 @@
   function startMaster () {
     logger.info(`Master started. PID: ${process.pid}`)
     process.on('SIGINT', () => {
-      logger.info(`Master exiting`)
+      logger.info('Master exiting')
       process.exit()
     })
   }
