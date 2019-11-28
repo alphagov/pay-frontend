@@ -12,7 +12,7 @@ pipeline {
   }
 
   libraries {
-    lib("pay-jenkins-library@master")
+    lib("pay-jenkins-library@PP-5889-dont-build-frontned-one-hundred-times")
   }
   environment {
     RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"
@@ -38,9 +38,9 @@ pipeline {
       steps {
         cypress('frontend')
       }
-      post { 
-        always { 
-          script { 
+      post {
+        always {
+          script {
             cypress.cleanUp()
           }
         }
