@@ -1,5 +1,3 @@
-#!/usr/bin/env groovy
-
 pipeline {
   agent any
 
@@ -15,9 +13,9 @@ pipeline {
     lib("pay-jenkins-library@PP-5889-dont-build-frontned-one-hundred-times")
   }
   environment {
-    npm_config_cache = 'npm-cache'
     RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"
     JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
+    npm_config_cache = 'npm-cache'
   }
 
   stages {

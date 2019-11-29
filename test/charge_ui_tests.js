@@ -41,7 +41,7 @@ const generateConfirmViewTemplateData = (templateData = {}) => {
 describe('The charge view', function () {
   it('should render the amount', function () {
     const templateData = {
-      'amount': '50.00'
+      amount: '50.00'
     }
 
     const body = renderTemplate('charge', templateData)
@@ -51,7 +51,7 @@ describe('The charge view', function () {
   it('should have a submit form.', function () {
     const postAction = '/post_card_path'
     const templateData = {
-      'post_card_action': postAction
+      post_card_action: postAction
     }
 
     const body = renderTemplate('charge', templateData)
@@ -114,7 +114,7 @@ describe('The charge view', function () {
   })
 
   it('should display custom branding', () => {
-    const templateData = lodash.merge('charge', { 'id': '1234' }, customBrandingData)
+    const templateData = lodash.merge('charge', { id: '1234' }, customBrandingData)
     const body = renderTemplate('charge', templateData)
     body.should.containSelector('.custom-branding-image')
 
@@ -199,7 +199,7 @@ describe('The confirm view', function () {
   })
 
   it('should render a confirm button', function () {
-    const body = renderTemplate('confirm', { confirmPath: '/card_details/123/confirm', 'charge': { id: 1234, amount: 50 } })
+    const body = renderTemplate('confirm', { confirmPath: '/card_details/123/confirm', charge: { id: 1234, amount: 50 } })
     const $ = cheerio.load(body)
     body.should.containSelector('form#confirmation').withAttributes(
       {
@@ -213,7 +213,7 @@ describe('The confirm view', function () {
   it('should have a cancel form.', function () {
     const postAction = '/post_cancel_path'
     const templateData = {
-      'post_cancel_action': postAction
+      post_cancel_action: postAction
     }
 
     const body = renderTemplate('charge', templateData)

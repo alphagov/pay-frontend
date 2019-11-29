@@ -12,21 +12,21 @@ exports.uniformlyGeneratedRandomNumber = () => {
   // 1. Generate a random number
   // 2. Hash it so it is uniformly distributed
   // 3. Modulo 100
-  let abUuid = random.randomUuid()
-  let hash = crypto.createHash('sha256')
+  const abUuid = random.randomUuid()
+  const hash = crypto.createHash('sha256')
 
   hash.update(abUuid)
 
   // We will Math.ceil our number so we don't have to check zeros
-  let uniformHash = hash.digest('hex')
-  let uniformNumber = parseInt(uniformHash, 16)
-  let uniformModNumber = Math.ceil(uniformNumber % 100)
+  const uniformHash = hash.digest('hex')
+  const uniformNumber = parseInt(uniformHash, 16)
+  const uniformModNumber = Math.ceil(uniformNumber % 100)
 
   return uniformModNumber
 }
 
 exports._getSession = req => {
-  let sessionVal = cookie.getSessionVariable(req, 'abTestId')
+  const sessionVal = cookie.getSessionVariable(req, 'abTestId')
   return sessionVal || null
 }
 

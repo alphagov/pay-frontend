@@ -2,7 +2,7 @@
 
 const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42, serviceOpts = {}, providerOpts = {}) {
   return [
-    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, 'status': 'CREATED' } },
+    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, status: 'CREATED' } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',
@@ -33,7 +33,7 @@ const buildChargeFromTokenNotFound = function buildChargeFromTokenNotFound (toke
 
 const buildUsedTokenAndReturnPaymentChargeStubs = function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
   return [
-    { name: 'connectorCreateChargeFromToken', opts: { 'tokenId': tokenId, 'gatewayAccountId': gatewayAccountId, 'used': true, 'status': status } },
+    { name: 'connectorCreateChargeFromToken', opts: { tokenId: tokenId, gatewayAccountId: gatewayAccountId, used: true, status: status } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',

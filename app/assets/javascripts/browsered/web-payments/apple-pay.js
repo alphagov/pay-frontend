@@ -7,7 +7,7 @@ module.exports = () => {
   const session = new ApplePaySession(4, prepareAppleRequestObject())
 
   function validateMerchantSession (url) {
-    return fetch(`/apple-pay-merchant-validation`, {
+    return fetch('/apple-pay-merchant-validation', {
       method: 'POST',
       credentials: 'same-origin',
       headers: {

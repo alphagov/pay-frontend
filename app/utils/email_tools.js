@@ -25,7 +25,7 @@ const validEmail = email => {
   const match = reValidEmail.exec(email)
   return {
     'local-part': match !== null ? match[1] : false,
-    'domain': match !== null ? match[7] : false
+    domain: match !== null ? match[7] : false
   }
 }
 

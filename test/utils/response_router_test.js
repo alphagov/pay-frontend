@@ -111,17 +111,17 @@ describe('rendering behaviour', () => {
   })
 
   const defaultTemplates = {
-    'ERROR': {
+    ERROR: {
       template: 'error',
       code: 500,
       message: 'There is a problem, please try again later'
     },
-    'NOT_FOUND': {
+    NOT_FOUND: {
       template: 'error',
       code: 404,
       message: 'Page cannot be found'
     },
-    'HUMANS': {
+    HUMANS: {
       template: 'plain_message',
       code: 200,
       message: 'GOV.UK Payments is built by a team at the Government Digital Service in London. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'

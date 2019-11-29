@@ -43,7 +43,7 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
     const innerForm = iFrameContent.getElementById('collectionForm')
     innerForm.action = Charge.worldpay_3ds_flex_ddc_url
     iFrameContent.getElementById('input-jwt').value = Charge.worldpay_3ds_flex_ddc_jwt
-    iFrameContent.getElementById('input-bin').value = form.elements['cardNo'].value
+    iFrameContent.getElementById('input-bin').value = form.elements.cardNo.value
     innerForm.submit()
   }
 

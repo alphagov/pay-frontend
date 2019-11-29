@@ -37,12 +37,12 @@ const client = request
   })
 
 const getHeaders = function getHeaders (args, segmentData, url) {
-  let headers = {}
+  const headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
   if (url) {
     const port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
-    headers['host'] = urlParse(url).hostname + port
+    headers.host = urlParse(url).hostname + port
   }
 
   if (segmentData.clsSegment) {

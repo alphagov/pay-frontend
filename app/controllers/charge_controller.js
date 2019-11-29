@@ -215,7 +215,7 @@ module.exports = {
           },
           error => {
             subSegment.close(error.message)
-            return res.json({ 'accepted': false, message: error.message })
+            return res.json({ accepted: false, message: error.message })
           }
         )
     }, clsSegment)

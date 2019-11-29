@@ -63,21 +63,21 @@ describe('POST /card_details/{chargeId} endpoint', function () {
       }
     }
     paymentDetails = {
-      'chargeId': chargeId,
-      'cardNo': '4242424242424242',
-      'expiryMonth': '01',
-      'expiryYear': '20',
-      'cardholderName': 'Joe Bloggs',
-      'cvc': '111',
-      'addressCountry': 'GB',
-      'addressLine1': '1 Horse Guards',
-      'addressCity': 'London',
-      'addressPostcode': 'E1 8QS'
+      chargeId: chargeId,
+      cardNo: '4242424242424242',
+      expiryMonth: '01',
+      expiryYear: '20',
+      cardholderName: 'Joe Bloggs',
+      cvc: '111',
+      addressCountry: 'GB',
+      addressLine1: '1 Horse Guards',
+      addressCity: 'London',
+      addressPostcode: 'E1 8QS'
     }
   })
 
   it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
-    paymentDetails['worldpay3dsFlexDdcResult'] = 'a-worldpay-3ds-flex-ddc-result'
+    paymentDetails.worldpay3dsFlexDdcResult = 'a-worldpay-3ds-flex-ddc-result'
     const request = {
       chargeData: chargeData,
       body: paymentDetails,
@@ -112,8 +112,8 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
-        'chargeId': chargeId,
-        'payload': payload
+        chargeId: chargeId,
+        payload: payload
       }
     ))).to.be.true // eslint-disable-line
   })
@@ -152,8 +152,8 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
-        'chargeId': chargeId,
-        'payload': payload
+        chargeId: chargeId,
+        payload: payload
       }
     ))).to.be.true // eslint-disable-line
   })

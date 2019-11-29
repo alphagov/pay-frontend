@@ -11,9 +11,9 @@ var expect = chai.expect
 
 chai.use(chaiAsPromised)
 
-let requireReturnController = function () {
-  let mocks = {
-    'csrf': function () {
+const requireReturnController = function () {
+  const mocks = {
+    csrf: function () {
       return {
         secretSync: function () {
           return 'foo'

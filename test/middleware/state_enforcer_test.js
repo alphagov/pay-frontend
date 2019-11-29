@@ -51,8 +51,10 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(500))
     assert(render.calledWith('error',
-      { message: 'There is a problem, please try again later',
-        viewName: 'error' }
+      {
+        message: 'There is a problem, please try again later',
+        viewName: 'error'
+      }
     ))
   })
 
@@ -65,7 +67,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(200))
     assert(render.calledWith('errors/incorrect_state/auth_success',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -73,7 +76,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/in_progress'
         },
         returnUrl: '/return/1',
-        viewName: 'AUTHORISATION_SUCCESS' }
+        viewName: 'AUTHORISATION_SUCCESS'
+      }
     ))
   })
 
@@ -86,7 +90,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(200))
     assert(render.calledWith('errors/incorrect_state/auth_waiting',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -94,7 +99,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/in_progress'
         },
         returnUrl: '/return/1',
-        viewName: 'AUTHORISATION_READY' }
+        viewName: 'AUTHORISATION_READY'
+      }
     ))
   })
   it('should throw an error when a view is passed in without having a state', function () {
@@ -116,7 +122,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(200))
     assert(render.calledWith('errors/charge_confirm_state_completed',
-      { status: 'successful',
+      {
+        status: 'successful',
         chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
@@ -125,7 +132,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/success_return'
         },
         returnUrl: '/return/1',
-        viewName: 'CAPTURED' }
+        viewName: 'CAPTURED'
+      }
     ))
   })
 
@@ -138,7 +146,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(200))
     assert(render.calledWith('errors/incorrect_state/auth_failure',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -146,7 +155,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/auth_failure'
         },
         returnUrl: '/return/1',
-        viewName: 'AUTHORISATION_REJECTED' }
+        viewName: 'AUTHORISATION_REJECTED'
+      }
     ))
   })
 
@@ -159,7 +169,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(200))
     assert(render.calledWith('errors/incorrect_state/auth_failure',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -167,7 +178,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/auth_failure'
         },
         returnUrl: '/return/1',
-        viewName: 'AUTHORISATION_CANCELLED' }
+        viewName: 'AUTHORISATION_CANCELLED'
+      }
     ))
   })
   it('should render the capture_failure view the correct analytics when capture fails', function () {
@@ -178,7 +190,8 @@ describe('state enforcer', function () {
     }, response, next)
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(render.calledWith('errors/incorrect_state/capture_failure',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -186,7 +199,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/capture_failure'
         },
         returnUrl: '/return/1',
-        viewName: 'CAPTURE_FAILURE' }
+        viewName: 'CAPTURE_FAILURE'
+      }
     ))
   })
 
@@ -199,7 +213,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line
     assert(status.calledWith(200))
     assert(render.calledWith('errors/incorrect_state/capture_failure',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -207,7 +222,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/capture_failure'
         },
         returnUrl: '/return/1',
-        viewName: 'CAPTURE_ERROR' }
+        viewName: 'CAPTURE_ERROR'
+      }
     ))
   })
 
@@ -220,7 +236,8 @@ describe('state enforcer', function () {
     expect(next.notCalled).to.be.true // eslint-disable-line 
     assert(status.calledWith(200))
     assert(render.calledWith('errors/incorrect_state/capture_waiting',
-      { chargeId: 1,
+      {
+        chargeId: 1,
         analytics: {
           analyticsId: 'Test AnalyticsID',
           type: 'Test Type',
@@ -228,7 +245,8 @@ describe('state enforcer', function () {
           path: '/card_details/1/in_progress'
         },
         returnUrl: '/return/1',
-        viewName: 'CAPTURE_READY' }
+        viewName: 'CAPTURE_READY'
+      }
     ))
   })
 })

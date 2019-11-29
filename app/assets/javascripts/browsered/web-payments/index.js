@@ -41,7 +41,7 @@ const setupEventListener = () => {
     })
 
     standardMethodForm.addEventListener('submit', function (e) {
-      ga('send', 'event', 'Standard', 'Selection', `User chose Standard method`)
+      ga('send', 'event', 'Standard', 'Selection', 'User chose Standard method')
     })
   }
 }

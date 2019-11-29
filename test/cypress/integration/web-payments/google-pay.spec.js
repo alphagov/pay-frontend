@@ -30,7 +30,8 @@ describe('Google Pay payment flow', () => {
   const createPaymentChargeStubs = [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
-    { name: 'connectorGetChargeDetails',
+    {
+      name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
         status: 'CREATED',

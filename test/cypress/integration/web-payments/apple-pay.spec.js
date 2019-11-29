@@ -38,7 +38,8 @@ describe('Apple Pay payment flow', () => {
   const createPaymentChargeStubs = [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
-    { name: 'connectorGetChargeDetails',
+    {
+      name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
         status: 'CREATED',
@@ -73,7 +74,7 @@ describe('Apple Pay payment flow', () => {
     if (path === '/apple-pay-merchant-validation') {
       return new Promise(resolve => resolve({
         status: 200,
-        json: () => new Promise(resolve => resolve({ signature: `legit` }))
+        json: () => new Promise(resolve => resolve({ signature: 'legit' }))
       }))
     }
     // Mock payment auth response

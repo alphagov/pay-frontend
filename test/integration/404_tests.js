@@ -7,7 +7,7 @@ describe('Invalid pages redirect to 404 page', function () {
     request(app)
       .get('/notapage')
       .expect(302)
-      .expect(res => expect(res.headers['location']).to.equal('https://www.gov.uk/404'))
+      .expect(res => expect(res.headers.location).to.equal('https://www.gov.uk/404'))
       .end(done)
   })
 
@@ -15,7 +15,7 @@ describe('Invalid pages redirect to 404 page', function () {
     request(app)
       .get('/')
       .expect(200)
-      .expect(res => expect(res.headers['location']).to.not.equal('https://www.gov.uk/404'))
+      .expect(res => expect(res.headers.location).to.not.equal('https://www.gov.uk/404'))
       .end(done)
   })
 
@@ -23,7 +23,7 @@ describe('Invalid pages redirect to 404 page', function () {
     request(app)
       .get('/public/images/spinner.gif')
       .expect(200)
-      .expect(res => expect(res.headers['location']).to.not.equal('https://www.gov.uk/404'))
+      .expect(res => expect(res.headers.location).to.not.equal('https://www.gov.uk/404'))
       .end(done)
   })
 })

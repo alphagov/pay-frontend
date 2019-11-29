@@ -22,7 +22,7 @@ describe('charge validator', () => {
 
     describe('when there is an error in a required field', () => {
       before(() => {
-        result = validator.verify({ 'cardNo': '4242' })
+        result = validator.verify({ cardNo: '4242' })
       })
 
       it('it should add any fields containing errors to the \'errorFields\' array of the returned object', () => {
@@ -42,7 +42,7 @@ describe('charge validator', () => {
 
     describe('when there is an error in an optional field', () => {
       before(() => {
-        result = validator.verify({ 'addressLine2': '012345678901 Cheese Avenue' })
+        result = validator.verify({ addressLine2: '012345678901 Cheese Avenue' })
       })
 
       it('it should add any fields containing errors to the \'errorFields\' array of the returned object', () => {

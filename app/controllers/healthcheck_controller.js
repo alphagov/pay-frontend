@@ -3,7 +3,7 @@ const _ = require('lodash')
 const logger = require('../utils/logger')(__filename)
 const baseClient = require('../services/clients/base_client/base_client')
 
-const healthyPingResponse = { 'ping': { 'healthy': true } }
+const healthyPingResponse = { ping: { healthy: true } }
 
 const respond = (res, statusCode, data) => {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' })

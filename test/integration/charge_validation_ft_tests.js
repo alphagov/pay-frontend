@@ -5,9 +5,9 @@ const cheerio = require('cheerio')
 const State = require('../../config/state.js')
 const cookie = require('../test_helpers/session.js')
 
-let { postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
+const { postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
 
-let defaultCardID = function () {
+const defaultCardID = function () {
   nock(process.env.CARDID_HOST)
     .post('/v1/api/card', () => {
       return true
@@ -21,7 +21,7 @@ const mockSuccessPatchEmail = function (chargeId) {
     })
     .reply(200)
 }
-let localServer = process.env.CONNECTOR_HOST
+const localServer = process.env.CONNECTOR_HOST
 
 const connectorChargePath = '/v1/frontend/charges/'
 const chargeId = '23144323'
@@ -37,20 +37,20 @@ describe('checks for PAN-like numbers', () => {
   it('shows an error when a card is submitted with non-PAN fields containing a suspected PAN', function (done) {
     const chargeId = '23144323'
     const formWithAllFieldsContainingTooManyDigits = {
-      'returnUrl': RETURN_URL,
-      'cardUrl': connectorAuthUrl,
-      'chargeId': chargeId,
-      'cardNo': '4242424242424242',
-      'cvc': '234',
-      'expiryMonth': '11',
-      'expiryYear': '99',
-      'cardholderName': '012345678901Jimi Hendrix',
-      'addressLine1': '012345678901 Whip Ma Whop Ma Avenue',
-      'addressLine2': '012345678901line two',
-      'addressPostcode': 'Y1 012345678901 1YN',
-      'addressCity': 'Willy wonka 012345678901',
-      'email': '012345678901willy@wonka.com',
-      'addressCountry': 'US'
+      returnUrl: RETURN_URL,
+      cardUrl: connectorAuthUrl,
+      chargeId: chargeId,
+      cardNo: '4242424242424242',
+      cvc: '234',
+      expiryMonth: '11',
+      expiryYear: '99',
+      cardholderName: '012345678901Jimi Hendrix',
+      addressLine1: '012345678901 Whip Ma Whop Ma Avenue',
+      addressLine2: '012345678901line two',
+      addressPostcode: 'Y1 012345678901 1YN',
+      addressCity: 'Willy wonka 012345678901',
+      email: '012345678901willy@wonka.com',
+      addressCountry: 'US'
     }
     const cookieValue = cookie.create(chargeId, {})
 
@@ -89,20 +89,20 @@ describe('checks for PAN-like numbers', () => {
   it('shows an error when a card is submitted with a card holder name containing a suspected CVV', function (done) {
     const chargeId = '23144323'
     const formWithAllFieldsContainingTooManyDigits = {
-      'returnUrl': RETURN_URL,
-      'cardUrl': connectorAuthUrl,
-      'chargeId': chargeId,
-      'cardNo': '4242424242424242',
-      'cvc': '234',
-      'expiryMonth': '11',
-      'expiryYear': '99',
-      'cardholderName': '234',
-      'addressLine1': 'Whip Ma Whop Ma Avenue',
-      'addressLine2': '1line two',
-      'addressPostcode': 'Y1 1YN',
-      'addressCity': 'Willy Wonka',
-      'email': 'willy@wonka.com',
-      'addressCountry': 'US'
+      returnUrl: RETURN_URL,
+      cardUrl: connectorAuthUrl,
+      chargeId: chargeId,
+      cardNo: '4242424242424242',
+      cvc: '234',
+      expiryMonth: '11',
+      expiryYear: '99',
+      cardholderName: '234',
+      addressLine1: 'Whip Ma Whop Ma Avenue',
+      addressLine2: '1line two',
+      addressPostcode: 'Y1 1YN',
+      addressCity: 'Willy Wonka',
+      email: 'willy@wonka.com',
+      addressCountry: 'US'
     }
     const cookieValue = cookie.create(chargeId, {})
 
@@ -126,20 +126,20 @@ describe('checks for PAN-like numbers', () => {
   it('shows an error when an email contains what could be a typo', function (done) {
     const chargeId = '23144323'
     const formWithAllFieldsContainingTooManyDigits = {
-      'returnUrl': RETURN_URL,
-      'cardUrl': connectorAuthUrl,
-      'chargeId': chargeId,
-      'cardNo': '4242424242424242',
-      'cvc': '234',
-      'expiryMonth': '11',
-      'expiryYear': '99',
-      'cardholderName': 'A Name',
-      'addressLine1': 'Whip Ma Whop Ma Avenue',
-      'addressLine2': '1line two',
-      'addressPostcode': 'Y1 1YN',
-      'addressCity': 'Townfordshire',
-      'email': 'willy@wonka.con',
-      'addressCountry': 'US'
+      returnUrl: RETURN_URL,
+      cardUrl: connectorAuthUrl,
+      chargeId: chargeId,
+      cardNo: '4242424242424242',
+      cvc: '234',
+      expiryMonth: '11',
+      expiryYear: '99',
+      cardholderName: 'A Name',
+      addressLine1: 'Whip Ma Whop Ma Avenue',
+      addressLine2: '1line two',
+      addressPostcode: 'Y1 1YN',
+      addressCity: 'Townfordshire',
+      email: 'willy@wonka.con',
+      addressCountry: 'US'
     }
     const cookieValue = cookie.create(chargeId, {})
 

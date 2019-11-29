@@ -24,7 +24,8 @@ describe('Standard card payment flow', () => {
   const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId)
 
   const checkCardDetailsStubs = [
-    { name: 'connectorGetChargeDetails',
+    {
+      name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -41,7 +42,8 @@ describe('Standard card payment flow', () => {
     alteredValidPayment.email = email
     return [
       { name: 'adminUsersGetService', opts: {} },
-      { name: 'connectorMultipleSubsequentChargeDetails',
+      {
+        name: 'connectorMultipleSubsequentChargeDetails',
         opts: [{
           chargeId,
           status: 'ENTERING CARD DETAILS',
@@ -59,7 +61,8 @@ describe('Standard card payment flow', () => {
   }
 
   const submitPaymentCaptureStubs = [
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         paymentDetails: validPayment,
@@ -161,8 +164,8 @@ describe('Standard card payment flow', () => {
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 
@@ -241,8 +244,8 @@ describe('Standard card payment flow', () => {
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 
@@ -321,8 +324,8 @@ describe('Standard card payment flow', () => {
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 })

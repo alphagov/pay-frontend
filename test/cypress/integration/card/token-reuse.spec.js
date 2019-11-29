@@ -9,7 +9,8 @@ describe('Re-use token flow', () => {
   const usedTokenAndReturnPaymentExpiredChargeStubs = cardPaymentStubs.buildUsedTokenAndReturnPaymentChargeStubs(tokenId, chargeId, 'EXPIRED')
 
   const checkCardDetailsStubs = [
-    { name: 'connectorGetChargeDetails',
+    {
+      name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -33,7 +34,8 @@ describe('Re-use token flow', () => {
 
   const confirmPaymentDetailsStubs = [
     { name: 'adminUsersGetService', opts: {} },
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -83,9 +85,9 @@ describe('Re-use token flow', () => {
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
 
-      cy.get('#card-details-link').should(($a) => expect($a).to.contain(`Continue with your payment`))
+      cy.get('#card-details-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#card-details-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}`))
-      cy.get('#return-url').should(($a) => expect($a).to.contain(`Go back to try the payment again`))
+      cy.get('#return-url').should(($a) => expect($a).to.contain('Go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#card-details-link').click()
@@ -144,9 +146,9 @@ describe('Re-use token flow', () => {
 
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
 
-      cy.get('#confirm-link').should(($a) => expect($a).to.contain(`Continue with your payment`))
+      cy.get('#confirm-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#confirm-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}/confirm`))
-      cy.get('#return-url').should(($a) => expect($a).to.contain(`Go back to try the payment again`))
+      cy.get('#return-url').should(($a) => expect($a).to.contain('Go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#confirm-link').click()

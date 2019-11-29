@@ -35,10 +35,10 @@ const resolveServiceMiddleware = function (findServicePromise) {
 }
 
 const analyticsDataForErrors = {
-  'analyticsId': 'Service unavailable',
-  'type': 'Service unavailable',
-  'paymentProvider': 'Service unavailable',
-  'amount': '0.00'
+  analyticsId: 'Service unavailable',
+  type: 'Service unavailable',
+  paymentProvider: 'Service unavailable',
+  amount: '0.00'
 }
 
 describe('resolve service middleware', function () {
@@ -63,7 +63,7 @@ describe('resolve service middleware', function () {
 
   it('should display UNAUTHORISED if charge id is missing', function () {
     const resolveService = resolveServiceMiddleware()
-    const expectedRenderData = { 'analytics': analyticsDataForErrors, 'viewName': 'UNAUTHORISED' }
+    const expectedRenderData = { analytics: analyticsDataForErrors, viewName: 'UNAUTHORISED' }
     const req = {
       headers: []
     }

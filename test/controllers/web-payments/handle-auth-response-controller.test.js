@@ -143,14 +143,14 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'CAPTURE_FAILURE',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/capture_failure',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'CAPTURE_FAILURE',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/capture_failure',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
@@ -187,15 +187,15 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
@@ -230,15 +230,15 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
@@ -257,15 +257,15 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(() => {}, mockNormaliseCharge, mockCookies)(req, res)
