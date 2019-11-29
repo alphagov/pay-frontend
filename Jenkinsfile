@@ -12,9 +12,10 @@ pipeline {
   }
 
   libraries {
-    lib("pay-jenkins-library@master")
+    lib("pay-jenkins-library@PP-5889-dont-build-frontned-one-hundred-times")
   }
   environment {
+    npm_config_cache = 'npm-cache'
     RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"
     JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
   }
@@ -23,15 +24,49 @@ pipeline {
     stage('Docker Build') {
       steps {
         script {
-          buildAppWithMetrics {
-            app = "frontend"
-          }
+          env.image = "${gitCommit()}-${env.BUILD_NUMBER}"
+          buildAppWithMetrics { app = "frontend" }
         }
       }
       post {
         failure {
           postMetric("frontend.docker-build.failure", 1)
         }
+      }
+    }
+    stage('Docker CI') {
+      agent { docker { image "govukpay/frontend:${env.image}" } }
+      stages {
+        stage('Setup') {
+          steps {
+            sh 'node --version'
+            sh 'npm --version'
+            sh 'npm ci'
+          }
+        }
+        stage('Lint') {
+          steps {
+            sh 'npm run lint'
+          }
+        }
+        stage('Unit/ Integration tests') {
+          steps {
+            sh 'npm test -- --forbid-only --forbid-pending'
+          }
+        }
+        // stage('Publish pacts') {
+        //   steps {
+        //     script {
+        //       sh """"
+        //       NUMBER_OF_PACTS=$(ls -1 ./pacts | wc -l)
+        //       if [ $NUMBER_OF_PACTS -gt 0 ] then
+        //         for i in ./pacts/*-to-be-*.json; do mv "$i" "${i%.json}.ignore"; done
+        //         npm run publish-pacts
+        //       fi
+        //       """
+        //     }
+        //   }
+        // }
       }
     }
     stage('Browser Tests') {
