@@ -13,17 +13,22 @@ const govUkFrontendLayoutJsEnabledScriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT
 
 // Worldpay 3ds flex iframe
 const frameSource = ["'self'", 'https://secure-test.worldpay.com/']
+const CSP_NONE = ["'none'"]
+const CSP_SELF = ["'self'"]
+
+// Worldpay 3ds flex iframe - frame and child must be kept in sync
+const frameAndChildSource = ["'self'", 'https://secure-test.worldpay.com/', 'https://centinelapi.cardinalcommerce.com/']
 
 // Google analytics
-const imgSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.google-analytics.com/']
+const imgSource = ["'self'", 'https://www.google-analytics.com/']
 
 // Google analytics
-const scriptSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.google-analytics.com/',
+const scriptSource = ["'self'", 'https://www.google-analytics.com/',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
 const styleSource = ["'self'"]
 
 // Google analytics, Apple pay, Google pay uses standard Payment Request API so requires no exceptions
-const connectSource = ["'self'", 'https://www.google-analytics.com/', 'http://www.google-analytics.com/',
+const connectSource = ["'self'", 'https://www.google-analytics.com/',
   'https://apple-pay-gateway.apple.com/', 'https://apple-pay-gateway-nc-pod1.apple.com/',
   'https://apple-pay-gateway-nc-pod2.apple.com/', 'https://apple-pay-gateway-nc-pod3.apple.com/',
   'https://apple-pay-gateway-nc-pod4.apple.com/', 'https://apple-pay-gateway-nc-pod5.apple.com/',
@@ -45,11 +50,20 @@ const connectSource = ["'self'", 'https://www.google-analytics.com/', 'http://ww
 const csp = helmet.contentSecurityPolicy({
   directives: {
     reportUri: sentryCspReportUri,
-    frameSrc: frameSource,
+    frameSrc: frameAndChildSource,
+    childSrc: frameAndChildSource,
     imgSrc: imgSource,
-    styleSrc: styleSource,
     scriptSrc: scriptSource,
-    connectSrc: connectSource
+    connectSrc: connectSource,
+    styleSrc: CSP_SELF,
+    formAction: CSP_SELF,
+    fontSrc: CSP_SELF,
+    frameAncestors: CSP_SELF,
+    manifestSrc: CSP_NONE,
+    mediaSrc: CSP_NONE,
+    objectSrc: CSP_NONE,
+    baseUri: CSP_NONE,
+    blockAllMixedContent: true
   },
   reportOnly: !enforceCsp
 })
