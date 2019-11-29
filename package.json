@@ -48,14 +48,7 @@
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
-    "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect",
     "publish-pacts": "./bin/publish-pacts.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.js": [
@@ -122,7 +115,6 @@
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.3",
     "chokidar-cli": "latest",
-    "cypress": "3.1.5",
     "dotenv": "^8.2.0",
     "envfile": "^4.1.0",
     "eslint": "^6.7.1",
@@ -139,7 +131,6 @@
     "grunt-contrib-watch": "1.1.x",
     "grunt-rewrite": "1.0.x",
     "grunt-sass": "3.1.x",
-    "husky": "^3.1.0",
     "lint-staged": "^9.4.3",
     "mocha": "6.2.x",
     "mountebank": "2.1.2",
@@ -152,7 +143,6 @@
     "proxyquire": "~2.1.3",
     "sass-lint": "^1.13.1",
     "sinon": "7.5.x",
-    "snyk": "^1.251.x",
     "standard": "^14.3.x",
     "superagent": "^5.1.1",
     "supertest": "^4.0.2"
@@ -165,6 +155,5 @@
     "statements": 85,
     "functions": 85,
     "branches": 85
-  },
-  "snyk": true
+  }
 }
