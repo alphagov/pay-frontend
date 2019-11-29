@@ -9,7 +9,7 @@ const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
 
 // Script responsible for setting 'js-enabled' class, extends GOV.UK frontend `layout` which we have no control over
 // and never changes
-const govUkFrontendLayoutJsEnabledScriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
+const govUkFrontendLayoutJsEnabledScriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU1='"
 
 // Worldpay 3ds flex iframe
 const frameSource = ["'self'", 'https://secure-test.worldpay.com/']

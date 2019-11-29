@@ -44,7 +44,8 @@ describe('Standard card payment flow', () => {
   const createPaymentChargeStubsWelsh = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'cy')
 
   const checkCardDetailsStubs = [
-    { name: 'connectorGetChargeDetails',
+    {
+      name: 'connectorGetChargeDetails',
       opts: {
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -58,7 +59,8 @@ describe('Standard card payment flow', () => {
   // i.e - charge after or before authorisation when clicking confirm should bring up confirmation page or 'your payment is in progress' page respectively
   const confirmPaymentDetailsStubs = [
     { name: 'adminUsersGetService', opts: {} },
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         status: 'ENTERING CARD DETAILS',
@@ -75,7 +77,8 @@ describe('Standard card payment flow', () => {
   ]
 
   const submitPaymentCaptureStubs = [
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         paymentDetails: validPayment,
@@ -110,6 +113,14 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    // set csp.js -> govUkFrontendLayoutJsEnabledScriptHash to incorrect SHA
+    it('Should not run GOV.UK frontend inline script due to CSP violation', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+      cy.visit(`/card_details/${chargeId}`)
+
+      cy.get('body').should('not.have.class', 'js-enabled')
     })
 
     it('Should enter and validate a correct card', () => {
@@ -169,8 +180,8 @@ describe('Standard card payment flow', () => {
       // 14. Get charge status before continuing - should be the same as authorised success (GET)
       // 15. Post to connector capture route (POST)
       // 16. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 
