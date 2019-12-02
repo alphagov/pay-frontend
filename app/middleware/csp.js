@@ -5,7 +5,9 @@ const enforceCsp = process.env.CSP_ENFORCE === 'true'
 const cspReportUri = process.env.CSP_REPORT_URI
 const environment = process.env.ENVIRONMENT
 const allowUnsafeEvalScripts = process.env.CSP_ALLOW_UNSAFE_EVAL_SCRIPTS === 'true'
-
+const logger = require('../utils/logger')(__filename)
+logger.info(`enforceCsp: ${enforceCsp}`)
+logger.info(`allowUnsafeEvalScripts: ${allowUnsafeEvalScripts}`)
 const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
 
 // Script responsible for setting 'js-enabled' class, extends GOV.UK frontend `layout` which we have no control over
