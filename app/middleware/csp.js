@@ -12,7 +12,6 @@ const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
 const govUkFrontendLayoutJsEnabledScriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
 // Worldpay 3ds flex iframe
-const frameSource = ["'self'", 'https://secure-test.worldpay.com/']
 const CSP_NONE = ["'none'"]
 const CSP_SELF = ["'self'"]
 
@@ -25,7 +24,6 @@ const imgSource = ["'self'", 'https://www.google-analytics.com/']
 // Google analytics
 const scriptSource = ["'self'", 'https://www.google-analytics.com/',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
-const styleSource = ["'self'"]
 
 // Google analytics, Apple pay, Google pay uses standard Payment Request API so requires no exceptions
 const connectSource = ["'self'", 'https://www.google-analytics.com/',
@@ -62,6 +60,7 @@ const csp = helmet.contentSecurityPolicy({
     manifestSrc: CSP_NONE,
     mediaSrc: CSP_NONE,
     objectSrc: CSP_NONE,
+    prefetchSrc: CSP_SELF,
     baseUri: CSP_NONE,
     blockAllMixedContent: true
   },
