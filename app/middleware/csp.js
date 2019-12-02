@@ -4,7 +4,7 @@ const sendCspHeader = process.env.CSP_SEND_HEADER === 'true'
 const enforceCsp = process.env.CSP_ENFORCE === 'true'
 const cspReportUri = process.env.CSP_REPORT_URI
 const environment = process.env.ENVIRONMENT
-const zapTestHash = process.env.CSP_ZAP_TEST_HASH
+const allowUnsafeEvalScripts = process.env.CSP_ALLOW_UNSAFE_EVAL_SCRIPTS === 'true'
 
 const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
 
@@ -25,8 +25,8 @@ const scriptSource = ["'self'", 'https://www.google-analytics.com/',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
 
 // Sript that is being used during zap test: https://github.com/alphagov/pay-endtoend/blob/d685d5bc38d639e8adef629673e5577cb923408e/src/test/resources/uk/gov/pay/pen/tests/frontend.feature#L23
-if (zapTestHash) {
-  scriptSource.push(zapTestHash)
+if (allowUnsafeEvalScripts) {
+  scriptSource.push("'unsafe-eval'")
 }
 
 // Google analytics, Apple pay, Google pay uses standard Payment Request API so requires no exceptions
