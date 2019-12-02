@@ -51,15 +51,15 @@ describe('CSP middleware', () => {
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy')
   })
 
-  it('should add zap hash to Content-Security-Policy header when included in configuration', () => {
+  it('should add `unsafe-eval` to Content-Security-Policy header when included in configuration', () => {
     process.env.CSP_SEND_HEADER = 'true'
-    process.env.CSP_ZAP_TEST_HASH = "'sha256-xUXfQvaQIcsBFXwODJDnPGU3R2JQw59eNsZ6XDIotxU='"
+    process.env.CSP_ALLOW_UNSAFE_EVAL_SCRIPTS = 'true'
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
     const response = { setHeader: sinon.spy() }
     csp(mockRequest, response, next)
 
-    sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy', sinon.match(/'sha256-xUXfQvaQIcsBFXwODJDnPGU3R2JQw59eNsZ6XDIotxU='/g))
+    sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy', sinon.match(/'unsafe-eval'/g))
   })
 })
