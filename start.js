@@ -11,6 +11,8 @@
   var fileOptions = { encoding: 'utf-8' }
   var pid
 
+  logger.info(`[process.version=${process.version}] [NODE_VERSION=${process.env.NODE_VERSION}]`)
+
   /**
    * throng is a wrapper around node cluster
    * https://github.com/hunterloftis/throng
