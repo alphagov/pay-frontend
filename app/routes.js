@@ -70,7 +70,7 @@ exports.bind = function (app) {
     stateEnforcer
   ]
 
-  app.get(card.new.path, csp, middlewareStack, charge.new)
+  app.get(card.new.path, csp.cardDetails, middlewareStack, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
   app.post(card.create.path, middlewareStack, charge.create)

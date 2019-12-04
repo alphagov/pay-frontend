@@ -21,7 +21,7 @@ describe('CSP middleware', () => {
 
     const next = sinon.spy()
     const response = { setHeader: sinon.spy() }
-    csp(mockRequest, response, next)
+    csp.cardDetails(mockRequest, response, next)
 
     expect(next.called).to.be.true
     expect(response.setHeader.called).to.be.false
@@ -34,7 +34,7 @@ describe('CSP middleware', () => {
 
     const next = sinon.spy()
     const response = { setHeader: sinon.spy() }
-    csp(mockRequest, response, next)
+    csp.cardDetails(mockRequest, response, next)
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy-Report-Only')
   })
@@ -46,7 +46,7 @@ describe('CSP middleware', () => {
 
     const next = sinon.spy()
     const response = { setHeader: sinon.spy() }
-    csp(mockRequest, response, next)
+    csp.cardDetails(mockRequest, response, next)
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy')
   })
@@ -58,7 +58,7 @@ describe('CSP middleware', () => {
 
     const next = sinon.spy()
     const response = { setHeader: sinon.spy() }
-    csp(mockRequest, response, next)
+    csp.cardDetails(mockRequest, response, next)
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy', sinon.match(/'unsafe-eval'/g))
   })
