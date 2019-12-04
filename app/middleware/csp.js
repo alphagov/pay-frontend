@@ -21,7 +21,7 @@ const frameAndChildSourceCardDetails = ["'self'", 'https://secure-test.worldpay.
 
 const imgSourceCardDetails = ["'self'", 'https://www.google-analytics.com/']
 
-const scriptSourceCardDetails = ["'self'", 'https://www.google-analytics.com/',
+const scriptSourceCardDetails = ["'self'",  "'unsafe-inline'", 'https://www.google-analytics.com/',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
 
 const formActionWP3DS = ["'self'", 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect', 'https://secure-test.worldpay.com/shopper/3ds']
