@@ -26,8 +26,10 @@ const noCache = require('./app/utils/no_cache')
 const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
-const Sentry = require('./app/utils/sentry.js').initialiseSentry()
+const Sentry = require('./app/utils/sentry').initialiseSentry()
 const csp = require('./app/middleware/csp')
+const cls = require('./app/middleware/cls')
+const correlationHeader = require('./app/middleware/correlation_header')
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
@@ -83,6 +85,9 @@ function initialiseGlobalMiddleware (app) {
   app.use(compression())
 
   app.disable('x-powered-by')
+
+  app.use(cls)
+  app.use(correlationHeader)
 }
 
 function initialisei18n (app) {

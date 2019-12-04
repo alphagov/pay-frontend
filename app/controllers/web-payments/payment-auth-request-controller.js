@@ -9,16 +9,14 @@ const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payloa
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
 const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const { setSessionVariable } = require('../../utils/cookies')
-
-// constants
-const clsXrayConfig = require('../../../config/xray-cls')
+const { NAMESPACE_NAME, XRAY_SEGMENT_KEY_NAME } = require('../../../config/cls')
 
 module.exports = (req, res) => {
   const { chargeId, params, body } = req
   const { provider } = params
   const payload = provider === 'apple' ? normaliseApplePayPayload(body) : normaliseGooglePayPayload(body)
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
+  const namespace = getNamespace(NAMESPACE_NAME)
+  const clsSegment = namespace.get(XRAY_SEGMENT_KEY_NAME)
   return AWSXRay.captureAsyncFunc('Auth_charge_wallet', subsegment => {
     return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload })
       .then(data => {

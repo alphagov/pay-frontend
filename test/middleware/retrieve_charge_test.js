@@ -20,7 +20,8 @@ const retrieveCharge = proxyquire(path.join(__dirname, '/../../app/middleware/re
       return {
         get: () => {
           return new AWSXRay.Segment('stub-segment')
-        }
+        },
+        set: () => {}
       }
     }
   }

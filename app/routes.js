@@ -2,7 +2,6 @@
 
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
-const { getNamespace, createNamespace } = require('continuation-local-storage')
 
 // Local dependencies
 const logger = require('./utils/logger')(__filename)
@@ -27,9 +26,6 @@ const resolveService = require('./middleware/resolve_service.js')
 const resolveLanguage = require('./middleware/resolve_language.js')
 const xraySegmentCls = require('./middleware/x_ray')
 
-// Constants
-const clsXrayConfig = require('../config/xray-cls')
-
 // Import AB test when we need to use it
 // const abTest = require('./utils/ab_test.js')
 // const AB_TEST_THRESHOLD = process.env.AB_TEST_THRESHOLD
@@ -42,17 +38,6 @@ exports.bind = function (app) {
   AWSXRay.middleware.setSamplingRules('aws-xray.rules')
   AWSXRay.config([AWSXRay.plugins.ECSPlugin])
   app.use(AWSXRay.express.openSegment('pay_frontend'))
-
-  createNamespace(clsXrayConfig.nameSpaceName)
-
-  app.use((req, res, next) => {
-    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-    namespace.bindEmitter(req)
-    namespace.bindEmitter(res)
-    namespace.run(() => {
-      next()
-    })
-  })
 
   app.get('/healthcheck', healthcheck)
 

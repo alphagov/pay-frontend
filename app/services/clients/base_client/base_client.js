@@ -11,6 +11,7 @@ const AWSXRay = require('aws-xray-sdk')
 // Local dependencies
 const CORRELATION_HEADER_NAME = require('../../../../config/correlation_header').CORRELATION_HEADER
 const { addProxy } = require('../../../utils/add_proxy')
+const { NAMESPACE_NAME, XRAY_SEGMENT_KEY_NAME } = require('../../../../config/cls')
 
 const agentOptions = {
   keepAlive: true,
@@ -18,7 +19,6 @@ const agentOptions = {
 }
 
 // Constants
-const clsXrayConfig = require('../../../../config/xray-cls')
 const RETRIABLE_ERRORS = ['ECONNRESET']
 
 function retryOnEconnreset (err) {
@@ -37,12 +37,12 @@ const client = request
   })
 
 const getHeaders = function getHeaders (args, segmentData, url) {
-  let headers = {}
+  const headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
   if (url) {
     const port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
-    headers['host'] = urlParse(url).hostname + port
+    headers.host = urlParse(url).hostname + port
   }
 
   if (segmentData.clsSegment) {
@@ -71,8 +71,8 @@ const getHeaders = function getHeaders (args, segmentData, url) {
  * @private
  */
 const _request = function request (methodName, url, args, callback, subSegment) {
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
+  const namespace = getNamespace(NAMESPACE_NAME)
+  const clsSegment = namespace ? namespace.get(XRAY_SEGMENT_KEY_NAME) : null
 
   const proxiedUrl = addProxy(url)
   const optionalPort = proxiedUrl.port ? ':' + proxiedUrl.port : ''

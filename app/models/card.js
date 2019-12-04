@@ -10,9 +10,7 @@ const i18n = require('i18n')
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
 const cardIdClient = require('../services/clients/cardid_client')
-
-// Constants
-const clsXrayConfig = require('../../config/xray-cls')
+const { NAMESPACE_NAME, XRAY_SEGMENT_KEY_NAME } = require('../../config/cls')
 const i18nConfig = require('../../config/i18n')
 
 i18n.configure(i18nConfig)
@@ -26,8 +24,8 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
 
     // Use a subSegment if passed, otherwise get our main segment
     if (!subSegment) {
-      const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-      subSegment = namespace.get(clsXrayConfig.segmentKeyName)
+      const namespace = getNamespace(NAMESPACE_NAME)
+      subSegment = namespace.get(XRAY_SEGMENT_KEY_NAME)
     }
 
     AWSXRay.captureAsyncFunc('cardIdClient_post', function (postSubsegment) {

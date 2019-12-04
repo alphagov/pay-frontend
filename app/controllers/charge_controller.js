@@ -31,7 +31,7 @@ const supportedNetworksFormattedByProvider = require('../assets/javascripts/brow
 const worlpay3dsFlexService = require('../services/worldpay_3ds_flex_service')
 
 // Constants
-const clsXrayConfig = require('../../config/xray-cls')
+const { NAMESPACE_NAME, XRAY_SEGMENT_KEY_NAME } = require('../../config/cls')
 const { views, preserveProperties } = require('../../config/charge_controller')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { createChargeIdSessionKey } = require('../utils/session')
@@ -198,8 +198,8 @@ module.exports = {
     }
   },
   checkCard: (req, res) => {
-    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
+    const namespace = getNamespace(NAMESPACE_NAME)
+    const clsSegment = namespace.get(XRAY_SEGMENT_KEY_NAME)
     AWSXRay.captureAsyncFunc('Card_checkCard', function (subSegment) {
       Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
         .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment)
@@ -215,7 +215,7 @@ module.exports = {
           },
           error => {
             subSegment.close(error.message)
-            return res.json({ 'accepted': false, message: error.message })
+            return res.json({ accepted: false, message: error.message })
           }
         )
     }, clsSegment)

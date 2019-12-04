@@ -4,10 +4,10 @@
 const { getNamespace } = require('continuation-local-storage')
 
 // Local dependencies
-const clsXrayConfig = require('../../config/xray-cls')
+const { NAMESPACE_NAME, XRAY_SEGMENT_KEY_NAME } = require('../../config/cls')
 
 module.exports = (req, res, next) => {
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  namespace.set(clsXrayConfig.segmentKeyName, req.segment)
+  const namespace = getNamespace(NAMESPACE_NAME)
+  namespace.set(XRAY_SEGMENT_KEY_NAME, req.segment)
   next()
 }

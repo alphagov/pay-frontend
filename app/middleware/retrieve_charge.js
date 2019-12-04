@@ -3,6 +3,7 @@
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
+const { PAYMENT_EXTERNAL_ID } = require('@govuk-pay/pay-js-commons').logging.keys
 
 // Local dependencies
 const logging = require('../utils/logging')
@@ -11,14 +12,14 @@ const Charge = require('../models/charge')
 const chargeParam = require('../services/charge_param_retriever')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
-
-// Constants
-const clsXrayConfig = require('../../config/xray-cls')
+const { NAMESPACE_NAME, XRAY_SEGMENT_KEY_NAME } = require('../../config/cls')
 
 module.exports = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
+  const namespace = getNamespace(NAMESPACE_NAME)
+  namespace.set(PAYMENT_EXTERNAL_ID, chargeId)
+
+  const clsSegment = namespace.get(XRAY_SEGMENT_KEY_NAME)
   if (!chargeId) {
     responseRouter.response(req, res, 'UNAUTHORISED', withAnalyticsError())
   } else {
