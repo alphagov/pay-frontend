@@ -27,6 +27,7 @@ const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
+const csp = require('./app/middleware/csp')
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
@@ -125,6 +126,7 @@ function initialiseTemplateEngine (app) {
 }
 
 function initialisePublic (app) {
+  app.use('/public/worldpay', csp.worldpayIframe, express.static(path.join(__dirname, '/public/worldpay/'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/public'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/app/data'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk-country-and-territory-autocomplete'), publicCaching))
