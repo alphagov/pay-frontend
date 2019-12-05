@@ -62,7 +62,7 @@ const cardDetailsCSP = helmet.contentSecurityPolicy({
     imgSrc: imgSourceCardDetails,
     scriptSrc: scriptSourceCardDetails,
     connectSrc: connectSourceCardDetails,
-    styleSrc: CSP_SELF,
+    styleSrc: [...CSP_SELF, "'unsafe-eval'"],
     formAction: CSP_SELF,
     fontSrc: CSP_SELF,
     frameAncestors: CSP_SELF,
