@@ -20,7 +20,7 @@ const CSP_SELF = ["'self'"]
 const frameAndChildSourceCardDetails = ["'self'", 'https://secure-test.worldpay.com/',
   'https://centinelapi.cardinalcommerce.com/']
 
-const imgSourceCardDetails = ["'self'", 'https://www.google-analytics.com/']
+const imgSourceCardDetails = ["'self'", 'https://www.google-analytics.com/', 'https://www.gstatic.com/']
 
 const scriptSourceCardDetails = ["'self'", "'unsafe-inline'", 'https://www.google-analytics.com/',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
