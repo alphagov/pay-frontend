@@ -17,14 +17,16 @@ const CSP_NONE = ["'none'"]
 const CSP_SELF = ["'self'"]
 
 // Worldpay 3ds flex iframe - frame and child must be kept in sync
-const frameAndChildSourceCardDetails = ["'self'", 'https://secure-test.worldpay.com/', 'https://centinelapi.cardinalcommerce.com/']
+const frameAndChildSourceCardDetails = ["'self'", 'https://secure-test.worldpay.com/',
+  'https://centinelapi.cardinalcommerce.com/']
 
 const imgSourceCardDetails = ["'self'", 'https://www.google-analytics.com/']
 
-const scriptSourceCardDetails = ["'self'",  "'unsafe-inline'", 'https://www.google-analytics.com/',
+const scriptSourceCardDetails = ["'self'", "'unsafe-inline'", 'https://www.google-analytics.com/',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
 
-const formActionWP3DS = ["'self'", 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect', 'https://secure-test.worldpay.com/shopper/3ds']
+const formActionWP3DS = ["'self'", 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect',
+  'https://secure-test.worldpay.com/shopper/3ds/ddc.html']
 // Sript that is being used during zap test: https://github.com/alphagov/pay-endtoend/blob/d685d5bc38d639e8adef629673e5577cb923408e/src/test/resources/uk/gov/pay/pen/tests/frontend.feature#L23
 if (allowUnsafeEvalScripts) {
   scriptSourceCardDetails.push("'unsafe-eval'")
