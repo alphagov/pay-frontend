@@ -8,6 +8,7 @@ const { expect } = require('chai')
 const nock = require('nock')
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
+const { validChargeDetails } = require('../fixtures/payment_fixtures')
 
 const retrieveCharge = proxyquire(path.join(__dirname, '/../../app/middleware/retrieve_charge.js'), {
   'aws-xray-sdk': {
@@ -37,8 +38,8 @@ const ANALYTICS_ERROR = {
 
 describe('retrieve param test', () => {
   const response = {
-    status: () => {},
-    render: () => {},
+    status: () => { },
+    render: () => { },
     locals: {}
   }
   let status
@@ -97,7 +98,7 @@ describe('retrieve param test', () => {
   })
 
   it('should set chargeData chargeID and call next on success', done => {
-    const chargeData = { foo: 'bar' }
+    const chargeData = validChargeDetails().getPlain()
     nock(process.env.CONNECTOR_HOST)
       .get(`/v1/frontend/charges/${chargeId}`)
       .reply(200, chargeData)

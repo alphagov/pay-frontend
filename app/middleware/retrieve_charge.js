@@ -3,20 +3,29 @@
 // NPM dependencies
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
+const {
+  PAYMENT_EXTERNAL_ID,
+  GATEWAY_ACCOUNT_ID,
+  GATEWAY_ACCOUNT_TYPE,
+  PROVIDER
+} = require('@govuk-pay/pay-js-commons').logging.keys
 
 // Local dependencies
-const logging = require('../utils/logging')
+const logger = require('../utils/logger')(__filename)
 const responseRouter = require('../utils/response_router')
 const Charge = require('../models/charge')
 const chargeParam = require('../services/charge_param_retriever')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
+const { setLoggingField, getLoggingFields } = require('../utils/logging_fields_helper')
 
 // Constants
 const clsXrayConfig = require('../../config/xray-cls')
 
 module.exports = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
+  setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
+
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
   if (!chargeId) {
@@ -28,11 +37,14 @@ module.exports = (req, res, next) => {
         .then(data => {
           subsegment.close()
           req.chargeData = data
+          setLoggingField(req, GATEWAY_ACCOUNT_ID, data.gateway_account.gateway_account_id)
+          setLoggingField(req, GATEWAY_ACCOUNT_TYPE, data.gateway_account.type)
+          setLoggingField(req, PROVIDER, data.gateway_account.payment_provider)
           next()
         })
-        .catch(() => {
+        .catch((err) => {
           subsegment.close('error')
-          logging.systemError('Charge search middleware, finding charge', req.headers && req.headers[CORRELATION_HEADER], chargeId)
+          logger.error('Error finding charge in middleware: ' + err, getLoggingFields(req))
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
         })
     }, clsSegment)

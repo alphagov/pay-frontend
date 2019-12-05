@@ -29,12 +29,11 @@ const cookies = require('../utils/cookies')
 const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
 const supportedNetworksFormattedByProvider = require('../assets/javascripts/browsered/web-payments/format-card-types')
 const worlpay3dsFlexService = require('../services/worldpay_3ds_flex_service')
-
-// Constants
 const clsXrayConfig = require('../../config/xray-cls')
 const { views, preserveProperties } = require('../../config/charge_controller')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { createChargeIdSessionKey } = require('../utils/session')
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 
 const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
@@ -109,7 +108,7 @@ module.exports = {
         charge.countries = countries
         if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
         // else
-        Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id).then(
+        Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id, getLoggingFields(req)).then(
           () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
           () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
       },
@@ -215,7 +214,7 @@ module.exports = {
           },
           error => {
             subSegment.close(error.message)
-            return res.json({ 'accepted': false, message: error.message })
+            return res.json({ accepted: false, message: error.message })
           }
         )
     }, clsSegment)
