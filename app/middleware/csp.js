@@ -5,6 +5,7 @@ const enforceCsp = process.env.CSP_ENFORCE === 'true'
 const cspReportUri = process.env.CSP_REPORT_URI
 const environment = process.env.ENVIRONMENT
 const allowUnsafeEvalScripts = process.env.CSP_ALLOW_UNSAFE_EVAL_SCRIPTS === 'true'
+const addPrefetchDirective = process.env.CSP_ADD_PREFETCH_DIRECTIVE === 'true'
 
 const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
 
@@ -38,24 +39,7 @@ const connectSourceCardDetails = ["'self'", 'https://www.google-analytics.com']
 const skipSendingCspHeader = (req, res, next) => { next() }
 
 const cardDetailsCSP = helmet.contentSecurityPolicy({
-  directives: {
-    reportUri: sentryCspReportUri,
-    frameSrc: frameAndChildSourceCardDetails,
-    childSrc: frameAndChildSourceCardDetails,
-    imgSrc: imgSourceCardDetails,
-    scriptSrc: scriptSourceCardDetails,
-    connectSrc: connectSourceCardDetails,
-    styleSrc: [...CSP_SELF, "'unsafe-eval'"],
-    formAction: CSP_SELF,
-    fontSrc: CSP_SELF,
-    frameAncestors: CSP_SELF,
-    manifestSrc: CSP_NONE,
-    mediaSrc: CSP_NONE,
-    objectSrc: CSP_NONE,
-    prefetchSrc: CSP_SELF,
-    baseUri: CSP_NONE,
-    blockAllMixedContent: true
-  },
+  directives: getCardDetailsCSPDirectives(),
   reportOnly: !enforceCsp
 })
 
@@ -70,6 +54,34 @@ const worldpayIframeCSP = helmet.contentSecurityPolicy({
   },
   reportOnly: !enforceCsp
 })
+
+function getCardDetailsCSPDirectives () {
+  var directives = {
+    reportUri: sentryCspReportUri,
+    frameSrc: frameAndChildSourceCardDetails,
+    childSrc: frameAndChildSourceCardDetails,
+    imgSrc: imgSourceCardDetails,
+    scriptSrc: scriptSourceCardDetails,
+    connectSrc: connectSourceCardDetails,
+    styleSrc: [...CSP_SELF, "'unsafe-eval'"],
+    formAction: CSP_SELF,
+    fontSrc: CSP_SELF,
+    frameAncestors: CSP_SELF,
+    manifestSrc: CSP_NONE,
+    mediaSrc: CSP_NONE,
+    objectSrc: CSP_NONE,
+    baseUri: CSP_NONE,
+    blockAllMixedContent: true
+  }
+
+  // required for ZAP tests which falsely identifies not definiing `prefetch-src` as risk
+  // prefetch-src is a CSP leve 3 experimental directive and is not required on card details page
+  if (addPrefetchDirective) {
+    directives.prefetchSrc = CSP_NONE
+  }
+
+  return directives
+}
 
 module.exports = {
   cardDetails: sendCspHeader ? cardDetailsCSP : skipSendingCspHeader,

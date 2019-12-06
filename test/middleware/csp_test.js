@@ -62,4 +62,16 @@ describe('CSP middleware', () => {
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy', sinon.match(/'unsafe-eval'/g))
   })
+
+  it('should add `prefetch-src` to Content-Security-Policy header when CSP_ADD_PREFETCH_DIRECTIVE is true', () => {
+    process.env.CSP_SEND_HEADER = 'true'
+    process.env.CSP_ADD_PREFETCH_DIRECTIVE = 'true'
+    const csp = requireHelper('../../app/middleware/csp')
+
+    const next = sinon.spy()
+    const response = { setHeader: sinon.spy() }
+    csp.cardDetails(mockRequest, response, next)
+
+    sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy', sinon.match(/prefetch-src/g))
+  })
 })
