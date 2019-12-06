@@ -81,7 +81,7 @@
     "aws-xray-sdk": "^2.4.0",
     "body-parser": "1.19.x",
     "cert-info": "^1.5.1",
-    "change-case": "2.3.x",
+    "change-case": "4.1.x",
     "client-sessions": "0.8.x",
     "compression": "1.7.x",
     "continuation-local-storage": "^3.2.1",
