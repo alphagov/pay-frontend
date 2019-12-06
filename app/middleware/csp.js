@@ -62,19 +62,9 @@ const cardDetailsCSP = helmet.contentSecurityPolicy({
 const worldpayIframeCSP = helmet.contentSecurityPolicy({
   directives: {
     reportUri: sentryCspReportUri,
-    frameSrc: CSP_NONE,
-    childSrc: CSP_NONE,
-    imgSrc: CSP_SELF,
-    scriptSrc: CSP_SELF,
-    connectSrc: CSP_SELF,
-    styleSrc: CSP_SELF,
+    defaultSrc: CSP_NONE,
     formAction: formActionWP3DS,
-    fontSrc: CSP_SELF,
     frameAncestors: CSP_SELF,
-    manifestSrc: CSP_NONE,
-    mediaSrc: CSP_NONE,
-    objectSrc: CSP_NONE,
-    prefetchSrc: CSP_SELF,
     baseUri: CSP_NONE,
     blockAllMixedContent: true
   },
