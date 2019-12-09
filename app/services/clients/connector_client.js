@@ -55,10 +55,11 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _putConnector = (url, payload, description, subSegment) => {
+const _putConnector = (url, payload, description, subSegment, loggingFields = {}) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
+      ...loggingFields,
       url: url,
       method: 'PUT',
       description: description,
@@ -71,11 +72,12 @@ const _putConnector = (url, payload, description, subSegment) => {
       null,
       subSegment
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime, loggingFields)
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
+        ...loggingFields,
         service: 'connector',
         method: 'PUT',
         url: url,
@@ -216,9 +218,9 @@ const cancel = chargeOptions => {
 }
 
 // PUT functions
-const updateStatus = (chargeOptions, subSegment) => {
+const updateStatus = (chargeOptions, subSegment, loggingFields = {}) => {
   const updateStatusUrl = _getUpdateStatusUrlFor(chargeOptions.chargeId)
-  return _putConnector(updateStatusUrl, chargeOptions.payload, 'update status', subSegment)
+  return _putConnector(updateStatusUrl, chargeOptions.payload, 'update status', subSegment, loggingFields)
 }
 
 // PATCH functions

@@ -18,13 +18,13 @@ const CANCELABLE_STATES = [
 module.exports = correlationId => {
   correlationId = correlationId || ''
 
-  const updateToEnterDetails = function (chargeId) {
-    return updateStatus(chargeId, State.ENTERING_CARD_DETAILS)
+  const updateToEnterDetails = function (chargeId, loggingFields = {}) {
+    return updateStatus(chargeId, State.ENTERING_CARD_DETAILS, loggingFields)
   }
 
-  const updateStatus = function (chargeId, status) {
+  const updateStatus = function (chargeId, status, loggingFields = {}) {
     return new Promise(function (resolve, reject) {
-      connectorClient({ correlationId }).updateStatus({ chargeId, payload: { new_status: status } })
+      connectorClient({ correlationId }).updateStatus({ chargeId, payload: { new_status: status } }, null, loggingFields)
         .then(response => {
           updateComplete(response, { resolve, reject })
         })
