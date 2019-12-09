@@ -26,7 +26,7 @@ module.exports = correlationId => {
     return new Promise(function (resolve, reject) {
       connectorClient({ correlationId }).updateStatus({ chargeId, payload: { new_status: status } }, null, loggingFields)
         .then(response => {
-          updateComplete(response, { resolve, reject })
+          updateComplete(response, { resolve, reject }, loggingFields)
         })
         .catch(err => {
           clientUnavailable(err, { resolve, reject })
@@ -34,9 +34,9 @@ module.exports = correlationId => {
     })
   }
 
-  const find = function (chargeId) {
+  const find = function (chargeId, loggingFields = {}) {
     return new Promise(function (resolve, reject) {
-      connectorClient({ correlationId }).findCharge({ chargeId })
+      connectorClient({ correlationId }).findCharge({ chargeId }, loggingFields)
         .then(response => {
           if (response.statusCode !== 200) {
             return reject(new Error('GET_FAILED'))
@@ -49,9 +49,9 @@ module.exports = correlationId => {
     })
   }
 
-  const capture = function (chargeId) {
+  const capture = function (chargeId, loggingFields = {}) {
     return new Promise(function (resolve, reject) {
-      connectorClient({ correlationId }).capture({ chargeId })
+      connectorClient({ correlationId }).capture({ chargeId }, loggingFields)
         .then(response => {
           captureComplete(response, { resolve, reject })
         })
@@ -61,11 +61,11 @@ module.exports = correlationId => {
     })
   }
 
-  const cancel = function (chargeId) {
+  const cancel = function (chargeId, loggingFields = {}) {
     return new Promise(function (resolve, reject) {
       connectorClient({ correlationId }).cancel({ chargeId })
         .then(response => {
-          cancelComplete(chargeId, response, { resolve, reject })
+          cancelComplete(response, { resolve, reject }, loggingFields)
         })
         .catch(err => {
           cancelFail(err, { resolve, reject })
@@ -73,10 +73,10 @@ module.exports = correlationId => {
     })
   }
 
-  const findByToken = async function (tokenId) {
+  const findByToken = async function (tokenId, loggingFields = {}) {
     let response
     try {
-      response = await connectorClient({ correlationId }).findByToken({ tokenId })
+      response = await connectorClient({ correlationId }).findByToken({ tokenId }, loggingFields)
     } catch (err) {
       throw new Error('CLIENT_UNAVAILABLE', err)
     }
@@ -86,26 +86,26 @@ module.exports = correlationId => {
     return response.body
   }
 
-  const patch = async function (chargeId, op, path, value, subSegment) {
+  const patch = async function (chargeId, op, path, value, loggingFields = {}) {
     const payload = {
       op: op,
       path: path,
       value: value
     }
-    const response = await connectorClient({ correlationId }).patch({ chargeId, payload }, subSegment)
+    const response = await connectorClient({ correlationId }).patch({ chargeId, payload }, loggingFields)
     if (response.statusCode !== 200) {
       throw new Error('Calling connector to patch a charge returned an unexpected status code')
     }
   }
 
-  const cancelComplete = function (chargeId, response, defer) {
+  const cancelComplete = function (response, defer, loggingFields = {}) {
     const code = response.statusCode
     if (code === 204) return defer.resolve()
     logger.error('[%s] Calling connector cancel a charge failed', correlationId, {
+      ...loggingFields,
       service: 'connector',
       method: 'POST',
-      status: code,
-      charge_id: chargeId
+      status: code
     })
     if (code === 400) return defer.reject(new Error('CANCEL_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
@@ -126,10 +126,10 @@ module.exports = correlationId => {
     clientUnavailable(err, defer)
   }
 
-  const updateComplete = function (response, defer) {
+  const updateComplete = function (response, defer, loggingFields = {}) {
     if (response.statusCode !== 204) {
       logger.error('[%s] Calling connector to update charge status failed', correlationId, {
-        chargeId: response.body,
+        ...loggingFields,
         status: response.statusCode
       })
       defer.reject(new Error('UPDATE_FAILED'))

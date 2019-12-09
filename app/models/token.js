@@ -3,10 +3,10 @@
 // Local dependencies
 const connectorClient = require('../services/clients/connector_client')
 
-const markTokenAsUsed = async function (tokenId, correlationId) {
+const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = {}) {
   let response
   try {
-    response = await connectorClient({ correlationId }).markTokenAsUsed({ tokenId })
+    response = await connectorClient({ correlationId }).markTokenAsUsed({ tokenId }, loggingFields)
   } catch (err) {
     throw new Error('CLIENT_UNAVAILABLE', err)
   }

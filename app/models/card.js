@@ -17,7 +17,7 @@ const i18nConfig = require('../../config/i18n')
 
 i18n.configure(i18nConfig)
 
-const checkCard = function (cardNo, allowed, language, correlationId, subSegment) {
+const checkCard = function (cardNo, allowed, language, correlationId, subSegment, loggingFields = {}) {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const data = { cardNumber: parseInt(cardNo) }
@@ -38,7 +38,7 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
       cardIdClient.post({ payload: data, correlationId: correlationId }, postSubsegment)
         .then((response) => {
           postSubsegment.close()
-          logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime)
+          logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime, loggingFields)
 
           if (response.statusCode === 404) {
             return reject(new Error('Your card is not supported'))
@@ -61,8 +61,9 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
           }
 
           logger.debug(`[${correlationId}] Checking card brand`, {
-            cardBrand: card.brand,
-            cardType: card.type
+            ...loggingFields,
+            card_brand: card.brand,
+            card_type: card.type
           })
 
           if (_.filter(allowed, { brand: card.brand }).length === 0) {
@@ -82,8 +83,11 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
         })
         .catch(error => {
           postSubsegment.close(error)
-          logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, error)
-          logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime)
+          logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, {
+            ...loggingFields,
+            error
+          })
+          logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
           resolve()
         })
     }, subSegment)
@@ -113,8 +117,8 @@ module.exports = function (allowedCards, correlationId) {
   return {
     withdrawalTypes: withdrawalTypes,
     allowed: _.clone(allowed),
-    checkCard: (cardNo, language, subSegment) => {
-      return checkCard(cardNo, allowed, language, correlationId, subSegment)
+    checkCard: (cardNo, language, subSegment, loggingFields = {}) => {
+      return checkCard(cardNo, allowed, language, correlationId, subSegment, loggingFields)
     }
   }
 }

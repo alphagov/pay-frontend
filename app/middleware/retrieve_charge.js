@@ -4,7 +4,6 @@
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
 const {
-  PAYMENT_EXTERNAL_ID,
   GATEWAY_ACCOUNT_ID,
   GATEWAY_ACCOUNT_TYPE,
   PROVIDER
@@ -24,8 +23,6 @@ const clsXrayConfig = require('../../config/xray-cls')
 
 module.exports = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
-  setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
-
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
   if (!chargeId) {
@@ -33,7 +30,7 @@ module.exports = (req, res, next) => {
   } else {
     req.chargeId = chargeId
     AWSXRay.captureAsyncFunc('Charge_find', (subsegment) => {
-      Charge(req.headers[CORRELATION_HEADER]).find(chargeId)
+      Charge(req.headers[CORRELATION_HEADER]).find(chargeId, getLoggingFields(req))
         .then(data => {
           subsegment.close()
           req.chargeData = data

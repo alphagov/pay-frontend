@@ -2,6 +2,7 @@
 
 const request = require('requestretry')
 const logger = require('../../../utils/logger')(__filename)
+const { getLoggingFields } = require('../../../utils/logging_fields_helper')
 
 // Local constants
 const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY } = process.env
@@ -37,8 +38,12 @@ module.exports = (req, res) => {
 
   request(options, (err, response, body) => {
     if (err) {
-      logger.info('Error generating Apple Pay session')
-      logger.info(err, response, body)
+      logger.info('Error generating Apple Pay session', {
+        ...getLoggingFields(req),
+        error: err,
+        response: response,
+        body: body
+      })
       res.status(500).send(body)
     }
     res.status(200).send(body)

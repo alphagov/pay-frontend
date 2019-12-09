@@ -60,7 +60,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.googlePayRequestDetails = googlePayDetails
 
   const correlationId = req.headers[CORRELATION_HEADER] || ''
-  charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId)
+  charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId, getLoggingFields(req))
   charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 }
 
@@ -80,7 +80,7 @@ const handleCreateResponse = (req, res, charge, response) => {
   switch (response.statusCode) {
     case 202:
     case 409:
-      logging.failedChargePost(409)
+      logging.failedChargePost(409, getLoggingFields(req))
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
@@ -91,8 +91,8 @@ const handleCreateResponse = (req, res, charge, response) => {
       }
       break
     case 500:
-      logging.failedChargePost(409)
-      logging.systemError('Charge create response', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+      logging.failedChargePost(409, getLoggingFields(req))
+      logger.error('Charge create error response', getLoggingFields(req))
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
@@ -113,7 +113,7 @@ module.exports = {
           () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
       },
       err => {
-        logging.failedGetWorldpayDdcJwt(err)
+        logging.failedGetWorldpayDdcJwt(err, getLoggingFields(req))
         responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       })
   },
@@ -124,7 +124,7 @@ module.exports = {
       email_collection_mode: charge.gatewayAccount.emailCollectionMode,
       collect_billing_address: res.locals.service.collectBillingAddress
     }
-    const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions)
+    const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions, getLoggingFields(req))
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
@@ -156,7 +156,7 @@ module.exports = {
         emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
       }
       try {
-        await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail)
+        await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, getLoggingFields(req))
       } catch (err) {
         return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       }
@@ -176,7 +176,7 @@ module.exports = {
       try {
         await appendChargeForNewView(charge, req, charge.id)
       } catch (err) {
-        logging.failedGetWorldpayDdcJwt(err)
+        logging.failedGetWorldpayDdcJwt(err, getLoggingFields(req))
         return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       }
       _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
@@ -189,10 +189,10 @@ module.exports = {
       delete payload.address
     }
     try {
-      const response = await connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload })
+      const response = await connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload }, getLoggingFields(req))
       handleCreateResponse(req, res, charge, response)
     } catch (err) {
-      logging.failedChargePatch(err.message)
+      logging.failedChargePatch(err.message, getLoggingFields(req))
       responseRouter.response(req, res, 'ERROR', withAnalyticsError())
     }
   },
@@ -201,7 +201,7 @@ module.exports = {
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     AWSXRay.captureAsyncFunc('Card_checkCard', function (subSegment) {
       Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
-        .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment)
+        .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment, getLoggingFields(req))
         .then(
           card => {
             subSegment.close()
@@ -232,12 +232,12 @@ module.exports = {
       default:
         if (charge.walletType !== undefined) {
           Charge(req.headers[CORRELATION_HEADER])
-            .capture(req.chargeId)
+            .capture(req.chargeId, getLoggingFields(req))
             .then(
               () => redirect(res).toReturn(req.chargeId),
               err => {
                 if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-                logging.systemError('Capturing charge for wallet payment', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+                logger.error('Error capturing charge for wallet payment', getLoggingFields(req))
                 responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                   charge,
                   { returnUrl: routeFor('return', charge.id) }
@@ -263,12 +263,12 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const cookieKey = createChargeIdSessionKey(req.chargeId)
     Charge(req.headers[CORRELATION_HEADER])
-      .capture(req.chargeId)
+      .capture(req.chargeId, getLoggingFields(req))
       .then(() => redirect(res).toReturn(req.chargeId),
         (err) => {
           cookies.deleteSessionVariable(req, cookieKey)
           if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-          logging.systemError('Capturing charge', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+          logger.error('Error capturing charge', getLoggingFields(req))
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
             charge,
             { returnUrl: routeFor('return', charge.id) }
@@ -290,11 +290,11 @@ module.exports = {
     //                to `then`--
     //                Charge.cancel().then('USER_CANCELLED').catch('SYSTEM_ERROR')
     Charge(req.headers[CORRELATION_HEADER])
-      .cancel(req.chargeId)
+      .cancel(req.chargeId, getLoggingFields(req))
       .then(
         () => responseRouter.response(req, res, 'USER_CANCELLED', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) })),
         () => {
-          logging.systemError('Cancelling charge', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+          logger.error('Error cancelling charge', getLoggingFields(req))
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
         }
       )

@@ -6,6 +6,7 @@ const lodash = require('lodash')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 const responseRouter = require('../utils/response_router')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { withAnalyticsError } = require('../utils/analytics')
@@ -29,14 +30,14 @@ module.exports = function resolveServiceMiddleware (req, res, next) {
     // @FIXME(sfount) tests shouldn't rely on middleware returning a value if
     //                it is not used by the middleware stack - revisit this structure
     return getAdminUsersClient({ correlationId: req.headers[CORRELATION_HEADER] })
-      .findServiceBy({ gatewayAccountId })
+      .findServiceBy({ gatewayAccountId }, getLoggingFields(req))
       .then(service => {
         serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_MAX_AGE)
         res.locals.service = service
         next()
       })
       .catch(() => {
-        logger.error(`Failed to retrieve service information for service: ${req.chargeData.gateway_account.serviceName}`)
+        logger.error(`Failed to retrieve service information for service: ${req.chargeData.gateway_account.serviceName}`, getLoggingFields(req))
         next()
       })
   }
