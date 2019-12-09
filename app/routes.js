@@ -26,6 +26,7 @@ const retrieveCharge = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
 const resolveLanguage = require('./middleware/resolve_language.js')
 const xraySegmentCls = require('./middleware/x_ray')
+const decryptCardDetails = require('./middleware/decrypt_card_details.js')
 
 // Constants
 const clsXrayConfig = require('../config/xray-cls')
@@ -60,6 +61,7 @@ exports.bind = function (app) {
   const card = paths.card
 
   const middlewareStack = [
+    decryptCardDetails,
     xraySegmentCls,
     csrfCheck,
     csrfTokenGeneration,
