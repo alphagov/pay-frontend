@@ -237,7 +237,10 @@ module.exports = {
               () => redirect(res).toReturn(req.chargeId),
               err => {
                 if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-                logger.error('Error capturing charge for wallet payment', getLoggingFields(req))
+                logger.error('Error capturing charge for wallet payment', {
+                  ...getLoggingFields(req),
+                  error: err
+                })
                 responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                   charge,
                   { returnUrl: routeFor('return', charge.id) }
@@ -268,7 +271,10 @@ module.exports = {
         (err) => {
           cookies.deleteSessionVariable(req, cookieKey)
           if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-          logger.error('Error capturing charge', getLoggingFields(req))
+          logger.error('Error capturing charge', {
+            ...getLoggingFields(req),
+            error: err
+          })
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
             charge,
             { returnUrl: routeFor('return', charge.id) }
@@ -293,8 +299,11 @@ module.exports = {
       .cancel(req.chargeId, getLoggingFields(req))
       .then(
         () => responseRouter.response(req, res, 'USER_CANCELLED', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) })),
-        () => {
-          logger.error('Error cancelling charge', getLoggingFields(req))
+        (err) => {
+          logger.error('Error cancelling charge', {
+            ...getLoggingFields(req),
+            error: err
+          })
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
         }
       )

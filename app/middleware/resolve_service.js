@@ -36,8 +36,11 @@ module.exports = function resolveServiceMiddleware (req, res, next) {
         res.locals.service = service
         next()
       })
-      .catch(() => {
-        logger.error(`Failed to retrieve service information for service: ${req.chargeData.gateway_account.serviceName}`, getLoggingFields(req))
+      .catch((err) => {
+        logger.error(`Failed to retrieve service information for service: ${req.chargeData.gateway_account.serviceName}`, {
+          ...getLoggingFields(req),
+          error: err
+        })
         next()
       })
   }

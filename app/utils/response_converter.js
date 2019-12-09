@@ -22,7 +22,8 @@ function createCallbackToPromiseConverter (context, transformer, loggingFields =
   const defer = context.defer
 
   return (error, response, body) => {
-    requestLogger.logRequestEnd(context, loggingFields)
+    const statusCode = response && response.statusCode
+    requestLogger.logRequestEnd(context, statusCode, loggingFields)
 
     if (error) {
       requestLogger.logRequestError(context, error, loggingFields)

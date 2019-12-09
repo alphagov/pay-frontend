@@ -16,7 +16,7 @@ exports.failedChargePost = (status, loggingFields = {}) => {
     ...loggingFields,
     service: 'connector',
     method: 'POST',
-    status: status
+    status_code: status
   })
 }
 
@@ -34,7 +34,7 @@ exports.failedChargePatch = (err, loggingFields = {}) => {
     ...loggingFields,
     service: 'connector',
     method: 'PATCH',
-    err: err
+    error: err
   })
 }
 

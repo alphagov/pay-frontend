@@ -177,7 +177,7 @@ const _getConnector = (url, description, loggingFields = {}) => {
           ...loggingFields,
           service: 'connector',
           method: 'GET',
-          status: response.statusCode
+          status_code: response.statusCode
         })
       }
       resolve(response)

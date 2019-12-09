@@ -41,7 +41,10 @@ module.exports = (req, res, next) => {
         })
         .catch((err) => {
           subsegment.close('error')
-          logger.error('Error finding charge in middleware: ' + err, getLoggingFields(req))
+          logger.error('Error finding charge in middleware', {
+            ...getLoggingFields(req),
+            error: err
+          })
           responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
         })
     }, clsSegment)
