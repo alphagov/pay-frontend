@@ -72,10 +72,10 @@ const _putConnector = (url, payload, description, subSegment, loggingFields = {}
       null,
       subSegment
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime, loggingFields)
+      logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PUT', url, new Date() - startTime, loggingFields)
+      logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
         ...loggingFields,
         service: 'connector',
@@ -105,10 +105,10 @@ const _postConnector = (url, payload, description, loggingFields = {}) => {
       null,
       null
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime, loggingFields)
+      logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime, loggingFields)
+      logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
         ...loggingFields,
         service: 'connector',
@@ -138,10 +138,10 @@ const _patchConnector = (url, payload, description, loggingFields = {}) => {
       null,
       null
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime, loggingFields)
+      logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime, loggingFields)
+      logger.info('PATCH %s to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
         ...loggingFields,
         service: 'connector',
@@ -171,9 +171,9 @@ const _getConnector = (url, description, loggingFields = {}) => {
       null,
       null
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime, loggingFields)
+      logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       if (response.statusCode !== 200) {
-        logger.warn('[%s] Calling connector to GET something returned a non http 200 response', correlationId, {
+        logger.warn('Calling connector to GET something returned a non http 200 response', correlationId, {
           ...loggingFields,
           service: 'connector',
           method: 'GET',
@@ -182,7 +182,7 @@ const _getConnector = (url, description, loggingFields = {}) => {
       }
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime, loggingFields)
+      logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
         ...loggingFields,
         service: 'connector',
