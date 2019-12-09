@@ -5,11 +5,10 @@ const csrf = require('csrf')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const logging = require('../utils/logging')
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 const session = require('../utils/session')
 const responseRouter = require('../utils/response_router')
 const chargeParam = require('../services/charge_param_retriever')
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
 
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
@@ -21,7 +20,7 @@ exports.csrfTokenGeneration = (req, res, next) => {
 exports.csrfCheck = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
   if (!chargeId) {
-    logger.info('Session cookie is not present, rendering unauthorised page')
+    logger.info('Session cookie is not present, rendering unauthorised page', getLoggingFields(req))
     return responseRouter.response(req, res, 'UNAUTHORISED')
   }
 
@@ -32,13 +31,13 @@ exports.csrfCheck = (req, res, next) => {
   if (!chargeSession.csrfSecret) {
     responseRouter.response(req, res, 'UNAUTHORISED')
     logger.error('CSRF secret is not defined', {
-      chargeId: chargeId,
+      ...getLoggingFields(req),
       referrer: req.get('Referrer'),
       url: req.originalUrl,
       method: req.method
     })
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    logging.systemError('CSRF is invalid', req.headers && req.headers[CORRELATION_HEADER], chargeId)
+    logger.error('CSRF is invalid', getLoggingFields(req))
     responseRouter.response(req, res, 'SYSTEM_ERROR')
   } else {
     chargeSession.csrfTokens.push(csrfToken)
@@ -50,7 +49,7 @@ function csrfValid (csrfToken, chargeSession, req) {
   if (!['put', 'post'].includes(req.method.toLowerCase())) {
     return true
   } else if (chargeSession.csrfTokens.includes(csrfToken)) {
-    logger.error('CSRF token was already used')
+    logger.error('CSRF token was already used', getLoggingFields(req))
     return false
   } else {
     return csrf().verify(chargeSession.csrfSecret, csrfToken)

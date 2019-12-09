@@ -18,14 +18,14 @@ exports.successCodes = () => SUCCESS_CODES
  * @param {function} transformer
  * @returns {function}
  */
-function createCallbackToPromiseConverter (context, transformer) {
+function createCallbackToPromiseConverter (context, transformer, loggingFields = {}) {
   const defer = context.defer
 
   return (error, response, body) => {
-    requestLogger.logRequestEnd(context)
+    requestLogger.logRequestEnd(context, loggingFields)
 
     if (error) {
-      requestLogger.logRequestError(context, error)
+      requestLogger.logRequestError(context, error, loggingFields)
       defer.reject({ error: error })
     } else if (response && SUCCESS_CODES.includes(response.statusCode)) {
       if (body && typeof transformer === 'function') {
@@ -34,7 +34,7 @@ function createCallbackToPromiseConverter (context, transformer) {
         defer.resolve(body)
       }
     } else {
-      requestLogger.logRequestFailure(context, response)
+      requestLogger.logRequestFailure(context, response, loggingFields)
       defer.reject({
         errorCode: response.statusCode,
         message: response.body

@@ -5,6 +5,7 @@ const lodash = require('lodash')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 const responseRouter = require('../utils/response_router')
 const stateService = require('../services/state_service')
 const State = require('../../config/state.js')
@@ -22,7 +23,7 @@ module.exports = (req, res, next) => {
   if (!correctStates.includes(currentState)) {
     logger.info(`State enforcer status doesn't match: current charge state from \
     connector [${currentState}], expected [${correctStates}] for charge [${req.chargeId}] \
-    with payment provider [${paymentProvider}]`)
+    with payment provider [${paymentProvider}]`, getLoggingFields(req))
     const stateName = currentState.toUpperCase().replace(/\s/g, '_')
     responseRouter.response(req, res, stateName, {
       chargeId: req.chargeId,

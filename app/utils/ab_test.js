@@ -4,6 +4,7 @@ const cookie = require('./cookies')
 const random = require('./random')
 const crypto = require('crypto')
 const logger = require('../utils/logger')(__filename)
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 
 exports.uniformlyGeneratedRandomNumber = () => {
   // AFAIK node's Math.random function is not uniformly random
@@ -12,21 +13,21 @@ exports.uniformlyGeneratedRandomNumber = () => {
   // 1. Generate a random number
   // 2. Hash it so it is uniformly distributed
   // 3. Modulo 100
-  let abUuid = random.randomUuid()
-  let hash = crypto.createHash('sha256')
+  const abUuid = random.randomUuid()
+  const hash = crypto.createHash('sha256')
 
   hash.update(abUuid)
 
   // We will Math.ceil our number so we don't have to check zeros
-  let uniformHash = hash.digest('hex')
-  let uniformNumber = parseInt(uniformHash, 16)
-  let uniformModNumber = Math.ceil(uniformNumber % 100)
+  const uniformHash = hash.digest('hex')
+  const uniformNumber = parseInt(uniformHash, 16)
+  const uniformModNumber = Math.ceil(uniformNumber % 100)
 
   return uniformModNumber
 }
 
 exports._getSession = req => {
-  let sessionVal = cookie.getSessionVariable(req, 'abTestId')
+  const sessionVal = cookie.getSessionVariable(req, 'abTestId')
   return sessionVal || null
 }
 
@@ -40,13 +41,13 @@ exports._setSession = req => {
 
 exports._getOrSetSession = req => {
   if (exports._getSession(req) === null) {
-    logger.info('Could not find user ab testing session, creating one')
+    logger.info('Could not find user ab testing session, creating one', getLoggingFields(req))
     exports._setSession(req)
   }
   return exports._getSession(req)
 }
 
-exports.switch = opts => {
+exports.switch = (opts, loggingFields = {}) => {
   const threshold = Math.floor(parseInt(opts.threshold, 10) || 100)
   const defaultVariant = opts.defaultVariant
   const testingVariant = opts.testingVariant
@@ -60,7 +61,8 @@ exports.switch = opts => {
       logger.info(
         'Session value was %s, >= %s, showing testing variant',
         sessionValue,
-        threshold
+        threshold,
+        loggingFields
       )
 
       return testingVariant(req, res)
@@ -68,7 +70,8 @@ exports.switch = opts => {
       logger.info(
         'Session value was %s, <= %s, showing default variant',
         sessionValue,
-        threshold
+        threshold,
+        loggingFields
       )
 
       return defaultVariant(req, res)

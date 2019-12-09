@@ -4,6 +4,7 @@
 const normalise = require('../../services/normalise_charge')
 const logging = require('../../utils/logging')
 const logger = require('../../utils/logger')(__filename)
+const { getLoggingFields } = require('../../utils/logging_fields_helper')
 const responseRouter = require('../../utils/response_router')
 const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const Charge = require('../../models/charge')
@@ -28,15 +29,15 @@ const handleAuthResponse = (req, res, charge) => response => {
   switch (response.statusCode) {
     case 202:
     case 409:
-      logging.failedChargePost(409)
+      logging.failedChargePost(409, getLoggingFields(req))
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
       Charge(req.headers[CORRELATION_HEADER])
-        .capture(req.chargeId)
+        .capture(req.chargeId, getLoggingFields(req))
         .then(
           () => {
-            logger.info(`Successful capture for digital wallet payment. ChargeID: ${charge.id}`)
+            logger.info('Successful capture for digital wallet payment.', getLoggingFields(req))
             return redirect(res).toReturn(req.chargeId)
           },
           err => {
@@ -46,7 +47,7 @@ const handleAuthResponse = (req, res, charge) => response => {
                 {},
                 webPaymentsRouteFor('handlePaymentResponse', charge.id)))
             } else {
-              logging.systemError('Wallet auth response capture payment attempt', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+              logger.error('Wallet auth response capture payment attempt error', getLoggingFields(req))
               responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
                 charge,
                 { returnUrl: routeFor('return', charge.id) },
@@ -58,8 +59,8 @@ const handleAuthResponse = (req, res, charge) => response => {
       break
     case 400:
     case 500:
-      logging.failedChargePost(409)
-      logging.systemError('Wallet authorisation response', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+      logging.failedChargePost(409, getLoggingFields(req))
+      logger.error('Wallet authorisation response', getLoggingFields(req))
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
         charge,
         { returnUrl: routeFor('return', charge.id) },
@@ -76,7 +77,7 @@ module.exports = (req, res) => {
   const charge = normalise.charge(req.chargeData, req.chargeId)
   const connectorResponse = getSessionVariable(req, webPaymentAuthResponseSessionKey)
   if (!connectorResponse) {
-    logging.systemError('Web payment auth, no connector response', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+    logger.error('Web payment auth error, no connector response', getLoggingFields(req))
     return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
       charge,
       { returnUrl: routeFor('return', charge.id) },

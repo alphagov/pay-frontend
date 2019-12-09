@@ -65,7 +65,7 @@ const _putConnector = (url, payload, description, subSegment, loggingFields = {}
       description: description,
       service: SERVICE_NAME
     }
-    requestLogger.logRequestStart(context)
+    requestLogger.logRequestStart(context, loggingFields)
     baseClient.put(
       url,
       { payload, correlationId },
@@ -89,7 +89,7 @@ const _putConnector = (url, payload, description, subSegment, loggingFields = {}
 }
 
 /** @private */
-const _postConnector = (url, payload, description) => {
+const _postConnector = (url, payload, description, loggingFields = {}) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -98,18 +98,19 @@ const _postConnector = (url, payload, description) => {
       description: description,
       service: SERVICE_NAME
     }
-    requestLogger.logRequestStart(context)
+    requestLogger.logRequestStart(context, loggingFields)
     baseClient.post(
       url,
       { payload, correlationId },
       null,
       null
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime, loggingFields)
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'POST', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
+        ...loggingFields,
         service: 'connector',
         method: 'POST',
         url: url,
@@ -121,7 +122,7 @@ const _postConnector = (url, payload, description) => {
 }
 
 /** @private */
-const _patchConnector = (url, payload, description) => {
+const _patchConnector = (url, payload, description, loggingFields = {}) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -130,18 +131,19 @@ const _patchConnector = (url, payload, description) => {
       description: description,
       service: SERVICE_NAME
     }
-    requestLogger.logRequestStart(context)
+    requestLogger.logRequestStart(context, loggingFields)
     baseClient.patch(
       url,
       { payload, correlationId },
       null,
       null
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime, loggingFields)
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'PATCH', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
+        ...loggingFields,
         service: 'connector',
         method: 'PATCH',
         url: url,
@@ -153,7 +155,7 @@ const _patchConnector = (url, payload, description) => {
 }
 
 /** @private */
-const _getConnector = (url, description) => {
+const _getConnector = (url, description, loggingFields = {}) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -162,16 +164,17 @@ const _getConnector = (url, description) => {
       description: description,
       service: SERVICE_NAME
     }
-    requestLogger.logRequestStart(context)
+    requestLogger.logRequestStart(context, loggingFields)
     baseClient.get(
       url,
       { correlationId },
       null,
       null
     ).then(response => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime, loggingFields)
       if (response.statusCode !== 200) {
         logger.warn('[%s] Calling connector to GET something returned a non http 200 response', correlationId, {
+          ...loggingFields,
           service: 'connector',
           method: 'GET',
           status: response.statusCode
@@ -179,8 +182,9 @@ const _getConnector = (url, description) => {
       }
       resolve(response)
     }).catch(err => {
-      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime)
+      logger.info('[%s] - %s to %s ended - total time %dms', correlationId, 'GET', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
+        ...loggingFields,
         service: 'connector',
         method: 'GET',
         url: url,
@@ -192,29 +196,29 @@ const _getConnector = (url, description) => {
 }
 
 // POST functions
-const threeDs = chargeOptions => {
+const threeDs = (chargeOptions, loggingFields = {}) => {
   const threeDsUrl = _getThreeDsFor(chargeOptions.chargeId)
-  return _postConnector(threeDsUrl, chargeOptions.payload, '3ds')
+  return _postConnector(threeDsUrl, chargeOptions.payload, '3ds', loggingFields)
 }
 
-const chargeAuth = chargeOptions => {
+const chargeAuth = (chargeOptions, loggingFields = {}) => {
   const authUrl = _getAuthUrlFor(chargeOptions.chargeId)
-  return _postConnector(authUrl, chargeOptions.payload, 'create charge')
+  return _postConnector(authUrl, chargeOptions.payload, 'create charge', loggingFields)
 }
 
-const chargeAuthWithWallet = chargeOptions => {
+const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
   const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.provider)
-  return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment')
+  return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields)
 }
 
-const capture = chargeOptions => {
+const capture = (chargeOptions, loggingFields = {}) => {
   const captureUrl = _getCaptureUrlFor(chargeOptions.chargeId)
-  return _postConnector(captureUrl, null, 'do capture')
+  return _postConnector(captureUrl, null, 'do capture', loggingFields)
 }
 
-const cancel = chargeOptions => {
+const cancel = (chargeOptions, loggingFields = {}) => {
   const cancelUrl = _getCancelUrlFor(chargeOptions.chargeId)
-  return _postConnector(cancelUrl, null, 'cancel charge')
+  return _postConnector(cancelUrl, null, 'cancel charge', loggingFields)
 }
 
 // PUT functions
@@ -224,30 +228,30 @@ const updateStatus = (chargeOptions, subSegment, loggingFields = {}) => {
 }
 
 // PATCH functions
-const patch = chargeOptions => {
+const patch = (chargeOptions, loggingFields = {}) => {
   const patchUrl = _getPatchUrlFor(chargeOptions.chargeId)
-  return _patchConnector(patchUrl, chargeOptions.payload, 'patch')
+  return _patchConnector(patchUrl, chargeOptions.payload, 'patch', loggingFields)
 }
 
 // GET functions
-const findCharge = chargeOptions => {
+const findCharge = (chargeOptions, loggingFields = {}) => {
   const findChargeUrl = _getFindChargeUrlFor(chargeOptions.chargeId)
-  return _getConnector(findChargeUrl, 'find charge')
+  return _getConnector(findChargeUrl, 'find charge', loggingFields)
 }
 
-const findByToken = chargeOptions => {
+const findByToken = (chargeOptions, loggingFields = {}) => {
   const findByTokenUrl = _getFindByTokenUrlFor(chargeOptions.tokenId)
-  return _getConnector(findByTokenUrl, 'find by token')
+  return _getConnector(findByTokenUrl, 'find by token', loggingFields)
 }
 
-const getWorldpay3dsFlexJwt = chargeOptions => {
+const getWorldpay3dsFlexJwt = (chargeOptions, loggingFields = {}) => {
   const getWorldpay3dsFlexJwtUrl = _getWorldpay3dsFlexUrlFor(chargeOptions.chargeId)
-  return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT')
+  return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT', loggingFields)
 }
 
-const markTokenAsUsed = chargeOptions => {
+const markTokenAsUsed = (chargeOptions, loggingFields = {}) => {
   const markUsedTokenUrl = _markUsedTokenUrl(chargeOptions.tokenId)
-  return _postConnector(markUsedTokenUrl, undefined, 'mark token as used')
+  return _postConnector(markUsedTokenUrl, undefined, 'mark token as used', loggingFields)
 }
 
 module.exports = function (clientOptions = {}) {

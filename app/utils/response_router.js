@@ -2,6 +2,7 @@
 
 const lodash = require('lodash')
 const logger = require('./logger')(__filename)
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 
 const expired = {
   view: 'errors/incorrect_state/session_expired',
@@ -238,7 +239,7 @@ exports.response = (req, res, actionName, options) => {
   options.viewName = actionName
   let action = lodash.result(actions, actionName)
   if (!action) {
-    logger.error('Response action ' + actionName + ' NOT FOUND')
+    logger.error('Response action ' + actionName + ' NOT FOUND', getLoggingFields(req))
     options = { viewName: 'error' }
     action = actions.ERROR
   }

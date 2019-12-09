@@ -4,6 +4,7 @@
 const AWSXRay = require('aws-xray-sdk')
 const { getNamespace } = require('continuation-local-storage')
 const logger = require('../../utils/logger')(__filename)
+const { getLoggingFields } = require('../../utils/logging_fields_helper')
 const connectorClient = require('../../services/clients/connector_client')
 const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payload')
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
@@ -20,19 +21,19 @@ module.exports = (req, res) => {
   const namespace = getNamespace(clsXrayConfig.nameSpaceName)
   const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
   return AWSXRay.captureAsyncFunc('Auth_charge_wallet', subsegment => {
-    return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload })
+    return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload }, getLoggingFields(req))
       .then(data => {
         subsegment.close()
         setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
           statusCode: data.statusCode
         })
-        logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`)
+        logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
         res.status(200)
         res.send({ url: `/handle-payment-response/${chargeId}` })
       })
       .catch(err => {
         subsegment.close('error')
-        logger.error(`Error while trying to authorise ${provider} Pay payment: ${err}`)
+        logger.error(`Error while trying to authorise ${provider} Pay payment: ${err}`, getLoggingFields(req))
         res.status(200)
         res.send({ url: `/handle-payment-response/${chargeId}` })
       })

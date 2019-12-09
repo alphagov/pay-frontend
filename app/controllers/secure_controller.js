@@ -27,7 +27,7 @@ exports.new = async function (req, res) {
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   var chargeId
   try {
-    const chargeData = await Charge(correlationId).findByToken(chargeTokenId)
+    const chargeData = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
     chargeId = chargeData.charge.externalId
 
     setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
@@ -46,7 +46,7 @@ exports.new = async function (req, res) {
       })
     } else {
       logger.info('Payment token used for the first time', getLoggingFields(req))
-      await Token.markTokenAsUsed(chargeTokenId, correlationId)
+      await Token.markTokenAsUsed(chargeTokenId, correlationId, getLoggingFields(req))
       setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
       res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
     }

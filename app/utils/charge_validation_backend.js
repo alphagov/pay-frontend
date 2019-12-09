@@ -7,7 +7,7 @@ const _ = require('lodash')
 const chargeValidator = require('./charge_validation.js')
 const normalise = require('../services/normalise_charge.js')
 
-module.exports = (translations, logger, cardModel, chargeOptions) => {
+module.exports = (translations, logger, cardModel, chargeOptions, loggingFields = {}) => {
   const validator = chargeValidator(translations, logger, cardModel, chargeOptions)
   return {
     verify: (req) => new Promise((resolve) => {
@@ -15,6 +15,7 @@ module.exports = (translations, logger, cardModel, chargeOptions) => {
       cardModel.checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language)
         .then(card => {
           logger.debug('Card supported', {
+            ...loggingFields,
             cardBrand: card.brand,
             cardType: card.type,
             cardCorporate: card.corporate,
@@ -23,7 +24,10 @@ module.exports = (translations, logger, cardModel, chargeOptions) => {
           resolve({ validation, card })
         })
         .catch(err => {
-          logger.debug('Card not supported', { err: err.message })
+          logger.debug('Card not supported', {
+            ...loggingFields,
+            error: err.message
+          })
           // add card not supported error to validation
           validation.hasError = true
           _.remove(validation.errorFields, errorField => errorField.cssKey === 'card-no')

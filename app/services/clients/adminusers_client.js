@@ -21,7 +21,7 @@ const responseBodyToServiceTransformer = function responseBodyToServiceTransform
 let baseUrl
 let correlationId
 
-const findServiceBy = function findServiceBy (findOptions) {
+const findServiceBy = function findServiceBy (findOptions, loggingFields = {}) {
   return new Promise(function (resolve, reject) {
     const servicesResource = `${baseUrl}/v1/api/services`
     const params = {
@@ -44,8 +44,8 @@ const findServiceBy = function findServiceBy (findOptions) {
       description: 'find a service',
       service: SERVICE_NAME
     }
-    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer)
-    requestLogger.logRequestStart(context)
+    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer, loggingFields)
+    requestLogger.logRequestStart(context, loggingFields)
     baseClient.get(servicesResource, params, callbackToPromiseConverter)
       .on('error', callbackToPromiseConverter)
   })

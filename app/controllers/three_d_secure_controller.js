@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const logging = require('../utils/logging')
+const { getLoggingFields } = require('../utils/logging_fields_helper')
 const responseRouter = require('../utils/response_router')
 const normalise = require('../services/normalise_charge')
 const paths = require('../paths')
@@ -31,7 +31,8 @@ const build3dsPayload = (chargeId, req) => {
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
-    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [starts with [${paRes.substring(0, 50)}] and ending with [${paRes.substring(paRes.length - 50)}] ]`)
+    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [starts with [${paRes.substring(0, 50)}] and ending with [${paRes.substring(paRes.length - 50)}] ]`,
+      getLoggingFields(req))
   }
 
   const providerStatus = threeDsEPDQResults[_.get(req, 'body.providerStatus', '')]
@@ -58,11 +59,11 @@ const handleThreeDsResponse = (req, res, charge) => response => {
       redirect(res).toAuthWaiting(charge.id)
       break
     case 500:
-      logging.systemError('3DS response 500', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+      logger.error('3DS response 500', getLoggingFields(req))
       responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       break
     default:
-      logging.systemError('3DS unknown response (`ERROR` used)', req.headers && req.headers[CORRELATION_HEADER], charge.id)
+      logger.error('3DS unknown response', getLoggingFields(req))
       responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
   }
 }
@@ -72,12 +73,12 @@ module.exports = {
     const charge = normalise.charge(req.chargeData, req.chargeId)
     const correlationId = req.headers[CORRELATION_HEADER] || ''
     const payload = build3dsPayload(charge.id, req)
-    connectorClient({ correlationId }).threeDs({ chargeId: charge.id, payload })
+    connectorClient({ correlationId }).threeDs({ chargeId: charge.id, payload }, getLoggingFields(req))
       .then(handleThreeDsResponse(req, res, charge))
       .catch((err) => {
         logger.error('Exception in auth3dsHandler', {
-          chargeId: charge.id,
-          chargeStatus: charge.status,
+          ...getLoggingFields(req),
+          charge_status: charge.status,
           error: err
         })
         responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
