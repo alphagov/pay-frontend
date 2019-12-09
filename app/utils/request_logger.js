@@ -12,11 +12,10 @@ exports.logRequestStart = (context, loggingFields = {}) => {
 }
 exports.logRequestEnd = (context, loggingFields = {}) => {
   const duration = new Date() - context.startTime
-  logger.info(`[${context.correlationId}] - ${context.method} to ${context.url} ended - elapsed time: ${duration} ms`,
-    loggingFields)
+  logger.info(`${context.method} to ${context.url} ended - elapsed time: ${duration} ms`, loggingFields)
 }
 exports.logRequestFailure = (context, response, loggingFields = {}) => {
-  logger.error(`[${context.correlationId}] Calling ${context.service} to ${context.description} failed`, {
+  logger.error(`Calling ${context.service} to ${context.description} failed`, {
     ...loggingFields,
     service: context.service,
     method: context.method,
@@ -25,7 +24,7 @@ exports.logRequestFailure = (context, response, loggingFields = {}) => {
   })
 }
 exports.logRequestError = (context, error, loggingFields = {}) => {
-  logger.error(`[${context.correlationId}] Calling ${context.service} to ${context.description} threw exception`, {
+  logger.error(`Calling ${context.service} to ${context.description} threw exception`, {
     ...loggingFields,
     service: context.service,
     method: context.method,

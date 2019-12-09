@@ -38,7 +38,7 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
       cardIdClient.post({ payload: data, correlationId: correlationId }, postSubsegment)
         .then((response) => {
           postSubsegment.close()
-          logger.info(`[${correlationId}]  - %s to %s ended - total time %dms`, 'POST', cardIdClient.CARD_URL, new Date() - startTime, loggingFields)
+          logger.info('POST to %s ended - total time %dms', cardIdClient.CARD_URL, new Date() - startTime, loggingFields)
 
           if (response.statusCode === 404) {
             return reject(new Error('Your card is not supported'))
@@ -60,7 +60,7 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
             prepaid: body.prepaid
           }
 
-          logger.debug(`[${correlationId}] Checking card brand`, {
+          logger.debug('Checking card brand', {
             ...loggingFields,
             card_brand: card.brand,
             card_type: card.type
@@ -83,11 +83,11 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
         })
         .catch(error => {
           postSubsegment.close(error)
-          logger.error(`[${correlationId}] ERROR CALLING CARDID AT ${cardIdClient.CARD_URL}`, {
+          logger.error('Error calling card id to check card', {
             ...loggingFields,
             error
           })
-          logger.info(`[${correlationId}] - %s to %s ended - total time %dms`, 'POST', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
+          logger.info('POST to %s ended - total time %dms', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
           resolve()
         })
     }, subSegment)
