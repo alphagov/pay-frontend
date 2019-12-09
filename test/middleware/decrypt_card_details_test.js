@@ -18,7 +18,7 @@ describe.only('When CLOUDFRONT_PRIVATE_KEY is true', function () {
   const next = sinon.spy()
 
   it('should decrypt cardNo', () => {
-    const encryptedCardDetails = Object.keys(decryptedCardDetails).reduce( (encryptedMap, key) => {
+    const encryptedCardDetails = Object.keys(decryptedCardDetails).reduce((encryptedMap, key) => {
       encryptedMap[key] = encryptValue(decryptedCardDetails[key])
       return encryptedMap
     }, {})
@@ -43,7 +43,7 @@ describe.only('When CLOUDFRONT_PRIVATE_KEY is not set', function () {
       body: decryptedCardDetails
     }
 
-    process.env.CLOUDFRONT_PRIVATE_KEY=''
+    process.env.CLOUDFRONT_PRIVATE_KEY = ''
     decryptCardDetails(request, {}, next)
     expect(next.called).to.be.true
     expect(request.body).to.equal(decryptedCardDetails)
