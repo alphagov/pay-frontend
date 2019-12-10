@@ -1,7 +1,12 @@
-const decryptCardDetails = require('../../app/middleware/decrypt_card_details.js')
 const { expect } = require('chai')
 const sinon = require('sinon')
 const forge = require('node-forge')
+
+// proxyrequire is necessary to reload the script under test after changing
+// the envs between tests.
+const proxyquire = require('proxyquire').noPreserveCache()
+
+const keypair = forge.pki.rsa.generateKeyPair({ bits: 1024, e: 0x10001 })
 
 const decryptedCardDetails = {
   cardNo: 'something',
@@ -23,21 +28,23 @@ const encryptValue = (value, publicKey) => {
   return forge.util.encode64(encrypted)
 }
 
-describe.only('When CLOUDFRONT_PRIVATE_KEY is true', function () {
+const encryptMapValues = (mapToEncrypt) => {
+  return Object.keys(mapToEncrypt).reduce((encryptedMap, key) => {
+    encryptedMap[key] = encryptValue(decryptedCardDetails[key], keypair.publicKey)
+    return encryptedMap
+  }, {})
+}
+
+describe.only('When CLOUDFRONT_PRIVATE_KEY is set', function () {
   const next = sinon.spy()
-  const keypair = forge.pki.rsa.generateKeyPair({ bits: 1024, e: 0x10001 })
 
-  it('should decrypt cardNo', () => {
-    const encryptedCardDetails = Object.keys(decryptedCardDetails).reduce((encryptedMap, key) => {
-      encryptedMap[key] = encryptValue(decryptedCardDetails[key], keypair.publicKey)
-      return encryptedMap
-    }, {})
-
+  it('should decrypt card data', () => {
     const request = {
-      body: encryptedCardDetails
+      body: encryptMapValues(decryptedCardDetails)
     }
 
     process.env.CLOUDFRONT_PRIVATE_KEY = forge.pki.privateKeyToPem(keypair.privateKey)
+    const decryptCardDetails = proxyquire('../../app/middleware/decrypt_card_details.js', {})
     decryptCardDetails(request, {}, next)
     expect(next.called).to.equal(true)
     expect(request.body).to.deep.equal(decryptedCardDetails)
@@ -47,12 +54,13 @@ describe.only('When CLOUDFRONT_PRIVATE_KEY is true', function () {
 describe.only('When CLOUDFRONT_PRIVATE_KEY is not set', function () {
   const next = sinon.spy()
 
-  it('should not decrypt cardNo', () => {
+  it('should not decrypt card data', () => {
     const request = {
       body: decryptedCardDetails
     }
 
     process.env.CLOUDFRONT_PRIVATE_KEY = ''
+    const decryptCardDetails = proxyquire('../../app/middleware/decrypt_card_details.js', {})
     decryptCardDetails(request, {}, next)
     expect(next.called).to.equal(true)
     expect(request.body).to.equal(decryptedCardDetails)
