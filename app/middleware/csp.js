@@ -12,7 +12,6 @@ const sentryCspReportUri = `${cspReportUri}&sentry_environment=${environment}`
 // and never changes
 const govUkFrontendLayoutJsEnabledScriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
-// Worldpay 3ds flex iframe
 const CSP_NONE = ["'none'"]
 const CSP_SELF = ["'self'"]
 
@@ -27,6 +26,16 @@ const scriptSourceCardDetails = ["'self'", "'unsafe-inline'", 'https://www.googl
 
 const formActionWP3DS = ["'self'", 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect',
   'https://secure-test.worldpay.com/shopper/3ds/ddc.html']
+
+// Direct redirect use case lets post to any given site
+const formActionCardDetails = (req, res) => {
+  if (res.locals && res.locals.service &&
+      res.locals.service.redirectToServiceImmediatelyOnTerminalState === true) {
+    return '*'
+  }
+  return CSP_SELF[0]
+}
+
 // Sript that is being used during zap test: https://github.com/alphagov/pay-endtoend/blob/d685d5bc38d639e8adef629673e5577cb923408e/src/test/resources/uk/gov/pay/pen/tests/frontend.feature#L23
 if (allowUnsafeEvalScripts) {
   scriptSourceCardDetails.push("'unsafe-eval'")
@@ -46,7 +55,7 @@ const cardDetailsCSP = helmet.contentSecurityPolicy({
     scriptSrc: scriptSourceCardDetails,
     connectSrc: connectSourceCardDetails,
     styleSrc: [...CSP_SELF, "'unsafe-eval'"],
-    formAction: CSP_SELF,
+    formAction: [formActionCardDetails],
     fontSrc: CSP_SELF,
     frameAncestors: CSP_SELF,
     manifestSrc: CSP_NONE,
