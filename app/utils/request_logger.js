@@ -10,9 +10,16 @@ exports.logRequestStart = (context, loggingFields = {}) => {
     url: context.url
   })
 }
-exports.logRequestEnd = (context, loggingFields = {}) => {
+exports.logRequestEnd = (context, statusCode, loggingFields = {}) => {
   const duration = new Date() - context.startTime
-  logger.info(`${context.method} to ${context.url} ended - elapsed time: ${duration} ms`, loggingFields)
+  logger.info(`${context.method} to ${context.url} ended`, {
+    ...loggingFields,
+    service: context.service,
+    method: context.method,
+    url: context.url,
+    response_time: duration,
+    status_code: statusCode
+  })
 }
 exports.logRequestFailure = (context, response, loggingFields = {}) => {
   logger.error(`Calling ${context.service} to ${context.description} failed`, {
@@ -20,7 +27,7 @@ exports.logRequestFailure = (context, response, loggingFields = {}) => {
     service: context.service,
     method: context.method,
     url: context.url,
-    status: response.statusCode
+    status_code: response.statusCode
   })
 }
 exports.logRequestError = (context, error, loggingFields = {}) => {

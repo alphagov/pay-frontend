@@ -16,8 +16,11 @@ module.exports.healthcheck = (req, res) => {
     baseClient.get(`${process.env.FORWARD_PROXY_URL}/nginx_status`, {}, (err, response) => {
       const statusCode = _.get(response, 'statusCode')
       if (err || statusCode !== 200) {
-        logger.error(`Healthchecking forward proxy returned error: ${err}, status code: ${statusCode}`,
-          getLoggingFields(req))
+        logger.error('Healthchecking forward proxy returned error', {
+          ...getLoggingFields(req),
+          error: err,
+          status_code: statusCode
+        })
         respond(res, 502, _.merge(healthyPingResponse, { proxy: { healthy: false } }))
       } else {
         respond(res, 200, _.merge(healthyPingResponse, { proxy: { healthy: true } }))

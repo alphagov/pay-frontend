@@ -105,7 +105,7 @@ module.exports = correlationId => {
       ...loggingFields,
       service: 'connector',
       method: 'POST',
-      status: code
+      status_code: code
     })
     if (code === 400) return defer.reject(new Error('CANCEL_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
@@ -130,7 +130,7 @@ module.exports = correlationId => {
     if (response.statusCode !== 204) {
       logger.error('Calling connector to update charge status failed', {
         ...loggingFields,
-        status: response.statusCode
+        status_code: response.statusCode
       })
       defer.reject(new Error('UPDATE_FAILED'))
       return

@@ -33,7 +33,10 @@ module.exports = (req, res) => {
       })
       .catch(err => {
         subsegment.close('error')
-        logger.error(`Error while trying to authorise ${provider} Pay payment: ${err}`, getLoggingFields(req))
+        logger.error(`Error while trying to authorise ${provider} Pay payment`, {
+          ...getLoggingFields(req),
+          error: err
+        })
         res.status(200)
         res.send({ url: `/handle-payment-response/${chargeId}` })
       })
