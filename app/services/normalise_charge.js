@@ -136,7 +136,7 @@ module.exports = (function () {
 
   const creditCard = function (creditCardNo) {
     creditCardNo = (creditCardNo) || ''
-    return creditCardNo.replace(/\D/g, '')
+    return creditCardNo
   }
 
   const expiryDate = function (month, year) {

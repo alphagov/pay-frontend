@@ -20,7 +20,7 @@ i18n.configure(i18nConfig)
 const checkCard = function (cardNo, allowed, language, correlationId, subSegment, loggingFields = {}) {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
-    const data = { cardNumber: parseInt(cardNo) }
+    const data = { cardNumber: cardNo }
 
     i18n.setLocale(language || 'en')
 
@@ -31,10 +31,6 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
     }
 
     AWSXRay.captureAsyncFunc('cardIdClient_post', function (postSubsegment) {
-      if (cardNo.length > 0 && cardNo.length < 11) {
-        postSubsegment.close()
-        return reject(new Error(i18n.__('fieldErrors.fields.cardNo.numberIncorrectLength')))
-      }
       cardIdClient.post({ payload: data, correlationId: correlationId }, postSubsegment)
         .then((response) => {
           postSubsegment.close()

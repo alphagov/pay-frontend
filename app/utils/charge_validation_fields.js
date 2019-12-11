@@ -48,7 +48,6 @@ module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
     creditCardType: creditCardType,
     allowedCards: Card.allowed,
     fieldValidations: {
-      cardNo: cardNo.bind(Card),
       expiryMonth,
       cvc,
       addressPostcode,
@@ -63,6 +62,8 @@ module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
     requiredFormFields: REQUIRED_FORM_FIELDS,
     optionalFormFields: OPTIONAL_FORM_FIELDS
   }
+
+  const cardNoValidator = cardNo.bind(Card)
 
   if (chargeOptions.collect_billing_address === true) {
     chargeValidationFields.requiredFormFields = [...REQUIRED_FORM_FIELDS, ...REQUIRED_BILLING_ADDRESS_FORM_FIELDS]

@@ -24,7 +24,7 @@ module.exports = (translations, logger, Card, chargeOptions = { collect_billing_
     optional: validations.optionalFormFields,
     creditCardType: validations.creditCardType,
     allowedCards: Card.allowed,
-    cardNo: fieldValidations.cardNo,
+    cardNo: chargeValidationFields.cardNoValidator,
     verify: (body) => {
       const checkResult = {
         hasError: false,
