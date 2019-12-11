@@ -75,7 +75,7 @@
   },
   "dependencies": {
     "@govuk-pay/pay-js-commons": "2.19.1",
-    "@sentry/node": "5.10.1",
+    "@sentry/node": "5.10.2",
     "appmetrics": "5.0.5",
     "appmetrics-statsd": "3.0.0",
     "aws-xray-sdk": "^2.4.0",
