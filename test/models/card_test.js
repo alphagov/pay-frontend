@@ -8,6 +8,12 @@ const { unexpectedPromise } = require(path.join(__dirname, '/../test_helpers/tes
 const proxyquire = require('proxyquire')
 const AWSXRay = require('aws-xray-sdk')
 
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+
+const { expect } = chai
+
 // Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
 
@@ -94,6 +100,33 @@ describe('card', function () {
           .checkCard(1234).then(unexpectedPromise, function (error) {
             assert.strictEqual(error.message, 'Bar is not supported')
           })
+      })
+    })
+
+    // public enum PrepaidStatus { PREPAID, NOT_PREPAID, UNKNOWN}
+    describe('a prepaid card', () => {
+      const gatewayAccountAllowCardsConfiguration = [{ brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0' }]
+
+      beforeEach(function () {
+        nock.cleanAll()
+        nock(process.env.CARDID_HOST)
+          .post('/v1/api/card')
+          .reply(200, { brand: 'bar', label: 'bar', prepaid: 'PREPAID', corporate: true })
+      })
+
+      it('should reject if gateway account `block_prepaid_cards` is set to true', () => {
+        const gatewayAccountBlockedPrepaid = true
+
+        const scenario = CardModel(gatewayAccountAllowCardsConfiguration, gatewayAccountBlockedPrepaid).checkCard(1234)
+
+        return expect(scenario).to.be.rejectedWith('Prepaid card payments are not accepted')
+      })
+
+      it('should allow if gateway account `block_prepaid_cards` is set to false', async () => {
+        const gatewayAccountBlockedPrepaid = false
+        const card = await CardModel(gatewayAccountAllowCardsConfiguration, gatewayAccountBlockedPrepaid).checkCard(1234)
+
+        expect(card.brand).is.equal.toString('bar')
       })
     })
 

@@ -17,7 +17,7 @@ const i18nConfig = require('../../config/i18n')
 
 i18n.configure(i18nConfig)
 
-const checkCard = function (cardNo, allowed, language, correlationId, subSegment, loggingFields = {}) {
+const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correlationId, subSegment, loggingFields = {}) {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const data = { cardNumber: parseInt(cardNo) }
@@ -79,6 +79,10 @@ const checkCard = function (cardNo, allowed, language, correlationId, subSegment
             }
           }
 
+          if(blockPrepaidCards && card.prepaid === 'PREPAID') {
+            return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedPrepaidCard', changeCase.titleCase(card.brand))))
+          }
+
           resolve(card)
         })
         .catch(error => {
@@ -106,7 +110,7 @@ const normaliseCardType = function (cardType) {
   return undefined
 }
 
-module.exports = function (allowedCards, correlationId) {
+module.exports = function (allowedCards, blockPrepaidCards, correlationId) {
   const withdrawalTypes = []
   const allowed = _.clone(allowedCards)
   correlationId = correlationId || ''
@@ -118,7 +122,7 @@ module.exports = function (allowedCards, correlationId) {
     withdrawalTypes: withdrawalTypes,
     allowed: _.clone(allowed),
     checkCard: (cardNo, language, subSegment, loggingFields = {}) => {
-      return checkCard(cardNo, allowed, language, correlationId, subSegment, loggingFields)
+      return checkCard(cardNo, allowed, blockPrepaidCards, language, correlationId, subSegment, loggingFields)
     }
   }
 }
