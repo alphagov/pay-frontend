@@ -10,10 +10,11 @@ const toggleWaiting = () => {
     paymentMethodSubmitElement.classList.add('hidden')
   }
 
-  var payDividerElements = document.getElementsByClassName('pay-divider')
-  if (typeof payDividerElements !== 'undefined' && payDividerElements.length > 0) {
-    payDividerElements[0].classList.remove('pay-divider')
-    payDividerElements[0].classList.add('hidden')
+  var paymentMethodDivider = document.getElementById('payment-method-divider')
+  if (typeof paymentMethodDivider !== 'undefined' && paymentMethodDivider !== null) {
+    paymentMethodDivider.classList.add('hidden')
+    paymentMethodDivider.classList.remove('pay-divider')
+    document.getElementById('payment-method-divider-word').classList.add('hidden')
   }
 }
 

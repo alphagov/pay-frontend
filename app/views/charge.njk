@@ -74,7 +74,7 @@
             })
           }}
         <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
-        <span class="pay-divider"><span class="pay-divider--word">or</span></span>
+        <span id="payment-method-divider" class="pay-divider"><span id="payment-method-divider-word" class="pay-divider--word">or</span></span>
       </form>
     {% endif %}
     {% if allowGooglePay %}
@@ -95,7 +95,7 @@
             })
           }}
         <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
-        <span class="pay-divider"><span class="pay-divider--word">or</span></span>
+        <span id="payment-method-divider" class="pay-divider"><span id="payment-method-divider-word" class="pay-divider--word">or</span></span>
       </form>
     {% else %}
       <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
