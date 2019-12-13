@@ -179,7 +179,7 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Prepaid card blocking', () => {
-    it('should block a prepaid card if gateway account is configured not allow them', () => {
+    it('should block a prepaid card if gateway account is configured to not allow them', () => {
       const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: true })
       cy.task('setupStubs', blockedPrepaidStubs)
 
@@ -194,7 +194,7 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no-lbl').should('contain', 'Prepaid cards are not accepted')
     })
 
-    it('should allow prepaid cards if gateway account is confgirued to allow', () => {
+    it('should allow prepaid cards if gateway account is configured to allow', () => {
       const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: false })
       cy.task('setupStubs', blockedPrepaidStubs)
 

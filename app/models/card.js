@@ -80,6 +80,7 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
           }
 
           if(blockPrepaidCards && card.prepaid === 'PREPAID') {
+            logger.info('Card validation blocked prepaid card', { card_brand: card.brand, card_type: card.type, corporate: card.corporate, x_request_id: correlationId })
             return reject(new Error(i18n.__('fieldErrors.fields.cardNo.unsupportedPrepaidCard', changeCase.titleCase(card.brand))))
           }
 

@@ -36,7 +36,7 @@ const { createChargeIdSessionKey } = require('../utils/session')
 const { getLoggingFields } = require('../utils/logging_fields_helper')
 
 const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
-  const cardModel = Card(charge.gatewayAccount.cardTypes, req.headers[CORRELATION_HEADER])
+  const cardModel = Card(charge.gatewayAccount.cardTypes, charge.gatewayAccount.block_prepaid_cards, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
   charge.cardsAsStrings = JSON.stringify(cardModel.allowed)
