@@ -119,7 +119,7 @@ describe('card', function () {
 
         const scenario = CardModel(gatewayAccountAllowCardsConfiguration, gatewayAccountBlockedPrepaid).checkCard(1234)
 
-        return expect(scenario).to.be.rejectedWith('Prepaid card payments are not accepted')
+        return expect(scenario).to.be.rejectedWith('Prepaid cards are not accepted')
       })
 
       it('should allow if gateway account `block_prepaid_cards` is set to false', async () => {

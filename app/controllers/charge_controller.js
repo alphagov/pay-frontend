@@ -119,7 +119,7 @@ module.exports = {
   },
   create: async (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    const cardModel = Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
+    const cardModel = Card(req.chargeData.gateway_account.card_types, req.chargeData.gateway_account.block_prepaid_cards, req.headers[CORRELATION_HEADER])
     const chargeOptions = {
       email_collection_mode: charge.gatewayAccount.emailCollectionMode,
       collect_billing_address: res.locals.service.collectBillingAddress
@@ -200,7 +200,7 @@ module.exports = {
     const namespace = getNamespace(clsXrayConfig.nameSpaceName)
     const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
     AWSXRay.captureAsyncFunc('Card_checkCard', function (subSegment) {
-      Card(req.chargeData.gateway_account.card_types, req.headers[CORRELATION_HEADER])
+      Card(req.chargeData.gateway_account.card_types, req.chargeData.gateway_account.block_prepaid_cards, req.headers[CORRELATION_HEADER])
         .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment, getLoggingFields(req))
         .then(
           card => {

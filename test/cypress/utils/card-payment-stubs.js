@@ -14,9 +14,11 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         language: language || 'en',
         paymentProvider: providerOpts.paymentProvider,
         requires3ds: providerOpts.requires3ds,
-        integrationVersion3ds: providerOpts.integrationVersion3ds
+        integrationVersion3ds: providerOpts.integrationVersion3ds,
+        blockPrepaidCards: providerOpts.blockPrepaidCards
       }
     },
+    { name: 'cardIdValidCardDetails' },
     { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
 
     // @TODO(sfount) this should pass the service to be queried relative to the charge - right now it just returns a default service

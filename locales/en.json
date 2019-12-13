@@ -114,7 +114,7 @@
 				"unsupportedBrand": "%s is not supported",
 				"unsupportedDebitCard": "%s debit cards are not supported",
 				"unsupportedCreditCard": "%s credit cards are not supported",
-				"unsupportedPrepaidCard": "Prepaid card payments are not accepted"
+				"unsupportedPrepaidCard": "Prepaid cards are not accepted"
 			},
 			"cvc": {
 				"name": "card security code",
