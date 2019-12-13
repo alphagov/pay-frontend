@@ -17,6 +17,7 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     'corporate_prepaid_credit_card_surcharge_amount': 0,
     'corporate_prepaid_debit_card_surcharge_amount': 0,
     'email_collection_mode': opts.emailCollectionMode || 'MANDATORY',
+    'block_prepaid_cards': opts.blockPrepaidCards || false,
     'live': false,
     'payment_provider': opts.paymentProvider || 'sandbox',
     'requires3ds': opts.requires3ds || false,
@@ -347,7 +348,7 @@ const fixtures = {
       'type': 'C',
       'label': 'VISA CREDIT',
       'corporate': false,
-      'prepaid': 'UNKNOWN'
+      'prepaid': 'PREPAID'
     }
     return data
   }

@@ -113,7 +113,8 @@
 				"nonNumeric": "Enter a valid card number",
 				"unsupportedBrand": "%s is not supported",
 				"unsupportedDebitCard": "%s debit cards are not supported",
-				"unsupportedCreditCard": "%s credit cards are not supported"
+				"unsupportedCreditCard": "%s credit cards are not supported",
+				"unsupportedPrepaidCard": "Prepaid cards are not accepted"
 			},
 			"cvc": {
 				"name": "card security code",

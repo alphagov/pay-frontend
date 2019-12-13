@@ -178,6 +178,38 @@ describe('Standard card payment flow', () => {
     })
   })
 
+  describe('Prepaid card blocking', () => {
+    it('should block a prepaid card if gateway account is configured to not allow them', () => {
+      const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: true })
+      cy.task('setupStubs', blockedPrepaidStubs)
+
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.server()
+
+      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.get('#card-no').type('4000160000000004')
+      cy.get('#card-no').blur()
+      cy.wait('@checkCard')
+      cy.get('#card-no-lbl').should('contain', 'Prepaid cards are not accepted')
+    })
+
+    it('should allow prepaid cards if gateway account is configured to allow', () => {
+      const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: false })
+      cy.task('setupStubs', blockedPrepaidStubs)
+
+      cy.visit(`/secure/${tokenId}`)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.server()
+
+      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.get('#card-no').type('4000160000000004')
+      cy.get('#card-no').blur()
+      cy.wait('@checkCard')
+      cy.get('#card-no-lbl').should('not.contain', 'Prepaid cards are not accepted')
+    })
+  })
+
   describe('Secure card payment page should show error', () => {
     it('Should setup the payment and load the page', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)

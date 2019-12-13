@@ -116,7 +116,8 @@
 				"nonNumeric": "Rhowch rif cerdyn dilys",
 				"unsupportedBrand": "Ni dderbynnir %s",
 				"unsupportedDebitCard": "Ni dderbynnir cardiau debyd %s",
-				"unsupportedCreditCard": "Ni dderbynnir cardiau credyd %s"
+				"unsupportedCreditCard": "Ni dderbynnir cardiau credyd %s",
+				"unsupportedPrepaidCard": "Ni dderbynnir cardiau rhagdaledig"
 			},
 			"cvc": {
 				"name": "god diogelwch cerdyn",
