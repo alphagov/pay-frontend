@@ -3,6 +3,18 @@
 const toggleWaiting = () => {
   document.getElementById('card-details-wrap').classList.toggle('hidden')
   document.getElementById('spinner').classList.toggle('hidden')
+  document.getElementById('error-summary').classList.add('hidden')
+
+  var paymentMethodSubmitElement = document.getElementById('payment-method-submit')
+  if (typeof paymentMethodSubmitElement !== 'undefined' && paymentMethodSubmitElement !== null) {
+    paymentMethodSubmitElement.classList.add('hidden')
+  }
+
+  var payDividerElements = document.getElementsByClassName('pay-divider')
+  if (typeof payDividerElements !== 'undefined' && payDividerElements.length > 0) {
+    payDividerElements[0].classList.remove('pay-divider')
+    payDividerElements[0].classList.add('hidden')
+  }
 }
 
 const addWorldpaySessionIdToForm = (form, worldpaySessionId) => {
