@@ -4,7 +4,7 @@ const { getGooglePaymentsConfiguration, showErrorSummary, toggleWaiting } = requ
 const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 
 const processPayment = paymentData => {
-  toggleWaiting()
+  toggleWaiting('google-pay-payment-method-submit')
 
   return fetch(`/web-payments-auth-request/google/${window.paymentDetails.chargeID}`, {
     method: 'POST',
@@ -23,7 +23,7 @@ const processPayment = paymentData => {
       }
     })
     .catch(err => {
-      toggleWaiting()
+      toggleWaiting('google-pay-payment-method-submit')
       showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
       ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
       return err

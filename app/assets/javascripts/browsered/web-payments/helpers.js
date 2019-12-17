@@ -21,8 +21,8 @@ const clearErrorSummary = () => {
   errorSummary.classList.add('hidden')
 }
 
-const toggleWaiting = status => {
-  const button = document.getElementById('payment-method-submit')
+const toggleWaiting = (paymentMethodSubmitId) => {
+  const button = document.getElementById(paymentMethodSubmitId)
   button[button.getAttribute('disabled') ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled')
   document.getElementById('spinner').classList.toggle('hidden')
 }
