@@ -69,12 +69,10 @@
               html: ApplePayButtonHTML,
               classes: "web-payments-button apple-pay",
               attributes: {
-                id: "payment-method-submit"
+                id: "apple-pay-payment-method-submit"
               }
             })
           }}
-        <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
-        <span id="payment-method-divider" class="pay-divider"><span id="payment-method-divider-word" class="pay-divider--word">or</span></span>
       </form>
     {% endif %}
     {% if allowGooglePay %}
@@ -90,16 +88,18 @@
               html: GooglePayButtonHTML,
               classes: "web-payments-button google-pay",
               attributes: {
-                id: "payment-method-submit"
+                id: "google-pay-payment-method-submit"
               }
             })
           }}
-        <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
-        <span id="payment-method-divider" class="pay-divider"><span id="payment-method-divider-word" class="pay-divider--word">or</span></span>
       </form>
-    {% else %}
-      <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
     {% endif %}
+
+    {% if allowApplePay or allowGooglePay %}
+      <span id="payment-method-divider" class="pay-divider"><span id="payment-method-divider-word" class="pay-divider--word">or</span></span>
+    {% endif %}
+    <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
+
     <div id="card-details-wrap">
       <h1 class="govuk-heading-l">{{ __p("cardDetails.title") }}</h1>
 

@@ -5,7 +5,12 @@ const toggleWaiting = () => {
   document.getElementById('spinner').classList.toggle('hidden')
   document.getElementById('error-summary').classList.add('hidden')
 
-  var paymentMethodSubmitElement = document.getElementById('payment-method-submit')
+  var paymentMethodSubmitElement = document.getElementById('apple-pay-payment-method-submit')
+  if (typeof paymentMethodSubmitElement !== 'undefined' && paymentMethodSubmitElement !== null) {
+    paymentMethodSubmitElement.classList.add('hidden')
+  }
+
+  paymentMethodSubmitElement = document.getElementById('google-pay-payment-method-submit')
   if (typeof paymentMethodSubmitElement !== 'undefined' && paymentMethodSubmitElement !== null) {
     paymentMethodSubmitElement.classList.add('hidden')
   }

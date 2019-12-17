@@ -39,10 +39,10 @@ module.exports = () => {
 
   session.onpaymentauthorized = event => {
     const { payment } = event
-    toggleWaiting()
+    toggleWaiting('apple-pay-payment-method-submit')
 
     if (!rfc822Validator(payment.shippingContact.emailAddress)) {
-      toggleWaiting()
+      toggleWaiting('apple-pay-payment-method-submit')
       showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
 
       const emailError = new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
@@ -68,13 +68,13 @@ module.exports = () => {
         })
       } else {
         session.abort()
-        toggleWaiting()
+        toggleWaiting('apple-pay-payment-method-submit')
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'During authorisation/capture')
       }
     }).catch(err => {
       session.abort()
-      toggleWaiting()
+      toggleWaiting('apple-pay-payment-method-submit')
       showErrorSummary(i18n.fieldErrors.webPayments.apple)
       ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
       return err
