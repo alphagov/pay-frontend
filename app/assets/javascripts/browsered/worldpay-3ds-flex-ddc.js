@@ -15,11 +15,18 @@ const toggleWaiting = () => {
     paymentMethodSubmitElement.classList.add('hidden')
   }
 
-  var paymentMethodDivider = document.getElementById('payment-method-divider')
+  var paymentMethodDivider = document.getElementById('apple-pay-payment-method-divider')
   if (typeof paymentMethodDivider !== 'undefined' && paymentMethodDivider !== null) {
     paymentMethodDivider.classList.add('hidden')
     paymentMethodDivider.classList.remove('pay-divider')
-    document.getElementById('payment-method-divider-word').classList.add('hidden')
+    document.getElementById('apple-pay-payment-method-divider-word').classList.add('hidden')
+  }
+
+  paymentMethodDivider = document.getElementById('google-pay-payment-method-divider')
+  if (typeof paymentMethodDivider !== 'undefined' && paymentMethodDivider !== null) {
+    paymentMethodDivider.classList.add('hidden')
+    paymentMethodDivider.classList.remove('pay-divider')
+    document.getElementById('google-pay-payment-method-divider-word').classList.add('hidden')
   }
 }
 
