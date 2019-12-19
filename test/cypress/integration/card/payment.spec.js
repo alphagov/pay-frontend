@@ -114,6 +114,9 @@ describe('Standard card payment flow', () => {
       // 6. Client will be redirected to /card_details/:chargeId (304) and global variable `chargeId` should be set
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
+
+      cy.get('#google-pay-payment-method-divider').should('not.exist')
+      cy.get('#apple-pay-payment-method-divider').should('not.exist')
     })
 
     it('Should enter and validate a correct card', () => {
