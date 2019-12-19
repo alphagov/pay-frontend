@@ -63,7 +63,6 @@ const cardDetailsCSP = helmet.contentSecurityPolicy({
     manifestSrc: CSP_NONE,
     mediaSrc: CSP_NONE,
     objectSrc: CSP_NONE,
-    prefetchSrc: CSP_SELF,
     baseUri: CSP_NONE,
     blockAllMixedContent: true
   },
