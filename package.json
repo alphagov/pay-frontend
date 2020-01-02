@@ -107,7 +107,7 @@
     "requestretry": "^4.0.2",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.5.0",
-    "staticify": "3.3.x",
+    "staticify": "4.0.x",
     "throng": "4.0.x",
     "uk-postcode": "0.1.x",
     "winston": "3.2.1"
