@@ -143,7 +143,7 @@
     "lint-staged": "^9.5.0",
     "mocha": "6.2.x",
     "mountebank": "2.1.2",
-    "nock": "11.7.0",
+    "nock": "11.7.1",
     "node-sass": "4.13.0",
     "nodemon": "^2.0.2",
     "nyc": "14.1.x",
