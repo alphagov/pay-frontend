@@ -8,7 +8,7 @@ const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayA
         chargeId,
         gatewayAccountId,
         status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'ENTERING CARD DETAILS' },
+        state: { finished: false, status: 'started' },
         language: 'en',
         paymentProvider: providerOpts.paymentProvider,
         requires3ds: providerOpts.requires3ds,
