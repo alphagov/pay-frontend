@@ -1,8 +1,28 @@
 'use strict'
 
+const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayAccountId = 42, providerOpts = {}) {
+  return [
+    {
+      name: 'connectorGetChargeDetails',
+      opts: {
+        chargeId,
+        gatewayAccountId,
+        status: 'ENTERING CARD DETAILS',
+        state: { finished: false, status: 'ENTERING CARD DETAILS' },
+        language: 'en',
+        paymentProvider: providerOpts.paymentProvider,
+        requires3ds: providerOpts.requires3ds,
+        integrationVersion3ds: providerOpts.integrationVersion3ds,
+        blockPrepaidCards: providerOpts.blockPrepaidCards
+      }
+    },
+    { name: 'connectorCancelCharge', opts: { chargeId } }
+  ]
+}
+
 const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42, serviceOpts = {}, providerOpts = {}) {
   return [
-    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, 'status': 'CREATED' } },
+    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, status: 'CREATED' } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',
@@ -35,7 +55,7 @@ const buildChargeFromTokenNotFound = function buildChargeFromTokenNotFound (toke
 
 const buildUsedTokenAndReturnPaymentChargeStubs = function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
   return [
-    { name: 'connectorCreateChargeFromToken', opts: { 'tokenId': tokenId, 'gatewayAccountId': gatewayAccountId, 'used': true, 'status': status } },
+    { name: 'connectorCreateChargeFromToken', opts: { tokenId: tokenId, gatewayAccountId: gatewayAccountId, used: true, status: status } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',
@@ -87,6 +107,7 @@ const buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs = (tokenId, ch
 }
 
 module.exports = {
+  buildCancelChargeStub,
   buildCreatePaymentChargeStubs,
   buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs,
   buildUsedTokenAndReturnPaymentChargeStubs: buildUsedTokenAndReturnPaymentChargeStubs,
