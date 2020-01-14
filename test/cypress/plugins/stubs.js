@@ -2,7 +2,7 @@ const paymentFixtures = require('./../../fixtures/payment_fixtures')
 const serviceFixtures = require('./../../fixtures/service_fixtures')
 const worldpay3dsFlexDdcJwtFixtures = require('./../../fixtures/worldpay_3ds_flex_fixtures')
 
-const JSONRequestHeader = { 'Accept': 'application/json' }
+const JSONRequestHeader = { Accept: 'application/json' }
 const JSONResponseHeader = { 'Content-Type': 'application/json' }
 
 const simpleStubBuilder = function simpleStubBuilder (method, statusCode, path, body) {
@@ -25,6 +25,11 @@ const simpleStubBuilder = function simpleStubBuilder (method, statusCode, path, 
 }
 
 module.exports = {
+  connectorCancelCharge: (opts = {}) => {
+    const path = `/v1/frontend/charges/${opts.chargeId}/cancel`
+    return simpleStubBuilder('POST', 204, path, undefined)
+  },
+
   connectorCreateChargeFromToken: (opts = {}) => {
     const path = `/v1/frontend/tokens/${opts.tokenId}`
     const body = paymentFixtures.validChargeCreatedByToken(opts)
@@ -89,7 +94,7 @@ module.exports = {
         }
       }]
     }
-    return [ stub ]
+    return [stub]
   },
 
   connectorValidPatchConfirmedChargeDetails: (opts = {}) => {
@@ -110,7 +115,7 @@ module.exports = {
     return simpleStubBuilder('POST', 200, path, body)
   },
 
-  connectorMultipleSubsequentChargeDetails: ([ firstChargeOpts, secondChargeOpts ]) => {
+  connectorMultipleSubsequentChargeDetails: ([firstChargeOpts, secondChargeOpts]) => {
     const firstChargeBody = paymentFixtures.validChargeDetails(firstChargeOpts).getPlain()
     const secondChargeBody = paymentFixtures.validChargeDetails(secondChargeOpts).getPlain()
 
@@ -139,7 +144,7 @@ module.exports = {
         }
       }]
     }
-    return [ stub ]
+    return [stub]
   },
 
   connectorPostValidCaptureCharge: (opts = {}) => {
