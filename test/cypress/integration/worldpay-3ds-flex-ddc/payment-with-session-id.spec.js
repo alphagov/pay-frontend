@@ -24,39 +24,10 @@ describe('Worldpay 3ds flex card payment flow', () => {
     email: 'validpayingemail@example.com'
   }
 
+  const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
   const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts)
-
-  const checkCardDetailsStubs = [
-    {
-      name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }
-    },
-    { name: 'cardIdValidCardDetails' }
-  ]
-
-  const confirmPaymentDetailsStubs = [
-    { name: 'adminUsersGetService', opts: {} },
-    {
-      name: 'connectorMultipleSubsequentChargeDetails',
-      opts: [{
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }, {
-        chargeId,
-        paymentDetails: validPayment,
-        status: 'AUTHORISATION SUCCESS',
-        state: { finished: false, status: 'submitted' }
-      }]
-    },
-    { name: 'cardIdValidCardDetails' },
-    { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
-  ]
+  const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
 
   const worldpay3dsFlexDdcStub = {
     name: 'worldpay3dsFlexDdcIframePost',

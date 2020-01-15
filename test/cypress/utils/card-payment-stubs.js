@@ -1,5 +1,50 @@
 'use strict'
 
+const confirmPaymentDetailsStubs = function confirmPaymentDetailsStubs (chargeId, validPayment = {}) {
+  return [
+    { name: 'adminUsersGetService', opts: {} },
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
+      opts: [{
+        chargeId,
+        status: 'ENTERING CARD DETAILS',
+        state: { finished: false, status: 'started' }
+      }, {
+        chargeId,
+        paymentDetails: {
+          cardNumber: validPayment.cardNumber,
+          expiryMonth: validPayment.expiryMonth,
+          expiryYear: validPayment.expiryYear,
+          name: validPayment.name,
+          securityCode: validPayment.securityCode,
+          addressLine1: validPayment.addressLine1,
+          city: validPayment.city,
+          postcode: validPayment.postcode,
+          email: validPayment.email
+        },
+        status: 'AUTHORISATION SUCCESS',
+        state: { finished: false, status: 'submitted' }
+      }]
+    },
+    { name: 'cardIdValidCardDetails' },
+    { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
+  ]
+}
+
+const checkCardDetailsStubs = function checkCardDetailsStubs (chargeId) {
+  return [
+    {
+      name: 'connectorGetChargeDetails',
+      opts: {
+        chargeId,
+        status: 'ENTERING CARD DETAILS',
+        state: { finished: false, status: 'started' }
+      }
+    },
+    { name: 'cardIdValidCardDetails' }
+  ]
+}
+
 const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayAccountId = 42, providerOpts = {}) {
   return [
     {
@@ -20,7 +65,8 @@ const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayA
   ]
 }
 
-const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42, serviceOpts = {}, providerOpts = {}) {
+const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42,
+  serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}) {
   return [
     { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, status: 'CREATED' } },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
@@ -35,7 +81,8 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         paymentProvider: providerOpts.paymentProvider,
         requires3ds: providerOpts.requires3ds,
         integrationVersion3ds: providerOpts.integrationVersion3ds,
-        blockPrepaidCards: providerOpts.blockPrepaidCards
+        blockPrepaidCards: providerOpts.blockPrepaidCards,
+        emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY'
       }
     },
     { name: 'cardIdValidCardDetails' },
@@ -107,6 +154,8 @@ const buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs = (tokenId, ch
 }
 
 module.exports = {
+  confirmPaymentDetailsStubs,
+  checkCardDetailsStubs,
   buildCancelChargeStub,
   buildCreatePaymentChargeStubs,
   buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs,

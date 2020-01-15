@@ -42,39 +42,11 @@ describe('Standard card payment flow', () => {
 
   const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
   const createPaymentChargeStubsWelsh = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'cy')
-
-  const checkCardDetailsStubs = [
-    {
-      name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }
-    },
-    { name: 'cardIdValidCardDetails' }
-  ]
+  const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
 
   // @TODO(sfount) test the payment in progress in flows by returning statuses that indicate different levels of progress
   // i.e - charge after or before authorisation when clicking confirm should bring up confirmation page or 'your payment is in progress' page respectively
-  const confirmPaymentDetailsStubs = [
-    { name: 'adminUsersGetService', opts: {} },
-    {
-      name: 'connectorMultipleSubsequentChargeDetails',
-      opts: [{
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }, {
-        chargeId,
-        paymentDetails: validPayment,
-        status: 'AUTHORISATION SUCCESS',
-        state: { finished: false, status: 'submitted' }
-      }]
-    },
-    { name: 'cardIdValidCardDetails' },
-    { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
-  ]
+  const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
 
   const submitPaymentCaptureStubs = [
     {
