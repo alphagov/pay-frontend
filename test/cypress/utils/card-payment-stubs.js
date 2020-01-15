@@ -1,6 +1,6 @@
 'use strict'
 
-const confirmPaymentDetailsStubs = function confirmPaymentDetailsStubs (chargeId, validPayment = {}) {
+const confirmPaymentDetailsStubs = function confirmPaymentDetailsStubs (chargeId, validPayment = {}, emailCollectionMode) {
   return [
     { name: 'adminUsersGetService', opts: {} },
     {
@@ -8,7 +8,8 @@ const confirmPaymentDetailsStubs = function confirmPaymentDetailsStubs (chargeId
       opts: [{
         chargeId,
         status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
+        state: { finished: false, status: 'started' },
+        emailCollectionMode: emailCollectionMode || 'MANDATORY'
       }, {
         chargeId,
         paymentDetails: {
@@ -23,7 +24,8 @@ const confirmPaymentDetailsStubs = function confirmPaymentDetailsStubs (chargeId
           email: validPayment.email
         },
         status: 'AUTHORISATION SUCCESS',
-        state: { finished: false, status: 'submitted' }
+        state: { finished: false, status: 'submitted' },
+        emailCollectionMode: emailCollectionMode || 'MANDATORY'
       }]
     },
     { name: 'cardIdValidCardDetails' },
@@ -68,7 +70,15 @@ const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayA
 const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42,
   serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}) {
   return [
-    { name: 'connectorCreateChargeFromToken', opts: { tokenId, gatewayAccountId, status: 'CREATED' } },
+    {
+      name: 'connectorCreateChargeFromToken',
+      opts: {
+        tokenId,
+        gatewayAccountId,
+        status: 'CREATED',
+        emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY'
+      }
+    },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
     {
       name: 'connectorGetChargeDetails',

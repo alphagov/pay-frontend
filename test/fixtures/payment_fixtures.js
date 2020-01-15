@@ -7,24 +7,24 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     ? lodash.flatMap(opts.cardTypes, buildCardType)
     : buildStandardSupportedCardTypes()
   const structure = {
-    'gateway_account_id': opts.gatewayAccountId || 6,
-    'allow_apple_pay': opts.allowApplePay || false,
-    'allow_google_pay': opts.allowGooglePay || false,
-    'gateway_merchant_id': opts.gatewayMerchantId || null,
-    'analytics_id': opts.analyticsId || 'an-analytics-id',
-    'corporate_credit_card_surcharge_amount': 0,
-    'corporate_debit_card_surcharge_amount': 0,
-    'corporate_prepaid_credit_card_surcharge_amount': 0,
-    'corporate_prepaid_debit_card_surcharge_amount': 0,
-    'email_collection_mode': opts.emailCollectionMode || 'MANDATORY',
-    'block_prepaid_cards': opts.blockPrepaidCards || false,
-    'live': false,
-    'payment_provider': opts.paymentProvider || 'sandbox',
-    'requires3ds': opts.requires3ds || false,
-    'service_name': 'My service',
-    'type': opts.gatewayAccountType || 'test',
-    'version': 1,
-    'integration_version_3ds': opts.integrationVersion3ds || 1,
+    gateway_account_id: opts.gatewayAccountId || 6,
+    allow_apple_pay: opts.allowApplePay || false,
+    allow_google_pay: opts.allowGooglePay || false,
+    gateway_merchant_id: opts.gatewayMerchantId || null,
+    analytics_id: opts.analyticsId || 'an-analytics-id',
+    corporate_credit_card_surcharge_amount: 0,
+    corporate_debit_card_surcharge_amount: 0,
+    corporate_prepaid_credit_card_surcharge_amount: 0,
+    corporate_prepaid_debit_card_surcharge_amount: 0,
+    email_collection_mode: opts.emailCollectionMode || 'MANDATORY',
+    block_prepaid_cards: opts.blockPrepaidCards || false,
+    live: false,
+    payment_provider: opts.paymentProvider || 'sandbox',
+    requires3ds: opts.requires3ds || false,
+    service_name: 'My service',
+    type: opts.gatewayAccountType || 'test',
+    version: 1,
+    integration_version_3ds: opts.integrationVersion3ds || 1,
     card_types: cardTypes
   }
   return structure
@@ -32,11 +32,11 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
 
 const buildCardType = function buildCardType (opts) {
   return {
-    'brand': opts.brand || 'visa',
-    'id': opts.id || 'an-id',
-    'label': opts.label || 'Visa',
-    'requires3ds': opts.requires3ds || false,
-    'type': opts.type || 'DEBIT'
+    brand: opts.brand || 'visa',
+    id: opts.id || 'an-id',
+    label: opts.label || 'Visa',
+    requires3ds: opts.requires3ds || false,
+    type: opts.type || 'DEBIT'
   }
 }
 
@@ -113,35 +113,35 @@ const buildStandardSupportedCardTypes = function buildStandardSupportedCardTypes
 // format payment details as expected attached to a valid charge
 const utilFormatPaymentDetails = function utilFormatPaymentDetails (details) {
   const structure = {
-    'last_digits_card_number': details.cardNumber.substr(-4),
-    'first_digits_card_number': details.cardNumber.substr(6),
-    'cardholder_name': details.name,
-    'expiry_date': `${details.expiryMonth}/${details.expiryYear}`,
-    'billing_address': {
-      'line1': details.addressLine1,
-      'line2': '',
-      'postcode': details.postcode,
-      'city': details.city,
-      'county': null,
-      'country': 'GB'
+    last_digits_card_number: details.cardNumber.substr(-4),
+    first_digits_card_number: details.cardNumber.substr(6),
+    cardholder_name: details.name,
+    expiry_date: `${details.expiryMonth}/${details.expiryYear}`,
+    billing_address: {
+      line1: details.addressLine1,
+      line2: '',
+      postcode: details.postcode,
+      city: details.city,
+      county: null,
+      country: 'GB'
     },
-    'card_brand': 'Visa'
+    card_brand: 'Visa'
   }
   return structure
 }
 
 const utilFormatPrefilledCardHolderDetails = (details) => {
   const structure = {
-    'cardholder_name': details.cardholderName || null,
-    'billing_address': {
-      'line1': details.billingAddress.addressLine1 || null,
-      'line2': details.billingAddress.addressLine2 || null,
-      'postcode': details.billingAddress.postcode || null,
-      'city': details.billingAddress.city || null,
-      'county': null,
-      'country': details.billingAddress.country || null
+    cardholder_name: details.cardholderName || null,
+    billing_address: {
+      line1: details.billingAddress.addressLine1 || null,
+      line2: details.billingAddress.addressLine2 || null,
+      postcode: details.billingAddress.postcode || null,
+      city: details.billingAddress.city || null,
+      county: null,
+      country: details.billingAddress.country || null
     },
-    'card_brand': ''
+    card_brand: ''
   }
   return structure
 }
@@ -170,19 +170,19 @@ const buildAuth3dsDetails = function buildAuth3dsDetails (opts) {
 const buildChargeDetails = function buildChargeDetails (opts) {
   const chargeId = opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv'
   const data = {
-    'amount': opts.amount || 1000,
-    'state': opts.state || {
-      'status': 'created',
-      'finished': false
+    amount: opts.amount || 1000,
+    state: opts.state || {
+      status: 'created',
+      finished: false
     },
-    'description': opts.description || 'Example fixture payment',
-    'language': opts.language || 'en',
-    'status': opts.status || 'CREATED',
+    description: opts.description || 'Example fixture payment',
+    language: opts.language || 'en',
+    status: opts.status || 'CREATED',
     charge_id: chargeId,
-    'return_url': opts.returnUrl || '/?confirm',
-    'created_date': '2019-02-12T17:53:31.307Z',
-    'delayed_capture': false,
-    'gateway_account': buildGatewayAccount(opts)
+    return_url: opts.returnUrl || '/?confirm',
+    created_date: '2019-02-12T17:53:31.307Z',
+    delayed_capture: false,
+    gateway_account: buildGatewayAccount(opts)
   }
 
   if (opts.state) { data.state = opts.state }
@@ -209,29 +209,29 @@ const buildChargeDetails = function buildChargeDetails (opts) {
 const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
   const chargeId = opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv'
   const structure = {
-    'amount': opts.amount || 1000,
-    'state': opts.state,
-    'description': opts.description || 'Example fixture payment',
-    'language': opts.language || 'en',
-    'status': opts.status,
-    'links': [{
-      'rel': 'self',
-      'method': 'GET',
-      'href': `https://connector:9300/v1/frontend/charges/${chargeId}`
+    amount: opts.amount || 1000,
+    state: opts.state,
+    description: opts.description || 'Example fixture payment',
+    language: opts.language || 'en',
+    status: opts.status,
+    links: [{
+      rel: 'self',
+      method: 'GET',
+      href: `https://connector:9300/v1/frontend/charges/${chargeId}`
     }, {
-      'rel': 'cardAuth',
-      'method': 'POST',
-      'href': `https://connector:9300/v1/frontend/charges/${chargeId}/cards`
+      rel: 'cardAuth',
+      method: 'POST',
+      href: `https://connector:9300/v1/frontend/charges/${chargeId}/cards`
     }, {
-      'rel': 'cardCapture',
-      'method': 'POST',
-      'href': `https://connector:9300/v1/frontend/charges/${chargeId}/capture`
+      rel: 'cardCapture',
+      method: 'POST',
+      href: `https://connector:9300/v1/frontend/charges/${chargeId}/capture`
     }],
     charge_id: chargeId,
-    'return_url': opts.returnUrl || '/?confirm',
+    return_url: opts.returnUrl || '/?confirm',
     // 'created_date': '2019-02-12T17:53:31.307Z',
-    'delayed_capture': false,
-    'gateway_account': buildGatewayAccount(opts)
+    delayed_capture: false,
+    gateway_account: buildGatewayAccount(opts)
   }
 
   if (opts.state) { structure.state = opts.state }
@@ -246,9 +246,9 @@ const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
 const fixtures = {
   tokenResponse: (opts = {}) => {
     const data = {
-      'used': opts.used,
-      'charge': {
-        'externalId': opts.chargeExternalId
+      used: opts.used,
+      charge: {
+        externalId: opts.chargeExternalId
       }
     }
     return {
@@ -262,33 +262,33 @@ const fixtures = {
   },
 
   // intitial charge details returned have different API surface than charge others
-  validChargeCreatedByToken: (opts = { 'used': false }) => {
+  validChargeCreatedByToken: (opts = { used: false }) => {
     console.log('state passed in: ' + opts.status)
     const data = {
-      'used': opts.used,
-      'charge': {
-        'amount': opts.amount || 1000,
-        'cardDetails': null,
-        'corporateSurcharge': null,
-        'delayedCapture': false,
-        'description': opts.description || 'Example fixture payment',
-        'email': null,
-        'externalId': opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv',
-        'gatewayAccount': buildGatewayAccount(opts),
-        'gatewayTransactionId': null,
-        'language': 'ENGLISH',
-        'paymentGatewayName': 'SANDBOX',
-        'providerSessionId': null,
-        'reference': 'my payment reference',
-        'refunds': [],
-        'returnUrl': '/?confirm',
-        'status': opts.status || 'CREATED',
-        'version': 1,
-        'walletType': null,
-        'events': [{
-          'gatewayEventDate': null,
-          'status': 'CREATED',
-          'version': 1
+      used: opts.used,
+      charge: {
+        amount: opts.amount || 1000,
+        cardDetails: null,
+        corporateSurcharge: null,
+        delayedCapture: false,
+        description: opts.description || 'Example fixture payment',
+        email: null,
+        externalId: opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv',
+        gatewayAccount: buildGatewayAccount(opts),
+        gatewayTransactionId: null,
+        language: 'ENGLISH',
+        paymentGatewayName: 'SANDBOX',
+        providerSessionId: null,
+        reference: 'my payment reference',
+        refunds: [],
+        returnUrl: '/?confirm',
+        status: opts.status || 'CREATED',
+        version: 1,
+        walletType: null,
+        events: [{
+          gatewayEventDate: null,
+          status: 'CREATED',
+          version: 1
         }]
       }
     }
@@ -298,7 +298,7 @@ const fixtures = {
   validChargeDetails: (opts = {}) => buildChargeDetails(opts),
 
   validChargeCardDetailsAuthorised: () => {
-    const data = { 'status': 'AUTHORISATION SUCCESS' }
+    const data = { status: 'AUTHORISATION SUCCESS' }
     return {
       getPactified: () => {
         return pactBase.pactify(data)
@@ -311,24 +311,24 @@ const fixtures = {
 
   validAuthorisationRequest: (opts = {}) => {
     const data = {
-      'card_number': opts.cardNumber || '371449635398431',
-      'cvc': opts.cvc || '1234',
-      'expiry_date': opts.expiryDate || '11/99',
-      'card_brand': opts.cardBrand || 'american-express',
-      'card_type': opts.cardType || 'CREDIT',
-      'corporate_card': opts.corporateCard || false,
-      'cardholder_name': opts.cardholderName || 'Scrooge McDuck',
-      'accept_header': 'text/html',
-      'user_agent_header': 'Mozilla/5.0',
-      'prepaid': opts.prepaid || 'NOT_PREPAID',
-      'worldpay_3ds_flex_ddc_result': opts.worldpay3dsFlexDdcResult || '96c3fcf6-d90a-467e-a224-107f70052528',
-      'address': {
-        'line1': opts.addressLine1 || 'The Money Pool',
-        'city': opts.addressCity || 'London',
-        'postcode': opts.addressPostcode || 'DO11 4RS',
-        'country': opts.addressCountry || 'GB'
+      card_number: opts.cardNumber || '371449635398431',
+      cvc: opts.cvc || '1234',
+      expiry_date: opts.expiryDate || '11/99',
+      card_brand: opts.cardBrand || 'american-express',
+      card_type: opts.cardType || 'CREDIT',
+      corporate_card: opts.corporateCard || false,
+      cardholder_name: opts.cardholderName || 'Scrooge McDuck',
+      accept_header: 'text/html',
+      user_agent_header: 'Mozilla/5.0',
+      prepaid: opts.prepaid || 'NOT_PREPAID',
+      worldpay_3ds_flex_ddc_result: opts.worldpay3dsFlexDdcResult || '96c3fcf6-d90a-467e-a224-107f70052528',
+      address: {
+        line1: opts.addressLine1 || 'The Money Pool',
+        city: opts.addressCity || 'London',
+        postcode: opts.addressPostcode || 'DO11 4RS',
+        country: opts.addressCountry || 'GB'
       },
-      'ip_address': opts.ipAddress || '127.0.0.1'
+      ip_address: opts.ipAddress || '127.0.0.1'
     }
     return {
       getPactified: () => {
@@ -344,11 +344,11 @@ const fixtures = {
 
   validCardDetails: () => {
     const data = {
-      'brand': 'visa',
-      'type': 'C',
-      'label': 'VISA CREDIT',
-      'corporate': false,
-      'prepaid': 'PREPAID'
+      brand: 'visa',
+      type: 'C',
+      label: 'VISA CREDIT',
+      corporate: false,
+      prepaid: 'PREPAID'
     }
     return data
   }
