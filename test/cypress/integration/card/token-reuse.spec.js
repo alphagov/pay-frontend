@@ -7,17 +7,7 @@ describe('Re-use token flow', () => {
   const usedTokenAndReturnPaymentCreatedChargeStubs = cardPaymentStubs.buildUsedTokenAndReturnPaymentChargeStubs(tokenId, chargeId, 'ENTERING CARD DETAILS')
   const usedTokenAndReturnPaymentAuthSuccessChargeStubs = cardPaymentStubs.buildUsedTokenAndReturnPaymentChargeStubs(tokenId, chargeId, 'AUTHORISATION SUCCESS')
   const usedTokenAndReturnPaymentExpiredChargeStubs = cardPaymentStubs.buildUsedTokenAndReturnPaymentChargeStubs(tokenId, chargeId, 'EXPIRED')
-
-  const checkCardDetailsStubs = [
-    { name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }
-    },
-    { name: 'cardIdValidCardDetails' }
-  ]
+  const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
 
   const validPayment = {
     cardNumber: '4444333322221111',
@@ -31,23 +21,7 @@ describe('Re-use token flow', () => {
     email: 'validpayingemail@example.com'
   }
 
-  const confirmPaymentDetailsStubs = [
-    { name: 'adminUsersGetService', opts: {} },
-    { name: 'connectorMultipleSubsequentChargeDetails',
-      opts: [{
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }, {
-        chargeId,
-        paymentDetails: validPayment,
-        status: 'AUTHORISATION SUCCESS',
-        state: { finished: false, status: 'submitted' }
-      }]
-    },
-    { name: 'cardIdValidCardDetails' },
-    { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
-  ]
+  const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
 
   beforeEach(() => {
     // this test is for the full process, the session should be maintained
@@ -83,9 +57,9 @@ describe('Re-use token flow', () => {
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
 
-      cy.get('#card-details-link').should(($a) => expect($a).to.contain(`Continue with your payment`))
+      cy.get('#card-details-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#card-details-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}`))
-      cy.get('#return-url').should(($a) => expect($a).to.contain(`Go back to try the payment again`))
+      cy.get('#return-url').should(($a) => expect($a).to.contain('Go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#card-details-link').click()
@@ -144,9 +118,9 @@ describe('Re-use token flow', () => {
 
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
 
-      cy.get('#confirm-link').should(($a) => expect($a).to.contain(`Continue with your payment`))
+      cy.get('#confirm-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#confirm-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}/confirm`))
-      cy.get('#return-url').should(($a) => expect($a).to.contain(`Go back to try the payment again`))
+      cy.get('#return-url').should(($a) => expect($a).to.contain('Go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#confirm-link').click()

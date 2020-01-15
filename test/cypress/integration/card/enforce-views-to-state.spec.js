@@ -3,17 +3,8 @@ const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
 const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
-const checkCardDetailsStubs = [
-  {
-    name: 'connectorGetChargeDetails',
-    opts: {
-      chargeId,
-      status: 'ENTERING CARD DETAILS',
-      state: { finished: false, status: 'started' }
-    }
-  },
-  { name: 'cardIdValidCardDetails' }
-]
+const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
+
 const validPayment = {
   cardNumber: '4444333322221111',
   expiryMonth: '01',
@@ -25,24 +16,8 @@ const validPayment = {
   postcode: 'E1 8QS',
   email: 'validpayingemail@example.com'
 }
-const confirmPaymentDetailsStubs = [
-  { name: 'adminUsersGetService', opts: {} },
-  {
-    name: 'connectorMultipleSubsequentChargeDetails',
-    opts: [{
-      chargeId,
-      status: 'ENTERING CARD DETAILS',
-      state: { finished: false, status: 'started' }
-    }, {
-      chargeId,
-      paymentDetails: validPayment,
-      status: 'AUTHORISATION SUCCESS',
-      state: { finished: false, status: 'submitted' }
-    }]
-  },
-  { name: 'cardIdValidCardDetails' },
-  { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
-]
+const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
+
 const backButtonStubs = [
   {
     name: 'connectorGetChargeDetails',

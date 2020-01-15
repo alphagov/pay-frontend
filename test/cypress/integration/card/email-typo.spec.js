@@ -22,44 +22,19 @@ describe('Standard card payment flow', () => {
   }
 
   const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId)
-
-  const checkCardDetailsStubs = [
-    { name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' }
-      }
-    },
-    { name: 'cardIdValidCardDetails' }
-  ]
+  const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
 
   // @TODO(sfount) test the payment in progress in flows by returning statuses that indicate different levels of progress
   // i.e - charge after or before authorisation when clicking confirm should bring up confirmation page or 'your payment is in progress' page respectively
   const confirmPaymentDetailsStubs = function (email) {
     const alteredValidPayment = lodash.cloneDeep(validPayment)
     alteredValidPayment.email = email
-    return [
-      { name: 'adminUsersGetService', opts: {} },
-      { name: 'connectorMultipleSubsequentChargeDetails',
-        opts: [{
-          chargeId,
-          status: 'ENTERING CARD DETAILS',
-          state: { finished: false, status: 'started' }
-        }, {
-          chargeId,
-          paymentDetails: alteredValidPayment,
-          status: 'AUTHORISATION SUCCESS',
-          state: { finished: false, status: 'submitted' }
-        }]
-      },
-      { name: 'cardIdValidCardDetails' },
-      { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
-    ]
+    return cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, alteredValidPayment)
   }
 
   const submitPaymentCaptureStubs = [
-    { name: 'connectorMultipleSubsequentChargeDetails',
+    {
+      name: 'connectorMultipleSubsequentChargeDetails',
       opts: [{
         chargeId,
         paymentDetails: validPayment,
@@ -161,8 +136,8 @@ describe('Standard card payment flow', () => {
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 
@@ -241,8 +216,8 @@ describe('Standard card payment flow', () => {
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 
@@ -321,8 +296,8 @@ describe('Standard card payment flow', () => {
       // 13. Get charge status before continuing - should be the same as authorised success (GET)
       // 14. Post to connector capture route (POST)
       // 15. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', `/`)
-      cy.location('search').should('eq', `?confirm`)
+      cy.location('pathname').should('eq', '/')
+      cy.location('search').should('eq', '?confirm')
     })
   })
 })
