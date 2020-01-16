@@ -22,6 +22,49 @@ describe('Standard card payment flow', () => {
     Cypress.Cookies.preserveOnce('frontend_state')
   })
 
+  describe('Email collection off', () => {
+    const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
+      tokenId, chargeId, 'en', 42, {}, {}, { emailCollectionMode: 'OFF' })
+    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, 'OFF')
+
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.window().its('chargeId').should('eq', `${chargeId}`)
+
+      cy.get('#email').should('not.exist')
+    })
+
+    it('Should enter card details', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.server()
+      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.get('#card-no').type(validPayment.cardNumber)
+      cy.get('#card-no').blur()
+      cy.wait('@checkCard')
+      cy.get('#expiry-month').type(validPayment.expiryMonth)
+      cy.get('#expiry-year').type(validPayment.expiryYear)
+      cy.get('#cardholder-name').type(validPayment.name)
+      cy.get('#cvc').type(validPayment.securityCode)
+      cy.get('#address-line-1').type(validPayment.addressLine1)
+      cy.get('#address-city').type(validPayment.city)
+      cy.get('#address-postcode').type(validPayment.postcode)
+
+      cy.get('#email').should('not.exist')
+    })
+
+    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
+      cy.task('setupStubs', confirmPaymentDetailsStubs)
+      cy.get('#card-details').submit()
+      cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
+      cy.get('#email').should('not.exist')
+    })
+  })
+
   describe('Email collection mandatory', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, {})
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
@@ -50,6 +93,8 @@ describe('Standard card payment flow', () => {
       cy.get('#address-line-1').type(validPayment.addressLine1)
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
+
+      cy.get('#email').should('exist')
     })
 
     it('Submitting confirmation should show email error', () => {
@@ -90,6 +135,8 @@ describe('Standard card payment flow', () => {
       cy.get('#address-line-1').type(validPayment.addressLine1)
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
+
+      cy.get('#email').should('exist')
     })
 
     it('Submitting confirmation with valid details should redirect to confirmation page', () => {
