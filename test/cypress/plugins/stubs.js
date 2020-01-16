@@ -115,34 +115,39 @@ module.exports = {
     return simpleStubBuilder('POST', 200, path, body)
   },
 
-  connectorMultipleSubsequentChargeDetails: ([firstChargeOpts, secondChargeOpts]) => {
-    const firstChargeBody = paymentFixtures.validChargeDetails(firstChargeOpts).getPlain()
-    const secondChargeBody = paymentFixtures.validChargeDetails(secondChargeOpts).getPlain()
+  connectorMultipleSubsequentChargeDetails: (...chargesArr) => {
+    const charges = Array.prototype.concat.apply([], chargesArr) // flatten as charges is in the form [[charge1, charge2]]
+    const responseArray = []
+    responseArray.push({
+      is: {
+        statusCode: 200,
+        headers: JSONResponseHeader,
+        body: paymentFixtures.validChargeDetails(charges[0]).getPlain()
+      },
+      _behaviours: {
+        repeat: 1
+      }
+    })
+    charges.shift()
+    charges.forEach(charge => {
+      responseArray.push({
+        is: {
+          statusCode: 200,
+          headers: JSONResponseHeader,
+          body: paymentFixtures.validChargeDetails(charge).getPlain()
+        }
+      })
+    })
 
     const stub = {
       predicates: [{
         equals: {
           method: 'GET',
-          path: `/v1/frontend/charges/${firstChargeOpts.chargeId}`,
+          path: `/v1/frontend/charges/${charges[0].chargeId}`,
           headers: JSONRequestHeader
         }
       }],
-      responses: [{
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: firstChargeBody
-        },
-        _behaviours: {
-          repeat: 1
-        }
-      }, {
-        is: {
-          statusCode: 200,
-          headers: JSONResponseHeader,
-          body: secondChargeBody
-        }
-      }]
+      responses: responseArray
     }
     return [stub]
   },
