@@ -1,0 +1,4 @@
+memory: 500M
+disk_quota: 500M
+card_frontend_session_encryption_key: asdjhbwefbo23r23rbfik2roiwhefwbqw
+card_connector_analytics_tracking_id: testing-123

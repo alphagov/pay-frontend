@@ -1,33 +1,23 @@
 ---
 applications:
   - name: card-frontend
-    buildpack: nodejs_buildpack
+    buildpacks:
+      - nodejs_buildpack
     health-check-type: http
     health-check-http-endpoint: '/healthcheck'
     health-check-invocation-timeout: 5
-    memory: 1G
-    disk_quota: 1G
-    command: node start.js
+    memory: ((memory))
+    disk_quota: ((disk_quota))
+    command: npm start
     env:
       NODE_ENV: production
-      http_proxy: ((http_proxy_url))
-      HTTP_PROXY: ((http_proxy_url))
-      HTTP_PROXY_HOST: ((http_proxy_host))
-      HTTP_PROXY_PORT: ((http_proxy_port))
-      https_proxy: ((http_proxy_url))
-      HTTPS_PROXY: ((http_proxy_url))
-      HTTPS_PROXY_HOST: ((http_proxy_host))
-      HTTPS_PROXY_PORT: ((http_proxy_port))
-      HTTP_PROXY_ENABLED: ((http_proxy_enabled))
-      NO_PROXY: ((http_no_proxy))
       SESSION_ENCRYPTION_KEY: ((card_frontend_session_encryption_key))
       COOKIE_MAX_AGE: '5400000'
-      CONNECTOR_TOKEN_URL: http://card-connector-((space)).apps.internal:8080/v1/frontend/tokens/{chargeTokenId}
-      CONNECTOR_URL: http://card-connector-((space)).apps.internal:8080
-      CONNECTOR_HOST: http://card-connector-((space)).apps.internal:8080
+      CONNECTOR_HOST: ((card_connector_url))
       ANALYTICS_TRACKING_ID: ((card_connector_analytics_tracking_id))
-      CARDID_HOST: http://cardid-((space)).apps.internal:8080
+      CARDID_HOST: ((cardid_url))
       NODE_WORKER_COUNT: '1'
       FRONTEND_URL: https://((card_frontend_url))
-      ADMINUSERS_URL: http://adminusers-((space)).apps.internal:8080
-
+      ADMINUSERS_URL: ((adminusers_url))
+    routes:
+      - route: ((card_frontend_url))
