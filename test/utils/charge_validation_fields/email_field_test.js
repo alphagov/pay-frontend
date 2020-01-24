@@ -7,8 +7,8 @@ var fields = require('../../../app/utils/charge_validation_fields.js')(Card)
 
 let result
 
-describe('card validation: email', function () {
-  describe('should validate if does not contain 12 digits', () => {
+describe.only('card validation: email', function () {
+  describe('should validate if does not contain 15 digits', () => {
     it('and it contains only text', () => {
       result = fields.fieldValidations.email('pumpkinlover@example.com')
       expect(result).to.equal(true)
@@ -20,15 +20,16 @@ describe('card validation: email', function () {
     })
   })
 
-  describe('should not validate if it contains 12 or more digits', () => {
+  describe('should not validate if it contains 15 or more digits', () => {
     it('and the digits are consecutive', () => {
-      result = fields.fieldValidations.email('1234567890123@example.com')
+      result = fields.fieldValidations.email('1234567813190123@example.com')
       expect(result).to.equal('containsTooManyDigits')
     })
 
     it('and the digits are not consecutive', () => {
-      result = fields.fieldValidations.email('012345AB678901@cheesey-feet.com')
+      result = fields.fieldValidations.email('012345AB1213678901@cheesey-feet.com')
       expect(result).to.equal('containsTooManyDigits')
     })
+
   })
 })
