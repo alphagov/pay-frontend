@@ -25,10 +25,5 @@ describe('card validation: email', function () {
       result = fields.fieldValidations.email('1234567890123@example.com')
       expect(result).to.equal('containsTooManyDigits')
     })
-
-    it('and the digits are not consecutive', () => {
-      result = fields.fieldValidations.email('012345AB678901@cheesey-feet.com')
-      expect(result).to.equal('containsTooManyDigits')
-    })
   })
 })
