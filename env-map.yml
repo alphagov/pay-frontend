@@ -1,0 +1,5 @@
+env_vars:
+  ADMINUSERS_URL:  '."user-provided"[0].credentials.adminusers_url'
+  CARDID_HOST: '."user-provided"[0].credentials.cardid_url'
+  CONNECTOR_HOST: '."user-provided"[0].credentials.card_connector_url'
+  FRONTEND_URL: '."user-provided"[0].credentials.card_frontend_url'
