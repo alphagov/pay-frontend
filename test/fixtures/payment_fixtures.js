@@ -117,20 +117,16 @@ const utilFormatPaymentDetails = function utilFormatPaymentDetails (details) {
     first_digits_card_number: details.cardNumber.substr(6),
     cardholder_name: details.name,
     expiry_date: `${details.expiryMonth}/${details.expiryYear}`,
-    card_brand: 'Visa'
-  }
-
-  if (!details.noBillingAddress) {
-    structure.billing_address = {
+    billing_address: {
       line1: details.addressLine1,
-      line2: details.addressLine2 || '',
+      line2: '',
       postcode: details.postcode,
       city: details.city,
       county: null,
-      country: details.country || 'GB'
-    }
+      country: 'GB'
+    },
+    card_brand: 'Visa'
   }
-
   return structure
 }
 
@@ -186,7 +182,6 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     return_url: opts.returnUrl || '/?confirm',
     created_date: '2019-02-12T17:53:31.307Z',
     delayed_capture: false,
-    moto: opts.moto || false,
     gateway_account: buildGatewayAccount(opts)
   }
 
@@ -236,7 +231,6 @@ const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
     return_url: opts.returnUrl || '/?confirm',
     // 'created_date': '2019-02-12T17:53:31.307Z',
     delayed_capture: false,
-    moto: opts.moto || false,
     gateway_account: buildGatewayAccount(opts)
   }
 
@@ -291,7 +285,6 @@ const fixtures = {
         status: opts.status || 'CREATED',
         version: 1,
         walletType: null,
-        moto: opts.moto || false,
         events: [{
           gatewayEventDate: null,
           status: 'CREATED',
