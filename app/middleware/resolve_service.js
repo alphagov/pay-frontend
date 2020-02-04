@@ -25,7 +25,6 @@ module.exports = function resolveServiceMiddleware (req, res, next) {
   const cachedService = serviceCache.get(gatewayAccountId)
   if (cachedService) {
     res.locals.service = cachedService
-    res.locals.collectBillingAddress = res.locals.service.collectBillingAddress && !req.chargeData.moto
     next()
   } else {
     // @FIXME(sfount) tests shouldn't rely on middleware returning a value if
@@ -35,7 +34,6 @@ module.exports = function resolveServiceMiddleware (req, res, next) {
       .then(service => {
         serviceCache.put(gatewayAccountId, service, SERVICE_CACHE_MAX_AGE)
         res.locals.service = service
-        res.locals.collectBillingAddress = res.locals.service.collectBillingAddress && !req.chargeData.moto
         next()
       })
       .catch((err) => {

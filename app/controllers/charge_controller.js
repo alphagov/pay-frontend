@@ -122,7 +122,7 @@ module.exports = {
     const cardModel = Card(req.chargeData.gateway_account.card_types, req.chargeData.gateway_account.block_prepaid_cards, req.headers[CORRELATION_HEADER])
     const chargeOptions = {
       email_collection_mode: charge.gatewayAccount.emailCollectionMode,
-      collect_billing_address: res.locals.collectBillingAddress
+      collect_billing_address: res.locals.service.collectBillingAddress
     }
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions, getLoggingFields(req))
 
