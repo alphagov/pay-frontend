@@ -272,7 +272,7 @@
           </span>
           <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ __p("cardDetails.amexcvcTip") }}"/>
         </div>
-        {% if service.collectBillingAddress %}
+        {% if collectBillingAddress %}
           <div class="govuk-form-group govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
             <legend for="address-country" class="govuk-!-margin-bottom-6">
               <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h2>
