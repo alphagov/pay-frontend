@@ -3,6 +3,7 @@ const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
 const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
+const gatewayAccountId = 42
 
 const validPayment = {
   cardNumber: '4444333322221111',
@@ -24,8 +25,8 @@ describe('Standard card payment flow', () => {
 
   describe('Email collection off', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
-      tokenId, chargeId, 'en', 42, {}, {}, { emailCollectionMode: 'OFF' })
-    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, 'OFF')
+      tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OFF' })
+    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OFF' })
 
     it('Should setup the payment and load the page', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
@@ -66,8 +67,8 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Email collection mandatory', () => {
-    const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, {})
-    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
+    const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, {}, {})
+    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'MANDATORY' })
 
     it('Should setup the payment and load the page', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
@@ -108,8 +109,8 @@ describe('Standard card payment flow', () => {
 
   describe('Email collection optional', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
-      tokenId, chargeId, 'en', 42, {}, {}, { emailCollectionMode: 'OPTIONAL' })
-    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, 'OPTIONAL')
+      tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OPTIONAL' })
+    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OPTIONAL' })
 
     it('Should setup the payment and load the page', () => {
       cy.task('setupStubs', createPaymentChargeStubs)

@@ -15,6 +15,19 @@ const chargeId = '42mdrsshtsk4chpeoifhlgf4lk'
 const card = paymentFixtures.validCardDetails()
 const chargeData = paymentFixtures.validChargeDetails({ emailCollectionMode: 'OFF' }).getPlain()
 
+const paymentDetails = {
+  chargeId: chargeId,
+  cardNo: '4242424242424242',
+  expiryMonth: '01',
+  expiryYear: '20',
+  cardholderName: 'Joe Bloggs',
+  cvc: '111',
+  addressCountry: 'GB',
+  addressLine1: '1 Horse Guards',
+  addressCity: 'London',
+  addressPostcode: 'E1 8QS'
+}
+
 const mockedChargeValidationBackend = function () {
   const validation = {
     hasError: false
@@ -38,7 +51,6 @@ describe('POST /card_details/{chargeId} endpoint', function () {
   let response
   let chargeAuthStub
   let mockedConnectorClient
-  let paymentDetails
 
   beforeEach(() => {
     chargeAuthStub = sinon.stub().resolves(
@@ -56,28 +68,13 @@ describe('POST /card_details/{chargeId} endpoint', function () {
     response = {
       redirect: sinon.spy(),
       locals: {
-        service: {
-          collectBillingAddress: true
-        }
-
+        collectBillingAddress: true
       }
-    }
-    paymentDetails = {
-      'chargeId': chargeId,
-      'cardNo': '4242424242424242',
-      'expiryMonth': '01',
-      'expiryYear': '20',
-      'cardholderName': 'Joe Bloggs',
-      'cvc': '111',
-      'addressCountry': 'GB',
-      'addressLine1': '1 Horse Guards',
-      'addressCity': 'London',
-      'addressPostcode': 'E1 8QS'
     }
   })
 
   it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
-    paymentDetails['worldpay3dsFlexDdcResult'] = 'a-worldpay-3ds-flex-ddc-result'
+    paymentDetails.worldpay3dsFlexDdcResult = 'a-worldpay-3ds-flex-ddc-result'
     const request = {
       chargeData: chargeData,
       body: paymentDetails,
@@ -112,8 +109,8 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
-        'chargeId': chargeId,
-        'payload': payload
+        chargeId: chargeId,
+        payload: payload
       }
     ))).to.be.true // eslint-disable-line
   })
@@ -148,12 +145,51 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
     delete payload.accept_header
     delete payload.user_agent_header
-    delete payload.worldpay_3ds_flex_ddc_result
 
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
-        'chargeId': chargeId,
-        'payload': payload
+        chargeId: chargeId,
+        payload: payload
+      }
+    ))).to.be.true // eslint-disable-line
+  })
+
+  it('should not include billing address in authorisation request when billing address collection disabled', async function () {
+    response.locals.collectBillingAddress = false
+
+    const request = {
+      chargeData: chargeData,
+      body: paymentDetails,
+      chargeId: chargeId,
+      header: sinon.spy(),
+      headers: {
+        'x-request-id': 'unique-id',
+        'x-forwarded-for': '127.0.0.1'
+      }
+    }
+    await requireChargeController(mockedConnectorClient).create(request, response)
+
+    const payload = paymentFixtures.validAuthorisationRequest({
+      cardNumber: paymentDetails.cardNo,
+      cvc: paymentDetails.cvc,
+      cardBrand: card.brand,
+      expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
+      cardholderName: paymentDetails.cardholderName,
+      cardType: card.type,
+      corporateCard: card.corporate,
+      prepaid: card.prepaid,
+      noBillingAddress: true
+    }).getPlain()
+
+    delete payload.accept_header
+    delete payload.user_agent_header
+
+    console.log('PAYLOAD ' + JSON.stringify(payload))
+
+    expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
+      {
+        chargeId: chargeId,
+        payload: payload
       }
     ))).to.be.true // eslint-disable-line
   })
