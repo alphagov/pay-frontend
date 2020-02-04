@@ -17,7 +17,7 @@ const AUTHORISE_CHARGE_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}/cards`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASE_URL = `http://localhost:${PORT}`
 
-describe('connector client - charge tests', function () {
+describe('Connector client - charge tests', function () {
   const provider = Pact({
     consumer: 'frontend',
     provider: 'connector',
@@ -31,7 +31,7 @@ describe('connector client - charge tests', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('making auth request', function () {
+  describe('Authorisation request success', function () {
     const authRequest = fixtures.validAuthorisationRequest()
 
     before(() => {
@@ -58,7 +58,34 @@ describe('connector client - charge tests', function () {
     })
   })
 
-  describe('find charge', function () {
+  describe('Authorisation request without a billing address success', function () {
+    const authRequest = fixtures.validAuthorisationRequest({ noBillingAddress: true })
+
+    before(() => {
+      const response = fixtures.validChargeCardDetailsAuthorised()
+      const builder = new PactInteractionBuilder(AUTHORISE_CHARGE_URL)
+        .withRequestBody(authRequest.getPactified())
+        .withMethod('POST')
+        .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+        .withUponReceiving('an authorisation request without a billing address')
+        .withResponseBody(response.getPactified())
+        .withStatusCode(200)
+        .build()
+      return provider.addInteraction(builder)
+    })
+
+    afterEach(() => provider.verify())
+
+    it('should return authorisation success', async function () {
+      const res = await connectorClient({ baseUrl: BASE_URL }).chargeAuth({
+        chargeId: TEST_CHARGE_ID,
+        payload: authRequest.getPlain()
+      })
+      expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+    })
+  })
+
+  describe('Find charge success', function () {
     before(() => {
       const response = fixtures.validChargeDetails({
         chargeId: TEST_CHARGE_ID,
