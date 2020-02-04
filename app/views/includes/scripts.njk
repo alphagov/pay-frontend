@@ -30,7 +30,7 @@
   };
   window.Charge = {
     email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
-    collect_billing_address: {{ "true" if service.collectBillingAddress else "false" }},
+    collect_billing_address: {{ "true" if collectBillingAddress else "false" }},
     worldpay_3ds_flex_ddc_jwt: '{{ worldpay3dsFlexDdcJwt }}',
     worldpay_3ds_flex_ddc_url: '{{ worldpay3dsFlexDdcUrl }}'
   }
@@ -41,7 +41,7 @@
     if (mainWrap.classList.contains('charge-new')) {
       window.payScripts.helpers.setGlobalChargeId();
       showCardType().init();
-      {% if service.collectBillingAddress %}
+      {% if collectBillingAddress %}
         window.payScripts.helpers.initialiseAddressCountryAutocomplete();
       {% endif %}
       window.payScripts.inputConfirm.init();
