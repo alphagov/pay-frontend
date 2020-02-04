@@ -322,14 +322,18 @@ const fixtures = {
       user_agent_header: 'Mozilla/5.0',
       prepaid: opts.prepaid || 'NOT_PREPAID',
       worldpay_3ds_flex_ddc_result: opts.worldpay3dsFlexDdcResult || '96c3fcf6-d90a-467e-a224-107f70052528',
-      address: {
+      ip_address: opts.ipAddress || '127.0.0.1'
+    }
+
+    if (!opts.noBillingAddress) {
+      data.address = {
         line1: opts.addressLine1 || 'The Money Pool',
         city: opts.addressCity || 'London',
         postcode: opts.addressPostcode || 'DO11 4RS',
         country: opts.addressCountry || 'GB'
-      },
-      ip_address: opts.ipAddress || '127.0.0.1'
+      }
     }
+
     return {
       getPactified: () => {
         return pactBase.pactify(data)
