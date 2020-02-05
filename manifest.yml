@@ -2,22 +2,25 @@
 applications:
   - name: card-frontend
     buildpacks:
+      - https://github.com/alphagov/env-map-buildpack.git#v1
       - nodejs_buildpack
     health-check-type: http
     health-check-http-endpoint: '/healthcheck'
     health-check-invocation-timeout: 5
     memory: ((memory))
     disk_quota: ((disk_quota))
+    services:
+      - app-catalog
     command: npm start
     env:
       NODE_ENV: production
       SESSION_ENCRYPTION_KEY: ((card_frontend_session_encryption_key))
       COOKIE_MAX_AGE: '5400000'
-      CONNECTOR_HOST: ((card_connector_url))
       ANALYTICS_TRACKING_ID: ((card_connector_analytics_tracking_id))
-      CARDID_HOST: ((cardid_url))
       NODE_WORKER_COUNT: '1'
-      FRONTEND_URL: https://((card_frontend_url))
-      ADMINUSERS_URL: ((adminusers_url))
-    routes:
-      - route: ((card_frontend_url))
+
+      # These are taken via bound service, see `env-map.yml`
+      ADMINUSERS_URL: ""
+      CARDID_HOST: ""
+      CONNECTOR_HOST: ""
+      FRONTEND_URL: ""
