@@ -15,13 +15,17 @@ const chargeId = '42mdrsshtsk4chpeoifhlgf4lk'
 const card = paymentFixtures.validCardDetails()
 const chargeData = paymentFixtures.validChargeDetails({ emailCollectionMode: 'OFF' }).getPlain()
 
-const paymentDetails = {
+const paymentDetailsWithoutAddress = {
   chargeId: chargeId,
   cardNo: '4242424242424242',
   expiryMonth: '01',
   expiryYear: '20',
   cardholderName: 'Joe Bloggs',
-  cvc: '111',
+  cvc: '111'
+}
+
+const paymentDetails = {
+  ...paymentDetailsWithoutAddress,
   addressCountry: 'GB',
   addressLine1: '1 Horse Guards',
   addressCity: 'London',
@@ -159,7 +163,7 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
     const request = {
       chargeData: chargeData,
-      body: paymentDetails,
+      body: paymentDetailsWithoutAddress,
       chargeId: chargeId,
       header: sinon.spy(),
       headers: {
@@ -170,11 +174,11 @@ describe('POST /card_details/{chargeId} endpoint', function () {
     await requireChargeController(mockedConnectorClient).create(request, response)
 
     const payload = paymentFixtures.validAuthorisationRequest({
-      cardNumber: paymentDetails.cardNo,
-      cvc: paymentDetails.cvc,
+      cardNumber: paymentDetailsWithoutAddress.cardNo,
+      cvc: paymentDetailsWithoutAddress.cvc,
       cardBrand: card.brand,
-      expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
-      cardholderName: paymentDetails.cardholderName,
+      expiryDate: `${paymentDetailsWithoutAddress.expiryMonth}/${paymentDetailsWithoutAddress.expiryYear}`,
+      cardholderName: paymentDetailsWithoutAddress.cardholderName,
       cardType: card.type,
       corporateCard: card.corporate,
       prepaid: card.prepaid,
@@ -183,8 +187,6 @@ describe('POST /card_details/{chargeId} endpoint', function () {
 
     delete payload.accept_header
     delete payload.user_agent_header
-
-    console.log('PAYLOAD ' + JSON.stringify(payload))
 
     expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
       {
