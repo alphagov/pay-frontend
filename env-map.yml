@@ -1,5 +1,7 @@
 env_vars:
-  ADMINUSERS_URL:  '."user-provided"[0].credentials.adminusers_url'
-  CARDID_HOST: '."user-provided"[0].credentials.cardid_url'
-  CONNECTOR_HOST: '."user-provided"[0].credentials.card_connector_url'
-  FRONTEND_URL: '."user-provided"[0].credentials.card_frontend_url'
+  ADMINUSERS_URL:         '.[][] | select(.name == "app-catalog") | .credentials.adminusers_url'
+  CARDID_HOST:            '.[][] | select(.name == "app-catalog") | .credentials.cardid_url'
+  CONNECTOR_HOST:         '.[][] | select(.name == "app-catalog") | .credentials.card_connector_url'
+  FRONTEND_URL:           '.[][] | select(.name == "app-catalog") | .credentials.card_frontend_url'
+  SESSION_ENCRYPTION_KEY: '.[][] | select(.name == "card-frontend-secret-service") | .credentials.card_frontend_session_encryption_key'
+  ANALYTICS_TRACKING_ID:  '.[][] | select(.name == "card-frontend-secret-service") | .credentials.card_frontend_analytics_tracking_id'

@@ -11,12 +11,11 @@ applications:
     disk_quota: ((disk_quota))
     services:
       - app-catalog
+      - card-frontend-secret-service
     command: npm start
     env:
       NODE_ENV: production
-      SESSION_ENCRYPTION_KEY: ((card_frontend_session_encryption_key))
       COOKIE_MAX_AGE: '5400000'
-      ANALYTICS_TRACKING_ID: ((card_connector_analytics_tracking_id))
       NODE_WORKER_COUNT: '1'
 
       # These are taken via bound service, see `env-map.yml`
@@ -24,3 +23,7 @@ applications:
       CARDID_HOST: ""
       CONNECTOR_HOST: ""
       FRONTEND_URL: ""
+
+      # These are provided via bound card-frontend-secret-service, see `env-map.yml`
+      SESSION_ENCRYPTION_KEY: ""
+      ANALYTICS_TRACKING_ID: ""
