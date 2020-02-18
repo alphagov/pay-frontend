@@ -33,25 +33,6 @@ const paymentDetails = {
 }
 
 describe('with valid payment details', function () {
-  const mockedChargeValidationBackend = function () {
-    const validation = {
-      hasError: false
-    }
-    return {
-      verify: () => {
-        return Promise.resolve({ validation, card })
-      }
-    }
-  }
-
-  const requireChargeController = function (mockedConnectorClient) {
-    const proxyquireMocks = {
-      '../utils/charge_validation_backend': mockedChargeValidationBackend,
-      '../services/clients/connector_client': mockedConnectorClient
-    }
-    return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
-  }
-
   describe('POST /card_details/{chargeId} endpoint', function () {
     let response
     let chargeAuthStub
@@ -198,3 +179,109 @@ describe('with valid payment details', function () {
     })
   })
 })
+
+describe('with invalid payment details', function () {
+  describe('when DECRYPT_AND_OMIT_CARD_DATA is set', function () {
+    let chargeController
+    beforeEach(() => {
+      chargeController = requireChargeController(sinon.stub(), { failValidation: true, decryptAndOmitCardData: true })
+    })
+
+    describe('POST /card_details/{chargeId} endpoint', function () {
+      it('should show a validation error including card data', async function () {
+        const request = {
+          chargeData: chargeData,
+          body: paymentDetails,
+          chargeId: chargeId,
+          header: sinon.stub(),
+          headers: {
+            'x-request-id': 'unique-id',
+            'x-forwarded-for': '127.0.0.1'
+          }
+        }
+        const response = {
+          redirect: sinon.spy(),
+          status: sinon.spy(),
+          render: sinon.spy(),
+          locals: {
+            collectBillingAddress: true
+          }
+        }
+
+        await chargeController.create(request, response)
+
+        expect(response.status.getCall(0).args[0]).to.equal(200)
+        const [renderedView, renderParameters] = response.render.getCall(0).args
+        expect(renderedView).to.equal('charge')
+        const renderKeys = Object.keys(renderParameters)
+        expect(renderKeys).not.to.include('cardNo')
+        expect(renderKeys).not.to.include('expiryMonth')
+        expect(renderKeys).not.to.include('expiryYear')
+        expect(renderKeys).not.to.include('cvc')
+      })
+    })
+  })
+
+  describe('when DECRYPT_AND_OMIT_CARD_DATA is not set', function () {
+    let chargeController
+    beforeEach(() => {
+      chargeController = requireChargeController(sinon.stub(), { failValidation: true, decryptAndOmitCardData: undefined })
+    })
+    describe('POST /card_details/{chargeId} endpoint', function () {
+      it('should show a validation error including card data', async function () {
+        const request = {
+          chargeData: chargeData,
+          body: paymentDetails,
+          chargeId: chargeId,
+          header: sinon.spy(),
+          headers: {
+            'x-request-id': 'unique-id',
+            'x-forwarded-for': '127.0.0.1'
+          }
+        }
+        const response = {
+          redirect: sinon.spy(),
+          status: sinon.spy(),
+          render: sinon.spy(),
+          locals: {
+            collectBillingAddress: true
+          }
+        }
+
+        await chargeController.create(request, response)
+
+        expect(response.status.getCall(0).args[0]).to.equal(200)
+        const [renderedView, renderParameters] = response.render.getCall(0).args
+        expect(renderedView).to.equal('charge')
+        expect(renderParameters).to.include({
+          cardNo: paymentDetails.cardNo,
+          expiryMonth: paymentDetails.expiryMonth,
+          expiryYear: paymentDetails.expiryYear,
+          cvc: paymentDetails.cvc
+        })
+      })
+    })
+  })
+})
+
+function requireChargeController (mockedConnectorClient, { failValidation, decryptAndOmitCardData } = {}) {
+  const mockedChargeValidationBackend = () => ({
+    verify: () => Promise.resolve({ validation: { hasError: failValidation }, card })
+  })
+
+  const proxyquireMocks = {
+    '../utils/charge_validation_backend': mockedChargeValidationBackend,
+    '../services/clients/connector_client': mockedConnectorClient
+  }
+  const oldDecryptAndOmitCardData = process.env.DECRYPT_AND_OMIT_CARD_DATA
+  if (decryptAndOmitCardData) {
+    process.env.DECRYPT_AND_OMIT_CARD_DATA = decryptAndOmitCardData
+  }
+  const result = proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
+  if (oldDecryptAndOmitCardData) {
+    process.env.DECRYPT_AND_OMIT_CARD_DATA = oldDecryptAndOmitCardData
+  } else {
+    delete process.env.DECRYPT_AND_OMIT_CARD_DATA
+  }
+  return result
+}
