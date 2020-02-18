@@ -32,167 +32,169 @@ const paymentDetails = {
   addressPostcode: 'E1 8QS'
 }
 
-const mockedChargeValidationBackend = function () {
-  const validation = {
-    hasError: false
-  }
-  return {
-    verify: () => {
-      return Promise.resolve({ validation, card })
+describe('with valid payment details', function () {
+  const mockedChargeValidationBackend = function () {
+    const validation = {
+      hasError: false
+    }
+    return {
+      verify: () => {
+        return Promise.resolve({ validation, card })
+      }
     }
   }
-}
 
-const requireChargeController = function (mockedConnectorClient) {
-  const proxyquireMocks = {
-    '../utils/charge_validation_backend': mockedChargeValidationBackend,
-    '../services/clients/connector_client': mockedConnectorClient
+  const requireChargeController = function (mockedConnectorClient) {
+    const proxyquireMocks = {
+      '../utils/charge_validation_backend': mockedChargeValidationBackend,
+      '../services/clients/connector_client': mockedConnectorClient
+    }
+    return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
   }
-  return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
-}
 
-describe('POST /card_details/{chargeId} endpoint', function () {
-  let response
-  let chargeAuthStub
-  let mockedConnectorClient
+  describe('POST /card_details/{chargeId} endpoint', function () {
+    let response
+    let chargeAuthStub
+    let mockedConnectorClient
 
-  beforeEach(() => {
-    chargeAuthStub = sinon.stub().resolves(
-      {
-        statusCode: 200,
-        body: {
-          status: 'AUTHORISATION SUCCESS'
+    beforeEach(() => {
+      chargeAuthStub = sinon.stub().resolves(
+        {
+          statusCode: 200,
+          body: {
+            status: 'AUTHORISATION SUCCESS'
+          }
+        })
+      mockedConnectorClient = sinon.stub().callsFake(() => {
+        return {
+          chargeAuth: chargeAuthStub
         }
       })
-    mockedConnectorClient = sinon.stub().callsFake(() => {
-      return {
-        chargeAuth: chargeAuthStub
+      response = {
+        redirect: sinon.spy(),
+        locals: {
+          collectBillingAddress: true
+        }
       }
     })
-    response = {
-      redirect: sinon.spy(),
-      locals: {
-        collectBillingAddress: true
-      }
-    }
-  })
 
-  it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
-    paymentDetails.worldpay3dsFlexDdcResult = 'a-worldpay-3ds-flex-ddc-result'
-    const request = {
-      chargeData: chargeData,
-      body: paymentDetails,
-      chargeId: chargeId,
-      header: sinon.spy(),
-      headers: {
-        'x-request-id': 'unique-id',
-        'x-forwarded-for': '127.0.0.1'
-      }
-    }
-
-    await requireChargeController(mockedConnectorClient).create(request, response)
-
-    const payload = paymentFixtures.validAuthorisationRequest({
-      cardNumber: paymentDetails.cardNo,
-      cvc: paymentDetails.cvc,
-      cardBrand: card.brand,
-      expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
-      cardholderName: paymentDetails.cardholderName,
-      cardType: card.type,
-      corporateCard: card.corporate,
-      prepaid: card.prepaid,
-      addressLine1: paymentDetails.addressLine1,
-      addressCity: paymentDetails.addressCity,
-      addressPostcode: paymentDetails.addressPostcode,
-      addressCountry: paymentDetails.addressCountry,
-      worldpay3dsFlexDdcResult: paymentDetails.worldpay3dsFlexDdcResult
-    }).getPlain()
-
-    delete payload.accept_header
-    delete payload.user_agent_header
-
-    expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
-      {
+    it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
+      paymentDetails.worldpay3dsFlexDdcResult = 'a-worldpay-3ds-flex-ddc-result'
+      const request = {
+        chargeData: chargeData,
+        body: paymentDetails,
         chargeId: chargeId,
-        payload: payload
+        header: sinon.spy(),
+        headers: {
+          'x-request-id': 'unique-id',
+          'x-forwarded-for': '127.0.0.1'
+        }
       }
-    ))).to.be.true // eslint-disable-line
-  })
 
-  it('should not send worldpay_3ds_flex_ddc_result to connector when the request does not include a worldpay3dsFlexDdcResult parameter', async function () {
-    const request = {
-      chargeData: chargeData,
-      body: paymentDetails,
-      chargeId: chargeId,
-      header: sinon.spy(),
-      headers: {
-        'x-request-id': 'unique-id',
-        'x-forwarded-for': '127.0.0.1'
-      }
-    }
-    await requireChargeController(mockedConnectorClient).create(request, response)
+      await requireChargeController(mockedConnectorClient).create(request, response)
 
-    const payload = paymentFixtures.validAuthorisationRequest({
-      cardNumber: paymentDetails.cardNo,
-      cvc: paymentDetails.cvc,
-      cardBrand: card.brand,
-      expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
-      cardholderName: paymentDetails.cardholderName,
-      cardType: card.type,
-      corporateCard: card.corporate,
-      prepaid: card.prepaid,
-      addressLine1: paymentDetails.addressLine1,
-      addressCity: paymentDetails.addressCity,
-      addressPostcode: paymentDetails.addressPostcode,
-      addressCountry: paymentDetails.addressCountry
-    }).getPlain()
+      const payload = paymentFixtures.validAuthorisationRequest({
+        cardNumber: paymentDetails.cardNo,
+        cvc: paymentDetails.cvc,
+        cardBrand: card.brand,
+        expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
+        cardholderName: paymentDetails.cardholderName,
+        cardType: card.type,
+        corporateCard: card.corporate,
+        prepaid: card.prepaid,
+        addressLine1: paymentDetails.addressLine1,
+        addressCity: paymentDetails.addressCity,
+        addressPostcode: paymentDetails.addressPostcode,
+        addressCountry: paymentDetails.addressCountry,
+        worldpay3dsFlexDdcResult: paymentDetails.worldpay3dsFlexDdcResult
+      }).getPlain()
 
-    delete payload.accept_header
-    delete payload.user_agent_header
+      delete payload.accept_header
+      delete payload.user_agent_header
 
-    expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
-      {
+      expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
+        {
+          chargeId: chargeId,
+          payload: payload
+        }
+      ))).to.be.true // eslint-disable-line
+    })
+
+    it('should not send worldpay_3ds_flex_ddc_result to connector when the request does not include a worldpay3dsFlexDdcResult parameter', async function () {
+      const request = {
+        chargeData: chargeData,
+        body: paymentDetails,
         chargeId: chargeId,
-        payload: payload
+        header: sinon.spy(),
+        headers: {
+          'x-request-id': 'unique-id',
+          'x-forwarded-for': '127.0.0.1'
+        }
       }
-    ))).to.be.true // eslint-disable-line
-  })
+      await requireChargeController(mockedConnectorClient).create(request, response)
 
-  it('should not include billing address in authorisation request when billing address collection disabled', async function () {
-    response.locals.collectBillingAddress = false
+      const payload = paymentFixtures.validAuthorisationRequest({
+        cardNumber: paymentDetails.cardNo,
+        cvc: paymentDetails.cvc,
+        cardBrand: card.brand,
+        expiryDate: `${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}`,
+        cardholderName: paymentDetails.cardholderName,
+        cardType: card.type,
+        corporateCard: card.corporate,
+        prepaid: card.prepaid,
+        addressLine1: paymentDetails.addressLine1,
+        addressCity: paymentDetails.addressCity,
+        addressPostcode: paymentDetails.addressPostcode,
+        addressCountry: paymentDetails.addressCountry
+      }).getPlain()
 
-    const request = {
-      chargeData: chargeData,
-      body: paymentDetailsWithoutAddress,
-      chargeId: chargeId,
-      header: sinon.spy(),
-      headers: {
-        'x-request-id': 'unique-id',
-        'x-forwarded-for': '127.0.0.1'
-      }
-    }
-    await requireChargeController(mockedConnectorClient).create(request, response)
+      delete payload.accept_header
+      delete payload.user_agent_header
 
-    const payload = paymentFixtures.validAuthorisationRequest({
-      cardNumber: paymentDetailsWithoutAddress.cardNo,
-      cvc: paymentDetailsWithoutAddress.cvc,
-      cardBrand: card.brand,
-      expiryDate: `${paymentDetailsWithoutAddress.expiryMonth}/${paymentDetailsWithoutAddress.expiryYear}`,
-      cardholderName: paymentDetailsWithoutAddress.cardholderName,
-      cardType: card.type,
-      corporateCard: card.corporate,
-      prepaid: card.prepaid,
-      noBillingAddress: true
-    }).getPlain()
+      expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
+        {
+          chargeId: chargeId,
+          payload: payload
+        }
+      ))).to.be.true // eslint-disable-line
+    })
 
-    delete payload.accept_header
-    delete payload.user_agent_header
+    it('should not include billing address in authorisation request when billing address collection disabled', async function () {
+      response.locals.collectBillingAddress = false
 
-    expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
-      {
+      const request = {
+        chargeData: chargeData,
+        body: paymentDetailsWithoutAddress,
         chargeId: chargeId,
-        payload: payload
+        header: sinon.spy(),
+        headers: {
+          'x-request-id': 'unique-id',
+          'x-forwarded-for': '127.0.0.1'
+        }
       }
-    ))).to.be.true // eslint-disable-line
+      await requireChargeController(mockedConnectorClient).create(request, response)
+
+      const payload = paymentFixtures.validAuthorisationRequest({
+        cardNumber: paymentDetailsWithoutAddress.cardNo,
+        cvc: paymentDetailsWithoutAddress.cvc,
+        cardBrand: card.brand,
+        expiryDate: `${paymentDetailsWithoutAddress.expiryMonth}/${paymentDetailsWithoutAddress.expiryYear}`,
+        cardholderName: paymentDetailsWithoutAddress.cardholderName,
+        cardType: card.type,
+        corporateCard: card.corporate,
+        prepaid: card.prepaid,
+        noBillingAddress: true
+      }).getPlain()
+
+      delete payload.accept_header
+      delete payload.user_agent_header
+
+      expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
+        {
+          chargeId: chargeId,
+          payload: payload
+        }
+      ))).to.be.true // eslint-disable-line
+    })
   })
 })
