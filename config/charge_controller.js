@@ -1,3 +1,15 @@
+const cardDataFields = require('./card_data_fields')
+
+const nonCardDataFields = [
+  'cardholderName',
+  'addressLine1',
+  'addressLine2',
+  'addressCity',
+  'addressPostcode',
+  'addressCountry',
+  'email'
+]
+
 module.exports = {
   views: {
     CHARGE_VIEW: 'charge',
@@ -14,5 +26,5 @@ module.exports = {
     declined: 'DECLINED',
     error: 'ERROR'
   },
-  preserveProperties: ['cardNo', 'expiryMonth', 'expiryYear', 'cvc', 'cardholderName', 'addressLine1', 'addressLine2', 'addressCity', 'addressPostcode', 'addressCountry', 'email']
+  preserveProperties: (flags) => flags.decryptAndOmitCardData ? [...nonCardDataFields] : [...cardDataFields, ...nonCardDataFields]
 }
