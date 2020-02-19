@@ -188,7 +188,7 @@ describe('with invalid payment details', function () {
     })
 
     describe('POST /card_details/{chargeId} endpoint', function () {
-      it('should show a validation error including card data', async function () {
+      it('should show a validation error omitting card data', async function () {
         const request = {
           chargeData: chargeData,
           body: paymentDetails,
