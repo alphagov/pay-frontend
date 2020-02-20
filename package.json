@@ -151,7 +151,7 @@
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.0.6/pay-product-page-4.0.6.tgz",
     "proxyquire": "~2.1.3",
     "sass-lint": "^1.13.1",
-    "sinon": "8.1.x",
+    "sinon": "9.0.x",
     "snyk": "^1.288.x",
     "standard": "^14.3.x",
     "superagent": "^5.2.2",
