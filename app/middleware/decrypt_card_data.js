@@ -43,24 +43,22 @@ function createMiddleware (env) {
     oaepHash: 'sha256'
   })
 
-  return async function decryptCardDataMiddleware (req, _res, next) {
+  return function decryptCardDataMiddleware (req, _res, next) {
     const fieldsToDecrypt = cardDataFields.filter(x => req.body[x] !== undefined)
-    try {
-      await Promise.all(fieldsToDecrypt.map(async (fieldName) => {
-        const cipherText = req.body[fieldName]
-        try {
-          const result = await decryptNode.decrypt(keyring, Buffer.from(cipherText, 'base64'))
-          req.body[fieldName] = result.plaintext.toString('utf8')
-        } catch (rejection) {
-          logger.error('Failed to decrypt', fieldName)
-          throw rejection
-        }
-      }))
-    } catch (err) {
+    Promise.all(fieldsToDecrypt.map(async (fieldName) => {
+      const cipherText = req.body[fieldName]
+      try {
+        const result = await decryptNode.decrypt(keyring, Buffer.from(cipherText, 'base64'))
+        req.body[fieldName] = result.plaintext.toString('utf8')
+      } catch (rejection) {
+        logger.error('Failed to decrypt', fieldName)
+        throw rejection
+      }
+    })).then(() => {
+      next()
+    }).catch((err) => {
       next(err)
-      throw err
-    }
-    next()
+    })
   }
 }
 

@@ -4,6 +4,12 @@ const proxyquire = require('proxyquire')
 const { expect } = require('chai')
 
 describe('decryptCardData middleware', function () {
+  let next
+  beforeEach(function () {
+    next = sinon.stub()
+    next.promise = new Promise(resolve => next.callsFake(resolve))
+  })
+
   describe('with mocked crypto', function () {
     const decryptCardDataFactory = proxyquire(path.join(__dirname, '../../app/middleware/decrypt_card_data.js'), {
       '@aws-crypto/decrypt-node': {
@@ -49,8 +55,8 @@ describe('decryptCardData middleware', function () {
             cvc: '123'
           }
         }
-        const next = sinon.stub()
-        await decryptCardDataMiddleware(req, {}, next)
+        decryptCardDataMiddleware(req, {}, next)
+        await next.promise
         expect(req.body.cardNo).to.eq('some magic cardNo')
         expect(req.body.expiryMonth).to.eq('01')
         expect(req.body.expiryYear).to.eq('20')
@@ -76,7 +82,8 @@ describe('decryptCardData middleware', function () {
             cvc: Buffer.from('123').toString('base64')
           }
         }
-        await decryptCardDataMiddleware(req, {}, () => {})
+        decryptCardDataMiddleware(req, {}, next)
+        await next.promise
         expect(req.body.cardNo).to.eq('decrypted(some magic cardNo)')
         expect(req.body.expiryMonth).to.eq('decrypted(01)')
         expect(req.body.expiryYear).to.eq('decrypted(20)')
@@ -88,7 +95,8 @@ describe('decryptCardData middleware', function () {
           body: {}
         }
         try {
-          await decryptCardDataMiddleware(req, {}, () => {})
+          decryptCardDataMiddleware(req, {}, next)
+          await next.promise
         } catch (rejection) {
           expect(rejection).to.eq('should not have happened')
         }
@@ -102,7 +110,8 @@ describe('decryptCardData middleware', function () {
             some_thing_else: 'some thing else'
           }
         }
-        await decryptCardDataMiddleware(req, {}, () => {})
+        decryptCardDataMiddleware(req, {}, next)
+        await next.promise
         expect(req.body.some_thing).to.eq('some thing')
         expect(req.body.some_other_thing).to.eq('some other thing')
         expect(req.body.some_thing_else).to.eq('some thing else')
@@ -174,7 +183,8 @@ gDi9k8BeU+7EWeBLvLje4u26cSM3wX0d11FoELg5XkAD20Ir080l
             cardNo: testCase.ciphertext
           }
         }
-        await decryptCardDataMiddleware(req, {}, () => {})
+        decryptCardDataMiddleware(req, {}, next)
+        await next.promise
         expect(req.body.cardNo).to.eq(testCase.plaintext)
       })
     })
@@ -188,7 +198,8 @@ gDi9k8BeU+7EWeBLvLje4u26cSM3wX0d11FoELg5XkAD20Ir080l
         }
       }
       try {
-        await decryptCardDataMiddleware(req, {}, () => {})
+        decryptCardDataMiddleware(req, {}, next)
+        await next.promise
       } catch (rejection) {
         expect(rejection).to.eq('should not have happened')
       }
