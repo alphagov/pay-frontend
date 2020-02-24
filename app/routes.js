@@ -79,7 +79,7 @@ exports.bind = function (app) {
   app.get(card.confirm.path, middlewareStack, charge.confirm)
   app.post(card.capture.path, middlewareStack, charge.capture)
   app.post(card.cancel.path, middlewareStack, charge.cancel)
-  app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, resolveLanguage, charge.checkCard)
+  app.post(card.checkCard.path, xraySegmentCls, retrieveCharge, resolveLanguage, decryptCardData, charge.checkCard)
   app.get(card.return.path, xraySegmentCls, retrieveCharge, resolveLanguage, returnCont.return)
 
   app.get(card.auth3dsRequired.path, middlewareStack, threeDS.auth3dsRequired)

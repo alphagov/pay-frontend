@@ -51,7 +51,7 @@ function createMiddleware (env) {
         const result = await decryptNode.decrypt(keyring, Buffer.from(cipherText, 'base64'))
         req.body[fieldName] = result.plaintext.toString('utf8')
       } catch (rejection) {
-        logger.error('Failed to decrypt', fieldName)
+        logger.error('Failed to decrypt', { fieldName })
         throw rejection
       }
     })).then(() => {

@@ -141,7 +141,7 @@ var showCardType = function() {
       var card = getCardType();
       if (card.length !== 1 && cardInput.value.replace(/\D/g,'').length < 11) return
       request.open('POST', '/check_card/' + chargeId, true);
-      request.setRequestHeader('Content-type', 'application/json');
+      request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       request.onload = function () {
         var payload = JSON.parse(request.response)
         if (request.status >= 200 && request.status < 400) {
@@ -153,9 +153,9 @@ var showCardType = function() {
       request.onerror = function () {
         return reject()
       }
-      request.send(JSON.stringify({
-        cardNo: cardInput.value.replace(/\D/g, '')
-      }));
+      request.send('cardNo=' + encodeURIComponent(
+        cardInput.value.replace(/\D/g, '')
+      ))
     });
   }
 
