@@ -7,7 +7,9 @@ describe('decryptCardData middleware', function () {
   let next
   beforeEach(function () {
     next = sinon.stub()
-    next.promise = new Promise(resolve => next.callsFake(resolve))
+    next.promise = new Promise(
+      (resolve, reject) => next.callsFake(err => err ? reject(err) : resolve())
+    )
   })
 
   describe('with mocked crypto', function () {
