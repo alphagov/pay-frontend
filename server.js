@@ -29,6 +29,7 @@ const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
 const csp = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation_header')
+const errorHandlers = require('./app/middleware/error_handlers')
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
@@ -174,6 +175,7 @@ function initialise () {
   initialiseRoutes(app) // This contains the 404 override and so should be last
   logApplePayCertificateTimeToExpiry()
   app.use(Sentry.Handlers.errorHandler())
+  app.use(errorHandlers.defaultErrorHandler)
 
   return app
 }
