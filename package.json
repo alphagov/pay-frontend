@@ -43,8 +43,8 @@
     "start": "node start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard --fix",
-    "watch-live-reload": "./node_modules/.bin/grunt watch",
-    "test": "rm -rf ./pacts && DISABLE_APPMETRICS=true node ./node_modules/mocha/bin/mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
+    "watch-live-reload": "grunt watch",
+    "test": "rm -rf ./pacts && DISABLE_APPMETRICS=true mocha '!(node_modules)/**/*+(_test|_tests|.test)'.js",
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
@@ -74,6 +74,8 @@
     ]
   },
   "dependencies": {
+    "@aws-crypto/decrypt-node": "^1.0.3",
+    "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
     "@govuk-pay/pay-js-commons": "2.24.0",
     "@sentry/node": "5.12.4",
     "appmetrics": "5.1.1",

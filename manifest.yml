@@ -27,3 +27,7 @@ applications:
       # These are provided via bound card-frontend-secret-service, see `env-map.yml`
       SESSION_ENCRYPTION_KEY: ""
       ANALYTICS_TRACKING_ID: ""
+      DECRYPT_AND_OMIT_CARD_DATA: true
+      DECRYPT_CARD_DATA_PRIVATE_KEY: ""
+      DECRYPT_CARD_DATA_KEY_NAME: ""
+      DECRYPT_CARD_DATA_KEY_NAMESPACE: ""

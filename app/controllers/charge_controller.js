@@ -10,7 +10,8 @@ const AWSXRay = require('aws-xray-sdk')
 const {
   GOOGLE_PAY_MERCHANT_ID,
   WORLDPAY_3DS_FLEX_DDC_TEST_URL,
-  WORLDPAY_3DS_FLEX_DDC_LIVE_URL
+  WORLDPAY_3DS_FLEX_DDC_LIVE_URL,
+  DECRYPT_AND_OMIT_CARD_DATA
 } = process.env
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
@@ -179,7 +180,11 @@ module.exports = {
         logging.failedGetWorldpayDdcJwt(err, getLoggingFields(req))
         return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
       }
-      _.merge(data.validation, withAnalytics(charge, charge), _.pick(req.body, preserveProperties))
+      _.merge(
+        data.validation,
+        withAnalytics(charge, charge),
+        _.pick(req.body, preserveProperties({ decryptAndOmitCardData: DECRYPT_AND_OMIT_CARD_DATA }))
+      )
       return responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
     }
 
