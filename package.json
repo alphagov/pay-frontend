@@ -115,7 +115,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
+    "@babel/core": "^7.8.6",
     "@babel/preset-env": "^7.8.4",
     "@pact-foundation/pact-node": "^10.4.0",
     "browserify": "16.5.x",
