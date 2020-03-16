@@ -122,6 +122,7 @@ module.exports = {
     } else if (issuerUrl) {
       res.redirect(303, issuerUrl)
     } else {
+      logger.error('3DS data is missing for charge, unable to begin 3DS', getLoggingFields(req))
       responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
     }
   },
