@@ -162,35 +162,38 @@
           <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
         </div>
         <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7 {% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
-          <label class="govuk-label govuk-label--s govuk-!-font-size-24" id="expiry-date-lbl" for="expiry-month">
-            <span class="expiry-date-label"
-              data-label-replace="expiryMonth"
-              data-original-label="{{ __p("cardDetails.expiry") }}">
-              {{ __p("cardDetails.expiry") }}
-            </span>
-          </label>
-          <span class="govuk-hint govuk-!-margin-bottom-2">
-            {{ __p("cardDetails.expiryHint") }}</span>
-          {% if highlightErrorFields.expiryMonth %}
-            <p class="govuk-error-message" id="error-expiry-date">
-              {{ highlightErrorFields.expiryMonth }}
-            </p>
-          {% endif %}
-          <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
-              <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ __p("cardDetails.expiryMonth") }}</label>
-              <input
-                id="expiry-month"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                name="expiryMonth"
-                value="{{expiryMonth}}"
-                class="govuk-input govuk-date-input__input govuk-input--width-3"
-                minlength="1"
-                maxlength="2"
-                autocomplete="cc-exp-month"/>
-          </div>
-          <div class="govuk-date-input__item govuk-date-input__item--year">
+          <fieldset class="govuk-fieldset" role="group" aria-describedby="expiry-date-hint">
+            <legend>
+              <label class="govuk-label govuk-label--s govuk-!-font-size-24" id="expiry-date-lbl" for="expiry-month">
+                <span class="expiry-date-label"
+                  data-label-replace="expiryMonth"
+                  data-original-label="{{ __p("cardDetails.expiry") }}">
+                  {{ __p("cardDetails.expiry") }}
+                </span>
+              </label>
+            </legend>
+            <span class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
+              {{ __p("cardDetails.expiryHint") }}</span>
+            {% if highlightErrorFields.expiryMonth %}
+              <p class="govuk-error-message" id="error-expiry-date">
+                {{ highlightErrorFields.expiryMonth }}
+              </p>
+            {% endif %}
+            <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
+                <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ __p("cardDetails.expiryMonth") }}</label>
+                <input
+                  id="expiry-month"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  name="expiryMonth"
+                  value="{{expiryMonth}}"
+                  class="govuk-input govuk-date-input__input govuk-input--width-3"
+                  minlength="1"
+                  maxlength="2"
+                  autocomplete="cc-exp-month"/>
+            </div>
+            <div class="govuk-date-input__item govuk-date-input__item--year">
               <label for="expiry-year" class="govuk-label govuk-date-input__label">{{ __p("cardDetails.expiryYear") }}</label>
               <input
                 id="expiry-year"
@@ -207,6 +210,7 @@
                 data-required
               />
             </div>
+          </fieldset>
         </div>
         <div class="govuk-form-group{% if highlightErrorFields.cardholderName %} govuk-form-group--error{% endif %}" data-validation="cardholderName">
           <label id="cardholder-name-lbl" for="cardholder-name" class="govuk-label govuk-label--s govuk-!-font-size-24">
