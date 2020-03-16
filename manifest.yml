@@ -18,11 +18,13 @@ applications:
       COOKIE_MAX_AGE: '5400000'
       NODE_WORKER_COUNT: '1'
 
-      # These are taken via bound service, see `env-map.yml`
+      # These are provided by app-catalog, see `env-map.yml`
       ADMINUSERS_URL: ""
       CARDID_HOST: ""
       CONNECTOR_HOST: ""
       FRONTEND_URL: ""
+      METRICS_HOST: ""
+      METRICS_PORT: ""
 
       # These are provided via bound card-frontend-secret-service, see `env-map.yml`
       SESSION_ENCRYPTION_KEY: ""
