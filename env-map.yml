@@ -3,6 +3,8 @@ env_vars:
   CARDID_HOST:                     '.[][] | select(.name == "app-catalog") | .credentials.cardid_url'
   CONNECTOR_HOST:                  '.[][] | select(.name == "app-catalog") | .credentials.card_connector_url'
   FRONTEND_URL:                    '.[][] | select(.name == "app-catalog") | .credentials.card_frontend_url'
+  METRICS_HOST:                    '.[][] | select(.name == "app-catalog") | .credentials.carbon_relay_route'
+  METRICS_PORT:                    '.[][] | select(.name == "app-catalog") | .credentials.carbon_relay_port'
   SESSION_ENCRYPTION_KEY:          '.[][] | select(.name == "card-frontend-secret-service") | .credentials.card_frontend_session_encryption_key'
   ANALYTICS_TRACKING_ID:           '.[][] | select(.name == "card-frontend-secret-service") | .credentials.card_frontend_analytics_tracking_id'
   DECRYPT_CARD_DATA_PRIVATE_KEY:   '.[][] | select(.name == "card-frontend-secret-service") | .credentials.field_level_encryption_private_key'
