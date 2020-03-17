@@ -395,6 +395,19 @@ describe('chargeTests', function () {
         .end(done)
     })
 
+    it('should send 3ds data to connector and redirect to 3ds required if connector says so', function (done) {
+      const cookieValue = cookie.create(chargeId)
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(400, { status: 'AUTHORISATION 3DS REQUIRED' })
+      defaultAdminusersResponseForGetService(gatewayAccountId)
+
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
+        .expect(303)
+        .expect('Location', `${frontendCardDetailsPath}/${chargeId}/3ds_required`)
+        .end(done)
+    })
+
     it('should send 3ds data to connector and redirect to auth_waiting if connector returns a 202', function (done) {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
