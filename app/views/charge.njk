@@ -385,7 +385,7 @@
         </div>
         {% endif %}
         {% if (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
-        <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
+        <div class="email-container govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
             <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
               <legend for="email" class="govuk-!-margin-bottom-6">
                 <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.contactDetails") }}</h2>
