@@ -234,7 +234,27 @@ const actions = {
   }
 }
 
-exports.response = (req, res, actionName, options) => {
+exports.errorResponse = function errorReponse (req, res, reason, options, error) {
+  logger.error('Rendering error response', {
+    page: 'ERROR',
+    reason: reason,
+    error: error,
+    ...getLoggingFields(req)
+  })
+  this.response(req, res, 'ERROR', options)
+}
+
+exports.systemErrorResponse = function systemErrorResponse (req, res, reason, options, error) {
+  logger.error('Rendering error response', {
+    page: 'SYSTEM_ERROR',
+    reason: reason,
+    error: error,
+    ...getLoggingFields(req)
+  })
+  this.response(req, res, 'SYSTEM_ERROR', options)
+}
+
+exports.response = function response (req, res, actionName, options) {
   options = options || {}
   options.viewName = actionName
   let action = lodash.result(actions, actionName)

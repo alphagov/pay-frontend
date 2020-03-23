@@ -10,7 +10,6 @@ const {
 } = require('@govuk-pay/pay-js-commons').logging.keys
 
 // Local dependencies
-const logger = require('../utils/logger')(__filename)
 const responseRouter = require('../utils/response_router')
 const Charge = require('../models/charge')
 const chargeParam = require('../services/charge_param_retriever')
@@ -41,11 +40,7 @@ module.exports = (req, res, next) => {
         })
         .catch((err) => {
           subsegment.close('error')
-          logger.error('Error finding charge in middleware', {
-            ...getLoggingFields(req),
-            error: err
-          })
-          responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+          responseRouter.systemErrorResponse(req, res, 'Error finding charge in middleware', withAnalyticsError(), err)
         })
     }, clsSegment)
   }

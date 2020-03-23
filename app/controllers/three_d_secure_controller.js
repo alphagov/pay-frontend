@@ -64,12 +64,10 @@ const handleThreeDsResponse = (req, res, charge) => response => {
       redirect(res).toAuthWaiting(charge.id)
       break
     case 500:
-      logger.error('3DS response 500', getLoggingFields(req))
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+      responseRouter.systemErrorResponse(req, res, '3DS response 500', withAnalytics(charge))
       break
     default:
-      logger.error('3DS unknown response', getLoggingFields(req))
-      responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
+      responseRouter.errorResponse(req, res, '3DS unknown response', withAnalytics(charge))
   }
 }
 
@@ -86,7 +84,7 @@ module.exports = {
           charge_status: charge.status,
           error: err
         })
-        responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
+        responseRouter.errorResponse(req, res, 'Exception in auth3dsHandler', withAnalytics(charge), err)
       })
   },
   auth3dsRequired: (req, res) => {
@@ -127,8 +125,7 @@ module.exports = {
     } else if (issuerUrl) {
       res.redirect(303, issuerUrl)
     } else {
-      logger.error('3DS data is missing for charge, unable to begin 3DS', getLoggingFields(req))
-      responseRouter.response(req, res, 'ERROR', withAnalytics(charge))
+      responseRouter.errorResponse(req, res, 'auth3dsData missing for charge - unable to start 3DS', withAnalytics(charge))
     }
   },
   auth3dsRequiredIn: (req, res) => {

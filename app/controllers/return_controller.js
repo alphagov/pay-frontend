@@ -20,11 +20,7 @@ exports.return = (req, res) => {
       .then(() => logger.warn('Return controller cancelled payment', getLoggingFields(req)))
       .then(() => res.redirect(req.chargeData.return_url))
       .catch((err) => {
-        logger.error('Return controller failed to cancel payment', {
-          ...getLoggingFields(req),
-          error: err
-        })
-        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+        responseRouter.systemErrorResponse(req, res, 'Return controller failed to cancel payment', withAnalyticsError(), err)
       })
   } else {
     return res.redirect(req.chargeData.return_url)
