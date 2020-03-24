@@ -237,8 +237,8 @@ const actions = {
 exports.errorResponse = function errorReponse (req, res, reason, options, error) {
   logger.error('Rendering error response', {
     page: 'ERROR',
-    reason: reason,
-    error: error,
+    reason,
+    error,
     ...getLoggingFields(req)
   })
   this.response(req, res, 'ERROR', options)
@@ -247,8 +247,8 @@ exports.errorResponse = function errorReponse (req, res, reason, options, error)
 exports.systemErrorResponse = function systemErrorResponse (req, res, reason, options, error) {
   logger.error('Rendering error response', {
     page: 'SYSTEM_ERROR',
-    reason: reason,
-    error: error,
+    reason,
+    error,
     ...getLoggingFields(req)
   })
   this.response(req, res, 'SYSTEM_ERROR', options)
