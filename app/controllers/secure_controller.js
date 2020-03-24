@@ -57,10 +57,6 @@ exports.new = async function (req, res) {
       getLoggingFields(req))
       return responseRouter.response(req, res, 'UNAUTHORISED')
     }
-    logger.error('Error exchanging payment token', {
-      ...getLoggingFields(req),
-      error: err
-    })
-    responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalyticsError())
+    responseRouter.systemErrorResponse(req, res, 'Error exchanging payment token', withAnalyticsError(), err)
   }
 }

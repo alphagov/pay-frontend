@@ -37,8 +37,7 @@ exports.csrfCheck = (req, res, next) => {
       method: req.method
     })
   } else if (!csrfValid(csrfToken, chargeSession, req)) {
-    logger.error('CSRF is invalid', getLoggingFields(req))
-    responseRouter.response(req, res, 'SYSTEM_ERROR')
+    responseRouter.systemErrorResponse(req, res, 'CSRF is invalid')
   } else {
     chargeSession.csrfTokens.push(csrfToken)
     next()

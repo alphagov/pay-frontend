@@ -47,21 +47,19 @@ const handleAuthResponse = (req, res, charge) => response => {
                 {},
                 webPaymentsRouteFor('handlePaymentResponse', charge.id)))
             } else {
-              logger.error('Wallet auth response capture payment attempt error', getLoggingFields(req))
-              responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+              responseRouter.systemErrorResponse(req, res, 'Wallet auth response capture payment attempt error', withAnalytics(
                 charge,
                 { returnUrl: routeFor('return', charge.id) },
                 webPaymentsRouteFor('handlePaymentResponse', charge.id)
-              ))
+              ), err)
             }
           }
         )
       break
     case 400:
     case 500:
-      logging.failedChargePost(409, getLoggingFields(req))
-      logger.error('Wallet authorisation response', getLoggingFields(req))
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+      logging.failedChargePost(500, getLoggingFields(req))
+      responseRouter.systemErrorResponse(req, res, 'Wallet authorisation error response', withAnalytics(
         charge,
         { returnUrl: routeFor('return', charge.id) },
         webPaymentsRouteFor('handlePaymentResponse', charge.id))
@@ -77,8 +75,7 @@ module.exports = (req, res) => {
   const charge = normalise.charge(req.chargeData, req.chargeId)
   const connectorResponse = getSessionVariable(req, webPaymentAuthResponseSessionKey)
   if (!connectorResponse) {
-    logger.error('Web payment auth error, no connector response', getLoggingFields(req))
-    return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+    return responseRouter.systemErrorResponse(req, res, 'Web payment auth error, no connector response', withAnalytics(
       charge,
       { returnUrl: routeFor('return', charge.id) },
       webPaymentsRouteFor('handlePaymentResponse', charge.id)

@@ -37,12 +37,3 @@ exports.failedChargePatch = (err, loggingFields = {}) => {
     error: err
   })
 }
-
-exports.failedGetWorldpayDdcJwt = (err, loggingFields = {}) => {
-  logger.error('Calling connector to get a Worldpay 3DS Flex DDC JWT threw exception', {
-    ...loggingFields,
-    service: 'connector',
-    method: 'GET',
-    error: err
-  })
-}

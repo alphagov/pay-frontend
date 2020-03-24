@@ -92,9 +92,8 @@ const handleCreateResponse = (req, res, charge, response) => {
       }
       break
     case 500:
-      logging.failedChargePost(409, getLoggingFields(req))
-      logger.error('Charge create error response', getLoggingFields(req))
-      responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+      logging.failedChargePost(500, getLoggingFields(req))
+      responseRouter.systemErrorResponse(req, res, '500 response when authorising charge', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
       redirect(res).toNew(req.chargeId)
@@ -114,8 +113,7 @@ module.exports = {
           () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
       },
       err => {
-        logging.failedGetWorldpayDdcJwt(err, getLoggingFields(req))
-        responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+        responseRouter.systemErrorResponse(req, res, 'Calling connector to get a Worldpay 3DS Flex DDC JWT threw exception', withAnalytics(charge), err)
       })
   },
   create: async (req, res) => {
@@ -159,7 +157,7 @@ module.exports = {
       try {
         await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, getLoggingFields(req))
       } catch (err) {
-        return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+        return responseRouter.systemErrorResponse(req, res, 'Error patching email address on Charge', withAnalytics(charge), err)
       }
     }
 
@@ -177,8 +175,7 @@ module.exports = {
       try {
         await appendChargeForNewView(charge, req, charge.id)
       } catch (err) {
-        logging.failedGetWorldpayDdcJwt(err, getLoggingFields(req))
-        return responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge))
+        return responseRouter.systemErrorResponse(req, res, 'Calling connector to get a Worldpay 3DS Flex DDC JWT threw exception', withAnalytics(charge), err)
       }
       _.merge(
         data.validation,
@@ -198,7 +195,7 @@ module.exports = {
       handleCreateResponse(req, res, charge, response)
     } catch (err) {
       logging.failedChargePatch(err.message, getLoggingFields(req))
-      responseRouter.response(req, res, 'ERROR', withAnalyticsError())
+      responseRouter.errorResponse(req, res, 'Error when calling connector to authorise the charge', withAnalyticsError(), err)
     }
   },
   checkCard: (req, res) => {
@@ -242,14 +239,10 @@ module.exports = {
               () => redirect(res).toReturn(req.chargeId),
               err => {
                 if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-                logger.error('Error capturing charge for wallet payment', {
-                  ...getLoggingFields(req),
-                  error: err
-                })
-                responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+                responseRouter.systemErrorResponse(req, res, 'Error capturing charge for wallet payment', withAnalytics(
                   charge,
                   { returnUrl: routeFor('return', charge.id) }
-                ))
+                ), err)
               }
             )
         } else {
@@ -276,14 +269,10 @@ module.exports = {
         (err) => {
           cookies.deleteSessionVariable(req, cookieKey)
           if (err.message === 'CAPTURE_FAILED') return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(charge))
-          logger.error('Error capturing charge', {
-            ...getLoggingFields(req),
-            error: err
-          })
-          responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(
+          responseRouter.systemErrorResponse(req, res, 'Error capturing charge', withAnalytics(
             charge,
             { returnUrl: routeFor('return', charge.id) }
-          ))
+          ), err)
         }
       )
   },
@@ -309,7 +298,7 @@ module.exports = {
             ...getLoggingFields(req),
             error: err
           })
-          responseRouter.response(req, res, 'SYSTEM_ERROR', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+          responseRouter.systemErrorResponse(req, res, 'Error cancelling charge', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }), err)
         }
       )
   }
