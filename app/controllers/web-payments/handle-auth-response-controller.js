@@ -59,7 +59,7 @@ const handleAuthResponse = (req, res, charge) => response => {
     case 400:
     case 500:
       logging.failedChargePost(500, getLoggingFields(req))
-      responseRouter.systemErrorResponse(req, res, 'Wallet authorisation response', withAnalytics(
+      responseRouter.systemErrorResponse(req, res, 'Wallet authorisation error response', withAnalytics(
         charge,
         { returnUrl: routeFor('return', charge.id) },
         webPaymentsRouteFor('handlePaymentResponse', charge.id))
