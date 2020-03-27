@@ -28,7 +28,7 @@ const systemError = {
   view: 'errors/system_error',
   analyticsPage: '/error',
   terminal: true,
-  logErrorPageShown: true
+  shouldLogErrorPageShown: true
 }
 
 const error = {
@@ -39,7 +39,7 @@ const error = {
   },
   analyticsPage: '/error',
   terminal: true,
-  logErrorPageShown: true
+  shouldLogErrorPageShown: true
 }
 
 const actions = {
@@ -91,7 +91,7 @@ const actions = {
       message: 'There is a problem, please try again later'
     },
     terminal: true,
-    logErrorPageShown: true
+    shouldLogErrorPageShown: true
   },
 
   SESSION_INCORRECT: {
@@ -110,7 +110,7 @@ const actions = {
       message: 'Please try again later'
     },
     terminal: true,
-    logErrorPageShown: true
+    shouldLogErrorPageShown: true
   },
 
   HUMANS: {
@@ -213,7 +213,7 @@ const actions = {
     view: 'errors/system_error',
     analyticsPage: '/error',
     terminal: true,
-    logErrorPageShown: true
+    shouldLogErrorPageShown: true
   },
 
   AUTHORISATION_READY: {
@@ -259,7 +259,7 @@ exports.response = function response (req, res, actionName, options) {
   let action = lodash.result(actions, actionName)
 
   if (action) {
-    if (action.logErrorPageShown) {
+    if (action.shouldLogErrorPageShown) {
       logErrorPageShown(action.view, `Action: ${actionName}`, getLoggingFields(req))
     }
   } else {
