@@ -27,7 +27,8 @@ const systemError = {
   code: 500,
   view: 'errors/system_error',
   analyticsPage: '/error',
-  terminal: true
+  terminal: true,
+  shouldLogErrorPageShown: true
 }
 
 const error = {
@@ -37,7 +38,8 @@ const error = {
     message: 'There is a problem, please try again later'
   },
   analyticsPage: '/error',
-  terminal: true
+  terminal: true,
+  shouldLogErrorPageShown: true
 }
 
 const actions = {
@@ -88,7 +90,8 @@ const actions = {
     locals: {
       message: 'There is a problem, please try again later'
     },
-    terminal: true
+    terminal: true,
+    shouldLogErrorPageShown: true
   },
 
   SESSION_INCORRECT: {
@@ -106,7 +109,8 @@ const actions = {
     locals: {
       message: 'Please try again later'
     },
-    terminal: true
+    terminal: true,
+    shouldLogErrorPageShown: true
   },
 
   HUMANS: {
@@ -208,7 +212,8 @@ const actions = {
   AUTHORISATION_ERROR: {
     view: 'errors/system_error',
     analyticsPage: '/error',
-    terminal: true
+    terminal: true,
+    shouldLogErrorPageShown: true
   },
 
   AUTHORISATION_READY: {
@@ -234,35 +239,47 @@ const actions = {
   }
 }
 
-exports.errorResponse = function errorReponse (req, res, reason, options, error) {
-  logger.error('Rendering error response', {
-    page: 'ERROR',
-    reason,
-    error,
-    ...getLoggingFields(req)
-  })
-  this.response(req, res, 'ERROR', options)
+exports.errorResponse = function errorReponse (req, res, reason, options = {}, error) {
+  const action = actions.ERROR
+  logErrorPageShown(action.view, reason, getLoggingFields(req), error)
+  options.viewName = 'ERROR'
+  redirectOrRender(req, res, actions.ERROR, options)
 }
 
-exports.systemErrorResponse = function systemErrorResponse (req, res, reason, options, error) {
-  logger.error('Rendering error response', {
-    page: 'SYSTEM_ERROR',
-    reason,
-    error,
-    ...getLoggingFields(req)
-  })
-  this.response(req, res, 'SYSTEM_ERROR', options)
+exports.systemErrorResponse = function systemErrorResponse (req, res, reason, options = {}, error) {
+  const action = actions.SYSTEM_ERROR
+  logErrorPageShown(action.view, reason, getLoggingFields(req), error)
+  options.viewName = 'SYSTEM_ERROR'
+  redirectOrRender(req, res, actions.SYSTEM_ERROR, options)
 }
 
 exports.response = function response (req, res, actionName, options) {
   options = options || {}
   options.viewName = actionName
   let action = lodash.result(actions, actionName)
-  if (!action) {
-    logger.error('Response action ' + actionName + ' NOT FOUND', getLoggingFields(req))
+
+  if (action) {
+    if (action.shouldLogErrorPageShown) {
+      logErrorPageShown(action.view, `Action: ${actionName}`, getLoggingFields(req))
+    }
+  } else {
     options = { viewName: 'error' }
     action = actions.ERROR
+    logErrorPageShown(action.view, `Response action ${actionName} NOT FOUND`, getLoggingFields(req))
   }
+  redirectOrRender(req, res, action, options)
+}
+
+function logErrorPageShown (page, reason, loggingFields, error) {
+  logger.error('Rendering error response', {
+    page,
+    reason,
+    error,
+    ...loggingFields
+  })
+}
+
+function redirectOrRender (req, res, action, options) {
   if (shouldRedirect(req, res, action)) {
     res.redirect(req.chargeData.return_url)
   } else {

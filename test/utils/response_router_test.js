@@ -4,12 +4,18 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const lodash = require('lodash')
+const proxyquire = require('proxyquire')
 
 // Local dependencies
 const serviceFixtures = require('../fixtures/service_fixtures')
 const Service = require('../../app/models/Service.class')
-const responseRouter = require('../../app/utils/response_router')
 const testHelpers = require('../test_helpers/test_helpers')
+
+const errorLogger = sinon.spy()
+
+const responseRouter = proxyquire('../../app/utils/response_router', {
+  './logger': () => { return { error: errorLogger } }
+})
 
 // Constants
 const nonTerminalActions = [
@@ -64,8 +70,8 @@ describe('rendering behaviour', () => {
   const request = {}
 
   const response = {
-    status: () => {},
-    render: () => {},
+    status: () => { },
+    render: () => { },
     locals: {
       service: new Service(service)
     }
@@ -77,6 +83,7 @@ describe('rendering behaviour', () => {
   beforeEach(() => {
     status = sinon.stub(response, 'status')
     render = sinon.stub(response, 'render')
+    errorLogger.resetHistory()
   })
 
   afterEach(() => {
@@ -108,20 +115,69 @@ describe('rendering behaviour', () => {
       message: 'There is a problem, please try again later',
       viewName: 'error'
     }])
+    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+      page: 'error',
+      reason: 'Response action AINT_NO_VIEW_HERE NOT FOUND'
+    }))
+  })
+
+  it('should render error response', () => {
+    responseRouter.errorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, 'err')
+    expect(render.lastCall.args).to.deep.equal(['error', {
+      returnUrl: 'http://example.com',
+      viewName: 'ERROR',
+      message: 'There is a problem, please try again later'
+    }])
+    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+      page: 'error',
+      reason: 'A reason',
+      error: 'err'
+    }))
+  })
+
+  it('should render system error response', () => {
+    responseRouter.systemErrorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, 'err')
+    expect(render.lastCall.args).to.deep.equal(['errors/system_error', {
+      returnUrl: 'http://example.com',
+      viewName: 'SYSTEM_ERROR'
+    }])
+    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+      page: 'errors/system_error',
+      reason: 'A reason',
+      error: 'err'
+    }))
+  })
+
+  it('should log an error for AUTHORISATION_ERROR action', () => {
+    responseRouter.response(request, response, 'AUTHORISATION_ERROR')
+    expect(status.lastCall.args).to.deep.equal([200])
+    expect(render.lastCall.args).to.deep.equal(['errors/system_error', {
+      viewName: 'AUTHORISATION_ERROR'
+    }])
+    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+      page: 'errors/system_error',
+      reason: 'Action: AUTHORISATION_ERROR'
+    }))
+  })
+
+  it('should not log an error for a non-error action', () => {
+    responseRouter.response(request, response, 'CAPTURE_SUBMITTED')
+    expect(status.lastCall.args).to.deep.equal([200])
+    sinon.assert.notCalled(errorLogger)
   })
 
   const defaultTemplates = {
-    'ERROR': {
+    ERROR: {
       template: 'error',
       code: 500,
       message: 'There is a problem, please try again later'
     },
-    'NOT_FOUND': {
+    NOT_FOUND: {
       template: 'error',
       code: 404,
       message: 'Page cannot be found'
     },
-    'HUMANS': {
+    HUMANS: {
       template: 'plain_message',
       code: 200,
       message: 'GOV.UK Payments is built by a team at the Government Digital Service in London. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'
@@ -148,8 +204,8 @@ describe('behaviour of non-terminal actions with direct redirect enabled on serv
   const request = {}
 
   const response = {
-    status: () => {},
-    render: () => {},
+    status: () => { },
+    render: () => { },
     locals: {
       service: new Service(service)
     }
@@ -188,7 +244,7 @@ describe('behaviour of terminal actions with direct redirect enabled on service'
   }
 
   const response = {
-    redirect: () => {},
+    redirect: () => { },
     locals: {
       service: new Service(service)
     }
@@ -220,8 +276,8 @@ describe('behaviour of terminal actions with direct redirect disabled on service
   const request = {}
 
   const response = {
-    status: () => {},
-    render: () => {},
+    status: () => { },
+    render: () => { },
     locals: {
       service: new Service(service)
     }
