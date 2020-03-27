@@ -72,7 +72,7 @@ const requireSecureController = function (mockedCharge, mockedToken, mockedRespo
     '../utils/response_router': mockedResponseRouter,
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
-    'csrf': function () {
+    csrf: function () {
       return {
         secretSync: function () {
           return 'foo'
@@ -103,21 +103,22 @@ describe('secure controller', function () {
       }
 
       chargeObject = {
-        'used': false,
-        'charge': {
-          'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-          'status': 'CREATED',
-          'gatewayAccount': {
-            'service_name': 'Service Name',
-            'analytics_id': 'bla-1234',
-            'type': 'live',
-            'payment_provider': 'worldpay'
+        used: false,
+        charge: {
+          externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+          status: 'CREATED',
+          gatewayAccount: {
+            service_name: 'Service Name',
+            analytics_id: 'bla-1234',
+            type: 'live',
+            payment_provider: 'worldpay'
           }
         }
       }
 
       responseRouter = {
-        response: sinon.spy()
+        response: sinon.spy(),
+        systemErrorResponse: sinon.spy()
       }
     })
 
@@ -132,7 +133,7 @@ describe('secure controller', function () {
       describe('and not marked as used successfully', function () {
         it('should display the generic error page', async function () {
           await requireSecureController(mockCharge.withSuccess(), mockToken.withFailure(), responseRouter).new(request, response)
-          expect(responseRouter.response.calledWith(request, response, 'SYSTEM_ERROR', withAnalyticsError())).to.be.true // eslint-disable-line
+          expect(responseRouter.systemErrorResponse.calledWith(request, response, 'Error exchanging payment token', withAnalyticsError())).to.be.true // eslint-disable-line
         })
       })
 
@@ -141,8 +142,8 @@ describe('secure controller', function () {
           await requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess(), responseRouter).new(request, response)
           expect(response.redirect.calledWith(303, paths.generateRoute('card.new', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
           expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
-          expect(request.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
-            'csrfSecret': 'foo'
+          expect(request.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
+            csrfSecret: 'foo'
           })
         })
       })
@@ -155,15 +156,15 @@ describe('secure controller', function () {
             headers: { 'x-Request-id': 'unique-id' }
           }
           const charge = {
-            'used': true,
-            'charge': {
-              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-              'status': 'AUTHORISATION SUCCESS',
-              'gatewayAccount': {
-                'service_name': 'Service Name',
-                'analytics_id': 'bla-1234',
-                'type': 'live',
-                'payment_provider': 'worldpay'
+            used: true,
+            charge: {
+              externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+              status: 'AUTHORISATION SUCCESS',
+              gatewayAccount: {
+                service_name: 'Service Name',
+                analytics_id: 'bla-1234',
+                type: 'live',
+                payment_provider: 'worldpay'
               }
             }
           }
@@ -179,15 +180,15 @@ describe('secure controller', function () {
             headers: { 'x-Request-id': 'unique-id' }
           }
           const charge = {
-            'used': true,
-            'charge': {
-              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-              'status': 'AUTHORISATION SUCCESS',
-              'gatewayAccount': {
-                'service_name': 'Service Name',
-                'analytics_id': 'bla-1234',
-                'type': 'live',
-                'payment_provider': 'worldpay'
+            used: true,
+            charge: {
+              externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+              status: 'AUTHORISATION SUCCESS',
+              gatewayAccount: {
+                service_name: 'Service Name',
+                analytics_id: 'bla-1234',
+                type: 'live',
+                payment_provider: 'worldpay'
               }
             }
           }
@@ -200,23 +201,23 @@ describe('secure controller', function () {
         it('should display the "Your payment session has expired" page', async function () {
           const requestWithWrongCookie = {
             frontend_state: {
-              'ch_xxxx': {
-                'csrfSecret': 'foo'
+              ch_xxxx: {
+                csrfSecret: 'foo'
               }
             },
             params: { chargeTokenId: 1 },
             headers: { 'x-Request-id': 'unique-id' }
           }
           const charge = {
-            'used': true,
-            'charge': {
-              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-              'status': 'AUTHORISATION SUCCESS',
-              'gatewayAccount': {
-                'service_name': 'Service Name',
-                'analytics_id': 'bla-1234',
-                'type': 'live',
-                'payment_provider': 'worldpay'
+            used: true,
+            charge: {
+              externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+              status: 'AUTHORISATION SUCCESS',
+              gatewayAccount: {
+                service_name: 'Service Name',
+                analytics_id: 'bla-1234',
+                type: 'live',
+                payment_provider: 'worldpay'
               }
             }
           }
@@ -229,23 +230,23 @@ describe('secure controller', function () {
         it('should redirect to the appropriate page based on the charge state', async function () {
           const requestWithFrontendStateCookie = {
             frontend_state: {
-              'ch_dh6kpbb4k82oiibbe4b9haujjk': {
-                'csrfSecret': 'foo'
+              ch_dh6kpbb4k82oiibbe4b9haujjk: {
+                csrfSecret: 'foo'
               }
             },
             params: { chargeTokenId: 1 },
             headers: { 'x-Request-id': 'unique-id' }
           }
           const charge = {
-            'used': true,
-            'charge': {
-              'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-              'status': 'AUTHORISATION SUCCESS',
-              'gatewayAccount': {
-                'service_name': 'Service Name',
-                'analytics_id': 'bla-1234',
-                'type': 'live',
-                'payment_provider': 'worldpay'
+            used: true,
+            charge: {
+              externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+              status: 'AUTHORISATION SUCCESS',
+              gatewayAccount: {
+                service_name: 'Service Name',
+                analytics_id: 'bla-1234',
+                type: 'live',
+                payment_provider: 'worldpay'
               }
             }
           }
@@ -256,8 +257,8 @@ describe('secure controller', function () {
           }
           expect(responseRouter.response.calledWith(requestWithFrontendStateCookie, response, 'AUTHORISATION_SUCCESS', opts)).to.be.true // eslint-disable-line
           expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
-          expect(requestWithFrontendStateCookie.frontend_state['ch_dh6kpbb4k82oiibbe4b9haujjk']).to.eql({
-            'csrfSecret': 'foo'
+          expect(requestWithFrontendStateCookie.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
+            csrfSecret: 'foo'
           })
         })
       })
