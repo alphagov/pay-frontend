@@ -1,8 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const AWSXRay = require('aws-xray-sdk')
-const { getNamespace } = require('continuation-local-storage')
 const logger = require('../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../utils/logging_fields_helper')
 const connectorClient = require('../../services/clients/connector_client')
@@ -11,34 +9,25 @@ const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-pay
 const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const { setSessionVariable } = require('../../utils/cookies')
 
-// constants
-const clsXrayConfig = require('../../../config/xray-cls')
-
 module.exports = (req, res) => {
   const { chargeId, params, body } = req
   const { provider } = params
   const payload = provider === 'apple' ? normaliseApplePayPayload(body) : normaliseGooglePayPayload(body)
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
-  return AWSXRay.captureAsyncFunc('Auth_charge_wallet', subsegment => {
-    return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload }, getLoggingFields(req))
-      .then(data => {
-        subsegment.close()
-        setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-          statusCode: data.statusCode
-        })
-        logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
-        res.status(200)
-        res.send({ url: `/handle-payment-response/${chargeId}` })
+  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload }, getLoggingFields(req))
+    .then(data => {
+      setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
+        statusCode: data.statusCode
       })
-      .catch(err => {
-        subsegment.close('error')
-        logger.error(`Error while trying to authorise ${provider} Pay payment`, {
-          ...getLoggingFields(req),
-          error: err
-        })
-        res.status(200)
-        res.send({ url: `/handle-payment-response/${chargeId}` })
+      logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
+      res.status(200)
+      res.send({ url: `/handle-payment-response/${chargeId}` })
+    })
+    .catch(err => {
+      logger.error(`Error while trying to authorise ${provider} Pay payment`, {
+        ...getLoggingFields(req),
+        error: err
       })
-  }, clsSegment)
+      res.status(200)
+      res.send({ url: `/handle-payment-response/${chargeId}` })
+    })
 }

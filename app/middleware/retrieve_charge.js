@@ -1,8 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const AWSXRay = require('aws-xray-sdk')
-const { getNamespace } = require('continuation-local-storage')
 const {
   GATEWAY_ACCOUNT_ID,
   GATEWAY_ACCOUNT_TYPE,
@@ -17,31 +15,22 @@ const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const { setLoggingField, getLoggingFields } = require('../utils/logging_fields_helper')
 
-// Constants
-const clsXrayConfig = require('../../config/xray-cls')
-
 module.exports = (req, res, next) => {
   const chargeId = chargeParam.retrieve(req)
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
   if (!chargeId) {
     responseRouter.response(req, res, 'UNAUTHORISED', withAnalyticsError())
   } else {
     req.chargeId = chargeId
-    AWSXRay.captureAsyncFunc('Charge_find', (subsegment) => {
-      Charge(req.headers[CORRELATION_HEADER]).find(chargeId, getLoggingFields(req))
-        .then(data => {
-          subsegment.close()
-          req.chargeData = data
-          setLoggingField(req, GATEWAY_ACCOUNT_ID, data.gateway_account.gateway_account_id)
-          setLoggingField(req, GATEWAY_ACCOUNT_TYPE, data.gateway_account.type)
-          setLoggingField(req, PROVIDER, data.gateway_account.payment_provider)
-          next()
-        })
-        .catch((err) => {
-          subsegment.close('error')
-          responseRouter.systemErrorResponse(req, res, 'Error finding charge in middleware', withAnalyticsError(), err)
-        })
-    }, clsSegment)
+    Charge(req.headers[CORRELATION_HEADER]).find(chargeId, getLoggingFields(req))
+      .then(data => {
+        req.chargeData = data
+        setLoggingField(req, GATEWAY_ACCOUNT_ID, data.gateway_account.gateway_account_id)
+        setLoggingField(req, GATEWAY_ACCOUNT_TYPE, data.gateway_account.type)
+        setLoggingField(req, PROVIDER, data.gateway_account.payment_provider)
+        next()
+      })
+      .catch((err) => {
+        responseRouter.systemErrorResponse(req, res, 'Error finding charge in middleware', withAnalyticsError(), err)
+      })
   }
 }

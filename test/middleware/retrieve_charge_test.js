@@ -1,31 +1,12 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const assert = require('assert')
 const sinon = require('sinon')
 const { expect } = require('chai')
 const nock = require('nock')
-const proxyquire = require('proxyquire')
-const AWSXRay = require('aws-xray-sdk')
 const { validChargeDetails } = require('../fixtures/payment_fixtures')
-
-const retrieveCharge = proxyquire(path.join(__dirname, '/../../app/middleware/retrieve_charge.js'), {
-  'aws-xray-sdk': {
-    captureAsyncFunc: (name, callback) => {
-      callback(new AWSXRay.Segment('stub-subsegment'))
-    }
-  },
-  'continuation-local-storage': {
-    getNamespace: () => {
-      return {
-        get: () => {
-          return new AWSXRay.Segment('stub-segment')
-        }
-      }
-    }
-  }
-})
+const retrieveCharge = require('../../app/middleware/retrieve_charge')
 
 const ANALYTICS_ERROR = {
   analytics: {

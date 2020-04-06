@@ -5,7 +5,6 @@ const { expect } = require('chai')
 const nock = require('nock')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
-const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
 require('../../test_helpers/html_assertions')
@@ -30,21 +29,7 @@ describe('The web payments auth request controller', () => {
     const requirePaymentAuthRequestController = (mockedNormalise, mockedCookies) => {
       const proxyquireMocks = {
         '../../utils/cookies': mockedCookies,
-        './apple-pay/normalise-apple-pay-payload': mockedNormalise,
-        'aws-xray-sdk': {
-          captureAsyncFunc: (name, callback) => {
-            return callback({ close: () => { } }) // eslint-disable-line
-          }
-        },
-        'continuation-local-storage': {
-          getNamespace: () => {
-            return {
-              get: function () {
-                return new AWSXRay.Segment('stub-segment')
-              }
-            }
-          }
-        }
+        './apple-pay/normalise-apple-pay-payload': mockedNormalise
       }
 
       return proxyquire('../../../app/controllers/web-payments/payment-auth-request-controller.js', proxyquireMocks)
@@ -110,21 +95,7 @@ describe('The web payments auth request controller', () => {
     const requirePaymentAuthRequestController = (mockedNormalise, mockedCookies) => {
       const proxyquireMocks = {
         '../../utils/cookies': mockedCookies,
-        './google-pay/normalise-google-pay-payload': mockedNormalise,
-        'aws-xray-sdk': {
-          captureAsyncFunc: (name, callback) => {
-            return callback({ close: () => { } }) // eslint-disable-line
-          }
-        },
-        'continuation-local-storage': {
-          getNamespace: () => {
-            return {
-              get: function () {
-                return new AWSXRay.Segment('stub-segment')
-              }
-            }
-          }
-        }
+        './google-pay/normalise-google-pay-payload': mockedNormalise
       }
 
       return proxyquire('../../../app/controllers/web-payments/payment-auth-request-controller.js', proxyquireMocks)
