@@ -3,8 +3,6 @@
 // NPM dependencies
 const _ = require('lodash')
 const i18n = require('i18n')
-const { getNamespace } = require('continuation-local-storage')
-const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
 const {
@@ -30,13 +28,12 @@ const cookies = require('../utils/cookies')
 const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
 const supportedNetworksFormattedByProvider = require('../assets/javascripts/browsered/web-payments/format-card-types')
 const worlpay3dsFlexService = require('../services/worldpay_3ds_flex_service')
-const clsXrayConfig = require('../../config/xray-cls')
 const { views, preserveProperties } = require('../../config/charge_controller')
 const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { createChargeIdSessionKey } = require('../utils/session')
 const { getLoggingFields } = require('../utils/logging_fields_helper')
 
-const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
+const appendChargeForNewView = async function appendChargeForNewView(charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, charge.gatewayAccount.block_prepaid_cards, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
@@ -199,27 +196,21 @@ module.exports = {
     }
   },
   checkCard: (req, res) => {
-    const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-    const clsSegment = namespace.get(clsXrayConfig.segmentKeyName)
-    AWSXRay.captureAsyncFunc('Card_checkCard', function (subSegment) {
-      Card(req.chargeData.gateway_account.card_types, req.chargeData.gateway_account.block_prepaid_cards, req.headers[CORRELATION_HEADER])
-        .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, subSegment, getLoggingFields(req))
-        .then(
-          card => {
-            subSegment.close()
-            return res.json({
-              accepted: true,
-              type: card.type,
-              corporate: card.corporate,
-              prepaid: card.prepaid
-            })
-          },
-          error => {
-            subSegment.close(error.message)
-            return res.json({ accepted: false, message: error.message })
-          }
-        )
-    }, clsSegment)
+    Card(req.chargeData.gateway_account.card_types, req.chargeData.gateway_account.block_prepaid_cards, req.headers[CORRELATION_HEADER])
+      .checkCard(normalise.creditCard(req.body.cardNo), req.chargeData.language, getLoggingFields(req))
+      .then(
+        card => {
+          return res.json({
+            accepted: true,
+            type: card.type,
+            corporate: card.corporate,
+            prepaid: card.prepaid
+          })
+        },
+        error => {
+          return res.json({ accepted: false, message: error.message })
+        }
+      )
   },
   authWaiting: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
