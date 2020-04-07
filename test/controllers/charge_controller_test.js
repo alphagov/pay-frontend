@@ -7,7 +7,6 @@ const path = require('path')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = require('chai').expect
-const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
 require(path.join(__dirname, '/../test_helpers/html_assertions'))
@@ -92,20 +91,6 @@ const requireChargeController = function (mockedCharge, mockedNormalise, mockedC
     '../utils/session.js': mockSession,
     '../services/worldpay_3ds_flex_service': {
       getDdcJwt: () => Promise.resolve('a-jwt')
-    },
-    'aws-xray-sdk': {
-      captureAsyncFunc: function (name, callback) {
-        callback({ close: () => { } }) // eslint-disable-line
-      }
-    },
-    'continuation-local-storage': {
-      getNamespace: function () {
-        return {
-          get: function () {
-            return new AWSXRay.Segment('stub-segment')
-          }
-        }
-      }
     }
   }
 
@@ -252,7 +237,7 @@ describe('check card endpoint', function () {
     }
 
     return {
-      checkCard: (cardNo, language, subSegment) => {
+      checkCard: (cardNo, language) => {
         return Promise.resolve(card)
       }
     }
