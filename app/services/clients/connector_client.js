@@ -69,8 +69,7 @@ const _putConnector = (url, payload, description, subSegment, loggingFields = {}
     baseClient.put(
       url,
       { payload, correlationId },
-      null,
-      subSegment
+      null
     ).then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       resolve(response)
@@ -102,7 +101,6 @@ const _postConnector = (url, payload, description, loggingFields = {}) => {
     baseClient.post(
       url,
       { payload, correlationId },
-      null,
       null
     ).then(response => {
       logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
@@ -135,7 +133,6 @@ const _patchConnector = (url, payload, description, loggingFields = {}) => {
     baseClient.patch(
       url,
       { payload, correlationId },
-      null,
       null
     ).then(response => {
       logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
