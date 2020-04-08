@@ -5,7 +5,6 @@ const { expect } = require('chai')
 // NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
-const AWSXRay = require('aws-xray-sdk')
 // Local dependencies
 require('../../test_helpers/html_assertions')
 
@@ -34,21 +33,7 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
   const proxyquireMocks = {
     '../../models/charge': mockedCharge,
     '../../utils/cookies': mockedCookies,
-    '../../services/normalise_charge': mockedNormaliseCharge,
-    'aws-xray-sdk': {
-      captureAsyncFunc: (name, callback) => {
-        return callback({close: () => {}}) // eslint-disable-line
-      }
-    },
-    'continuation-local-storage': {
-      getNamespace: () => {
-        return {
-          get: function () {
-            return new AWSXRay.Segment('stub-segment')
-          }
-        }
-      }
-    }
+    '../../services/normalise_charge': mockedNormaliseCharge
   }
 
   return proxyquire('../../../app/controllers/web-payments/handle-auth-response-controller', proxyquireMocks)

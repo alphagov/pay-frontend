@@ -9,7 +9,6 @@ const cheerio = require('cheerio')
 const logger = require('../../app/utils/logger')(__filename)
 const expect = chai.expect
 const proxyquire = require('proxyquire')
-const AWSXRay = require('aws-xray-sdk')
 const should = chai.should()
 
 // Local dependencies
@@ -27,33 +26,15 @@ const serviceFixtures = require('../fixtures/service_fixtures')
 const random = require('../../app/utils/random')
 
 // Constants
-const app = proxyquire('../../server', {
-  'aws-xray-sdk': {
-    enableManualMode: () => {},
-    setLogger: () => {},
-    middleware: {
-      setSamplingRules: () => {}
-    },
-    config: () => {},
-    express: {
-      openSegment: () => (req, res, next) => next(),
-      closeSegment: () => (req, rest, next) => next()
-    },
-    captureAsyncFunc: (name, callback) => callback(new AWSXRay.Segment('stub-subsegment')),
-    '@global': true
-  },
-  'continuation-local-storage': {
-    getNamespace: function () {
-      return {
-        get: () => new AWSXRay.Segment('stub-segment'),
-        bindEmitter: () => {},
-        run: callback => callback(),
-        set: () => {}
-      }
-    },
-    '@global': true
-  }
-}).getApp()
+const app = proxyquire('../../server.js',
+  {
+    'memory-cache': {
+      get: function () { 
+        return false 
+      },
+      '@global': true
+    }
+  }).getApp()
 
 const EMPTY_BODY = ''
 const defaultCorrelationHeader = {
