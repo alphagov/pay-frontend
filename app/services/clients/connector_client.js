@@ -55,7 +55,7 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _putConnector = (url, payload, description, subSegment, loggingFields = {}) => {
+const _putConnector = (url, payload, description, loggingFields = {}) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -219,9 +219,9 @@ const cancel = (chargeOptions, loggingFields = {}) => {
 }
 
 // PUT functions
-const updateStatus = (chargeOptions, subSegment, loggingFields = {}) => {
+const updateStatus = (chargeOptions, loggingFields = {}) => {
   const updateStatusUrl = _getUpdateStatusUrlFor(chargeOptions.chargeId)
-  return _putConnector(updateStatusUrl, chargeOptions.payload, 'update status', subSegment, loggingFields)
+  return _putConnector(updateStatusUrl, chargeOptions.payload, 'update status', loggingFields)
 }
 
 // PATCH functions

@@ -12,5 +12,5 @@ const CARD_URL = process.env.CARDID_HOST + '/v1/api/card'
  *
  * @returns {Request}
  */
-exports.post = (args, subSegment) => baseClient.post(CARD_URL, args, null)
+exports.post = (args) => baseClient.post(CARD_URL, args, null)
 exports.CARD_URL = CARD_URL

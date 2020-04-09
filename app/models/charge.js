@@ -24,7 +24,7 @@ module.exports = correlationId => {
 
   const updateStatus = function (chargeId, status, loggingFields = {}) {
     return new Promise(function (resolve, reject) {
-      connectorClient({ correlationId }).updateStatus({ chargeId, payload: { new_status: status } }, null, loggingFields)
+      connectorClient({ correlationId }).updateStatus({ chargeId, payload: { new_status: status } }, loggingFields)
         .then(response => {
           updateComplete(response, { resolve, reject }, loggingFields)
         })
