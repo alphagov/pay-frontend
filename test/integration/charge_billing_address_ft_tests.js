@@ -6,8 +6,6 @@ const nock = require('nock')
 const chai = require('chai')
 const cheerio = require('cheerio')
 const expect = chai.expect
-const proxyquire = require('proxyquire')
-const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
 const logger = require('../../app/utils/logger')(__filename)
@@ -22,33 +20,7 @@ const {
 const State = require('../../config/state')
 
 // Constants
-const app = proxyquire('../../server', {
-  'aws-xray-sdk': {
-    enableManualMode: () => {},
-    setLogger: () => {},
-    middleware: {
-      setSamplingRules: () => {}
-    },
-    config: () => {},
-    express: {
-      openSegment: () => (req, res, next) => next(),
-      closeSegment: () => (req, rest, next) => next()
-    },
-    captureAsyncFunc: (name, callback) => callback(new AWSXRay.Segment('stub-subsegment')),
-    '@global': true
-  },
-  'continuation-local-storage': {
-    getNamespace: function () {
-      return {
-        get: () => new AWSXRay.Segment('stub-segment'),
-        bindEmitter: () => {},
-        run: callback => callback(),
-        set: () => {}
-      }
-    },
-    '@global': true
-  }
-}).getApp()
+const app = require('../../server.js').getApp()
 
 const gatewayAccount = {
   gatewayAccountId: '12345',

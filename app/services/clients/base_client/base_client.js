@@ -5,8 +5,6 @@ const http = require('http')
 const urlParse = require('url').parse // eslint-disable-line
 const _ = require('lodash')
 const request = require('requestretry')
-const { getNamespace } = require('continuation-local-storage')
-const AWSXRay = require('aws-xray-sdk')
 
 // Local dependencies
 const CORRELATION_HEADER_NAME = require('../../../../config/correlation_header').CORRELATION_HEADER
@@ -18,7 +16,6 @@ const agentOptions = {
 }
 
 // Constants
-const clsXrayConfig = require('../../../../config/xray-cls')
 const RETRIABLE_ERRORS = ['ECONNRESET']
 
 function retryOnEconnreset (err) {
@@ -36,24 +33,13 @@ const client = request
     retryStrategy: retryOnEconnreset
   })
 
-const getHeaders = function getHeaders (args, segmentData, url) {
+const getHeaders = function getHeaders (args, url) {
   let headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
   if (url) {
     const port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
     headers['host'] = urlParse(url).hostname + port
-  }
-
-  if (segmentData.clsSegment) {
-    const subSegment = segmentData.subSegment || new AWSXRay.Segment('_request', null, segmentData.clsSegment.trace_id)
-    headers['X-Amzn-Trace-Id'] = [
-      'Root=',
-      segmentData.clsSegment.trace_id,
-      ';Parent=',
-      subSegment.id,
-      ';Sampled=1'
-    ].join('')
   }
   _.merge(headers, args.headers)
 
@@ -70,17 +56,14 @@ const getHeaders = function getHeaders (args, segmentData, url) {
  *
  * @private
  */
-const _request = function request (methodName, url, args, callback, subSegment) {
-  const namespace = getNamespace(clsXrayConfig.nameSpaceName)
-  const clsSegment = namespace ? namespace.get(clsXrayConfig.segmentKeyName) : null
-
+const _request = function request (methodName, url, args, callback) {
   const proxiedUrl = addProxy(url)
   const optionalPort = proxiedUrl.port ? ':' + proxiedUrl.port : ''
   const requestOptions = {
     uri: proxiedUrl.protocol + '//' + proxiedUrl.hostname + optionalPort + proxiedUrl.pathname,
     method: methodName,
     agent: httpAgent,
-    headers: getHeaders(args, { clsSegment: clsSegment, subSegment: subSegment }, url)
+    headers: getHeaders(args, url)
   }
 
   if (args.payload) {
@@ -107,8 +90,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  get: function (url, args, callback, subSegment) {
-    return _request('GET', url, args, callback, subSegment)
+  get: function (url, args, callback) {
+    return _request('GET', url, args, callback)
   },
 
   /**
@@ -119,8 +102,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  post: function (url, args, callback, subSegment) {
-    return _request('POST', url, args, callback, subSegment)
+  post: function (url, args, callback) {
+    return _request('POST', url, args, callback)
   },
 
   /**
@@ -131,8 +114,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  put: function (url, args, callback, subSegment) {
-    return _request('PUT', url, args, callback, subSegment)
+  put: function (url, args, callback) {
+    return _request('PUT', url, args, callback)
   },
 
   /**
@@ -143,8 +126,8 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  patch: function (url, args, callback, subSegment) {
-    return _request('PATCH', url, args, callback, subSegment)
+  patch: function (url, args, callback) {
+    return _request('PATCH', url, args, callback)
   },
 
   /**
@@ -155,7 +138,7 @@ module.exports = {
      *
      * @returns {OutgoingMessage}
      */
-  delete: function (url, args, callback, subSegment) {
-    return _request('DELETE', url, args, callback, subSegment)
+  delete: function (url, args, callback) {
+    return _request('DELETE', url, args, callback)
   }
 }

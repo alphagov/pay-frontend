@@ -1,9 +1,19 @@
 const nock = require('nock')
-const app = require('../../server.js').getApp()
+const proxyquire = require('proxyquire')
 const expect = require('chai').expect
 const cheerio = require('cheerio')
 const State = require('../../config/state.js')
 const cookie = require('../test_helpers/session.js')
+
+const app = proxyquire('../../server.js',
+  {
+    'memory-cache': {
+      get: function () { 
+        return false 
+      },
+      '@global': true
+    }
+  }).getApp()
 
 let { postChargeRequest, defaultConnectorResponseForGetCharge, defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
 
