@@ -9,6 +9,7 @@ const applePayMerchantValidation = require('./controllers/web-payments/apple-pay
 const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-request-controller')
 const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response-controller')
 const returnCont = require('./controllers/return_controller.js')
+const testCreate = require('./controllers/test/createPayment.js')
 const { healthcheck } = require('./controllers/healthcheck_controller.js')
 const paths = require('./paths.js')
 
@@ -45,6 +46,7 @@ exports.bind = function (app) {
     decryptCardData
   ]
 
+  app.get(card.test.path, testCreate)
   app.get(card.new.path, middlewareStack, csp.cardDetails, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)

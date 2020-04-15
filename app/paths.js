@@ -13,6 +13,10 @@ if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST en
 
 const paths = {
   card: {
+    test: {
+      path: '/test',
+      action: 'get'
+    },
     new: {
       path: '/card_details/:chargeId',
       action: 'get'

@@ -43,6 +43,9 @@ const error = {
 }
 
 const actions = {
+  test: {
+    view: 'test'
+  },
   auth_3ds_required: {
     view: 'auth_3ds_required',
     analyticsPage: '/3ds_required'
@@ -297,6 +300,13 @@ function render (res, action, options) {
   if (lodash.get(options, 'analytics.path')) {
     options.analytics.path = options.analytics.path + lodash.get(action, 'analyticsPage', '')
   }
+  console.log('2222222')
+  console.log('2222222')
+  console.log('2222222')
+  console.log('2222222')
+  console.log('2222222')
   res.status(action.code || 200)
+  console.log('action: ', action)
+  console.log('action.view: ', action.view)
   res.render(action.view, options)
 }
