@@ -138,6 +138,17 @@
               </p>
             {% endif %}
           </label>
+          <p class="govuk-body-s accepted-cards-hint withdrawal-text">
+            {% if withdrawalText === 'debit_credit' %}
+              {{ __p("cardDetails.withdrawalText").debit_credit }}
+            {% endif %}
+            {% if withdrawalText === 'debit' %}
+              {{ __p("cardDetails.withdrawalText").debit }}
+            {% endif %}
+            {% if withdrawalText === 'credit' %}
+              {{ __p("cardDetails.withdrawalText").credit }}
+            {% endif %}
+          </p>
           <ul class="accepted-cards field-empty">
             {% if allowedCards %}
               {% for currentAllowedCard in allowedCards %}
@@ -164,17 +175,6 @@
                   autocomplete="cc-number"
                   value="{{cardNo}}"
           />
-          <p class="govuk-body-s accepted-cards-hint withdrawal-text">
-            {% if withdrawalText === 'debit_credit' %}
-              {{ __p("cardDetails.withdrawalText").debit_credit }}
-            {% endif %}
-            {% if withdrawalText === 'debit' %}
-              {{ __p("cardDetails.withdrawalText").debit }}
-            {% endif %}
-            {% if withdrawalText === 'credit' %}
-              {{ __p("cardDetails.withdrawalText").credit }}
-            {% endif %}
-          </p>
           <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
         </div>
         <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7 {% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
