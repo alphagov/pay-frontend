@@ -3,7 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
-  {{ __p("cardDetails.title") }}
+  Apply for a blue badge
 {% endblock %}
 
 {% set mainClasses = "charge-new" %}
@@ -42,6 +42,24 @@
 {% block content %}
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">Apply for a blue badge</h1>
+
+      <div class="payment-summary-wrap">
+      <aside class="payment-summary">
+        <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
+        <p id="payment-description" class="govuk-body">
+          {{ description }}
+        </p>
+        <p class="govuk-body hidden" id="payment-summary-breakdown">
+          {{ __p("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
+          {{ __p("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          {{ __p("paymentSummary.totalAmount") }}
+          <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
+        </p>
+      </aside>
+    </div>
     <div id="error-summary" class="govuk-error-summary {% if not hasError %}hidden{% endif %}" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
         {{ __p("fieldErrors.summary") }}
@@ -99,8 +117,6 @@
     <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
 
     <div id="card-details-wrap">
-      <h1 class="govuk-heading-l">{{ __p("cardDetails.title") }}</h1>
-
       <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
         <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
         <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
@@ -122,16 +138,6 @@
               </p>
             {% endif %}
           </label>
-          <input id="card-no"
-                  type="text"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                  name="cardNo"
-                  maxlength="26"
-                  class="govuk-input govuk-!-width-three-quarters"
-                  autocomplete="cc-number"
-                  value="{{cardNo}}"
-          />
           <ul class="accepted-cards field-empty">
             {% if allowedCards %}
               {% for currentAllowedCard in allowedCards %}
@@ -148,6 +154,16 @@
               {% endfor %}
             {% endif %}
           </ul>
+          <input id="card-no"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  name="cardNo"
+                  maxlength="26"
+                  class="govuk-input govuk-!-width-three-quarters"
+                  autocomplete="cc-number"
+                  value="{{cardNo}}"
+          />
           <p class="govuk-body-s accepted-cards-hint withdrawal-text">
             {% if withdrawalText === 'debit_credit' %}
               {{ __p("cardDetails.withdrawalText").debit_credit }}
@@ -477,22 +493,6 @@
   {% if worldpay3dsFlexDdcJwt %}
     <iframe id="worldpay3dsFlexDdcIframe" src="/public/worldpay/worldpay-3ds-flex-ddc.html" class="govuk-!-display-none"></iframe>
   {% endif %}
-  <div class="govuk-grid-column-one-third payment-summary-wrap">
-    <aside class="payment-summary">
-      <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
-      <p id="payment-description" class="govuk-body">
-        {{ description }}
-      </p>
-      <p class="govuk-body hidden" id="payment-summary-breakdown">
-        {{ __p("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
-        {{ __p("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
-      </p>
-      <p class="govuk-body govuk-!-margin-bottom-0">
-        {{ __p("paymentSummary.totalAmount") }}
-        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
-      </p>
-    </aside>
-  </div>
 </div>
 
 {% endblock %}

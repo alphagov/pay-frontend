@@ -17,6 +17,10 @@ const paths = {
       path: '/test',
       action: 'get'
     },
+    testCreatePayment: {
+      path: '/test-create-payment',
+      action: 'get'
+    },
     new: {
       path: '/card_details/:chargeId',
       action: 'get'

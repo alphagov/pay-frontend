@@ -46,7 +46,7 @@ exports.bind = function (app) {
     decryptCardData
   ]
 
-  app.get(card.test.path, testCreate)
+  app.get(card.testCreatePayment.path, testCreate)
   app.get(card.new.path, middlewareStack, csp.cardDetails, charge.new)
   app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
