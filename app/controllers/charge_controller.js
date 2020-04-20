@@ -6,7 +6,6 @@ const i18n = require('i18n')
 
 // Local dependencies
 const {
-  GOOGLE_PAY_MERCHANT_ID,
   WORLDPAY_3DS_FLEX_DDC_TEST_URL,
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL,
   DECRYPT_AND_OMIT_CARD_DATA
@@ -23,6 +22,7 @@ const paths = require('../paths')
 const { countries } = require('../services/countries')
 const { commonTypos } = require('../utils/email_tools')
 const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
+const { getMerchantId } = require('../utils/google_pay_merchant_id_selector')
 const connectorClient = require('../services/clients/connector_client')
 const cookies = require('../utils/cookies')
 const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
@@ -52,7 +52,7 @@ const appendChargeForNewView = async function appendChargeForNewView(charge, req
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
   charge.googlePayRequestMethodData = getGooglePayMethodData({
     allowedCardTypes: supportedNetworksFormattedByProvider(cardModel.allowed, 'google'),
-    merchantId: GOOGLE_PAY_MERCHANT_ID,
+    merchantId: getMerchantId(charge.gatewayAccount.gatewayAccountId),
     gatewayMerchantId: charge.gatewayAccount.gatewayMerchantId
   })
   charge.googlePayRequestDetails = googlePayDetails
