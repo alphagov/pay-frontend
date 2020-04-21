@@ -33,7 +33,7 @@ const { CORRELATION_HEADER } = require('../../config/correlation_header')
 const { createChargeIdSessionKey } = require('../utils/session')
 const { getLoggingFields } = require('../utils/logging_fields_helper')
 
-const appendChargeForNewView = async function appendChargeForNewView(charge, req, chargeId) {
+const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, charge.gatewayAccount.block_prepaid_cards, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
@@ -60,6 +60,9 @@ const appendChargeForNewView = async function appendChargeForNewView(charge, req
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId, getLoggingFields(req))
   charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
+
+  charge.collectAdditionalBrowserDataForEpdq3ds = charge.gatewayAccount.paymentProvider === 'epdq' &&
+      charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })

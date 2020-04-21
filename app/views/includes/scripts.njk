@@ -31,6 +31,7 @@
   window.Charge = {
     email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
     collect_billing_address: {{ "true" if collectBillingAddress else "false" }},
+    collect_additional_browser_data_for_epdq_3ds: {{"true" if collectAdditionalBrowserDataForEpdq3ds else "false" }},
     worldpay_3ds_flex_ddc_jwt: '{{ worldpay3dsFlexDdcJwt }}',
     worldpay_3ds_flex_ddc_url: '{{ worldpay3dsFlexDdcUrl }}'
   }
@@ -46,6 +47,7 @@
       {% endif %}
       window.payScripts.inputConfirm.init();
       window.payScripts.formValidation.init();
+      window.payScripts.epdq3ds2.init();
     } else if (mainWrap.classList.contains('confirm-page')) {
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
