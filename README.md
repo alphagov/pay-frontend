@@ -19,6 +19,7 @@ GOV.UK Pay Frontend application (Node.js)
 | `CSP_ENFORCE`                            |            | false/undefined                                                 | Browser will block content security policy violations if set to true, default is to only report on violations.                                        |
 | `CSP_REPORT_URI`                         |            |                                                                 | URI to receive CSP violation reports.                                                                                                                 |
 | `GOOGLE_PAY_MERCHANT_ID`                 |            |                                                                 | Merchant ID used to identify GOV.UK Pay to Google when making a payment request. This ID is got from the Google Pay Developer Profile.                |
+| `GOOGLE_PAY_MERCHANT_ID_2`               |            |                                                                 | The same as GOOGLE_PAY_MERCHANT_ID, but used to rotate to a new merchant id in a safe way.                                                            |
 
 ## Licence
 
