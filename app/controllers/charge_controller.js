@@ -8,7 +8,8 @@ const i18n = require('i18n')
 const {
   WORLDPAY_3DS_FLEX_DDC_TEST_URL,
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL,
-  DECRYPT_AND_OMIT_CARD_DATA
+  DECRYPT_AND_OMIT_CARD_DATA,
+  GOOGLE_PAY_MERCHANT_ID_2
 } = process.env
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
@@ -50,9 +51,15 @@ const appendChargeForNewView = async function appendChargeForNewView(charge, req
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
+  
+  const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
+  if (googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
+    logger.info('Using GOOGLE_PAY_MERCHANT_ID_2', {...getLoggingFields(req)})
+  }
+
   charge.googlePayRequestMethodData = getGooglePayMethodData({
     allowedCardTypes: supportedNetworksFormattedByProvider(cardModel.allowed, 'google'),
-    merchantId: getMerchantId(charge.gatewayAccount.gatewayAccountId),
+    merchantId: googlePayMerchantId,
     gatewayMerchantId: charge.gatewayAccount.gatewayMerchantId
   })
   charge.googlePayRequestDetails = googlePayDetails
