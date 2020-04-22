@@ -170,7 +170,7 @@ const _getConnector = (url, description, loggingFields = {}) => {
     ).then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       if (response.statusCode !== 200) {
-        logger.warn('Calling connector to GET something returned a non http 200 response', correlationId, {
+        logger.warn('Calling connector to GET something returned a non http 200 response', {
           ...loggingFields,
           service: 'connector',
           method: 'GET',
