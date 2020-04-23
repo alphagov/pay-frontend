@@ -92,7 +92,7 @@
     "govuk-frontend": "^3.6.0",
     "helmet": "3.22.0",
     "humps": "^2.0.1",
-    "i18n": "0.8.x",
+    "i18n": "0.9.x",
     "lodash": "4.17.x",
     "mailcheck": "^1.1.1",
     "memory-cache": "^0.2.0",
