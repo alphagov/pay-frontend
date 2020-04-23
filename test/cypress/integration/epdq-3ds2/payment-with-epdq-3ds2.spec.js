@@ -32,11 +32,11 @@ describe('Enter card details page', () => {
           cy.get('#card-details input[name=jsScreenColorDepth]').should('exist')
           cy.get('#card-details input[name=jsScreenColorDepth]').should('have.attr', 'value', $win.screen.colorDepth.toString())
 
-          cy.get('#card-details input[name=jsScreenColorHeight]').should('exist')
-          cy.get('#card-details input[name=jsScreenColorHeight]').should('have.attr', 'value', $win.screen.height.toString())
+          cy.get('#card-details input[name=jsScreenHeight]').should('exist')
+          cy.get('#card-details input[name=jsScreenHeight]').should('have.attr', 'value', $win.screen.height.toString())
 
-          cy.get('#card-details input[name=jsScreenColorWidth]').should('exist')
-          cy.get('#card-details input[name=jsScreenColorWidth]').should('have.attr', 'value', $win.screen.width.toString())
+          cy.get('#card-details input[name=jsScreenWidth]').should('exist')
+          cy.get('#card-details input[name=jsScreenWidth]').should('have.attr', 'value', $win.screen.width.toString())
 
           const now = new Date()
           cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('exist')
@@ -70,8 +70,8 @@ describe('Enter card details page', () => {
 
       it('Should not have extra browser information for ePDQ 3DS2', () => {
         cy.get('#card-details input[name=jsScreenColorDepth]').should('not.exist')
-        cy.get('#card-details input[name=jsScreenColorHeight]').should('not.exist')
-        cy.get('#card-details input[name=jsScreenColorWidth]').should('not.exist')
+        cy.get('#card-details input[name=jsScreenHeight]').should('not.exist')
+        cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
         cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('not.exist')
         cy.get('#card-details input[name=jsNavigatorLanguage]').should('not.exist')
       })
@@ -99,8 +99,8 @@ describe('Enter card details page', () => {
 
       it('Should not have extra browser information for ePDQ 3DS2', () => {
         cy.get('#card-details input[name=jsScreenColorDepth]').should('not.exist')
-        cy.get('#card-details input[name=jsScreenColorHeight]').should('not.exist')
-        cy.get('#card-details input[name=jsScreenColorWidth]').should('not.exist')
+        cy.get('#card-details input[name=jsScreenHeight]').should('not.exist')
+        cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
         cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('not.exist')
         cy.get('#card-details input[name=jsNavigatorLanguage]').should('not.exist')
       })
@@ -128,8 +128,8 @@ describe('Enter card details page', () => {
 
       it('Should not have extra browser information for ePDQ 3DS2', () => {
         cy.get('#card-details input[name=jsScreenColorDepth]').should('not.exist')
-        cy.get('#card-details input[name=jsScreenColorHeight]').should('not.exist')
-        cy.get('#card-details input[name=jsScreenColorWidth]').should('not.exist')
+        cy.get('#card-details input[name=jsScreenHeight]').should('not.exist')
+        cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
         cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('not.exist')
         cy.get('#card-details input[name=jsNavigatorLanguage]').should('not.exist')
       })
