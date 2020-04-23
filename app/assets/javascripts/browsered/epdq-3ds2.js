@@ -17,11 +17,11 @@ const addAdditionalInformation = () => {
     }
 
     if (typeof window.screen.height === 'number') {
-      appendHiddenInputToForm('jsScreenColorHeight', window.screen.height)
+      appendHiddenInputToForm('jsScreenHeight', window.screen.height)
     }
 
     if (typeof window.screen.width === 'number') {
-      appendHiddenInputToForm('jsScreenColorWidth', window.screen.width)
+      appendHiddenInputToForm('jsScreenWidth', window.screen.width)
     }
   }
 
