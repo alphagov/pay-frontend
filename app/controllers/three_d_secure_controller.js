@@ -31,7 +31,7 @@ const build3dsPayload = (chargeId, req) => {
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
-    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [starts with [${paRes.substring(0, 50)}] and ending with [${paRes.substring(paRes.length - 50)}] ]`,
+    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [${paRes}]`,
       getLoggingFields(req))
   }
 
@@ -98,16 +98,30 @@ module.exports = {
     const md = _.get(charge, 'auth3dsData.md')
     const htmlOut = _.get(charge, 'auth3dsData.htmlOut')
     const worldpayChallengeJwt = _.get(charge, 'auth3dsData.worldpayChallengeJwt')
+    const threeDSReturnUrl = `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', { chargeId: charge.id })}`
 
     if (issuerUrl && paRequest) {
       const data = {
         postUrl: issuerUrl,
         paRequest: paRequest,
-        threeDSReturnUrl: `${req.protocol}://${req.hostname}${paths.generateRoute('external.card.auth3dsRequiredIn', { chargeId: charge.id })}`
+        threeDSReturnUrl: threeDSReturnUrl
       }
       if (md) {
         data.md = md
       }
+
+      logger.info('Rendering form to post to card issuer to initiate 3DS authentication', {
+        ...getLoggingFields(req),
+        form: {
+          action: issuerUrl,
+          fields: {
+            PaReq: paRequest,
+            MD: md,
+            TermUrl: threeDSReturnUrl
+          }
+        }
+      })
+
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (worldpayChallengeJwt) {
       const challengeUrl = charge.gatewayAccount.type === 'live'
@@ -117,6 +131,19 @@ module.exports = {
         postUrl: challengeUrl,
         worldpayChallengeJwt: worldpayChallengeJwt
       }
+
+      logger.info('Rendering form to post to Worldpay to initiate 3DS authentication', {
+        ...getLoggingFields(req),
+        form: {
+          action: challengeUrl,
+          fields: {
+            PaReq: paRequest,
+            MD: md,
+            JWT: worldpayChallengeJwt
+          }
+        }
+      })
+
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_OUT_VIEW, data)
     } else if (htmlOut) {
       responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_HTML_OUT_VIEW, {
