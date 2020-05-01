@@ -31,8 +31,15 @@ const build3dsPayload = (chargeId, req) => {
   const paRes = _.get(req, 'body.PaRes')
   if (!_.isUndefined(paRes)) {
     auth3dsPayload.pa_response = paRes
-    logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [${paRes}]`,
-      getLoggingFields(req))
+
+    const paResSegments = []
+    for (let i = 0; i < paRes.length; i += 1000) {
+      paResSegments.push(paRes.substring(i, i + 1000))
+    }
+    for (let i = 0; i < paResSegments.length; i++) {
+      logger.info(`paRes received for charge [${chargeId}] 3DS authorisation [${paResSegments[i]}] (${i + 1}/${paResSegments.length})`,
+        getLoggingFields(req))
+    }
   }
 
   const providerStatus = threeDsEPDQResults[_.get(req, 'body.providerStatus', '')]
