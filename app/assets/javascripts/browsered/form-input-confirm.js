@@ -4,6 +4,7 @@
 require('./polyfills')
 
 const init = () => {
+  console.log('form-input-validation')
   const inputs = Array.prototype.slice.call(document.querySelectorAll('[data-confirmation]'))
 
   inputs.forEach(input => {

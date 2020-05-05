@@ -30,6 +30,7 @@ var showCardType = function() {
   }
 
   var showCardType = function() {
+    console.log('showCardType')
     var cardType  = getCardType();
     var number = cardInput.value.replace(/\D/g,'');
     unSelectAll();
@@ -96,6 +97,7 @@ var showCardType = function() {
   }
 
   var replaceCardLabelWithOriginal = function() {
+    console.log('replaceCardLabelWithOriginal')
     if (cardIsInvalid()) return;
     cardNoFormGroup.classList.remove('error');
     cardNoLabel.textContent = cardNoLabel.getAttribute('data-original-label');

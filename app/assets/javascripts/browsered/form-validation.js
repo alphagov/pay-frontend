@@ -4,6 +4,7 @@ const chargeValidation = require('../../../utils/charge_validation')
 const { submitWithWorldpay3dsFlexDdcResult } = require('./worldpay-3ds-flex-ddc')
 
 var init = function () {
+  console.log('form-validation')
   var form = document.getElementById('card-details')
   var formInputs = Array.prototype.slice.call(form.querySelectorAll('input'))
   var countrySelect = document.getElementById('address-country')
@@ -77,6 +78,7 @@ var init = function () {
   }
 
   var addCardError = function (error) {
+    console.log('11 - addCardError: ')
     var formGroup = getFormGroup(cardInput)
     replaceLabel(error.message, formGroup)
     prependHighlightError({ cssKey: 'card-no', value: error.message })
@@ -176,6 +178,7 @@ var init = function () {
   }
 
   var checkCardType = function (validation, formGroup) {
+    console.log('checkCardType: ')
     clearCorporateCardSurchargeInformation()
     showCardType().checkCardtypeIsAllowed().then(
       function (result) {

@@ -39,8 +39,11 @@
     {% endif %}
   {% endblock %}
 
-{% block content %}
-<div class="govuk-grid-row govuk-!-margin-bottom-9">
+{% block main %}
+  <div class="govuk-width-container">
+    {% block beforeContent %}{% endblock %}
+    <main class="iqbal govuk-main-wrapper charge-new" id="main-content" role="main">
+      <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
     <div id="error-summary" class="govuk-error-summary {% if not hasError %}hidden{% endif %}" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -494,8 +497,13 @@
     </aside>
   </div>
 </div>
-
+    </main>
+  </div>
 {% endblock %}
+
+{# {% block content %}
+
+{% endblock %} #}
 
 {% block bodyEnd %}
   {% include "includes/scripts.njk" %}

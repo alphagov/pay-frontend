@@ -74,6 +74,7 @@ module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
 
 // Validation Functions
 function expiryMonth (expiryMonth, allFields) {
+  console.log('1111 - expiry month')
   let expiryYear = allFields.expiryYear
   if (!expiryMonth || !expiryYear) return 'message'
 
@@ -140,6 +141,7 @@ function containsSuspectedCVV (input) {
 
 // Must be bound prior to use
 function cardNo (cardNo) {
+  console.log('111 cardNo')
   if (!cardNo) return 'message' // default message
   cardNo = cardNo.replace(/\D/g, '')
   const cardType = creditCardType(cardNo)

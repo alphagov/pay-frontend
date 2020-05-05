@@ -17,6 +17,7 @@ const CUSTOM_ERRORS = {
 }
 
 module.exports = (translations, logger, Card, chargeOptions = { collect_billing_address: true }) => {
+  console.log('charge_validation')
   const validations = chargeValidationFields(Card, chargeOptions)
   const fieldValidations = validations.fieldValidations
   return {
