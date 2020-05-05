@@ -6,10 +6,11 @@
   {{ __p("confirmDetails.title") }}
 {% endblock %}
 
-{% set mainClasses = "confirm-page" %}
-
-{% block content %}
-<div class="govuk-grid-row govuk-!-margin-bottom-9">
+{% block main %}
+  <div class="govuk-width-container">
+    {% block beforeContent %}{% endblock %}
+    <main class="govuk-main-wrapper confirm-page" id="main-content" role="main">
+      <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ __p("confirmDetails.title") }}</h1>
 
@@ -138,4 +139,6 @@
     </aside>
   </div>
 </div>
-{% endblock %}
+    </main>
+  </div>
+{% endblock %} 
