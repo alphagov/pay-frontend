@@ -6,136 +6,139 @@
   {{ __p("confirmDetails.title") }}
 {% endblock %}
 
-{% set mainClasses = "confirm-page" %}
+{% block main %}
+  <div class="govuk-width-container govuk-main-wrapper">
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+      <main class="govuk-grid-column-two-thirds confirm-page" id="main-content" role="main">
+        <div class="confirm-page__content">
+          <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ __p("confirmDetails.title") }}</h1>
 
-{% block content %}
-<div class="govuk-grid-row govuk-!-margin-bottom-9">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ __p("confirmDetails.title") }}</h1>
+          {% set cardDetailsArray = [
+            [
+              {
+                text: __p('confirmDetails.card')
+              },
+              {
+                text: charge.cardDetails.cardNumber,
+                classes: 'govuk-!-width-two-thirds',
+                attributes: {
+                  id: 'card-number'
+                }
+              }
+            ],
+            [
+              {
+                text: __p('confirmDetails.expiry')
+              },
+              {
+                text: charge.cardDetails.expiryDate,
+                classes: 'govuk-!-width-two-thirds',
+                attributes: {
+                  id: 'expiry-date'
+                }
+              }
+            ],
+            [
+              {
+                text: __p('confirmDetails.name')
+              },
+              {
+                text: charge.cardDetails.cardholderName,
+                classes: 'govuk-!-width-two-thirds',
+                attributes: {
+                  id: 'cardholder-name'
+                }
 
-    {% set cardDetailsArray = [
-      [
-        {
-          text: __p('confirmDetails.card')
-        },
-        {
-          text: charge.cardDetails.cardNumber,
-          classes: 'govuk-!-width-two-thirds',
-          attributes: {
-            id: 'card-number'
-          }
-        }
-      ],
-      [
-        {
-          text: __p('confirmDetails.expiry')
-        },
-        {
-          text: charge.cardDetails.expiryDate,
-          classes: 'govuk-!-width-two-thirds',
-          attributes: {
-            id: 'expiry-date'
-          }
+              }
+            ]
+          ] %}
 
-        }
-      ],
-      [
-        {
-          text: __p('confirmDetails.name')
-        },
-        {
-          text: charge.cardDetails.cardholderName,
-          classes: 'govuk-!-width-two-thirds',
-          attributes: {
-            id: 'cardholder-name'
-          }
+          {% if charge.cardDetails.billingAddress %}
+            {% set billingAddressArray = [
+              [
+                {
+                  text: __p('confirmDetails.address')
+                },
+                {
+                  text: charge.cardDetails.billingAddress,
+                  classes: 'govuk-!-width-two-thirds',
+                  attributes: {
+                    id: 'address'
+                  }
+                }
+              ]
+          ] %}
+          {% endif %}
 
-        }
-      ]
-    ] %}
+          {% if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY') 
+            or(charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' and charge.email) %}
+            {% set emailArray = [
+              [
+                {
+                  text: __p('confirmDetails.email')
+                },
+                {
+                  text: charge.email,
+                  classes: 'govuk-!-width-two-thirds',
+                  attributes: {
+                    id: 'email'
+                  }
+                }
+              ]
+            ] %}
+            {% endif %}
+            {{
+              govukTable({
+                firstCellIsHeader: true,
+                rows: cardDetailsArray.concat(billingAddressArray).concat(emailArray)
+              })
+            }}
 
-    {% if charge.cardDetails.billingAddress %}
-      {% set billingAddressArray = [
-        [
-          {
-            text: __p('confirmDetails.address')
-          },
-          {
-            text: charge.cardDetails.billingAddress,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'address'
-            }
-          }
-        ]
-      ] %}
-    {% endif %}
+          <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
+            <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+            <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
+            {% set confirmButtonHTML %}
+            {{ __p("commonButtons.confirmButton") }}
+            {% endset %}
+            {{
+              govukButton({
+                html: confirmButtonHTML,
+                preventDoubleClick: true,
+                attributes: {
+                  id: 'confirm'
+                }
+              })
+            }}
+          </form>
 
-    {% if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY') or (charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' and charge.email) %}
-      {% set emailArray = [
-        [
-          {
-            text: __p('confirmDetails.email')
-          },
-          {
-            text: charge.email,
-            classes: 'govuk-!-width-two-thirds',
-            attributes: {
-              id: 'email'
-            }
-          }
-        ]
-      ] %}
-    {% endif %}
-
-    {{
-      govukTable({
-        firstCellIsHeader: true,
-        rows: cardDetailsArray.concat(billingAddressArray).concat(emailArray)
-      })
-    }}
-
-    <form id="confirmation" method="POST" action="{{ confirmPath }}" class="form">
-      <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
-      <input id="chargeId" name="chargeId" type="hidden" value="{{ charge.id }}"/>
-      {% set confirmButtonHTML %}
-        {{ __p("commonButtons.confirmButton") }}
-      {% endset %}
-      {{
-        govukButton({
-          html: confirmButtonHTML,
-          preventDoubleClick: true,
-          attributes: {
-            id: 'confirm'
-          }
-        })
-      }}
-    </form>
-
-    <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
-      <div>
-        <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
-        <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
-      </div>
-    </form>
+          <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
+            <div>
+              <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
+              <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
+            </div>
+          </form>
+        </div>
+      </main>
+      <aside class="govuk-grid-column-one-third payment-summary-wrap">
+          <div class="payment-summary">
+            <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
+            <p id="payment-description" class="govuk-body">
+              {{ charge.description }}
+            </p>
+            {% if charge.corporateCardSurcharge %}
+              <p class="govuk-body" id="payment-summary-breakdown">
+                {{ __p("paymentSummary.amount") }}
+                <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
+                {{ __p("paymentSummary.corporateCardFee") }}
+                <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
+              </p>
+            {% endif %}
+            <p class="govuk-body govuk-!-margin-bottom-0">
+              {{ __p("paymentSummary.totalAmount") }}
+              <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
+            </p>
+          </div>
+        </aside>
+    </div>
   </div>
-  <div class="govuk-grid-column-one-third payment-summary-wrap">
-    <aside class="payment-summary">
-      <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
-      <p id="payment-description" class="govuk-body">
-        {{ charge.description }}
-      </p>
-      {% if charge.corporateCardSurcharge %}
-      <p class="govuk-body" id="payment-summary-breakdown">
-        {{ __p("paymentSummary.amount") }} <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
-        {{ __p("paymentSummary.corporateCardFee") }} <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
-      </p>
-      {% endif %}
-      <p class="govuk-body govuk-!-margin-bottom-0">
-        {{ __p("paymentSummary.totalAmount") }}
-        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
-      </p>
-    </aside>
-  </div>
-</div>
 {% endblock %}
