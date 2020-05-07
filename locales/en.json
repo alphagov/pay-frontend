@@ -1,14 +1,16 @@
 {
 	"cardDetails": {
 		"webPayments": {
-			"payWith": "Pay with"
+			"payWithApplePay": "Pay with Apple Pay",
+			"payWithGooglePay": "Pay with Google Pay"
 		},
 		"withdrawalText": {
 			"debit_credit": "Accepted credit and debit card types",
 			"debit": "Credit card payments are not accepted. Please use a debit card.",
 			"credit": "Debit card payments are not accepted. Please use a credit card."
 		},
-		"title": "Enter card details",
+		"enterPaymentDetails": "Enter payment details",
+		"enterCardDetails": "Enter card details",
 		"expiry": "Expiry date",
 		"expiryHint": "For example, 10/20",
 		"expiryMonth": "Month",
