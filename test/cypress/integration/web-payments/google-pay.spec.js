@@ -106,8 +106,8 @@ describe('Google Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
-      cy.get('#google-pay-payment-method-submit.google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.google-pay').click()
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
@@ -148,7 +148,7 @@ describe('Google Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
-      cy.get('#google-pay-payment-method-submit.google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
@@ -159,7 +159,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
-      cy.get('#google-pay-payment-method-submit.google-pay').should('be.not.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.not.visible')
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
@@ -196,8 +196,8 @@ describe('Google Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
-      cy.get('#google-pay-payment-method-submit.google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.google-pay').click()
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page

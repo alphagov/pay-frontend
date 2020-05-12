@@ -4,14 +4,16 @@
 			"choose": "Dewiswch sut yr hoffech dalu",
 			"standard": "Cerdyn debyd neu gredyd",
 			"continue": "Parhau i’r taliad",
-			"payWith": "Talu gyda"
+            "payWithApplePay": "Talu gyda Apple Pay",
+            "payWithGooglePay": "Talu gyda Google Pay"
 		},
 		"withdrawalText": {
 			"debit_credit": "Math o gardiau credyd a debyd y derbynnir",
 			"debit": "Ni dderbynnir taliadau cerdyn credyd. Defnyddiwch gerdyn debyd os gwelwch yn dda.",
 			"credit": "Ni dderbynnir taliadau cerdyn debyd. Defnyddiwch gerdyn credyd os gwelwch yn dda."
 		},
-		"title": "Rhowch fanylion y cerdyn",
+        "enterPaymentDetails": "Rhowch fanylion taliad",
+		"enterCardDetails": "Rhowch fanylion y cerdyn",
 		"expiry": "Dyddiad dod i ben",
 		"expiryHint": "Er enghraifft 10/20",
 		"expiryMonth": "Mis",

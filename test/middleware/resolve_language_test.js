@@ -33,7 +33,7 @@ describe('Resolve language from Charge object', function () {
       resolveLanguage(req, res, function () {
         assert(res.locals.language === req.chargeData.language)
         const strings = JSON.parse(res.locals.translationStrings)
-        assert(strings.cardDetails.title === 'Enter card details')
+        assert(strings.cardDetails.enterCardDetails === 'Enter card details')
         done()
       })
     })
@@ -49,7 +49,7 @@ describe('Resolve language from Charge object', function () {
       resolveLanguage(req, res, function () {
         assert(res.locals.language === 'en')
         const strings = JSON.parse(res.locals.translationStrings)
-        assert(strings.cardDetails.title === 'Enter card details')
+        assert(strings.cardDetails.enterCardDetails === 'Enter card details')
         done()
       })
     })
@@ -66,7 +66,7 @@ describe('Resolve language from Charge object', function () {
       resolveLanguage(req, res, function () {
         assert(res.locals.language === req.chargeData.language)
         const strings = JSON.parse(res.locals.translationStrings)
-        assert(strings.cardDetails.title === 'Rhowch fanylion y cerdyn')
+        assert(strings.cardDetails.enterCardDetails === 'Rhowch fanylion y cerdyn')
         done()
       })
     })

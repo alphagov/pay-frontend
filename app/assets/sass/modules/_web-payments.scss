@@ -17,27 +17,71 @@
   }
 }
 
-.web-payments-button {
-  @include govuk-media-query($until: desktop) {
-    margin-top: govuk-spacing(2);
-  }
-
-  background: govuk-colour("black");
-  box-shadow: none;
-  width: 100%;
-
-  &:focus,
+.web-payment-button {
   &:hover {
-    background: black;
+    background-color: #000;
   }
 
   &[disabled] {
     background: $govuk-secondary-text-colour;
   }
+
+  //https://developer.apple.com/documentation/apple_pay_on_the_web/displaying_apple_pay_buttons
+  &--apple-pay{
+    @supports (-webkit-appearance: -apple-pay-button) { 
+      min-width: 200px;
+      width: 100%;
+      min-height: 32px;
+      max-height: 64px;
+      height: 40px;
+      display: inline-block;
+      -webkit-appearance: -apple-pay-button;
+      -apple-pay-button-style: black;
+    }
+  
+    @supports not (-webkit-appearance: -apple-pay-button) {
+      display: inline-block;
+      background-size: 100% 60%;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      border-radius: 5px;
+      padding: 0px;
+      box-sizing: border-box;
+      min-width: 200px;
+      width: 100%;
+      min-height: 32px;
+      height: 40px;
+      background-image: -webkit-named-image(apple-pay-logo-white);
+      background-color: #000;
+    }
+  }
+
+  //https://developers.google.com/pay/api/web/overview
+  &--google-pay{
+    background-origin: content-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("/images/google-pay-logo.svg");
+    background-color: #000;
+    box-shadow: none;
+    min-width: 200px;
+    width: 100%;
+    padding: 12px 24px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    height: 40px;
+    min-height: 40px;
+    border: 0;
+  }
+
+  @include govuk-media-query($until: desktop) {
+    margin-top: govuk-spacing(2);
+  }
+
+  @include govuk-media-query($from: tablet) {
+    width: 200px;
+  }
 }
 
-.web-payments-logo {
-  display: inline-block;
-  width: 3rem;
-  margin: 0 0 -.25rem .25rem;
-}
+

@@ -51,7 +51,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
-  
+ 
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
   if (googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
     logger.info('Using GOOGLE_PAY_MERCHANT_ID_2', {...getLoggingFields(req)})
