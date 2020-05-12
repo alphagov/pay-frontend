@@ -124,7 +124,7 @@
     "chokidar-cli": "latest",
     "cypress": "3.1.5",
     "dotenv": "^8.2.0",
-    "envfile": "^5.1.0",
+    "envfile": "^5.2.0",
     "eslint": "^6.8.0",
     "govuk-country-and-territory-autocomplete": "^1.0.1",
     "grunt": "1.1.0",
