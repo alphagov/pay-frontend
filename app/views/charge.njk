@@ -63,60 +63,63 @@
               </div>
             </div>
             {% if allowApplePay or allowGooglePay %}
-              <h1 class="govuk-heading-l">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
+              <h1 class="govuk-heading-l web-payment-button-heading">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
             {% endif %}
             {% if allowApplePay %}
-              <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithApplePay") }}</h2>
-              
-              {% set ApplePayButtonHTML %}
-              <span class="govuk-visually-hidden">Apple Pay</span>
-              {% endset %}
-              
-              <form id="apple-pay-container" class="govuk-!-width-three-quarters web-payments-container">
-                <input type="hidden" name="payment-method" value="Apple Pay"/>
-                {{
-              govukButton({
-                html: ApplePayButtonHTML,
-                classes: "web-payment-button web-payment-button--apple-pay",
-                attributes: {
-                  id: "apple-pay-payment-method-submit"
-                }
-              })
-            }}
-                <span id="apple-pay-payment-method-divider" class="pay-divider">
+              <div class="apple-pay-container">
+                <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithApplePay") }}</h2>
+
+                {% set ApplePayButtonHTML %}
+                <span class="govuk-visually-hidden">Apple Pay</span>
+                {% endset %}
+
+                <form class="govuk-!-width-three-quarters web-payments-container">
+                  <input type="hidden" name="payment-method" value="Apple Pay"/>
+                  {{
+                    govukButton({
+                      html: ApplePayButtonHTML,
+                      classes: "web-payment-button web-payment-button--apple-pay",
+                      attributes: {
+                        id: "apple-pay-payment-method-submit"
+                      }
+                    })
+                  }}
+                  <span id="apple-pay-payment-method-divider" class="pay-divider">
                   <span id="apple-pay-payment-method-divider-word" class="pay-divider--word">or</span></span>
-              </form>
+                </form>
+              </div>
             {% endif %}
             {% if allowGooglePay %}
-              <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithGooglePay") }}</h2>
-              
-              {% set GooglePayButtonHTML %}
-                <span class="govuk-visually-hidden">Google Pay</span>
-              {% endset %}
-              
-              <form id="google-pay-container" class="govuk-!-width-three-quarters web-payments-container">
-                <input type="hidden" name="payment-method" value="Google Pay"/>
-                {{
-              govukButton({
-                html: GooglePayButtonHTML,
-                classes: "web-payment-button web-payment-button--google-pay",
-                attributes: {
-                  id: "google-pay-payment-method-submit"
-                }
-              })
-            }}
-                <span id="google-pay-payment-method-divider" class="pay-divider">
+              <div class="google-pay-container">
+                <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithGooglePay") }}</h2>
+
+                {% set GooglePayButtonHTML %}
+                  <span class="govuk-visually-hidden">Google Pay</span>
+                {% endset %}
+
+                <form class="govuk-!-width-three-quarters web-payments-container">
+                  <input type="hidden" name="payment-method" value="Google Pay"/>
+                  {{
+                    govukButton({
+                      html: GooglePayButtonHTML,
+                      classes: "web-payment-button web-payment-button--google-pay",
+                      attributes: {
+                        id: "google-pay-payment-method-submit"
+                      }
+                    })
+                  }}
+                  <span id="google-pay-payment-method-divider" class="pay-divider">
                   <span id="google-pay-payment-method-divider-word" class="pay-divider--word">or</span></span>
-              </form>
+                </form>
+              </div>
             {% endif %}
             <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
 
             <div id="card-details-wrap">
               {% if allowApplePay or allowGooglePay %}
-                <h2 class="govuk-heading-m">{{ __p("cardDetails.enterCardDetails") }}</h2>
-              {% else %}
-                <h1 class="govuk-heading-l">{{ __p("cardDetails.enterCardDetails") }}</h1>
+                <h2 class="govuk-heading-m web-payment-button-heading">{{ __p("cardDetails.enterCardDetails") }}</h2>
               {% endif %}
+              <h1 class="govuk-heading-l non-web-payment-button-heading">{{ __p("cardDetails.enterCardDetails") }}</h1>
 
               <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
                 <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
@@ -298,10 +301,10 @@
                   <div class="govuk-form-group govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top {% if highlightErrorFields.addressCountry %} govuk-form-group--error{% endif %}" data-validation="addressCountry">
                     <legend for="address-country" class="govuk-!-margin-bottom-6">
                       {% if allowApplePay or allowGooglePay %}
-                        <h3 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h3>
-                      {% else %}
-                        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.billingAddress") }}</h2>
+                        <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-heading">{{ __p("cardDetails.billingAddress") }}</h3>
                       {% endif %}
+                      <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-heading">{{ __p("cardDetails.billingAddress") }}</h2>
+
                       <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.billingAddressHint") }}</span>
                     </legend>
                     <label id="address-country-lbl" for="address-country" class="govuk-label">
@@ -412,10 +415,10 @@
                     <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
                       <legend for="email" class="govuk-!-margin-bottom-6">
                         {% if allowApplePay or allowGooglePay %}
-                          <h3 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.contactDetails") }}</h3>
-                        {% else %}
-                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1">{{ __p("cardDetails.contactDetails") }}</h2>
+                          <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-heading">{{ __p("cardDetails.contactDetails") }}</h3>
                         {% endif %}
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-heading">{{ __p("cardDetails.contactDetails") }}</h2>
+
                         <span class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</span>
                       </legend>
                       <label id="email-lbl" for="email" class="govuk-label">

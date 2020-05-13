@@ -1,20 +1,35 @@
-#apple-pay-container,
-#google-pay-container {
+.apple-pay-container{
   display: none;
-}
 
-// Toggle Apple Pay
-.apple-pay-available {
-  #apple-pay-container {
+  .apple-pay-available & {
     display: block;
   }
 }
 
-// Toggle Google Pay
-.google-pay-available {
-  #google-pay-container {
+.google-pay-container {
+  display: none;
+
+  .google-pay-available & {
     display: block;
-  }
+  } 
+}
+
+.web-payment-button-heading{
+  display: none;
+  
+  .apple-pay-available &,
+  .google-pay-available & {
+    display: block; 
+  } 
+}
+
+.non-web-payment-button-heading{
+  display: block;
+
+  .apple-pay-available &,
+  .google-pay-available & {
+    display: none; 
+  } 
 }
 
 .web-payment-button {
