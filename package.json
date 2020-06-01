@@ -146,7 +146,7 @@
     "nock": "12.0.3",
     "node-sass": "4.14.1",
     "nodemon": "^2.0.4",
-    "nyc": "15.0.x",
+    "nyc": "15.1.x",
     "pact": "4.3.2",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.3.4/pay-product-page-4.3.4.tgz",
     "proxyquire": "~2.1.3",
