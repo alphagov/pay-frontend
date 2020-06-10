@@ -6,7 +6,6 @@ coverage
 .settings
 .project
 *.log
-test
 pacts
 Jenkinsfile
 CONTRIBUTING.md
