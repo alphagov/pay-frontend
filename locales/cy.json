@@ -70,7 +70,7 @@
 	"errorViews": {
 		"either": "Gallwch:",
 		"continue": "Parhau gyda’ch taliad",
-		"tryAgain": "Mynd yn ôl i geisio’r taliad eto",
+		"tryAgain": "Canslo a mynd yn ôl i trio'r taliad eto",
 		"problem": "Roedd problem gyda’ch taliad",
 		"declined": "Mae eich taliad wedi cael ei wrthod",
 		"contactYourBank": "Nid oes arian wedi cael ei dynnu o’ch cyfrif. Cysylltwch â’ch banc am ragor o fanylion.",
