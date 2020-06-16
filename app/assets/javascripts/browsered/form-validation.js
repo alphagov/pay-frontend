@@ -202,7 +202,7 @@ var init = function () {
   }
 
   var showCorporateCardSurchargeInformation = function (cardType, corporateCardSurchargeAmount) {
-    var amountNumber = parseInt(paymentSummaryAmountValue)
+    var amountNumber = parseFloat(paymentSummaryAmountValue)
     var corporateCardSurchargeAmountNumber = corporateCardSurchargeAmount / 100
 
     // card message
