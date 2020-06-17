@@ -59,7 +59,7 @@ describe('Re-use token flow', () => {
 
       cy.get('#card-details-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#card-details-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}`))
-      cy.get('#return-url').should(($a) => expect($a).to.contain('Go back to try the payment again'))
+      cy.get('#return-url').should(($a) => expect($a).to.contain('Cancel and go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#card-details-link').click()
@@ -120,7 +120,7 @@ describe('Re-use token flow', () => {
 
       cy.get('#confirm-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#confirm-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}/confirm`))
-      cy.get('#return-url').should(($a) => expect($a).to.contain('Go back to try the payment again'))
+      cy.get('#return-url').should(($a) => expect($a).to.contain('Cancel and go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#confirm-link').click()
