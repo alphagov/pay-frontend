@@ -12,7 +12,7 @@
 		"enterPaymentDetails": "Enter payment details",
 		"enterCardDetails": "Enter card details",
 		"expiry": "Expiry date",
-		"expiryHint": "For example, 10/20",
+		"expiryHint": "For example, 10/%s",
 		"expiryMonth": "Month",
 		"expiryYear": "Year",
 		"cvc": "Card security code",
