@@ -58,6 +58,9 @@ const fixtures = {
         }
       }
     }
+    if (ops.email) {
+      data.payment_info.email = ops.email
+    }
     return {
       getPactified: () => {
         return pactBase.pactify(data)

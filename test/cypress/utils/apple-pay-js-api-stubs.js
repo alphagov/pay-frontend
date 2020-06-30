@@ -1,7 +1,7 @@
 'use strict'
 
 // Mock class for Apple Pay
-const getMockApplePayClass = (validPaymentRequestResponse, email) => {
+const getMockApplePayClass = (validPaymentRequestResponse, email = null) => {
   class MockApplePaySession {
     completePayment () {
       return true
