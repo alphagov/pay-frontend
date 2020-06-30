@@ -20,6 +20,7 @@ const Charge = require('../models/charge')
 const Card = require('../models/card')
 const State = require('../../config/state')
 const paths = require('../paths')
+const { getFutureYearAs2Digits } = require('../services/example_card_expiry_date')
 const { countries } = require('../services/countries')
 const { commonTypos } = require('../utils/email_tools')
 const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
@@ -45,16 +46,17 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
     prepaidCredit: charge.gatewayAccount.corporatePrepaidCreditCardSurchargeAmount,
     prepaidDebit: charge.gatewayAccount.corporatePrepaidDebitCardSurchargeAmount
   })
-  charge.post_card_action = routeFor('create', chargeId)
   charge.id = chargeId
+  charge.exampleCardExpiryDateYear = getFutureYearAs2Digits()
+  charge.post_card_action = routeFor('create', chargeId)
   charge.post_cancel_action = routeFor('cancel', chargeId)
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
- 
+
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
   if (googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
-    logger.info('Using GOOGLE_PAY_MERCHANT_ID_2', {...getLoggingFields(req)})
+    logger.info('Using GOOGLE_PAY_MERCHANT_ID_2', { ...getLoggingFields(req) })
   }
 
   charge.googlePayRequestMethodData = getGooglePayMethodData({

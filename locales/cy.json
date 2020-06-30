@@ -15,7 +15,7 @@
         "enterPaymentDetails": "Rhowch fanylion taliad",
 		"enterCardDetails": "Rhowch fanylion y cerdyn",
 		"expiry": "Dyddiad dod i ben",
-		"expiryHint": "Er enghraifft 10/20",
+		"expiryHint": "Er enghraifft 10/%s",
 		"expiryMonth": "Mis",
 		"expiryYear": "Blwyddyn",
 		"cvc": "Cod diogelwch y cerdyn",

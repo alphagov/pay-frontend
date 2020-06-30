@@ -194,7 +194,7 @@
                       </label>
                     </legend>
                     <span class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
-                      {{ __p("cardDetails.expiryHint") }}</span>
+                      {{ __p("cardDetails.expiryHint", exampleCardExpiryDateYear) }}</span>
                     {% if highlightErrorFields.expiryMonth %}
                       <p class="govuk-error-message" id="error-expiry-date">
                         {{ highlightErrorFields.expiryMonth }}

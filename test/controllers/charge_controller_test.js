@@ -70,16 +70,16 @@ const mockSession = (function () {
 
 const aChargeWithStatus = function (status) {
   return {
-    'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-    'status': status,
-    'amount': '4.99',
-    'gatewayAccount': {
-      'serviceName': 'Service Name',
-      'analyticsId': 'test-1234',
-      'type': 'test',
-      'paymentProvider': 'sandbox'
+    externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+    status: status,
+    amount: '4.99',
+    gatewayAccount: {
+      serviceName: 'Service Name',
+      analyticsId: 'test-1234',
+      type: 'test',
+      paymentProvider: 'sandbox'
     },
-    'id': '3'
+    id: '3'
   }
 }
 
@@ -89,6 +89,9 @@ const requireChargeController = function (mockedCharge, mockedNormalise, mockedC
     '../models/charge.js': mockedCharge,
     '../services/normalise_charge.js': mockedNormalise,
     '../utils/session.js': mockSession,
+    '../services/example_card_expiry_date.js': {
+      getFutureYearAs2Digits: () => '20'
+    },
     '../services/worldpay_3ds_flex_service': {
       getDdcJwt: () => Promise.resolve('a-jwt')
     }
@@ -106,20 +109,20 @@ describe('card details endpoint', function () {
 
   const aResponseWithStatus = function (status) {
     return {
-      'externalId': 'dh6kpbb4k82oiibbe4b9haujjk',
-      'status': status,
-      'gatewayAccount': {
-        'serviceName': 'Service Name',
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox'
+      externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
+      status: status,
+      gatewayAccount: {
+        serviceName: 'Service Name',
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox'
       },
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox'
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox'
       },
-      'worldpay3dsFlexDdcJwt': 'a-jwt'
+      worldpay3dsFlexDdcJwt: 'a-jwt'
     }
   }
   before(function () {
@@ -171,13 +174,13 @@ describe('card details endpoint', function () {
 
     await requireChargeController(charge, mockedNormalise, mockedConnectorClient).new(request, response)
     const systemErrorObj = {
-      'message': 'Page cannot be found',
-      'viewName': 'NOT_FOUND',
-      'analytics': {
-        'analyticsId': 'Service unavailable',
-        'type': 'Service unavailable',
-        'paymentProvider': 'Service unavailable',
-        'amount': '0.00'
+      message: 'Page cannot be found',
+      viewName: 'NOT_FOUND',
+      analytics: {
+        analyticsId: 'Service unavailable',
+        type: 'Service unavailable',
+        paymentProvider: 'Service unavailable',
+        amount: '0.00'
       }
     }
     expect(response.render.calledWith('error', systemErrorObj)).to.be.true // eslint-disable-line
@@ -191,15 +194,15 @@ describe('card details endpoint', function () {
 
     requireChargeController(charge, mockedNormalise, mockedConnectorClient).capture(request, response)
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/card_details/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/card_details/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
@@ -213,14 +216,14 @@ describe('card details endpoint', function () {
 
     requireChargeController(charge, mockedNormalise, mockedConnectorClient).capture(request, response)
     const systemErrorObj = {
-      'viewName': 'CAPTURE_FAILURE',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/card_details/3/capture_failure',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'CAPTURE_FAILURE',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/card_details/3/capture_failure',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
@@ -229,7 +232,7 @@ describe('card details endpoint', function () {
 
 describe('check card endpoint', function () {
   const mockedCard = function (allowedCards, correlationId) {
-    let card = {
+    const card = {
       brand: 'VISA',
       type: 'CREDIT',
       corporate: true,
@@ -252,32 +255,32 @@ describe('check card endpoint', function () {
     const mockedNormalise = mockNormalise.withCharge(mockedNormalisedCharge)
 
     request = {
-      'headers': {
+      headers: {
         'x-request-id': '1537873066.725'
       },
-      'chargeData': {
-        'language': 'en',
-        'gateway_account': {
-          'card_types': [
+      chargeData: {
+        language: 'en',
+        gateway_account: {
+          card_types: [
             {
-              'id': 'c2683cfc-07b3-47c4-b7ff-5552d3b2f1e6',
-              'brand': 'visa',
-              'label': 'Visa',
-              'type': 'DEBIT',
-              'requires3ds': false
+              id: 'c2683cfc-07b3-47c4-b7ff-5552d3b2f1e6',
+              brand: 'visa',
+              label: 'Visa',
+              type: 'DEBIT',
+              requires3ds: false
             },
             {
-              'id': 'b41ce0fe-c381-43aa-a5d5-77af61cd9baf',
-              'brand': 'visa',
-              'label': 'Visa',
-              'type': 'CREDIT',
-              'requires3ds': false
+              id: 'b41ce0fe-c381-43aa-a5d5-77af61cd9baf',
+              brand: 'visa',
+              label: 'Visa',
+              type: 'CREDIT',
+              requires3ds: false
             }
           ]
         }
       },
       body: {
-        'cardNo': '4242424242424242'
+        cardNo: '4242424242424242'
       }
     }
     response = {
