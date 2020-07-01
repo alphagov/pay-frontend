@@ -3,6 +3,11 @@ update_configs:
   - package_manager: "javascript"
     directory: "/"
     update_schedule: "daily"
+    default_labels:
+      - "govuk-pay"
   - package_manager: "docker"
     directory: "/"
     update_schedule: "weekly"
+    default_labels:
+      - "govuk-pay"
+
