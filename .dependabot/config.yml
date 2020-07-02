@@ -5,8 +5,10 @@ update_configs:
     update_schedule: "daily"
     default_labels:
       - "govuk-pay"
+      - "dependencies"
   - package_manager: "docker"
     directory: "/"
     update_schedule: "weekly"
     default_labels:
       - "govuk-pay"
+      - "dependencies"
