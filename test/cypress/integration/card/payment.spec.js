@@ -75,8 +75,6 @@ describe('Standard card payment flow', () => {
 
   describe('Secure card payment page', () => {
     it('Should setup the payment and load the page', () => {
-      cy.clock(Date.UTC(2020, 6, 7, 12, 0, 0))
-
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
 
@@ -92,7 +90,7 @@ describe('Standard card payment flow', () => {
       cy.get('#google-pay-payment-method-divider').should('not.exist')
       cy.get('#apple-pay-payment-method-divider').should('not.exist')
 
-      cy.get('#expiry-date-hint').should('contain', '10/22')
+      cy.get('#expiry-date-hint').contains(/\b10\/[0-9]{2}\b/)
     })
 
     it('Should enter and validate a correct card', () => {
