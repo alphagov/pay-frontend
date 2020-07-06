@@ -6,9 +6,8 @@ describe('Apple Pay payment flow', () => {
   const returnURL = '?success'
 
   const validPaymentRequestResponse = email => {
-    return {
+    const response = {
       shippingContact: {
-        emailAddress: email || 'jonheslop@bla.test',
         familyName: 'payment',
         givenName: 'mr',
         phoneticFamilyName: '',
@@ -33,6 +32,10 @@ describe('Apple Pay payment flow', () => {
         transactionIdentifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
       }
     }
+    if (email) {
+      response.shippingContact.emailAddress = email
+    }
+    return response
   }
 
   const createPaymentChargeStubs = [
@@ -52,7 +55,7 @@ describe('Apple Pay payment flow', () => {
     { name: 'adminUsersGetService' }
   ]
 
-  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled) => {
+  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY') => {
     return [
       {
         name: 'connectorGetChargeDetails',
@@ -62,7 +65,8 @@ describe('Apple Pay payment flow', () => {
           state: { finished: false, status: 'started' },
           allowApplePay: applePayEnabled,
           allowGooglePay: googlePayEnabled,
-          gatewayMerchantId: 'SMTHG12345UP'
+          gatewayMerchantId: 'SMTHG12345UP',
+          emailCollectionMode: emailCollectionMode
         }
       },
       { name: 'cardIdValidCardDetails' }
@@ -110,6 +114,44 @@ describe('Apple Pay payment flow', () => {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
           win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, 'jonheslop@bla.test')
+          // Stub fetch so we can simulate
+          // 1. The merchant validation call to Apple
+          // 2. The auth call to connector
+          cy.stub(win, 'fetch', mockFetchAPI)
+        }
+      })
+
+      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
+      cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.visible')
+      cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').click()
+
+      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
+      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq('/')
+        expect(loc.search).to.eq(returnURL)
+      })
+    })
+
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be marked as used (POST)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    })
+
+    it('Should show Apple Pay as a payment option with email address collection disabled and user chooses Apple Pay', () => {
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'OFF'))
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          // Stub Apple Pay API (which only exists within Safari)
+          win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, null)
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector

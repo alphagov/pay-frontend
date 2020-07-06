@@ -2,12 +2,13 @@
 
 const { prepareAppleRequestObject, showErrorSummary, toggleWaiting } = require('./helpers')
 const rfc822Validator = require('rfc822-validate')
+const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
 module.exports = () => {
   const session = new ApplePaySession(4, prepareAppleRequestObject())
 
   function validateMerchantSession (url) {
-    return fetch(`/apple-pay-merchant-validation`, {
+    return fetch('/apple-pay-merchant-validation', {
       method: 'POST',
       credentials: 'same-origin',
       headers: {
@@ -41,15 +42,18 @@ module.exports = () => {
     const { payment } = event
     toggleWaiting('apple-pay-payment-method-submit')
 
-    if (!rfc822Validator(payment.shippingContact.emailAddress)) {
-      toggleWaiting('apple-pay-payment-method-submit')
-      showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
+    if (email_collection_mode !== 'OFF') { // eslint-disable-line camelcase
+      if (!payment.shippingContact || typeof payment.shippingContact.emailAddress !== 'string' ||
+          !rfc822Validator(payment.shippingContact.emailAddress)) {
+        toggleWaiting('apple-pay-payment-method-submit')
+        showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
 
-      const emailError = new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
-      return session.completePayment({
-        status: ApplePaySession.STATUS_FAILURE,
-        errors: [emailError]
-      })
+        const emailError = new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
+        return session.completePayment({
+          status: ApplePaySession.STATUS_FAILURE,
+          errors: [emailError]
+        })
+      }
     }
 
     return fetch(`/web-payments-auth-request/apple/${window.paymentDetails.chargeID}`, {

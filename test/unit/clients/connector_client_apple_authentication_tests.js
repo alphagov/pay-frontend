@@ -39,7 +39,7 @@ describe('connectors client - apple authentication API', function () {
 
   describe('Authenticate apple payment', function () {
     describe('authorisation success', function () {
-      const appleAuthRequest = fixtures.appleAuthRequestDetails()
+      const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test' })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before(() => {
@@ -70,8 +70,39 @@ describe('connectors client - apple authentication API', function () {
     })
   })
 
+  describe('authorisation success with no email', function () {
+    const appleAuthRequest = fixtures.appleAuthRequestDetails()
+    const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
+
+    before(() => {
+      const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
+        .withRequestBody(appleAuthRequest.getPactified())
+        .withMethod('POST')
+        .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+        .withUponReceiving('a valid Apple Pay auth request with no email address which should be authorised')
+        .withResponseBody(authorisationSuccessResponse.getPactified())
+        .withStatusCode(200)
+        .build()
+      return provider.addInteraction(builder)
+    })
+
+    afterEach(() => provider.verify())
+
+    it('should return authorisation success', function (done) {
+      const payload = appleAuthRequest.getPlain()
+      connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+        chargeId: TEST_CHARGE_ID,
+        provider: 'apple',
+        payload: payload
+      }).then(res => {
+        expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+        done()
+      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+    })
+  })
+
   describe('authorisation declined', function () {
-    const appleAuthRequest = fixtures.appleAuthRequestDetails({ lastDigitsCardNumber: '0002' })
+    const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0002' })
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
@@ -98,7 +129,7 @@ describe('connectors client - apple authentication API', function () {
   })
 
   describe('authorisation error', function () {
-    const appleAuthRequest = fixtures.appleAuthRequestDetails({ lastDigitsCardNumber: '0119' })
+    const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0119' })
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
