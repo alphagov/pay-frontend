@@ -1,7 +1,55 @@
 'use strict'
 
-// NPM Dependencies
+const logger = require('../../../utils/logger')(__filename)
+const { getLoggingFields } = require('../../../utils/logging_fields_helper')
+const { output, redact } = require('../../../utils/structured_logging_value_helper')
 const humps = require('humps')
+
+const logselectedPayloadProperties = req => {
+  const selectedPayloadProperties = {}
+  const payload = req.body
+
+  if (payload.token) {
+    selectedPayloadProperties.token = {}
+
+    if (payload.token.paymentMethod) {
+      selectedPayloadProperties.token.paymentMethod = {}
+
+      if ('displayName' in payload.token.paymentMethod) {
+        selectedPayloadProperties.token.paymentMethod.displayName = output(payload.token.paymentMethod.displayName)
+      }
+
+      if ('network' in payload.token.paymentMethod) {
+        selectedPayloadProperties.token.paymentMethod.network = output(payload.token.paymentMethod.network)
+      }
+
+      if ('type' in payload.token.paymentMethod) {
+        selectedPayloadProperties.token.paymentMethod.type = output(payload.token.paymentMethod.type)
+      }
+    }
+
+    if (payload.shippingContact) {
+      selectedPayloadProperties.shippingContact = {}
+
+      if ('givenName' in payload.shippingContact) {
+        selectedPayloadProperties.shippingContact.givenName = redact(payload.shippingContact.givenName)
+      }
+
+      if ('familyName' in payload.shippingContact) {
+        selectedPayloadProperties.shippingContact.familyName = redact(payload.shippingContact.familyName)
+      }
+
+      if ('emailAddress' in payload.shippingContact) {
+        selectedPayloadProperties.shippingContact.emailAddress = redact(payload.shippingContact.emailAddress)
+      }
+    }
+  }
+
+  logger.info('Received Apple Pay payload', {
+    ...getLoggingFields(req),
+    selected_payload_properties: selectedPayloadProperties
+  })
+}
 
 const normaliseCardName = cardName => {
   const lowerCaseCardName = cardName.toLowerCase()
@@ -26,7 +74,11 @@ const nullable = word => {
 
 const normaliseLastDigitsCardNumber = displayName => displayName.substr(displayName.length - 4)
 
-module.exports = payload => {
+module.exports = req => {
+  logselectedPayloadProperties(req)
+
+  const payload = req.body
+
   const paymentInfo = {
     last_digits_card_number: normaliseLastDigitsCardNumber(payload.token.paymentMethod.displayName),
     brand: normaliseCardName(payload.token.paymentMethod.network),
