@@ -30,7 +30,7 @@ describe('normalise apple pay payload', function () {
         transactionIdentifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
       }
     }
-    const normalisedPayload = normalise(applePayPayload)
+    const normalisedPayload = normalise({ body: applePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
@@ -81,7 +81,7 @@ describe('normalise apple pay payload', function () {
         transactionIdentifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
       }
     }
-    const normalisedPayload = normalise(applePayPayload)
+    const normalisedPayload = normalise({ body: applePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {

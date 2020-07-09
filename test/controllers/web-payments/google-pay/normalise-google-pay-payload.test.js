@@ -24,7 +24,7 @@ describe('normalise Google Pay payload', () => {
       payerName: 'Some Name'
     }
 
-    const normalisedPayload = normalise(googlePayPayload)
+    const normalisedPayload = normalise({ body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
@@ -60,7 +60,7 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise(googlePayPayload)
+    const normalisedPayload = normalise({ body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
