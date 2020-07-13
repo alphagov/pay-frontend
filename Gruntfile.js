@@ -60,14 +60,6 @@ module.exports = function (grunt) {
         dest: 'public'
       }]
     },
-    applePayVerification: {
-      files: [{
-        expand: true,
-        cwd: 'app/assets/apple-pay',
-        src: ['**'],
-        dest: 'public/.well-known'
-      }]
-    },
     worldpayIframe: {
       files: [{
         expand: true,
