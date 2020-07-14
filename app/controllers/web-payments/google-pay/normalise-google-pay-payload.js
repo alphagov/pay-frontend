@@ -44,11 +44,19 @@ const normaliseCardName = cardName => {
     case 'AMEX':
       return 'american-express'
     case 'VISA':
+    case 'ELECTRON':
       return 'visa'
+    case 'DISCOVER':
+      return 'discover'
+    case 'JCB':
+      return 'jcb'
+    case 'MAESTRO':
+      return 'maestro'
     default:
-      throw new Error('Unrecognised card brand in google pay payload')
+      throw new Error('Unrecognised card brand in Google Pay payload: ' + cardName)
   }
 }
+
 const nullable = word => {
   if (word.length === 0 || !word.trim()) {
     return null
