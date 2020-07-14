@@ -59,7 +59,15 @@ const normaliseCardName = cardName => {
     case 'amex':
       return 'american-express'
     case 'visa':
+    case 'electron':
       return 'visa'
+    case 'discover':
+      return 'discover'
+    case 'jcb':
+      return 'jcb'
+    case 'maestro':
+      return 'maestro'
+
     default:
       throw new Error('Unrecognised card brand in Apple Pay payload: ' + cardName)
   }
