@@ -50,8 +50,6 @@ const normaliseCardName = cardName => {
       return 'discover'
     case 'JCB':
       return 'jcb'
-    case 'MAESTRO':
-      return 'maestro'
     default:
       throw new Error('Unrecognised card brand in Google Pay payload: ' + cardName)
   }
