@@ -43,9 +43,11 @@ const checkOriginHostName = origin => {
 }
 
 const submitWithWorldpay3dsFlexDdcResult = form => {
+  const DDC_TIMEOUT_IN_MILLISECONDS = 30000
+
   const worldpayNoResponseTimeout = window.setTimeout(() => {
     form.submit()
-  }, 10000)
+  }, DDC_TIMEOUT_IN_MILLISECONDS)
 
   window.addEventListener('message', function (event) {
     if (checkOriginHostName(event.origin)) {
@@ -68,7 +70,7 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
     const innerForm = iFrameContent.getElementById('collectionForm')
     innerForm.action = Charge.worldpay_3ds_flex_ddc_url
     iFrameContent.getElementById('input-jwt').value = Charge.worldpay_3ds_flex_ddc_jwt
-    iFrameContent.getElementById('input-bin').value = form.elements['cardNo'].value
+    iFrameContent.getElementById('input-bin').value = form.elements.cardNo.value
     innerForm.submit()
   }
 
