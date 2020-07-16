@@ -3,6 +3,7 @@
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging_fields_helper')
 const { output, redact } = require('../../../utils/structured_logging_value_helper')
+const isNumeric = require('../../../utils/number')
 const humps = require('humps')
 
 const logselectedPayloadProperties = req => {
@@ -80,7 +81,14 @@ const nullable = word => {
   return word
 }
 
-const normaliseLastDigitsCardNumber = displayName => displayName.substr(displayName.length - 4)
+const normaliseLastDigitsCardNumber = displayName => {
+  let lastDigitsCardNumber = ''
+  const lastFourChars = displayName.substr(displayName.length - 4)
+  if (displayName.length >= 4 && isNumeric(lastFourChars)) {
+    lastDigitsCardNumber = lastFourChars
+  }
+  return lastDigitsCardNumber
+}
 
 module.exports = req => {
   logselectedPayloadProperties(req)
