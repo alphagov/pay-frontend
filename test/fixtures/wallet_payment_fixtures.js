@@ -42,7 +42,7 @@ const fixtures = {
   appleAuthRequestDetails: (ops = {}) => {
     const data = {
       payment_info: {
-        last_digits_card_number: ops.lastDigitsCardNumber || successfulLastDigitsCardNumber,
+        last_digits_card_number: ops.lastDigitsCardNumber !== undefined ? ops.lastDigitsCardNumber : successfulLastDigitsCardNumber,
         brand: 'master-card',
         cardholder_name: 'Some Name'
       },
@@ -60,6 +60,7 @@ const fixtures = {
     if (ops.email) {
       data.payment_info.email = ops.email
     }
+
     return {
       getPactified: () => {
         return pactBase.pactify(data)
