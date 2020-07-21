@@ -69,6 +69,37 @@ describe('connectors client - google authentication API', function () {
       })
     })
 
+    describe('authorisation success with no last card digits', function () {
+      const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '' })
+      const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
+
+      before(() => {
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
+          .withRequestBody(successfulGoogleAuthRequest.getPactified())
+          .withMethod('POST')
+          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withUponReceiving('a valid google pay auth request with no last card digits which should be authorised')
+          .withResponseBody(authorisationSuccessResponse.getPactified())
+          .withStatusCode(200)
+          .build()
+        return provider.addInteraction(builder)
+      })
+
+      afterEach(() => provider.verify())
+
+      it('should return authorisation success', function (done) {
+        const payload = successfulGoogleAuthRequest.getPlain()
+        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          chargeId: TEST_CHARGE_ID,
+          provider: 'google',
+          payload: payload
+        }).then(res => {
+          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+          done()
+        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+      })
+    })
+
     describe('authorisation declined', function () {
       const declinedGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '0002' })
 
