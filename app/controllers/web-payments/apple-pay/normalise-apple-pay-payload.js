@@ -80,7 +80,16 @@ const nullable = word => {
   return word
 }
 
-const normaliseLastDigitsCardNumber = displayName => displayName.substr(displayName.length - 4)
+const normaliseLastDigitsCardNumber = displayName => {
+  let lastDigitsCardNumber = ''
+  if (displayName.length >= 4) {
+    const lastFourChars = displayName.substr(-4)
+    if (lastFourChars.match(/[0-9]{4}/)) {
+      lastDigitsCardNumber = lastFourChars
+    }
+  }
+  return lastDigitsCardNumber
+}
 
 module.exports = req => {
   logselectedPayloadProperties(req)
