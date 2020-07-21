@@ -55,6 +55,16 @@ const normaliseCardName = cardName => {
   }
 }
 
+const normaliseLastDigitsCardNumber = cardDetails => {
+  let lastDigitsCardNumber = ''
+
+  if (cardDetails.match(/^[0-9]{4}$/)) {
+    lastDigitsCardNumber = cardDetails
+  }
+
+  return lastDigitsCardNumber
+}
+
 const nullable = word => {
   if (word.length === 0 || !word.trim()) {
     return null
@@ -68,7 +78,7 @@ module.exports = req => {
   const payload = req.body
 
   const paymentInfo = {
-    last_digits_card_number: payload.details.paymentMethodData.info.cardDetails,
+    last_digits_card_number: normaliseLastDigitsCardNumber(payload.details.paymentMethodData.info.cardDetails),
     brand: normaliseCardName(payload.details.paymentMethodData.info.cardNetwork),
     cardholder_name: nullable(payload.payerName || ''),
     email: nullable(payload.payerEmail || '')
