@@ -9,6 +9,7 @@ const {
   WORLDPAY_3DS_FLEX_DDC_TEST_URL,
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL,
   DECRYPT_AND_OMIT_CARD_DATA,
+  GOOGLE_PAY_MERCHANT_ID,
   GOOGLE_PAY_MERCHANT_ID_2
 } = process.env
 const logger = require('../utils/logger')(__filename)
@@ -55,7 +56,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
 
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
-  if (googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
+  if (googlePayMerchantId !== GOOGLE_PAY_MERCHANT_ID && googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
     logger.info('Using GOOGLE_PAY_MERCHANT_ID_2', { ...getLoggingFields(req) })
   }
 
