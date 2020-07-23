@@ -123,7 +123,7 @@
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.3",
     "chokidar-cli": "latest",
-    "cypress": "3.1.5",
+    "cypress": "4.11.0",
     "dotenv": "^8.2.0",
     "envfile": "^5.1.0",
     "eslint": "^6.8.0",
