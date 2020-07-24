@@ -199,13 +199,6 @@ describe('normalise apple pay payload', function () {
   })
   it('should return the correct format for the payload with min data', function () {
     const applePayPayload = {
-      shippingContact: {
-        emailAddress: '',
-        familyName: '',
-        givenName: '',
-        phoneticFamilyName: '',
-        phoneticGivenName: ''
-      },
       token: {
         paymentData: {
           version: 'EC_v1',
