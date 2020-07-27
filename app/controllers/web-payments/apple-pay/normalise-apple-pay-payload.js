@@ -73,13 +73,6 @@ const normaliseCardName = cardName => {
   }
 }
 
-const nullable = word => {
-  if (word.length === 0 || !word.trim()) {
-    return null
-  }
-  return word
-}
-
 const normaliseLastDigitsCardNumber = displayName => {
   let lastDigitsCardNumber = ''
   if (displayName.length >= 4) {
@@ -91,6 +84,28 @@ const normaliseLastDigitsCardNumber = displayName => {
   return lastDigitsCardNumber
 }
 
+const normaliseCardholderName = payload => {
+  if (payload.shippingContact) {
+    if (payload.shippingContact.givenName && payload.shippingContact.familyName) {
+      return payload.shippingContact.givenName + ' ' + payload.shippingContact.familyName
+    }
+    if (payload.shippingContact.familyName) {
+      return payload.shippingContact.familyName
+    }
+    if (payload.shippingContact.givenName) {
+      return payload.shippingContact.givenName
+    }
+  }
+  return null
+}
+
+const normaliseEmail = payload => {
+  if (payload.shippingContact && payload.shippingContact.emailAddress) {
+    return payload.shippingContact.emailAddress
+  }
+  return null
+}
+
 module.exports = req => {
   logselectedPayloadProperties(req)
 
@@ -100,8 +115,8 @@ module.exports = req => {
     last_digits_card_number: normaliseLastDigitsCardNumber(payload.token.paymentMethod.displayName),
     brand: normaliseCardName(payload.token.paymentMethod.network),
     card_type: payload.token.paymentMethod.type.toUpperCase(),
-    cardholder_name: nullable(payload.shippingContact.givenName + ' ' + payload.shippingContact.familyName),
-    email: nullable(payload.shippingContact.emailAddress)
+    cardholder_name: normaliseCardholderName(payload),
+    email: normaliseEmail(payload)
   }
 
   delete payload.token.paymentMethod
