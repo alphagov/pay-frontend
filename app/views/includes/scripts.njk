@@ -49,6 +49,11 @@
       window.payScripts.formValidation.init();
       window.payScripts.epdq3ds2.init();
     } else if (mainWrap.classList.contains('confirm-page')) {
+      var confirmationForm = document.getElementById('confirmation')
+      var confirmButton = document.getElementById('confirm')
+      confirmationForm.addEventListener('submit', function () {
+        confirmButton.setAttribute('disabled', 'disabled')
+      })
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
     {% if allowGooglePay%}
