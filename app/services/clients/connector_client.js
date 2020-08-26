@@ -4,6 +4,13 @@ const logger = require('../../utils/logger')(__filename)
 const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 
+const metrics = require('metrics')
+const registry = new metrics.Report
+const GraphiteReporter = new metrics.GraphiteReporter(registry, "frontend.connector.calls", process.env.METRICS_HOST, 8094)
+const meter = new metrics.Meter
+registry.addMetric("myapp.Meter", meter)
+GraphiteReporter.start(1000)
+
 // Constants
 const SERVICE_NAME = 'connector'
 
@@ -161,6 +168,10 @@ const _getConnector = (url, description, loggingFields = {}) => {
       description: description,
       service: SERVICE_NAME
     }
+
+    console.log('Calling meter.mark()')
+    meter.mark()
+    
     requestLogger.logRequestStart(context, loggingFields)
     baseClient.get(
       url,
