@@ -55,7 +55,7 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _putConnector = (url, payload, description, loggingFields = {}) => {
+const _putConnector = (url, payload, description, loggingFields = {}, callingFunction) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -72,6 +72,9 @@ const _putConnector = (url, payload, description, loggingFields = {}) => {
       null
     ).then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+      if (response.statusCode > 499 && response.statusCode < 600) {
+        incrementFailureCounter(callingFunction, response.statusCode)
+      }
       resolve(response)
     }).catch(err => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
@@ -82,13 +85,14 @@ const _putConnector = (url, payload, description, loggingFields = {}) => {
         url: url,
         error: err
       })
+      incrementFailureCounter(callingFunction, 'error')
       reject(err)
     })
   })
 }
 
 /** @private */
-const _postConnector = (url, payload, description, loggingFields = {}) => {
+const _postConnector = (url, payload, description, loggingFields = {}, callingFunction) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -104,6 +108,9 @@ const _postConnector = (url, payload, description, loggingFields = {}) => {
       null
     ).then(response => {
       logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+      if (response.statusCode > 499 && response.statusCode < 600) {
+        incrementFailureCounter(callingFunction, response.statusCode)
+      }
       resolve(response)
     }).catch(err => {
       logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
@@ -114,13 +121,14 @@ const _postConnector = (url, payload, description, loggingFields = {}) => {
         url: url,
         error: err
       })
+      incrementFailureCounter(callingFunction, 'error')
       reject(err)
     })
   })
 }
 
 /** @private */
-const _patchConnector = (url, payload, description, loggingFields = {}) => {
+const _patchConnector = (url, payload, description, loggingFields = {}, callingFunction) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -136,6 +144,9 @@ const _patchConnector = (url, payload, description, loggingFields = {}) => {
       null
     ).then(response => {
       logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+      if (response.statusCode > 499 && response.statusCode < 600) {
+        incrementFailureCounter(callingFunction, response.statusCode)
+      }
       resolve(response)
     }).catch(err => {
       logger.info('PATCH %s to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
@@ -146,6 +157,7 @@ const _patchConnector = (url, payload, description, loggingFields = {}) => {
         url: url,
         error: err
       })
+      incrementFailureCounter(callingFunction, 'error')
       reject(err)
     })
   })
@@ -169,7 +181,6 @@ const _getConnector = (url, description, loggingFields = {}, callingFunction) =>
       null
     ).then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
-      getCounter(`${METRICS_PREFIX}.${callingFunction}.${response.statusCode}`).inc() //TODO delete after sending data to HG is verified
       if (response.statusCode !== 200) {
         logger.warn('Calling connector to GET something returned a non http 200 response', {
           ...loggingFields,
@@ -191,7 +202,7 @@ const _getConnector = (url, description, loggingFields = {}, callingFunction) =>
         url: url,
         error: err
       })
-      getCounter(`${METRICS_PREFIX}.${callingFunction}.error`).inc()
+      incrementFailureCounter(callingFunction, 'error')
       reject(err)
     })
   })
@@ -204,39 +215,39 @@ const incrementFailureCounter = (callingFunction, statusCode) => {
 // POST functions
 const threeDs = (chargeOptions, loggingFields = {}) => {
   const threeDsUrl = _getThreeDsFor(chargeOptions.chargeId)
-  return _postConnector(threeDsUrl, chargeOptions.payload, '3ds', loggingFields)
+  return _postConnector(threeDsUrl, chargeOptions.payload, '3ds', loggingFields, 'threeDs')
 }
 
 const chargeAuth = (chargeOptions, loggingFields = {}) => {
   const authUrl = _getAuthUrlFor(chargeOptions.chargeId)
-  return _postConnector(authUrl, chargeOptions.payload, 'create charge', loggingFields)
+  return _postConnector(authUrl, chargeOptions.payload, 'create charge', loggingFields, 'chargeAuth')
 }
 
 const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
   const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.provider)
-  return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields)
+  return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields, 'chargeAuthWithWallet')
 }
 
 const capture = (chargeOptions, loggingFields = {}) => {
   const captureUrl = _getCaptureUrlFor(chargeOptions.chargeId)
-  return _postConnector(captureUrl, null, 'do capture', loggingFields)
+  return _postConnector(captureUrl, null, 'do capture', loggingFields, 'capture')
 }
 
 const cancel = (chargeOptions, loggingFields = {}) => {
   const cancelUrl = _getCancelUrlFor(chargeOptions.chargeId)
-  return _postConnector(cancelUrl, null, 'cancel charge', loggingFields)
+  return _postConnector(cancelUrl, null, 'cancel charge', loggingFields, 'cancel')
 }
 
 // PUT functions
 const updateStatus = (chargeOptions, loggingFields = {}) => {
   const updateStatusUrl = _getUpdateStatusUrlFor(chargeOptions.chargeId)
-  return _putConnector(updateStatusUrl, chargeOptions.payload, 'update status', loggingFields)
+  return _putConnector(updateStatusUrl, chargeOptions.payload, 'update status', loggingFields, 'updateStatus')
 }
 
 // PATCH functions
 const patch = (chargeOptions, loggingFields = {}) => {
   const patchUrl = _getPatchUrlFor(chargeOptions.chargeId)
-  return _patchConnector(patchUrl, chargeOptions.payload, 'patch', loggingFields)
+  return _patchConnector(patchUrl, chargeOptions.payload, 'patch', loggingFields, 'patch')
 }
 
 // GET functions
@@ -257,7 +268,7 @@ const getWorldpay3dsFlexJwt = (chargeOptions, loggingFields = {}) => {
 
 const markTokenAsUsed = (chargeOptions, loggingFields = {}) => {
   const markUsedTokenUrl = _markUsedTokenUrl(chargeOptions.tokenId)
-  return _postConnector(markUsedTokenUrl, undefined, 'mark token as used', loggingFields)
+  return _postConnector(markUsedTokenUrl, undefined, 'mark token as used', loggingFields, 'markTokenAsUsed')
 }
 
 module.exports = function (clientOptions = {}) {
