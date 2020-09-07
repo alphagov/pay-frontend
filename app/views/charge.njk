@@ -145,16 +145,26 @@
                       </p>
                     {% endif %}
                   </label>
+                  
+                  {% if allowMoto and motoMaskCardNumberInput %} 
+                    {% set cardNumberInputType = 'password' %}  
+                    {% set cardNumberAutoCompleteType = 'off' %}
+                  {% else %}
+                    {% set cardNumberInputType = 'text' %}   
+                    {% set cardNumberAutoCompleteType = 'cc-number' %}
+                  {% endif %}
+
                   <input id="card-no"
-                    type="text"
-                    inputmode="numeric"
-                    pattern="[0-9]*"
-                    name="cardNo"
-                    maxlength="26"
-                    class="govuk-input govuk-!-width-three-quarters"
-                    autocomplete="cc-number"
-                    value="{{cardNo}}"
-                  />
+                      type="{{cardNumberInputType}}"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      name="cardNo"
+                      maxlength="26"
+                      class="govuk-input govuk-!-width-three-quarters"
+                      autocomplete="{{cardNumberAutoCompleteType}}"
+                      value="{{cardNo}}"
+                    />
+
                   <ul class="accepted-cards field-empty">
                     {% if allowedCards %}
                       {% for currentAllowedCard in allowedCards %}
@@ -285,15 +295,24 @@
                       </p>
                     {% endif %}
                   </label>
+
+                  {% if allowMoto and motoMaskCardSecurityCodeInput %} 
+                    {% set securityCodeInputType = 'password' %}  
+                    {% set securityCodeAutoCompleteType = 'off' %}
+                  {% else %}
+                    {% set securityCodeInputType = 'text' %}   
+                    {% set securityCodeAutoCompleteType = 'cc-csc' %}
+                  {% endif %} 
+
                   <input id="cvc"
-                  type="text"
+                  type="{{securityCodeInputType}}"
                   inputmode="numeric"
                   pattern="[0-9]*"
                   value="{{cvc}}"
                   name="cvc"
                   class="govuk-input govuk-input--width-3 cvc"
                   maxlength="4"
-                  autocomplete="cc-csc"/>
+                  autocomplete="{{securityCodeAutoCompleteType}}"/>
                   <img src="/images/security-code.png" class="generic-cvc" alt="{{ __p("cardDetails.cvcTip") }}"/>
                   <span class="either hidden">
                     {{ __p("commonConjunctions.or") }}
