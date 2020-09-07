@@ -3,10 +3,10 @@
 const logger = require('../../utils/logger')(__filename)
 const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
+const { getCounter } = require('../../metrics/graphite_reporter')
+const METRICS_PREFIX = 'internal-rest-call.connector'
 
-// Constants
 const SERVICE_NAME = 'connector'
-
 const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/{provider}'
 const CARD_AUTH_PATH = '/v1/frontend/charges/{chargeId}/cards'
 const CARD_3DS_PATH = '/v1/frontend/charges/{chargeId}/3ds'
@@ -152,7 +152,7 @@ const _patchConnector = (url, payload, description, loggingFields = {}) => {
 }
 
 /** @private */
-const _getConnector = (url, description, loggingFields = {}) => {
+const _getConnector = (url, description, loggingFields = {}, callingFunction) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -169,6 +169,7 @@ const _getConnector = (url, description, loggingFields = {}) => {
       null
     ).then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+      getCounter(`${METRICS_PREFIX}.${callingFunction}.${response.statusCode}`).inc() //TODO delete after sending data to HG is verified
       if (response.statusCode !== 200) {
         logger.warn('Calling connector to GET something returned a non http 200 response', {
           ...loggingFields,
@@ -176,6 +177,9 @@ const _getConnector = (url, description, loggingFields = {}) => {
           method: 'GET',
           status_code: response.statusCode
         })
+        if (response.statusCode > 499 && response.statusCode < 600) {
+          incrementFailureCounter(callingFunction, response.statusCode)
+        }
       }
       resolve(response)
     }).catch(err => {
@@ -187,9 +191,14 @@ const _getConnector = (url, description, loggingFields = {}) => {
         url: url,
         error: err
       })
+      getCounter(`${METRICS_PREFIX}.${callingFunction}.error`).inc()
       reject(err)
     })
   })
+}
+
+const incrementFailureCounter = (callingFunction, statusCode) => {
+  getCounter(`${METRICS_PREFIX}.${callingFunction}.${statusCode}`).inc()
 }
 
 // POST functions
@@ -233,17 +242,17 @@ const patch = (chargeOptions, loggingFields = {}) => {
 // GET functions
 const findCharge = (chargeOptions, loggingFields = {}) => {
   const findChargeUrl = _getFindChargeUrlFor(chargeOptions.chargeId)
-  return _getConnector(findChargeUrl, 'find charge', loggingFields)
+  return _getConnector(findChargeUrl, 'find charge', loggingFields, 'findCharge')
 }
 
 const findByToken = (chargeOptions, loggingFields = {}) => {
   const findByTokenUrl = _getFindByTokenUrlFor(chargeOptions.tokenId)
-  return _getConnector(findByTokenUrl, 'find by token', loggingFields)
+  return _getConnector(findByTokenUrl, 'find by token', loggingFields, 'findByToken')
 }
 
 const getWorldpay3dsFlexJwt = (chargeOptions, loggingFields = {}) => {
   const getWorldpay3dsFlexJwtUrl = _getWorldpay3dsFlexUrlFor(chargeOptions.chargeId)
-  return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT', loggingFields)
+  return _getConnector(getWorldpay3dsFlexJwtUrl, 'get Worldpay 3DS Flex DDC JWT', loggingFields, 'getWorldpay3dsFlexJwt')
 }
 
 const markTokenAsUsed = (chargeOptions, loggingFields = {}) => {
