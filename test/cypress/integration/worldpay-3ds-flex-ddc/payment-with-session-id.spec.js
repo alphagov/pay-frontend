@@ -95,32 +95,36 @@ describe('Worldpay 3ds flex card payment flow', () => {
   }
 
   setUpAndCheckCardPaymentPage()
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details and a JWT should cause worldpay iFrame result to post a message with the session ID', () => {
+  describe('Valid DDC response', () => {
+    it('Form is submitted with the session ID from the DDC response', () => {
       cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStub])
 
       cy.get('#card-details').submit().should($form => {
         const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
         expect(formVal).to.eq(worldpaySessionId)
+        const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
+        expect(ddcStatusVal).to.eq('valid DDC result')
       })
     })
   })
 
   setUpAndCheckCardPaymentPage()
-  describe('Secure confirmation page', () => {
-    it('If Worldpay were to respond with status=false, submitting confirmation should not include the hidden input containing the session ID', () => {
+  describe('Worldpay responds with status=false', () => {
+    it('submitting confirmation should not include the hidden input containing the session ID', () => {
       cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStubFailure])
 
       cy.get('#card-details').submit().should($form => {
         const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult
         expect(formVal).to.eq(undefined)
+        const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
+        expect(ddcStatusVal).to.eq('DDC result did not have Status of true')
       })
     })
   })
 
   setUpAndCheckCardPaymentPage()
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation when Worldpay times out after  iframe post should still submit the form but without the worldpaySessionId', () => {
+  describe('DDC times out', () => {
+    it('iframe post should still submit the form but without the worldpaySessionId', () => {
       confirmPaymentDetailsStubs.pop()
       cy.task('setupStubs', confirmPaymentDetailsStubs)
 

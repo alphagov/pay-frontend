@@ -42,10 +42,15 @@ const checkOriginHostName = origin => {
   return Charge.worldpay_3ds_flex_ddc_url.lastIndexOf(origin, 0) === 0
 }
 
+const updateDdcStatusField = (status) => {
+  document.getElementById('worldpay3dsFlexDdcStatus').value = status
+}
+
 const submitWithWorldpay3dsFlexDdcResult = form => {
   const DDC_TIMEOUT_IN_MILLISECONDS = 30000
 
   const worldpayNoResponseTimeout = window.setTimeout(() => {
+    updateDdcStatusField(`DDC timeout after ${DDC_TIMEOUT_IN_MILLISECONDS} milliseconds`)
     form.submit()
   }, DDC_TIMEOUT_IN_MILLISECONDS)
 
@@ -54,7 +59,12 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
       const { MessageType, SessionId, Status } = JSON.parse(event.data)
       if (MessageType === 'profile.completed') {
         if (Status === true && typeof SessionId === 'string') {
+          updateDdcStatusField('valid DDC result')
           addWorldpaySessionIdToForm(form, SessionId)
+        } else if (!Status) {
+          updateDdcStatusField('DDC result did not have Status of true')
+        } else {
+          updateDdcStatusField('no SessionID string in DDC result')
         }
         window.clearTimeout(worldpayNoResponseTimeout)
         form.submit()
@@ -72,6 +82,7 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
     iFrameContent.getElementById('input-jwt').value = Charge.worldpay_3ds_flex_ddc_jwt
     iFrameContent.getElementById('input-bin').value = form.elements.cardNo.value
     innerForm.submit()
+    updateDdcStatusField('DDC initiated')
   }
 
   if (innerDoc.readyState === 'complete') {
