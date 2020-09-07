@@ -72,7 +72,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 
   charge.collectAdditionalBrowserDataForEpdq3ds = charge.gatewayAccount.paymentProvider === 'epdq' &&
-      charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2
+    charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
@@ -137,6 +137,16 @@ module.exports = {
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
+
+
+    const { worldpay3dsFlexDdcStatus } = req.body
+    if (worldpay3dsFlexDdcStatus) {
+      logger.info(`Payment details submitted for a Worldpay 3DS Flex charge. DDC status is: ${worldpay3dsFlexDdcStatus}`,
+        {
+          ...getLoggingFields(req),
+          worldpay_3ds_flex_ddc_status: worldpay3dsFlexDdcStatus
+        })
+    }
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
     // else
