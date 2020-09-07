@@ -177,7 +177,6 @@ const _getConnector = (url, description, loggingFields = {}, callingFunction) =>
     baseClient.get(
       url,
       { correlationId },
-      null,
       null
     ).then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
