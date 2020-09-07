@@ -127,6 +127,9 @@
                 {% if (originalEmail) %}
                   <input name="originalemail" type="hidden" value="{{ originalEmail }}"/>
                 {% endif %}
+                {% if worldpay3dsFlexDdcJwt %}
+                  <input name="worldpay3dsFlexDdcStatus" id="worldpay3dsFlexDdcStatus" type="hidden" value="Not initiated"/>
+                {% endif %}
 
                 <div class="govuk-form-group{% if highlightErrorFields.cardNo %} govuk-form-group--error{% endif %} card-no-group" data-validation="cardNo">
                   <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-width-three-quarters">
