@@ -8,9 +8,11 @@ const i18n = require('i18n')
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
 const cardIdClient = require('../services/clients/cardid_client')
+const { getCounter } = require('../metrics/graphite_reporter')
 
 // Constants
 const i18nConfig = require('../../config/i18n')
+const METRICS_PREFIX = 'internal-rest-call.cardid'
 
 i18n.configure(i18nConfig)
 
@@ -36,6 +38,7 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
         }
         // if the server is down, or returns non 500, just continue
         if (response.statusCode !== 200) {
+          incrementFailureCounter('checkCard', response.statusCode)
           return resolve()
         }
 
@@ -80,9 +83,14 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
           error
         })
         logger.info('POST to %s ended - total time %dms', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
+        incrementFailureCounter('checkCard', 'error')
         resolve()
       })
   })
+}
+
+const incrementFailureCounter = (callingFunction, statusCode) => {
+  getCounter(`${METRICS_PREFIX}.${callingFunction}.${statusCode}`).inc()
 }
 
 const normaliseCardType = function (cardType) {

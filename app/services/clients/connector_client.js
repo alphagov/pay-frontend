@@ -4,8 +4,8 @@ const logger = require('../../utils/logger')(__filename)
 const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 const { getCounter } = require('../../metrics/graphite_reporter')
-const METRICS_PREFIX = 'internal-rest-call.connector'
 
+const METRICS_PREFIX = 'internal-rest-call.connector'
 const SERVICE_NAME = 'connector'
 const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/{provider}'
 const CARD_AUTH_PATH = '/v1/frontend/charges/{chargeId}/cards'
