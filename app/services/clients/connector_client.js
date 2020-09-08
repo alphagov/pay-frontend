@@ -164,7 +164,7 @@ const _patchConnector = (url, payload, description, loggingFields = {}, callingF
 }
 
 /** @private */
-const _getConnector = (url, description, loggingFields = {}, callingFunction) => {
+const _getConnector = (url, description, loggingFields = {}, callingFunctionName) => {
   return new Promise(function (resolve, reject) {
     const startTime = new Date()
     const context = {
@@ -188,7 +188,7 @@ const _getConnector = (url, description, loggingFields = {}, callingFunction) =>
           status_code: response.statusCode
         })
         if (response.statusCode > 499 && response.statusCode < 600) {
-          incrementFailureCounter(callingFunction, response.statusCode)
+          incrementFailureCounter(callingFunctionName, response.statusCode)
         }
       }
       resolve(response)
@@ -201,14 +201,14 @@ const _getConnector = (url, description, loggingFields = {}, callingFunction) =>
         url: url,
         error: err
       })
-      incrementFailureCounter(callingFunction, 'error')
+      incrementFailureCounter(callingFunctionName, 'error')
       reject(err)
     })
   })
 }
 
-const incrementFailureCounter = (callingFunction, statusCode) => {
-  getCounter(`${METRICS_PREFIX}.${callingFunction}.${statusCode}`).inc()
+const incrementFailureCounter = (callingFunctionName, statusCode) => {
+  getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 
 // POST functions

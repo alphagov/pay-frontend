@@ -89,8 +89,8 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
   })
 }
 
-const incrementFailureCounter = (callingFunction, statusCode) => {
-  getCounter(`${METRICS_PREFIX}.${callingFunction}.${statusCode}`).inc()
+const incrementFailureCounter = (callingFunctionName, statusCode) => {
+  getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 
 const normaliseCardType = function (cardType) {

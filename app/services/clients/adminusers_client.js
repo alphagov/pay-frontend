@@ -15,47 +15,46 @@ let baseUrl
 let correlationId
 
 /** @private */
-const _getAdminUsers = (url, description, findOptions, loggingFields = {}, callingFunction) => {
-  return new Promise(function (resolve, reject) {
-    const startTime = new Date()
-    const context = {
-      url: url,
-      startTime: startTime,
-      method: 'GET',
-      description: description,
-      service: SERVICE_NAME
+function _getAdminUsers(url, description, findOptions, loggingFields = {}, callingFunctionName) {
+  const startTime = new Date()
+  const context = {
+    url: url,
+    startTime: startTime,
+    method: 'GET',
+    description: description,
+    service: SERVICE_NAME
+  }
+  requestLogger.logRequestStart(context, loggingFields)
+  const params = {
+    correlationId: correlationId,
+    qs: {
+      gatewayAccountId: findOptions.gatewayAccountId
     }
-    requestLogger.logRequestStart(context, loggingFields)
-    const params = {
-      correlationId: correlationId,
-      qs: {
-        gatewayAccountId: findOptions.gatewayAccountId
-      }
-    }
-    baseClient.get(url, params, null)
+  }
+  return baseClient
+    .get(url, params, null)
     .then(response => {
       requestLogger.logRequestEnd(context, response.statusCode, loggingFields)
       if (SUCCESS_CODES.includes(response.statusCode)) {
-        resolve(new Service(response.body))
+        return new Service(response.body)
       } else {
         if (response.statusCode > 499 && response.statusCode < 600) {
-          incrementFailureCounter(callingFunction, response.statusCode)
+          incrementFailureCounter(callingFunctionName, response.statusCode)
         }
-        resolve(response.body)
+        return response.body
       }
     }).catch(err => {
       requestLogger.logRequestError(context, err, loggingFields)
-      incrementFailureCounter(callingFunction, 'error')
-      reject(err)
+      incrementFailureCounter(callingFunctionName, 'error')
+      throw err
     })
-  })
 }
 
-const incrementFailureCounter = (callingFunction, statusCode) => {
-  getCounter(`${METRICS_PREFIX}.${callingFunction}.${statusCode}`).inc()
+const incrementFailureCounter = (callingFunctionName, statusCode) => {
+  getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 
-const findServiceBy = function findServiceBy (findOptions, loggingFields = {}) {
+const findServiceBy = function findServiceBy(findOptions, loggingFields = {}) {
   const servicesUrl = `${baseUrl}/v1/api/services`
   return _getAdminUsers(servicesUrl, 'find service', findOptions, loggingFields, 'findServiceBy')
 }
