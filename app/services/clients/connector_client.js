@@ -70,6 +70,13 @@ function _putConnector(url, payload, description, loggingFields = {}, callingFun
     .then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       if (response.statusCode > 499 && response.statusCode < 600) {
+        logger.error(`Error communicating with ${url}`, {
+          ...loggingFields,
+          service: 'connector',
+          method: 'PUT',
+          status_code: response.statusCode,
+          url: url
+        })
         incrementFailureCounter(callingFunctionName, response.statusCode)
       }
       return response
@@ -103,6 +110,13 @@ function _postConnector(url, payload, description, loggingFields = {}, callingFu
   ).then(response => {
     logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     if (response.statusCode > 499 && response.statusCode < 600) {
+      logger.error(`Error communicating with ${url}`, {
+        ...loggingFields,
+        service: 'connector',
+        method: 'POST',
+        status_code: response.statusCode,
+        url: url
+      })
       incrementFailureCounter(callingFunctionName, response.statusCode)
     }
     return response
@@ -136,6 +150,13 @@ function _patchConnector(url, payload, description, loggingFields = {}, callingF
   ).then(response => {
     logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     if (response.statusCode > 499 && response.statusCode < 600) {
+      logger.error(`Error communicating with ${url}`, {
+        ...loggingFields,
+        service: 'connector',
+        method: 'PATCH',
+        status_code: response.statusCode,
+        url: url
+      })
       incrementFailureCounter(callingFunctionName, response.statusCode)
     }
     return response
@@ -167,11 +188,12 @@ function _getConnector(url, description, loggingFields = {}, callingFunctionName
     .then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       if (response.statusCode !== 200) {
-        logger.warn('Calling connector to GET something returned a non http 200 response', {
+        logger.error(`Error communicating with ${url}`, {
           ...loggingFields,
           service: 'connector',
           method: 'GET',
-          status_code: response.statusCode
+          status_code: response.statusCode,
+          url: url
         })
         if (response.statusCode > 499 && response.statusCode < 600) {
           incrementFailureCounter(callingFunctionName, response.statusCode)

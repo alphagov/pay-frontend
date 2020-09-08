@@ -9,6 +9,7 @@ const i18n = require('i18n')
 const logger = require('../utils/logger')(__filename)
 const cardIdClient = require('../services/clients/cardid_client')
 const { getCounter } = require('../metrics/graphite_reporter')
+const requestLogger = require('../utils/request_logger')
 
 // Constants
 const i18nConfig = require('../../config/i18n')
@@ -38,6 +39,13 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
         }
         // if the server is down, or returns non 500, just continue
         if (response.statusCode !== 200) {
+          logger.error(`Error communicating with ${cardIdClient.CARD_URL}`, {
+            ...loggingFields,
+            service: 'cardid',
+            method: 'POST',
+            status_code: response.statusCode,
+            url: cardIdClient.CARD_URL
+          })
           incrementFailureCounter('checkCard', response.statusCode)
           return resolve()
         }
@@ -78,10 +86,7 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
         resolve(card)
       })
       .catch(error => {
-        logger.error('Error calling card id to check card', {
-          ...loggingFields,
-          error
-        })
+        requestLogger.logRequestError({service: 'cardid', description: 'get card information'}, error, loggingFields)
         logger.info('POST to %s ended - total time %dms', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
         incrementFailureCounter('checkCard', 'error')
         resolve()
