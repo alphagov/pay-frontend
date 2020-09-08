@@ -55,27 +55,24 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _putConnector = (url, payload, description, loggingFields = {}, callingFunction) => {
-  return new Promise(function (resolve, reject) {
-    const startTime = new Date()
-    const context = {
-      ...loggingFields,
-      url: url,
-      method: 'PUT',
-      description: description,
-      service: SERVICE_NAME
-    }
-    requestLogger.logRequestStart(context, loggingFields)
-    baseClient.put(
-      url,
-      { payload, correlationId },
-      null
-    ).then(response => {
+function _putConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
+  const startTime = new Date()
+  const context = {
+    ...loggingFields,
+    url: url,
+    method: 'PUT',
+    description: description,
+    service: SERVICE_NAME
+  }
+  requestLogger.logRequestStart(context, loggingFields)
+  return baseClient
+    .put(url, { payload, correlationId })
+    .then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       if (response.statusCode > 499 && response.statusCode < 600) {
-        incrementFailureCounter(callingFunction, response.statusCode)
+        incrementFailureCounter(callingFunctionName, response.statusCode)
       }
-      resolve(response)
+      return response
     }).catch(err => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
@@ -85,100 +82,89 @@ const _putConnector = (url, payload, description, loggingFields = {}, callingFun
         url: url,
         error: err
       })
-      incrementFailureCounter(callingFunction, 'error')
-      reject(err)
+      incrementFailureCounter(callingFunctionName, 'error')
+      throw err
     })
-  })
 }
 
 /** @private */
-const _postConnector = (url, payload, description, loggingFields = {}, callingFunction) => {
-  return new Promise(function (resolve, reject) {
-    const startTime = new Date()
-    const context = {
-      url: url,
+function _postConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
+  const startTime = new Date()
+  const context = {
+    url: url,
+    method: 'POST',
+    description: description,
+    service: SERVICE_NAME
+  }
+  requestLogger.logRequestStart(context, loggingFields)
+  return baseClient.post(
+    url,
+    { payload, correlationId }
+  ).then(response => {
+    logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+    if (response.statusCode > 499 && response.statusCode < 600) {
+      incrementFailureCounter(callingFunctionName, response.statusCode)
+    }
+    return response
+  }).catch(err => {
+    logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+    logger.error('Calling connector threw exception', {
+      ...loggingFields,
+      service: 'connector',
       method: 'POST',
-      description: description,
-      service: SERVICE_NAME
-    }
-    requestLogger.logRequestStart(context, loggingFields)
-    baseClient.post(
-      url,
-      { payload, correlationId },
-      null
-    ).then(response => {
-      logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
-      if (response.statusCode > 499 && response.statusCode < 600) {
-        incrementFailureCounter(callingFunction, response.statusCode)
-      }
-      resolve(response)
-    }).catch(err => {
-      logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
-      logger.error('Calling connector threw exception', {
-        ...loggingFields,
-        service: 'connector',
-        method: 'POST',
-        url: url,
-        error: err
-      })
-      incrementFailureCounter(callingFunction, 'error')
-      reject(err)
+      url: url,
+      error: err
     })
+    incrementFailureCounter(callingFunctionName, 'error')
+    throw err
   })
 }
 
 /** @private */
-const _patchConnector = (url, payload, description, loggingFields = {}, callingFunction) => {
-  return new Promise(function (resolve, reject) {
-    const startTime = new Date()
-    const context = {
-      url: url,
+function _patchConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
+  const startTime = new Date()
+  const context = {
+    url: url,
+    method: 'PATCH',
+    description: description,
+    service: SERVICE_NAME
+  }
+  requestLogger.logRequestStart(context, loggingFields)
+  return baseClient.patch(
+    url,
+    { payload, correlationId }
+  ).then(response => {
+    logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+    if (response.statusCode > 499 && response.statusCode < 600) {
+      incrementFailureCounter(callingFunctionName, response.statusCode)
+    }
+    return response
+  }).catch(err => {
+    logger.info('PATCH %s to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+    logger.error('Calling connector threw exception', {
+      ...loggingFields,
+      service: 'connector',
       method: 'PATCH',
-      description: description,
-      service: SERVICE_NAME
-    }
-    requestLogger.logRequestStart(context, loggingFields)
-    baseClient.patch(
-      url,
-      { payload, correlationId },
-      null
-    ).then(response => {
-      logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
-      if (response.statusCode > 499 && response.statusCode < 600) {
-        incrementFailureCounter(callingFunction, response.statusCode)
-      }
-      resolve(response)
-    }).catch(err => {
-      logger.info('PATCH %s to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
-      logger.error('Calling connector threw exception', {
-        ...loggingFields,
-        service: 'connector',
-        method: 'PATCH',
-        url: url,
-        error: err
-      })
-      incrementFailureCounter(callingFunction, 'error')
-      reject(err)
+      url: url,
+      error: err
     })
+    incrementFailureCounter(callingFunctionName, 'error')
+    throw err
   })
 }
 
 /** @private */
-const _getConnector = (url, description, loggingFields = {}, callingFunctionName) => {
-  return new Promise(function (resolve, reject) {
-    const startTime = new Date()
-    const context = {
-      url: url,
-      method: 'GET',
-      description: description,
-      service: SERVICE_NAME
-    }
-    requestLogger.logRequestStart(context, loggingFields)
-    baseClient.get(
-      url,
-      { correlationId },
-      null
-    ).then(response => {
+function _getConnector(url, description, loggingFields = {}, callingFunctionName) {
+  const startTime = new Date()
+  const context = {
+    url: url,
+    method: 'GET',
+    description: description,
+    service: SERVICE_NAME
+  }
+  requestLogger.logRequestStart(context, loggingFields)
+  return baseClient.get(url, { correlationId })
+    .then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       if (response.statusCode !== 200) {
         logger.warn('Calling connector to GET something returned a non http 200 response', {
@@ -191,7 +177,7 @@ const _getConnector = (url, description, loggingFields = {}, callingFunctionName
           incrementFailureCounter(callingFunctionName, response.statusCode)
         }
       }
-      resolve(response)
+      return response
     }).catch(err => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
@@ -202,9 +188,8 @@ const _getConnector = (url, description, loggingFields = {}, callingFunctionName
         error: err
       })
       incrementFailureCounter(callingFunctionName, 'error')
-      reject(err)
+      throw err
     })
-  })
 }
 
 const incrementFailureCounter = (callingFunctionName, statusCode) => {
