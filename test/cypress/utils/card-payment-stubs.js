@@ -73,6 +73,7 @@ const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayA
 
 const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42,
   serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}, additionalChargeOpts = {}) {
+
   return [
     {
       name: 'connectorCreateChargeFromToken',
@@ -80,7 +81,10 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         tokenId,
         gatewayAccountId,
         status: 'CREATED',
-        emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY'
+        emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY',
+        allowMoto: gatewayAccountOpts.allowMoto,
+        motoMaskCardNumberInput: gatewayAccountOpts.motoMaskCardNumberInput,
+        motoMaskCardSecurityCodeInput: gatewayAccountOpts.motoMaskCardSecurityCodeInput
       }
     },
     { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
@@ -97,7 +101,10 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
         requires3ds: providerOpts.requires3ds,
         integrationVersion3ds: providerOpts.integrationVersion3ds,
         blockPrepaidCards: providerOpts.blockPrepaidCards,
-        emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY'
+        emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY',
+        allowMoto: gatewayAccountOpts.allowMoto,
+        motoMaskCardNumberInput: gatewayAccountOpts.motoMaskCardNumberInput,
+        motoMaskCardSecurityCodeInput: gatewayAccountOpts.motoMaskCardSecurityCodeInput
       }
     },
     { name: 'cardIdValidCardDetails' },
