@@ -2,6 +2,7 @@
 
 // Local dependencies
 const baseClient = require('./base_client/base_client')
+const logger = require('../../utils/logger')(__filename)
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
 const { getCounter } = require('../../metrics/graphite_reporter')
@@ -39,7 +40,13 @@ function _getAdminUsers(url, description, findOptions, loggingFields = {}, calli
         return new Service(response.body)
       } else {
         if (response.statusCode > 499 && response.statusCode < 600) {
-          requestLogger.logRequestError(context, err, loggingFields)
+          logger.error(`Error communicating with ${url}`, {
+            ...loggingFields,
+            service: 'adminusers',
+            method: 'GET',
+            status_code: response.statusCode,
+            url: url
+          })
           incrementFailureCounter(callingFunctionName, response.statusCode)
         }
         return response.body
