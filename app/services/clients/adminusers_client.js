@@ -4,51 +4,59 @@
 const baseClient = require('./base_client/base_client')
 const requestLogger = require('../../utils/request_logger')
 const Service = require('../../models/Service.class')
-const { createCallbackToPromiseConverter } = require('../../utils/response_converter')
+const { getCounter } = require('../../metrics/graphite_reporter')
 
 // Constants
 const SERVICE_NAME = 'adminusers'
-
-const responseBodyToServiceTransformer = function responseBodyToServiceTransformer (body) {
-  try {
-    const service = new Service(body)
-    return Promise.resolve(service)
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
+const METRICS_PREFIX = 'internal-rest-call.adminusers'
+const SUCCESS_CODES = [200, 201, 202, 204, 206]
 
 let baseUrl
 let correlationId
 
-const findServiceBy = function findServiceBy (findOptions, loggingFields = {}) {
-  return new Promise(function (resolve, reject) {
-    const servicesResource = `${baseUrl}/v1/api/services`
-    const params = {
-      correlationId: correlationId,
-      qs: {
-        gatewayAccountId: findOptions.gatewayAccountId
+/** @private */
+function _getAdminUsers(url, description, findOptions, loggingFields = {}, callingFunctionName) {
+  const startTime = new Date()
+  const context = {
+    url: url,
+    startTime: startTime,
+    method: 'GET',
+    description: description,
+    service: SERVICE_NAME
+  }
+  requestLogger.logRequestStart(context, loggingFields)
+  const params = {
+    correlationId: correlationId,
+    qs: {
+      gatewayAccountId: findOptions.gatewayAccountId
+    }
+  }
+  return baseClient
+    .get(url, params, null)
+    .then(response => {
+      requestLogger.logRequestEnd(context, response.statusCode, loggingFields)
+      if (SUCCESS_CODES.includes(response.statusCode)) {
+        return new Service(response.body)
+      } else {
+        if (response.statusCode > 499 && response.statusCode < 600) {
+          incrementFailureCounter(callingFunctionName, response.statusCode)
+        }
+        return response.body
       }
-    }
-    const startTime = new Date()
+    }).catch(err => {
+      requestLogger.logRequestError(context, err, loggingFields)
+      incrementFailureCounter(callingFunctionName, 'error')
+      throw err
+    })
+}
 
-    // @FIXME(sfount) we should NOT be passing the resolve/ reject of a promise
-    //                down through 'cotext' - this tightly couples the code and
-    //                gives us no control of when our code handles errors
-    const context = {
-      url: servicesResource,
-      defer: { resolve, reject },
-      startTime: startTime,
-      correlationId: correlationId,
-      method: 'GET',
-      description: 'find a service',
-      service: SERVICE_NAME
-    }
-    const callbackToPromiseConverter = createCallbackToPromiseConverter(context, responseBodyToServiceTransformer, loggingFields)
-    requestLogger.logRequestStart(context, loggingFields)
-    baseClient.get(servicesResource, params, callbackToPromiseConverter)
-      .on('error', callbackToPromiseConverter)
-  })
+const incrementFailureCounter = (callingFunctionName, statusCode) => {
+  getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
+}
+
+const findServiceBy = function findServiceBy(findOptions, loggingFields = {}) {
+  const servicesUrl = `${baseUrl}/v1/api/services`
+  return _getAdminUsers(servicesUrl, 'find service', findOptions, loggingFields, 'findServiceBy')
 }
 
 module.exports = function (clientOptions = {}) {
