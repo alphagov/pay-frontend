@@ -69,6 +69,7 @@ function _putConnector(url, payload, description, loggingFields = {}, callingFun
     .put(url, { payload, correlationId })
     .then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+      incrementStatusCodeCounter(callingFunctionName, response.statusCode)
       if (response.statusCode > 499 && response.statusCode < 600) {
         logger.error(`Error communicating with ${url}`, {
           ...loggingFields,
@@ -77,7 +78,6 @@ function _putConnector(url, payload, description, loggingFields = {}, callingFun
           status_code: response.statusCode,
           url: url
         })
-        incrementFailureCounter(callingFunctionName, response.statusCode)
       }
       return response
     }).catch(err => {
@@ -89,7 +89,7 @@ function _putConnector(url, payload, description, loggingFields = {}, callingFun
         url: url,
         error: err
       })
-      incrementFailureCounter(callingFunctionName, 'error')
+      incrementStatusCodeCounter(callingFunctionName, 'error')
       throw err
     })
 }
@@ -109,6 +109,7 @@ function _postConnector(url, payload, description, loggingFields = {}, callingFu
     { payload, correlationId }
   ).then(response => {
     logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+    incrementStatusCodeCounter(callingFunctionName, response.statusCode)
     if (response.statusCode > 499 && response.statusCode < 600) {
       logger.error(`Error communicating with ${url}`, {
         ...loggingFields,
@@ -117,7 +118,6 @@ function _postConnector(url, payload, description, loggingFields = {}, callingFu
         status_code: response.statusCode,
         url: url
       })
-      incrementFailureCounter(callingFunctionName, response.statusCode)
     }
     return response
   }).catch(err => {
@@ -129,7 +129,7 @@ function _postConnector(url, payload, description, loggingFields = {}, callingFu
       url: url,
       error: err
     })
-    incrementFailureCounter(callingFunctionName, 'error')
+    incrementStatusCodeCounter(callingFunctionName, 'error')
     throw err
   })
 }
@@ -149,6 +149,7 @@ function _patchConnector(url, payload, description, loggingFields = {}, callingF
     { payload, correlationId }
   ).then(response => {
     logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+    incrementStatusCodeCounter(callingFunctionName, response.statusCode)
     if (response.statusCode > 499 && response.statusCode < 600) {
       logger.error(`Error communicating with ${url}`, {
         ...loggingFields,
@@ -157,7 +158,6 @@ function _patchConnector(url, payload, description, loggingFields = {}, callingF
         status_code: response.statusCode,
         url: url
       })
-      incrementFailureCounter(callingFunctionName, response.statusCode)
     }
     return response
   }).catch(err => {
@@ -169,7 +169,7 @@ function _patchConnector(url, payload, description, loggingFields = {}, callingF
       url: url,
       error: err
     })
-    incrementFailureCounter(callingFunctionName, 'error')
+    incrementStatusCodeCounter(callingFunctionName, 'error')
     throw err
   })
 }
@@ -187,6 +187,7 @@ function _getConnector(url, description, loggingFields = {}, callingFunctionName
   return baseClient.get(url, { correlationId })
     .then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+      incrementStatusCodeCounter(callingFunctionName, response.statusCode)
       if (response.statusCode !== 200) {
         logger.error(`Error communicating with ${url}`, {
           ...loggingFields,
@@ -195,9 +196,6 @@ function _getConnector(url, description, loggingFields = {}, callingFunctionName
           status_code: response.statusCode,
           url: url
         })
-        if (response.statusCode > 499 && response.statusCode < 600) {
-          incrementFailureCounter(callingFunctionName, response.statusCode)
-        }
       }
       return response
     }).catch(err => {
@@ -209,12 +207,12 @@ function _getConnector(url, description, loggingFields = {}, callingFunctionName
         url: url,
         error: err
       })
-      incrementFailureCounter(callingFunctionName, 'error')
+      incrementStatusCodeCounter(callingFunctionName, 'error')
       throw err
     })
 }
 
-const incrementFailureCounter = (callingFunctionName, statusCode) => {
+const incrementStatusCodeCounter = (callingFunctionName, statusCode) => {
   getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 

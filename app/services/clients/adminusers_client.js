@@ -36,6 +36,7 @@ function _getAdminUsers(url, description, findOptions, loggingFields = {}, calli
     .get(url, params, null)
     .then(response => {
       requestLogger.logRequestEnd(context, response.statusCode, loggingFields)
+      incrementStatusCodeCounter(callingFunctionName, response.statusCode)
       if (SUCCESS_CODES.includes(response.statusCode)) {
         return new Service(response.body)
       } else {
@@ -47,18 +48,17 @@ function _getAdminUsers(url, description, findOptions, loggingFields = {}, calli
             status_code: response.statusCode,
             url: url
           })
-          incrementFailureCounter(callingFunctionName, response.statusCode)
         }
         return response.body
       }
     }).catch(err => {
       requestLogger.logRequestError(context, err, loggingFields)
-      incrementFailureCounter(callingFunctionName, 'error')
+      incrementStatusCodeCounter(callingFunctionName, 'error')
       throw err
     })
 }
 
-const incrementFailureCounter = (callingFunctionName, statusCode) => {
+const incrementStatusCodeCounter = (callingFunctionName, statusCode) => {
   getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 

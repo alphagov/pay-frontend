@@ -29,6 +29,7 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
     }
     cardIdClient.post({ payload: data, correlationId: correlationId })
       .then((response) => {
+        incrementStatusCodeCounter('checkCard', response.statusCode)
         logger.info('POST to %s ended - total time %dms', cardIdClient.CARD_URL, new Date() - startTime, loggingFields)
 
         if (response.statusCode === 404) {
@@ -46,7 +47,6 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
             status_code: response.statusCode,
             url: cardIdClient.CARD_URL
           })
-          incrementFailureCounter('checkCard', response.statusCode)
           return resolve()
         }
 
@@ -88,13 +88,13 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
       .catch(error => {
         requestLogger.logRequestError({service: 'cardid', description: 'get card information'}, error, loggingFields)
         logger.info('POST to %s ended - total time %dms', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
-        incrementFailureCounter('checkCard', 'error')
+        incrementStatusCodeCounter('checkCard', 'error')
         resolve()
       })
   })
 }
 
-const incrementFailureCounter = (callingFunctionName, statusCode) => {
+const incrementStatusCodeCounter = (callingFunctionName, statusCode) => {
   getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 
