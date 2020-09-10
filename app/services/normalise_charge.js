@@ -19,6 +19,7 @@ module.exports = (function () {
       links: charge.links,
       status: charge.status,
       email: charge.email,
+      moto: charge.moto,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     }
     if (charge.auth_3ds_data) {

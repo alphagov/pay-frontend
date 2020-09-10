@@ -30,7 +30,8 @@ var unNormalisedCharge = {
       brand: 'VISA',
       label: 'Visa'
     }]
-  }
+  },
+  moto: false
 }
 
 var normalisedCharge = {
@@ -61,7 +62,8 @@ var normalisedCharge = {
       debit: false,
       credit: true
     }]
-  }
+  },
+  moto: false
 }
 
 var unNormalisedAddress = {

@@ -78,6 +78,7 @@ const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (to
     {
       name: 'connectorCreateChargeFromToken',
       opts: {
+        ...additionalChargeOpts,
         tokenId,
         gatewayAccountId,
         status: 'CREATED',

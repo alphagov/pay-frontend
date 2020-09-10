@@ -18,39 +18,61 @@ describe('Standard card payment flow', () => {
   }
 
   const createPaymentChargeStubsNoMoto = cardPaymentStubs.buildCreatePaymentChargeStubs(
-    tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {
-      allowMoto: false
+    tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {}, {
+      moto: false
     })
 
   const createPaymentChargeStubsNoMotoMaskCardNumberAndSecurityCode = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {
-      allowMoto: false,
       motoMaskCardNumberInput: true,
       motoMaskCardSecurityCodeInput: true
+    },
+    {
+      moto: false
+    })
+
+  const createPaymentChargeStubsNoMotoGatewayMotoMaskCardNumberAndSecurityCode = cardPaymentStubs.buildCreatePaymentChargeStubs(
+    tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {
+      allowMoto: true,
+      motoMaskCardNumberInput: true,
+      motoMaskCardSecurityCodeInput: true
+    },
+    {
+      moto: false
     })
 
   const createPaymentChargeStubsMotoMaskCardNumberOnly = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {
-      allowMoto: true,
       motoMaskCardNumberInput: true
+    },
+    {
+      moto: true
     })
 
   const createPaymentChargeStubsMotoMaskSecurityCodeOnly = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {
       allowMoto: true,
       motoMaskCardSecurityCodeInput: true
+    },
+    {
+      moto: true
     })
 
   const createPaymentChargeStubsMotoMaskCardNumberAndSecurityCode = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, {}, {}, {
-      allowMoto: true,
       motoMaskCardNumberInput: true,
       motoMaskCardSecurityCodeInput: true
+    },
+    {
+      moto: true
     })
 
   const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
 
-  const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
+  const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, {},
+    {
+      moto: true
+    })
 
   beforeEach(() => {
     // this test is for the full process, the session should be maintained
@@ -86,6 +108,24 @@ describe('Standard card payment flow', () => {
     })
 
     it('Card number & security code input elements should NOT mask digits as it is not a MOTO service', () => {
+      cy.get('#card-no').invoke('attr', 'type').should('eq', 'text')
+      cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'cc-number')
+
+      cy.get('#cvc').invoke('attr', 'type').should('eq', 'text')
+      cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'cc-csc')
+    })
+  })
+
+  describe('Secure card payment page - MOTO NOT enabled but gateway account is MOTO enabled and masking set for both card number and security code', () => {
+    it('Should setup the payment and load the page', () => {
+      cy.task('setupStubs', createPaymentChargeStubsNoMotoGatewayMotoMaskCardNumberAndSecurityCode)
+      cy.visit(`/secure/${tokenId}`)
+
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+      cy.window().its('chargeId').should('eq', `${chargeId}`)
+    })
+
+    it('Card number & security code input elements should NOT mask digits as MOTO is false for this charge', () => {
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'text')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'cc-number')
 
@@ -209,9 +249,6 @@ describe('Standard card payment flow', () => {
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
       cy.get('#cvc').type(validPayment.securityCode)
-      cy.get('#address-line-1').type(validPayment.addressLine1)
-      cy.get('#address-city').type(validPayment.city)
-      cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(validPayment.email)
     })
   })
