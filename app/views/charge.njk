@@ -146,7 +146,7 @@
                     {% endif %}
                   </label>
                   
-                  {% if allowMoto and motoMaskCardNumberInput %} 
+                  {% if moto and gatewayAccount.motoMaskCardNumberInput %} 
                     {% set cardNumberInputType = 'password' %}  
                     {% set cardNumberAutoCompleteType = 'off' %}
                   {% else %}
@@ -296,7 +296,7 @@
                     {% endif %}
                   </label>
 
-                  {% if allowMoto and motoMaskCardSecurityCodeInput %} 
+                  {% if moto and gatewayAccount.motoMaskCardSecurityCodeInput %} 
                     {% set securityCodeInputType = 'password' %}  
                     {% set securityCodeAutoCompleteType = 'off' %}
                   {% else %}

@@ -54,9 +54,6 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
-  charge.allowMoto = charge.gatewayAccount.allowMoto
-  charge.motoMaskCardNumberInput = charge.gatewayAccount.motoMaskCardNumberInput
-  charge.motoMaskCardSecurityCodeInput = charge.gatewayAccount.motoMaskCardSecurityCodeInput
 
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
   if (googlePayMerchantId !== GOOGLE_PAY_MERCHANT_ID && googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
