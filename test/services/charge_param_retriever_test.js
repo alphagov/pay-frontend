@@ -36,6 +36,22 @@ describe('charge param retreiver', function () {
     get: () => null
   }
 
+  var VALID_POST_RESPONSE_FOR_3DS = {
+    params: {},
+    originalUrl: '/card_details/foo/3ds_required_in',
+    body: { chargeId: 'foo' },
+    method: 'POST',
+    get: () => null
+  }
+
+  var VALID_POST_RESPONSE_FOR_EPDQ_3DS = {
+    params: {},
+    originalUrl: '/card_details/foo/3ds_required_in/epdq',
+    body: { chargeId: 'foo' },
+    method: 'POST',
+    get: () => null
+  }
+
   it('should return false if the charge param is not present in params or body', function () {
     assert.strictEqual(chargeParam.retrieve(EMPTY_RESPONSE), false)
   })
@@ -52,7 +68,16 @@ describe('charge param retreiver', function () {
     assert.strictEqual(chargeParam.retrieve(VALID_GET_RESPONSE), 'foo')
   })
 
-  it('should return false if the charge param is in THE BODY and has session', function () {
+  it('should return THE ID if the charge param is in THE BODY and has session', function () {
     assert.strictEqual(chargeParam.retrieve(VALID_POST_RESPONSE), 'foo')
   })
+
+  it('should return THE ID if the charge id is in the 3ds post url', function () {
+    assert.strictEqual(chargeParam.retrieve(VALID_POST_RESPONSE_FOR_3DS), 'foo')
+  })
+
+  it('should return THE ID if the charge id is in the EPDQ 3ds post url', function () {
+    assert.strictEqual(chargeParam.retrieve(VALID_POST_RESPONSE_FOR_EPDQ_3DS), 'foo')
+  })
+
 })
