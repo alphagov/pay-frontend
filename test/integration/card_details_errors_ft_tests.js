@@ -146,6 +146,12 @@ describe('chargeTests', function () {
   })
 
   describe('Enter card details page — errors ', function () {
+    it('should error without frontend state cookie', function (done) {
+      postChargeRequest(app, null, minimumFormCardData('5105 1051 0510 5100'), chargeId, false)
+        .expect(403)
+        .end(done)
+    })
+
     it('should error without csrf', function (done) {
       const cookieValue = cookie.create(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
