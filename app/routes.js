@@ -17,7 +17,7 @@ const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
 const csp = require('./middleware/csp')
 const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
-const retrieveCharge = require('./middleware/retrieve_charge.js')
+const { requireValidCookieSession, fetchChargeDetails } = require('./middleware/retrieve_charge.js')
 const resolveService = require('./middleware/resolve_service.js')
 const resolveLanguage = require('./middleware/resolve_language.js')
 const decryptCardData = require('./middleware/decrypt_card_data')(process.env)
@@ -38,7 +38,8 @@ exports.bind = function (app) {
     csrfCheck,
     csrfTokenGeneration,
     actionName,
-    retrieveCharge,
+    requireValidCookieSession,
+    fetchChargeDetails,
     resolveLanguage,
     resolveService,
     stateEnforcer,
@@ -52,23 +53,23 @@ exports.bind = function (app) {
   app.get(card.confirm.path, middlewareStack, charge.confirm)
   app.post(card.capture.path, middlewareStack, charge.capture)
   app.post(card.cancel.path, middlewareStack, charge.cancel)
-  app.post(card.checkCard.path, retrieveCharge, resolveLanguage, decryptCardData, charge.checkCard)
-  app.get(card.return.path, retrieveCharge, resolveLanguage, returnCont.return)
+  app.post(card.checkCard.path, requireValidCookieSession, fetchChargeDetails, resolveLanguage, decryptCardData, charge.checkCard)
+  app.get(card.return.path, requireValidCookieSession, fetchChargeDetails, resolveLanguage, returnCont.return)
 
   app.get(card.auth3dsRequired.path, middlewareStack, threeDS.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, middlewareStack, threeDS.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
-  app.post(card.auth3dsHandler.path, [actionName, retrieveCharge, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
+  app.post(card.auth3dsRequiredInEpdq.path, [fetchChargeDetails, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, [requireValidCookieSession, fetchChargeDetails, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, [fetchChargeDetails, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, [requireValidCookieSession, fetchChargeDetails, resolveLanguage], threeDS.auth3dsRequiredIn)
+  app.post(card.auth3dsHandler.path, [actionName, requireValidCookieSession, fetchChargeDetails, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePayMerchantValidation)
 
   // Generic Web payments endpoint
-  app.post(paths.webPayments.authRequest.path, retrieveCharge, resolveLanguage, webPaymentsMakePayment)
-  app.get(paths.webPayments.handlePaymentResponse.path, retrieveCharge, resolveLanguage, webPaymentsHandlePaymentResponse)
+  app.post(paths.webPayments.authRequest.path, requireValidCookieSession, fetchChargeDetails, resolveLanguage, webPaymentsMakePayment)
+  app.get(paths.webPayments.handlePaymentResponse.path, requireValidCookieSession, fetchChargeDetails, resolveLanguage, webPaymentsHandlePaymentResponse)
 
   // secure controller
   app.get(paths.secure.get.path, secure.new)
