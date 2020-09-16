@@ -22,7 +22,7 @@ describe('Google Pay payment flow', () => {
         type: 'CARD'
       }
     },
-    payerEmail: 'name@email.fyi',
+    payerEmail: 'name@email.test',
     payerName: 'Some Name',
     complete: () => true
   }
