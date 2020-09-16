@@ -198,13 +198,13 @@
                 <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7 {% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
                   <fieldset class="govuk-fieldset" role="group" aria-describedby="expiry-date-hint">
                     <legend>
-                      <label class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
+                      <div class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
                         <span class="expiry-date-label"
                   data-label-replace="expiryMonth"
                   data-original-label="{{ __p("cardDetails.expiry") }}">
                           {{ __p("cardDetails.expiry") }}
                         </span>
-                      </label>
+                      </div>
                     </legend>
                     <span class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
                       {{ __p("cardDetails.expiryHint", exampleCardExpiryDateYear) }}</span>
