@@ -1,7 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const assert = require('assert')
 const sinon = require('sinon')
 const { expect } = require('chai')
 const nock = require('nock')
@@ -10,14 +9,14 @@ const retrieveCharge = require('../../app/middleware/retrieve_charge')
 
 const ANALYTICS_ERROR = {
   analytics: {
-    analyticsId: 'Service unavailable',
-    type: 'Service unavailable',
-    paymentProvider: 'Service unavailable',
-    amount: '0.00'
+      analyticsId: 'Service unavailable',
+      type: 'Service unavailable',
+      paymentProvider: 'Service unavailable',
+      amount: '0.00'
   }
 }
 
-describe('retrieve param test', () => {
+describe('retrieve charge test', () => {
   const response = {
     status: () => { },
     render: () => { },
@@ -47,37 +46,6 @@ describe('retrieve param test', () => {
     render.restore()
   })
 
-  // We don't need to test all states as they are tested in
-  // the charge param retriever tests
-  it('should call not found view if charge param does not return an id', () => {
-    retrieveCharge({ params: {}, body: {} }, response, next)
-    assert(status.calledWith(403))
-    assert(render.calledWith('errors/incorrect_state/session_expired', {
-      viewName: 'UNAUTHORISED',
-      analytics: ANALYTICS_ERROR.analytics
-    }))
-    expect(next.notCalled).to.be.true // eslint-disable-line
-  })
-
-  it('should call not found view if the connector does not respond', done => {
-    retrieveCharge(validRequest, response, next)
-    const testPromise = new Promise((resolve, reject) => {
-      setTimeout(() => { resolve() }, 700)
-    })
-
-    testPromise.then(result => {
-      try {
-        assert(status.calledWith(500))
-        assert(render.calledWith('errors/system_error', {
-          viewName: 'SYSTEM_ERROR',
-          analytics: ANALYTICS_ERROR.analytics
-        }))
-        expect(next.notCalled).to.be.true // eslint-disable-line
-        done()
-      } catch (err) { done(err) }
-    }, done)
-  })
-
   it('should set chargeData chargeID and call next on success', done => {
     const chargeData = validChargeDetails().getPlain()
     nock(process.env.CONNECTOR_HOST)
@@ -85,7 +53,7 @@ describe('retrieve param test', () => {
       .reply(200, chargeData)
     retrieveCharge(validRequest, response, next)
 
-    const testPromise = new Promise((resolve, reject) => {
+    const testPromise = new Promise((resolve) => {
       setTimeout(() => { resolve() }, 100)
     })
 
@@ -95,6 +63,25 @@ describe('retrieve param test', () => {
         expect(validRequest.chargeId).to.equal(chargeId)
         expect(validRequest.chargeData).to.deep.equal(chargeData)
         expect(next.called).to.be.true // eslint-disable-line
+        done()
+      } catch (err) { done(err) }
+    }, done)
+  })
+
+  it('should call not found view if the connector does not respond', done => {
+    retrieveCharge(validRequest, response, next)
+    const testPromise = new Promise((resolve) => {
+      setTimeout(() => { resolve() }, 700)
+    })
+
+    testPromise.then(result => {
+      try {
+        expect(status.calledWith(500))
+        expect(render.calledWith('errors/system_error', {
+          viewName: 'SYSTEM_ERROR',
+          analytics: ANALYTICS_ERROR.analytics
+        }))
+        expect(next.notCalled).to.be.true
         done()
       } catch (err) { done(err) }
     }, done)
