@@ -18,6 +18,7 @@ const csp = require('./middleware/csp')
 const actionName = require('./middleware/action_name.js')
 const stateEnforcer = require('./middleware/state_enforcer.js')
 const retrieveCharge = require('./middleware/retrieve_charge.js')
+const enforceSessionCookie = require('./middleware/enforce_session_cookie.js')
 const resolveService = require('./middleware/resolve_service.js')
 const resolveLanguage = require('./middleware/resolve_language.js')
 const decryptCardData = require('./middleware/decrypt_card_data')(process.env)
@@ -38,6 +39,7 @@ exports.bind = function (app) {
     csrfCheck,
     csrfTokenGeneration,
     actionName,
+    enforceSessionCookie,
     retrieveCharge,
     resolveLanguage,
     resolveService,
@@ -46,6 +48,7 @@ exports.bind = function (app) {
   ]
 
   const chargeCookieRequiredMiddlewareStack = [
+    enforceSessionCookie,
     retrieveCharge, 
     resolveLanguage
   ]
@@ -66,7 +69,7 @@ exports.bind = function (app) {
   app.get(card.auth3dsRequiredInEpdq.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
   app.post(card.auth3dsRequiredIn.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
   app.get(card.auth3dsRequiredIn.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
-  app.post(card.auth3dsHandler.path, [actionName, chargeCookieRequiredMiddlewareStack , resolveService, stateEnforcer], threeDS.auth3dsHandler)
+  app.post(card.auth3dsHandler.path, [actionName, enforceSessionCookie, retrieveCharge, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePayMerchantValidation)
