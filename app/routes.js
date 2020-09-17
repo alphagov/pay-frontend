@@ -34,7 +34,7 @@ exports.bind = function (app) {
   // charges
   const card = paths.card
 
-  const middlewareStack = [
+  const standardMiddlewareStack = [
     csrfCheck,
     csrfTokenGeneration,
     actionName,
@@ -45,30 +45,35 @@ exports.bind = function (app) {
     decryptCardData
   ]
 
-  app.get(card.new.path, middlewareStack, csp.cardDetails, charge.new)
-  app.get(card.authWaiting.path, middlewareStack, charge.authWaiting)
-  app.get(card.captureWaiting.path, middlewareStack, charge.captureWaiting)
-  app.post(card.create.path, middlewareStack, charge.create)
-  app.get(card.confirm.path, middlewareStack, charge.confirm)
-  app.post(card.capture.path, middlewareStack, charge.capture)
-  app.post(card.cancel.path, middlewareStack, charge.cancel)
-  app.post(card.checkCard.path, retrieveCharge, resolveLanguage, decryptCardData, charge.checkCard)
-  app.get(card.return.path, retrieveCharge, resolveLanguage, returnCont.return)
+  const chargeCookieRequiredMiddlewareStack = [
+    retrieveCharge, 
+    resolveLanguage
+  ]
 
-  app.get(card.auth3dsRequired.path, middlewareStack, threeDS.auth3dsRequired)
-  app.get(card.auth3dsRequiredOut.path, middlewareStack, threeDS.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, [retrieveCharge, resolveLanguage], threeDS.auth3dsRequiredIn)
-  app.post(card.auth3dsHandler.path, [actionName, retrieveCharge, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
+  app.get(card.new.path, standardMiddlewareStack, csp.cardDetails, charge.new)
+  app.get(card.authWaiting.path, standardMiddlewareStack, charge.authWaiting)
+  app.get(card.captureWaiting.path, standardMiddlewareStack, charge.captureWaiting)
+  app.post(card.create.path, standardMiddlewareStack, charge.create)
+  app.get(card.confirm.path, standardMiddlewareStack, charge.confirm)
+  app.post(card.capture.path, standardMiddlewareStack, charge.capture)
+  app.post(card.cancel.path, standardMiddlewareStack, charge.cancel)
+  app.post(card.checkCard.path, chargeCookieRequiredMiddlewareStack, decryptCardData, charge.checkCard)
+  app.get(card.return.path, chargeCookieRequiredMiddlewareStack, returnCont.return)
+
+  app.get(card.auth3dsRequired.path, standardMiddlewareStack, threeDS.auth3dsRequired)
+  app.get(card.auth3dsRequiredOut.path, standardMiddlewareStack, threeDS.auth3dsRequiredOut)
+  app.post(card.auth3dsRequiredInEpdq.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
+  app.post(card.auth3dsHandler.path, [actionName, chargeCookieRequiredMiddlewareStack , resolveService, stateEnforcer], threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
   app.post(paths.applePay.session.path, applePayMerchantValidation)
 
   // Generic Web payments endpoint
-  app.post(paths.webPayments.authRequest.path, retrieveCharge, resolveLanguage, webPaymentsMakePayment)
-  app.get(paths.webPayments.handlePaymentResponse.path, retrieveCharge, resolveLanguage, webPaymentsHandlePaymentResponse)
+  app.post(paths.webPayments.authRequest.path, chargeCookieRequiredMiddlewareStack, webPaymentsMakePayment)
+  app.get(paths.webPayments.handlePaymentResponse.path, chargeCookieRequiredMiddlewareStack, webPaymentsHandlePaymentResponse)
 
   // secure controller
   app.get(paths.secure.get.path, secure.new)
