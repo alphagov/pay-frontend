@@ -49,7 +49,12 @@ exports.bind = function (app) {
 
   const chargeCookieRequiredMiddlewareStack = [
     enforceSessionCookie,
-    retrieveCharge, 
+    retrieveCharge,
+    resolveLanguage
+  ]
+
+  const chargeNoCookieRequiredMiddlewareStack = [
+    retrieveCharge,
     resolveLanguage
   ]
 
@@ -65,10 +70,10 @@ exports.bind = function (app) {
 
   app.get(card.auth3dsRequired.path, standardMiddlewareStack, threeDS.auth3dsRequired)
   app.get(card.auth3dsRequiredOut.path, standardMiddlewareStack, threeDS.auth3dsRequiredOut)
-  app.post(card.auth3dsRequiredInEpdq.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
-  app.get(card.auth3dsRequiredInEpdq.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
-  app.post(card.auth3dsRequiredIn.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
-  app.get(card.auth3dsRequiredIn.path, chargeCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
+  app.post(card.auth3dsRequiredInEpdq.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
+  app.get(card.auth3dsRequiredInEpdq.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredIn.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
+  app.get(card.auth3dsRequiredIn.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
   app.post(card.auth3dsHandler.path, [actionName, enforceSessionCookie, retrieveCharge, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
 
   // Apple Pay endpoints
