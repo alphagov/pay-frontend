@@ -81,7 +81,7 @@ describe('retrieve charge test', () => {
           viewName: 'SYSTEM_ERROR',
           analytics: ANALYTICS_ERROR.analytics
         }))
-        expect(next.notCalled).to.be.true
+        expect(next.notCalled).to.be.true // eslint-disable-line
         done()
       } catch (err) { done(err) }
     }, done)
