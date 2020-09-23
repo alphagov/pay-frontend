@@ -54,7 +54,7 @@ describe('enforce session cookie test', () => {
       viewName: 'UNAUTHORISED',
       analytics: ANALYTICS_ERROR.analytics
     }))
-    expect(next.notCalled).to.be.true
+    expect(next.notCalled).to.be.true // eslint-disable-line
   })
 
   it('should call next when frontend_state cookie contains chargeId', done => {
@@ -73,7 +73,7 @@ describe('enforce session cookie test', () => {
     testPromise.then(result => {
       try {
         expect(status.calledWith(200))
-        expect(next.called).to.be.true
+        expect(next.called).to.be.true // eslint-disable-line
         done()
       } catch (err) {
         done(err)

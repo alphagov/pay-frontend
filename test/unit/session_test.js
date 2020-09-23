@@ -46,21 +46,21 @@ describe('session utils ', () => {
 
     describe('retrieve ', () => {
         it('should return session', function () {
-            expect(session.retrieve(VALID_GET_RESPONSE, chargeId)).to.be.true
+            expect(session.retrieve(VALID_GET_RESPONSE, chargeId)).to.be.true // eslint-disable-line
         })
     })
 
     describe('validateSessionCookie ', () => {
         it('should return true for GET request with valid session cookie', function () {
-            expect(session.validateSessionCookie(VALID_GET_RESPONSE)).to.be.true
+            expect(session.validateSessionCookie(VALID_GET_RESPONSE)).to.be.true // eslint-disable-line
         })
 
         it('should return true for POST request with valid session cookie', function () {
-            expect(session.validateSessionCookie(VALID_POST_RESPONSE)).to.be.true
+            expect(session.validateSessionCookie(VALID_POST_RESPONSE)).to.be.true // eslint-disable-line
         })
 
         it('should return false if the charge param is not present in params or body', function () {
-            expect(session.validateSessionCookie(EMPTY_RESPONSE)).to.be.false
+            expect(session.validateSessionCookie(EMPTY_RESPONSE)).to.be.false // eslint-disable-line
         })
 
         it('should return false if the charge param is in params but not in session', function () {
@@ -68,7 +68,7 @@ describe('session utils ', () => {
         })
 
         it('should return false if the charge param is in THE BODY but not in session', function () {
-            expect(session.validateSessionCookie(NO_SESSION_POST_RESPONSE)).to.be.false
+            expect(session.validateSessionCookie(NO_SESSION_POST_RESPONSE)).to.be.false // eslint-disable-line
         })
     })
 })
