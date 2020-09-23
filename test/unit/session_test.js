@@ -64,7 +64,7 @@ describe('session utils ', () => {
         })
 
         it('should return false if the charge param is in params but not in session', function () {
-            expect(session.validateSessionCookie(NO_SESSION_GET_RESPONSE)).to.be.false
+            expect(session.validateSessionCookie(NO_SESSION_GET_RESPONSE)).to.be.false // eslint-disable-line
         })
 
         it('should return false if the charge param is in THE BODY but not in session', function () {
