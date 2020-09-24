@@ -17,41 +17,41 @@ const adminusersServicePath = '/v1/api/services'
 const defaultCorrelationId = 'some-unique-id'
 const defaultGatewayAccountId = '12345'
 
-function localConnector () {
+function localConnector() {
   return process.env.CONNECTOR_HOST
 }
 
-function localAdminusers () {
+function localAdminusers() {
   return process.env.ADMINUSERS_URL
 }
 
-function connectorChargeUrl (chargeId) {
+function connectorChargeUrl(chargeId) {
   return localConnector() + connectorChargePath + chargeId
 }
 
-function connectorAuthUrl (chargeId) {
+function connectorAuthUrl(chargeId) {
   return localConnector() + connectorChargePath + chargeId + '/cards'
 }
 
-function connectorCaptureUrl (chargeId) {
+function connectorCaptureUrl(chargeId) {
   return localConnector() + connectorChargePath + chargeId + '/capture'
 }
 
-function connectorRespondsWith (chargeId, charge) {
+function connectorRespondsWith(chargeId, charge) {
   const connectorMock = nock(localConnector())
   connectorMock.get(connectorChargePath + chargeId).reply(200, charge)
 }
 
-function adminusersRespondsWith (gatewayAccountId, service) {
+function adminusersRespondsWith(gatewayAccountId, service) {
   const adminusersMock = nock(localAdminusers())
   adminusersMock.get(`${adminusersServicePath}?gatewayAccountId=${gatewayAccountId}`).reply(200, service)
 }
 
-function initConnectorUrl () {
+function initConnectorUrl() {
   process.env.CONNECTOR_URL = localConnector() + connectorChargePath + '{chargeId}'
 }
 
-function cardTypes () {
+function cardTypes() {
   return [
     {
       brand: 'visa',
@@ -86,7 +86,7 @@ function cardTypes () {
   ]
 }
 
-function rawSuccessfulGetChargeCorporateCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
+function rawSuccessfulGetChargeCorporateCardOnly(status, returnUrl, chargeId, gatewayAccountId) {
   const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.amount = 2345
   charge.corporate_card_surcharge = 250
@@ -94,7 +94,7 @@ function rawSuccessfulGetChargeCorporateCardOnly (status, returnUrl, chargeId, g
   return charge
 }
 
-function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
+function rawSuccessfulGetChargeDebitCardOnly(status, returnUrl, chargeId, gatewayAccountId) {
   const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.gateway_account.card_types = [
     {
@@ -106,11 +106,11 @@ function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatew
   return charge
 }
 
-function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, walletType) {
+function rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, walletType) {
   return rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData, 'sandbox', emailSettings, disableBillingAddress, walletType)
 }
 
-function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress, walletType) {
+function rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress, walletType) {
   const charge = {
     'amount': 2345,
     'description': 'Payment Description',
@@ -251,32 +251,40 @@ module.exports = {
 
   getChargeRequest: function (app, cookieValue, chargeId, query) {
     query = query || ''
-    return request(app)
+    const requestBuilder =  request(app)
       .get(frontendCardDetailsPath + '/' + chargeId + query)
-      .set('Cookie', ['frontend_state=' + cookieValue])
       .set('Accept', 'application/json')
       .set('x-request-id', defaultCorrelationId)
+
+    if (cookieValue) {
+      requestBuilder.set('Cookie', ['frontend_state=' + cookieValue])
+    }
+    return requestBuilder
   },
 
-  postChargeRequest (app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
+  postChargeRequest(app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
     if (sendCSRF) {
       data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET)
     }
-    return request(app)
+    const requestBuilder = request(app)
       .post(frontendCardDetailsPath + '/' + chargeId + query)
       .set('Content-Type', 'application/x-www-form-urlencoded')
-      .set('Cookie', ['frontend_state=' + cookieValue])
       .set('Accept', 'application/json')
       .set('x-request-id', 'some-unique-id')
       .set('x-forwarded-for', '127.0.0.1')
-      .send(data)
+
+    if (cookieValue) {
+      requestBuilder.set('Cookie', ['frontend_state=' + cookieValue])
+    }
+
+    return requestBuilder.send(data)
   },
 
   connectorResponseForPutCharge: function (chargeId, statusCode, responseBody, overrideUrl) {
     initConnectorUrl()
     const connectorMock = nock(localConnector())
     const mockPath = connectorChargePath + chargeId + '/status'
-    const payload = { 'new_status': 'ENTERING CARD DETAILS' }
+    const payload = {'new_status': 'ENTERING CARD DETAILS'}
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 

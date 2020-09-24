@@ -226,15 +226,17 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        const cookieValue = cookie.create(chargeId)
+
         const data = {
           PaRes: 'aPaRes',
           MD: 'aMD'
         }
-        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
+        postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true
             const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('aMD')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
@@ -248,15 +250,17 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        const cookieValue = cookie.create(chargeId)
+
         const data = {
         }
-        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
+        postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').length).to.equal(0)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').length).to.equal(0)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.not.exist
           })
           .end(done)
       })
@@ -272,12 +276,14 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        const cookieValue = cookie.create(chargeId)
+
         const data = {}
-        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in/epdq')
+        postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in/epdq')
           .expect(200)
           .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true
             const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('success')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
@@ -293,11 +299,13 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        const cookieValue = cookie.create(chargeId)
-        getChargeRequest(app, cookieValue, chargeId, '/3ds_required_in/epdq?status=declined')
+
+        getChargeRequest(app, false, chargeId, '/3ds_required_in/epdq?status=declined')
           .expect(200)
           .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true
             const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('declined')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
@@ -313,12 +321,14 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        const cookieValue = cookie.create(chargeId)
+
         const data = {}
-        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in/epdq?status=error')
+        postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in/epdq?status=error')
           .expect(200)
           .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true
             const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('error')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
@@ -333,15 +343,16 @@ describe('chargeTests', function () {
 
         nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
-        const cookieValue = cookie.create(chargeId)
         const data = {
           PaRes: 'aPaRes',
           MD: 'md'
         }
-        postChargeRequest(app, cookieValue, data, chargeId, false, '/3ds_required_in')
+        postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true
             const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('md')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
