@@ -234,9 +234,9 @@ describe('chargeTests', function () {
         postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
-            expect(res.header['set-cookie'] === undefined).to.be.true
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('aMD')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
@@ -256,11 +256,11 @@ describe('chargeTests', function () {
         postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
-            expect(res.header['set-cookie'] === undefined).to.be.true
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
-            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.not.exist
-            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.not.exist // eslint-disable-line
           })
           .end(done)
       })
@@ -281,9 +281,9 @@ describe('chargeTests', function () {
         postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in/epdq')
           .expect(200)
           .expect(function (res) {
-            expect(res.header['set-cookie'] === undefined).to.be.true
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('success')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
@@ -303,9 +303,9 @@ describe('chargeTests', function () {
         getChargeRequest(app, false, chargeId, '/3ds_required_in/epdq?status=declined')
           .expect(200)
           .expect(function (res) {
-            expect(res.header['set-cookie'] === undefined).to.be.true
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('declined')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
@@ -326,9 +326,9 @@ describe('chargeTests', function () {
         postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in/epdq?status=error')
           .expect(200)
           .expect(function (res) {
-            expect(res.header['set-cookie'] === undefined).to.be.true
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
             expect($('form[name=\'three_ds_required\'] > input[name=\'providerStatus\']').attr('value')).to.eql('error')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
           })
@@ -350,9 +350,9 @@ describe('chargeTests', function () {
         postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in')
           .expect(200)
           .expect(function (res) {
-            expect(res.header['set-cookie'] === undefined).to.be.true
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
             const $ = cheerio.load(res.text)
-            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
             expect($('form[name=\'three_ds_required\'] > input[name=\'PaRes\']').attr('value')).to.eql('aPaRes')
             expect($('form[name=\'three_ds_required\'] > input[name=\'MD\']').attr('value')).to.eql('md')
             expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
