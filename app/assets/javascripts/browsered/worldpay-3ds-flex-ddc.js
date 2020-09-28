@@ -5,28 +5,19 @@ const toggleWaiting = () => {
   document.getElementById('spinner').classList.toggle('hidden')
   document.getElementById('error-summary').classList.add('hidden')
 
-  var paymentMethodSubmitElement = document.getElementById('apple-pay-payment-method-submit')
-  if (typeof paymentMethodSubmitElement !== 'undefined' && paymentMethodSubmitElement !== null) {
-    paymentMethodSubmitElement.classList.add('hidden')
+  var paymentDetailsHeader = document.querySelector('.govuk-heading-l.web-payment-button-heading')
+  if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
+    paymentDetailsHeader.style.display = "none"
   }
 
-  paymentMethodSubmitElement = document.getElementById('google-pay-payment-method-submit')
-  if (typeof paymentMethodSubmitElement !== 'undefined' && paymentMethodSubmitElement !== null) {
-    paymentMethodSubmitElement.classList.add('hidden')
+  var applePayContainer = document.querySelector('.apple-pay-container')
+  if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
+    applePayContainer.style.display = "none"
   }
 
-  var paymentMethodDivider = document.getElementById('apple-pay-payment-method-divider')
-  if (typeof paymentMethodDivider !== 'undefined' && paymentMethodDivider !== null) {
-    paymentMethodDivider.classList.add('hidden')
-    paymentMethodDivider.classList.remove('pay-divider')
-    document.getElementById('apple-pay-payment-method-divider-word').classList.add('hidden')
-  }
-
-  paymentMethodDivider = document.getElementById('google-pay-payment-method-divider')
-  if (typeof paymentMethodDivider !== 'undefined' && paymentMethodDivider !== null) {
-    paymentMethodDivider.classList.add('hidden')
-    paymentMethodDivider.classList.remove('pay-divider')
-    document.getElementById('google-pay-payment-method-divider-word').classList.add('hidden')
+  var googlePayContainer = document.querySelector('.google-pay-container')
+  if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
+    googlePayContainer.style.display = "none"
   }
 }
 
