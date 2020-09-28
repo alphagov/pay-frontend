@@ -73,20 +73,41 @@ module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
 }
 
 // Validation Functions
-function expiryMonth (expiryMonth, allFields) {
-  let expiryYear = allFields.expiryYear
-  if (!expiryMonth || !expiryYear) return 'message'
 
+function expiryMonth (expiryMonth, allFields) {
   // validations for both expiry month and year are done together in 'expiryMonth'
   // it can't be renamed as it all runs off meta programming further up the stack
-  expiryMonth = expiryMonth - 1 // month is zero indexed
-  if (!(/^\d+$/.test(expiryMonth) && expiryMonth >= 0 && expiryMonth <= 11)) return 'invalidMonth'
-  if (![2, 4].includes(String(allFields.expiryYear).length)) return 'invalidYear'
-  if (`${expiryYear}`.length === 2) expiryYear = '20' + expiryYear
-  const cardDate = new Date(expiryYear, expiryMonth)
-  const currentDate = new Date()
-  if (currentDate.getFullYear() > cardDate.getFullYear()) return 'inThePast'
-  if (currentDate.getFullYear() === cardDate.getFullYear() && currentDate.getMonth() > cardDate.getMonth()) return 'inThePast'
+  const expiryYear = allFields.expiryYear
+
+  if (!expiryMonth || !expiryYear) {
+    return 'message'
+  }
+
+  if (!(/^[1-9]$/.test(expiryMonth)) && !(/^0[1-9]$/).test(expiryMonth) && !(/^1[0-2]$/.test(expiryMonth))) {
+    return 'invalidMonth'
+  }
+
+  const expiryMonthInt = parseInt(expiryMonth, 10)
+
+  if (!(/^[0-9]{2}$/.test(expiryYear)) && !(/^[1-9][0-9]{3}$/).test(expiryYear)) {
+    return 'invalidYear'
+  }
+
+  const expiryYearInt = expiryYear.length === 2 ? 2000 + parseInt(expiryYear, 10) : parseInt(expiryYear, 10)
+
+  if (expiryYearInt > 2099) {
+    return 'invalidYear'
+  }
+
+  const now = new Date()
+
+  if (expiryYearInt < now.getFullYear()) {
+    return 'inThePast'
+  }
+
+  if (expiryYearInt === now.getFullYear() && expiryMonthInt < now.getMonth() + 1) {
+    return 'inThePast'
+  }
 
   return true
 }
