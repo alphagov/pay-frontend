@@ -147,9 +147,7 @@ var init = function () {
     var focusedGroup = getFormGroup(document.activeElement)
     var inGroup = focusedGroup === group
     var groupHasError = group ? group.classList.contains('govuk-form-group--error') : false
-    var lastOfgroup = input.hasAttribute('data-last-of-form-group')
-    var required = input.hasAttribute('data-required')
-    if ((lastOfgroup && required) || groupHasError) { return checkValidation(input) }
+    if (groupHasError) { return checkValidation(input) }
     if (inGroup || blank) return
     checkValidation(input)
   }
