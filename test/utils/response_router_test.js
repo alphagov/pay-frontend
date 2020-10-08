@@ -11,10 +11,10 @@ const serviceFixtures = require('../fixtures/service_fixtures')
 const Service = require('../../app/models/Service.class')
 const testHelpers = require('../test_helpers/test_helpers')
 
-const errorLogger = sinon.spy()
+const infoLogger = sinon.spy()
 
 const responseRouter = proxyquire('../../app/utils/response_router', {
-  './logger': () => { return { error: errorLogger } }
+  './logger': () => { return { info: infoLogger } }
 })
 
 // Constants
@@ -83,7 +83,7 @@ describe('rendering behaviour', () => {
   beforeEach(() => {
     status = sinon.stub(response, 'status')
     render = sinon.stub(response, 'render')
-    errorLogger.resetHistory()
+    infoLogger.resetHistory()
   })
 
   afterEach(() => {
@@ -115,7 +115,7 @@ describe('rendering behaviour', () => {
       message: 'There is a problem, please try again later',
       viewName: 'error'
     }])
-    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+    sinon.assert.calledWithMatch(infoLogger, sinon.match('Rendering error response'), sinon.match({
       page: 'error',
       reason: 'Response action AINT_NO_VIEW_HERE NOT FOUND'
     }))
@@ -128,7 +128,7 @@ describe('rendering behaviour', () => {
       viewName: 'ERROR',
       message: 'There is a problem, please try again later'
     }])
-    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+    sinon.assert.calledWithMatch(infoLogger, sinon.match('Rendering error response'), sinon.match({
       page: 'error',
       reason: 'A reason',
       error: 'err'
@@ -141,7 +141,7 @@ describe('rendering behaviour', () => {
       returnUrl: 'http://example.com',
       viewName: 'SYSTEM_ERROR'
     }])
-    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+    sinon.assert.calledWithMatch(infoLogger, sinon.match('Rendering error response'), sinon.match({
       page: 'errors/system_error',
       reason: 'A reason',
       error: 'err'
@@ -154,7 +154,7 @@ describe('rendering behaviour', () => {
     expect(render.lastCall.args).to.deep.equal(['errors/system_error', {
       viewName: 'AUTHORISATION_ERROR'
     }])
-    sinon.assert.calledWithMatch(errorLogger, sinon.match('Rendering error response'), sinon.match({
+    sinon.assert.calledWithMatch(infoLogger, sinon.match('Rendering error response'), sinon.match({
       page: 'errors/system_error',
       reason: 'Action: AUTHORISATION_ERROR'
     }))
@@ -163,7 +163,7 @@ describe('rendering behaviour', () => {
   it('should not log an error for a non-error action', () => {
     responseRouter.response(request, response, 'CAPTURE_SUBMITTED')
     expect(status.lastCall.args).to.deep.equal([200])
-    sinon.assert.notCalled(errorLogger)
+    sinon.assert.notCalled(infoLogger)
   })
 
   const defaultTemplates = {
