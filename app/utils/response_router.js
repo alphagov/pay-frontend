@@ -271,7 +271,7 @@ exports.response = function response (req, res, actionName, options) {
 }
 
 function logErrorPageShown (page, reason, loggingFields, error) {
-  logger.error('Rendering error response', {
+  logger.info('Rendering error response', {
     page,
     reason,
     error,
