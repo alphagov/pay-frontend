@@ -19,7 +19,7 @@ exports.csrfTokenGeneration = (req, res, next) => {
 exports.csrfCheck = (req, res, next) => {
   const chargeId = fetchAndValidateChargeId(req)
   if (!chargeId) {
-    logger.info('Session cookie is not present, rendering unauthorised page', getLoggingFields(req))
+    logger.warn('Session cookie is not present, rendering unauthorised page', getLoggingFields(req))
     return responseRouter.response(req, res, 'UNAUTHORISED')
   }
 
@@ -29,7 +29,7 @@ exports.csrfCheck = (req, res, next) => {
 
   if (!chargeSession.csrfSecret) {
     responseRouter.response(req, res, 'UNAUTHORISED')
-    logger.error('CSRF secret is not defined', {
+    logger.warn('CSRF secret is not defined', {
       ...getLoggingFields(req),
       referrer: req.get('Referrer'),
       url: req.originalUrl,
@@ -54,7 +54,7 @@ function csrfValid(csrfToken, chargeSession, req) {
   if (!['put', 'post'].includes(req.method.toLowerCase())) {
     return true
   } else if (chargeSession.csrfTokens.includes(csrfToken)) {
-    logger.error('CSRF token was already used', getLoggingFields(req))
+    logger.warn('CSRF token was already used', getLoggingFields(req))
     return false
   } else {
     return csrf().verify(chargeSession.csrfSecret, csrfToken)
