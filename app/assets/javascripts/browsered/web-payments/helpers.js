@@ -73,7 +73,7 @@ const prepareAppleRequestObject = () => {
 
 const getGooglePaymentsConfiguration = () => {
   const allowedCardNetworks = supportedNetworksFormattedByProvider(allowedCardTypes, 'google')
-  const allowedCardAuthMethods = ['PAN_ONLY', 'CRYPTOGRAM_3DS']
+  const allowedCardAuthMethods = ['CRYPTOGRAM_3DS']
   const tokenizationSpecification = {
     type: 'PAYMENT_GATEWAY',
     parameters: {
