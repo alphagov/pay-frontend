@@ -20,7 +20,7 @@ function getGooglePayMethodData (params) {
         {
           type: 'CARD',
           parameters: {
-            allowedAuthMethods: ['CRYPTOGRAM_3DS'],
+            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
             allowedCardNetworks: params.allowedCardTypes
           },
           tokenizationSpecification: {
