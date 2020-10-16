@@ -157,7 +157,7 @@
     "snyk": "^1.407.x",
     "standard": "^14.3.x",
     "superagent": "^6.1.0",
-    "supertest": "^4.0.2"
+    "supertest": "^5.0.0"
   },
   "nyc": {
     "reporter": "text",
