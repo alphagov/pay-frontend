@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /card_details/
-Disallow: /worldpay/
-Disallow: /public/worldpay/

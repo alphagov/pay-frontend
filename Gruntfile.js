@@ -36,14 +36,6 @@ module.exports = function (grunt) {
   }
 
   const copy = {
-    robots: {
-      files: [{
-        expand: true,
-        cwd: 'app/assets/',
-        src: ['robots.txt'],
-        dest: 'public/'
-      }]
-    },
     assets: {
       files: [{
         expand: true,
