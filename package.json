@@ -155,7 +155,7 @@
     "sass-lint": "^1.13.1",
     "sinon": "9.0.x",
     "snyk": "^1.407.x",
-    "standard": "^14.3.x",
+    "standard": "^15.0.x",
     "superagent": "^6.1.0",
     "supertest": "^5.0.0"
   },
