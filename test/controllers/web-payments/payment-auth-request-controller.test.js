@@ -101,6 +101,31 @@ describe('The web payments auth request controller', () => {
       return proxyquire('../../../app/controllers/web-payments/payment-auth-request-controller.js', proxyquireMocks)
     }
 
+    it('should set url to the auth 3ds required page if the response from connector is 200 and the charge has status AUTH_3DS_REQUIRED', done => {
+      const res = {
+        status: sinon.spy(),
+        send: sinon.spy()
+      }
+      const mockCookies = {
+        setSessionVariable: sinon.spy()
+      }
+      const expectedBodySavedInSession = {
+        statusCode: 200
+      }
+      nock(process.env.CONNECTOR_HOST)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/${provider}`)
+        .reply(200, {
+          'status': 'AUTHORISATION 3DS REQUIRED'
+        })
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+          expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+          expect(res.send.calledWith({ url: `/card_details/${chargeId}/3ds_required` })).to.be.ok // eslint-disable-line
+          expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+          done()
+        }
+      )
+    })
+
     it('should set payload in the session and return handle payment url', done => {
       const res = {
         status: sinon.spy(),
