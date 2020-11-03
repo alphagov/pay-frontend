@@ -12,6 +12,10 @@
 
 {% set mainClasses = "charge-new" %}
 
+{% set bodyAttributes = {
+  'data-accept-header': acceptHeader
+} %}
+
 {% block bodyStart %}
   {% if allowApplePay or allowGooglePay %}
     <script nonce="{{ nonce }}">
