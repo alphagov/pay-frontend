@@ -25,6 +25,9 @@ const req = {
       analyticsId: 'test-1234',
       type: 'test',
       paymentProvider: 'sandbox'
+    },
+    state: {
+      status: 'AUTHORISATION SUCCESS'
     }
   }
 }
@@ -40,6 +43,11 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
 }
 
 describe('The web payments handle auth response controller', () => {
+
+  beforeEach(() => {
+    req.chargeData.state.status = 'AUTHORISATION SUCCESS'
+  })
+
   it('should capture and delete connector response if connector response is in the session and status code is 200', done => {
     const mockCharge = () => {
       return {
@@ -70,6 +78,29 @@ describe('The web payments handle auth response controller', () => {
     expect(res.redirect.calledWith(303, '/return/chargeId')).to.be.ok // eslint-disable-line
     done()
   })
+
+  it('redirect to 3ds page if connector response status code is 200 and charge status is 200', done => {
+    req.chargeData.state.status = 'AUTHORISATION 3DS REQUIRED'
+    const mockCharge = () => {}
+    const res = {
+      redirect: sinon.spy(),
+      render: sinon.spy(),
+      status: sinon.spy()
+    }
+    const mockCookies = {
+      getSessionVariable: () => {
+        return {
+          statusCode: 200
+        }
+      },
+      deleteSessionVariable: sinon.spy()
+    }
+    requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(res.redirect.calledWith(303, `/card_details/${chargeId}/3ds_required`)).to.be.ok // eslint-disable-line
+    done()
+  })
+
   it('redirect to auth waiting and delete connector response if connector response is in the session and status code is 202', done => {
     const mockCharge = () => {
       return {

@@ -11,6 +11,7 @@ const Charge = require('../../models/charge')
 const { withAnalytics } = require('../../utils/analytics')
 const paths = require('../../paths')
 const { getSessionVariable, deleteSessionVariable } = require('../../utils/cookies')
+const State = require('../../../config/state')
 
 // constants
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId })
@@ -18,6 +19,7 @@ const webPaymentsRouteFor = (resource, chargeId) => paths.generateRoute(`webPaym
 
 const redirect = res => {
   return {
+    toAuth3dsRequired: (chargeId) => res.redirect(303, routeFor('auth3dsRequired', chargeId)),
     toAuthWaiting: chargeId => res.redirect(303, routeFor('authWaiting', chargeId)),
     toConfirm: chargeId => res.redirect(303, routeFor('confirm', chargeId)),
     toNew: chargeId => res.redirect(303, routeFor('new', chargeId)),
@@ -33,28 +35,33 @@ const handleAuthResponse = (req, res, charge) => response => {
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
-      Charge(req.headers[CORRELATION_HEADER])
-        .capture(req.chargeId, getLoggingFields(req))
-        .then(
-          () => {
-            logger.info('Successful capture for digital wallet payment.', getLoggingFields(req))
-            return redirect(res).toReturn(req.chargeId)
-          },
-          err => {
-            if (err.message === 'CAPTURE_FAILED') {
-              return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(
-                charge,
-                {},
-                webPaymentsRouteFor('handlePaymentResponse', charge.id)))
-            } else {
-              responseRouter.systemErrorResponse(req, res, 'Wallet auth response capture payment attempt error', withAnalytics(
-                charge,
-                { returnUrl: routeFor('return', charge.id) },
-                webPaymentsRouteFor('handlePaymentResponse', charge.id)
-              ), err)
+      if (charge.state.status === State.AUTH_3DS_REQUIRED) {
+        logger.info('Requesting 3DS1 for Google payment, redirect to auth 3ds page', getLoggingFields(req))
+        return redirect(res).toAuth3dsRequired(req.chargeId)
+      } else {
+        Charge(req.headers[CORRELATION_HEADER])
+          .capture(req.chargeId, getLoggingFields(req))
+          .then(
+            () => {
+              logger.info('Successful capture for digital wallet payment.', getLoggingFields(req))
+              return redirect(res).toReturn(req.chargeId)
+            },
+            err => {
+              if (err.message === 'CAPTURE_FAILED') {
+                return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(
+                  charge,
+                  {},
+                  webPaymentsRouteFor('handlePaymentResponse', charge.id)))
+              } else {
+                responseRouter.systemErrorResponse(req, res, 'Wallet auth response capture payment attempt error', withAnalytics(
+                  charge,
+                  { returnUrl: routeFor('return', charge.id) },
+                  webPaymentsRouteFor('handlePaymentResponse', charge.id)
+                ), err)
+              }
             }
-          }
-        )
+          )
+      }
       break
     case 400:
     case 500:
