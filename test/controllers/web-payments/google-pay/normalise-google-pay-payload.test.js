@@ -1,6 +1,12 @@
 const expect = require('chai').expect
 const normalise = require('../../../../app/controllers/web-payments/google-pay/normalise-google-pay-payload')
 
+const headers = {
+  'accept-for-html': 'text/html;q=1.0, */*;q=0.9',
+  'user-agent': 'Mozilla/5.0',
+  'x-forwarded-for': '203.0.113.1'
+}
+
 describe('normalise Google Pay payload', () => {
   it('should return the correct format for the payload', () => {
     const googlePayPayload = {
@@ -24,14 +30,17 @@ describe('normalise Google Pay payload', () => {
       payerName: 'Some Name'
     }
 
-    const normalisedPayload = normalise({ body: googlePayPayload })
+    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
           last_digits_card_number: '4242',
           brand: 'master-card',
           cardholder_name: 'Some Name',
-          email: 'name@email.fyi'
+          email: 'name@email.fyi',
+          accept_header: 'text/html;q=1.0, */*;q=0.9',
+          user_agent_header: 'Mozilla/5.0',
+          ip_address: '203.0.113.1'
         },
         encrypted_payment_data: {
           signature: 'MEQCIB54h8T/hWY3864Ufkwo4SF5IjhoMV9hjpJRIsqbAn4LAiBZz1VBZ+aiaduX8MN3dBtzyDOZVstwG/8bqJZDbrhKfQ=',
@@ -64,7 +73,7 @@ describe('normalise Google Pay payload', () => {
       payerName: 'Some Name'
     }
 
-    expect(() => normalise({ body: googlePayPayload })).to.throw('Unrecognised card brand in Google Pay payload: UnSupportedCard')
+    expect(() => normalise({ headers: headers, body: googlePayPayload })).to.throw('Unrecognised card brand in Google Pay payload: UnSupportedCard')
   })
 
   it('should return the correct format for the payload with min data', () => {
@@ -86,14 +95,17 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise({ body: googlePayPayload })
+    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
           last_digits_card_number: '4242',
           brand: 'master-card',
           cardholder_name: null,
-          email: null
+          email: null,
+          accept_header: 'text/html;q=1.0, */*;q=0.9',
+          user_agent_header: 'Mozilla/5.0',
+          ip_address: '203.0.113.1'
         },
         encrypted_payment_data: {
           signature: 'MEQCIB54h8T/hWY3864Ufkwo4SF5IjhoMV9hjpJRIsqbAn4LAiBZz1VBZ+aiaduX8MN3dBtzyDOZVstwG/8bqJZDbrhKfQ=',
@@ -123,14 +135,17 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise({ body: googlePayPayload })
+    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
           last_digits_card_number: '',
           brand: 'master-card',
           cardholder_name: null,
-          email: null
+          email: null,
+          accept_header: 'text/html;q=1.0, */*;q=0.9',
+          user_agent_header: 'Mozilla/5.0',
+          ip_address: '203.0.113.1'
         },
         encrypted_payment_data: {
           signature: 'MEQCIB54h8T/hWY3864Ufkwo4SF5IjhoMV9hjpJRIsqbAn4LAiBZz1VBZ+aiaduX8MN3dBtzyDOZVstwG/8bqJZDbrhKfQ=',
@@ -160,14 +175,17 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise({ body: googlePayPayload })
+    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
           last_digits_card_number: '',
           brand: 'master-card',
           cardholder_name: null,
-          email: null
+          email: null,
+          accept_header: 'text/html;q=1.0, */*;q=0.9',
+          user_agent_header: 'Mozilla/5.0',
+          ip_address: '203.0.113.1'
         },
         encrypted_payment_data: {
           signature: 'MEQCIB54h8T/hWY3864Ufkwo4SF5IjhoMV9hjpJRIsqbAn4LAiBZz1VBZ+aiaduX8MN3dBtzyDOZVstwG/8bqJZDbrhKfQ=',
