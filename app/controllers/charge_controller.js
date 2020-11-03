@@ -54,6 +54,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
+  charge.acceptHeader = req.headers['accept']
 
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
   if (googlePayMerchantId !== GOOGLE_PAY_MERCHANT_ID && googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
