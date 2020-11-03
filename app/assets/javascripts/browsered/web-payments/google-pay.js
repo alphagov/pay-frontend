@@ -10,7 +10,8 @@ const processPayment = paymentData => {
     method: 'POST',
     credentials: 'same-origin',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept-for-HTML': document.body.getAttribute('data-accept-header') || '*/*'
     },
     body: JSON.stringify(paymentData)
   })
