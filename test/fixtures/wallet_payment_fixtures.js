@@ -9,7 +9,10 @@ const fixtures = {
         last_digits_card_number: ops.lastDigitsCardNumber !== undefined ? ops.lastDigitsCardNumber : successfulLastDigitsCardNumber,
         brand: 'master-card',
         cardholder_name: 'Some Name',
-        email: 'name@email.fyi'
+        email: 'name@email.fyi',
+        accept_header: 'text/html;q=1.0, */*;q=0.9',
+        user_agent_header: 'Mozilla/5.0',
+        ip_address: '203.0.113.1'
       },
       encrypted_payment_data: {
         signature: 'MEQCIB54h8T/hWY3864Ufkwo4SF5IjhoMV9hjpJRIsqbAn4LAiBZz1VBZ+aiaduX8MN3dBtzyDOZVstwG/8bqJZDbrhKfQ=',

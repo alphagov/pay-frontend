@@ -3,6 +3,7 @@
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging_fields_helper')
 const { output, redact } = require('../../../utils/structured_logging_value_helper')
+const userIpAddress = require('../../../utils/user_ip_address')
 const humps = require('humps')
 
 const logselectedPayloadProperties = req => {
@@ -81,7 +82,10 @@ module.exports = req => {
     last_digits_card_number: normaliseLastDigitsCardNumber(payload.details.paymentMethodData.info.cardDetails),
     brand: normaliseCardName(payload.details.paymentMethodData.info.cardNetwork),
     cardholder_name: nullable(payload.payerName || ''),
-    email: nullable(payload.payerEmail || '')
+    email: nullable(payload.payerEmail || ''),
+    accept_header: req.headers['accept-for-html'],
+    user_agent_header: req.headers['user-agent'],
+    ip_address: userIpAddress(req)
   }
 
   const paymentData = humps.decamelizeKeys(JSON.parse(payload.details.paymentMethodData.tokenizationData.token))
