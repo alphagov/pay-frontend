@@ -10,9 +10,11 @@ const { CORRELATION_HEADER } = require('../../../config/correlation_header')
 const { setSessionVariable } = require('../../utils/cookies')
 
 module.exports = (req, res) => {
+  logger.info('The res: '+ JSON.stringify(req))
   const { chargeId, params } = req
   const { provider } = params
   const payload = provider === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
+  logger.info('The payload: '+JSON.stringify(payload))
   return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload }, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
