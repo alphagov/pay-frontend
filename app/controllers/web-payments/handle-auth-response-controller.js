@@ -35,7 +35,7 @@ const handleAuthResponse = (req, res, charge) => response => {
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
-      if (charge.state.status === State.AUTH_3DS_REQUIRED) {
+      if (charge.status === State.AUTH_3DS_REQUIRED) {
         logger.info('Requesting 3DS1 for Google payment, redirect to auth 3ds page', getLoggingFields(req))
         return redirect(res).toAuth3dsRequired(req.chargeId)
       } else {
