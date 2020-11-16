@@ -26,9 +26,7 @@ const req = {
       type: 'test',
       paymentProvider: 'sandbox'
     },
-    state: {
-      status: 'AUTHORISATION SUCCESS'
-    }
+    status: 'AUTHORISATION SUCCESS'
   }
 }
 
@@ -45,7 +43,7 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
 describe('The web payments handle auth response controller', () => {
 
   beforeEach(() => {
-    req.chargeData.state.status = 'AUTHORISATION SUCCESS'
+    req.chargeData.status = 'AUTHORISATION SUCCESS'
   })
 
   it('should capture and delete connector response if connector response is in the session and status code is 200', done => {
@@ -80,7 +78,7 @@ describe('The web payments handle auth response controller', () => {
   })
 
   it('redirect to 3ds page if connector response status code is 200 and charge status is 200', done => {
-    req.chargeData.state.status = 'AUTHORISATION 3DS REQUIRED'
+    req.chargeData.status = 'AUTHORISATION 3DS REQUIRED'
     const mockCharge = () => {}
     const res = {
       redirect: sinon.spy(),
@@ -284,9 +282,9 @@ describe('The web payments handle auth response controller', () => {
         'testingVariant': 'original'
       }
     }
-    requireHandleAuthResponseController(() => {}, mockNormaliseCharge, mockCookies)(req, res)
-      expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
-      expect(mockCookies.getSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
+    requireHandleAuthResponseController(() => { }, mockNormaliseCharge, mockCookies)(req, res)
+    expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(mockCookies.getSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     done()
   })
 })
