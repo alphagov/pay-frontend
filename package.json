@@ -106,7 +106,7 @@
     "randomstring": "^1.1.5",
     "readdir": "1.0.x",
     "request": "^2.88.2",
-    "requestretry": "^4.1.1",
+    "requestretry": "^4.1.2",
     "rfc822-validate": "1.0.x",
     "serve-favicon": "2.5.0",
     "staticify": "5.0.x",
