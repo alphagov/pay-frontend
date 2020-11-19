@@ -98,7 +98,7 @@
     "memory-cache": "^0.2.0",
     "metrics": "0.1.21",
     "minimist": "1.2.x",
-    "moment-timezone": "^0.5.31",
+    "moment-timezone": "^0.5.32",
     "morgan": "1.10.x",
     "nunjucks": "^3.2.2",
     "polyfill-array-includes": "^2.0.0",
