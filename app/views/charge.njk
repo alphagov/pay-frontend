@@ -125,6 +125,25 @@
               {% endif %}
               <h1 class="govuk-heading-l non-web-payment-button-heading">{{ __p("cardDetails.enterCardDetails") }}</h1>
 
+              <div class="payment-summary-wrap">
+                <div class="payment-summary">
+                  <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
+                  <p id="payment-description" class="govuk-body">
+                    {{ description }}
+                  </p>
+                  <p class="govuk-body hidden" id="payment-summary-breakdown">
+                    {{ __p("paymentSummary.amount") }}
+                    <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
+                    {{ __p("paymentSummary.corporateCardFee") }}
+                    <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
+                  </p>
+                  <p class="govuk-body govuk-!-margin-bottom-0">
+                    {{ __p("paymentSummary.totalAmount") }}
+                    <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
+                  </p>
+                </div>
+              </div>
+
               <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
                 <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
                 <input id="csrf" name="csrfToken" type="hidden" value="{{ csrf }}"/>
@@ -149,26 +168,26 @@
                       </p>
                     {% endif %}
                   </label>
-                  
-                  {% if moto and gatewayAccount.motoMaskCardNumberInput %} 
-                    {% set cardNumberInputType = 'password' %}  
+
+                  {% if moto and gatewayAccount.motoMaskCardNumberInput %}
+                    {% set cardNumberInputType = 'password' %}
                     {% set cardNumberAutoCompleteType = 'off' %}
                   {% else %}
-                    {% set cardNumberInputType = 'text' %}   
+                    {% set cardNumberInputType = 'text' %}
                     {% set cardNumberAutoCompleteType = 'cc-number' %}
                   {% endif %}
 
-                  <input id="card-no"
-                      type="{{cardNumberInputType}}"
-                      inputmode="numeric"
-                      pattern="[0-9]*"
-                      name="cardNo"
-                      maxlength="26"
-                      class="govuk-input govuk-!-width-three-quarters"
-                      autocomplete="{{cardNumberAutoCompleteType}}"
-                      value="{{cardNo}}"
-                    />
-
+                  <p class="govuk-body-s accepted-cards-hint withdrawal-text">
+                    {% if withdrawalText === 'debit_credit' %}
+                      {{ __p("cardDetails.withdrawalText").debit_credit }}
+                    {% endif %}
+                    {% if withdrawalText === 'debit' %}
+                      {{ __p("cardDetails.withdrawalText").debit }}
+                    {% endif %}
+                    {% if withdrawalText === 'credit' %}
+                      {{ __p("cardDetails.withdrawalText").credit }}
+                    {% endif %}
+                  </p>
                   <ul class="accepted-cards field-empty">
                     {% if allowedCards %}
                       {% for currentAllowedCard in allowedCards %}
@@ -185,17 +204,17 @@
                       {% endfor %}
                     {% endif %}
                   </ul>
-                  <p class="govuk-body-s accepted-cards-hint withdrawal-text">
-                    {% if withdrawalText === 'debit_credit' %}
-                      {{ __p("cardDetails.withdrawalText").debit_credit }}
-                    {% endif %}
-                    {% if withdrawalText === 'debit' %}
-                      {{ __p("cardDetails.withdrawalText").debit }}
-                    {% endif %}
-                    {% if withdrawalText === 'credit' %}
-                      {{ __p("cardDetails.withdrawalText").credit }}
-                    {% endif %}
-                  </p>
+
+                  <input id="card-no"
+                      type="{{cardNumberInputType}}"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      name="cardNo"
+                      maxlength="26"
+                      class="govuk-input govuk-!-width-three-quarters"
+                      autocomplete="{{cardNumberAutoCompleteType}}"
+                      value="{{cardNo}}"
+                    />
                   <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
                 </div>
 
@@ -205,7 +224,7 @@
                       <div class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
                         <span class="expiry-date-label"
                   data-label-replace="expiryMonth"
-                  data-original-label="{{ __p("cardDetails.expiry") }}">
+                  dat-original-label="{{ __p("cardDetails.expiry") }}">
                           {{ __p("cardDetails.expiry") }}
                         </span>
                       </div>
@@ -299,13 +318,13 @@
                     {% endif %}
                   </label>
 
-                  {% if moto and gatewayAccount.motoMaskCardSecurityCodeInput %} 
-                    {% set securityCodeInputType = 'password' %}  
+                  {% if moto and gatewayAccount.motoMaskCardSecurityCodeInput %}
+                    {% set securityCodeInputType = 'password' %}
                     {% set securityCodeAutoCompleteType = 'off' %}
                   {% else %}
-                    {% set securityCodeInputType = 'text' %}   
+                    {% set securityCodeInputType = 'text' %}
                     {% set securityCodeAutoCompleteType = 'cc-csc' %}
-                  {% endif %} 
+                  {% endif %}
 
                   <input id="cvc"
                   type="{{securityCodeInputType}}"
@@ -533,24 +552,6 @@
             <iframe id="worldpay3dsFlexDdcIframe" src="/public/worldpay/worldpay-3ds-flex-ddc.html" class="govuk-!-display-none"></iframe>
           {% endif %}
       </main>
-      <aside class="govuk-grid-column-one-third payment-summary-wrap">
-        <div class="payment-summary">
-          <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
-          <p id="payment-description" class="govuk-body">
-            {{ description }}
-          </p>
-          <p class="govuk-body hidden" id="payment-summary-breakdown">
-            {{ __p("paymentSummary.amount") }}
-            <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
-            {{ __p("paymentSummary.corporateCardFee") }}
-            <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
-          </p>
-          <p class="govuk-body govuk-!-margin-bottom-0">
-            {{ __p("paymentSummary.totalAmount") }}
-            <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
-          </p>
-        </div>
-      </aside>
     </div>
   </div>
 {% endblock %}

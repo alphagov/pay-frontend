@@ -9,9 +9,7 @@
   }
 
   &-wrap {
-    position: -webkit-sticky;
-    position: sticky;
-    top: govuk-spacing(6);
+    margin: govuk-spacing(6) 0 govuk-spacing(6);
   }
 
   .amount {
