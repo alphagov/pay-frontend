@@ -86,7 +86,8 @@ const getGooglePaymentsConfiguration = () => {
     type: 'CARD',
     parameters: {
       allowedAuthMethods: allowedCardAuthMethods,
-      allowedCardNetworks: allowedCardNetworks
+      allowedCardNetworks: allowedCardNetworks,
+      assuranceDetailsRequired: true
     },
     tokenizationSpecification
   }
@@ -102,6 +103,7 @@ const getGooglePaymentsConfiguration = () => {
     transactionInfo: {
       totalPriceStatus: 'FINAL',
       totalPrice: window.paymentDetails.amount,
+      countryCode: 'GB',
       currencyCode: 'GBP'
     },
     allowedPaymentMethods: [cardPaymentMethod]
