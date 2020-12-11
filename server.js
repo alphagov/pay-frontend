@@ -74,11 +74,6 @@ function initialiseGlobalMiddleware (app) {
     next()
   })
 
-  app.use(function (req, res, next) {
-    noCache(res)
-    next()
-  })
-
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -179,6 +174,12 @@ function initialise () {
   initialiseCookies(app)
   initialiseTemplateEngine(app)
   initialisePublic(app)
+
+  app.use((req, res, next) => {
+    noCache(res)
+    next()
+  })
+
   initialiseRoutes(app) // This contains the 404 override and so should be last
   logApplePayCertificateTimeToExpiry()
   app.use(Sentry.Handlers.errorHandler())
