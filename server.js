@@ -137,7 +137,13 @@ function initialisePublic (app) {
   app.use('/javascripts', express.static(path.join(__dirname, '/public/assets/javascripts'), publicCaching))
   app.use('/images', express.static(path.join(__dirname, '/public/images'), publicCaching))
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/assets/stylesheets'), publicCaching))
-  app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/govuk/')))
+
+  if (process.env.NGINX_CACHING_ENABLED === 'true') {
+    app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/govuk/'), publicCaching))
+  } else {
+    app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/govuk/')))
+  }
+
   app.use('/public', express.static(path.join(__dirname, '/node_modules/@govuk-pay/pay-js-commons/')))
 }
 
