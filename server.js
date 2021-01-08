@@ -74,11 +74,6 @@ function initialiseGlobalMiddleware (app) {
     next()
   })
 
-  app.use(function (req, res, next) {
-    noCache(res)
-    next()
-  })
-
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -151,6 +146,13 @@ function initialiseRoutes (app) {
   router.bind(app)
 }
 
+function setNoCacheHeadersForRoutes (app) {
+  app.use((req, res, next) => {
+    noCache(res)
+    next()
+  })
+}
+
 function listen () {
   const app = initialise()
   app.listen(PORT || 3000)
@@ -179,7 +181,9 @@ function initialise () {
   initialiseCookies(app)
   initialiseTemplateEngine(app)
   initialisePublic(app)
+  setNoCacheHeadersForRoutes(app)
   initialiseRoutes(app) // This contains the 404 override and so should be last
+
   logApplePayCertificateTimeToExpiry()
   app.use(Sentry.Handlers.errorHandler())
   app.use(errorHandlers.defaultErrorHandler)
