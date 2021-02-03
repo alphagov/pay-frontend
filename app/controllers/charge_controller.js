@@ -51,7 +51,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.exampleCardExpiryDateYear = getFutureYearAs2Digits()
   charge.post_card_action = routeFor('create', chargeId)
   charge.post_cancel_action = routeFor('cancel', chargeId)
-  charge.allowApplePay = charge.gatewayAccount.allowApplePay
+  charge.allowApplePay = charge.gatewayAccount.gatewayAccountId === 27
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
   charge.acceptHeader = req.headers['accept']
