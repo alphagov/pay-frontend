@@ -13,6 +13,9 @@ const initialiseAddressCountryAutocomplete = () => {
       autoselect: true,
       displayMenu: 'overlay'
     })
+
+    var noOpAutocompleteIdentifier = Math.random().toString(36).substring(2, 15)
+    document.getElementById('address-country').setAttribute('autocomplete', noOpAutocompleteIdentifier)
   }
 
   autocompleteScript.setAttribute('type', 'text/javascript')
