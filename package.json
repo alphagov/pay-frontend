@@ -89,7 +89,7 @@
     "csrf": "3.1.x",
     "express": "4.17.x",
     "gaap-analytics": "^3.1.0",
-    "govuk-frontend": "^3.10.2",
+    "govuk-frontend": "^3.11.0",
     "helmet": "3.23.3",
     "humps": "^2.0.1",
     "i18n": "0.13.x",
