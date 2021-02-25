@@ -117,7 +117,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/preset-env": "^7.13.5",
-    "@pact-foundation/pact-node": "^10.11.8",
+    "@pact-foundation/pact-node": "^10.11.9",
     "browserify": "17.0.x",
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
