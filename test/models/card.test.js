@@ -1,10 +1,9 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const assert = require('assert')
 const nock = require('nock')
-const { unexpectedPromise } = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
+const { unexpectedPromise } = require('../test-helpers/test-helpers.js')
 
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
@@ -14,7 +13,7 @@ const { expect } = chai
 const CardModel = require('../../app/models/card.js')
 
 // Local dependencies
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+require('../test-helpers/html-assertions.js')
 
 // Constants
 const aRequestId = 'unique-request-id'

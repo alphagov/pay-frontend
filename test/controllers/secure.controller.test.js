@@ -1,8 +1,5 @@
 'use strict'
 
-// Core dependencies
-const path = require('path')
-
 // NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
@@ -13,7 +10,7 @@ const paths = require('../../app/paths.js')
 const withAnalyticsError = require('../../app/utils/analytics').withAnalyticsError
 
 // configure
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+require('../test-helpers/html-assertions.js')
 
 const mockCharge = (function () {
   const mock = function (withSuccess, chargeObject) {
@@ -68,8 +65,8 @@ const mockToken = (function () {
 }())
 
 const requireSecureController = function (mockedCharge, mockedToken, mockedResponseRouter) {
-  return proxyquire(path.join(__dirname, '/../../app/controllers/secure_controller.js'), {
-    '../utils/response_router': mockedResponseRouter,
+  return proxyquire('../../app/controllers/secure.controller.js', {
+    '../utils/response-router': mockedResponseRouter,
     '../models/charge.js': mockedCharge,
     '../models/token.js': mockedToken,
     csrf: function () {
@@ -143,7 +140,7 @@ describe('secure controller', function () {
           expect(response.redirect.calledWith(303, paths.generateRoute('card.new', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
           expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
           expect(request.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
-            csrfSecret: 'foo'
+            csrfSecret: 'foo' // pragma: allowlist secret
           })
         })
       })
@@ -202,7 +199,7 @@ describe('secure controller', function () {
           const requestWithWrongCookie = {
             frontend_state: {
               ch_xxxx: {
-                csrfSecret: 'foo'
+                csrfSecret: 'foo' // pragma: allowlist secret
               }
             },
             params: { chargeTokenId: 1 },
@@ -231,7 +228,7 @@ describe('secure controller', function () {
           const requestWithFrontendStateCookie = {
             frontend_state: {
               ch_dh6kpbb4k82oiibbe4b9haujjk: {
-                csrfSecret: 'foo'
+                csrfSecret: 'foo' // pragma: allowlist secret
               }
             },
             params: { chargeTokenId: 1 },
@@ -258,7 +255,7 @@ describe('secure controller', function () {
           expect(responseRouter.response.calledWith(requestWithFrontendStateCookie, response, 'AUTHORISATION_SUCCESS', opts)).to.be.true // eslint-disable-line
           expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
           expect(requestWithFrontendStateCookie.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
-            csrfSecret: 'foo'
+            csrfSecret: 'foo' // pragma: allowlist secret
           })
         })
       })

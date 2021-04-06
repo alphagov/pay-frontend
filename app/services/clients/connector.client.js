@@ -1,9 +1,9 @@
 'use strict'
 
 const logger = require('../../utils/logger')(__filename)
-const baseClient = require('./base_client/base_client')
-const requestLogger = require('../../utils/request_logger')
-const { getCounter } = require('../../metrics/graphite_reporter')
+const baseClient = require('./base.client/base.client')
+const requestLogger = require('../../utils/request-logger')
+const { getCounter } = require('../../metrics/graphite-reporter')
 
 const METRICS_PREFIX = 'internal-rest-call.connector'
 const SERVICE_NAME = 'connector'
@@ -55,7 +55,7 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-function _putConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
+function _putConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     ...loggingFields,
@@ -95,7 +95,7 @@ function _putConnector(url, payload, description, loggingFields = {}, callingFun
 }
 
 /** @private */
-function _postConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
+function _postConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -135,7 +135,7 @@ function _postConnector(url, payload, description, loggingFields = {}, callingFu
 }
 
 /** @private */
-function _patchConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
+function _patchConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -175,7 +175,7 @@ function _patchConnector(url, payload, description, loggingFields = {}, callingF
 }
 
 /** @private */
-function _getConnector(url, description, loggingFields = {}, callingFunctionName) {
+function _getConnector (url, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,

@@ -9,8 +9,8 @@ const expect = chai.expect
 
 // Local dependencies
 const logger = require('../../app/utils/logger')(__filename)
-const cookie = require('../test_helpers/session')
-const helper = require('../test_helpers/test_helpers')
+const cookie = require('../test-helpers/session')
+const helper = require('../test-helpers/test-helpers')
 const {
   getChargeRequest,
   postChargeRequest,

@@ -1,10 +1,9 @@
 'use strict'
 
 // Core dependencies
-const path = require('path')
 
 // Local dependencies
-const paymentFixtures = require('../fixtures/payment_fixtures')
+const paymentFixtures = require('../fixtures/payment-fixtures')
 
 // NPM dependencies
 const proxyquire = require('proxyquire')
@@ -270,14 +269,14 @@ function requireChargeController (mockedConnectorClient, { failValidation, decry
   })
 
   const proxyquireMocks = {
-    '../utils/charge_validation_backend': mockedChargeValidationBackend,
-    '../services/clients/connector_client': mockedConnectorClient
+    '../utils/charge-validation-backend': mockedChargeValidationBackend,
+    '../services/clients/connector.client': mockedConnectorClient
   }
   const oldDecryptAndOmitCardData = process.env.DECRYPT_AND_OMIT_CARD_DATA
   if (decryptAndOmitCardData) {
     process.env.DECRYPT_AND_OMIT_CARD_DATA = decryptAndOmitCardData
   }
-  const result = proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
+  const result = proxyquire('../../app/controllers/charge.controller.js', proxyquireMocks)
   if (oldDecryptAndOmitCardData) {
     process.env.DECRYPT_AND_OMIT_CARD_DATA = oldDecryptAndOmitCardData
   } else {

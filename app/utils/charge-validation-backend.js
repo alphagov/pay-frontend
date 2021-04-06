@@ -4,8 +4,8 @@
 const _ = require('lodash')
 
 // Local dependencies
-const chargeValidator = require('./charge_validation.js')
-const normalise = require('../services/normalise_charge.js')
+const chargeValidator = require('./charge-validation.js')
+const normalise = require('../services/normalise-charge.js')
 
 module.exports = (translations, logger, cardModel, chargeOptions, loggingFields = {}) => {
   const validator = chargeValidator(translations, logger, cardModel, chargeOptions)

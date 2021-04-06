@@ -15,9 +15,9 @@ const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASEURL = `http://localhost:${PORT}`
 
 // Custom dependencies
-const connectorClient = require('../../../app/services/clients/connector_client')
-const fixtures = require('../../fixtures/wallet_payment_fixtures')
-const { PactInteractionBuilder } = require('../../fixtures/pact_interaction_builder')
+const connectorClient = require('../../../app/services/clients/connector.client')
+const fixtures = require('../../fixtures/wallet-payment-fixtures')
+const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
 
 // Global setup
 const expect = chai.expect

@@ -5,9 +5,9 @@ const lodash = require('lodash')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
-const responseRouter = require('../utils/response_router')
-const stateService = require('../services/state_service')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
+const responseRouter = require('../utils/response-router')
+const stateService = require('../services/state.service')
 const State = require('../../config/state.js')
 const paths = require('../paths')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError

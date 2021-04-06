@@ -3,16 +3,16 @@ const _ = require('lodash')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
-const responseRouter = require('../utils/response_router')
-const normalise = require('../services/normalise_charge')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
+const responseRouter = require('../utils/response-router')
+const normalise = require('../services/normalise-charge')
 const paths = require('../paths')
 const { withAnalytics } = require('../utils/analytics')
-const connectorClient = require('../services/clients/connector_client')
+const connectorClient = require('../services/clients/connector.client')
 
 // Constants
-const { views, threeDsEPDQResults } = require('../../config/charge_controller')
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const { views, threeDsEPDQResults } = require('../../config/charge.controller')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
 

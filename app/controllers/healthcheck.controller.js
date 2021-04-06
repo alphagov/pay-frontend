@@ -1,8 +1,8 @@
 // NPM dependencies
 const _ = require('lodash')
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
-const baseClient = require('../services/clients/base_client/base_client')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
+const baseClient = require('../services/clients/base.client/base.client')
 
 const healthyPingResponse = { ping: { healthy: true } }
 

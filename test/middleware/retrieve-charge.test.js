@@ -4,15 +4,15 @@
 const sinon = require('sinon')
 const { expect } = require('chai')
 const nock = require('nock')
-const { validChargeDetails } = require('../fixtures/payment_fixtures')
-const retrieveCharge = require('../../app/middleware/retrieve_charge')
+const { validChargeDetails } = require('../fixtures/payment-fixtures')
+const retrieveCharge = require('../../app/middleware/retrieve-charge')
 
 const ANALYTICS_ERROR = {
   analytics: {
-      analyticsId: 'Service unavailable',
-      type: 'Service unavailable',
-      paymentProvider: 'Service unavailable',
-      amount: '0.00'
+    analyticsId: 'Service unavailable',
+    type: 'Service unavailable',
+    paymentProvider: 'Service unavailable',
+    amount: '0.00'
   }
 }
 
@@ -77,7 +77,7 @@ describe('retrieve charge test', () => {
     testPromise.then(result => {
       try {
         expect(status.calledWith(500))
-        expect(render.calledWith('errors/system_error', {
+        expect(render.calledWith('errors/system-error', {
           viewName: 'SYSTEM_ERROR',
           analytics: ANALYTICS_ERROR.analytics
         }))

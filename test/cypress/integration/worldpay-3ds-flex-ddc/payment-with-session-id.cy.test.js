@@ -54,14 +54,13 @@ describe('Worldpay 3ds flex card payment flow', () => {
     complete: () => true
   }
 
-  
   const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
   const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts)
   const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
-  
+
   const createGooglePayPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(
-    tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts, gatewayAccountOpts, additionalChargeOpts )
+    tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts, gatewayAccountOpts, additionalChargeOpts)
 
   const worldpay3dsFlexDdcStub = {
     name: 'worldpay3dsFlexDdcIframePost',
@@ -160,7 +159,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
         cy.wait('@checkCard')
         cy.get('#card-no').should('not.have.class', 'govuk-input--error')
       })
-      
+
       it('Should enter payment details', () => {
         cy.get('#expiry-month').type(validPayment.expiryMonth)
         cy.get('#expiry-year').type(validPayment.expiryYear)

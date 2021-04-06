@@ -93,7 +93,7 @@ describe('Standard card payment flow', () => {
       cy.get('#expiry-date-hint').contains(/\b10\/[0-9]{2}\b/)
 
       // Accept header will almost certainly contain either ‘text/html’ or ‘*/*’
-      cy.get('body').should('have.attr', 'data-accept-header').and("match", /text\/html|\*\/\*/)
+      cy.get('body').should('have.attr', 'data-accept-header').and('match', /text\/html|\*\/\*/)
     })
 
     it('Should enter and validate a correct card', () => {

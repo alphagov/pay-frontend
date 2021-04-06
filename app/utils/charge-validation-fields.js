@@ -10,7 +10,7 @@ const rfc822Validator = require('rfc822-validate')
 // Local dependencies
 const luhn = require('./luhn')
 const creditCardType = require('credit-card-type')
-const emailTools = require('./email_tools')
+const emailTools = require('./email-tools')
 
 // Constants
 const EMAIL_MAX_LENGTH = 254

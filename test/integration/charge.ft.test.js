@@ -8,15 +8,15 @@ const logger = require('../../app/utils/logger')(__filename)
 const proxyquire = require('proxyquire')
 
 // Local dependencies
-const cookie = require('../test_helpers/session')
-const helper = require('../test_helpers/test_helpers')
+const cookie = require('../test-helpers/session')
+const helper = require('../test-helpers/test-helpers')
 const {
   postChargeRequest,
   defaultConnectorResponseForGetCharge,
   defaultAdminusersResponseForGetService
 } = helper
 const State = require('../../config/state')
-const serviceFixtures = require('../fixtures/service_fixtures')
+const serviceFixtures = require('../fixtures/service-fixtures')
 
 // Constants
 const app = proxyquire('../../server.js',

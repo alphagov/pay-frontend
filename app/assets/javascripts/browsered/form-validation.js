@@ -1,6 +1,6 @@
 'use strict'
 
-const chargeValidation = require('../../../utils/charge_validation')
+const chargeValidation = require('../../../utils/charge-validation')
 const { submitWithWorldpay3dsFlexDdcResult } = require('./worldpay-3ds-flex-ddc')
 
 var init = function () {

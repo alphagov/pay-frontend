@@ -1,6 +1,6 @@
 'use strict'
 
-const responseRouter = require('../utils/response_router')
+const responseRouter = require('../utils/response-router')
 
 module.exports = {
   defaultErrorHandler (err, req, res, next) {

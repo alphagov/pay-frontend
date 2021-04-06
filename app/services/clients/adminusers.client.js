@@ -1,11 +1,11 @@
 'use strict'
 
 // Local dependencies
-const baseClient = require('./base_client/base_client')
+const baseClient = require('./base.client/base.client')
 const logger = require('../../utils/logger')(__filename)
-const requestLogger = require('../../utils/request_logger')
+const requestLogger = require('../../utils/request-logger')
 const Service = require('../../models/Service.class')
-const { getCounter } = require('../../metrics/graphite_reporter')
+const { getCounter } = require('../../metrics/graphite-reporter')
 
 // Constants
 const SERVICE_NAME = 'adminusers'
@@ -16,7 +16,7 @@ let baseUrl
 let correlationId
 
 /** @private */
-function _getAdminUsers(url, description, findOptions, loggingFields = {}, callingFunctionName) {
+function _getAdminUsers (url, description, findOptions, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -62,7 +62,7 @@ const incrementStatusCodeCounter = (callingFunctionName, statusCode) => {
   getCounter(`${METRICS_PREFIX}.${callingFunctionName}.${statusCode}`).inc()
 }
 
-const findServiceBy = function findServiceBy(findOptions, loggingFields = {}) {
+const findServiceBy = function findServiceBy (findOptions, loggingFields = {}) {
   const servicesUrl = `${baseUrl}/v1/api/services`
   return _getAdminUsers(servicesUrl, 'find service', findOptions, loggingFields, 'findServiceBy')
 }

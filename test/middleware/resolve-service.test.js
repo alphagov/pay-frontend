@@ -1,7 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const _ = require('lodash')
 const sinon = require('sinon')
 const chai = require('chai')
@@ -10,7 +9,7 @@ const proxyquire = require('proxyquire')
 
 // Local dependencies
 const Service = require('../../app/models/Service.class')
-const serviceFixtures = require('../fixtures/service_fixtures')
+const serviceFixtures = require('../fixtures/service-fixtures')
 
 // Configure
 chai.use(chaiAsPromised)
@@ -18,8 +17,8 @@ const expect = chai.expect
 const errorLogger = sinon.spy()
 
 const resolveServiceMiddleware = function (findServicePromise) {
-  return proxyquire(path.join(__dirname, '/../../app/middleware/resolve_service.js'), {
-    '../services/clients/adminusers_client': () => {
+  return proxyquire('../../app/middleware/resolve-service.js', {
+    '../services/clients/adminusers.client': () => {
       return {
         findServiceBy: () => {
           return findServicePromise
@@ -35,10 +34,10 @@ const resolveServiceMiddleware = function (findServicePromise) {
 }
 
 const analyticsDataForErrors = {
-  'analyticsId': 'Service unavailable',
-  'type': 'Service unavailable',
-  'paymentProvider': 'Service unavailable',
-  'amount': '0.00'
+  analyticsId: 'Service unavailable',
+  type: 'Service unavailable',
+  paymentProvider: 'Service unavailable',
+  amount: '0.00'
 }
 
 describe('resolve service middleware', function () {
@@ -63,7 +62,7 @@ describe('resolve service middleware', function () {
 
   it('should display UNAUTHORISED if charge id is missing', function () {
     const resolveService = resolveServiceMiddleware()
-    const expectedRenderData = { 'analytics': analyticsDataForErrors, 'viewName': 'UNAUTHORISED' }
+    const expectedRenderData = { analytics: analyticsDataForErrors, viewName: 'UNAUTHORISED' }
     const req = {
       headers: []
     }
@@ -76,7 +75,7 @@ describe('resolve service middleware', function () {
     const nextSpy = sinon.spy()
     resolveService(req, res, nextSpy)
     expect(res.status.calledWith(403)).to.be.equal(true)
-    expect(res.render.calledWith('errors/incorrect_state/session_expired', expectedRenderData)).to.be.equal(true) // eslint-disable-line
+    expect(res.render.calledWith('errors/incorrect-state/session-expired', expectedRenderData)).to.be.equal(true) // eslint-disable-line
   })
 
   it('should log an error if it fails to retrieving service data', function (done) {

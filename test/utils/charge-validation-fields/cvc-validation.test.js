@@ -1,7 +1,7 @@
 var expect = require('chai').expect
-var cardTypes = require('../../test_helpers/test_helpers.js').cardTypes()
+var cardTypes = require('../../test-helpers/test-helpers.js').cardTypes()
 var Card = require('../../../app/models/card.js')(cardTypes)
-var fields = require('../../../app/utils/charge_validation_fields.js')(Card)
+var fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
 describe('card validation: cvc', function () {
   it('should true if correct', function () {

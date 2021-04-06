@@ -4,7 +4,7 @@
 const changeCase = require('change-case')
 
 // Local dependencies
-const chargeValidationFields = require('./charge_validation_fields')
+const chargeValidationFields = require('./charge-validation-fields')
 
 // Constants
 const CUSTOM_ERRORS = {

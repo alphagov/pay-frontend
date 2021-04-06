@@ -1,6 +1,5 @@
-var path = require('path')
 var expect = require('chai').expect
-var normalise = require(path.join(__dirname, '/../../app/services/normalise_charge.js'))
+var normalise = require('../../app/services/normalise-charge.js')
 
 describe('normalise', function () {
   it('expiry date should return correctly on multiple formats', function () {

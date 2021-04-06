@@ -10,16 +10,16 @@ const {
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const { setLoggingField, getLoggingFields } = require('../utils/logging_fields_helper')
+const { setLoggingField, getLoggingFields } = require('../utils/logging-fields-helper')
 const { generateRoute } = require('../paths')
 const Token = require('../models/token')
 const Charge = require('../models/charge')
-const responseRouter = require('../utils/response_router')
+const responseRouter = require('../utils/response-router')
 const { createChargeIdSessionKey } = require('../utils/session')
 const { setSessionVariable, getSessionVariable } = require('../utils/cookies')
-const CORRELATION_HEADER = require('../../config/correlation_header').CORRELATION_HEADER
+const CORRELATION_HEADER = require('../../config/correlation-header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
-const { resolveActionName } = require('../services/state_service')
+const { resolveActionName } = require('../services/state.service')
 const paths = require('../paths')
 
 exports.new = async function (req, res) {

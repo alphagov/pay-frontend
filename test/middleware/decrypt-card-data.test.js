@@ -1,4 +1,3 @@
-const path = require('path')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 const { expect } = require('chai')
@@ -13,7 +12,7 @@ describe('decryptCardData middleware', function () {
   })
 
   describe('with mocked crypto', function () {
-    const decryptCardDataFactory = proxyquire(path.join(__dirname, '../../app/middleware/decrypt_card_data.js'), {
+    const decryptCardDataFactory = proxyquire('../../app/middleware/decrypt-card-data.js', {
       '@aws-crypto/decrypt-node': {
         decrypt: (_, cipherText) => Promise.resolve({ plaintext: Buffer.from(`decrypted(${cipherText})`) })
       },
@@ -152,7 +151,7 @@ eeGQn6GHtGFbA5sw3fgIT6atMw7R/JP1PPz3pZJReaH6ZhRFSY6eT3JKHLKhNdG7
 gDi9k8BeU+7EWeBLvLje4u26cSM3wX0d11FoELg5XkAD20Ir080l
 -----END RSA PRIVATE KEY-----`
 
-    const decryptCardDataFactory = require('../../app/middleware/decrypt_card_data.js')
+    const decryptCardDataFactory = require('../../app/middleware/decrypt-card-data.js')
     const decryptCardDataMiddleware = decryptCardDataFactory({
       DECRYPT_AND_OMIT_CARD_DATA: 'true',
       // The public part of this key was used in AWS cloudfront

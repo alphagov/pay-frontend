@@ -28,7 +28,7 @@ const toggleWaiting = (paymentMethodSubmitId) => {
 }
 
 const prepareAppleRequestObject = () => {
-  let supportedTypes = []
+  const supportedTypes = []
   let merchantCapabilities = []
   if (!allowedCardTypes.every(type => type.debit === false)) {
     supportedTypes.push('debit')

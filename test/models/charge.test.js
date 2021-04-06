@@ -1,8 +1,5 @@
 'use strict'
 
-// Core dependencies
-const path = require('path')
-
 // NPM dependencies
 const assert = require('assert')
 const nock = require('nock')
@@ -12,9 +9,9 @@ chai.use(chaiAsPromised)
 const { expect } = chai
 
 // Local dependencies
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
-const Charge = require(path.join(__dirname, '/../../app/models/charge.js'))
-const { unexpectedPromise } = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
+require('../test-helpers/html-assertions.js')
+const Charge = require('../../app/models/charge.js')
+const { unexpectedPromise } = require('../test-helpers/test-helpers.js')
 
 // Constants
 const originalHost = process.env.CONNECTOR_HOST

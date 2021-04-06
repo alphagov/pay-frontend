@@ -1,15 +1,12 @@
 'use strict'
 
-// Core dependencies
-const path = require('path')
-
 // NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = require('chai').expect
 
 // Local dependencies
-require(path.join(__dirname, '/../test_helpers/html_assertions'))
+require('../test-helpers/html-assertions')
 
 const mockCharge = (function () {
   const mock = function (shouldSuccess, error) {
@@ -85,14 +82,14 @@ const aChargeWithStatus = function (status) {
 
 const requireChargeController = function (mockedCharge, mockedNormalise, mockedConnectorClient, mockedCard) {
   const proxyquireMocks = {
-    '../services/clients/connector_client': mockedConnectorClient,
+    '../services/clients/connector.client': mockedConnectorClient,
     '../models/charge.js': mockedCharge,
-    '../services/normalise_charge.js': mockedNormalise,
+    '../services/normalise-charge.js': mockedNormalise,
     '../utils/session.js': mockSession,
-    '../services/example_card_expiry_date.js': {
+    '../services/example-card-expiry-date.js': {
       getFutureYearAs2Digits: () => '20'
     },
-    '../services/worldpay_3ds_flex_service': {
+    '../services/worldpay-3ds-flex.service': {
       getDdcJwt: () => Promise.resolve('a-jwt')
     }
   }
@@ -101,7 +98,7 @@ const requireChargeController = function (mockedCharge, mockedNormalise, mockedC
     proxyquireMocks['../models/card.js'] = mockedCard
   }
 
-  return proxyquire(path.join(__dirname, '/../../app/controllers/charge_controller.js'), proxyquireMocks)
+  return proxyquire('../../app/controllers/charge.controller.js', proxyquireMocks)
 }
 
 describe('card details endpoint', function () {
@@ -205,7 +202,7 @@ describe('card details endpoint', function () {
         testingVariant: 'original'
       }
     }
-    expect(response.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(response.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
   })
 
   it('should display CAPTURE_FAILURE if capture returns a capture failed error', function () {
@@ -226,7 +223,7 @@ describe('card details endpoint', function () {
         testingVariant: 'original'
       }
     }
-    expect(response.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(response.render.calledWith('errors/incorrect-state/capture-failure', systemErrorObj)).to.be.true // eslint-disable-line
   })
 })
 

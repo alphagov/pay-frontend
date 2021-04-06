@@ -9,10 +9,10 @@ const {
 
 // Local dependencies
 const Charge = require('../models/charge')
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
-const responseRouter = require('../utils/response_router')
-const { setLoggingField, getLoggingFields } = require('../utils/logging_fields_helper')
+const responseRouter = require('../utils/response-router')
+const { setLoggingField, getLoggingFields } = require('../utils/logging-fields-helper')
 
 module.exports = (req, res, next) => {
   const chargeId = req.params.chargeId ? req.params.chargeId : req.body.chargeId

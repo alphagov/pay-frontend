@@ -1,20 +1,20 @@
 'use strict'
 
 // Local dependencies
-const {PAYMENT_EXTERNAL_ID} = require('@govuk-pay/pay-js-commons').logging.keys
+const { PAYMENT_EXTERNAL_ID } = require('@govuk-pay/pay-js-commons').logging.keys
 const logger = require('../utils/logger')(__filename)
-const {setLoggingField, getLoggingFields} = require('../utils/logging_fields_helper')
+const { setLoggingField, getLoggingFields } = require('../utils/logging-fields-helper')
 const cookie = require('../utils/cookies')
 
-const createChargeIdSessionKey = function createChargeIdSessionKey(chargeId) {
+const createChargeIdSessionKey = function createChargeIdSessionKey (chargeId) {
   return 'ch_' + chargeId
 }
 
-const retrieve = function retrieve(req, chargeId) {
+const retrieve = function retrieve (req, chargeId) {
   return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId))
 }
 
-const validateSessionCookie = function validateSessionCookie(req) {
+const validateSessionCookie = function validateSessionCookie (req) {
   const chargeId = req.params.chargeId ? req.params.chargeId : req.body.chargeId
   setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
 
@@ -47,4 +47,3 @@ module.exports = {
   retrieve,
   validateSessionCookie
 }
-

@@ -6,9 +6,9 @@ const Pact = require('pact')
 const { expect } = require('chai')
 
 // Local dependencies
-const connectorClient = require('../../../app/services/clients/connector_client')
-const fixtures = require('../../fixtures/payment_fixtures')
-const { PactInteractionBuilder } = require('../../fixtures/pact_interaction_builder')
+const connectorClient = require('../../../app/services/clients/connector.client')
+const fixtures = require('../../fixtures/payment-fixtures')
+const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
 
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASE_URL = `http://localhost:${PORT}`

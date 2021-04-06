@@ -1,6 +1,6 @@
 'use strict'
 
-const connectorClient = require('./clients/connector_client')
+const connectorClient = require('./clients/connector.client')
 
 const getDdcJwt = async function getDdcJwt (charge, correlationId, loggingFields = {}) {
   if (charge.gatewayAccount.paymentProvider === 'worldpay' &&

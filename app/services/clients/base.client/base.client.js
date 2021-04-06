@@ -7,8 +7,8 @@ const _ = require('lodash')
 const request = require('requestretry')
 
 // Local dependencies
-const CORRELATION_HEADER_NAME = require('../../../../config/correlation_header').CORRELATION_HEADER
-const { addProxy } = require('../../../utils/add_proxy')
+const CORRELATION_HEADER_NAME = require('../../../../config/correlation-header').CORRELATION_HEADER
+const { addProxy } = require('../../../utils/add-proxy')
 
 const agentOptions = {
   keepAlive: true,
@@ -34,12 +34,12 @@ const client = request
   })
 
 const getHeaders = function getHeaders (args, url) {
-  let headers = {}
+  const headers = {}
   headers['Content-Type'] = 'application/json'
   headers[CORRELATION_HEADER_NAME] = args.correlationId || ''
   if (url) {
     const port = (urlParse(url).port) ? ':' + urlParse(url).port : ''
-    headers['host'] = urlParse(url).hostname + port
+    headers.host = urlParse(url).hostname + port
   }
   _.merge(headers, args.headers)
 

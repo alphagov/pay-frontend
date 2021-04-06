@@ -1,4 +1,4 @@
-const cardDataFields = require('./card_data_fields')
+const cardDataFields = require('./card-data-fields')
 
 const nonCardDataFields = [
   'cardholderName',

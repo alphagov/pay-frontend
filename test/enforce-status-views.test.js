@@ -1,16 +1,15 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const request = require('supertest')
 const nock = require('nock')
 const cheerio = require('cheerio')
 const { expect } = require('chai')
 
 // Local dependencies
-const app = require(path.join(__dirname, '/../server.js')).getApp()
-const helper = require(path.join(__dirname, '/test_helpers/test_helpers.js'))
-const cookie = require(path.join(__dirname, '/test_helpers/session.js'))
+const app = require('../server.js').getApp()
+const helper = require('./test-helpers/test-helpers.js')
+const cookie = require('./test-helpers/session.js')
 
 // Constants
 const chargeId = '23144323'

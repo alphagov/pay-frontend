@@ -1,10 +1,9 @@
 'use strict'
 
-const path = require('path')
 const sinon = require('sinon')
 const moment = require('moment-timezone')
 const { expect } = require('chai')
-const { getFutureYearAs2Digits } = require(path.join(__dirname, '/../../app/services/example_card_expiry_date.js'))
+const { getFutureYearAs2Digits } = require('../../app/services/example-card-expiry-date.js')
 
 const mockNewDateToAlwaysReturn = (moment) => sinon.useFakeTimers({ now: moment.toDate(), toFake: ['Date'] })
 

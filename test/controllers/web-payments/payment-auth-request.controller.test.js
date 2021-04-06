@@ -7,7 +7,7 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 
 // Local dependencies
-require('../../test_helpers/html_assertions')
+require('../../test-helpers/html-assertions')
 
 const mockNormalise = object => object
 const chargeId = 'chargeId'
@@ -32,7 +32,7 @@ describe('The web payments auth request controller', () => {
         './apple-pay/normalise-apple-pay-payload': mockedNormalise
       }
 
-      return proxyquire('../../../app/controllers/web-payments/payment-auth-request-controller.js', proxyquireMocks)
+      return proxyquire('../../../app/controllers/web-payments/payment-auth-request.controller.js', proxyquireMocks)
     }
 
     it('should set payload in the session and return handle payment url', done => {
@@ -98,7 +98,7 @@ describe('The web payments auth request controller', () => {
         './google-pay/normalise-google-pay-payload': mockedNormalise
       }
 
-      return proxyquire('../../../app/controllers/web-payments/payment-auth-request-controller.js', proxyquireMocks)
+      return proxyquire('../../../app/controllers/web-payments/payment-auth-request.controller.js', proxyquireMocks)
     }
 
     it('should set payload in the session and return handle payment url', done => {

@@ -1,7 +1,6 @@
-var path = require('path')
 var assert = require('assert')
 var expect = require('chai').expect
-var actionName = require(path.join(__dirname, '/../../app/middleware/action_name.js'))
+var actionName = require('../../app/middleware/action-name.js')
 
 var sinon = require('sinon')
 

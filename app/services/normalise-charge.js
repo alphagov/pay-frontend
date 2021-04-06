@@ -6,8 +6,8 @@ const lodash = require('lodash')
 
 // Local dependencies
 const countries = require('../services/countries')
-const normaliseCards = require('../services/normalise_cards')
-const userIpAddress = require('../utils/user_ip_address')
+const normaliseCards = require('../services/normalise-cards')
+const userIpAddress = require('../utils/user-ip-address')
 
 module.exports = (function () {
   const charge = function (charge, chargeId) {

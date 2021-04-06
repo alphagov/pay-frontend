@@ -6,10 +6,10 @@ const Pact = require('pact')
 const { expect } = require('chai')
 
 // Local dependencies
-const connectorClient = require('../../../app/services/clients/connector_client')
-const { PactInteractionBuilder } = require('../../fixtures/pact_interaction_builder')
-const worlpay3dsFlexFixtures = require('../../fixtures/worldpay_3ds_flex_fixtures')
-const paymentFixtures = require('../../fixtures/payment_fixtures')
+const connectorClient = require('../../../app/services/clients/connector.client')
+const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
+const worlpay3dsFlexFixtures = require('../../fixtures/worldpay-3ds-flex-fixtures')
+const paymentFixtures = require('../../fixtures/payment-fixtures')
 
 const TEST_CHARGE_ID = 'testChargeId'
 const GET_JWT_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}/worldpay/3ds-flex/ddc`

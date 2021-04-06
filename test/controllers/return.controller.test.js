@@ -1,5 +1,4 @@
-var path = require('path')
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+require('../test-helpers/html-assertions.js')
 var proxyquire = require('proxyquire')
 var chai = require('chai')
 var chaiAsPromised = require('chai-as-promised')
@@ -11,9 +10,9 @@ var expect = chai.expect
 
 chai.use(chaiAsPromised)
 
-let requireReturnController = function () {
-  let mocks = {
-    'csrf': function () {
+const requireReturnController = function () {
+  const mocks = {
+    csrf: function () {
       return {
         secretSync: function () {
           return 'foo'
@@ -22,7 +21,7 @@ let requireReturnController = function () {
     }
   }
 
-  return proxyquire(path.join(__dirname, '/../../app/controllers/return_controller.js'), mocks)
+  return proxyquire('../../app/controllers/return.controller.js', mocks)
 }
 
 describe('return controller', function () {
@@ -79,7 +78,7 @@ describe('return controller', function () {
     requireReturnController().return(request, response)
       .should.be.fulfilled.then(() => {
         expect(response.render.called).to.equal(true)
-        expect(response.render.getCall(0).args[0]).to.equal('errors/system_error')
+        expect(response.render.getCall(0).args[0]).to.equal('errors/system-error')
         expect(response.render.getCall(0).args[1].viewName).to.equal('SYSTEM_ERROR')
       }).should.notify(done)
   })

@@ -4,7 +4,7 @@
 const { expect } = require('chai')
 
 // Local dependencies
-const abTest = require('../../app/utils/ab_test')
+const abTest = require('../../app/utils/ab-test')
 
 describe('ab test helper', function () {
   it('should uniformly generate a random number', () => {

@@ -1,7 +1,7 @@
 // Test disabled temporarily whilst Google Analytics is disabled
 /*
 var path = require('path')
-var renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions.js')).render
+var renderTemplate = require('./test-helpers/html-assertions.js').render
 var should = require('chai').should() // eslint-disable-line
 
 describe('Frontend analytics', function () {

@@ -1,13 +1,12 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const lodash = require('lodash')
 const cheerio = require('cheerio')
 const should = require('chai').should() // eslint-disable-line
 
 // Local dependencies
-const renderTemplate = require(path.join(__dirname, '/test_helpers/html_assertions')).render
+const renderTemplate = require('./test-helpers/html-assertions').render
 
 // Constants
 const customBrandingData = {

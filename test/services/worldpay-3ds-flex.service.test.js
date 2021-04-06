@@ -4,13 +4,13 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const { expect } = require('chai')
 
-const { validDdcJwt } = require('../fixtures/worldpay_3ds_flex_fixtures')
+const { validDdcJwt } = require('../fixtures/worldpay-3ds-flex-fixtures')
 
 const TEST_JWT = 'a-jwt-returned-from-connector'
 
 const requireService = function (mockedConnectorClient) {
-  return proxyquire('../../app/services/worldpay_3ds_flex_service', {
-    './clients/connector_client': mockedConnectorClient
+  return proxyquire('../../app/services/worldpay-3ds-flex.service', {
+    './clients/connector.client': mockedConnectorClient
   })
 }
 

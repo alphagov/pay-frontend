@@ -1,6 +1,6 @@
 const morgan = require('morgan')
 const logger = require('../utils/logger')(__filename)
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { format } = require('@govuk-pay/pay-js-commons').logging.requestLogFormat(CORRELATION_HEADER)
 
 module.exports = function () {

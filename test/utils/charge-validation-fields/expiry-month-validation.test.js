@@ -1,8 +1,8 @@
 'use strict'
 
-const cardTypes = require('../../test_helpers/test_helpers.js').cardTypes()
+const cardTypes = require('../../test-helpers/test-helpers.js').cardTypes()
 const Card = require('../../../app/models/card.js')(cardTypes)
-const fields = require('../../../app/utils/charge_validation_fields.js')(Card)
+const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 const { expect } = require('chai')
 const sinon = require('sinon')
 const mockNewDateToAlwaysReturn = (date) => sinon.useFakeTimers({ now: date, toFake: ['Date'] })
@@ -13,7 +13,7 @@ describe('Card expiry date validation', function () {
   before(() => {
     const september = 9 - 1 // Months are zero-indexed
     clock = mockNewDateToAlwaysReturn(new Date(2020, september, 21))
-  });
+  })
 
   after(() => {
     if (clock) {

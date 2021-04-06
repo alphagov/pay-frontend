@@ -6,11 +6,11 @@ const lodash = require('lodash')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
-const responseRouter = require('../utils/response_router')
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
+const responseRouter = require('../utils/response-router')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { withAnalyticsError } = require('../utils/analytics')
-const getAdminUsersClient = require('../services/clients/adminusers_client')
+const getAdminUsersClient = require('../services/clients/adminusers.client')
 
 // Constants
 const SERVICE_CACHE_MAX_AGE = parseInt(process.env.SERVICE_CACHE_MAX_AGE || 15 * 60 * 1000) // default to 15 mins

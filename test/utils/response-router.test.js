@@ -7,13 +7,13 @@ const lodash = require('lodash')
 const proxyquire = require('proxyquire')
 
 // Local dependencies
-const serviceFixtures = require('../fixtures/service_fixtures')
+const serviceFixtures = require('../fixtures/service-fixtures')
 const Service = require('../../app/models/Service.class')
-const testHelpers = require('../test_helpers/test_helpers')
+const testHelpers = require('../test-helpers/test-helpers')
 
 const infoLogger = sinon.spy()
 
-const responseRouter = proxyquire('../../app/utils/response_router', {
+const responseRouter = proxyquire('../../app/utils/response-router', {
   './logger': () => { return { info: infoLogger } }
 })
 
@@ -100,7 +100,7 @@ describe('rendering behaviour', () => {
   it('should return a 200 by default', () => {
     responseRouter.response(request, response, 'CAPTURE_FAILURE')
     expect(status.lastCall.args).to.deep.equal([200])
-    expect(render.lastCall.args).to.deep.equal(['errors/incorrect_state/capture_failure', { viewName: 'CAPTURE_FAILURE' }])
+    expect(render.lastCall.args).to.deep.equal(['errors/incorrect-state/capture-failure', { viewName: 'CAPTURE_FAILURE' }])
   })
 
   it('should return locals passed in', () => {
@@ -137,12 +137,12 @@ describe('rendering behaviour', () => {
 
   it('should render system error response', () => {
     responseRouter.systemErrorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, 'err')
-    expect(render.lastCall.args).to.deep.equal(['errors/system_error', {
+    expect(render.lastCall.args).to.deep.equal(['errors/system-error', {
       returnUrl: 'http://example.com',
       viewName: 'SYSTEM_ERROR'
     }])
     sinon.assert.calledWithMatch(infoLogger, sinon.match('Rendering error response'), sinon.match({
-      page: 'errors/system_error',
+      page: 'errors/system-error',
       reason: 'A reason',
       error: 'err'
     }))
@@ -151,11 +151,11 @@ describe('rendering behaviour', () => {
   it('should log an error for AUTHORISATION_ERROR action', () => {
     responseRouter.response(request, response, 'AUTHORISATION_ERROR')
     expect(status.lastCall.args).to.deep.equal([200])
-    expect(render.lastCall.args).to.deep.equal(['errors/system_error', {
+    expect(render.lastCall.args).to.deep.equal(['errors/system-error', {
       viewName: 'AUTHORISATION_ERROR'
     }])
     sinon.assert.calledWithMatch(infoLogger, sinon.match('Rendering error response'), sinon.match({
-      page: 'errors/system_error',
+      page: 'errors/system-error',
       reason: 'Action: AUTHORISATION_ERROR'
     }))
   })
@@ -178,7 +178,7 @@ describe('rendering behaviour', () => {
       message: 'Page cannot be found'
     },
     HUMANS: {
-      template: 'plain_message',
+      template: 'plain-message',
       code: 200,
       message: 'GOV.UK Payments is built by a team at the Government Digital Service in London. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'
     }

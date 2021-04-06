@@ -2,22 +2,22 @@
 
 const lodash = require('lodash')
 const logger = require('./logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
 
 const expired = {
-  view: 'errors/incorrect_state/session_expired',
+  view: 'errors/incorrect-state/session-expired',
   analyticsPage: '/session_expired',
   terminal: true
 }
 
 const systemCancelled = {
-  view: 'errors/incorrect_state/system_cancelled',
+  view: 'errors/incorrect-state/system-cancelled',
   analyticsPage: '/system_cancelled',
   terminal: true
 }
 
 const userCancelled = {
-  view: 'user_cancelled',
+  view: 'user-cancelled',
   locals: { status: 'successful' },
   analyticsPage: '/user_cancelled',
   terminal: true
@@ -25,7 +25,7 @@ const userCancelled = {
 
 const systemError = {
   code: 500,
-  view: 'errors/system_error',
+  view: 'errors/system-error',
   analyticsPage: '/error',
   terminal: true,
   shouldLogErrorPageShown: true
@@ -44,23 +44,23 @@ const error = {
 
 const actions = {
   auth_3ds_required: {
-    view: 'auth_3ds_required',
+    view: 'auth-3ds-required',
     analyticsPage: '/3ds_required'
   },
   auth_3ds_required_in: {
-    view: 'auth_3ds_required_in',
+    view: 'auth-3ds-required-in',
     analyticsPage: '/3ds_required'
   },
   auth_3ds_required_out: {
-    view: 'auth_3ds_required_out',
+    view: 'auth-3ds-required-out',
     analyticsPage: '/3ds_required'
   },
   auth_3ds_required_html_out: {
-    view: 'auth_3ds_required_html_out',
+    view: 'auth-3ds-required-html-out',
     analyticsPage: '/3ds_required'
   },
   auth_waiting: {
-    view: 'auth_waiting',
+    view: 'auth-waiting',
     analyticsPage: '/auth_waiting'
   },
   confirm: {
@@ -71,7 +71,7 @@ const actions = {
     view: 'charge'
   },
   capture_waiting: {
-    view: 'capture_waiting',
+    view: 'capture-waiting',
     analyticsPage: '/capture_waiting'
   },
 
@@ -96,7 +96,7 @@ const actions = {
 
   SESSION_INCORRECT: {
     code: 422,
-    view: 'errors/incorrect_state/session_expired',
+    view: 'errors/incorrect-state/session-expired',
     analyticsPage: '/problem',
     terminal: true
   },
@@ -115,7 +115,7 @@ const actions = {
 
   HUMANS: {
     code: 200,
-    view: 'plain_message',
+    view: 'plain-message',
     locals: {
       message: 'GOV.UK Payments is built by a team at the Government Digital Service in London. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'
     }
@@ -123,12 +123,12 @@ const actions = {
 
   UNAUTHORISED: {
     code: 403,
-    view: 'errors/incorrect_state/session_expired',
+    view: 'errors/incorrect-state/session-expired',
     terminal: true
   },
 
   CAPTURE_SUBMITTED: {
-    view: 'errors/charge_confirm_state_completed',
+    view: 'errors/charge-confirm-state-completed',
     locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
@@ -155,84 +155,84 @@ const actions = {
   USER_CANCEL_ERROR: userCancelled,
 
   CAPTURED: {
-    view: 'errors/charge_confirm_state_completed',
+    view: 'errors/charge-confirm-state-completed',
     locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
 
   CAPTURE_APPROVED: {
-    view: 'errors/charge_confirm_state_completed',
+    view: 'errors/charge-confirm-state-completed',
     locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
 
   CAPTURE_APPROVED_RETRY: {
-    view: 'errors/charge_confirm_state_completed',
+    view: 'errors/charge-confirm-state-completed',
     locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true
   },
 
   CAPTURE_ERROR: {
-    view: 'errors/incorrect_state/capture_failure',
+    view: 'errors/incorrect-state/capture-failure',
     analyticsPage: '/capture_failure',
     terminal: true
   },
 
   CAPTURE_FAILURE: {
-    view: 'errors/incorrect_state/capture_failure',
+    view: 'errors/incorrect-state/capture-failure',
     analyticsPage: '/capture_failure',
     terminal: true
   },
 
   AUTHORISATION_3DS_REQUIRED: {
-    view: 'errors/incorrect_state/auth_3ds_required',
+    view: 'errors/incorrect-state/auth-3ds-required',
     analyticsPage: '/3ds_required'
   },
 
   AUTHORISATION_SUCCESS: {
-    view: 'errors/incorrect_state/auth_success',
+    view: 'errors/incorrect-state/auth-success',
     analyticsPage: '/in_progress'
   },
 
   AUTHORISATION_REJECTED: {
-    view: 'errors/incorrect_state/auth_failure',
+    view: 'errors/incorrect-state/auth-failure',
     analyticsPage: '/auth_failure',
     terminal: true
   },
 
   AUTHORISATION_CANCELLED: {
-    view: 'errors/incorrect_state/auth_failure',
+    view: 'errors/incorrect-state/auth-failure',
     analyticsPage: '/auth_failure',
     terminal: true
   },
 
   AUTHORISATION_ERROR: {
-    view: 'errors/system_error',
+    view: 'errors/system-error',
     analyticsPage: '/error',
     terminal: true,
     shouldLogErrorPageShown: true
   },
 
   AUTHORISATION_READY: {
-    view: 'errors/incorrect_state/auth_waiting',
+    view: 'errors/incorrect-state/auth-waiting',
     analyticsPage: '/in_progress'
   },
 
   CAPTURE_READY: {
-    view: 'errors/incorrect_state/capture_waiting',
+    view: 'errors/incorrect-state/capture-waiting',
     analyticsPage: '/in_progress'
   },
 
   ENTERING_CARD_DETAILS: {
-    view: 'errors/incorrect_state/enter_card_details',
+    view: 'errors/incorrect-state/enter-card-details',
     analyticsPage: '/in_progress'
   },
 
   AWAITING_CAPTURE_REQUEST: {
-    view: 'errors/charge_confirm_state_completed',
+    view: 'errors/charge-confirm-state-completed',
     locals: { status: 'successful' },
     analyticsPage: '/success_return',
     terminal: true

@@ -1,10 +1,9 @@
-var path = require('path')
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+require('../test-helpers/html-assertions.js')
 var sinon = require('sinon')
 var expect = require('chai').expect
 
 var requireStaticController = function () {
-  return require(path.join(__dirname, '/../../app/controllers/static_controller.js'))
+  return require('../../app/controllers/static.controller.js')
 }
 
 describe('static controller', function () {

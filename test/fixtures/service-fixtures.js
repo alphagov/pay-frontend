@@ -4,20 +4,20 @@
 const lodash = require('lodash')
 
 // Local dependencies
-const pactBase = require('./pact_base')
+const pactBase = require('./pact-base')
 
 // Global setup
 const pactServices = pactBase({ array: ['service_ids'] })
 
 module.exports = {
   validServiceResponse: (opts = {}) => {
-    let defaultServiceName = 'service name'
+    const defaultServiceName = 'service name'
     const data = {
       external_id: opts.external_id || 'external-id',
       name: opts.name || defaultServiceName,
       gateway_account_ids: opts.gateway_account_ids || [lodash.random(9999999)],
       service_name: {
-        'en': { en: opts.name || defaultServiceName }
+        en: { en: opts.name || defaultServiceName }
       },
       redirect_to_service_immediately_on_terminal_state: opts.redirect_to_service_immediately_on_terminal_state === true,
       collect_billing_address: typeof opts.collect_billing_address === 'undefined' || opts.collect_billing_address

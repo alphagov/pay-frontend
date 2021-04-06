@@ -19,17 +19,17 @@ const certinfo = require('cert-info')
 
 // Local dependencies
 const logger = require('./app/utils/logger')(__filename)
-const loggingMiddleware = require('./app/middleware/logging_middleware')
+const loggingMiddleware = require('./app/middleware/logging-middleware')
 const router = require('./app/routes')
 const cookies = require('./app/utils/cookies')
-const noCache = require('./app/utils/no_cache')
+const noCache = require('./app/utils/no-cache')
 const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
 const csp = require('./app/middleware/csp')
-const correlationHeader = require('./app/middleware/correlation_header')
-const errorHandlers = require('./app/middleware/error_handlers')
+const correlationHeader = require('./app/middleware/correlation-header')
+const errorHandlers = require('./app/middleware/error-handlers')
 
 // Global constants
 const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env

@@ -13,9 +13,9 @@ const SERVICES_PATH = '/v1/api/services'
 const port = Math.floor(Math.random() * 48127) + 1024
 
 // Custom dependencies
-const getAdminUsersClient = require('../../../app/services/clients/adminusers_client')
-const serviceFixtures = require('../../fixtures/service_fixtures')
-const PactInteractionBuilder = require('../../fixtures/pact_interaction_builder').PactInteractionBuilder
+const getAdminUsersClient = require('../../../app/services/clients/adminusers.client')
+const serviceFixtures = require('../../fixtures/service-fixtures')
+const PactInteractionBuilder = require('../../fixtures/pact-interaction-builder').PactInteractionBuilder
 
 // Global setup
 const expect = chai.expect

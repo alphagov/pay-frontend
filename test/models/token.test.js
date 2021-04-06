@@ -1,7 +1,6 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const nock = require('nock')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
@@ -9,14 +8,14 @@ chai.use(chaiAsPromised)
 const { expect } = chai
 
 // Local dependencies
-const Token = require(path.join(__dirname, '/../../app/models/token.js'))
-const wrongPromise = require(path.join(__dirname, '/../test_helpers/test_helpers.js')).unexpectedPromise
+const Token = require('../../app/models/token.js')
+const wrongPromise = require('../test-helpers/test-helpers.js').unexpectedPromise
 
 // Constants
 const originalHost = process.env.CONNECTOR_HOST
 
 // Configure
-require(path.join(__dirname, '/../test_helpers/html_assertions.js'))
+require('../test-helpers/html-assertions.js')
 
 describe('token model', function () {
   describe('mark token as used', function () {

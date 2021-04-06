@@ -12,8 +12,8 @@ const proxyquire = require('proxyquire')
 const should = chai.should()
 
 // Local dependencies
-const cookie = require('../test_helpers/session')
-const helper = require('../test_helpers/test_helpers')
+const cookie = require('../test-helpers/session')
+const helper = require('../test-helpers/test-helpers')
 const {
   postChargeRequest,
   defaultConnectorResponseForGetCharge,

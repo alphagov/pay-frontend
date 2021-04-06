@@ -1,10 +1,10 @@
 'use strict'
 
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
 const Charge = require('../models/charge')
-const responseRouter = require('../utils/response_router')
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const responseRouter = require('../utils/response-router')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { withAnalyticsError } = require('../utils/analytics')
 const cookies = require('../utils/cookies')
 const { createChargeIdSessionKey } = require('../utils/session')

@@ -2,7 +2,7 @@
 
 const request = require('requestretry')
 const logger = require('../../../utils/logger')(__filename)
-const { getLoggingFields } = require('../../../utils/logging_fields_helper')
+const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 
 // Local constants
 const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY } = process.env

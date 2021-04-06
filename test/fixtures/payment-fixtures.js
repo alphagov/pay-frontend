@@ -1,5 +1,5 @@
 const lodash = require('lodash')
-const pactBase = require('./pact_base')()
+const pactBase = require('./pact-base')()
 
 // helper methods for building entities common to many different types of requests
 const buildGatewayAccount = function buildGatewayAccount (opts = {}) {

@@ -14,27 +14,27 @@ const {
 } = process.env
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
-const responseRouter = require('../utils/response_router')
-const normalise = require('../services/normalise_charge')
-const chargeValidator = require('../utils/charge_validation_backend')
+const responseRouter = require('../utils/response-router')
+const normalise = require('../services/normalise-charge')
+const chargeValidator = require('../utils/charge-validation-backend')
 const Charge = require('../models/charge')
 const Card = require('../models/card')
 const State = require('../../config/state')
 const paths = require('../paths')
-const { getFutureYearAs2Digits } = require('../services/example_card_expiry_date')
+const { getFutureYearAs2Digits } = require('../services/example-card-expiry-date')
 const { countries } = require('../services/countries')
-const { commonTypos } = require('../utils/email_tools')
+const { commonTypos } = require('../utils/email-tools')
 const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
-const { getMerchantId } = require('../utils/google_pay_merchant_id_selector')
-const connectorClient = require('../services/clients/connector_client')
+const { getMerchantId } = require('../utils/google-pay-merchant-id-selector')
+const connectorClient = require('../services/clients/connector.client')
 const cookies = require('../utils/cookies')
 const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
 const supportedNetworksFormattedByProvider = require('../assets/javascripts/browsered/web-payments/format-card-types')
-const worlpay3dsFlexService = require('../services/worldpay_3ds_flex_service')
-const { views, preserveProperties } = require('../../config/charge_controller')
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
+const worlpay3dsFlexService = require('../services/worldpay-3ds-flex.service')
+const { views, preserveProperties } = require('../../config/charge.controller')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { createChargeIdSessionKey } = require('../utils/session')
-const { getLoggingFields } = require('../utils/logging_fields_helper')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
 
 const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
   const cardModel = Card(charge.gatewayAccount.cardTypes, charge.gatewayAccount.block_prepaid_cards, req.headers[CORRELATION_HEADER])
@@ -54,7 +54,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.allowApplePay = charge.gatewayAccount.allowApplePay
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
-  charge.acceptHeader = req.headers['accept']
+  charge.acceptHeader = req.headers.accept
 
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
   if (googlePayMerchantId !== GOOGLE_PAY_MERCHANT_ID && googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {
@@ -138,7 +138,6 @@ module.exports = {
 
     normalise.addressLines(req.body)
     normalise.whitespace(req.body)
-
 
     const { worldpay3dsFlexDdcStatus } = req.body
     if (worldpay3dsFlexDdcStatus) {

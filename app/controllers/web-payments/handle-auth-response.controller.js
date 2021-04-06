@@ -1,12 +1,12 @@
 'use strict'
 
 // NPM dependencies
-const normalise = require('../../services/normalise_charge')
+const normalise = require('../../services/normalise-charge')
 const logging = require('../../utils/logging')
 const logger = require('../../utils/logger')(__filename)
-const { getLoggingFields } = require('../../utils/logging_fields_helper')
-const responseRouter = require('../../utils/response_router')
-const { CORRELATION_HEADER } = require('../../../config/correlation_header')
+const { getLoggingFields } = require('../../utils/logging-fields-helper')
+const responseRouter = require('../../utils/response-router')
+const { CORRELATION_HEADER } = require('../../../config/correlation-header')
 const Charge = require('../../models/charge')
 const { withAnalytics } = require('../../utils/analytics')
 const paths = require('../../paths')

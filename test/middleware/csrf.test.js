@@ -1,12 +1,11 @@
-var path = require('path')
 var assert = require('assert')
 var sinon = require('sinon')
 var _ = require('lodash')
 var expect = require('chai').expect
 var nock = require('nock')
-var helper = require(path.join(__dirname, '/../test_helpers/test_helpers.js'))
+var helper = require('../test-helpers/test-helpers.js')
 
-var { csrfCheck, csrfTokenGeneration } = require(path.join(__dirname, '/../../app/middleware/csrf.js'))
+var { csrfCheck, csrfTokenGeneration } = require('../../app/middleware/csrf.js')
 
 describe('retrieve param test', function () {
   var response = {
@@ -53,14 +52,14 @@ describe('retrieve param test', function () {
     expect(next.called).to.not.be.true // eslint-disable-line
     expect(resp.locals.csrf).to.be.undefined // eslint-disable-line
     assert(status.calledWith(500))
-    assert(render.calledWith('errors/system_error', { viewName: 'SYSTEM_ERROR' }))
+    assert(render.calledWith('errors/system-error', { viewName: 'SYSTEM_ERROR' }))
   }
 
   var assertUnauthorisedRequest = function (next, resp, status, render) {
     expect(next.called).to.not.be.true // eslint-disable-line
     expect(resp.locals.csrf).to.be.undefined // eslint-disable-line
     assert(status.calledWith(403))
-    assert(render.calledWith('errors/incorrect_state/session_expired', { viewName: 'UNAUTHORISED' }))
+    assert(render.calledWith('errors/incorrect-state/session-expired', { viewName: 'UNAUTHORISED' }))
   }
 
   var assertValidRequest = function (next, resp, status, render) {

@@ -3,8 +3,8 @@
 const cookie = require('./cookies')
 const random = require('./random')
 const crypto = require('crypto')
-const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
+const logger = require('./logger')(__filename)
+const { getLoggingFields } = require('./logging-fields-helper')
 
 exports.uniformlyGeneratedRandomNumber = () => {
   // AFAIK node's Math.random function is not uniformly random

@@ -1,8 +1,8 @@
 'use strict'
 
 const logger = require('../../../utils/logger')(__filename)
-const { getLoggingFields } = require('../../../utils/logging_fields_helper')
-const { output, redact } = require('../../../utils/structured_logging_value_helper')
+const { getLoggingFields } = require('../../../utils/logging-fields-helper')
+const { output, redact } = require('../../../utils/structured-logging-value-helper')
 const humps = require('humps')
 
 const logselectedPayloadProperties = req => {

@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect
 
-const { output, redact } = require('../../app/utils/structured_logging_value_helper.js')
+const { output, redact } = require('../../app/utils/structured-logging-value-helper.js')
 
 describe('The output function', () => {
   it('returns "(null)" for a null value', () => {

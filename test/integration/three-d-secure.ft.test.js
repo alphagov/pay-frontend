@@ -8,12 +8,12 @@ const expect = chai.expect
 
 // Local dependencies
 const logger = require('../../app/utils/logger')(__filename)
-const paymentFixtures = require('../fixtures/payment_fixtures')
+const paymentFixtures = require('../fixtures/payment-fixtures')
 
 const app = require('../../server.js').getApp()
-const cookie = require('../test_helpers/session.js')
-const { getChargeRequest, postChargeRequest } = require('../test_helpers/test_helpers.js')
-const { defaultAdminusersResponseForGetService } = require('../test_helpers/test_helpers.js')
+const cookie = require('../test-helpers/session.js')
+const { getChargeRequest, postChargeRequest } = require('../test-helpers/test-helpers.js')
+const { defaultAdminusersResponseForGetService } = require('../test-helpers/test-helpers.js')
 const State = require('../../config/state.js')
 
 // Constants

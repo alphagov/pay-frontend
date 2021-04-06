@@ -1,8 +1,8 @@
 'use strict'
 
 const { CORRELATION_ID } = require('@govuk-pay/pay-js-commons').logging.keys
-const { CORRELATION_HEADER } = require('../../config/correlation_header')
-const { setLoggingField } = require('../utils/logging_fields_helper')
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
+const { setLoggingField } = require('../utils/logging-fields-helper')
 
 module.exports = (req, res, next) => {
   req.correlationId = req.headers[CORRELATION_HEADER] || ''

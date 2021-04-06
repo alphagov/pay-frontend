@@ -1,6 +1,6 @@
 const expect = require('chai').expect
 
-const userIpAddress = require('../../app/utils/user_ip_address')
+const userIpAddress = require('../../app/utils/user-ip-address')
 
 describe('user ip address', () => {
   it('returns the address provided in x-forwarded-for header', () => {

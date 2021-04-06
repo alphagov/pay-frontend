@@ -4,7 +4,7 @@ const i18n = require('i18n')
 const assert = require('assert')
 
 // Local dependencies
-const resolveLanguage = require('../../app/middleware/resolve_language.js')
+const resolveLanguage = require('../../app/middleware/resolve-language.js')
 
 // Local constants
 const res = {

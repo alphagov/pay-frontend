@@ -3,10 +3,10 @@
 // NPM dependencies
 const assert = require('assert')
 const sinon = require('sinon')
-const {expect} = require('chai')
+const { expect } = require('chai')
 const nock = require('nock')
-const {validChargeDetails} = require('../fixtures/payment_fixtures')
-const enforceSessionCookie = require('../../app/middleware/enforce_session_cookie')
+const { validChargeDetails } = require('../fixtures/payment-fixtures')
+const enforceSessionCookie = require('../../app/middleware/enforce-session-cookie')
 
 const ANALYTICS_ERROR = {
   analytics: {
@@ -27,10 +27,10 @@ describe('enforce session cookie test', () => {
   let render
   let next
   const validRequest = {
-    params: {chargeId: 'foo'},
+    params: { chargeId: 'foo' },
     body: {},
     method: 'GET',
-    frontend_state: {ch_foo: true},
+    frontend_state: { ch_foo: true },
     headers: {}
   }
   const chargeId = 'foo'
@@ -48,9 +48,9 @@ describe('enforce session cookie test', () => {
   })
 
   it('should call not found view if frontend_state cookie not present', () => {
-    enforceSessionCookie({params: {}, body: {}}, response, next)
+    enforceSessionCookie({ params: {}, body: {} }, response, next)
     assert(status.calledWith(403))
-    assert(render.calledWith('errors/incorrect_state/session_expired', {
+    assert(render.calledWith('errors/incorrect-state/session-expired', {
       viewName: 'UNAUTHORISED',
       analytics: ANALYTICS_ERROR.analytics
     }))

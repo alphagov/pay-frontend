@@ -1,7 +1,6 @@
 var expect = require('chai').expect
-var path = require('path')
 var _ = require('lodash')
-var normalise = require(path.join(__dirname, '/../../app/services/normalise_charge.js'))
+var normalise = require('../../app/services/normalise-charge.js')
 
 var unNormalisedCharge = {
   amount: 1234,

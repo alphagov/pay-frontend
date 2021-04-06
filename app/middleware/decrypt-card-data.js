@@ -3,7 +3,7 @@
 const logger = require('../utils/logger')(__filename)
 const decryptNode = require('@aws-crypto/decrypt-node')
 const rawRsaKeyringNode = require('@aws-crypto/raw-rsa-keyring-node')
-const cardDataFields = require('../../config/card_data_fields')
+const cardDataFields = require('../../config/card-data-fields')
 
 function getMandatoryEnvironmentVariable (env, key) {
   const result = env[key]

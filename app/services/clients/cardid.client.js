@@ -1,7 +1,7 @@
 'use strict'
 
 // Local dependencies
-const baseClient = require('./base_client/base_client')
+const baseClient = require('./base.client/base.client')
 
 // Constants
 const CARD_URL = process.env.CARDID_HOST + '/v1/api/card'

@@ -1,8 +1,7 @@
 'use strict'
 
-var path = require('path')
 var clientSessions = require('client-sessions')
-var cookies = require(path.join(__dirname, '/../../app/utils/cookies.js'))
+var cookies = require('../../app/utils/cookies.js')
 
 function createSessionChargeKey (chargeId) {
   return 'ch_' + chargeId

@@ -2,11 +2,11 @@
 
 // NPM dependencies
 const logger = require('../../utils/logger')(__filename)
-const { getLoggingFields } = require('../../utils/logging_fields_helper')
-const connectorClient = require('../../services/clients/connector_client')
+const { getLoggingFields } = require('../../utils/logging-fields-helper')
+const connectorClient = require('../../services/clients/connector.client')
 const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payload')
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
-const { CORRELATION_HEADER } = require('../../../config/correlation_header')
+const { CORRELATION_HEADER } = require('../../../config/correlation-header')
 const { setSessionVariable } = require('../../utils/cookies')
 
 module.exports = (req, res) => {

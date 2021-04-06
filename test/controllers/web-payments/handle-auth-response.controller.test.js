@@ -6,7 +6,7 @@ const { expect } = require('chai')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 // Local dependencies
-require('../../test_helpers/html_assertions')
+require('../../test-helpers/html-assertions')
 
 const mockNormaliseCharge = {
   charge: object => object
@@ -34,14 +34,13 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
   const proxyquireMocks = {
     '../../models/charge': mockedCharge,
     '../../utils/cookies': mockedCookies,
-    '../../services/normalise_charge': mockedNormaliseCharge
+    '../../services/normalise-charge': mockedNormaliseCharge
   }
 
-  return proxyquire('../../../app/controllers/web-payments/handle-auth-response-controller', proxyquireMocks)
+  return proxyquire('../../../app/controllers/web-payments/handle-auth-response.controller', proxyquireMocks)
 }
 
 describe('The web payments handle auth response controller', () => {
-
   beforeEach(() => {
     req.chargeData.status = 'AUTHORISATION SUCCESS'
   })
@@ -157,19 +156,19 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'CAPTURE_FAILURE',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/capture_failure',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'CAPTURE_FAILURE',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/capture_failure',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
     expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/incorrect_state/capture_failure', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(res.render.calledWith('errors/incorrect-state/capture-failure', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
   it('show error page and delete connector response if connector response is in the session and error', done => {
@@ -201,20 +200,20 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
     expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
   it('show error page and delete connector response if connector response is in the session and status code is 400', done => {
@@ -244,20 +243,20 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
     expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
   it('should return error if connector response has not been saved in the session', done => {
@@ -271,19 +270,19 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     const systemErrorObj = {
-      'viewName': 'SYSTEM_ERROR',
-      'returnUrl': '/return/3',
-      'analytics': {
-        'analyticsId': 'test-1234',
-        'type': 'test',
-        'paymentProvider': 'sandbox',
-        'path': '/handle-payment-response/3/error',
-        'amount': '4.99',
-        'testingVariant': 'original'
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(() => { }, mockNormaliseCharge, mockCookies)(req, res)
-    expect(res.render.calledWith('errors/system_error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
     expect(mockCookies.getSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     done()
   })

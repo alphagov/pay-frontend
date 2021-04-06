@@ -1,7 +1,7 @@
 'use strict'
 
 const logger = require('../utils/logger')(__filename)
-const responseRouter = require('../utils/response_router')
+const responseRouter = require('../utils/response-router')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 exports.humans = (req, res) => responseRouter.response(req, res, 'HUMANS', withAnalyticsError())

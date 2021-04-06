@@ -5,9 +5,9 @@ const csrf = require('csrf')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging_fields_helper')
+const { getLoggingFields } = require('../utils/logging-fields-helper')
 const session = require('../utils/session')
-const responseRouter = require('../utils/response_router')
+const responseRouter = require('../utils/response-router')
 
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = fetchAndValidateChargeId(req)
@@ -43,14 +43,14 @@ exports.csrfCheck = (req, res, next) => {
   }
 }
 
-function fetchAndValidateChargeId(req) {
+function fetchAndValidateChargeId (req) {
   if (session.validateSessionCookie(req)) {
     return req.params.chargeId ? req.params.chargeId : req.body.chargeId
   }
   return false
 }
 
-function csrfValid(csrfToken, chargeSession, req) {
+function csrfValid (csrfToken, chargeSession, req) {
   if (!['put', 'post'].includes(req.method.toLowerCase())) {
     return true
   } else if (chargeSession.csrfTokens.includes(csrfToken)) {

@@ -49,5 +49,5 @@ describe('Google Pay merchant ID selector test', function () {
 })
 
 function newGooglePayMerchantIdCalculator () {
-  return proxyquire('../../app/utils/google_pay_merchant_id_selector.js', {})
+  return proxyquire('../../app/utils/google-pay-merchant-id-selector.js', {})
 }

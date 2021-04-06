@@ -1,12 +1,11 @@
 'use strict'
 
 // NPM dependencies
-const path = require('path')
 const expect = require('chai').expect
 
 // Local dependencies
-const stateService = require(path.join(__dirname, '/../../app/services/state_service.js'))
-const State = require(path.join(__dirname, '/../../config/state.js'))
+const stateService = require('../../app/services/state.service.js')
+const State = require('../../config/state.js')
 
 describe('state service', function () {
   describe('resolveStates', function () {

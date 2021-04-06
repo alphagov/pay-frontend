@@ -8,7 +8,7 @@ const csrf = require('csrf')
 const nock = require('nock')
 
 // Local dependencies
-const serviceFixtures = require('../fixtures/service_fixtures')
+const serviceFixtures = require('../fixtures/service-fixtures')
 const frontendCardDetailsPath = '/card_details'
 
 // Constants
@@ -17,41 +17,41 @@ const adminusersServicePath = '/v1/api/services'
 const defaultCorrelationId = 'some-unique-id'
 const defaultGatewayAccountId = '12345'
 
-function localConnector() {
+function localConnector () {
   return process.env.CONNECTOR_HOST
 }
 
-function localAdminusers() {
+function localAdminusers () {
   return process.env.ADMINUSERS_URL
 }
 
-function connectorChargeUrl(chargeId) {
+function connectorChargeUrl (chargeId) {
   return localConnector() + connectorChargePath + chargeId
 }
 
-function connectorAuthUrl(chargeId) {
+function connectorAuthUrl (chargeId) {
   return localConnector() + connectorChargePath + chargeId + '/cards'
 }
 
-function connectorCaptureUrl(chargeId) {
+function connectorCaptureUrl (chargeId) {
   return localConnector() + connectorChargePath + chargeId + '/capture'
 }
 
-function connectorRespondsWith(chargeId, charge) {
+function connectorRespondsWith (chargeId, charge) {
   const connectorMock = nock(localConnector())
   connectorMock.get(connectorChargePath + chargeId).reply(200, charge)
 }
 
-function adminusersRespondsWith(gatewayAccountId, service) {
+function adminusersRespondsWith (gatewayAccountId, service) {
   const adminusersMock = nock(localAdminusers())
   adminusersMock.get(`${adminusersServicePath}?gatewayAccountId=${gatewayAccountId}`).reply(200, service)
 }
 
-function initConnectorUrl() {
+function initConnectorUrl () {
   process.env.CONNECTOR_URL = localConnector() + connectorChargePath + '{chargeId}'
 }
 
-function cardTypes() {
+function cardTypes () {
   return [
     {
       brand: 'visa',
@@ -86,7 +86,7 @@ function cardTypes() {
   ]
 }
 
-function rawSuccessfulGetChargeCorporateCardOnly(status, returnUrl, chargeId, gatewayAccountId) {
+function rawSuccessfulGetChargeCorporateCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
   const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.amount = 2345
   charge.corporate_card_surcharge = 250
@@ -94,123 +94,123 @@ function rawSuccessfulGetChargeCorporateCardOnly(status, returnUrl, chargeId, ga
   return charge
 }
 
-function rawSuccessfulGetChargeDebitCardOnly(status, returnUrl, chargeId, gatewayAccountId) {
+function rawSuccessfulGetChargeDebitCardOnly (status, returnUrl, chargeId, gatewayAccountId) {
   const charge = rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId)
   charge.gateway_account.card_types = [
     {
-      'type': 'DEBIT',
-      'brand': 'visa',
-      'label': 'visa'
+      type: 'DEBIT',
+      brand: 'visa',
+      label: 'visa'
     }
   ]
   return charge
 }
 
-function rawSuccessfulGetCharge(status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, walletType) {
+function rawSuccessfulGetCharge (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, emailSettings, disableBillingAddress, walletType) {
   return rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData, 'sandbox', emailSettings, disableBillingAddress, walletType)
 }
 
-function rawSuccessfulGetChargeWithPaymentProvider(status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress, walletType) {
+function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId, gatewayAccountId, auth3dsData = {}, paymentProvider = 'sandbox', emailSettings, disableBillingAddress, walletType) {
   const charge = {
-    'amount': 2345,
-    'description': 'Payment Description',
-    'status': status,
-    'return_url': returnUrl,
-    'email': 'bob@example.com',
-    'links': [{
-      'href': connectorChargeUrl(chargeId),
-      'rel': 'self',
-      'method': 'POST'
+    amount: 2345,
+    description: 'Payment Description',
+    status: status,
+    return_url: returnUrl,
+    email: 'bob@example.com',
+    links: [{
+      href: connectorChargeUrl(chargeId),
+      rel: 'self',
+      method: 'POST'
     }, {
-      'href': connectorAuthUrl(chargeId),
-      'rel': 'cardAuth',
-      'method': 'POST'
+      href: connectorAuthUrl(chargeId),
+      rel: 'cardAuth',
+      method: 'POST'
     }, {
-      'href': connectorCaptureUrl(chargeId),
-      'rel': 'cardCapture',
-      'method': 'POST'
+      href: connectorCaptureUrl(chargeId),
+      rel: 'cardCapture',
+      method: 'POST'
     }],
-    'gateway_account': {
-      'gateway_account_id': gatewayAccountId || defaultGatewayAccountId,
-      'analytics_id': 'test-1234',
-      'type': 'test',
-      'payment_provider': paymentProvider,
-      'service_name': 'Pranks incorporated',
-      'card_types': [
+    gateway_account: {
+      gateway_account_id: gatewayAccountId || defaultGatewayAccountId,
+      analytics_id: 'test-1234',
+      type: 'test',
+      payment_provider: paymentProvider,
+      service_name: 'Pranks incorporated',
+      card_types: [
         {
-          'type': 'DEBIT',
-          'brand': 'visa',
-          'label': 'visa',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'visa',
+          label: 'visa',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'master-card',
-          'label': 'master-card',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'master-card',
+          label: 'master-card',
+          id: 'id-0'
         },
         {
-          'type': 'CREDIT',
-          'brand': 'american-express',
-          'label': 'american-express',
-          'id': 'id-0'
+          type: 'CREDIT',
+          brand: 'american-express',
+          label: 'american-express',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'jcb',
-          'label': 'jcb',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'jcb',
+          label: 'jcb',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'diners-club',
-          'label': 'diners-club',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'diners-club',
+          label: 'diners-club',
+          id: 'id-0'
         },
         {
-          'type': 'DEBIT',
-          'brand': 'discover',
-          'label': 'discover',
-          'id': 'id-0'
+          type: 'DEBIT',
+          brand: 'discover',
+          label: 'discover',
+          id: 'id-0'
         }
       ],
-      'email_collection_mode': 'MANDATORY',
-      'email_notifications': {
-        'PAYMENT_CONFIRMED': {
-          'version': 1,
-          'enabled': true,
-          'template_body': null
+      email_collection_mode: 'MANDATORY',
+      email_notifications: {
+        PAYMENT_CONFIRMED: {
+          version: 1,
+          enabled: true,
+          template_body: null
         },
-        'REFUND_ISSUED': {
-          'version': 1,
-          'enabled': true,
-          'template_body': null
+        REFUND_ISSUED: {
+          version: 1,
+          enabled: true,
+          template_body: null
         }
       }
     }
   }
   if (status === 'AUTHORISATION SUCCESS') {
     charge.card_details = {
-      'card_brand': 'Visa',
-      'cardholder_name': 'Test User',
-      'last_digits_card_number': '1234',
-      'expiry_date': '11/99',
-      'billing_address': {
-        'line1': 'line1',
-        'line2': 'line2',
-        'city': 'city',
-        'postcode': 'postcode',
-        'county': 'county',
-        'country': 'GB'
+      card_brand: 'Visa',
+      cardholder_name: 'Test User',
+      last_digits_card_number: '1234',
+      expiry_date: '11/99',
+      billing_address: {
+        line1: 'line1',
+        line2: 'line2',
+        city: 'city',
+        postcode: 'postcode',
+        county: 'county',
+        country: 'GB'
       }
     }
   }
   if (status === 'AUTHORISATION 3DS REQUIRED') {
     charge.auth_3ds_data = {
-      'paRequest': auth3dsData.paRequest,
-      'issuerUrl': auth3dsData.issuerUrl,
-      'htmlOut': auth3dsData.htmlOut,
-      'md': auth3dsData.md
+      paRequest: auth3dsData.paRequest,
+      issuerUrl: auth3dsData.issuerUrl,
+      htmlOut: auth3dsData.htmlOut,
+      md: auth3dsData.md
     }
   }
   if (emailSettings) {
@@ -251,7 +251,7 @@ module.exports = {
 
   getChargeRequest: function (app, cookieValue, chargeId, query) {
     query = query || ''
-    const requestBuilder =  request(app)
+    const requestBuilder = request(app)
       .get(frontendCardDetailsPath + '/' + chargeId + query)
       .set('Accept', 'application/json')
       .set('x-request-id', defaultCorrelationId)
@@ -262,7 +262,7 @@ module.exports = {
     return requestBuilder
   },
 
-  postChargeRequest(app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
+  postChargeRequest (app, cookieValue, data, chargeId, sendCSRF = true, query = '') {
     if (sendCSRF) {
       data.csrfToken = csrf().create(process.env.CSRF_USER_SECRET)
     }
@@ -284,7 +284,7 @@ module.exports = {
     initConnectorUrl()
     const connectorMock = nock(localConnector())
     const mockPath = connectorChargePath + chargeId + '/status'
-    const payload = {'new_status': 'ENTERING CARD DETAILS'}
+    const payload = { new_status: 'ENTERING CARD DETAILS' }
     connectorMock.put(mockPath, payload).reply(statusCode, responseBody)
   },
 

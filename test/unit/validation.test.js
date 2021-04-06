@@ -1,7 +1,6 @@
 var randomString = require('randomstring')
-var path = require('path')
-var validationLib = require(path.join(__dirname, '/../../app/utils/charge_validation_fields'))
-var cardFactory = require(path.join(__dirname, '/../../app/models/card.js'))
+var validationLib = require('../../app/utils/charge-validation-fields')
+var cardFactory = require('../../app/models/card.js')
 var card = cardFactory()
 var fieldValidators = validationLib(card).fieldValidations
 
