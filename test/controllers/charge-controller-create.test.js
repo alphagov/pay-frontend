@@ -3,7 +3,7 @@
 // Core dependencies
 
 // Local dependencies
-const paymentFixtures = require('../fixtures/payment-fixtures')
+const paymentFixtures = require('../fixtures/payment.fixtures')
 
 // NPM dependencies
 const proxyquire = require('proxyquire')

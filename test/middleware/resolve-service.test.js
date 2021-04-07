@@ -9,7 +9,7 @@ const proxyquire = require('proxyquire')
 
 // Local dependencies
 const Service = require('../../app/models/Service.class')
-const serviceFixtures = require('../fixtures/service-fixtures')
+const serviceFixtures = require('../fixtures/service.fixtures')
 
 // Configure
 chai.use(chaiAsPromised)

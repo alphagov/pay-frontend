@@ -7,7 +7,7 @@ const lodash = require('lodash')
 const proxyquire = require('proxyquire')
 
 // Local dependencies
-const serviceFixtures = require('../fixtures/service-fixtures')
+const serviceFixtures = require('../fixtures/service.fixtures')
 const Service = require('../../app/models/Service.class')
 const testHelpers = require('../test-helpers/test-helpers')
 
