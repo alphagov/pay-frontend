@@ -15,7 +15,8 @@ const port = Math.floor(Math.random() * 48127) + 1024
 // Custom dependencies
 const getAdminUsersClient = require('../../../app/services/clients/adminusers.client')
 const serviceFixtures = require('../../fixtures/service.fixtures')
-const PactInteractionBuilder = require('../../fixtures/pact-interaction-builder').PactInteractionBuilder
+const PactInteractionBuilder = require('../../test-helpers/pact/pact-interaction-builder').PactInteractionBuilder
+const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 // Global setup
 const expect = chai.expect
@@ -46,7 +47,7 @@ describe('adminusers client - services API', function () {
             .withQuery({ gatewayAccountId: gatewayAccountId })
             .withState('a service exists with the given gateway account id association')
             .withUponReceiving('a valid find service request')
-            .withResponseBody(getServiceResponse.getPactified())
+            .withResponseBody(pactify(getServiceResponse))
             .withStatusCode(200)
             .build()
         ).then(() => done())

@@ -18,7 +18,7 @@ describe('Service model from service raw data', () => {
         address_postcode: 'AW1H 9UX',
         address_country: 'GB'
       }
-    }).getPlain())
+    }))
 
     expect(serviceModel.merchantDetails.countryName).to.equal('United Kingdom')
   })
@@ -32,7 +32,7 @@ describe('Service model from service raw data', () => {
         address_postcode: 'AW1H 9UX',
         address_country: 'GB'
       }
-    }).getPlain())
+    }))
 
     expect(serviceModel.hasCompleteMerchantDetailsAddress).to.equal(false)
   })
@@ -46,7 +46,7 @@ describe('Service model from service raw data', () => {
         address_postcode: 'AW1H 9UX',
         address_country: 'GB'
       }
-    }).getPlain())
+    }))
 
     expect(serviceModel.hasCompleteMerchantDetailsAddress).to.equal(true)
   })

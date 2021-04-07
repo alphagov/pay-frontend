@@ -43,7 +43,7 @@ const analyticsDataForErrors = {
 describe('resolve service middleware', function () {
   it('should resolve service from gateway account id', function (done) {
     const gatewayAccountId = '1'
-    const service = new Service(serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }).getPlain())
+    const service = new Service(serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }))
     const resolveService = resolveServiceMiddleware(Promise.resolve(service))
     const chargeData = {}
     const req = {

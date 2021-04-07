@@ -8,7 +8,8 @@ const { expect } = require('chai')
 // Local dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
 const fixtures = require('../../fixtures/payment.fixtures')
-const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
+const { PactInteractionBuilder } = require('../../test-helpers/pact/pact-interaction-builder')
+const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASE_URL = `http://localhost:${PORT}`
@@ -36,7 +37,7 @@ describe('connector client - tokens', function () {
         .withMethod('GET')
         .withState('an unused token testToken exists with external charge id chargeExternalId associated with it')
         .withUponReceiving('a valid token')
-        .withResponseBody(response.getPactified())
+        .withResponseBody(pactify(response))
         .withStatusCode(200)
         .build()
       return provider.addInteraction(builder)

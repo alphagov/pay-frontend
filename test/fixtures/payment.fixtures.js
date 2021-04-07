@@ -1,5 +1,4 @@
 const lodash = require('lodash')
-const pactBase = require('./pact-base')()
 
 // helper methods for building entities common to many different types of requests
 const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
@@ -204,14 +203,7 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     data.auth_3ds_data = buildAuth3dsDetails(opts.auth3dsData)
   }
 
-  return {
-    getPactified: () => {
-      return pactBase.pactify(data)
-    },
-    getPlain: () => {
-      return data
-    }
-  }
+  return data
 }
 
 const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
@@ -254,18 +246,10 @@ const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
 
 const fixtures = {
   tokenResponse: (opts = {}) => {
-    const data = {
+    return {
       used: opts.used,
       charge: {
         externalId: opts.chargeExternalId
-      }
-    }
-    return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
       }
     }
   },
@@ -273,7 +257,7 @@ const fixtures = {
   // intitial charge details returned have different API surface than charge others
   validChargeCreatedByToken: (opts = { used: false }) => {
     console.log('state passed in: ' + opts.status)
-    const data = {
+    return {
       used: opts.used,
       charge: {
         amount: opts.amount || 1000,
@@ -302,21 +286,12 @@ const fixtures = {
         }]
       }
     }
-    return data
   },
 
   validChargeDetails: (opts = {}) => buildChargeDetails(opts),
 
   validChargeCardDetailsAuthorised: () => {
-    const data = { status: 'AUTHORISATION SUCCESS' }
-    return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
-    }
+    return { status: 'AUTHORISATION SUCCESS' }
   },
 
   validAuthorisationRequest: (opts = {}) => {
@@ -347,27 +322,19 @@ const fixtures = {
       }
     }
 
-    return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
-    }
+    return data
   },
 
   validChargeDetailsWithPrefilledCardHolderDetails: (opts = {}) => buildChargeDetailsWithPrefilledCardHolderDeatils(opts),
 
   validCardDetails: () => {
-    const data = {
+    return {
       brand: 'visa',
       type: 'C',
       label: 'VISA CREDIT',
       corporate: false,
       prepaid: 'PREPAID'
     }
-    return data
   }
 }
 

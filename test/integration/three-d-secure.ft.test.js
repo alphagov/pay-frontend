@@ -49,7 +49,7 @@ describe('chargeTests', function () {
             paRequest,
             issuerUrl
           }
-        }).getPlain()
+        })
 
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -76,7 +76,7 @@ describe('chargeTests', function () {
             worldpayChallengeJwt
           },
           gatewayAccountType: 'test'
-        }).getPlain()
+        })
 
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -101,7 +101,7 @@ describe('chargeTests', function () {
             worldpayChallengeJwt
           },
           gatewayAccountType: 'live'
-        }).getPlain()
+        })
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -130,7 +130,7 @@ describe('chargeTests', function () {
             md,
             issuerUrl
           }
-        }).getPlain()
+        })
 
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
@@ -157,7 +157,7 @@ describe('chargeTests', function () {
           auth3dsData: {
             issuerUrl
           }
-        }).getPlain()
+        })
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -181,7 +181,7 @@ describe('chargeTests', function () {
           auth3dsData: {
             htmlOut
           }
-        }).getPlain()
+        })
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -200,7 +200,7 @@ describe('chargeTests', function () {
 
     describe('When required information not found for auth 3ds out view', function () {
       it('should display error in iframe UI', function (done) {
-        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -221,7 +221,7 @@ describe('chargeTests', function () {
   describe('The /card_details/charge_id/3ds_required_in', function () {
     describe('for worldpay payment provider', function () {
       it('should return the data needed for the UI', function (done) {
-        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -245,7 +245,7 @@ describe('chargeTests', function () {
       })
 
       it('should not return UI elements for which there is no data', function (done) {
-        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -271,7 +271,7 @@ describe('chargeTests', function () {
         const chargeResponse = paymentFixtures.validChargeDetails({
           ...chargeOptionsWith3dsRequired,
           paymentProvider: 'epdq'
-        }).getPlain()
+        })
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -294,7 +294,7 @@ describe('chargeTests', function () {
         const chargeResponse = paymentFixtures.validChargeDetails({
           ...chargeOptionsWith3dsRequired,
           paymentProvider: 'epdq'
-        }).getPlain()
+        })
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -316,7 +316,7 @@ describe('chargeTests', function () {
         const chargeResponse = paymentFixtures.validChargeDetails({
           ...chargeOptionsWith3dsRequired,
           paymentProvider: 'epdq'
-        }).getPlain()
+        })
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -338,7 +338,7 @@ describe('chargeTests', function () {
 
     describe('for smartpay payment provider', function () {
       it('should return the data needed for the UI when GET', function (done) {
-        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
+        const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
         defaultAdminusersResponseForGetService(gatewayAccountId)
 
         nock(process.env.CONNECTOR_HOST)
@@ -363,7 +363,7 @@ describe('chargeTests', function () {
   })
 
   describe('The /card_details/charge_id/3ds_handler', function () {
-    const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired).getPlain()
+    const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
 
     it('should send 3ds data to connector and redirect to confirm', function (done) {
       const cookieValue = cookie.create(chargeId)
@@ -423,7 +423,7 @@ describe('chargeTests', function () {
         {
           ...chargeOptionsWith3dsRequired,
           paymentProvider: 'stripe'
-        }).getPlain()
+        })
       nock(process.env.CONNECTOR_HOST)
         .get(`/v1/frontend/charges/${chargeId}`).reply(200, stripeChargeResponse)
         .post(`${connectorChargePath}${chargeId}/3ds`, {}).reply(409)

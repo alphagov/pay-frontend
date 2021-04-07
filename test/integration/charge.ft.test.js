@@ -156,7 +156,7 @@ describe('chargeTests', function () {
 
       nock(adminUsersHost, defaultCorrelationHeader)
         .get(`${servicesResource}?gatewayAccountId=${gatewayAccountId}`)
-        .reply(200, serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }).getPlain())
+        .reply(200, serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }))
 
       mockSuccessCardIdResponse(defaultCardID)
 

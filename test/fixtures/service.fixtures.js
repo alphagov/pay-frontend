@@ -1,13 +1,6 @@
 'use strict'
 
-// NPM dependencies
 const lodash = require('lodash')
-
-// Local dependencies
-const pactBase = require('./pact-base')
-
-// Global setup
-const pactServices = pactBase({ array: ['service_ids'] })
 
 module.exports = {
   validServiceResponse: (opts = {}) => {
@@ -52,13 +45,6 @@ module.exports = {
       }
     }
 
-    return {
-      getPactified: () => {
-        return pactServices.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
-    }
+    return data
   }
 }

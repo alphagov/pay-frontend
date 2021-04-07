@@ -47,7 +47,7 @@ describe('retrieve charge test', () => {
   })
 
   it('should set chargeData chargeID and call next on success', done => {
-    const chargeData = validChargeDetails().getPlain()
+    const chargeData = validChargeDetails()
     nock(process.env.CONNECTOR_HOST)
       .get(`/v1/frontend/charges/${chargeId}`)
       .reply(200, chargeData)

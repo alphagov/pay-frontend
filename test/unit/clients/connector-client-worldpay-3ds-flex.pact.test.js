@@ -7,9 +7,10 @@ const { expect } = require('chai')
 
 // Local dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
-const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
+const { PactInteractionBuilder } = require('../../test-helpers/pact/pact-interaction-builder')
 const worlpay3dsFlexFixtures = require('../../fixtures/worldpay-3ds-flex.fixtures')
 const paymentFixtures = require('../../fixtures/payment.fixtures')
+const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 const TEST_CHARGE_ID = 'testChargeId'
 const GET_JWT_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}/worldpay/3ds-flex/ddc`
@@ -41,7 +42,7 @@ describe('connector client - Worldpay 3DS flex tests', function () {
           .withMethod('GET')
           .withState('a Worldpay account exists with 3DS flex credentials and a charge with id testChargeId')
           .withUponReceiving('a valid get Worldpay 3DS flex DDC JWT request')
-          .withResponseBody(response.getPactified())
+          .withResponseBody(pactify(response))
           .withStatusCode(200)
           .build()
         return provider.addInteraction(builder)
@@ -51,7 +52,7 @@ describe('connector client - Worldpay 3DS flex tests', function () {
 
       it('should return jwt', async function () {
         const res = await connectorClient({ baseUrl: BASE_URL }).getWorldpay3dsFlexJwt({ chargeId: TEST_CHARGE_ID })
-        expect(res.body.jwt).to.be.equal(response.getPlain().jwt)
+        expect(res.body.jwt).to.be.equal(response.jwt)
       })
     })
   })
@@ -70,7 +71,7 @@ describe('connector client - Worldpay 3DS flex tests', function () {
         .withMethod('GET')
         .withState('a Worldpay account exists with 3DS flex credentials and a charge with id testChargeId that is in state AUTHORISATION_3DS_REQUIRED')
         .withUponReceiving('a valid get charge request')
-        .withResponseBody(response.getPactified())
+        .withResponseBody(pactify(response))
         .withStatusCode(200)
         .build()
       return provider.addInteraction(builder)

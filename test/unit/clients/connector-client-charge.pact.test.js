@@ -8,7 +8,8 @@ const { expect } = require('chai')
 // Local dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
 const fixtures = require('../../fixtures/payment.fixtures')
-const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
+const { PactInteractionBuilder } = require('../../test-helpers/pact/pact-interaction-builder')
+const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 const TEST_CHARGE_ID = 'testChargeId'
 const GET_CHARGE_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}`
@@ -37,11 +38,11 @@ describe('Connector client - charge tests', function () {
     before(() => {
       const response = fixtures.validChargeCardDetailsAuthorised()
       const builder = new PactInteractionBuilder(AUTHORISE_CHARGE_URL)
-        .withRequestBody(authRequest.getPactified())
+        .withRequestBody(authRequest)
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('an authorisation request')
-        .withResponseBody(response.getPactified())
+        .withResponseBody(pactify(response))
         .withStatusCode(200)
         .build()
       return provider.addInteraction(builder)
@@ -52,7 +53,7 @@ describe('Connector client - charge tests', function () {
     it('should return authorisation success', async function () {
       const res = await connectorClient({ baseUrl: BASE_URL }).chargeAuth({
         chargeId: TEST_CHARGE_ID,
-        payload: authRequest.getPlain()
+        payload: authRequest
       })
       expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
     })
@@ -64,11 +65,11 @@ describe('Connector client - charge tests', function () {
     before(() => {
       const response = fixtures.validChargeCardDetailsAuthorised()
       const builder = new PactInteractionBuilder(AUTHORISE_CHARGE_URL)
-        .withRequestBody(authRequest.getPactified())
+        .withRequestBody(authRequest)
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('an authorisation request without a billing address')
-        .withResponseBody(response.getPactified())
+        .withResponseBody(pactify(response))
         .withStatusCode(200)
         .build()
       return provider.addInteraction(builder)
@@ -79,7 +80,7 @@ describe('Connector client - charge tests', function () {
     it('should return authorisation success', async function () {
       const res = await connectorClient({ baseUrl: BASE_URL }).chargeAuth({
         chargeId: TEST_CHARGE_ID,
-        payload: authRequest.getPlain()
+        payload: authRequest
       })
       expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
     })
@@ -96,7 +97,7 @@ describe('Connector client - charge tests', function () {
         .withMethod('GET')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid get charge request')
-        .withResponseBody(response.getPactified())
+        .withResponseBody(pactify(response))
         .withStatusCode(200)
         .build()
       return provider.addInteraction(builder)

@@ -58,7 +58,7 @@ describe('enforce session cookie test', () => {
   })
 
   it('should call next when frontend_state cookie contains chargeId', done => {
-    const chargeData = validChargeDetails().getPlain()
+    const chargeData = validChargeDetails()
     nock(process.env.CONNECTOR_HOST)
       .get(`/v1/frontend/charges/${chargeId}`)
       .reply(200, chargeData)
