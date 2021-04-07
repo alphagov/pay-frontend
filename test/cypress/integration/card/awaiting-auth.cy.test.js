@@ -4,6 +4,9 @@ const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
 const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
 const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
+const { adminUsersGetService } = require('../../utils/stub-builders/service-stubs')
+const { cardIdValidCardDetails } = require('../../utils/stub-builders/card-id-stubs')
+const { connectorMultipleSubsequentChargeDetails, connectorValidPatchConfirmedChargeDetails } = require('../../utils/stub-builders/charge-stubs')
 
 const validPayment = {
   cardNumber: '4444333322221111',
@@ -65,39 +68,37 @@ describe('Awaiting auth', () => {
     }
 
     const confirmPaymentDetailsStubs = [
-      { name: 'adminUsersGetService', opts: {} },
-      {
-        name: 'connectorMultipleSubsequentChargeDetails',
-        opts: [
-          {
-            chargeId,
-            status: 'AUTHORISATION READY',
-            state: { finished: false, status: 'started' }
-          },
-          // the charge below needs to have AUTHORISATION READY status to force the page to the auth_waiting page
-          {
-            chargeId,
-            paymentDetails: paymentDetails,
-            status: 'AUTHORISATION READY',
-            state: { finished: false, status: 'submitted' }
-          },
-          // status of AUTHORISATION SUCCESS to move the page from auth_waiting to confirm page
-          {
-            chargeId,
-            paymentDetails: paymentDetails,
-            status: 'AUTHORISATION SUCCESS',
-            state: { finished: false, status: 'submitted' }
-          },
-          // another charge below to satisfy the state enforcer so we go to the correct confirm page
-          {
-            chargeId,
-            paymentDetails: paymentDetails,
-            status: 'AUTHORISATION SUCCESS',
-            state: { finished: false, status: 'submitted' }
-          }]
-      },
-      { name: 'cardIdValidCardDetails' },
-      { name: 'connectorValidPatchConfirmedChargeDetails', opts: { chargeId } }
+      adminUsersGetService(),
+      connectorMultipleSubsequentChargeDetails([
+        {
+          chargeId,
+          status: 'AUTHORISATION READY',
+          state: { finished: false, status: 'started' }
+        },
+        // the charge below needs to have AUTHORISATION READY status to force the page to the auth_waiting page
+        {
+          chargeId,
+          paymentDetails: paymentDetails,
+          status: 'AUTHORISATION READY',
+          state: { finished: false, status: 'submitted' }
+        },
+        // status of AUTHORISATION SUCCESS to move the page from auth_waiting to confirm page
+        {
+          chargeId,
+          paymentDetails: paymentDetails,
+          status: 'AUTHORISATION SUCCESS',
+          state: { finished: false, status: 'submitted' }
+        },
+        // another charge below to satisfy the state enforcer so we go to the correct confirm page
+        {
+          chargeId,
+          paymentDetails: paymentDetails,
+          status: 'AUTHORISATION SUCCESS',
+          state: { finished: false, status: 'submitted' }
+        }
+      ]),
+      cardIdValidCardDetails(),
+      connectorValidPatchConfirmedChargeDetails(chargeId)
     ]
 
     cy.task('setupStubs', confirmPaymentDetailsStubs)

@@ -1,10 +1,8 @@
 const util = require('util')
 const request = require('request')
-const lodash = require('lodash')
 
 const requestPromise = util.promisify(request)
 
-const stubGenerators = require('./stubs')
 const cookieMonster = require('./cookie-monster')
 
 module.exports = (on, config) => {
@@ -12,11 +10,15 @@ module.exports = (on, config) => {
 
   // common task definitions - used by all test specs
   on('task', {
-    setupStubs (specs) {
-      // spec has name and options - passed into stub generator for a given name
-      const stubs = lodash.flatMap(specs, spec => stubGenerators[spec.name](spec.opts))
-
-      return requestPromise({
+    /**
+     * Makes a post request to Mountebank to setup an Imposter with stubs built using the array of
+     * stubs
+     *
+     * Note: this task can only be called once per test, so all stubs for a test must be set up in
+     * the same call.
+     */
+    setupStubs (stubs) {
+      return request({
         method: 'POST',
         url: stubServerURL,
         json: true,

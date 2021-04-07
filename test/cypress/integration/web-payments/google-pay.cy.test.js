@@ -1,4 +1,14 @@
 const { getMockPaymentRequest } = require('../../utils/payment-request-api-stub')
+const {
+  connectorGetChargeDetails,
+  connectorUpdateChargeStatus
+} = require('../../utils/stub-builders/charge-stubs')
+const {
+  connectorCreateChargeFromToken,
+  connectorMarkTokenAsUsed
+} = require('../../utils/stub-builders/token-stubs')
+const { adminUsersGetService } = require('../../utils/stub-builders/service-stubs')
+const { cardIdValidCardDetails } = require('../../utils/stub-builders/card-id-stubs')
 
 describe('Google Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
@@ -28,36 +38,28 @@ describe('Google Pay payment flow', () => {
   }
 
   const createPaymentChargeStubs = [
-    { name: 'connectorCreateChargeFromToken', opts: { tokenId } },
-    { name: 'connectorMarkTokenAsUsed', opts: { tokenId } },
-    {
-      name: 'connectorGetChargeDetails',
-      opts: {
-        chargeId,
-        status: 'CREATED',
-        state: { finished: false, status: 'created' }
-      }
-    },
-    { name: 'connectorUpdateChargeStatus', opts: { chargeId } },
-
-    // @TODO(sfount) this should pass the service to be queried relative to the charge - right now it just returns a default service
-    { name: 'adminUsersGetService' }
+    connectorCreateChargeFromToken({ tokenId }),
+    connectorMarkTokenAsUsed(tokenId),
+    connectorGetChargeDetails({
+      chargeId,
+      status: 'CREATED',
+      state: { finished: false, status: 'created' }
+    }),
+    connectorUpdateChargeStatus(chargeId),
+    adminUsersGetService()
   ]
 
   const checkCardDetailsStubsWithGooglePayorApplePay = (googlePayEnabled, applePayEnabled) => {
     return [
-      {
-        name: 'connectorGetChargeDetails',
-        opts: {
-          chargeId,
-          status: 'ENTERING CARD DETAILS',
-          state: { finished: false, status: 'started' },
-          allowApplePay: applePayEnabled,
-          allowGooglePay: googlePayEnabled,
-          gatewayMerchantId: 'SMTHG12345UP'
-        }
-      },
-      { name: 'cardIdValidCardDetails' }
+      connectorGetChargeDetails({
+        chargeId,
+        status: 'ENTERING CARD DETAILS',
+        state: { finished: false, status: 'started' },
+        allowApplePay: applePayEnabled,
+        allowGooglePay: googlePayEnabled,
+        gatewayMerchantId: 'SMTHG12345UP'
+      }),
+      cardIdValidCardDetails()
     ]
   }
 

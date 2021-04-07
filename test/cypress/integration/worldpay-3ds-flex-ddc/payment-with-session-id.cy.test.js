@@ -2,6 +2,7 @@ const { expect } = require('chai')
 const _ = require('lodash')
 const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const { getMockPaymentRequest } = require('../../utils/payment-request-api-stub')
+const { worldpay3dsFlexDdcIframePost } = require('../../utils/stub-builders/worldpay-stubs')
 
 describe('Worldpay 3ds flex card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
@@ -62,21 +63,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
   const createGooglePayPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(
     tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts, gatewayAccountOpts, additionalChargeOpts)
 
-  const worldpay3dsFlexDdcStub = {
-    name: 'worldpay3dsFlexDdcIframePost',
-    opts: {
-      sessionId: worldpaySessionId,
-      status: true
-    }
-  }
-
-  const worldpay3dsFlexDdcStubFailure = {
-    name: 'worldpay3dsFlexDdcIframePost',
-    opts: {
-      sessionId: worldpaySessionId,
-      status: false
-    }
-  }
+  const worldpay3dsFlexDdcStub = worldpay3dsFlexDdcIframePost(worldpaySessionId, true)
+  const worldpay3dsFlexDdcStubFailure = worldpay3dsFlexDdcIframePost(worldpaySessionId, false)
 
   beforeEach(() => {
     // this test is for the full process, the session should be maintained
