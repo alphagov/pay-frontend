@@ -1,6 +1,82 @@
 # pay-frontend
 GOV.UK Pay Frontend application (Node.js)
 
+## Running locally
+
+### Prerequisites
+
+* This requires the [Pay CLI](https://github.com/alphagov/pay-infra/tree/master/cli), which is not publicly available at present.
+* You have [set up your local development environment](https://pay-team-manual.cloudapps.digital/manual/setup-local-dev-environment.html)
+* Clone this repo locally.
+
+### Starting app
+
+Rename `.env.example` to `.env`. This contains the environment variables required to run the app, and contains the URLs for other microservices that frontend makes requests to, which default to the URLs that apps run using pay local are available on.
+
+Start the Pay local environment 
+
+```
+pay local launch --cluster card
+```
+
+Start frontend
+
+```
+npm install && npm run compile
+npm run start:dev
+```
+
+Make a create payment request to the locally running Public API app, and visit the `next_url` with the host changed to http://localhost:3000.
+
+### Debug using Visual Studio Code
+
+* You need to make sure the app runs locally first using the steps in the [Running](#running) section.
+* In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
+* From the **Run** toolbar, select tne launch config `Frontend`.
+* Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
+* Press The `green play` button (`F5` MacOS):
+    * This will run the app in debug mode.
+    * Uses `nodemon` so it will automatically restart on code changes.
+
+### Watching for changes
+
+You shouldn’t need to restart the app to see changes you make.
+
+We use [nodemon](https://github.com/remy/nodemon) which watches for changes to files and restarts the node process.
+
+If you’re making changes to client-side JS or Sass files (anything within [`/assets/`](app/assets/)) then running `npm run watch-live-reload` will watch for changes and recompile. Nodemon does not do anything here as that’s not necessary. If you install the [livereload browser plugin](http://livereload.com/extensions/) then it will refresh your page once the assets have been compiled to the `/public` folder.
+
+## Running tests
+
+### To run mocha tests
+```
+npm run compile && npm test
+```
+### Debug tests using Visual Studio Code
+
+#### IMPORTANT NOTE - some tests do not work in debug mode
+* Some integration tests do not work in debug mode.  This is because the tests are dependent on other tests running before hand.
+* Nevertheless, it is still useful to debug tests that do work in debug mode.
+
+#### Run tests in debug mode
+* In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
+* From the **Run** toolbar, select the launch config you want to run:
+  * `Mocha All` - runs all tests.
+  * `Mocha Current File` - only run currently open test file.
+* Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
+* Press The `green play` button or `F5`.
+
+### To run cypress tests
+
+Run in two separate terminals:
+1. `npm run cypress:server`
+
+    _This runs both the Cypress server and Mountebank which is the virtualisation server used for stubbing out external API calls._
+
+2. Either:
+- `npm run cypress:test` to run headless 
+- `npm run cypress:test-headed` to run headed
+
 ## Key environment variables
 
 | variable                                 | required   | default value                                                   | Description                                                                                                                                           |
