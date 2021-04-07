@@ -5,7 +5,7 @@ const expect = require('chai').expect
 
 // Local dependencies
 const Service = require('../../app/models/Service.class')
-const serviceFixtures = require('../fixtures/service-fixtures')
+const serviceFixtures = require('../fixtures/service.fixtures')
 
 describe('Service model from service raw data', () => {
   it('should contain expected merchant details country name', () => {

@@ -7,7 +7,7 @@ const { expect } = require('chai')
 
 // Local dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
-const fixtures = require('../../fixtures/payment-fixtures')
+const fixtures = require('../../fixtures/payment.fixtures')
 const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
 
 const PORT = Math.floor(Math.random() * 48127) + 1024

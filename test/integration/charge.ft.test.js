@@ -16,7 +16,7 @@ const {
   defaultAdminusersResponseForGetService
 } = helper
 const State = require('../../config/state')
-const serviceFixtures = require('../fixtures/service-fixtures')
+const serviceFixtures = require('../fixtures/service.fixtures')
 
 // Constants
 const app = proxyquire('../../server.js',

@@ -8,7 +8,7 @@ const csrf = require('csrf')
 const nock = require('nock')
 
 // Local dependencies
-const serviceFixtures = require('../fixtures/service-fixtures')
+const serviceFixtures = require('../fixtures/service.fixtures')
 const frontendCardDetailsPath = '/card_details'
 
 // Constants

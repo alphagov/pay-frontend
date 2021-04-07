@@ -4,7 +4,7 @@
 const sinon = require('sinon')
 const { expect } = require('chai')
 const nock = require('nock')
-const { validChargeDetails } = require('../fixtures/payment-fixtures')
+const { validChargeDetails } = require('../fixtures/payment.fixtures')
 const retrieveCharge = require('../../app/middleware/retrieve-charge')
 
 const ANALYTICS_ERROR = {

@@ -16,7 +16,7 @@ const BASEURL = `http://localhost:${PORT}`
 
 // Custom dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
-const fixtures = require('../../fixtures/wallet-payment-fixtures')
+const fixtures = require('../../fixtures/wallet-payment.fixtures')
 const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
 
 // Global setup

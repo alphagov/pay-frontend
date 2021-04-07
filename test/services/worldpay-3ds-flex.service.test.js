@@ -4,7 +4,7 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const { expect } = require('chai')
 
-const { validDdcJwt } = require('../fixtures/worldpay-3ds-flex-fixtures')
+const { validDdcJwt } = require('../fixtures/worldpay-3ds-flex.fixtures')
 
 const TEST_JWT = 'a-jwt-returned-from-connector'
 

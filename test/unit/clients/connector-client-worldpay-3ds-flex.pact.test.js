@@ -8,8 +8,8 @@ const { expect } = require('chai')
 // Local dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
 const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
-const worlpay3dsFlexFixtures = require('../../fixtures/worldpay-3ds-flex-fixtures')
-const paymentFixtures = require('../../fixtures/payment-fixtures')
+const worlpay3dsFlexFixtures = require('../../fixtures/worldpay-3ds-flex.fixtures')
+const paymentFixtures = require('../../fixtures/payment.fixtures')
 
 const TEST_CHARGE_ID = 'testChargeId'
 const GET_JWT_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}/worldpay/3ds-flex/ddc`

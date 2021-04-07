@@ -14,7 +14,7 @@ const port = Math.floor(Math.random() * 48127) + 1024
 
 // Custom dependencies
 const getAdminUsersClient = require('../../../app/services/clients/adminusers.client')
-const serviceFixtures = require('../../fixtures/service-fixtures')
+const serviceFixtures = require('../../fixtures/service.fixtures')
 const PactInteractionBuilder = require('../../fixtures/pact-interaction-builder').PactInteractionBuilder
 
 // Global setup

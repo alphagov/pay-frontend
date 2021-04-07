@@ -8,7 +8,7 @@ const expect = chai.expect
 
 // Local dependencies
 const logger = require('../../app/utils/logger')(__filename)
-const paymentFixtures = require('../fixtures/payment-fixtures')
+const paymentFixtures = require('../fixtures/payment.fixtures')
 
 const app = require('../../server.js').getApp()
 const cookie = require('../test-helpers/session.js')

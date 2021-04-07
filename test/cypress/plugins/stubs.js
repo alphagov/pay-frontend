@@ -1,6 +1,6 @@
-const paymentFixtures = require('./../../fixtures/payment-fixtures')
-const serviceFixtures = require('./../../fixtures/service-fixtures')
-const worldpay3dsFlexDdcJwtFixtures = require('./../../fixtures/worldpay-3ds-flex-fixtures')
+const paymentFixtures = require('./../../fixtures/payment.fixtures')
+const serviceFixtures = require('./../../fixtures/service.fixtures')
+const worldpay3dsFlexDdcJwtFixtures = require('./../../fixtures/worldpay-3ds-flex.fixtures')
 
 const JSONRequestHeader = { Accept: 'application/json' }
 const JSONResponseHeader = { 'Content-Type': 'application/json' }

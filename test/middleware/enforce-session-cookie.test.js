@@ -5,7 +5,7 @@ const assert = require('assert')
 const sinon = require('sinon')
 const { expect } = require('chai')
 const nock = require('nock')
-const { validChargeDetails } = require('../fixtures/payment-fixtures')
+const { validChargeDetails } = require('../fixtures/payment.fixtures')
 const enforceSessionCookie = require('../../app/middleware/enforce-session-cookie')
 
 const ANALYTICS_ERROR = {
