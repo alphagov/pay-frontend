@@ -11,6 +11,7 @@ node_modules/*
 *.log
 reports
 .pre-commit-config.yaml
+.env
 
 # IntelliJ gubbins
 .idea
