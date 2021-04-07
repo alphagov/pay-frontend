@@ -17,7 +17,8 @@ const BASEURL = `http://localhost:${PORT}`
 // Custom dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
 const fixtures = require('../../fixtures/wallet-payment.fixtures')
-const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
+const { PactInteractionBuilder } = require('../../test-helpers/pact/pact-interaction-builder')
+const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 // Global setup
 const expect = chai.expect
@@ -44,11 +45,11 @@ describe('connectors client - google authentication API', function () {
 
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
-          .withRequestBody(successfulGoogleAuthRequest.getPactified())
+          .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid google pay auth request which should be authorised')
-          .withResponseBody(authorisationSuccessResponse.getPactified())
+          .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
           .build()
         return provider.addInteraction(builder)
@@ -57,7 +58,7 @@ describe('connectors client - google authentication API', function () {
       afterEach(() => provider.verify())
 
       it('should return authorisation success', function (done) {
-        const payload = successfulGoogleAuthRequest.getPlain()
+        const payload = successfulGoogleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
@@ -75,11 +76,11 @@ describe('connectors client - google authentication API', function () {
 
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
-          .withRequestBody(successfulGoogleAuthRequest.getPactified())
+          .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid google pay auth request with no last card digits which should be authorised')
-          .withResponseBody(authorisationSuccessResponse.getPactified())
+          .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
           .build()
         return provider.addInteraction(builder)
@@ -88,7 +89,7 @@ describe('connectors client - google authentication API', function () {
       afterEach(() => provider.verify())
 
       it('should return authorisation success', function (done) {
-        const payload = successfulGoogleAuthRequest.getPlain()
+        const payload = successfulGoogleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
@@ -105,7 +106,7 @@ describe('connectors client - google authentication API', function () {
 
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
-          .withRequestBody(declinedGoogleAuthRequest.getPactified())
+          .withRequestBody(declinedGoogleAuthRequest)
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid google pay auth request which should be declined')
@@ -120,7 +121,7 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: declinedGoogleAuthRequest.getPlain()
+          payload: declinedGoogleAuthRequest
         }).then(() => {
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
@@ -132,7 +133,7 @@ describe('connectors client - google authentication API', function () {
 
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
-          .withRequestBody(errorGoogleAuthRequest.getPactified())
+          .withRequestBody(errorGoogleAuthRequest)
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid google pay auth request which should return an error')
@@ -147,7 +148,7 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: errorGoogleAuthRequest.getPlain()
+          payload: errorGoogleAuthRequest
         }).then(() => {
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))

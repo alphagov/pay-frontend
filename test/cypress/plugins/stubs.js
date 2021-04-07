@@ -57,14 +57,14 @@ module.exports = {
   // @TODO(sfount) this should only match the query string with the - service ID provided
   adminUsersGetService: (opts = {}) => {
     const path = '/v1/api/services'
-    const body = serviceFixtures.validServiceResponse(opts).getPlain()
+    const body = serviceFixtures.validServiceResponse(opts)
 
     return simpleStubBuilder('GET', 200, path, body)
   },
 
   connectorGetChargeDetails: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeId}`
-    const body = paymentFixtures.validChargeDetails(opts).getPlain()
+    const body = paymentFixtures.validChargeDetails(opts)
 
     return simpleStubBuilder('GET', 200, path, body)
   },
@@ -103,14 +103,14 @@ module.exports = {
       chargeId: opts.chargeId,
       status: 'ENTERING CARD DETAILS',
       state: { finished: false, status: 'started' }
-    }).getPlain()
+    })
 
     return simpleStubBuilder('PATCH', 200, path, body)
   },
 
   connectorPostValidChargeCardDetailsAuthorisation: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeid}/cards`
-    const body = paymentFixtures.validChargeCardDetailsAuthorised().getPlain()
+    const body = paymentFixtures.validChargeCardDetailsAuthorised()
 
     return simpleStubBuilder('POST', 200, path, body)
   },
@@ -122,7 +122,7 @@ module.exports = {
       is: {
         statusCode: 200,
         headers: JSONResponseHeader,
-        body: paymentFixtures.validChargeDetails(charges[0]).getPlain()
+        body: paymentFixtures.validChargeDetails(charges[0])
       },
       _behaviours: {
         repeat: 1
@@ -134,7 +134,7 @@ module.exports = {
         is: {
           statusCode: 200,
           headers: JSONResponseHeader,
-          body: paymentFixtures.validChargeDetails(charge).getPlain()
+          body: paymentFixtures.validChargeDetails(charge)
         }
       })
     })
@@ -161,7 +161,7 @@ module.exports = {
   connectorWorldpay3dsFlexDdcJwt: (opts = {}) => {
     const path = `/v1/frontend/charges/${opts.chargeId}/worldpay/3ds-flex/ddc`
 
-    const body = worldpay3dsFlexDdcJwtFixtures.validDdcJwt().getPlain()
+    const body = worldpay3dsFlexDdcJwtFixtures.validDdcJwt()
 
     return simpleStubBuilder('GET', 200, path, body)
   },

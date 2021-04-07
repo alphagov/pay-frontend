@@ -17,7 +17,8 @@ const BASEURL = `http://localhost:${PORT}`
 // Custom dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')
 const fixtures = require('../../fixtures/wallet-payment.fixtures.js')
-const { PactInteractionBuilder } = require('../../fixtures/pact-interaction-builder')
+const { PactInteractionBuilder } = require('../../test-helpers/pact/pact-interaction-builder')
+const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 // Global setup
 const expect = chai.expect
@@ -44,11 +45,11 @@ describe('connectors client - apple authentication API', function () {
 
       before(() => {
         const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-          .withRequestBody(appleAuthRequest.getPactified())
+          .withRequestBody(appleAuthRequest)
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid apple pay auth request which should be authorised')
-          .withResponseBody(authorisationSuccessResponse.getPactified())
+          .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
           .build()
         return provider.addInteraction(builder)
@@ -57,7 +58,7 @@ describe('connectors client - apple authentication API', function () {
       afterEach(() => provider.verify())
 
       it('should return authorisation success', function (done) {
-        const payload = appleAuthRequest.getPlain()
+        const payload = appleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'apple',
@@ -75,11 +76,11 @@ describe('connectors client - apple authentication API', function () {
 
       before(() => {
         const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-          .withRequestBody(appleAuthRequest.getPactified())
+          .withRequestBody(appleAuthRequest)
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid Apple Pay auth request with no last card digits which should be authorised')
-          .withResponseBody(authorisationSuccessResponse.getPactified())
+          .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
           .build()
         return provider.addInteraction(builder)
@@ -88,7 +89,7 @@ describe('connectors client - apple authentication API', function () {
       afterEach(() => provider.verify())
 
       it('should return authorisation success', function (done) {
-        const payload = appleAuthRequest.getPlain()
+        const payload = appleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'apple',
@@ -107,11 +108,11 @@ describe('connectors client - apple authentication API', function () {
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-        .withRequestBody(appleAuthRequest.getPactified())
+        .withRequestBody(appleAuthRequest)
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid Apple Pay auth request with no email address which should be authorised')
-        .withResponseBody(authorisationSuccessResponse.getPactified())
+        .withResponseBody(pactify(authorisationSuccessResponse))
         .withStatusCode(200)
         .build()
       return provider.addInteraction(builder)
@@ -120,7 +121,7 @@ describe('connectors client - apple authentication API', function () {
     afterEach(() => provider.verify())
 
     it('should return authorisation success', function (done) {
-      const payload = appleAuthRequest.getPlain()
+      const payload = appleAuthRequest
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
         provider: 'apple',
@@ -137,7 +138,7 @@ describe('connectors client - apple authentication API', function () {
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-        .withRequestBody(appleAuthRequest.getPactified())
+        .withRequestBody(appleAuthRequest)
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid apple pay auth request which should be declined')
@@ -152,7 +153,7 @@ describe('connectors client - apple authentication API', function () {
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
         provider: 'apple',
-        payload: appleAuthRequest.getPlain()
+        payload: appleAuthRequest
       }).then(() => {
         done()
       }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
@@ -164,7 +165,7 @@ describe('connectors client - apple authentication API', function () {
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-        .withRequestBody(appleAuthRequest.getPactified())
+        .withRequestBody(appleAuthRequest)
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid apple pay auth request which should return an error')
@@ -179,7 +180,7 @@ describe('connectors client - apple authentication API', function () {
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
         provider: 'apple',
-        payload: appleAuthRequest.getPlain()
+        payload: appleAuthRequest
       }).then(() => {
         done()
       }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))

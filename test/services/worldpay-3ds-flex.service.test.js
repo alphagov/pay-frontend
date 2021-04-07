@@ -21,7 +21,7 @@ describe('Worldpay 3DS Flex service', () => {
 
   describe('get DDC JWT success', () => {
     beforeEach(() => {
-      const jwtResponse = validDdcJwt(TEST_JWT).getPlain()
+      const jwtResponse = validDdcJwt(TEST_JWT)
       getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
         {
           statusCode: 200,

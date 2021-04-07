@@ -1,4 +1,3 @@
-const pactBase = require('./pact-base')()
 const successfulLastDigitsCardNumber = 4242
 
 const fixtures = {
@@ -19,26 +18,11 @@ const fixtures = {
         signed_message: 'aSignedMessage'
       }
     }
-    return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
-    }
+    return data
   },
   webPaymentSuccessResponse: () => {
-    const data = {
-      status: 'AUTHORISATION SUCCESS'
-    }
     return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
+      status: 'AUTHORISATION SUCCESS'
     }
   },
   appleAuthRequestDetails: (ops = {}) => {
@@ -63,14 +47,7 @@ const fixtures = {
       data.payment_info.email = ops.email
     }
 
-    return {
-      getPactified: () => {
-        return pactBase.pactify(data)
-      },
-      getPlain: () => {
-        return data
-      }
-    }
+    return data
   }
 }
 

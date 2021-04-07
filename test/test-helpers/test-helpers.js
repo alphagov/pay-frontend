@@ -290,7 +290,7 @@ module.exports = {
 
   defaultAdminusersResponseForGetService: function (gatewayAccountId, serviceData = {}) {
     serviceData.gateway_account_ids = [gatewayAccountId]
-    const serviceResponse = serviceFixtures.validServiceResponse(serviceData).getPlain()
+    const serviceResponse = serviceFixtures.validServiceResponse(serviceData)
     adminusersRespondsWith(gatewayAccountId, serviceResponse)
   },
 
@@ -298,7 +298,7 @@ module.exports = {
     const serviceResponse = serviceFixtures.validServiceResponse({
       gateway_account_ids: [gatewayAccountId],
       redirect_to_service_immediately_on_terminal_state: true
-    }).getPlain()
+    })
     adminusersRespondsWith(gatewayAccountId, serviceResponse)
   },
 

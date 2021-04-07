@@ -12,7 +12,7 @@ const expect = require('chai').expect
 
 const chargeId = '42mdrsshtsk4chpeoifhlgf4lk'
 const card = paymentFixtures.validCardDetails()
-const chargeData = paymentFixtures.validChargeDetails({ emailCollectionMode: 'OFF' }).getPlain()
+const chargeData = paymentFixtures.validChargeDetails({ emailCollectionMode: 'OFF' })
 
 const paymentDetailsWithoutAddress = {
   chargeId: chargeId,
@@ -87,7 +87,7 @@ describe('with valid payment details', function () {
         addressPostcode: paymentDetails.addressPostcode,
         addressCountry: paymentDetails.addressCountry,
         worldpay3dsFlexDdcResult: paymentDetails.worldpay3dsFlexDdcResult
-      }).getPlain()
+      })
 
       delete payload.accept_header
       delete payload.user_agent_header
@@ -126,7 +126,7 @@ describe('with valid payment details', function () {
         addressCity: paymentDetails.addressCity,
         addressPostcode: paymentDetails.addressPostcode,
         addressCountry: paymentDetails.addressCountry
-      }).getPlain()
+      })
 
       delete payload.accept_header
       delete payload.user_agent_header
@@ -164,7 +164,7 @@ describe('with valid payment details', function () {
         corporateCard: card.corporate,
         prepaid: card.prepaid,
         noBillingAddress: true
-      }).getPlain()
+      })
 
       delete payload.accept_header
       delete payload.user_agent_header
