@@ -19,12 +19,12 @@ const CSP_SELF = ["'self'"]
 const frameAndChildSourceCardDetails = ["'self'", 'https://secure-test.worldpay.com',
   'https://centinelapi.cardinalcommerce.com']
 
-const imgSourceCardDetails = ["'self'", 'https://www.google-analytics.com', 'https://www.gstatic.com']
+const imgSourceCardDetails = ["'self'", 'https://www.google-analytics.com', 'https://www.gstatic.com', 'https://d106cm2l6ezls7.cloudfront.net']
 
 const scriptSourceCardDetails = ["'self'", "'unsafe-inline'", 'https://www.google-analytics.com',
   (req, res) => `'nonce-${res.locals && res.locals.nonce}'`, govUkFrontendLayoutJsEnabledScriptHash]
 
-const styleSourceCardDetails = ["'self'", "'unsafe-eval'", "'unsafe-inline'"]
+const styleSourceCardDetails = ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'https://d106cm2l6ezls7.cloudfront.net']
 
 const formActionWP3DS = ["'self'", 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect',
   'https://secure-test.worldpay.com/shopper/3ds/ddc.html']
