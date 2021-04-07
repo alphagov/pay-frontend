@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+{% block head %}
+  {% include "includes/iframe-head.njk" %}
+{% endblock %}
+<body>
+  {{ htmlOut | safe }}
+</body>
+</html>

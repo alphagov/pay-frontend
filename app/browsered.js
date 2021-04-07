@@ -5,7 +5,7 @@ const formValidation = require('./assets/javascripts/browsered/form-validation')
 const epdq3ds2 = require('./assets/javascripts/browsered/epdq-3ds2')
 const helpers = require('./assets/javascripts/browsered/helpers')
 
-exports.chargeValidation = require('./utils/charge_validation')
+exports.chargeValidation = require('./utils/charge-validation')
 analytics.eventTracking.init()
 
 // Place functions into scope so can trigger in scripts.njk

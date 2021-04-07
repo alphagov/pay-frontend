@@ -1,30 +1,30 @@
 'use strict'
 
 // Local dependencies
-const charge = require('./controllers/charge_controller.js')
-const threeDS = require('./controllers/three_d_secure_controller.js')
-const secure = require('./controllers/secure_controller.js')
-const statik = require('./controllers/static_controller.js')
-const applePayMerchantValidation = require('./controllers/web-payments/apple-pay/merchant-validation-controller')
-const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-request-controller')
-const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response-controller')
-const returnCont = require('./controllers/return_controller.js')
-const { healthcheck } = require('./controllers/healthcheck_controller.js')
+const charge = require('./controllers/charge.controller.js')
+const threeDS = require('./controllers/three-d-secure.controller.js')
+const secure = require('./controllers/secure.controller.js')
+const statik = require('./controllers/static.controller.js')
+const applePayMerchantValidation = require('./controllers/web-payments/apple-pay/merchant-validation.controller')
+const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-request.controller')
+const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response.controller')
+const returnCont = require('./controllers/return.controller.js')
+const { healthcheck } = require('./controllers/healthcheck.controller.js')
 const paths = require('./paths.js')
 
 // Express middleware
 const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
 const csp = require('./middleware/csp')
-const actionName = require('./middleware/action_name.js')
-const stateEnforcer = require('./middleware/state_enforcer.js')
-const retrieveCharge = require('./middleware/retrieve_charge.js')
-const enforceSessionCookie = require('./middleware/enforce_session_cookie.js')
-const resolveService = require('./middleware/resolve_service.js')
-const resolveLanguage = require('./middleware/resolve_language.js')
-const decryptCardData = require('./middleware/decrypt_card_data')(process.env)
+const actionName = require('./middleware/action-name.js')
+const stateEnforcer = require('./middleware/state-enforcer.js')
+const retrieveCharge = require('./middleware/retrieve-charge.js')
+const enforceSessionCookie = require('./middleware/enforce-session-cookie.js')
+const resolveService = require('./middleware/resolve-service.js')
+const resolveLanguage = require('./middleware/resolve-language.js')
+const decryptCardData = require('./middleware/decrypt-card-data')(process.env)
 
 // Import AB test when we need to use it
-// const abTest = require('./utils/ab_test.js')
+// const abTest = require('./utils/ab-test.js')
 // const AB_TEST_THRESHOLD = process.env.AB_TEST_THRESHOLD
 
 exports.paths = paths

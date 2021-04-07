@@ -1,7 +1,7 @@
 'use strict'
 
 // Local dependencies
-const connectorClient = require('../services/clients/connector_client')
+const connectorClient = require('../services/clients/connector.client')
 
 const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = {}) {
   let response

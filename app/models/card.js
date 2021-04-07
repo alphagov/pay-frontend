@@ -7,9 +7,9 @@ const i18n = require('i18n')
 
 // Local dependencies
 const logger = require('../utils/logger')(__filename)
-const cardIdClient = require('../services/clients/cardid_client')
-const { getCounter } = require('../metrics/graphite_reporter')
-const requestLogger = require('../utils/request_logger')
+const cardIdClient = require('../services/clients/cardid.client')
+const { getCounter } = require('../metrics/graphite-reporter')
+const requestLogger = require('../utils/request-logger')
 
 // Constants
 const i18nConfig = require('../../config/i18n')
@@ -86,7 +86,7 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
         resolve(card)
       })
       .catch(error => {
-        requestLogger.logRequestError({service: 'cardid', description: 'get card information'}, error, loggingFields)
+        requestLogger.logRequestError({ service: 'cardid', description: 'get card information' }, error, loggingFields)
         logger.info('POST to %s ended - total time %dms', cardIdClient.cardUrl, new Date() - startTime, loggingFields)
         incrementStatusCodeCounter('checkCard', 'error')
         resolve()

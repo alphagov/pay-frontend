@@ -73,7 +73,6 @@ const buildCancelChargeStub = function buildCancelChargeStub (chargeId, gatewayA
 
 const buildCreatePaymentChargeStubs = function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42,
   serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}, additionalChargeOpts = {}) {
-
   return [
     {
       name: 'connectorCreateChargeFromToken',

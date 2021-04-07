@@ -7,17 +7,17 @@ const toggleWaiting = () => {
 
   var paymentDetailsHeader = document.querySelector('.govuk-heading-l.web-payment-button-heading')
   if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
-    paymentDetailsHeader.style.display = "none"
+    paymentDetailsHeader.style.display = 'none'
   }
 
   var applePayContainer = document.querySelector('.apple-pay-container')
   if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
-    applePayContainer.style.display = "none"
+    applePayContainer.style.display = 'none'
   }
 
   var googlePayContainer = document.querySelector('.google-pay-container')
   if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
-    googlePayContainer.style.display = "none"
+    googlePayContainer.style.display = 'none'
   }
 }
 

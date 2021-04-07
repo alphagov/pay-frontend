@@ -1,7 +1,7 @@
 'use strict'
 
 const logger = require('../utils/logger')(__filename)
-const connectorClient = require('../services/clients/connector_client')
+const connectorClient = require('../services/clients/connector.client')
 const State = require('../../config/state.js')
 const StateModel = require('../../config/state')
 
