@@ -1,6 +1,11 @@
 const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const { getMockApplePayClass } = require('../../utils/apple-pay-js-api-stubs')
 const { getMockPaymentRequest } = require('../../utils/payment-request-api-stub')
+const {
+  connectorMultipleSubsequentChargeDetails,
+  connectorPostValidChargeCardDetailsAuthorisation,
+  connectorPostValidCaptureCharge
+} = require('../../utils/stub-builders/charge-stubs')
 
 const validPaymentRequestResponse = {
   details: {
@@ -49,22 +54,22 @@ describe('Standard card payment flow', () => {
   const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
 
   const submitPaymentCaptureStubs = [
-    {
-      name: 'connectorMultipleSubsequentChargeDetails',
-      opts: [{
+    connectorMultipleSubsequentChargeDetails([
+      {
         chargeId,
         paymentDetails: validPayment,
         status: 'AUTHORISATION SUCCESS',
         state: { finished: false, status: 'submitted' }
-      }, {
+      },
+      {
         chargeId,
         paymentDetails: validPayment,
         status: 'CAPTURE APPROVED',
         state: { finished: true, status: 'success' }
-      }]
-    },
-    { name: 'connectorPostValidChargeCardDetailsAuthorisation', opts: { chargeId } },
-    { name: 'connectorPostValidCaptureCharge', opts: { chargeId } }
+      }
+    ]),
+    connectorPostValidChargeCardDetailsAuthorisation(chargeId),
+    connectorPostValidCaptureCharge(chargeId)
   ]
 
   beforeEach(() => {

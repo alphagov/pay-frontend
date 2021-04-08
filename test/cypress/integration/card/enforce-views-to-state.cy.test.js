@@ -4,6 +4,7 @@ const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
 const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
 const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
+const { connectorGetChargeDetails } = require('../../utils/stub-builders/charge-stubs')
 
 const validPayment = {
   cardNumber: '4444333322221111',
@@ -19,15 +20,12 @@ const validPayment = {
 const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
 
 const backButtonStubs = [
-  {
-    name: 'connectorGetChargeDetails',
-    opts: {
-      chargeId,
-      paymentDetails: validPayment,
-      status: 'AUTHORISATION SUCCESS',
-      state: { finished: false, status: 'submitted' }
-    }
-  }
+  connectorGetChargeDetails({
+    chargeId,
+    paymentDetails: validPayment,
+    status: 'AUTHORISATION SUCCESS',
+    state: { finished: false, status: 'submitted' }
+  })
 ]
 
 describe('Enforce views to state', () => {
