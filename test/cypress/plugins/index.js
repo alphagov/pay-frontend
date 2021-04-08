@@ -18,7 +18,7 @@ module.exports = (on, config) => {
      * the same call.
      */
     setupStubs (stubs) {
-      return request({
+      return requestPromise({
         method: 'POST',
         url: stubServerURL,
         json: true,
