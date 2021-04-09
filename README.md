@@ -11,7 +11,7 @@ GOV.UK Pay Frontend application (Node.js)
 
 ### Starting app
 
-Rename `.env.example` to `.env`. This contains the environment variables required to run the app, and contains the URLs for other microservices that frontend makes requests to, which default to the URLs that apps run using pay local are available on.
+Copy `.env.example` and rename to `.env`. This contains the environment variables required to run the app, and contains the URLs for other microservices that frontend makes requests to, which default to the URLs that apps run using pay local are available on.
 
 Start the Pay local environment 
 
@@ -30,7 +30,6 @@ Make a create payment request to the locally running Public API app, and visit t
 
 ### Debug using Visual Studio Code
 
-* You need to make sure the app runs locally first using the steps in the [Running](#running) section.
 * In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
 * From the **Run** toolbar, select tne launch config `Frontend`.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
