@@ -9,6 +9,7 @@ updates:
   labels:
   - govuk-pay
   - dependencies
+  - javascript
   ignore:
   - dependency-name: "@aws-crypto/decrypt-node"
     versions:
@@ -51,6 +52,7 @@ updates:
   labels:
   - govuk-pay
   - dependencies
+  - javascript
   ignore:
   - dependency-name: node
     versions:
