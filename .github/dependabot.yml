@@ -1,0 +1,62 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "03:00"
+  open-pull-requests-limit: 10
+  labels:
+  - govuk-pay
+  - dependencies
+  ignore:
+  - dependency-name: "@aws-crypto/decrypt-node"
+    versions:
+    - ">= 2.a"
+    - "< 3"
+  - dependency-name: "@aws-crypto/raw-rsa-keyring-node"
+    versions:
+    - ">= 2.a"
+    - "< 3"
+  - dependency-name: change-case
+    versions:
+    - ">= 3.a"
+    - "< 4"
+  - dependency-name: change-case
+    versions:
+    - ">= 4.a"
+    - "< 5"
+  - dependency-name: credit-card-type
+    versions:
+    - ">= 9.a"
+    - "< 10"
+  - dependency-name: cypress
+    versions:
+    - ">= 5.a"
+    - "< 6"
+  - dependency-name: helmet
+    versions:
+    - ">= 4.a"
+    - "< 5"
+  - dependency-name: standard
+    versions:
+    - ">= 16.a"
+    - "< 17"
+- package-ecosystem: docker
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "03:00"
+  open-pull-requests-limit: 10
+  labels:
+  - govuk-pay
+  - dependencies
+  ignore:
+  - dependency-name: node
+    versions:
+    - ">= 14.a"
+    - "< 15"
+  - dependency-name: node
+    versions:
+    - ">= 15.a"
+    - "< 16"
