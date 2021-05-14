@@ -51,25 +51,5 @@
     })
   }
 
-  /**
-   * Make sure all child processes are cleaned up
-   */
-  function onInterrupt () {
-    pid = fs.readFileSync(pidFile, fileOptions)
-    fs.unlink(pidFile)
-    process.kill(pid, 'SIGTERM')
-    process.exit()
-  }
-
-  /**
-   * Keep track of processes, and clean up on SIGINT
-   */
-  function monitor () {
-    fs.writeFileSync(pidFile, process.pid, fileOptions)
-    process.on('SIGINT', onInterrupt)
-  }
-
-  monitor()
-
   start()
 }())
