@@ -149,7 +149,7 @@ module.exports = {
     }
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
-    // else
+
     let data
     try {
       data = await validator.verify(req)
