@@ -101,7 +101,7 @@
     "minimist": "1.2.x",
     "moment-timezone": "^0.5.33",
     "morgan": "1.10.x",
-    "nunjucks": "^3.2.2",
+    "nunjucks": "^3.2.3",
     "polyfill-array-includes": "^2.0.0",
     "promise-polyfill": "8.2.0",
     "randomstring": "^1.2.1",
