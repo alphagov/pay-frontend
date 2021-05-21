@@ -11,25 +11,25 @@
 
   .google-pay-available & {
     display: block;
-  } 
+  }
 }
 
-.web-payment-button-heading{
+.web-payment-button-section{
   display: none;
-  
+
   .apple-pay-available &,
   .google-pay-available & {
-    display: block; 
-  } 
+    display: block;
+  }
 }
 
-.non-web-payment-button-heading{
+.non-web-payment-button-section{
   display: block;
 
   .apple-pay-available &,
   .google-pay-available & {
-    display: none; 
-  } 
+    display: none;
+  }
 }
 
 .web-payment-button {
@@ -43,7 +43,7 @@
 
   //https://developer.apple.com/documentation/apple_pay_on_the_web/displaying_apple_pay_buttons
   &--apple-pay{
-    @supports (-webkit-appearance: -apple-pay-button) { 
+    @supports (-webkit-appearance: -apple-pay-button) {
       min-width: 200px;
       width: 100%;
       min-height: 32px;
@@ -53,7 +53,7 @@
       -webkit-appearance: -apple-pay-button;
       -apple-pay-button-style: black;
     }
-  
+
     @supports not (-webkit-appearance: -apple-pay-button) {
       display: inline-block;
       background-size: 100% 60%;
