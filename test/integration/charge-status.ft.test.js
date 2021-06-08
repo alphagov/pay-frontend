@@ -63,6 +63,7 @@ describe('chargeTests', function () {
             description: 'Payment Description',
             status: status,
             return_url: 'http://www.example.com/service',
+            payment_provider: 'sandbox',
             gateway_account: {
               gateway_account_id: gatewayAccountId,
               analytics_id: 'test-1234',

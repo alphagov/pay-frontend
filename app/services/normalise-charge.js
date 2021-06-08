@@ -16,6 +16,7 @@ module.exports = (function () {
       amount: penceToPounds(charge.amount),
       service_return_url: charge.return_url,
       description: charge.description,
+      paymentProvider: charge.payment_provider,
       links: charge.links,
       status: charge.status,
       email: charge.email,

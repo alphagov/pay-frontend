@@ -39,6 +39,7 @@ describe('Worldpay 3DS Flex service', () => {
       it('should call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
+          paymentProvider: 'worldpay',
           gatewayAccount: {
             paymentProvider: 'worldpay',
             requires3ds: true,
@@ -58,6 +59,7 @@ describe('Worldpay 3DS Flex service', () => {
       it('should not call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
+          paymentProvider: 'epdq',
           gatewayAccount: {
             paymentProvider: 'worldpay',
             requires3ds: true,
@@ -75,6 +77,7 @@ describe('Worldpay 3DS Flex service', () => {
       it('should not call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
+          paymentProvider: 'epdq',
           gatewayAccount: {
             paymentProvider: 'worldpay',
             requires3ds: false,
@@ -92,6 +95,7 @@ describe('Worldpay 3DS Flex service', () => {
       it('should not call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
+          paymentProvider: 'epdq',
           gatewayAccount: {
             paymentProvider: 'epdq',
             requires3ds: true,
@@ -124,6 +128,7 @@ describe('Worldpay 3DS Flex service', () => {
       it('should throw an error', async () => {
         const charge = {
           id: 'a-charge-id',
+          paymentProvider: 'worldpay',
           gatewayAccount: {
             paymentProvider: 'worldpay',
             requires3ds: true,

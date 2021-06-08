@@ -21,6 +21,7 @@ const req = {
   chargeData: {
     id: 3,
     amount: '4.99',
+    paymentProvider: 'sandbox',
     gatewayAccount: {
       analyticsId: 'test-1234',
       type: 'test',

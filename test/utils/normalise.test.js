@@ -6,6 +6,7 @@ var unNormalisedCharge = {
   amount: 1234,
   return_url: 'foo',
   description: 'bar',
+  payment_provider: 'worldpay',
   links: [{
     rel: 'rar',
     href: 'http://foo'
@@ -38,6 +39,7 @@ var normalisedCharge = {
   amount: '12.34',
   service_return_url: 'foo',
   description: 'bar',
+  paymentProvider: 'worldpay',
   links: [{
     rel: 'rar',
     href: 'http://foo'

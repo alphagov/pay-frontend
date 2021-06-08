@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
   const correctStates = stateService.resolveStates(req.actionName)
   const currentState = req.chargeData.status
 
-  const paymentProvider = req.chargeData.gateway_account.payment_provider
+  const paymentProvider = req.chargeData.payment_provider
   if (paymentProvider === 'stripe' && currentState === State.AUTH_3DS_READY) {
     correctStates.push(State.AUTH_3DS_READY)
   }
@@ -43,7 +43,7 @@ function getGoogleAnalytics (req) {
       path: paths.generateRoute('card.new', { chargeId: req.chargeId }),
       analyticsId: gatewayAccount.analytics_id,
       type: gatewayAccount.type,
-      paymentProvider: gatewayAccount.payment_provider
+      paymentProvider: req.chargeData.payment_provider
     }
   }
   return withAnalyticsError().analytics

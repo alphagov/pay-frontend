@@ -72,7 +72,7 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId, getLoggingFields(req))
   charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
 
-  charge.collectAdditionalBrowserDataForEpdq3ds = charge.gatewayAccount.paymentProvider === 'epdq' &&
+  charge.collectAdditionalBrowserDataForEpdq3ds = charge.paymentProvider === 'epdq' &&
     charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2
 }
 
