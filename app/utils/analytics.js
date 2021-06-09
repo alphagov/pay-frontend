@@ -23,7 +23,7 @@ exports.withAnalytics = (charge, param, path) => {
       path: path || paths.generateRoute('card.new', { chargeId: charge.id }),
       analyticsId: charge.gatewayAccount.analyticsId,
       type: charge.gatewayAccount.type,
-      paymentProvider: charge.gatewayAccount.paymentProvider,
+      paymentProvider: charge.paymentProvider,
       amount: charge.amount,
       testingVariant: 'original'
     }

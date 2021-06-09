@@ -70,6 +70,7 @@ const aChargeWithStatus = function (status) {
     externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
     status: status,
     amount: '4.99',
+    paymentProvider: 'sandbox',
     gatewayAccount: {
       serviceName: 'Service Name',
       analyticsId: 'test-1234',

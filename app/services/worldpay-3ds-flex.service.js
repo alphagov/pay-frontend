@@ -3,7 +3,7 @@
 const connectorClient = require('./clients/connector.client')
 
 const getDdcJwt = async function getDdcJwt (charge, correlationId, loggingFields = {}) {
-  if (charge.gatewayAccount.paymentProvider === 'worldpay' &&
+  if (charge.paymentProvider === 'worldpay' &&
     charge.gatewayAccount.requires3ds &&
     charge.gatewayAccount.integrationVersion3ds === 2) {
     const response = await connectorClient({ correlationId }).getWorldpay3dsFlexJwt({ chargeId: charge.id }, loggingFields)

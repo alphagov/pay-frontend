@@ -182,6 +182,7 @@ const buildChargeDetails = function buildChargeDetails (opts) {
       finished: false
     },
     description: opts.description || 'Example fixture payment',
+    payment_provider: opts.paymentProvider || 'sandbox',
     language: opts.language || 'en',
     status: opts.status || 'CREATED',
     charge_id: chargeId,
