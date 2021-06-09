@@ -13,27 +13,6 @@
         <div class="confirm-page__content">
           <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ __p("confirmDetails.title") }}</h1>
 
-          <div class="payment-summary-wrap govuk-!-margin-bottom-2">
-            <div class="payment-summary">
-              <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
-              <p id="payment-description" class="govuk-body">
-                {{ charge.description }}
-              </p>
-              {% if charge.corporateCardSurcharge %}
-                <p class="govuk-body" id="payment-summary-breakdown">
-                  {{ __p("paymentSummary.amount") }}
-                  <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
-                  {{ __p("paymentSummary.corporateCardFee") }}
-                  <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
-                </p>
-              {% endif %}
-              <p class="govuk-body govuk-!-margin-bottom-0">
-                {{ __p("paymentSummary.totalAmount") }}
-                <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
-              </p>
-            </div>
-          </div>
-
           {% set cardDetailsArray = [
             [
               {
@@ -91,7 +70,7 @@
           ] %}
           {% endif %}
 
-          {% if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY') 
+          {% if (charge.gatewayAccount.emailCollectionMode === 'MANDATORY')
             or(charge.gatewayAccount.emailCollectionMode === 'OPTIONAL' and charge.email) %}
             {% set emailArray = [
               [
@@ -140,6 +119,26 @@
           </form>
         </div>
       </main>
+      <aside class="govuk-grid-column-one-third payment-summary-wrap">
+          <div class="payment-summary">
+            <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
+            <p id="payment-description" class="govuk-body">
+              {{ charge.description }}
+            </p>
+            {% if charge.corporateCardSurcharge %}
+              <p class="govuk-body" id="payment-summary-breakdown">
+                {{ __p("paymentSummary.amount") }}
+                <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount">£{{ charge.amount }}</span><br/>
+                {{ __p("paymentSummary.corporateCardFee") }}
+                <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee">£{{ charge.corporateCardSurcharge }}</span>
+              </p>
+            {% endif %}
+            <p class="govuk-body govuk-!-margin-bottom-0">
+              {{ __p("paymentSummary.totalAmount") }}
+              <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£{{ charge.totalAmount if charge.totalAmount else charge.amount }}</span>
+            </p>
+          </div>
+        </aside>
     </div>
   </div>
 {% endblock %}

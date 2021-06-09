@@ -211,7 +211,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
       cy.get('#card-details').submit()
 
       cy.get('.google-pay-container').should('have.attr', 'style', 'display: none;')
-      cy.get('.web-payment-button-section').should('have.attr', 'style', 'display: none;')
+      cy.get('.govuk-heading-l.web-payment-button-heading').should('have.attr', 'style', 'display: none;')
     })
   })
 })

@@ -5,7 +5,7 @@ const toggleWaiting = () => {
   document.getElementById('spinner').classList.toggle('hidden')
   document.getElementById('error-summary').classList.add('hidden')
 
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
+  var paymentDetailsHeader = document.querySelector('.govuk-heading-l.web-payment-button-heading')
   if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
     paymentDetailsHeader.style.display = 'none'
   }
