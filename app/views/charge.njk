@@ -173,14 +173,12 @@
                     {% if allowedCards %}
                       {% for currentAllowedCard in allowedCards %}
                         <li
-                      class="{{ currentAllowedCard.brand }}"
-                      data-key="{{ currentAllowedCard.brand }}"
-                      data-credit="{{ currentAllowedCard.credit }}"
-                      data-debit="{{ currentAllowedCard.debit }}"
-                  >
-                          <span class="govuk-warning-text__assistive">
-                            {{ currentAllowedCard.brand }}
-                          </span>
+                          class="{{ currentAllowedCard.brand }}"
+                          data-key="{{ currentAllowedCard.brand }}"
+                          data-credit="{{ currentAllowedCard.credit }}"
+                          data-debit="{{ currentAllowedCard.debit }}"
+                        >
+                          <img src="/images/transparent-accessibiliity.gif" alt="{{ currentAllowedCard.brand | replace("-", " ") | title }}" />
                         </li>
                       {% endfor %}
                     {% endif %}
