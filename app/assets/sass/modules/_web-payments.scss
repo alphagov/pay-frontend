@@ -14,7 +14,7 @@
   } 
 }
 
-.web-payment-button-heading{
+.web-payment-button-section{
   display: none;
   
   .apple-pay-available &,
@@ -23,7 +23,7 @@
   } 
 }
 
-.non-web-payment-button-heading{
+.non-web-payment-button-section{
   display: block;
 
   .apple-pay-available &,

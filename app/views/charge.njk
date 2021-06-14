@@ -16,6 +16,28 @@
   'data-accept-header': acceptHeader
 } %}
 
+{% macro paymentSummary() %}
+  <div class="payment-summary-wrap">
+    <div class="payment-summary">
+        <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
+        <p id="payment-description" class="govuk-body">
+        {{ description }}
+        </p>
+        <p class="govuk-body hidden" id="payment-summary-breakdown">
+        {{ __p("paymentSummary.amount") }}
+        <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
+        {{ __p("paymentSummary.corporateCardFee") }}
+        <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+        {{ __p("paymentSummary.totalAmount") }}
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
+        </p>
+    </div>
+  </div>
+{% endmacro %}
+
+
 {% block bodyStart %}
   {% if allowApplePay or allowGooglePay %}
     <script nonce="{{ nonce }}">
@@ -67,7 +89,10 @@
               </div>
             </div>
             {% if allowApplePay or allowGooglePay %}
-              <h1 class="govuk-heading-l web-payment-button-heading">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
+              <div class="web-payment-button-section govuk-!-margin-bottom-7">
+                <h1 class="govuk-heading-l">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
+                {{ paymentSummary() }}
+              </div>
             {% endif %}
             {% if allowApplePay %}
               <div class="apple-pay-container">
@@ -121,9 +146,12 @@
 
             <div id="card-details-wrap">
               {% if allowApplePay or allowGooglePay %}
-                <h2 class="govuk-heading-m web-payment-button-heading">{{ __p("cardDetails.enterCardDetails") }}</h2>
+                <h2 class="govuk-heading-m web-payment-button-section">{{ __p("cardDetails.enterCardDetails") }}</h2>
               {% endif %}
-              <h1 class="govuk-heading-l non-web-payment-button-heading">{{ __p("cardDetails.enterCardDetails") }}</h1>
+              <div class="non-web-payment-button-section govuk-!-margin-bottom-5">
+                <h1 class="govuk-heading-l ">{{ __p("cardDetails.enterCardDetails") }}</h1>
+                {{paymentSummary()}}
+              </div>
 
               <form id="card-details" name="cardDetails" method="POST" action="{{ post_card_action }}" novalidate>
                 <input id="charge-id" name="chargeId" type="hidden" value="{{ id }}"/>
@@ -158,16 +186,17 @@
                     {% set cardNumberAutoCompleteType = 'cc-number' %}
                   {% endif %}
 
-                  <input id="card-no"
-                      type="{{cardNumberInputType}}"
-                      inputmode="numeric"
-                      pattern="[0-9]*"
-                      name="cardNo"
-                      maxlength="26"
-                      class="govuk-input govuk-!-width-three-quarters"
-                      autocomplete="{{cardNumberAutoCompleteType}}"
-                      value="{{cardNo}}"
-                    />
+                  <p class="govuk-body-s accepted-cards-hint withdrawal-text govuk-!-margin-bottom-0">
+                    {% if withdrawalText === 'debit_credit' %}
+                      {{ __p("cardDetails.withdrawalText").debit_credit }}
+                    {% endif %}
+                    {% if withdrawalText === 'debit' %}
+                      {{ __p("cardDetails.withdrawalText").debit }}
+                    {% endif %}
+                    {% if withdrawalText === 'credit' %}
+                      {{ __p("cardDetails.withdrawalText").credit }}
+                    {% endif %}
+                  </p>
 
                   <ul class="accepted-cards field-empty">
                     {% if allowedCards %}
@@ -183,18 +212,19 @@
                       {% endfor %}
                     {% endif %}
                   </ul>
-                  <p class="govuk-body-s accepted-cards-hint withdrawal-text">
-                    {% if withdrawalText === 'debit_credit' %}
-                      {{ __p("cardDetails.withdrawalText").debit_credit }}
-                    {% endif %}
-                    {% if withdrawalText === 'debit' %}
-                      {{ __p("cardDetails.withdrawalText").debit }}
-                    {% endif %}
-                    {% if withdrawalText === 'credit' %}
-                      {{ __p("cardDetails.withdrawalText").credit }}
-                    {% endif %}
-                  </p>
+
                   <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
+
+                  <input id="card-no"
+                      type="{{cardNumberInputType}}"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      name="cardNo"
+                      maxlength="26"
+                      class="govuk-input govuk-!-width-three-quarters"
+                      autocomplete="{{cardNumberAutoCompleteType}}"
+                      value="{{cardNo}}"
+                    />
                 </div>
 
                 <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7 {% if highlightErrorFields.expiryMonth %} error{% endif %} expiry-date" data-validation="expiryMonth">
@@ -325,9 +355,9 @@
                       <fieldset class="govuk-fieldset" aria-describedby="address-hint">
                         <legend>
                           {% if allowApplePay or allowGooglePay %}
-                            <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-heading">{{ __p("cardDetails.billingAddress") }}</h3>
+                            <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-section">{{ __p("cardDetails.billingAddress") }}</h3>
                           {% endif %}
-                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-heading">{{ __p("cardDetails.billingAddress") }}</h2>
+                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.billingAddress") }}</h2>
                         </legend>
 
                         <div id="address-hint" class="govuk-hint govuk-!-margin-bottom-6">{{ __p("cardDetails.billingAddressHint") }}</div>
@@ -444,9 +474,9 @@
                       <div>
                         <legend for="email" class="govuk-!-margin-bottom-6">
                           {% if allowApplePay or allowGooglePay %}
-                            <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-heading">{{ __p("cardDetails.contactDetails") }}</h3>
+                            <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h3>
                           {% endif %}
-                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-heading">{{ __p("cardDetails.contactDetails") }}</h2>
+                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h2>
                         </legend>
                         <div id="email-hint" class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</div>
 
@@ -540,24 +570,6 @@
             <iframe id="worldpay3dsFlexDdcIframe" src="/public/worldpay/worldpay-3ds-flex-ddc.html" class="govuk-!-display-none"></iframe>
           {% endif %}
       </main>
-      <aside class="govuk-grid-column-one-third payment-summary-wrap">
-        <div class="payment-summary">
-          <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
-          <p id="payment-description" class="govuk-body">
-            {{ description }}
-          </p>
-          <p class="govuk-body hidden" id="payment-summary-breakdown">
-            {{ __p("paymentSummary.amount") }}
-            <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
-            {{ __p("paymentSummary.corporateCardFee") }}
-            <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
-          </p>
-          <p class="govuk-body govuk-!-margin-bottom-0">
-            {{ __p("paymentSummary.totalAmount") }}
-            <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
-          </p>
-        </div>
-      </aside>
     </div>
   </div>
 {% endblock %}
