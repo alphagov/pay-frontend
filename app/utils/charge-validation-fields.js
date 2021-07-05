@@ -127,7 +127,6 @@ function email (email, allFields, chargeOptions = {}) {
   if (((email || '') === '' && (chargeOptions && chargeOptions.email_collection_mode === 'OPTIONAL')) ||
       chargeOptions.email_collection_mode === 'OFF') return { emptyOrCustomValidationAllowed: true }
   if (email && email.length > EMAIL_MAX_LENGTH) return 'invalidLength'
-  if (emailValidation(email)) return 'containsTooManyDigits'
   if (!rfc822Validator(email)) return 'message'
   const domain = emailTools.validEmail(email).domain
   return domain && domain.indexOf('.') === -1 ? 'message' : true
@@ -147,11 +146,6 @@ function containsSuspectedPAN (input) {
   if (!['string', 'number'].includes(typeof input)) return false
   const matchedDigits = String(input).match(/(\d)/g)
   return (matchedDigits !== null) && (matchedDigits.length > 11)
-}
-
-function emailValidation (input) {
-  const matchedDigits = String(input).match(/[0-9 ]{11,}/)
-  return matchedDigits !== null
 }
 
 function containsSuspectedCVV (input) {

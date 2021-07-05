@@ -77,8 +77,7 @@ describe('checks for PAN-like numbers', () => {
           cardholder: 'Enter the name as it appears on the card',
           addressLine1: 'Enter a valid billing address',
           city: 'Enter a valid town/city',
-          postcode: 'Enter a valid postcode',
-          email: 'Enter a valid email'
+          postcode: 'Enter a valid postcode'
         }
         expect($('#cardholder-name-error').text()).to.contains(errorMessages.cardholder)
         expect($('#error-cardholder-name').text()).to.contains(errorMessages.cardholder)
@@ -89,8 +88,6 @@ describe('checks for PAN-like numbers', () => {
         expect($('#error-address-city').text()).to.contains(errorMessages.city)
         expect($('#address-postcode-error').text()).to.contains(errorMessages.postcode)
         expect($('#error-address-postcode').text()).to.contains(errorMessages.postcode)
-        expect($('#email-error').text()).to.contains(errorMessages.email)
-        expect($('#error-email').text()).to.contains(errorMessages.email)
 
         done()
       })

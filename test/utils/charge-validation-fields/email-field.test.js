@@ -19,11 +19,4 @@ describe('card validation: email', function () {
       expect(result).to.equal(true)
     })
   })
-
-  describe('should not validate if it contains 12 or more digits', () => {
-    it('and the digits are consecutive', () => {
-      result = fields.fieldValidations.email('1234567890123@example.com')
-      expect(result).to.equal('containsTooManyDigits')
-    })
-  })
 })
