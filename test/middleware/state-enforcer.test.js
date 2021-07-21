@@ -37,7 +37,7 @@ describe('state enforcer', function () {
   it('should call next when Stripe charge is in AUTH_3DS_READY', function () {
     stateEnforcer({
       actionName: 'card.auth3dsHandler',
-      chargeData: { status: 'AUTHORISATION 3DS READY', payment_provider: 'stripe'}
+      chargeData: { status: 'AUTHORISATION 3DS READY', payment_provider: 'stripe' }
     }, {}, next)
     expect(next.calledOnce).to.be.true // eslint-disable-line
   })
