@@ -104,7 +104,7 @@
     "nunjucks": "^3.2.2",
     "polyfill-array-includes": "^2.0.0",
     "promise-polyfill": "8.2.0",
-    "punycode": "^2.1.1",
+    "punycode": "1.4.1",
     "randomstring": "^1.2.1",
     "readdir": "1.0.x",
     "request": "^2.88.2",
