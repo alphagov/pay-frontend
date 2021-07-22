@@ -117,6 +117,7 @@ function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId,
     status: status,
     return_url: returnUrl,
     email: 'bob@example.com',
+    payment_provider: paymentProvider,
     links: [{
       href: connectorChargeUrl(chargeId),
       rel: 'self',
@@ -134,7 +135,6 @@ function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId,
       gateway_account_id: gatewayAccountId || defaultGatewayAccountId,
       analytics_id: 'test-1234',
       type: 'test',
-      payment_provider: paymentProvider,
       service_name: 'Pranks incorporated',
       card_types: [
         {

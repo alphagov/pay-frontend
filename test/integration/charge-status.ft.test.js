@@ -32,7 +32,6 @@ const defaultCorrelationHeader = {
 }
 const gatewayAccount = {
   gatewayAccountId: '12345',
-  paymentProvider: 'sandbox',
   analyticsId: 'test-1234',
   type: 'test'
 }
@@ -68,7 +67,6 @@ describe('chargeTests', function () {
               gateway_account_id: gatewayAccountId,
               analytics_id: 'test-1234',
               type: 'test',
-              payment_provider: 'sandbox',
               service_name: 'Pranks incorporated',
               card_types: [{
                 type: 'CREDIT',
@@ -101,7 +99,7 @@ describe('chargeTests', function () {
             expect($('#card-details #csrf').attr('value')).to.not.be.empty // eslint-disable-line
             expect($('#amount').text()).to.eql('£23.45')
             expect($('#payment-description').text()).to.contain('Payment Description')
-            expect($('#govuk-script-analytics')[0].children[0].data).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', '${gatewayAccount.paymentProvider}', '23.45', '')`)
+            expect($('#govuk-script-analytics')[0].children[0].data).to.contains(`init('${gatewayAccount.analyticsId}', '${gatewayAccount.type}', 'sandbox', '23.45', '')`)
             expect($('#card-details').attr('action')).to.eql(frontendCardDetailsPostPath)
           })
           .end(done)

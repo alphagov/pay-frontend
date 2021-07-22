@@ -32,7 +32,6 @@ const app = proxyquire('../../server.js',
 
 const gatewayAccount = {
   gatewayAccountId: '12345',
-  paymentProvider: 'sandbox',
   analyticsId: 'test-1234',
   type: 'test'
 }

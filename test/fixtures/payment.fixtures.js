@@ -18,7 +18,6 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     email_collection_mode: opts.emailCollectionMode || 'MANDATORY',
     block_prepaid_cards: opts.blockPrepaidCards || false,
     live: false,
-    payment_provider: opts.paymentProvider || 'sandbox',
     requires3ds: opts.requires3ds || false,
     service_name: 'My service',
     type: opts.gatewayAccountType || 'test',

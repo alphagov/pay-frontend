@@ -74,8 +74,7 @@ const aChargeWithStatus = function (status) {
     gatewayAccount: {
       serviceName: 'Service Name',
       analyticsId: 'test-1234',
-      type: 'test',
-      paymentProvider: 'sandbox'
+      type: 'test'
     },
     id: '3'
   }
@@ -112,8 +111,7 @@ describe('card details endpoint', function () {
       gatewayAccount: {
         serviceName: 'Service Name',
         analyticsId: 'test-1234',
-        type: 'test',
-        paymentProvider: 'sandbox'
+        type: 'test'
       },
       analytics: {
         analyticsId: 'test-1234',
