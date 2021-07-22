@@ -23,7 +23,6 @@ var unNormalisedCharge = {
   gateway_account: {
     analytics_id: 'bla-1234',
     type: 'live',
-    payment_provider: 'worldpay',
     service_name: 'Pranks incorporated',
     card_types: [{
       type: 'CREDIT',
@@ -56,7 +55,6 @@ var normalisedCharge = {
   gatewayAccount: {
     analyticsId: 'bla-1234',
     type: 'live',
-    paymentProvider: 'worldpay',
     serviceName: 'Pranks incorporated',
     cardTypes: [{
       brand: 'VISA',

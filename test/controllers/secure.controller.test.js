@@ -107,9 +107,9 @@ describe('secure controller', function () {
           gatewayAccount: {
             service_name: 'Service Name',
             analytics_id: 'bla-1234',
-            type: 'live',
-            payment_provider: 'worldpay'
-          }
+            type: 'live'
+          },
+          payment_provider: 'worldpay'
         }
       }
 
@@ -160,9 +160,9 @@ describe('secure controller', function () {
               gatewayAccount: {
                 service_name: 'Service Name',
                 analytics_id: 'bla-1234',
-                type: 'live',
-                payment_provider: 'worldpay'
-              }
+                type: 'live'
+              },
+              payment_provider: 'worldpay'
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithEmptyCookie, response)
@@ -184,9 +184,9 @@ describe('secure controller', function () {
               gatewayAccount: {
                 service_name: 'Service Name',
                 analytics_id: 'bla-1234',
-                type: 'live',
-                payment_provider: 'worldpay'
-              }
+                type: 'live'
+              },
+              payment_provider: 'worldpay'
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithoutCookie, response)
@@ -213,9 +213,9 @@ describe('secure controller', function () {
               gatewayAccount: {
                 service_name: 'Service Name',
                 analytics_id: 'bla-1234',
-                type: 'live',
-                payment_provider: 'worldpay'
-              }
+                type: 'live'
+              },
+              payment_provider: 'worldpay'
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithWrongCookie, response)
@@ -242,9 +242,9 @@ describe('secure controller', function () {
               gatewayAccount: {
                 service_name: 'Service Name',
                 analytics_id: 'bla-1234',
-                type: 'live',
-                payment_provider: 'worldpay'
-              }
+                type: 'live'
+              },
+              payment_provider: 'worldpay'
             }
           }
           await requireSecureController(mockCharge.withSuccess(charge), mockToken.withSuccess(), responseRouter).new(requestWithFrontendStateCookie, response)

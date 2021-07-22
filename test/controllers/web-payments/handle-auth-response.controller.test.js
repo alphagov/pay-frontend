@@ -24,8 +24,7 @@ const req = {
     paymentProvider: 'sandbox',
     gatewayAccount: {
       analyticsId: 'test-1234',
-      type: 'test',
-      paymentProvider: 'sandbox'
+      type: 'test'
     },
     status: 'AUTHORISATION SUCCESS'
   }
