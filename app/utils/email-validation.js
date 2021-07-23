@@ -26,7 +26,7 @@ function validateEmail (email) {
   }
 
   // don't allow consecutive periods in either part
-  if (email.includes('..')) {
+  if (email.indexOf('..') !== -1) {
     return { valid: false }
   }
 
