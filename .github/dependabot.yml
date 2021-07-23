@@ -43,6 +43,9 @@ updates:
     versions:
     - ">= 16.a"
     - "< 17"
+  - dependency-name: punycode
+    versions:
+    - ">= 1.5"
 - package-ecosystem: docker
   directory: "/"
   schedule:

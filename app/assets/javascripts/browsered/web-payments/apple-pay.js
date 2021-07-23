@@ -1,7 +1,7 @@
 'use strict'
 
 const { prepareAppleRequestObject, showErrorSummary, toggleWaiting } = require('./helpers')
-const rfc822Validator = require('rfc822-validate')
+const { validateEmail } = require('../../../../utils/email-validation')
 const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
 module.exports = () => {
@@ -44,7 +44,7 @@ module.exports = () => {
 
     if (email_collection_mode !== 'OFF') { // eslint-disable-line camelcase
       if (!payment.shippingContact || typeof payment.shippingContact.emailAddress !== 'string' ||
-          !rfc822Validator(payment.shippingContact.emailAddress)) {
+          !validateEmail(payment.shippingContact.emailAddress).valid) {
         toggleWaiting('apple-pay-payment-method-submit')
         showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
 

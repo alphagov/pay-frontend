@@ -5,12 +5,11 @@ require('polyfill-array-includes')
 
 // NPM dependencies
 const ukPostcode = require('uk-postcode')
-const rfc822Validator = require('rfc822-validate')
 
 // Local dependencies
 const luhn = require('./luhn')
 const creditCardType = require('credit-card-type')
-const emailTools = require('./email-tools')
+const { validateEmail } = require('./email-validation')
 
 // Constants
 const EMAIL_MAX_LENGTH = 254
@@ -127,8 +126,9 @@ function email (email, allFields, chargeOptions = {}) {
   if (((email || '') === '' && (chargeOptions && chargeOptions.email_collection_mode === 'OPTIONAL')) ||
       chargeOptions.email_collection_mode === 'OFF') return { emptyOrCustomValidationAllowed: true }
   if (email && email.length > EMAIL_MAX_LENGTH) return 'invalidLength'
-  if (!rfc822Validator(email)) return 'message'
-  const domain = emailTools.validEmail(email).domain
+  const emailValidationResult = validateEmail(email)
+  if (!emailValidationResult.valid) return 'message'
+  const domain = emailValidationResult.domain
   return domain && domain.indexOf('.') === -1 ? 'message' : true
 }
 
