@@ -1,8 +1,11 @@
-var expect = require('chai').expect
-var _ = require('lodash')
-var normalise = require('../../app/services/normalise-charge.js')
+const expect = require('chai').expect
+const normalise = require('../../app/services/normalise-charge.js')
+const serviceFixtures = require('../fixtures/service.fixtures')
+const Service = require('../../app/models/Service.class')
 
-var unNormalisedCharge = {
+const service = new Service(serviceFixtures.validServiceResponse())
+
+const unNormalisedCharge = {
   amount: 1234,
   return_url: 'foo',
   description: 'bar',
@@ -33,7 +36,7 @@ var unNormalisedCharge = {
   moto: false
 }
 
-var normalisedCharge = {
+const normalisedCharge = {
   id: 1,
   amount: '12.34',
   service_return_url: 'foo',
@@ -65,7 +68,82 @@ var normalisedCharge = {
   moto: false
 }
 
-var unNormalisedAddress = {
+const unNormalisedChargeWithCardDetails = {
+  ...unNormalisedCharge,
+  card_details: {
+    last_digits_card_number: '1234',
+    first_digits_card_number: '424242',
+    cardholder_name: 'Mr Test Man',
+    expiry_date: '10/23',
+    billing_address: {
+      line1: 'House 1',
+      line2: '10 A road',
+      postcode: 'abcd123',
+      city: 'Dublin',
+      country: 'IE'
+    },
+    card_brand: 'Visa',
+    card_type: 'credit'
+  }
+}
+
+const unNormalisedChargeWithCardDetailsWithNoCountry = {
+  ...unNormalisedCharge,
+  card_details: {
+    last_digits_card_number: '1234',
+    first_digits_card_number: '424242',
+    cardholder_name: 'Mr Test Man',
+    expiry_date: '10/23',
+    billing_address: {
+      line1: 'House 1',
+      line2: '10 A road',
+      postcode: 'abcd123',
+      city: 'Dublin'
+    },
+    card_brand: 'Visa',
+    card_type: 'credit'
+  }
+}
+
+const normalisedChargeWithCardDetails = {
+  ...normalisedCharge,
+  cardDetails: {
+    cardNumber: '●●●●●●●●●●●●1234',
+    firstDigitsCardNumber: '424242',
+    cardholderName: 'Mr Test Man',
+    expiryDate: '10/23',
+    billingAddress: 'House 1, 10 A road, Dublin, abcd123, Ireland',
+    cardBrand: 'Visa',
+    cardType: 'credit'
+  },
+  cardholderName: 'Mr Test Man',
+  addressCity: 'Dublin',
+  addressLine1: 'House 1',
+  addressLine2: '10 A road',
+  addressPostcode: 'abcd123',
+  countryCode: 'IE'
+}
+
+const normalisedChargeWithCardDetailsAndDefaultCountry = {
+  ...normalisedCharge,
+  cardDetails: {
+    cardNumber: '●●●●●●●●●●●●1234',
+    firstDigitsCardNumber: '424242',
+    cardholderName: 'Mr Test Man',
+    expiryDate: '10/23',
+    billingAddress: 'House 1, 10 A road, Dublin, abcd123',
+    cardBrand: 'Visa',
+    cardType: 'credit'
+  },
+  cardholderName: 'Mr Test Man',
+  addressCity: 'Dublin',
+  addressLine1: 'House 1',
+  addressLine2: '10 A road',
+  addressPostcode: 'abcd123',
+  countryCode: 'GB'
+}
+
+const unNormalisedAddress = {
   addressLine1: 'a',
   addressLine2: 'b',
   addressCity: 'c',
@@ -73,7 +151,7 @@ var unNormalisedAddress = {
   addressCountry: 'GB'
 }
 
-var normalisedApiAddress = {
+const normalisedApiAddress = {
   line1: 'a',
   line2: 'b',
   city: 'c',
@@ -81,39 +159,57 @@ var normalisedApiAddress = {
   country: 'GB'
 }
 
-describe('normalise', function () {
-  describe('charge', function () {
-    it('should return a refined state', function () {
-      var result = normalise.charge(unNormalisedCharge, 1)
-      expect(result).to.deep.equal(normalisedCharge)
+describe('normalise', () => {
+  describe('charge', () => {
+    describe('without card details', () => {
+      it('should return a refined state with a countryCode', () => {
+        const result = normalise.charge(unNormalisedCharge, 1, service)
+        expect(result).to.deep.equal(normalisedCharge)
+      })
+    })
+
+    describe('with card details', () => {
+      describe('prefilled card details have billing address country', () => {
+        it('should return a refined state with country from prefilled details', () => {
+          const result = normalise.charge(unNormalisedChargeWithCardDetails, 1, service)
+          expect(result).to.deep.equal(normalisedChargeWithCardDetails)
+        })
+      })
+
+      describe('prefilled card details have no billing address country', () => {
+        it('should return a refined state with countryCode GB', () => {
+          const result = normalise.charge(unNormalisedChargeWithCardDetailsWithNoCountry, 1, service)
+          expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountry)
+        })
+      })
     })
   })
 
-  describe('api address', function () {
-    it('should return a refined address for the api', function () {
-      var result = normalise.addressForApi(unNormalisedAddress)
+  describe('api address', () => {
+    it('should return a refined address for the api', () => {
+      const result = normalise.addressForApi(unNormalisedAddress)
       expect(result).to.deep.equal(normalisedApiAddress)
     })
   })
 
-  describe('addresslines', function () {
-    it('should return the body with adressline 2 moved to address line 1 if filled', function () {
-      var passedByReference = { addressLine2: 'foo' }
+  describe('addresslines', () => {
+    it('should return the body with adressline 2 moved to address line 1 if filled', () => {
+      const passedByReference = { addressLine2: 'foo' }
       normalise.addressLines(passedByReference)
       expect(passedByReference).to.deep.equal({ addressLine1: 'foo' })
       expect(passedByReference.addressLine2).to.be.undefined // eslint-disable-line
     })
 
-    it('should do nothing if there is addressLine1', function () {
-      var passedByReference = { addressLine1: 'bar', addressLine2: 'foo' }
+    it('should do nothing if there is addressLine1', () => {
+      const passedByReference = { addressLine1: 'bar', addressLine2: 'foo' }
       normalise.addressLines(passedByReference)
       expect(passedByReference).to.deep.equal({ addressLine1: 'bar', addressLine2: 'foo' })
     })
   })
 
-  describe('whitespace', function () {
-    it('should return the body with no surrounding whitespace', function () {
-      var passedByReference = {
+  describe('whitespace', () => {
+    it('should return the body with no surrounding whitespace', () => {
+      const passedByReference = {
         email: ' foo@foo.com',
         name: 'Foo Bar ',
         postcode: ' WC2B 6NH '
@@ -126,8 +222,8 @@ describe('normalise', function () {
       })
     })
 
-    it('should return the body with no surrounding whitespace but within the email', function () {
-      var passedByReference = {
+    it('should return the body with no surrounding whitespace but within the email', () => {
+      const passedByReference = {
         email: ' fo" "o@foo.com',
         name: 'Foo Bar ',
         postcode: ' WC2B 6NH '
@@ -141,30 +237,16 @@ describe('normalise', function () {
     })
   })
 
-  describe('address for view', function () {
-    it('should return a comma seperated address', function () {
-      var address = normalise.addressForView(unNormalisedAddress)
-      expect(address).to.deep.equal('a, b, c, d, United Kingdom')
-    })
-
-    it('should return a comma seperated address even with something missing', function () {
-      var unNormalised = _.cloneDeep(unNormalisedAddress)
-      delete unNormalised.addressCity
-      var address = normalise.addressForView(unNormalised)
-      expect(address).to.deep.equal('a, b, d, United Kingdom')
-    })
-  })
-
-  describe('credit card', function () {
-    it('should return stripping spaces', function () {
-      var card = '1234 5678'
-      var address = normalise.creditCard(card)
+  describe('credit card', () => {
+    it('should return stripping spaces', () => {
+      const card = '1234 5678'
+      const address = normalise.creditCard(card)
       expect(address).to.deep.equal('12345678')
     })
 
-    it('should return stripping hyphens', function () {
-      var card = '1234-5678'
-      var address = normalise.creditCard(card)
+    it('should return stripping hyphens', () => {
+      const card = '1234-5678'
+      const address = normalise.creditCard(card)
       expect(address).to.deep.equal('12345678')
     })
   })
