@@ -11,7 +11,7 @@ exports.translateCountryISOtoName = countryISO => {
   if (country !== undefined) {
     return country[0]
   } else {
-    return countries.find(country => country[1].split(':')[1] === DEFAULT_COUNTRY_CODE)[0]
+    return false
   }
 }
 

@@ -78,8 +78,8 @@ module.exports = (function () {
 
   const _normaliseConfirmationDetails = function (cardDetails) {
     cardDetails.cardNumber = '●●●●●●●●●●●●' + cardDetails.last_digits_card_number
-    delete cardDetails.last_digits_card_number
     const normalisedDetails = humps.camelizeKeys(cardDetails)
+    delete normalisedDetails.lastDigitsCardNumber
     if (cardDetails.billing_address) {
       normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
     }
@@ -123,17 +123,6 @@ module.exports = (function () {
       md: auth3dsData.md,
       worldpayChallengeJwt: auth3dsData.worldpayChallengeJwt
     }
-  }
-
-  // an empty string is equal to false in soft equality used by filter
-  const addressForView = function (body) {
-    return [body.addressLine1,
-      body.addressLine2,
-      body.addressCity,
-      body.addressPostcode,
-      countries.translateCountryISOtoName(body.addressCountry)].filter(function (str) {
-      return str
-    }).join(', ')
   }
 
   const creditCard = function (creditCardNo) {
@@ -193,7 +182,6 @@ module.exports = (function () {
     addressForApi,
     addressLines,
     whitespace,
-    addressForView,
     creditCard,
     expiryDate,
     apiPayload

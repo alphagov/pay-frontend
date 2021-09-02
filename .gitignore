@@ -11,6 +11,7 @@ node_modules/*
 *.log
 reports
 .env
+*.heapsnapshot
 
 # IntelliJ gubbins
 .idea

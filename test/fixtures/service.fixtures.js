@@ -45,6 +45,10 @@ module.exports = {
       }
     }
 
+    if (data.default_billing_address_country !== null) {
+      data.default_billing_address_country = opts.default_billing_address_country === undefined ? 'GB' : opts.default_billing_address_country
+    }
+
     return data
   }
 }
