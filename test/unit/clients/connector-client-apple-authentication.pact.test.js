@@ -4,7 +4,7 @@
 const path = require('path')
 
 // NPM dependencies
-const Pact = require('pact')
+const { Pact } = require('@pact-foundation/pact')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 
@@ -25,7 +25,7 @@ const expect = chai.expect
 chai.use(chaiAsPromised)
 
 describe('connectors client - apple authentication API', function () {
-  const provider = Pact({
+  const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',
     port: PORT,

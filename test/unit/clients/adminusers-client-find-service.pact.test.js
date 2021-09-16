@@ -4,7 +4,7 @@
 const path = require('path')
 
 // NPM dependencies
-const Pact = require('pact')
+const { Pact } = require('@pact-foundation/pact')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 
@@ -24,7 +24,7 @@ chai.use(chaiAsPromised)
 const adminusersClient = getAdminUsersClient({ baseUrl: `http://localhost:${port}` })
 
 describe('adminusers client - services API', function () {
-  const provider = Pact({
+  const provider = new Pact({
     consumer: 'frontend-to-be',
     provider: 'adminusers',
     port: port,

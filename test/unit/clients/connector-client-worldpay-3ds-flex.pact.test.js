@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const path = require('path')
-const Pact = require('pact')
+const { Pact } = require('@pact-foundation/pact')
 const { expect } = require('chai')
 
 // Local dependencies
@@ -20,7 +20,7 @@ const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASE_URL = `http://localhost:${PORT}`
 
 describe('connector client - Worldpay 3DS flex tests', function () {
-  const provider = Pact({
+  const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',
     port: PORT,
