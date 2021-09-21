@@ -93,13 +93,12 @@ pipeline {
         }
       }
     }
-    stage('Deploy') {
+    stage('Check Pact Compatibility') {
       when {
         branch 'master'
       }
       steps {
         checkPactCompatibility("frontend", gitCommit(), "test")
-        deployEcs("frontend")
       }
     }
     stage('Card Smoke Test') {
