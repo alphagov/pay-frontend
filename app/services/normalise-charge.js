@@ -14,6 +14,7 @@ module.exports = (function () {
     const chargeObj = {
       id: chargeId,
       amount: penceToPounds(charge.amount),
+      amountInPence: charge.amount,
       service_return_url: charge.return_url,
       description: charge.description,
       paymentProvider: charge.payment_provider,
@@ -21,7 +22,8 @@ module.exports = (function () {
       status: charge.status,
       email: charge.email,
       moto: charge.moto,
-      gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
+      gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account),
+      clientSecret: charge.client_secret
     }
     if (charge.auth_3ds_data) {
       chargeObj.auth3dsData = _normaliseAuth3dsData(charge.auth_3ds_data)

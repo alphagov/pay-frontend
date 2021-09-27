@@ -10,7 +10,8 @@ const {
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL,
   DECRYPT_AND_OMIT_CARD_DATA,
   GOOGLE_PAY_MERCHANT_ID,
-  GOOGLE_PAY_MERCHANT_ID_2
+  GOOGLE_PAY_MERCHANT_ID_2,
+  STRIPE_PUBLISHABLE_API_KEY
 } = process.env
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
@@ -55,6 +56,9 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
   charge.acceptHeader = req.headers.accept
+  charge.isStripe = charge.paymentProvider === 'stripe'
+  charge.stripePublishableKey = STRIPE_PUBLISHABLE_API_KEY
+  logger.info('PUBLISHABLE KEY ' + charge.stripePublishableKey)
 
   const googlePayMerchantId = getMerchantId(charge.gatewayAccount.gatewayAccountId)
   if (googlePayMerchantId !== GOOGLE_PAY_MERCHANT_ID && googlePayMerchantId === GOOGLE_PAY_MERCHANT_ID_2) {

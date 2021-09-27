@@ -11,6 +11,7 @@ const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/han
 const returnCont = require('./controllers/return.controller.js')
 const { healthcheck } = require('./controllers/healthcheck.controller.js')
 const paths = require('./paths.js')
+const handleStripeWalletAuth = require('./controllers/web-payments/handle-stripe-wallet-auth-response')
 
 // Express middleware
 const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
@@ -86,6 +87,8 @@ exports.bind = function (app) {
   // secure controller
   app.get(paths.secure.get.path, secure.new)
   app.post(paths.secure.post.path, secure.new)
+
+  app.get('/stripe-wallet-success', handleStripeWalletAuth)
 
   // static controller
   app.get(paths.static.humans.path, statik.humans)
