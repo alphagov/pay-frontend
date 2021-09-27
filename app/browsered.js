@@ -1,5 +1,6 @@
 const inputConfirm = require('./assets/javascripts/browsered/form-input-confirm')
 const webPayments = require('./assets/javascripts/browsered/web-payments')
+const stripeWalletPayments = require('./assets/javascripts/browsered/web-payments/stripe-wallet-payments')
 const analytics = require('gaap-analytics')
 const formValidation = require('./assets/javascripts/browsered/form-validation')
 const epdq3ds2 = require('./assets/javascripts/browsered/epdq-3ds2')
@@ -14,7 +15,8 @@ window.payScripts = { // eslint-disable-line no-unused-vars
   inputConfirm,
   webPayments,
   formValidation,
-  epdq3ds2
+  epdq3ds2,
+  stripeWalletPayments
 }
 
 // GA tracking if an email typo is spotted

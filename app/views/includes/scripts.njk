@@ -1,3 +1,4 @@
+<script src="https://js.stripe.com/v3/"></script>
 <script id="govuk-script-analytics" nonce="{{ nonce }}" type="text/javascript">
   {% if translationStrings %}
   var i18n = {{ translationStrings | safe }}
@@ -6,6 +7,9 @@
   window.paymentDetails = {
     description: '{{description}}',
     amount: '{{amount}}',
+    {% if amountInPence %}
+    amountInPence: {{amountInPence}},
+    {% endif %}
     chargeID: '{{id}}'
   };
 
@@ -56,17 +60,22 @@
       })
       analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
     }
-    {% if allowGooglePay%}
-      window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
-      window.googlePayMerchantID = '{{ googlePayMerchantID }}';
-      window.gatewayAccountType = '{{ gatewayAccount.type }}'
-    {% endif %}
-    {% if allowApplePay and allowGooglePay%}
-      window.payScripts.webPayments.init('all');
-    {% elif allowApplePay %}
-      window.payScripts.webPayments.init('apple');
-    {% elif allowGooglePay %}
-      window.payScripts.webPayments.init('google');
+
+    {% if isStripe %}
+      window.payScripts.stripeWalletPayments.init('{{ stripePublishableKey }}','{{ clientSecret }}')
+    {% else %}
+      {% if allowGooglePay%}
+        window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
+        window.googlePayMerchantID = '{{ googlePayMerchantID }}';
+        window.gatewayAccountType = '{{ gatewayAccount.type }}'
+      {% endif %}
+      {% if allowApplePay and allowGooglePay%}
+        window.payScripts.webPayments.init('all');
+      {% elif allowApplePay %}
+        window.payScripts.webPayments.init('apple');
+      {% elif allowGooglePay %}
+        window.payScripts.webPayments.init('google');
+      {% endif %}
     {% endif %}
   });
 </script>

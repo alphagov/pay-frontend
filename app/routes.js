@@ -8,6 +8,7 @@ const statik = require('./controllers/static.controller.js')
 const applePayMerchantValidation = require('./controllers/web-payments/apple-pay/merchant-validation.controller')
 const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-request.controller')
 const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response.controller')
+const stripeWebPaymentsMakeRequest = require('./controllers/web-payments/stripe-payment-auth-request-controller')
 const returnCont = require('./controllers/return.controller.js')
 const { healthcheck } = require('./controllers/healthcheck.controller.js')
 const paths = require('./paths.js')
@@ -82,6 +83,8 @@ exports.bind = function (app) {
   // Generic Web payments endpoint
   app.post(paths.webPayments.authRequest.path, chargeCookieRequiredMiddlewareStack, webPaymentsMakePayment)
   app.get(paths.webPayments.handlePaymentResponse.path, chargeCookieRequiredMiddlewareStack, webPaymentsHandlePaymentResponse)
+
+  app.post(paths.webPayments.stripeAuthRequest.path, chargeCookieRequiredMiddlewareStack, stripeWebPaymentsMakeRequest)
 
   // secure controller
   app.get(paths.secure.get.path, secure.new)

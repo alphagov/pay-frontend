@@ -8,6 +8,7 @@ const { getCounter } = require('../../metrics/graphite-reporter')
 const METRICS_PREFIX = 'internal-rest-call.connector'
 const SERVICE_NAME = 'connector'
 const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/{provider}'
+const STRIPE_WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/stripe/wallets'
 const CARD_AUTH_PATH = '/v1/frontend/charges/{chargeId}/cards'
 const CARD_3DS_PATH = '/v1/frontend/charges/{chargeId}/3ds'
 const CARD_STATUS_PATH = '/v1/frontend/charges/{chargeId}/status'
@@ -29,6 +30,8 @@ const _getAuthUrlFor = chargeId => baseUrl + CARD_AUTH_PATH.replace('{chargeId}'
 
 /** @private */
 const _getWalletAuthUrlFor = (chargeId, provider) => baseUrl + WALLET_AUTH_PATH.replace('{chargeId}', chargeId).replace('{provider}', provider)
+
+const _getStripeWalletAuthUrlFor = (chargeId) => baseUrl + STRIPE_WALLET_AUTH_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
 const _getThreeDsFor = chargeId => baseUrl + CARD_3DS_PATH.replace('{chargeId}', chargeId)
@@ -232,6 +235,14 @@ const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
   return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields, 'chargeAuthWithWallet')
 }
 
+const chargeAuthWithStripeWallet = (chargeId, paymentMethodId, loggingFields = {}) => {
+  const authUrl = _getStripeWalletAuthUrlFor(chargeId)
+  const payload = {
+    payment_method_id: paymentMethodId
+  }
+  return _postConnector(authUrl, payload, 'authorise charge using wallet for Stripe', loggingFields, 'stripeChargeAuthWithWallet')
+}
+
 const capture = (chargeOptions, loggingFields = {}) => {
   const captureUrl = _getCaptureUrlFor(chargeOptions.chargeId)
   return _postConnector(captureUrl, null, 'do capture', loggingFields, 'capture')
@@ -289,6 +300,7 @@ module.exports = function (clientOptions = {}) {
     findByToken,
     patch,
     markTokenAsUsed,
-    getWorldpay3dsFlexJwt
+    getWorldpay3dsFlexJwt,
+    chargeAuthWithStripeWallet
   }
 }

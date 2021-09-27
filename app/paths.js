@@ -84,7 +84,11 @@ const paths = {
     handlePaymentResponse: {
       path: '/handle-payment-response/:chargeId',
       action: 'get'
-    }
+    },
+    stripeAuthRequest: {
+      path: '/stripe-web-payments-auth-request/:chargeId',
+      action: 'post'
+    },
   },
   secure: {
     get: {
