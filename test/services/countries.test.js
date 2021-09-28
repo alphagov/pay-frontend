@@ -9,5 +9,7 @@ describe('countries', function () {
 
   it('should translate country code to name', function () {
     expect(translateCountryISOtoName('GB')).to.eql('United Kingdom')
+    expect(translateCountryISOtoName('SZ')).to.eql('Eswatini')
+    
   })
 })

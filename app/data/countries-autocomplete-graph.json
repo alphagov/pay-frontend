@@ -1820,7 +1820,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Macedonia"
+      "en-GB": "North Macedonia"
     }
   },
   "country:ML": {
@@ -1852,7 +1852,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Burma"
+      "en-GB": "Myanmar (Burma)"
     }
   },
   "country:MN": {
@@ -2668,7 +2668,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Swaziland"
+      "en-GB": "Eswatini"
     }
   },
   "country:TD": {
@@ -5480,6 +5480,23 @@
     "names": {
       "cy": false,
       "en-GB": "Burkina Fasoupper"
+    }
+  },
+  "nym:Burma": {
+    "edges": {
+      "from": [
+        "country:MM"
+      ]
+    },
+    "meta": {
+      "canonical": false,
+      "canonical-mask": 0,
+      "display-name": false,
+      "stable-name": false
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Burma"
     }
   },
   "nym:Byelarus": {
@@ -10344,7 +10361,7 @@
       "en-GB": "Kingdom of Spain"
     }
   },
-  "nym:Kingdom of Swaziland": {
+  "nym:Kingdom of Eswatini": {
     "edges": {
       "from": [
         "country:SZ"
@@ -10358,7 +10375,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Kingdom of Swaziland"
+      "en-GB": "Kingdom of Eswatini"
     }
   },
   "nym:Kingdom of Sweden": {
@@ -11549,6 +11566,23 @@
     "names": {
       "cy": false,
       "en-GB": "Macedon"
+    }
+  },
+  "nym:Macedonia": {
+    "edges": {
+      "from": [
+        "country:MK"
+      ]
+    },
+    "meta": {
+      "canonical": false,
+      "canonical-mask": 0,
+      "display-name": false,
+      "stable-name": false
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Macedonia"
     }
   },
   "nym:Madagascar": {
@@ -14900,7 +14934,7 @@
       "en-GB": "Republic of Lithuanialietuva"
     }
   },
-  "nym:Republic of Macedonia": {
+  "nym:Republic of North Macedonia": {
     "edges": {
       "from": [
         "country:MK"
@@ -14914,7 +14948,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Republic of Macedonia"
+      "en-GB": "Republic of North Macedonia"
     }
   },
   "nym:Republic of Madagascar": {
@@ -17467,6 +17501,23 @@
       "en-GB": "Swatini"
     }
   },
+  "nym:Swaziland": {
+    "edges": {
+      "from": [
+        "country:SZ"
+      ]
+    },
+    "meta": {
+      "canonical": false,
+      "canonical-mask": 0,
+      "display-name": false,
+      "stable-name": false
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Swaziland"
+    }
+  },
   "nym:Swiss Confederation": {
     "edges": {
       "from": [
@@ -18810,7 +18861,7 @@
       "en-GB": "The Kingdom of Spain"
     }
   },
-  "nym:The Kingdom of Swaziland": {
+  "nym:The Kingdom of Eswatini": {
     "edges": {
       "from": [
         "country:SZ"
@@ -18824,7 +18875,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "The Kingdom of Swaziland"
+      "en-GB": "The Kingdom of Eswatini"
     }
   },
   "nym:The Kingdom of Sweden": {
@@ -19881,7 +19932,7 @@
       "en-GB": "The Republic of Lithuania"
     }
   },
-  "nym:The Republic of Macedonia": {
+  "nym:The Republic of North Macedonia": {
     "edges": {
       "from": [
         "country:MK"
@@ -19895,7 +19946,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "The Republic of Macedonia"
+      "en-GB": "The Republic of North Macedonia"
     }
   },
   "nym:The Republic of Madagascar": {
@@ -21581,7 +21632,7 @@
       "en-GB": "Umbuso weSwatini"
     }
   },
-  "nym:Union of burma": {
+  "nym:Union of Myanmar": {
     "edges": {
       "from": [
         "country:MM"
@@ -21595,7 +21646,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Union of burma"
+      "en-GB": "Union of Myanmar"
     }
   },
   "nym:Union of the Comoros": {
