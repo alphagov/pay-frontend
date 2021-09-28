@@ -5482,6 +5482,23 @@
       "en-GB": "Burkina Fasoupper"
     }
   },
+  "nym:Burma": {
+    "edges": {
+      "from": [
+        "country:MM"
+      ]
+    },
+    "meta": {
+      "canonical": false,
+      "canonical-mask": 0,
+      "display-name": false,
+      "stable-name": false
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Burma"
+    }
+  },
   "nym:Byelarus": {
     "edges": {
       "from": [
@@ -11551,6 +11568,23 @@
       "en-GB": "Macedon"
     }
   },
+  "nym:Macedonia": {
+    "edges": {
+      "from": [
+        "country:MK"
+      ]
+    },
+    "meta": {
+      "canonical": false,
+      "canonical-mask": 0,
+      "display-name": false,
+      "stable-name": false
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Macedonia"
+    }
+  },
   "nym:Madagascar": {
     "edges": {
       "from": [
@@ -17465,6 +17499,23 @@
     "names": {
       "cy": false,
       "en-GB": "Swatini"
+    }
+  },
+  "nym:Swaziland": {
+    "edges": {
+      "from": [
+        "country:SZ"
+      ]
+    },
+    "meta": {
+      "canonical": false,
+      "canonical-mask": 0,
+      "display-name": false,
+      "stable-name": false
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Swaziland"
     }
   },
   "nym:Swiss Confederation": {
