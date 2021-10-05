@@ -52,7 +52,10 @@ function initialiseGlobalMiddleware (app) {
       logger.info(message)
     }
   }
-  app.set('settings', { getVersionedPath: staticify.getVersionedPath })
+
+  app.locals.getVersionedPath = function (path) {
+    return NODE_ENV === 'production' ? staticify.getVersionedPath(path) : path
+  }
 
   app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware())
   app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/govuk/assets/images', 'favicon.ico')))

@@ -123,7 +123,7 @@
                 <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithGooglePay") }}</h2>
 
                 {% set GooglePayButtonHTML %}
-                  <img class="google-pay-image" src="/images/google-pay-logo.svg" alt="Google Pay">
+                  <img class="google-pay-image" src="{{ getVersionedPath('/images/google-pay-logo.svg') }}" alt="Google Pay">
                 {% endset %}
 
                 <form class="govuk-!-width-three-quarters web-payments-container">
@@ -142,7 +142,7 @@
                 </form>
               </div>
             {% endif %}
-            <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
+            <div id="spinner" class="hidden"><img src="{{ getVersionedPath('/images/spinner.gif') }}" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
 
             <div id="card-details-wrap">
               {% if allowApplePay or allowGooglePay %}
@@ -207,7 +207,7 @@
                           data-credit="{{ currentAllowedCard.credit }}"
                           data-debit="{{ currentAllowedCard.debit }}"
                         >
-                          <img src="/images/transparent-accessibiliity.gif" alt="{{ currentAllowedCard.brand | replace("-", " ") | title }}" />
+                          <img src="{{ getVersionedPath('/images/transparent-accessibiliity.gif') }}" alt="{{ currentAllowedCard.brand | replace("-", " ") | title }}" />
                         </li>
                       {% endfor %}
                     {% endif %}
@@ -344,11 +344,11 @@
                   class="govuk-input govuk-input--width-3 cvc"
                   maxlength="4"
                   autocomplete="{{securityCodeAutoCompleteType}}"/>
-                  <img src="/images/security-code.png" class="generic-cvc" alt="{{ __p("cardDetails.cvcTip") }}"/>
+                  <img src="{{ getVersionedPath('/images/security-code.png') }}" class="generic-cvc" alt="{{ __p("cardDetails.cvcTip") }}"/>
                   <span class="either hidden">
                     {{ __p("commonConjunctions.or") }}
                   </span>
-                  <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ __p("cardDetails.amexcvcTip") }}"/>
+                  <img src="{{ getVersionedPath('/images/amex-security-code.png') }}" class="amex-cvc hidden" alt="{{ __p("cardDetails.amexcvcTip") }}"/>
                 </div>
                 {% if collectBillingAddress %}
                   <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
