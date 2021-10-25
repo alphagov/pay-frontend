@@ -1,4 +1,3 @@
-const path = require('path')
 const nodeSass = require('node-sass')
 
 module.exports = function (grunt) {
@@ -75,12 +74,12 @@ module.exports = function (grunt) {
     'application.css': {
       src: 'public/stylesheets/application.css',
       editor: function (contents) {
-        const staticify = require('staticify')(path.join(__dirname, 'public'))
-
-        return staticify.replacePaths(contents)
+        return contents
       }
     }
   }
+
+
 
   const watch = {
     css: {
@@ -167,6 +166,23 @@ module.exports = function (grunt) {
     }
   }
 
+  const hashres = {
+    // Global options
+    options: {
+      encoding: 'utf8',
+      fileNameFormat: '${name}-${hash}.${ext}', // eslint-disable-line
+      renameFiles: true
+    },
+    prod: {
+      src: [
+        'public/images/background-images/**/*'
+      ],
+      dest: [
+        'public/stylesheets/**/*.css'
+      ]
+    }
+  }
+
   grunt.initConfig({
     clean: ['public', 'govuk_modules'],
     sass,
@@ -177,7 +193,8 @@ module.exports = function (grunt) {
     babel,
     rewrite,
     uglify,
-    compress
+    compress,
+    hashres
   });
 
   [
@@ -190,7 +207,8 @@ module.exports = function (grunt) {
     'grunt-contrib-concat',
     'grunt-rewrite',
     'grunt-contrib-uglify',
-    'grunt-babel'
+    'grunt-babel',
+    'grunt-hashres'
   ].forEach(task => grunt.loadNpmTasks(task))
 
   grunt.registerTask('generate-assets', [
@@ -202,10 +220,12 @@ module.exports = function (grunt) {
     'babel',
     'concat',
     'uglify',
-    'compress'
+    'compress',
+    'hashres:prod'
   ])
 
   grunt.registerTask('default', [
     'watch'
   ])
+
 }
