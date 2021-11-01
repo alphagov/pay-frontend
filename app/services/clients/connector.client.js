@@ -70,7 +70,7 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
     .then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       incrementStatusCodeCounter(callingFunctionName, response.statusCode)
-      if (response.statusCode > 499 && response.statusCode < 600) {
+      if (response.statusCode > 500 && response.statusCode < 600) {
         logger.error(`Error communicating with ${url}`, {
           ...loggingFields,
           service: 'connector',
@@ -110,7 +110,7 @@ function _postConnector (url, payload, description, loggingFields = {}, callingF
   ).then(response => {
     logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.statusCode)
-    if (response.statusCode > 499 && response.statusCode < 600) {
+    if (response.statusCode > 500 && response.statusCode < 600) {
       logger.error(`Error communicating with ${url}`, {
         ...loggingFields,
         service: 'connector',
@@ -150,7 +150,7 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
   ).then(response => {
     logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.statusCode)
-    if (response.statusCode > 499 && response.statusCode < 600) {
+    if (response.statusCode > 500 && response.statusCode < 600) {
       logger.error(`Error communicating with ${url}`, {
         ...loggingFields,
         service: 'connector',

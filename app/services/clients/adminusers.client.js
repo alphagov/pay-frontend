@@ -40,7 +40,7 @@ function _getAdminUsers (url, description, findOptions, loggingFields = {}, call
       if (SUCCESS_CODES.includes(response.statusCode)) {
         return new Service(response.body)
       } else {
-        if (response.statusCode > 499 && response.statusCode < 600) {
+        if (response.statusCode > 500 && response.statusCode < 600) {
           logger.error(`Error communicating with ${url}`, {
             ...loggingFields,
             service: 'adminusers',
