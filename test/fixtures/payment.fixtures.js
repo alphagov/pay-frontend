@@ -13,7 +13,6 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     analytics_id: opts.analyticsId || 'an-analytics-id',
     corporate_credit_card_surcharge_amount: 0,
     corporate_debit_card_surcharge_amount: 0,
-    corporate_prepaid_credit_card_surcharge_amount: 0,
     corporate_prepaid_debit_card_surcharge_amount: 0,
     email_collection_mode: opts.emailCollectionMode || 'MANDATORY',
     block_prepaid_cards: opts.blockPrepaidCards || false,
