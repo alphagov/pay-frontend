@@ -44,7 +44,6 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.corporateCardSurchargeAmountsAsStrings = JSON.stringify({
     credit: charge.gatewayAccount.corporateCreditCardSurchargeAmount,
     debit: charge.gatewayAccount.corporateDebitCardSurchargeAmount,
-    prepaidCredit: charge.gatewayAccount.corporatePrepaidCreditCardSurchargeAmount,
     prepaidDebit: charge.gatewayAccount.corporatePrepaidDebitCardSurchargeAmount
   })
   charge.id = chargeId
