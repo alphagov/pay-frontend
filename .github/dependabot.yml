@@ -55,7 +55,7 @@ updates:
   labels:
   - govuk-pay
   - dependencies
-  - javascript
+  - docker
   ignore:
   - dependency-name: node
     versions:
@@ -65,8 +65,13 @@ updates:
     versions:
     - ">= 15.a"
     - "< 16"
-- package-ecosystem: "github-actions"
+- package-ecosystem: github-actions
   directory: "/"
   schedule:
-    interval: "daily"
+    interval: daily
     time: "03:00"
+  open-pull-requests-limit: 10
+  labels:
+  - govuk-pay
+  - dependencies
+  - github_actions
