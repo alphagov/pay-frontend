@@ -6,6 +6,10 @@ describe('Re-using token results in 403 flow', () => {
   const usedTokenAndReturnPaymentCreatedChargeStubs = cardPaymentStubs.buildUsedTokenAndReturnPaymentChargeStubs(tokenId, chargeId, 'ENTERING CARD DETAILS')
   const returnNotFound = cardPaymentStubs.buildChargeFromTokenNotFound(tokenId)
 
+  beforeEach(() => {
+    cy.clearCookies();
+  })
+
   describe('Visiting the secure url when payment is not in cookie', () => {
     it('should show the "Your payment session has expired" page', () => {
       cy.task('setupStubs', usedTokenAndReturnPaymentCreatedChargeStubs)
