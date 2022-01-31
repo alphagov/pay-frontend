@@ -13,7 +13,7 @@ pipeline {
   }
 
   libraries {
-    lib("pay-jenkins-library@master")
+    lib("pay-jenkins-library@BAU-simplify-cypress")
   }
   environment {
     CYPRESS_VERSION="${params.CYPRESS_VERSION}"
