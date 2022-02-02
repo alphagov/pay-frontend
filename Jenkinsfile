@@ -4,7 +4,7 @@ pipeline {
   agent any
 
   parameters {
-    booleanParam(defaultValue: false, description: '', name: 'runEndToEndTestsOnPR')
+    string(name: 'CYPRESS_VERSION', defaultValue: '5.0.0', description: 'Cypress version number')
   }
 
   options {
@@ -15,8 +15,8 @@ pipeline {
     lib("pay-jenkins-library@master")
   }
   environment {
-    RUN_END_TO_END_ON_PR = "${params.runEndToEndTestsOnPR}"
-    JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
+    CYPRESS_VERSION = "${params.CYPRESS_VERSION}"
+    JAVA_HOME = "/usr/lib/jvm/java-1.11.0-openjdk-amd64"
   }
 
   stages {
@@ -68,10 +68,7 @@ pipeline {
       parallel {
         stage('End to End Tests') {
             when {
-                anyOf {
-                  branch 'master'
-                  environment name: 'RUN_END_TO_END_ON_PR', value: 'true'
-                }
+              branch 'master'
             }
             steps {
                 runAppE2E("frontend", "card,zap")

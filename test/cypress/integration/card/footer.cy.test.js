@@ -7,7 +7,7 @@ describe('The footer displayed on payment pages', () => {
   const language = 'en'
 
   beforeEach(() => {
-    cy.sessionCookie(chargeId)
+    Cypress.Cookies.preserveOnce('frontend_state')
   })
 
   it('should display the service name and address when service has full organisation details', () => {
