@@ -29,7 +29,10 @@ module.exports = (on, config) => {
     },
 
     clearStubs () {
-      return requestPromise.delete(stubServerURL)
+      return requestPromise({
+        method: 'DELETE',
+        url: stubServerURL
+      })
     }
   })
   return config
