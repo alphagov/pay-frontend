@@ -1,7 +1,7 @@
 .payment-summary {
-  border-top: 2px solid $govuk-brand-colour;
   padding: govuk-spacing(3);
-  background-color: govuk-colour('light-grey');
+  border-top: 2px solid $govuk-brand-colour;
+  background-color: govuk-colour("light-grey");
 
   .amount {
     display: block;

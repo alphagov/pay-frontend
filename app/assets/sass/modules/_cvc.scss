@@ -19,23 +19,24 @@ body:not(.js-enabled) {
 
 .govuk-form-group.cvc {
   .cvc {
-    float: left;
     margin-right: govuk-spacing(3);
+    float: left;
   }
 
   img {
     position: relative;
     top: -1px;
     max-height: 38px;
-    float: left;
     margin-right: govuk-spacing(3);
+    float: left;
   }
 
   .either {
     @include govuk-font($size: 19);
-    line-height: 37px!important;
-    color: $govuk-secondary-text-colour;
-    float: left;
+
     margin-right: govuk-spacing(3);
+    float: left;
+    color: $govuk-secondary-text-colour;
+    line-height: 37px !important;
   }
 }

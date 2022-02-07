@@ -1,5 +1,6 @@
 .button-reset {
   @include govuk-font($size: 19);
+
   display: inline;
   margin: govuk-spacing(2) 0 0 2px;
   padding: 0;
@@ -8,8 +9,8 @@
   outline-offset: 0;
   color: $govuk-link-colour;
   background: 0 0;
-  text-decoration: underline;
   font-size: 19px;
+  text-decoration: underline;
   cursor: pointer;
 
   &:hover {
