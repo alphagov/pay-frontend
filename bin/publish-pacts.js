@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable node/no-path-concat */
 const pact = require('@pact-foundation/pact-node')
 const opts = {
   pactFilesOrDirs: [`${__dirname}/../pacts/`],

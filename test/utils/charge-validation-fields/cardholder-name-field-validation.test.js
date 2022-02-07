@@ -1,9 +1,9 @@
 'use strict'
 
 const { expect } = require('chai')
-var cardTypes = require('../../test-helpers/test-helpers.js').cardTypes()
-var Card = require('../../../app/models/card.js')(cardTypes)
-var fields = require('../../../app/utils/charge-validation-fields.js')(Card)
+const cardTypes = require('../../test-helpers/test-helpers.js').cardTypes()
+const Card = require('../../../app/models/card.js')(cardTypes)
+const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
 let result
 

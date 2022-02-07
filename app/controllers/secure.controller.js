@@ -25,7 +25,7 @@ const paths = require('../paths')
 exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
   const correlationId = req.headers[CORRELATION_HEADER] || ''
-  var chargeId
+  let chargeId
   try {
     const chargeData = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
     chargeId = chargeData.charge.externalId

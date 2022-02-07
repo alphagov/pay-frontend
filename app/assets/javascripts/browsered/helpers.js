@@ -4,7 +4,7 @@ const setGlobalChargeId = () => {
 }
 
 const initialiseAddressCountryAutocomplete = () => {
-  var autocompleteScript = document.createElement('script')
+  const autocompleteScript = document.createElement('script')
 
   autocompleteScript.onload = function () {
     openregisterLocationPicker({
@@ -14,7 +14,7 @@ const initialiseAddressCountryAutocomplete = () => {
       displayMenu: 'overlay'
     })
 
-    var noOpAutocompleteIdentifier = Math.random().toString(36).substring(2, 15)
+    const noOpAutocompleteIdentifier = Math.random().toString(36).substring(2, 15)
     document.getElementById('address-country').setAttribute('autocomplete', noOpAutocompleteIdentifier)
   }
 
