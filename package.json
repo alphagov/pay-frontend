@@ -44,6 +44,7 @@
     "start:dev": "nodemon -e js,njk -r dotenv/config start-dev.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard --fix",
+    "lint:scss": "stylelint --fix 'app/**/*.{css,scss,sass}'",
     "watch-live-reload": "grunt watch",
     "test": "rm -rf ./pacts && DISABLE_APPMETRICS=true mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
     "cypress:server": "mb | DISABLE_APPMETRICS=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
@@ -61,6 +62,7 @@
   "lint-staged": {
     "*.js": [
       "npm run lint",
+      "npm run lint:scss",
       "git add"
     ]
   },
@@ -127,7 +129,7 @@
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.10",
     "chokidar-cli": "latest",
-    "cypress": "5.0.0",
+    "cypress": "5.6.0",
     "dotenv": "^16.0.0",
     "envfile": "^5.2.0",
     "eslint": "^7.32.0",
@@ -154,10 +156,12 @@
     "nyc": "15.1.x",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.9.23/pay-product-page-4.9.23.tgz",
     "proxyquire": "~2.1.3",
-    "sass-lint": "^1.13.1",
     "sinon": "13.0.x",
     "snyk": "^1.848.x",
-    "standard": "^14.3.x",
+    "standard": "^16.0.4",
+    "stylelint": "^14.3.0",
+    "stylelint-config-standard-scss": "^3.0.0",
+    "stylelint-order": "^5.0.0",
     "superagent": "^7.1.1",
     "supertest": "^6.2.2"
   },
