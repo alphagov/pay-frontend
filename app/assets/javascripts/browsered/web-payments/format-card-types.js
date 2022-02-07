@@ -5,11 +5,10 @@ module.exports = (allowedCardTypes, provider) => {
     return []
   }
 
-  const availableNetworks = allowedCardTypes.map(type => {
-    if (type.debit || type.credit) {
-      return type.brand
-    }
-  })
+  const availableNetworks = allowedCardTypes.reduce((brands, type) => {
+    if (type.debit || type.credit) brands.push(type.brand)
+    return brands
+  }, [])
 
   let filteredAvailableNetworks = availableNetworks
     .filter(brand => brand !== 'diners-club')
