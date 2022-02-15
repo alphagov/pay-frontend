@@ -6,12 +6,10 @@ coverage
 .settings
 .project
 *.log
-test
 pacts
 Jenkinsfile
 CONTRIBUTING.md
 env.sh
-.snyk
 node_modules
 node_modules_local
 logs/**/*
