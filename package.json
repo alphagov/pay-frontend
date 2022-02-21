@@ -145,7 +145,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.3.4",
     "mocha": "7.2.x",
-    "mountebank": "2.5.0",
+    "mountebank": "2.6.0",
     "nock": "13.2.4",
     "node-sass": "7.0.1",
     "nodemon": "^2.0.15",
