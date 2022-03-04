@@ -63,19 +63,6 @@ pipeline {
         }
       }
     }
-    stage('Tests') {
-      failFast true
-      parallel {
-        stage('End to End Tests') {
-            when {
-              branch 'master'
-            }
-            steps {
-                runAppE2E("frontend", "card,zap")
-            }
-        }
-      }
-    }
     stage('Docker Tag') {
       steps {
         script {
