@@ -148,7 +148,8 @@ module.exports = (function () {
       address: addressForApi(req.body),
       accept_header: req.header('accept'),
       user_agent_header: req.header('user-agent'),
-      ip_address: userIpAddress(req)
+      ip_address: userIpAddress(req),
+      accept_language_header: req.header('accept-language')
     }
     if (req.body.worldpay3dsFlexDdcResult) {
       payload.worldpay_3ds_flex_ddc_result = req.body.worldpay3dsFlexDdcResult
