@@ -107,7 +107,7 @@
     "randomstring": "^1.2.1",
     "readdir": "1.0.x",
     "request": "^2.88.2",
-    "requestretry": "^7.0.0",
+    "requestretry": "^7.0.2",
     "serve-favicon": "2.5.0",
     "staticify": "5.0.x",
     "throng": "5.0.x",
