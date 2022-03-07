@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-const {unlink, readdir, exists} = require('fs').promises
+const { unlink, readdir, exists } = require('fs').promises
 
 const pact = require('@pact-foundation/pact-node')
 const pactDirPath = `${__dirname}/../pacts/`
 
-async function publish() {
+async function publish () {
   const opts = {
     pactFilesOrDirs: [pactDirPath],
     pactBroker: process.env.PACT_BROKER_URL,
@@ -20,14 +20,14 @@ async function publish() {
 
 async function removePactsNotToBePublished () {
   const files = await readdir(pactDirPath)
-  //todo: fix this 'to-be' nonsense
+  // todo: fix this 'to-be' nonsense
   files
     .filter(filename => filename.includes('to-be'))
     .forEach(async filename => await unlink(pactDirPath + filename))
 }
 
-async function run() {
-  //make sure pact dir exists, and clean out any files marked to be
+async function run () {
+  // make sure pact dir exists, and clean out any files marked to be
   if (await exists(pactDirPath)) {
     await removePactsNotToBePublished()
     await publish()
@@ -37,4 +37,3 @@ async function run() {
 }
 
 run()
-
