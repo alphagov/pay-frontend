@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-const {unlink, readdir} = require('fs').promises
-const {existsSync} = require('fs')
+const { unlink, readdir, stat } = require('fs').promises
 
 const pact = require('@pact-foundation/pact-node')
 const pactDirPath = `${__dirname}/../pacts/`
@@ -27,9 +26,9 @@ async function removePactsNotToBePublished () {
     .forEach(async filename => await unlink(pactDirPath + filename))
 }
 
-async function run() {
-  //make sure pact dir exists, and clean out any files marked to be
-  if (existsSync(pactDirPath)) {
+async function run () {
+  // make sure pact dir exists, and clean out any files marked to be
+  if (await stat(pactDirPath)) {
     await removePactsNotToBePublished()
     await publish()
   } else {
