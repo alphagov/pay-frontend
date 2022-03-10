@@ -1,4 +1,4 @@
-name: Github Actions Tests
+name: Post Merge
 
 on:
   pull_request:
