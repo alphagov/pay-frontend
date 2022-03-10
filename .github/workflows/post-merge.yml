@@ -12,7 +12,11 @@ permissions:
   contents: read
 
 jobs:
+  tests:
+    uses: ./.github/workflows/run-tests.yml
+
   connector-provider-contract-tests:
+    needs: tests
     uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@PP-9238-connector-as-provider  
     with:
       consumer: frontend
