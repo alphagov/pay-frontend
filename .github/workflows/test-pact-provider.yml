@@ -1,0 +1,19 @@
+name: Test products as provider pact
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/test-pact-provider.yml
+
+permissions:
+  contents: read
+
+jobs:
+  products-provider-contract-tests:
+    uses: alphagov/pay-products/.github/workflows/_run-pact-provider-tests.yml@pp-9379-products-as-provider-pact-tests
+    with:
+      consumer: products-ui
+      consumer_tag: master
+    secrets:
+      pact_broker_username: ${{ secrets.pact_broker_username }}
+      pact_broker_password: ${{ secrets.pact_broker_password }}
