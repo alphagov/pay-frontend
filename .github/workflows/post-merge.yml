@@ -1,0 +1,19 @@
+name: Github Actions Tests
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/post-merge.yml
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  connector-provider-contract-tests:
+    uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@PP-9238-connector-as-provider  
+    with:
+      consumer: frontend
+      consumer_tag: master
