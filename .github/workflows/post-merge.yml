@@ -48,7 +48,7 @@ jobs:
           PACT_BROKER_USERNAME: ${{ secrets.pact_broker_username }}
           PACT_BROKER_PASSWORD: ${{ secrets.pact_broker_password }}
           PACT_CONSUMER_TAG: starling-testing
-        run: npm publish-pacts
+        run: npm run publish-pacts
 
   connector-provider-contract-tests:
     needs: publish-frontend-consumer-contract-tests
