@@ -29,6 +29,7 @@ jobs:
             node_modules
             govuk_modules
             public
+            pacts
           key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
       - name: Cache NPM packages
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
@@ -73,6 +74,7 @@ jobs:
             node_modules
             govuk_modules
             public
+            pacts
           key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
       - name: Run unit tests
         run: npm test -- --forbid-only --forbid-pending
@@ -99,6 +101,7 @@ jobs:
             node_modules
             govuk_modules
             public
+            pacts
           key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
       - name: Parse Cypress version
         id: parse-cypress-version
