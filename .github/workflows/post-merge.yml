@@ -3,10 +3,10 @@ name: Post Merge
 on:
   pull_request:
     paths:
-      - .github/workflows/post-merge.yml
+      - .github/workflows/post-merge-SKIP-CI-FOR-NOW.yml
   push:
     branches:
-      - master
+      - master-SKIP-CI-FOR-NOW
 
 permissions:
   contents: read
@@ -18,17 +18,19 @@ jobs:
   publish-frontend-consumer-contract-tests:
     needs: tests
     runs-on: ubuntu-18.04
-      name: Publish frontend consumer pact and tag it
-      steps:
+
+    name: Publish and tag frontend consumer pact
+    steps:
+      - name: Publish frontend consumer pact file
         run: |
           pact="TODO - populate me with some JSON"
-          # Publish frontend consumer pact file
+
           curl -v --fail -X PUT -H "Content-Type: application/json" \
             -d@"$pact" \
             --user "${{ secrets.pact_broker_username }}:${{ secrets.pact_broker_password }}" \
             "https://pay-pact-broker.cloudapps.digital/pacts/provider/connector/consumer/frontend/version/${{ github.sha }}"
-
-          # Tag the pact
+      - name: Tag the pact
+        run: |
           curl -v --fail -X PUT -H "Content-Type: application/json" \
             --user "${{ secrets.pact_broker_username }}:${{ secrets.pact_broker_password }}" \
             "https://pay-pact-broker.cloudapps.digital/pacticipants/frontend/versions/${{ github.sha }}/tags/master"
