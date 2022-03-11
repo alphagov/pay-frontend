@@ -44,7 +44,7 @@
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard --fix",
     "watch-live-reload": "grunt watch",
-    "test": "rm -rf ./pacts && mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
+    "test": "mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
     "cypress:server": "mb | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
