@@ -12,11 +12,11 @@ permissions:
   contents: read
 
 jobs:
-  tests:
-    uses: ./.github/workflows/run-tests.yml
+  # tests:
+  #   uses: ./.github/workflows/run-tests.yml
 
   publish-frontend-consumer-contract-tests:
-    needs: tests
+    # needs: tests
     runs-on: ubuntu-18.04
 
     name: Publish and tag frontend consumer pact
@@ -30,8 +30,14 @@ jobs:
         uses: actions/setup-node@9ced9a43a244f3ac94f13bfd896db8c8f30da67a
         with:
           node-version: "${{ steps.parse-node-version.outputs.NVMRC }}"
-      - name: Install npm dependencies
-        run: npm ci
+      - name: Cache build directories
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+        with:
+          path: |
+            node_modules
+            govuk_modules
+            public
+          key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}          
       - name: Run frontend-as-consumer pact tests
         run: npm test -- --forbid-only --forbid-pending
       - name: Publish and tag frontend consumer pact
