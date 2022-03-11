@@ -15,9 +15,27 @@ jobs:
   tests:
     uses: ./.github/workflows/run-tests.yml
 
-  connector-provider-contract-tests:
+  publish-frontend-consumer-contract-tests:
     needs: tests
-    uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@PP-9238-connector-as-provider  
+    runs-on: ubuntu-18.04
+      name: Publish frontend consumer pact and tag it
+      steps:
+        run: |
+          pact="TODO - populate me with some JSON"
+          # Publish frontend consumer pact file
+          curl -v --fail -X PUT -H "Content-Type: application/json" \
+            -d@"$pact" \
+            --user "${{ secrets.pact_broker_username }}:${{ secrets.pact_broker_password }}" \
+            "https://pay-pact-broker.cloudapps.digital/pacts/provider/connector/consumer/frontend/version/${{ github.sha }}"
+
+          # Tag the pact
+          curl -v --fail -X PUT -H "Content-Type: application/json" \
+            --user "${{ secrets.pact_broker_username }}:${{ secrets.pact_broker_password }}" \
+            "https://pay-pact-broker.cloudapps.digital/pacticipants/frontend/versions/${{ github.sha }}/tags/master"
+
+  connector-provider-contract-tests:
+    needs: publish-frontend-consumer-contract-tests
+    uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@master
     with:
       consumer: frontend
       consumer_tag: master
