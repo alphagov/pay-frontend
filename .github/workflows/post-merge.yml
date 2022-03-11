@@ -12,11 +12,11 @@ permissions:
   contents: read
 
 jobs:
-  # tests:
-  #   uses: ./.github/workflows/run-tests.yml
+  tests:
+    uses: ./.github/workflows/run-tests.yml
 
   publish-frontend-consumer-contract-tests:
-    # needs: tests
+    needs: tests
     runs-on: ubuntu-18.04
 
     name: Publish and tag frontend consumer pact
@@ -40,7 +40,6 @@ jobs:
           key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
       - name: Run frontend-as-consumer pact tests
         run: |
-          export PATH=./node_modules/.bin:$PATH
           npm test -- --forbid-only --forbid-pending
       - name: Publish and tag frontend consumer pact
         env:
