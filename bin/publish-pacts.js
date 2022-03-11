@@ -34,6 +34,7 @@ async function run () {
     await publish()
   } catch (e) {
     console.log('Unable to publish pacts', e)
+    throw e
   }
 }
 
