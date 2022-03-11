@@ -3,10 +3,10 @@ name: Post Merge
 on:
   pull_request:
     paths:
-      - .github/workflows/post-merge-SKIP-CI-FOR-NOW.yml
+      - .github/workflows/post-merge.yml
   push:
     branches:
-      - master-SKIP-CI-FOR-NOW
+      - master
 
 permissions:
   contents: read
@@ -21,26 +21,34 @@ jobs:
 
     name: Publish and tag frontend consumer pact
     steps:
-      - name: Publish frontend consumer pact file
-        run: |
-          pact="TODO - populate me with some JSON"
-
-          curl -v --fail -X PUT -H "Content-Type: application/json" \
-            -d@"$pact" \
-            --user "${{ secrets.pact_broker_username }}:${{ secrets.pact_broker_password }}" \
-            "https://pay-pact-broker.cloudapps.digital/pacts/provider/connector/consumer/frontend/version/${{ github.sha }}"
-      - name: Tag the pact
-        run: |
-          curl -v --fail -X PUT -H "Content-Type: application/json" \
-            --user "${{ secrets.pact_broker_username }}:${{ secrets.pact_broker_password }}" \
-            "https://pay-pact-broker.cloudapps.digital/pacticipants/frontend/versions/${{ github.sha }}/tags/master"
+      - name: Checkout
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+      - name: Parse Node version
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        id: parse-node-version
+      - name: Setup
+        uses: actions/setup-node@9ced9a43a244f3ac94f13bfd896db8c8f30da67a
+        with:
+          node-version: "${{ steps.parse-node-version.outputs.NVMRC }}"
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Run frontend-as-consumer pact tests
+        run: npm test -- --forbid-only --forbid-pending
+      - name: Publish and tag frontend consumer pact
+        env:
+          PACT_BROKER_URL: https://pay-pact-broker.cloudapps.digital
+          PACT_CONSUMER_VERSION: ${{ github.sha }}
+          PACT_BROKER_USERNAME: ${{ secrets.pact_broker_username }}
+          PACT_BROKER_PASSWORD: ${{ secrets.pact_broker_password }}
+          PACT_CONSUMER_TAG: starling-testing
+        run: npm publish-pacts
 
   connector-provider-contract-tests:
     needs: publish-frontend-consumer-contract-tests
     uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@master
     with:
       consumer: frontend
-      consumer_tag: master
+      consumer_tag: starling-testing
     secrets:
       pact_broker_username: ${{ secrets.pact_broker_username }}
       pact_broker_password: ${{ secrets.pact_broker_password }}
