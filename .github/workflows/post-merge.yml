@@ -49,20 +49,15 @@ jobs:
           PACT_CONSUMER_VERSION: ${{ github.sha }}
           PACT_BROKER_USERNAME: ${{ secrets.pact_broker_username }}
           PACT_BROKER_PASSWORD: ${{ secrets.pact_broker_password }}
-          PACT_CONSUMER_TAG: starling-testing
-        run: |
-          pwd
-          ls -al
-          ls -al pacts/
-          ls -al node_modules/
-          npm run publish-pacts
+          PACT_CONSUMER_TAG: master
+        run: npm run publish-pacts
 
   connector-provider-contract-tests:
     needs: publish-frontend-consumer-contract-tests
     uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@master
     with:
       consumer: frontend
-      consumer_tag: starling-testing
+      consumer_tag: master
     secrets:
       pact_broker_username: ${{ secrets.pact_broker_username }}
       pact_broker_password: ${{ secrets.pact_broker_password }}
