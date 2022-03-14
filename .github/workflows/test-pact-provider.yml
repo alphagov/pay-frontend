@@ -15,6 +15,10 @@ jobs:
     steps:
       - name: context
         run: docker context inspect
+      - name: docker-host-env
+        run: echo "$DOCKER_HOST"
+      - name: docker-cert-path
+        run: echo "$DOCKER_CERT_PATH"
 
   # products-provider-contract-tests:
   #   uses: alphagov/pay-products/.github/workflows/_run-pact-provider-tests.yml@TEST-docker-pull-in-gha
