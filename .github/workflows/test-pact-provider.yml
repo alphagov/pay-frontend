@@ -20,11 +20,11 @@ jobs:
       - name: docker-cert-path
         run: echo "$DOCKER_CERT_PATH"
 
-  # products-provider-contract-tests:
-  #   uses: alphagov/pay-products/.github/workflows/_run-pact-provider-tests.yml@TEST-docker-pull-in-gha
-  #   with:
-  #     consumer: products-ui
-  #     consumer_tag: master
-  #   secrets:
-  #     pact_broker_username: ${{ secrets.pact_broker_username }}
-  #     pact_broker_password: ${{ secrets.pact_broker_password }}
+  products-provider-contract-tests:
+    uses: alphagov/pay-products/.github/workflows/_run-pact-provider-tests.yml@TEST-docker-pull-in-gha
+    with:
+      consumer: products-ui
+      consumer_tag: master
+    secrets:
+      pact_broker_username: ${{ secrets.pact_broker_username }}
+      pact_broker_password: ${{ secrets.pact_broker_password }}
