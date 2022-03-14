@@ -1,9 +1,6 @@
 name: Post Merge
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/post-merge.yml
   push:
     branches:
       - master
