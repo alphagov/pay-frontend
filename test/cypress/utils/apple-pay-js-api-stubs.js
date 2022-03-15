@@ -29,8 +29,16 @@ const getMockApplePayClass = (validPaymentRequestResponse, email = null) => {
       this._onvalidatemerchant = value
     }
 
+    get onvalidatemerchant () {
+      return this._onvalidatemerchant
+    }
+
     set onpaymentauthorized (value) {
       this._onpaymentauthorized = value
+    }
+
+    get onpaymentauthorized () {
+      return this._onpaymentauthorized
     }
   }
 

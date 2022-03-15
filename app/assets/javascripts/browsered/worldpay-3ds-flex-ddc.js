@@ -5,17 +5,17 @@ const toggleWaiting = () => {
   document.getElementById('spinner').classList.toggle('hidden')
   document.getElementById('error-summary').classList.add('hidden')
 
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
+  const paymentDetailsHeader = document.querySelector('.web-payment-button-section')
   if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
     paymentDetailsHeader.style.display = 'none'
   }
 
-  var applePayContainer = document.querySelector('.apple-pay-container')
+  const applePayContainer = document.querySelector('.apple-pay-container')
   if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
     applePayContainer.style.display = 'none'
   }
 
-  var googlePayContainer = document.querySelector('.google-pay-container')
+  const googlePayContainer = document.querySelector('.google-pay-container')
   if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
     googlePayContainer.style.display = 'none'
   }

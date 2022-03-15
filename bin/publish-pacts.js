@@ -1,6 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable node/no-path-concat */
 const { unlink, readdir, stat } = require('fs').promises
-
 const pact = require('@pact-foundation/pact-node')
 const pactDirPath = `${__dirname}/../pacts/`
 

@@ -25,19 +25,23 @@ class Service {
     this.defaultBillingAddressCountry = serviceData.default_billing_address_country
 
     this.customBranding =
-      serviceData.custom_branding ? {
-        cssUrl: serviceData.custom_branding.css_url,
-        imageUrl: serviceData.custom_branding.image_url
-      } : undefined
+      serviceData.custom_branding
+        ? {
+            cssUrl: serviceData.custom_branding.css_url,
+            imageUrl: serviceData.custom_branding.image_url
+          }
+        : undefined
 
-    this.merchantDetails = serviceData.merchant_details ? {
-      name: serviceData.merchant_details.name,
-      addressLine1: serviceData.merchant_details.address_line1,
-      addressLine2: serviceData.merchant_details.address_line2,
-      city: serviceData.merchant_details.address_city,
-      postcode: serviceData.merchant_details.address_postcode,
-      countryName: serviceData.merchant_details.address_country ? countries.translateCountryISOtoName(serviceData.merchant_details.address_country) : undefined
-    } : undefined
+    this.merchantDetails = serviceData.merchant_details
+      ? {
+          name: serviceData.merchant_details.name,
+          addressLine1: serviceData.merchant_details.address_line1,
+          addressLine2: serviceData.merchant_details.address_line2,
+          city: serviceData.merchant_details.address_city,
+          postcode: serviceData.merchant_details.address_postcode,
+          countryName: serviceData.merchant_details.address_country ? countries.translateCountryISOtoName(serviceData.merchant_details.address_country) : undefined
+        }
+      : undefined
 
     this.hasCompleteMerchantDetailsAddress = !!(
       this.merchantDetails &&

@@ -1,5 +1,5 @@
-var expect = require('chai').expect
-var normalise = require('../../app/services/normalise-charge.js')
+const expect = require('chai').expect
+const normalise = require('../../app/services/normalise-charge.js')
 
 describe('normalise', function () {
   it('expiry date should return correctly on multiple formats', function () {
