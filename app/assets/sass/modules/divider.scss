@@ -6,13 +6,13 @@
   margin-bottom: govuk-spacing(6);
   text-align: center;
 
-  &:before {
+  &::before {
     content: "";
+    display: block;
     position: absolute;
     z-index: 0;
     top: 50%;
     width: 100%;
-    display: block;
     border-top: 1px solid $govuk-border-colour;
   }
 
@@ -20,6 +20,6 @@
     position: relative;
     z-index: 1;
     padding: 0 govuk-spacing(1);
-    background:  govuk-colour('white');
+    background: govuk-colour("white");
   }
 }

@@ -36,3 +36,6 @@ pacts
 /test/cypress/screenshots
 /test/cypress/videos
 mb.pid
+
+# ST4
+*.sublime-*

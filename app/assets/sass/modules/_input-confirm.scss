@@ -1,5 +1,6 @@
 .input-confirm {
   @include govuk-font($size: 19);
+
   margin-top: govuk-spacing(1) * -1;
 
   @include govuk-media-query($from: tablet) {
@@ -12,6 +13,7 @@
 
   .input-confirmation {
     @include govuk-font($size: 24);
+
     color: $govuk-text-colour;
 
     .email-container & {

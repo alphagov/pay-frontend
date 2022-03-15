@@ -2,10 +2,10 @@
   position: relative;
   margin-right: govuk-spacing(7);
 
-  &:after {
+  &::after {
     @include govuk-font($size: 27);
 
-    content: '/';
+    content: "/";
     position: absolute;
     top: 71%;
     right: -1.5rem;

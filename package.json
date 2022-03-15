@@ -43,6 +43,7 @@
     "start:dev": "nodemon -e js,njk -r dotenv/config start-dev.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
     "lint": "standard --fix",
+    "lint:scss": "stylelint --fix 'app/**/*.{css,scss,sass}'",
     "watch-live-reload": "grunt watch",
     "test": "rm -rf ./pacts && mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
     "cypress:server": "mb | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
@@ -59,6 +60,7 @@
   "lint-staged": {
     "*.js": [
       "npm run lint",
+      "npm run lint:scss",
       "git add"
     ]
   },
@@ -154,6 +156,9 @@
     "sass-lint": "^1.13.1",
     "sinon": "13.0.x",
     "standard": "^14.3.x",
+    "stylelint": "^14.3.0",
+    "stylelint-config-standard-scss": "^3.0.0",
+    "stylelint-order": "^5.0.0",
     "superagent": "^7.1.1",
     "supertest": "^6.2.2"
   },
