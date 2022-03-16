@@ -72,6 +72,9 @@
       "locales/*"
     ]
   },
+  "overrides": {
+    "minimist": "1.2.5"
+  },
   "dependencies": {
     "@aws-crypto/decrypt-node": "^1.0.3",
     "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
@@ -95,7 +98,7 @@
     "mailcheck": "^1.1.1",
     "memory-cache": "^0.2.0",
     "metrics": "0.1.21",
-    "minimist": "^1.2.5",
+    "minimist": "1.2.5",
     "moment-timezone": "^0.5.34",
     "morgan": "1.10.x",
     "nunjucks": "^3.2.3",
