@@ -1,6 +1,9 @@
 name: Post Merge
 
 on:
+  pull_request:
+    paths:
+      - .github/workflows/post-merge.yml
   push:
     branches:
       - master
@@ -46,15 +49,15 @@ jobs:
           PACT_CONSUMER_VERSION: ${{ github.sha }}
           PACT_BROKER_USERNAME: ${{ secrets.pact_broker_username }}
           PACT_BROKER_PASSWORD: ${{ secrets.pact_broker_password }}
-          PACT_CONSUMER_TAG: master
+          PACT_CONSUMER_TAG: starling-test
         run: npm run publish-pacts
 
   connector-provider-contract-tests:
     needs: publish-frontend-consumer-contract-tests
-    uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@master
+    uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@BAU-fix-provider-contract-tests
     with:
       consumer: frontend
-      consumer_tag: master
+      consumer_tag: starling-test
     secrets:
       pact_broker_username: ${{ secrets.pact_broker_username }}
       pact_broker_password: ${{ secrets.pact_broker_password }}
