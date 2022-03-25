@@ -65,6 +65,9 @@ jobs:
     name: Unit tests
     needs: [version, install-and-compile]
 
+    outputs:
+      pact-consumer-tag: ${{ steps.set-pact-consumer-tag-and-version.outputs.pact-consumer-tag }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
@@ -80,13 +83,36 @@ jobs:
             govuk_modules
             public
           key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
-      - name: Cache pacts directory
-        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
-        with:
-          path: pacts
-          key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}-pacts
       - name: Run unit tests
         run: npm test -- --forbid-only --forbid-pending
+      - name: Set Pact Consumer Tag and Version
+        id: set-pact-consumer-tag-and-version
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # Github actually creates a phantom merge commit on PR actions, but we want to record
+            # in the pact broker something we can actually trace back to a PR, using the _actual_
+            # phantom merge commit sha (github.sha) would make this essentially impossible for us
+            CONSUMER_VERSION=${{ github.event.pull_request.head.sha }}
+            CONSUMER_TAG=${{ github.event.pull_request.number }}
+          elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            CONSUMER_VERSION=${{ github.sha }}
+            CONSUMER_TAG="master"
+          else
+            echo "Unknown type to get consumer tag from, failing on purpose"
+            exit 1
+          fi
+          echo "Setting Consumer tag to ${CONSUMER_TAG}"
+          echo "::set-output name=pact-consumer-tag::${CONSUMER_TAG}-STARLING-TEST"
+          echo "Setting Consumer version to ${CONSUMER_VERSION}"
+          echo "::set-output name=pact-consumer-version::${CONSUMER_VERSION}"
+      - name: Publish and tag frontend consumer pact
+        env:
+          PACT_BROKER_URL: https://pay-pact-broker.cloudapps.digital
+          PACT_CONSUMER_VERSION: "${{ steps.set-pact-consumer-tag-and-version.outputs.pact-consumer-version }}"
+          PACT_BROKER_USERNAME: ${{ secrets.pact_broker_username }}
+          PACT_BROKER_PASSWORD: ${{ secrets.pact_broker_password }}
+          PACT_CONSUMER_TAG: "${{ steps.set-pact-consumer-tag-and-version.outputs.pact-consumer-tag }}"
+        run: npm run publish-pacts
 
   cypress-tests:
     runs-on: ubuntu-18.04
@@ -121,3 +147,14 @@ jobs:
           npm run cypress:server > /dev/null 2>&1 &
           sleep 5
           npm run cypress:test
+
+  connector-provider-contract-tests:
+    needs: unit-tests
+    uses: alphagov/pay-connector/.github/workflows/_run-pact-provider-tests.yml@master
+    with:
+      consumer: frontend
+      consumer_tag: "${{ needs.unit-tests.outputs.pact-consumer-tag }}"
+    secrets:
+      pact_broker_username: ${{ secrets.pact_broker_username }}
+      pact_broker_password: ${{ secrets.pact_broker_password }}
+
