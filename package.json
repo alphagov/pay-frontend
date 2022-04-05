@@ -113,7 +113,7 @@
     "staticify": "5.0.x",
     "throng": "5.0.x",
     "uk-postcode": "0.1.x",
-    "winston": "3.6.0"
+    "winston": "3.7.2"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
