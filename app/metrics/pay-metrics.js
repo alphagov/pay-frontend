@@ -1,5 +1,5 @@
 const StatsD = require('hot-shots')
-const gc = (require('@sematext/gc-stats'))()
+const gcStats = require('@sematext/gc-stats')
 const eventLoopStats = require('event-loop-stats')
 
 const gcTypes = {
@@ -11,7 +11,7 @@ const gcTypes = {
 }
 
 class PayMetrics {
-  constructor (applicationName, { host = 'localhost', port = '8125', sendNodeMetrics = true, mockServer = false, eventLoopInterval = 5000 }) {
+  constructor (applicationName, { host = 'localhost', port = '8125', mockServer = false, eventLoopInterval = 5000 }) {
     this._statsdClient = new StatsD({
       host: host,
       port: port,
@@ -19,12 +19,7 @@ class PayMetrics {
       mock: mockServer
     })
 
-    this.sendNodeMetrics = sendNodeMetrics
     this.eventLoopInterval = eventLoopInterval
-
-    if (sendNodeMetrics === true) {
-      this._startSendingNodeMetrics()
-    }
   }
 
   async increment (metricName) {
@@ -39,7 +34,7 @@ class PayMetrics {
     this._statsdClient.gauge(metricName, value)
   }
 
-  _startSendingNodeMetrics () {
+  startSendingNodeMetrics () {
     this._startSendingEventLoopMetrics()
     this._startSendingGCMetrics()
   }
@@ -55,7 +50,7 @@ class PayMetrics {
   }
 
   _startSendingGCMetrics () {
-    gc.on('stats', function sendGCMetrics (gcStats) {
+    gcStats().on('stats', function sendGCMetrics (gcStats) {
       // available stats https://www.npmjs.com/package/gc-stats#property-insights
       this.gauge(this._gcMetricName('pause_ms', gcStats.gctype), gcStats.pauseMS)
       this.gauge(this._gcMetricName('after.totalHeapSize', gcStats.gctype), gcStats.after.totalHeapSize)

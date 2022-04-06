@@ -13,6 +13,7 @@ describe('PayMetrics library', () => {
     beforeEach(() => {
       payMetrics = new PayMetrics('unit_tests', { mockServer: true, eventLoopInterval: 10 })
       mockStatsdBuffer = payMetrics._statsdClient.mockBuffer
+      payMetrics.startSendingNodeMetrics()
     })
 
     it('sends gc stats', async () => {
@@ -36,7 +37,7 @@ describe('PayMetrics library', () => {
 
   describe('when not sending node internal metrics', () => {
     beforeEach(() => {
-      payMetrics = new PayMetrics('unit_tests', { sendNodeMetrics: false, mockServer: true })
+      payMetrics = new PayMetrics('unit_tests', { mockServer: true })
       mockStatsdBuffer = payMetrics._statsdClient.mockBuffer
     })
 
@@ -72,7 +73,7 @@ describe('PayMetrics library', () => {
 
   describe('when overriding the default statsd host settings', () => {
     it('sets the statsd host and port and prefix', () => {
-      payMetrics = new PayMetrics('unit_tests_host', { host: '192.168.0.1', port: '1234', sendNodeMetrics: false, mockServer: true })
+      payMetrics = new PayMetrics('unit_tests_host', { host: '192.168.0.1', port: '1234', mockServer: true })
 
       expect(payMetrics._statsdClient.prefix).to.equal('unit_tests_host.')
       expect(payMetrics._statsdClient.host).to.equal('192.168.0.1')
