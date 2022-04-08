@@ -23,6 +23,10 @@ module.exports = (function () {
       moto: charge.moto,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     }
+
+    if(charge.agreement_id) {
+      chargeObj.agreementId = charge.agreement_id
+    }
     if (charge.auth_3ds_data) {
       chargeObj.auth3dsData = _normaliseAuth3dsData(charge.auth_3ds_data)
     }

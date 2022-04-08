@@ -177,12 +177,12 @@
                       </p>
                     {% endif %}
                   </label>
-                  
-                  {% if moto and gatewayAccount.motoMaskCardNumberInput %} 
-                    {% set cardNumberInputType = 'password' %}  
+
+                  {% if moto and gatewayAccount.motoMaskCardNumberInput %}
+                    {% set cardNumberInputType = 'password' %}
                     {% set cardNumberAutoCompleteType = 'off' %}
                   {% else %}
-                    {% set cardNumberInputType = 'text' %}   
+                    {% set cardNumberInputType = 'text' %}
                     {% set cardNumberAutoCompleteType = 'cc-number' %}
                   {% endif %}
 
@@ -327,13 +327,13 @@
                     {% endif %}
                   </label>
 
-                  {% if moto and gatewayAccount.motoMaskCardSecurityCodeInput %} 
-                    {% set securityCodeInputType = 'password' %}  
+                  {% if moto and gatewayAccount.motoMaskCardSecurityCodeInput %}
+                    {% set securityCodeInputType = 'password' %}
                     {% set securityCodeAutoCompleteType = 'off' %}
                   {% else %}
-                    {% set securityCodeInputType = 'text' %}   
+                    {% set securityCodeInputType = 'text' %}
                     {% set securityCodeAutoCompleteType = 'cc-csc' %}
-                  {% endif %} 
+                  {% endif %}
 
                   <input id="cvc"
                   type="{{securityCodeInputType}}"
@@ -349,7 +349,12 @@
                     {{ __p("commonConjunctions.or") }}
                   </span>
                   <img src="/images/amex-security-code.png" class="amex-cvc hidden" alt="{{ __p("cardDetails.amexcvcTip") }}"/>
-                </div>
+                 </div>
+                   {% if agreementId %}
+                   <div>
+                       <p> This agreement id :{{agreementId}} is for recurring card payment </p>
+                   </div>
+                   {% endif %}
                 {% if collectBillingAddress %}
                   <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
                       <fieldset class="govuk-fieldset" aria-describedby="address-hint">
@@ -466,7 +471,7 @@
                             autocomplete="billing postal-code"/>
                         </div>
                     </fieldset>
-                  </div> 
+                  </div>
                 {% endif %}
                 {% if (gatewayAccount.emailCollectionMode === 'MANDATORY')
                   or(gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
