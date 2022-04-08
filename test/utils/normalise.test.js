@@ -190,7 +190,7 @@ const unNormalisedChargeWithCardDetailsAndAgreement = {
 
 
 const normalisedChargeWithCardDetails = {
-  ...normalisedChargeWithAgreement,
+  ...normalisedCharge,
   cardDetails: {
     cardNumber: '●●●●●●●●●●●●1234',
     firstDigitsCardNumber: '424242',
@@ -228,7 +228,7 @@ const normalisedChargeWithCardDetailsAndDefaultCountry = {
 }
 
 const normalisedChargeWithCardDetailsAndDefaultCountryAndAgreement = {
-  ...normalisedCharge,
+  ...normalisedChargeWithAgreement,
   cardDetails: {
     cardNumber: '●●●●●●●●●●●●1234',
     firstDigitsCardNumber: '424242',
@@ -289,7 +289,7 @@ describe('normalise', () => {
       describe('payment has associated agreement', () => {
         it('should return agreement id on the payment screen', () => {
           const result = normalise.charge(unNormalisedChargeWithCardDetailsAndAgreement, 1, service)
-          expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountry)
+          expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountryAndAgreement)
         })
       })
 
