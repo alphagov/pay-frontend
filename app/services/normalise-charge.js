@@ -23,6 +23,13 @@ module.exports = (function () {
       moto: charge.moto,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     }
+
+    if(charge.agreement_id) {
+      chargeObj.agreementId = charge.agreement_id
+    }
+    if(charge.save_payment_instrument_to_agreement) {
+      chargeObj.savePaymentInstrumentToAgreement = charge.save_payment_instrument_to_agreement
+    }
     if (charge.auth_3ds_data) {
       chargeObj.auth3dsData = _normaliseAuth3dsData(charge.auth_3ds_data)
     }
@@ -39,6 +46,7 @@ module.exports = (function () {
     if (charge.wallet_type) {
       chargeObj.walletType = charge.wallet_type
     }
+
     return chargeObj
   }
 
