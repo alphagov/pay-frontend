@@ -36,10 +36,82 @@ const unNormalisedCharge = {
   moto: false
 }
 
+const unNormalisedChargeWithAgreement = {
+  amount: 1234,
+  return_url: 'foo',
+  description: 'bar',
+  agreement_id: '12345678901234567890abcdef',
+  save_payment_instrument_to_agreement: true,
+  agreement: {
+    description: 'This agreement is for recurring card payment',
+    agreement_id: '12345678901234567890abcdef'
+  },
+  payment_provider: 'worldpay',
+  links: [{
+    rel: 'rar',
+    href: 'http://foo'
+  }],
+  status: 'status',
+  email: 'bobbybobby@bobby.bob',
+  auth_3ds_data: {
+    paRequest: 'paRequest',
+    issuerUrl: 'issuerUrl',
+    htmlOut: 'html',
+    md: 'md',
+    worldpayChallengeJwt: 'worldpayChallengeJwt'
+  },
+  gateway_account: {
+    analytics_id: 'bla-1234',
+    type: 'live',
+    service_name: 'Pranks incorporated',
+    card_types: [{
+      type: 'CREDIT',
+      brand: 'VISA',
+      label: 'Visa'
+    }]
+  },
+  moto: false
+}
+
 const normalisedCharge = {
   id: 1,
   amount: '12.34',
   service_return_url: 'foo',
+  description: 'bar',
+  paymentProvider: 'worldpay',
+  links: [{
+    rel: 'rar',
+    href: 'http://foo'
+  }],
+  status: 'status',
+  email: 'bobbybobby@bobby.bob',
+  auth3dsData: {
+    paRequest: 'paRequest',
+    issuerUrl: 'issuerUrl',
+    htmlOut: 'html',
+    md: 'md',
+    worldpayChallengeJwt: 'worldpayChallengeJwt'
+  },
+  gatewayAccount: {
+    analyticsId: 'bla-1234',
+    type: 'live',
+    serviceName: 'Pranks incorporated',
+    cardTypes: [{
+      brand: 'VISA',
+      debit: false,
+      credit: true
+    }]
+  },
+  moto: false
+}
+
+const normalisedChargeWithAgreement = {
+  id: 1,
+  amount: '12.34',
+  service_return_url: 'foo',
+  agreementId:'12345678901234567890abcdef',
+  savePaymentInstrumentToAgreement: true,
+  agreementDescription: 'This agreement is for recurring card payment',
   description: 'bar',
   paymentProvider: 'worldpay',
   links: [{
@@ -105,6 +177,25 @@ const unNormalisedChargeWithCardDetailsWithNoCountry = {
   }
 }
 
+const unNormalisedChargeWithCardDetailsAndAgreement = {
+  ...unNormalisedChargeWithAgreement,
+  card_details: {
+    last_digits_card_number: '1234',
+    first_digits_card_number: '424242',
+    cardholder_name: 'Mr Test Man',
+    expiry_date: '10/23',
+    billing_address: {
+      line1: 'House 1',
+      line2: '10 A road',
+      postcode: 'abcd123',
+      city: 'Dublin'
+    },
+    card_brand: 'Visa',
+    card_type: 'credit'
+  }
+}
+
+
 const normalisedChargeWithCardDetails = {
   ...normalisedCharge,
   cardDetails: {
@@ -126,6 +217,25 @@ const normalisedChargeWithCardDetails = {
 
 const normalisedChargeWithCardDetailsAndDefaultCountry = {
   ...normalisedCharge,
+  cardDetails: {
+    cardNumber: '●●●●●●●●●●●●1234',
+    firstDigitsCardNumber: '424242',
+    cardholderName: 'Mr Test Man',
+    expiryDate: '10/23',
+    billingAddress: 'House 1, 10 A road, Dublin, abcd123',
+    cardBrand: 'Visa',
+    cardType: 'credit'
+  },
+  cardholderName: 'Mr Test Man',
+  addressCity: 'Dublin',
+  addressLine1: 'House 1',
+  addressLine2: '10 A road',
+  addressPostcode: 'abcd123',
+  countryCode: 'GB'
+}
+
+const normalisedChargeWithCardDetailsAndDefaultCountryAndAgreement = {
+  ...normalisedChargeWithAgreement,
   cardDetails: {
     cardNumber: '●●●●●●●●●●●●1234',
     firstDigitsCardNumber: '424242',
@@ -182,6 +292,14 @@ describe('normalise', () => {
           expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountry)
         })
       })
+
+      describe('payment has associated agreement', () => {
+        it('should return agreement id on the payment screen', () => {
+          const result = normalise.charge(unNormalisedChargeWithCardDetailsAndAgreement, 1, service)
+          expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountryAndAgreement)
+        })
+      })
+
     })
   })
 
