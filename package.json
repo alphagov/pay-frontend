@@ -158,7 +158,7 @@
     "sinon": "13.0.x",
     "standard": "^14.3.x",
     "superagent": "^7.1.1",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.3"
   },
   "nyc": {
     "reporter": "text",
