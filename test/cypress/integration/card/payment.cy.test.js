@@ -29,6 +29,8 @@ const validPaymentRequestResponse = {
   complete: () => true
 }
 
+const agreementDescription = 'Human readable agreement description'
+
 describe('Standard card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
@@ -48,6 +50,12 @@ describe('Standard card payment flow', () => {
   const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
   const createPaymentChargeStubsWelsh = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'cy')
   const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
+  const checkCardDetailsWithSetupAgreementStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId, 42, {
+    agreement: {
+      agreement_id: 'an-agreement-id',
+      description: agreementDescription
+    }
+  })
 
   // @TODO(sfount) test the payment in progress in flows by returning statuses that indicate different levels of progress
   // i.e - charge after or before authorisation when clicking confirm should bring up confirmation page or 'your payment is in progress' page respectively
@@ -94,11 +102,22 @@ describe('Standard card payment flow', () => {
 
       cy.get('#google-pay-payment-method-divider').should('not.exist')
       cy.get('#apple-pay-payment-method-divider').should('not.exist')
+      cy.get('#agreement-setup-disclaimer').should('not.exist')
 
       cy.get('#expiry-date-hint').contains(/\b10\/[0-9]{2}\b/)
 
       // Accept header will almost certainly contain either ‘text/html’ or ‘*/*’
       cy.get('body').should('have.attr', 'data-accept-header').and('match', /text\/html|\*\/\*/)
+    })
+
+    it('Should show a paying user disclaimer that details will be saved if an agreement is being configured ', () => {
+      cy.task('setupStubs', checkCardDetailsWithSetupAgreementStubs)
+
+      // load the same card page with agreement stubs set
+      cy.reload()
+      cy.get('#agreement-setup-disclaimer').should('exist')
+      cy.get('#agreement-setup-disclaimer').should('contain', 'Your payment details will be saved for:')
+      cy.get('#agreement-setup-disclaimer').should('contain', agreementDescription)
     })
 
     it('Should enter and validate a correct card', () => {
