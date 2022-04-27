@@ -38,9 +38,10 @@ function confirmPaymentDetailsStubs (chargeId, validPayment = {}, gatewayAccount
   ]
 }
 
-function checkCardDetailsStubs (chargeId, gatewayAccountId = 42) {
+function checkCardDetailsStubs (chargeId, gatewayAccountId = 42, additionalChargeOpts = {}) {
   return [
     chargeStubs.connectorGetChargeDetails({
+      ...additionalChargeOpts,
       chargeId,
       gatewayAccountId,
       status: 'ENTERING CARD DETAILS',

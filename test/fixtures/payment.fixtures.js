@@ -202,6 +202,17 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     data.auth_3ds_data = buildAuth3dsDetails(opts.auth3dsData)
   }
 
+  if (opts.agreement) {
+    const agreementId = 'a-valid-agreement-id'
+    data.agreement_id = opts.agreement.agreement_id || agreementId
+    data.agreement = {
+      agreement_id: opts.agreement.agreement_id || agreementId,
+      description: opts.agreement.description || 'a valid description',
+      reference: opts.agreement.reference || 'a-valid-reference'
+    }
+    data.save_payment_instrument_to_agreement = true
+  }
+
   return data
 }
 
@@ -277,6 +288,12 @@ const fixtures = {
         status: opts.status || 'CREATED',
         version: 1,
         walletType: null,
+        agreement_id: 'some-agreement-id',
+        agreement: {
+          description: 'A valid description',
+          reference: 'A valid reference'
+        },
+        save_payment_instrument_to_agreement: true,
         moto: opts.moto || false,
         events: [{
           gatewayEventDate: null,

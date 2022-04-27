@@ -533,14 +533,14 @@
             })
           }}
                 {% endif %}
-                  {% if savePaymentInstrumentToAgreement and agreementId  and agreementDescription %}
-                   <div class="govuk-form-group">
+                  {% if savePaymentInstrumentToAgreement and agreementDescription %}
+                  <div id="agreement-setup-disclaimer" class="govuk-form-group">
                     <div class="govuk-inset-text">
-                     <p class="govuk-body">Your payment details will be saved for:</p>
-                       <p class="govuk-body">{{ agreementDescription }}</p>
-                     </div>
-                   </div>
-                   {% endif %}
+                      <p class="govuk-body">Your payment details will be saved for:</p>
+                      <p class="govuk-body">{{ agreementDescription }}</p>
+                    </div>
+                  </div>
+                  {% endif %}
                 <div>
                   {% if typos %}
                     {{
