@@ -150,7 +150,7 @@
     "mountebank": "2.6.0",
     "nock": "13.2.4",
     "node-sass": "7.0.1",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.16",
     "nyc": "15.1.x",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.9.36/pay-product-page-4.9.36.tgz",
     "proxyquire": "~2.1.3",
