@@ -14,8 +14,7 @@ const initialiseAddressCountryAutocomplete = () => {
       displayMenu: 'overlay'
     })
 
-    var noOpAutocompleteIdentifier = Math.random().toString(36).substring(2, 15)
-    document.getElementById('address-country').setAttribute('autocomplete', noOpAutocompleteIdentifier)
+    document.getElementById('address-country').setAttribute('autocomplete', 'country-disabled-autocomplete')
   }
 
   autocompleteScript.setAttribute('type', 'text/javascript')
