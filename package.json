@@ -73,7 +73,7 @@
     ]
   },
   "overrides": {
-    "minimist": "1.2.5"
+    "minimist": "1.2.6"
   },
   "dependencies": {
     "@aws-crypto/decrypt-node": "^1.0.3",
@@ -98,7 +98,7 @@
     "mailcheck": "^1.1.1",
     "memory-cache": "^0.2.0",
     "metrics": "0.1.21",
-    "minimist": "1.2.5",
+    "minimist": "1.2.6",
     "moment-timezone": "^0.5.34",
     "morgan": "1.10.x",
     "nunjucks": "^3.2.3",
