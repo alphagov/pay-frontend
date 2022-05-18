@@ -24,16 +24,16 @@ module.exports = (function () {
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     }
 
-     if(charge.agreement && charge.agreement.description) {
-            chargeObj.agreementDescription = charge.agreement.description
-     }
-    if(charge.agreement && charge.agreement.agreement_id){
+    if (charge.agreement && charge.agreement.description) {
+      chargeObj.agreementDescription = charge.agreement.description
+    }
+    if (charge.agreement && charge.agreement.agreement_id) {
       chargeObj.agreementId = charge.agreement.agreement_id
     }
-    if(charge.agreement_id) {
+    if (charge.agreement_id) {
       chargeObj.agreementId = charge.agreement_id
     }
-    if(charge.save_payment_instrument_to_agreement) {
+    if (charge.save_payment_instrument_to_agreement) {
       chargeObj.savePaymentInstrumentToAgreement = charge.save_payment_instrument_to_agreement
     }
     if (charge.auth_3ds_data) {

@@ -105,7 +105,7 @@ const normalisedChargeWithAgreement = {
   id: 1,
   amount: '12.34',
   service_return_url: 'foo',
-  agreementId:'12345678901234567890abcdef',
+  agreementId: '12345678901234567890abcdef',
   savePaymentInstrumentToAgreement: true,
   description: 'bar',
   paymentProvider: 'worldpay',
@@ -189,7 +189,6 @@ const unNormalisedChargeWithCardDetailsAndAgreement = {
     card_type: 'credit'
   }
 }
-
 
 const normalisedChargeWithCardDetails = {
   ...normalisedCharge,
@@ -294,7 +293,6 @@ describe('normalise', () => {
           expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountryAndAgreement)
         })
       })
-
     })
   })
 
