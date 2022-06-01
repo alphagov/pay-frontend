@@ -13,12 +13,12 @@ const paths = require('../paths')
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 
 module.exports = (req, res, next) => {
-  const correctStates = stateService.resolveStates(req.actionName)
+  let correctStates = stateService.resolveStates(req.actionName)
   const currentState = req.chargeData.status
 
   const paymentProvider = req.chargeData.payment_provider
   if (paymentProvider === 'stripe' && currentState === State.AUTH_3DS_READY) {
-    correctStates.push(State.AUTH_3DS_READY)
+    correctStates = correctStates.concat([State.AUTH_3DS_READY])
   }
   if (!correctStates.includes(currentState)) {
     logger.info(`State enforcer status doesn't match: current charge state from \
