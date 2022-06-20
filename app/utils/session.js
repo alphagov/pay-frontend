@@ -31,7 +31,7 @@ const validateSessionCookie = function validateSessionCookie (req) {
     return false
   } else if (!cookie.getSessionVariable(req, 'ch_' + chargeId)) {
     logger.info('ChargeId was not found on the session', {
-      ...getLoggingFields,
+      ...getLoggingFields(req),
       referrer: req.get('Referrer'),
       url: req.originalUrl,
       method: req.method,
@@ -39,6 +39,10 @@ const validateSessionCookie = function validateSessionCookie (req) {
     })
     return false
   }
+  logger.info('ChargeId found on session', {
+    ...getLoggingFields(req),
+    number_of_payments_on_cookie: cookie.getSessionVariableNames(req).length
+  })
   return true
 }
 
