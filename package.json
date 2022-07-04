@@ -159,7 +159,7 @@
     "stylelint-config-gds": "^0.2.0",
     "stylelint-order": "^5.0.0",
     "superagent": "^8.0.0",
-    "supertest": "^6.2.3"
+    "supertest": "^6.2.4"
   },
   "nyc": {
     "reporter": "text",
