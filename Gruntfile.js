@@ -1,11 +1,12 @@
 const path = require('path')
-const nodeSass = require('node-sass')
+const dartSass = require('sass')
 
 module.exports = function (grunt) {
   const sass = {
     dev: {
       options: {
-        implementation: nodeSass,
+        implementation: dartSass,
+        quietDeps: true,
         style: 'expanded',
         sourcemap: true,
         includePaths: [
