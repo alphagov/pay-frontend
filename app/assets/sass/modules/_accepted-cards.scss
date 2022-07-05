@@ -24,13 +24,15 @@
   $cards: visa master-card american-express jcb diners-club discover maestro visa-electron unionpay;
   @for $i from 1 through length($cards) {
     // sass-lint:disable space-around-operator
+    $x-pos: 12.5 * ($i - 1);
+
     .#{nth($cards, $i)} {
-      background-position: #{12.5 * ($i - 1)}% 100%;
+      background-position: #{$x-pos + "%"} 100%;
     }
 
     &.field-empty .#{nth($cards, $i)},
     .#{nth($cards, $i)}.selected {
-      background-position: #{12.5 * ($i - 1)}% 0%;
+      background-position: #{$x-pos + "%"} 0%;
     }
   }
 
