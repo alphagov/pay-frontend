@@ -118,7 +118,7 @@
     "@babel/preset-env": "^7.18.9",
     "@pact-foundation/pact": "^9.18.1",
     "@pact-foundation/pact-node": "^10.17.6",
-    "@snyk/protect": "^1.979.x",
+    "@snyk/protect": "^1.980.x",
     "browserify": "17.0.x",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
