@@ -21,7 +21,7 @@ RUN rm -rf ./test
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/govuk_modules ./govuk_modules
 COPY --from=builder /app/public ./public
-RUN npm prune --production
+RUN npm prune --omit=dev
 
 ENV PORT 9000
 EXPOSE 9000

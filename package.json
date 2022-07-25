@@ -161,6 +161,14 @@
     "superagent": "^8.0.0",
     "supertest": "^6.2.4"
   },
+  "overrides": {
+    "grunt-rewrite": {
+      "grunt": "1.5.3"
+    },
+    "grunt-babel": {
+      "grunt": "1.5.3"
+    }
+  },
   "nyc": {
     "reporter": "text",
     "check-coverage": false,
