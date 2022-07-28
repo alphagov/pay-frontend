@@ -468,8 +468,8 @@
                     </fieldset>
                   </div>
                 {% endif %}
-                {% if (gatewayAccount.emailCollectionMode === 'MANDATORY')
-                  or(gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
+                {% set shouldShowEmail = (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
+                {% if shouldShowEmail %}
                   <div class="govuk-!-width-three-quarters email-container govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
                     <fieldset class="govuk-fieldset" aria-describedby="email-hint">
                       <div>
@@ -534,10 +534,10 @@
           }}
                 {% endif %}
                   {% if savePaymentInstrumentToAgreement and agreementDescription %}
-                  <div id="agreement-setup-disclaimer" class="govuk-form-group">
+                  <div id="agreement-setup-disclaimer" class="govuk-form-group govuk-!-width-three-quarters {% if shouldShowEmail %}govuk-!-margin-top-6{% else %}govuk-!-margin-top-8{% endif %} pay-!-border-top"">
                     <div class="govuk-inset-text">
-                      <p class="govuk-body">Your payment details will be saved for:</p>
-                      <p class="govuk-body">{{ agreementDescription }}</p>
+                      <p class="govuk-hint govuk-!-margin-bottom-0">Your payment details will be saved for:</p>
+                      <p class="govuk-body-l">{{ agreementDescription }}</p>
                     </div>
                   </div>
                   {% endif %}
