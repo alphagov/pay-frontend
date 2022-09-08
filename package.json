@@ -142,7 +142,7 @@
     "mocha": "10.0.x",
     "mountebank": "2.7.0",
     "nock": "13.2.9",
-    "node-sass": "7.0.1",
+    "node-sass": "7.0.2",
     "nodemon": "^2.0.19",
     "nyc": "15.1.x",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.10.9/pay-product-page-4.10.9.tgz",
