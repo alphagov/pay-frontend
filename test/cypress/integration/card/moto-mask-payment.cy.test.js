@@ -151,31 +151,29 @@ describe('Standard card payment flow', () => {
       cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'cc-csc')
     })
 
-    it('should allow a valid card number to be entered', () => {
+    it('should display an error when a invalid card number is entered', () => {
+      cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.get('#card-no').type('1234567890')
+      cy.get('#card-no').blur()
+
+      cy.get('#card-no').should('have.class', 'govuk-input--error')
+      cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Card number is not the correct length')
+    })
+
+    it('should allow a valid card number to be entered and remove existing error messages', () => {
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
 
+      cy.get('#card-no').clear()
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
 
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
-    })
-
-    it('should display an error when a invalid card number is entered', () => {
-      cy.task('setupStubs', checkCardDetailsStubs)
-
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
-
-      cy.get('#card-no').type('1234567890')
-      cy.get('#card-no').blur()
-
-      cy.wait('@checkCard')
-      cy.get('#card-no').should('have.class', 'govuk-input--error')
-      cy.get('#card-no-lbl').should('contain', 'Card number is not the correct length')
+      cy.get('#card-no').parent().find('.govuk-error-message').should('not.exist')
     })
   })
 
@@ -196,21 +194,22 @@ describe('Standard card payment flow', () => {
       cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'off')
     })
 
-    it('should allow a valid security code to be entered', () => {
-      cy.get('#cvc').clear()
-      cy.get('#cvc').type(validPayment.securityCode)
-      cy.get('#cvc').blur()
-
-      cy.get('#cvc').should('not.have.class', 'govuk-input--error')
-    })
-
     it('should display an error when a invalid security code is entered', () => {
       cy.get('#cvc').clear()
       cy.get('#cvc').type('11')
       cy.get('#cvc').blur()
 
       cy.get('#cvc').should('have.class', 'govuk-input--error')
-      cy.get('#cvc-lbl').should('contain', 'Enter a valid card security code')
+      cy.get('#cvc-lbl').parent().find('.govuk-error-message').should('contain', 'Enter a valid card security code')
+    })
+
+    it('should allow a valid security code to be entered and remove existing error messages', () => {
+      cy.get('#cvc').clear()
+      cy.get('#cvc').type(validPayment.securityCode)
+      cy.get('#cvc').blur()
+
+      cy.get('#cvc').should('not.have.class', 'govuk-input--error')
+      cy.get('#cvc-lbl').parent().find('.govuk-error-message').should('not.exist')
     })
   })
 

@@ -237,14 +237,20 @@ var init = function () {
   var replaceLabel = function (validation, formGroup) {
     var label = formGroup.querySelectorAll('[data-label-replace]')[0]
     if (label.length === 0) return
+
+    var  errorElement = label.parentNode.parentNode.querySelector('.govuk-error-message') 
+
     if (validation) {
-      label.textContent = validation
-      label.setAttribute('role', 'alert')
-      label.classList.add('govuk-error-message')
+      if (errorElement){ 
+        errorElement.parentNode.removeChild(errorElement)
+      }
+
+      var errorElementHtml = '<p class="govuk-error-message" role="alert">' + validation + '</p>'
+      label.parentNode.insertAdjacentHTML("afterend", errorElementHtml)
     } else {
-      label.textContent = label.getAttribute('data-original-label')
-      label.setAttribute('role', '')
-      label.classList.remove('govuk-error-message')
+      if (errorElement){
+        errorElement.parentNode.removeChild(errorElement)
+      }
     }
   }
 

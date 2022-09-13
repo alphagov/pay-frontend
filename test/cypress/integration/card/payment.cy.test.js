@@ -195,7 +195,7 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no').type('4000160000000004')
       cy.get('#card-no').blur()
       cy.wait('@checkCard')
-      cy.get('#card-no-lbl').should('contain', 'Prepaid cards are not accepted')
+      cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Prepaid cards are not accepted')
     })
 
     it('should allow prepaid cards if gateway account is configured to allow', () => {
@@ -238,7 +238,7 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no').blur()
 
       cy.get('#card-no').should('have.class', 'govuk-input--error')
-      cy.get('#card-no-lbl').should('contain', 'Card number is not the correct length')
+      cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Card number is not the correct length')
     })
   })
 
@@ -266,7 +266,7 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no').blur()
 
       cy.get('#card-no').should('have.class', 'govuk-input--error')
-      cy.get('#card-no-lbl').should('contain', 'Nid yw rhif y cerdyn yr hyd cywir')
+      cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Nid yw rhif y cerdyn yr hyd cywir')
     })
   })
 
