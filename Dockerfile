@@ -3,7 +3,7 @@ FROM node:16.16.0-alpine3.15@sha256:80e6c223fba4c0b16e795cc7cc79564fd856166e39b4
 WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
-RUN npm ci --quiet
+RUN npm ci --quiet 
 
 COPY . .
 RUN npm run compile
