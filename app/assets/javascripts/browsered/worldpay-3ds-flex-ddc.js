@@ -45,8 +45,12 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
     form.submit()
   }, DDC_TIMEOUT_IN_MILLISECONDS)
 
+  const iFrame = document.getElementById('worldpay3dsFlexDdcIframe')
+  const iFrameWindow = iFrame.contentWindow
+  const innerDoc = iFrameWindow.document
+
   window.addEventListener('message', function (event) {
-    if (checkOriginHostName(event.origin)) {
+    if (checkOriginHostName(event.origin) && event.source === iFrameWindow) {
       const { MessageType, SessionId, Status } = JSON.parse(event.data)
       if (MessageType === 'profile.completed') {
         if (Status === true && typeof SessionId === 'string') {
@@ -65,8 +69,6 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
 
   toggleWaiting()
 
-  const iFrame = document.getElementById('worldpay3dsFlexDdcIframe')
-  const innerDoc = iFrame.contentWindow.document
   const initiateDeviceDataCollection = iFrameContent => {
     const innerForm = iFrameContent.getElementById('collectionForm')
     innerForm.action = Charge.worldpay_3ds_flex_ddc_url
