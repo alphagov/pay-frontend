@@ -1,6 +1,7 @@
 'use strict'
 
-const { prepareAppleRequestObject, showErrorSummary, toggleWaiting } = require('./helpers')
+const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
+const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
 const { validateEmail } = require('../../../../utils/email-validation')
 const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
@@ -40,12 +41,14 @@ module.exports = () => {
 
   session.onpaymentauthorized = event => {
     const { payment } = event
-    toggleWaiting('apple-pay-payment-method-submit')
+    toggleSubmitButtons()
+    showSpinnerAndHideMainContent()
 
     if (email_collection_mode !== 'OFF') { // eslint-disable-line camelcase
       if (!payment.shippingContact || typeof payment.shippingContact.emailAddress !== 'string' ||
           !validateEmail(payment.shippingContact.emailAddress).valid) {
-        toggleWaiting('apple-pay-payment-method-submit')
+        hideSpinnerAndShowMainContent()
+        toggleSubmitButtons()
         showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)
 
         const emailError = new ApplePayError('shippingContactInvalid', 'emailAddress', i18n.fieldErrors.fields.email.message)
@@ -72,13 +75,15 @@ module.exports = () => {
         })
       } else {
         session.abort()
-        toggleWaiting('apple-pay-payment-method-submit')
+        hideSpinnerAndShowMainContent()
+        toggleSubmitButtons()
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'During authorisation/capture')
       }
     }).catch(err => {
       session.abort()
-      toggleWaiting('apple-pay-payment-method-submit')
+      hideSpinnerAndShowMainContent()
+      toggleSubmitButtons()
       showErrorSummary(i18n.fieldErrors.webPayments.apple)
       ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
       return err

@@ -1,25 +1,6 @@
 'use strict'
 
-const toggleWaiting = () => {
-  document.getElementById('card-details-wrap').classList.toggle('hidden')
-  document.getElementById('spinner').classList.toggle('hidden')
-  document.getElementById('error-summary').classList.add('hidden')
-
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
-  if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
-    paymentDetailsHeader.style.display = 'none'
-  }
-
-  var applePayContainer = document.querySelector('.apple-pay-container')
-  if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
-    applePayContainer.style.display = 'none'
-  }
-
-  var googlePayContainer = document.querySelector('.google-pay-container')
-  if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
-    googlePayContainer.style.display = 'none'
-  }
-}
+const { showSpinnerAndHideMainContent } = require('./helpers')
 
 const addWorldpaySessionIdToForm = (form, worldpaySessionId) => {
   const worldpaySessionIdFormInput = document.createElement('input')
@@ -67,7 +48,7 @@ const submitWithWorldpay3dsFlexDdcResult = form => {
     }
   })
 
-  toggleWaiting()
+  showSpinnerAndHideMainContent()
 
   const initiateDeviceDataCollection = iFrameContent => {
     const innerForm = iFrameContent.getElementById('collectionForm')
