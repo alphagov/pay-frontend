@@ -180,7 +180,7 @@ describe('rendering behaviour', () => {
     HUMANS: {
       template: 'plain-message',
       code: 200,
-      message: 'GOV.UK Payments is built by a team at the Government Digital Service in London. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'
+      message: 'Thanks for everything, David.'
     }
   }
 
