@@ -589,6 +589,9 @@
           </div>
           {% if worldpay3dsFlexDdcJwt %}
             <iframe id="worldpay3dsFlexDdcIframe" src="/public/worldpay/worldpay-3ds-flex-ddc.html" class="govuk-!-display-none"></iframe>
+            {% if allowGooglePay %}
+              <iframe id="googlePayWorldpay3dsFlexDdcIframe" src="/public/worldpay/worldpay-3ds-flex-ddc.html" class="govuk-!-display-none"></iframe>
+            {% endif %}
           {% endif %}
       </main>
     </div>
