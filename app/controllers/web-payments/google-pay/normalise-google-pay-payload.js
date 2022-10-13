@@ -30,6 +30,10 @@ const logselectedPayloadProperties = req => {
     if ('payerEmail' in payload) {
       selectedPayloadProperties.payerEmail = redact(payload.payerEmail)
     }
+
+    if ('worldpay3dsFlexDdcResult' in payload) {
+      selectedPayloadProperties.worldpay3dsFlexDdcResult = redact(payload.worldpay3dsFlexDdcResult)
+    }
   }
 
   logger.info('Received Google Pay payload', {
@@ -83,6 +87,7 @@ module.exports = req => {
     brand: normaliseCardName(payload.details.paymentMethodData.info.cardNetwork),
     cardholder_name: nullable(payload.payerName || ''),
     email: nullable(payload.payerEmail || ''),
+    worldpay_3ds_flex_ddc_result: nullable(payload.worldpay3dsFlexDdcResult || ''),
     accept_header: req.headers['accept-for-html'],
     user_agent_header: req.headers['user-agent'],
     ip_address: userIpAddress(req)
