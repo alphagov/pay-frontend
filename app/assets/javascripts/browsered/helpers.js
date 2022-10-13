@@ -79,7 +79,7 @@ const hideSpinnerAndShowMainContent = () => {
 
   var googlePayContainer = document.querySelector('.google-pay-container')
   if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
-    googlePayContainer.style.display = 'bock'
+    googlePayContainer.style.display = 'block'
   }
 
   document.getElementById('spinner').classList.add('hidden')
