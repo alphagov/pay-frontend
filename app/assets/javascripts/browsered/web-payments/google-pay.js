@@ -23,6 +23,11 @@ const processPayment = paymentData => {
         return response.json().then(data => {
           window.location.href = data.url
         })
+      } else {
+        hideSpinnerAndShowMainContent()
+        toggleSubmitButtons()
+        showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
+        ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
       }
     })
     .catch(err => {
