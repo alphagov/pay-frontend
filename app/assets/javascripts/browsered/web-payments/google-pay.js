@@ -4,7 +4,9 @@ const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers'
 const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
 const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 
-const submitGooglePayAuthRequest = (paymentData, ddcStatus, ddcResult) => {
+const submitGooglePayAuthRequest = (paymentResponse, ddcStatus, ddcResult) => {
+  var paymentData = paymentResponse.toJSON()
+
   if (ddcStatus) {
     paymentData.worldpay3dsFlexDdcStatus = ddcStatus
   }
