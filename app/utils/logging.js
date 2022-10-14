@@ -37,3 +37,10 @@ exports.failedChargePatch = (err, loggingFields = {}) => {
     error: err
   })
 }
+
+exports.worldpay3dsFlexDdcStatus = (ddcStatus, loggingFields = {}) => {
+  logger.info(`Payment details submitted for a Worldpay 3DS Flex charge. DDC status is: ${ddcStatus}`, {
+    ...loggingFields,
+    worldpay_3ds_flex_ddc_status: ddcStatus
+  })
+}

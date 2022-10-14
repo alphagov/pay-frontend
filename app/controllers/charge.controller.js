@@ -140,11 +140,7 @@ module.exports = {
 
     const { worldpay3dsFlexDdcStatus } = req.body
     if (worldpay3dsFlexDdcStatus) {
-      logger.info(`Payment details submitted for a Worldpay 3DS Flex charge. DDC status is: ${worldpay3dsFlexDdcStatus}`,
-        {
-          ...getLoggingFields(req),
-          worldpay_3ds_flex_ddc_status: worldpay3dsFlexDdcStatus
-        })
+      logging.worldpay3dsFlexDdcStatus(worldpay3dsFlexDdcStatus, getLoggingFields(req))
     }
 
     if (charge.status === State.AUTH_READY) return redirect(res).toAuthWaiting(req.chargeId)
