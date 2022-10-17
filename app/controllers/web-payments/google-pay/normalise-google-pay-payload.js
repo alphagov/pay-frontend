@@ -10,25 +10,26 @@ const logselectedPayloadProperties = req => {
   const selectedPayloadProperties = {}
   const payload = req.body
 
-  if (payload.details && payload.details.paymentMethodData && payload.details.paymentMethodData.info) {
+  if (payload.paymentResponse && payload.paymentResponse.details
+    && payload.paymentResponse.details.paymentMethodData && payload.paymentResponse.details.paymentMethodData.info) {
     selectedPayloadProperties.details = {}
     selectedPayloadProperties.details.paymentMethodData = {}
     selectedPayloadProperties.details.paymentMethodData.info = {}
 
-    if ('cardDetails' in payload.details.paymentMethodData.info) {
-      selectedPayloadProperties.details.paymentMethodData.info.cardDetails = output(payload.details.paymentMethodData.info.cardDetails)
+    if ('cardDetails' in payload.paymentResponse.details.paymentMethodData.info) {
+      selectedPayloadProperties.details.paymentMethodData.info.cardDetails = output(payload.paymentResponse.details.paymentMethodData.info.cardDetails)
     }
 
-    if ('cardNetwork' in payload.details.paymentMethodData.info) {
-      selectedPayloadProperties.details.paymentMethodData.info.cardNetwork = output(payload.details.paymentMethodData.info.cardNetwork)
+    if ('cardNetwork' in payload.paymentResponse.details.paymentMethodData.info) {
+      selectedPayloadProperties.details.paymentMethodData.info.cardNetwork = output(payload.paymentResponse.details.paymentMethodData.info.cardNetwork)
     }
 
-    if ('payerName' in payload) {
-      selectedPayloadProperties.payerName = redact(payload.payerName)
+    if ('payerName' in payload.paymentResponse) {
+      selectedPayloadProperties.payerName = redact(payload.paymentResponse.payerName)
     }
 
-    if ('payerEmail' in payload) {
-      selectedPayloadProperties.payerEmail = redact(payload.payerEmail)
+    if ('payerEmail' in payload.paymentResponse) {
+      selectedPayloadProperties.payerEmail = redact(payload.paymentResponse.payerEmail)
     }
 
     if ('worldpay3dsFlexDdcResult' in payload) {
@@ -83,18 +84,18 @@ module.exports = req => {
   const payload = req.body
 
   const paymentInfo = {
-    last_digits_card_number: normaliseLastDigitsCardNumber(payload.details.paymentMethodData.info.cardDetails),
-    brand: normaliseCardName(payload.details.paymentMethodData.info.cardNetwork),
-    cardholder_name: nullable(payload.payerName || ''),
-    email: nullable(payload.payerEmail || ''),
+    last_digits_card_number: normaliseLastDigitsCardNumber(payload.paymentResponse.details.paymentMethodData.info.cardDetails),
+    brand: normaliseCardName(payload.paymentResponse.details.paymentMethodData.info.cardNetwork),
+    cardholder_name: nullable(payload.paymentResponse.payerName || ''),
+    email: nullable(payload.paymentResponse.payerEmail || ''),
     worldpay_3ds_flex_ddc_result: nullable(payload.worldpay3dsFlexDdcResult || ''),
     accept_header: req.headers['accept-for-html'],
     user_agent_header: req.headers['user-agent'],
     ip_address: userIpAddress(req)
   }
 
-  const paymentData = humps.decamelizeKeys(JSON.parse(payload.details.paymentMethodData.tokenizationData.token))
-  delete payload.details.paymentMethodData
+  const paymentData = humps.decamelizeKeys(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
+  delete payload.paymentResponse.details.paymentMethodData
 
   return {
     payment_info: paymentInfo,

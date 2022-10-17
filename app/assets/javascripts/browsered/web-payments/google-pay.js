@@ -5,14 +5,16 @@ const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMa
 const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 
 const submitGooglePayAuthRequest = (paymentResponse, ddcStatus, ddcResult) => {
-  var paymentData = paymentResponse.toJSON()
+  var requestBody = {
+    paymentResponse: paymentResponse
+  }
 
   if (ddcStatus) {
-    paymentData.worldpay3dsFlexDdcStatus = ddcStatus
+    requestBody.worldpay3dsFlexDdcStatus = ddcStatus
   }
 
   if (ddcResult) {
-    paymentData.worldpay3dsFlexDdcResult = ddcResult
+    requestBody.worldpay3dsFlexDdcResult = ddcResult
   }
 
   return fetch(`/web-payments-auth-request/google/${window.paymentDetails.chargeID}`, {
@@ -22,7 +24,7 @@ const submitGooglePayAuthRequest = (paymentResponse, ddcStatus, ddcResult) => {
       'Content-Type': 'application/json',
       'Accept-for-HTML': document.body.getAttribute('data-accept-header') || '*/*'
     },
-    body: JSON.stringify(paymentData)
+    body: JSON.stringify(requestBody)
   })
     .then(response => {
       ga('send', 'event', 'Google Pay', 'Successful', 'auth/capture request')
