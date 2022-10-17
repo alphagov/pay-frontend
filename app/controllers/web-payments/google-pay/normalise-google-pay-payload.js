@@ -12,24 +12,25 @@ const logselectedPayloadProperties = req => {
 
   if (payload.paymentResponse && payload.paymentResponse.details
     && payload.paymentResponse.details.paymentMethodData && payload.paymentResponse.details.paymentMethodData.info) {
-    selectedPayloadProperties.details = {}
-    selectedPayloadProperties.details.paymentMethodData = {}
-    selectedPayloadProperties.details.paymentMethodData.info = {}
+    selectedPayloadProperties.paymentResponse = {}
+    selectedPayloadProperties.paymentResponse.details = {}
+    selectedPayloadProperties.paymentResponse.details.paymentMethodData = {}
+    selectedPayloadProperties.paymentResponse.details.paymentMethodData.info = {}
 
     if ('cardDetails' in payload.paymentResponse.details.paymentMethodData.info) {
-      selectedPayloadProperties.details.paymentMethodData.info.cardDetails = output(payload.paymentResponse.details.paymentMethodData.info.cardDetails)
+      selectedPayloadProperties.paymentResponse.details.paymentMethodData.info.cardDetails = output(payload.paymentResponse.details.paymentMethodData.info.cardDetails)
     }
 
     if ('cardNetwork' in payload.paymentResponse.details.paymentMethodData.info) {
-      selectedPayloadProperties.details.paymentMethodData.info.cardNetwork = output(payload.paymentResponse.details.paymentMethodData.info.cardNetwork)
+      selectedPayloadProperties.paymentResponse.details.paymentMethodData.info.cardNetwork = output(payload.paymentResponse.details.paymentMethodData.info.cardNetwork)
     }
 
     if ('payerName' in payload.paymentResponse) {
-      selectedPayloadProperties.payerName = redact(payload.paymentResponse.payerName)
+      selectedPayloadProperties.paymentResponse.payerName = redact(payload.paymentResponse.payerName)
     }
 
     if ('payerEmail' in payload.paymentResponse) {
-      selectedPayloadProperties.payerEmail = redact(payload.paymentResponse.payerEmail)
+      selectedPayloadProperties.paymentResponse.payerEmail = redact(payload.paymentResponse.payerEmail)
     }
 
     if ('worldpay3dsFlexDdcResult' in payload) {
