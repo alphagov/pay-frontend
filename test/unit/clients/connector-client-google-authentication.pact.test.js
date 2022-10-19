@@ -24,6 +24,8 @@ const { pactify } = require('../../test-helpers/pact/pact-base')()
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
+const GOOGLE_DDC_RESULT = 'some long opaque string that’s a device data collection result'
+
 describe('connectors client - google authentication API', function () {
   const provider = new Pact({
     consumer: 'frontend',
@@ -40,7 +42,7 @@ describe('connectors client - google authentication API', function () {
 
   describe('Authenticate google payment', function () {
     describe('authorisation success', function () {
-      const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails()
+      const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails({ worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before(() => {
@@ -71,7 +73,10 @@ describe('connectors client - google authentication API', function () {
     })
 
     describe('authorisation success with no last card digits', function () {
-      const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '' })
+      const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails({
+        lastDigitsCardNumber: '',
+        worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
+      })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before(() => {
@@ -102,7 +107,10 @@ describe('connectors client - google authentication API', function () {
     })
 
     describe('authorisation declined', function () {
-      const declinedGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '0002' })
+      const declinedGoogleAuthRequest = fixtures.googleAuthRequestDetails({
+        lastDigitsCardNumber: '0002',
+        worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
+      })
 
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
@@ -129,7 +137,10 @@ describe('connectors client - google authentication API', function () {
     })
 
     describe('authorisation error', function () {
-      const errorGoogleAuthRequest = fixtures.googleAuthRequestDetails({ lastDigitsCardNumber: '0119' })
+      const errorGoogleAuthRequest = fixtures.googleAuthRequestDetails({
+        lastDigitsCardNumber: '0119',
+        worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
+      })
 
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
@@ -150,6 +161,37 @@ describe('connectors client - google authentication API', function () {
           provider: 'google',
           payload: errorGoogleAuthRequest
         }).then(() => {
+          done()
+        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+      })
+    })
+
+    describe('authorisation success with no ddc result', function () {
+      const successfulGoogleAuthRequest = fixtures.googleAuthRequestDetails()
+      const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
+
+      before(() => {
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
+          .withRequestBody(successfulGoogleAuthRequest)
+          .withMethod('POST')
+          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withUponReceiving('a valid google pay auth request with no ddc result which should be authorised')
+          .withResponseBody(pactify(authorisationSuccessResponse))
+          .withStatusCode(200)
+          .build()
+        return provider.addInteraction(builder)
+      })
+
+      afterEach(() => provider.verify())
+
+      it('should return authorisation success', function (done) {
+        const payload = successfulGoogleAuthRequest
+        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          chargeId: TEST_CHARGE_ID,
+          provider: 'google',
+          payload: payload
+        }).then(res => {
+          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })

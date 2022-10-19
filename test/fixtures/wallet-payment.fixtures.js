@@ -8,7 +8,7 @@ const fixtures = {
         brand: 'master-card',
         cardholder_name: 'Some Name',
         email: 'name@email.test',
-        worldpay_3ds_flex_ddc_result: 'some long opaque string that’s a device data collection result',
+        worldpay_3ds_flex_ddc_result: ops.worldpay3dsFlexDdcResult !== undefined ? ops.worldpay3dsFlexDdcResult : null,
         accept_header: 'text/html;q=1.0, */*;q=0.9',
         user_agent_header: 'Mozilla/5.0',
         ip_address: '203.0.113.1'
