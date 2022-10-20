@@ -166,7 +166,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.not.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
