@@ -120,7 +120,7 @@
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "chokidar-cli": "latest",
-    "cypress": "6.4.0",
+    "cypress": "7.7.0",
     "dotenv": "^16.0.3",
     "envfile": "^5.2.0",
     "eslint": "^8.25.0",
