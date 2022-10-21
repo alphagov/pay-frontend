@@ -220,6 +220,11 @@ describe('Apple Pay payment flow', () => {
     })
 
     it('Should show Apple Pay but error because a bad email was entered', () => {
+      // eslint-disable-next-line handle-callback-err
+      cy.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from failing when the purpose of the test is an uncaught exception
+        return false
+      })
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -279,6 +284,11 @@ describe('Apple Pay payment flow', () => {
     })
 
     it('Should show Apple Pay as a payment option and user chooses Apple Pay', () => {
+      // eslint-disable-next-line handle-callback-err
+      cy.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from failing when the purpose of the test is an uncaught exception
+        return false
+      })
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, true))
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
