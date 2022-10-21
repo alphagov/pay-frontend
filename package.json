@@ -98,7 +98,7 @@
     "polyfill-array-includes": "^2.0.0",
     "promise-polyfill": "8.2.3",
     "punycode": "1.4.1",
-    "randomstring": "^1.2.1",
+    "randomstring": "^1.2.3",
     "readdir": "1.0.x",
     "request": "^2.88.2",
     "requestretry": "^7.1.0",
