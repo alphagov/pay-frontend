@@ -4,17 +4,17 @@ const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers'
 const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
 const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 
-const submitGooglePayAuthRequest = (paymentResponse, ddcStatus, ddcResult) => {
+const submitGooglePayAuthRequest = (paymentResponse) => {
   var requestBody = {
     paymentResponse: paymentResponse
   }
 
-  if (ddcStatus) {
-    requestBody.worldpay3dsFlexDdcStatus = ddcStatus
+  if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {
+    requestBody.worldpay3dsFlexDdcStatus = Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus
   }
 
-  if (ddcResult) {
-    requestBody.worldpay3dsFlexDdcResult = ddcResult
+  if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionResult === 'string') {
+    requestBody.worldpay3dsFlexDdcResult = Charge.googlePayWorldpay3dsFlexDeviceDataCollectionResult
   }
 
   return fetch(`/web-payments-auth-request/google/${window.paymentDetails.chargeID}`, {
@@ -57,20 +57,17 @@ const performDeviceDataCollectionForGooglePay = (paymentData) => {
     if (checkOriginHostName(event.origin) && event.source === iframeWindow) {
       const { MessageType, SessionId, Status } = JSON.parse(event.data)
       if (MessageType === 'profile.completed') {
-        var ddcResult = null
-        var ddcStatus
         if (Status === true && typeof SessionId === 'string') {
-          ddcStatus = 'valid DDC result'
-          ddcResult = SessionId
+          Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = 'valid DDC result'
+          Charge.googlePayWorldpay3dsFlexDeviceDataCollectionResult = SessionId
         } else if (!Status) {
-          ddcStatus = 'DDC result did not have Status of true'
+          Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = 'DDC result did not have Status of true'
         } else {
-          ddcStatus = 'no SessionID string in DDC result'
+          Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = 'no SessionID string in DDC result'
         }
-        Charge.googlePayWorldpay3dsFlexDeviceDataCollectionResult = ddcResult
         window.clearTimeout(deviceDataCollectionTimeout)
         window.removeEventListener('message', deviceDataCollectionFinishedEventListener)
-        submitGooglePayAuthRequest(paymentData, ddcStatus, ddcResult)
+        submitGooglePayAuthRequest(paymentData)
       }
     }
   }
@@ -79,27 +76,11 @@ const performDeviceDataCollectionForGooglePay = (paymentData) => {
 
   const deviceDataCollectionTimeout = window.setTimeout(() => {
     window.removeEventListener('message', deviceDataCollectionFinishedEventListener)
-    submitGooglePayAuthRequest(paymentData, `DDC timeout after ${DDC_TIMEOUT_IN_MILLISECONDS} milliseconds`)
+    Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = `DDC timeout after ${DDC_TIMEOUT_IN_MILLISECONDS} milliseconds`
+    submitGooglePayAuthRequest(paymentData)
   }, DDC_TIMEOUT_IN_MILLISECONDS)
 
   var iframe = document.getElementById('googlePayWorldpay3dsFlexDdcIframe')
-
-  try {
-    // checking if iframe has been changed by DDC in a previous attempt. if it has then accessing href throws an exception
-    // due to same origin rule. we need to re-create the iframe to be able to re-use it.
-    // eslint-disable-next-line no-unused-expressions
-    iframe.contentWindow.location.href
-  } catch (error) {
-    var iframeParent = iframe.parentElement
-    iframe.remove()
-    var newIframe = document.createElement('iframe')
-    newIframe.id = 'googlePayWorldpay3dsFlexDdcIframe'
-    newIframe.classList.add('govuk-!-display-none')
-    newIframe.src = '/public/worldpay/worldpay-3ds-flex-ddc.html'
-    iframeParent.appendChild(newIframe)
-    iframe = newIframe
-  }
-
   const iframeWindow = iframe.contentWindow
   const iframeDocument = iframeWindow.document
 
@@ -127,15 +108,14 @@ const processPayment = paymentData => {
   toggleSubmitButtons()
   showSpinnerAndHideMainContent()
 
-  if (typeof Charge.worldpay_3ds_flex_ddc_jwt === 'string' && Charge.worldpay_3ds_flex_ddc_jwt !== '') {
-    const cachedDdcResult = window.Charge.googlePayWorldpay3dsFlexDeviceDataCollectionResult
-    if (!cachedDdcResult) {
-      performDeviceDataCollectionForGooglePay(paymentData)
-    } else {
-      submitGooglePayAuthRequest(paymentData, 'valid DDC result', cachedDdcResult)
-    }
-  } else {
+  if (typeof Charge.worldpay_3ds_flex_ddc_jwt !== 'string' || Charge.worldpay_3ds_flex_ddc_jwt === '') {
     submitGooglePayAuthRequest(paymentData)
+  }
+
+  if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {
+    submitGooglePayAuthRequest(paymentData)
+  } else {
+    performDeviceDataCollectionForGooglePay(paymentData)
   }
 }
 

@@ -1,7 +1,7 @@
 const { getMockPaymentRequest } = require('../../utils/payment-request-api-stub')
 const {
-  connectorGetChargeDetails,
   connectorUpdateChargeStatus,
+  connectorMultipleSubsequentChargeDetails,
   connectorWorldpay3dsFlexDdcJwt
 } = require('../../utils/stub-builders/charge-stubs')
 const {
@@ -46,25 +46,20 @@ describe('Google Pay payment flow', () => {
     }
   }
 
-  const createPaymentChargeStubs = [
-    connectorCreateChargeFromToken({ tokenId }),
-    connectorMarkTokenAsUsed(tokenId),
-    connectorGetChargeDetails({
-      chargeId,
-      status: 'CREATED',
-      state: { finished: false, status: 'created' },
-      requires3ds: true,
-      integrationVersion3ds: 2,
-      paymentProvider: 'worldpay'
-    }),
-    connectorUpdateChargeStatus(chargeId),
-    connectorWorldpay3dsFlexDdcJwt(chargeId),
-    adminUsersGetService()
-  ]
-
-  const checkCardDetailsStubsWithGooglePayorApplePay = (googlePayEnabled, applePayEnabled) => {
+  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled) => {
     return [
-      connectorGetChargeDetails({
+      connectorMultipleSubsequentChargeDetails([{
+          chargeId,
+          status: 'CREATED',
+          state: { finished: false, status: 'created' },
+          allowApplePay: applePayEnabled,
+          allowGooglePay: googlePayEnabled,
+          gatewayMerchantId: 'SMTHG12345UP',
+          requires3ds: true,
+          integrationVersion3ds: 2,
+          paymentProvider: 'worldpay'
+        },
+        {
         chargeId,
         status: 'ENTERING CARD DETAILS',
         state: { finished: false, status: 'started' },
@@ -74,7 +69,11 @@ describe('Google Pay payment flow', () => {
         requires3ds: true,
         integrationVersion3ds: 2,
         paymentProvider: 'worldpay'
-      }),
+      }]),
+      connectorCreateChargeFromToken({ tokenId }),
+      connectorMarkTokenAsUsed(tokenId),
+      connectorUpdateChargeStatus(chargeId),
+      adminUsersGetService(),
       cardIdValidCardDetails(),
       connectorWorldpay3dsFlexDdcJwt(chargeId)
     ]
@@ -84,48 +83,34 @@ describe('Google Pay payment flow', () => {
   const worldpay3dsFlexDdcStubFailure = worldpay3dsFlexDdcIframePost(worldpaySessionId, false)
 
   beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
     Cypress.Cookies.preserveOnce('frontend_state')
   })
 
   describe('Secure card payment page', () => {
     it('Should setup the payment and load the page', () => {
-      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
       cy.visit(`/secure/${tokenId}`)
-
-      // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be marked as used (POST)
-      // 3. Charge will be fetched (GET)
-      // 4. Service related to charge will be fetched (GET)
-      // 5. Charge status will be updated (PUT)
-      // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     })
 
     it('Should show Google Pay as a payment option and user chooses it', () => {
-      cy.task('setupStubs', [...checkCardDetailsStubsWithGooglePayorApplePay(true, false), worldpay3dsFlexDdcStub])
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
-          // Stub Payment Request API
           if (win.PaymentRequest) {
-            // If we’re running in headed mode
             cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
           } else {
-            // else headless
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
         }
       })
 
-      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pa
-      cy.intercept('POST', `/web-payments-auth-request/google/${chargeId}`, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       cy.wait('@web-payments-auth-request')
         .then((interception) => {
           // eslint-disable-next-line no-unused-expressions
@@ -134,7 +119,6 @@ describe('Google Pay payment flow', () => {
           expect(interception.request.body.worldpay3dsFlexDdcStatus).to.eq('valid DDC result')
         })
 
-      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/')
         expect(loc.search).to.eq(returnURL)
@@ -142,29 +126,23 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option and user chooses it but DDC fails', () => {
-      cy.task('setupStubs', [...checkCardDetailsStubsWithGooglePayorApplePay(true, false), worldpay3dsFlexDdcStubFailure])
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
-          // Stub Payment Request API
           if (win.PaymentRequest) {
-            // If we’re running in headed mode
             cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
           } else {
-            // else headless
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
         }
       })
 
-
-      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
-      cy.intercept('POST', `/web-payments-auth-request/google/${chargeId}`, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       cy.wait('@web-payments-auth-request')
         .then((interception) => {
           // eslint-disable-next-line no-unused-expressions
@@ -173,47 +151,38 @@ describe('Google Pay payment flow', () => {
           expect(interception.request.body.worldpay3dsFlexDdcStatus).to.eq('DDC result did not have Status of true')
         })
 
-      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/')
         expect(loc.search).to.eq(returnURL)
       })
     })
 
-    it('Should show Google Pay as a payment option and user chooses it but Ajax call fails first time', () => {
-      cy.task('setupStubs', [...checkCardDetailsStubsWithGooglePayorApplePay(true, false), worldpay3dsFlexDdcStub])
+    it('Should show Google Pay as a payment option and user chooses it but fetch call fails first time', () => {
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
-          // Stub Payment Request API
           if (win.PaymentRequest) {
-            // If we’re running in headed mode
             cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
           } else {
-            // else headless
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
         }
       })
 
-      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
-      cy.intercept('POST', `/web-payments-auth-request/google/${chargeId}`, { forceNetworkError: true }).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
-      // but the connection to the auth request handler fails
-      cy.wait('@web-payments-auth-request')
+      cy.wait('@first-web-payments-auth-request-which-fails')
 
-
-      // 9. The Google Pay button reappears and the user tries again
-      cy.intercept('POST', `/web-payments-auth-request/google/${chargeId}`, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@second-web-payments-auth-request')
+      cy.wait('@second-web-payments-auth-request-which-succeeds')
         .then((interception) => {
           // eslint-disable-next-line no-unused-expressions
           expect(interception.request.body.paymentResponse).to.exist
@@ -221,7 +190,45 @@ describe('Google Pay payment flow', () => {
           expect(interception.request.body.worldpay3dsFlexDdcStatus).to.eq('valid DDC result')
         })
 
-      // 10. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq('/')
+        expect(loc.search).to.eq(returnURL)
+      })
+    })
+
+    it('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time', () => {
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
+
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          if (win.PaymentRequest) {
+            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+          } else {
+            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+          }
+        }
+      })
+
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+
+      cy.wait('@first-web-payments-auth-request-which-fails')
+
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+
+      cy.wait('@second-web-payments-auth-request-which-succeeds')
+        .then((interception) => {
+          // eslint-disable-next-line no-unused-expressions
+          expect(interception.request.body.paymentResponse).to.exist
+          expect(interception.request.body).to.not.have.property('worldpay3dsFlexDdcResult')
+          expect(interception.request.body.worldpay3dsFlexDdcStatus).to.eq('DDC result did not have Status of true')
+        })
+
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/')
         expect(loc.search).to.eq(returnURL)
@@ -229,73 +236,126 @@ describe('Google Pay payment flow', () => {
     })
 
     it('Should show Google Pay as a payment option and user chooses standard method', () => {
-      cy.task('setupStubs', [...checkCardDetailsStubsWithGooglePayorApplePay(true, false), worldpay3dsFlexDdcStub])
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
-          // Stub Payment Request API
           if (win.PaymentRequest) {
-            // If we’re running in headed mode
             cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
           } else {
-            // else headless
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
         }
       })
 
-      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
 
-      // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.get('#card-no').type('4242424242424242')
+      cy.get('#card-no').blur()
+
+      cy.wait('@checkCard')
+
+      cy.get('#expiry-month').type('10')
+      cy.get('#expiry-year').type('50')
+      cy.get('#cardholder-name').type('Ms. Test')
+      cy.get('#cvc').type('123')
+      cy.get('#address-line-1').type('1 Test Street')
+      cy.get('#address-city').type('1 Test City')
+      cy.get('#address-postcode').type('TE1 1ST')
+      cy.get('#email').type('payer@payment.test')
+
+      cy.get('#card-details').submit().should($form => {
+        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
+        expect(formVal).to.eq(worldpaySessionId)
+        const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
+        expect(ddcStatusVal).to.eq('valid DDC result')
+      })
+    })
+
+    it('Should show Google Pay as a payment option and user chooses it but fetch call fails so user uses standard method', () => {
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
+
+      cy.visit(`/card_details/${chargeId}`, {
+        onBeforeLoad: win => {
+          if (win.PaymentRequest) {
+            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+          } else {
+            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+          }
+        }
+      })
+
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, { forceNetworkError: true }).as('web-payments-auth-request')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+
+      cy.wait('@web-payments-auth-request')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#card-no').should('be.visible')
+
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.get('#card-no').type('4242424242424242')
+      cy.get('#card-no').blur()
+
+      cy.wait('@checkCard')
+
+      cy.get('#expiry-month').type('10')
+      cy.get('#expiry-year').type('50')
+      cy.get('#cardholder-name').type('Ms. Test')
+      cy.get('#cvc').type('123')
+      cy.get('#address-line-1').type('1 Test Street')
+      cy.get('#address-city').type('1 Test City')
+      cy.get('#address-postcode').type('TE1 1ST')
+      cy.get('#email').type('payer@payment.test')
+
+      cy.get('#card-details').submit().should($form => {
+        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
+        expect(formVal).to.eq(worldpaySessionId)
+        const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
+        expect(ddcStatusVal).to.eq('valid DDC result')
+      })
     })
 
     it('Should not show Google Pay as browser doesn’t support it', () => {
-      cy.task('setupStubs', [...checkCardDetailsStubsWithGooglePayorApplePay(false, false), worldpay3dsFlexDdcStub])
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false), worldpay3dsFlexDdcStub])
+
       cy.visit(`/card_details/${chargeId}`)
 
-      // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
-
-      // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
     })
 
     it('Should setup the payment and load the page and Apple Pay is enabled for service as well', () => {
-      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
       cy.visit(`/secure/${tokenId}`)
-
-      // 1. Charge will be created using this id as a token (GET)
-      // 2. Token will be marked as used (POST)
-      // 3. Charge will be fetched (GET)
-      // 4. Service related to charge will be fetched (GET)
-      // 5. Charge status will be updated (PUT)
-      // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     })
 
     it('Should show Google Pay as a payment option and user chooses it', () => {
-      cy.task('setupStubs', [...checkCardDetailsStubsWithGooglePayorApplePay(true, true), worldpay3dsFlexDdcStub])
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, true), worldpay3dsFlexDdcStub])
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
-          // Stub Payment Request API
           if (win.PaymentRequest) {
-            // If we’re running in headed mode
             cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
           } else {
-            // else headless
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
         }
       })
 
-      cy.intercept('POST', `/web-payments-auth-request/google/${chargeId}`, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
 
-      // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Google Pay
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       cy.wait('@web-payments-auth-request')
         .then((interception) => {
           // eslint-disable-next-line no-unused-expressions
@@ -304,7 +364,6 @@ describe('Google Pay payment flow', () => {
           expect(interception.request.body.worldpay3dsFlexDdcStatus).to.eq('valid DDC result')
         })
 
-      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/')
         expect(loc.search).to.eq(returnURL)
