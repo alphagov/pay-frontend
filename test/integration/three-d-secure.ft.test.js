@@ -447,6 +447,18 @@ describe('chargeTests', function () {
         .end(done)
     })
 
+    it('should send 3ds data to connector and render an error if connector returns an 402', function (done) {
+      const cookieValue = cookie.create(chargeId)
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { pa_response: 'aPaResponse' }).reply(402)
+      defaultAdminusersResponseForGetService(gatewayAccountId)
+
+      postChargeRequest(app, cookieValue, { PaRes: 'aPaResponse' }, chargeId, true, '/3ds_handler')
+        .expect(500)
+        .end(done)
+    })
+
     it('should send 3ds data to connector and render an error if connector returns an invalid status code', function (done) {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)

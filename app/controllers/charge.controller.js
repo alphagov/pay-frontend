@@ -101,9 +101,10 @@ const handleCreateResponse = (req, res, charge, response) => {
         redirect(res).toConfirm(req.chargeId)
       }
       break
+    case 402:
     case 500:
-      logging.failedChargePost(500, getLoggingFields(req))
-      responseRouter.systemErrorResponse(req, res, '500 response when authorising charge', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+      logging.failedChargePost(response.statusCode, getLoggingFields(req))
+      responseRouter.systemErrorResponse(req, res, `${response.statusCode} response when authorising charge`, withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
       redirect(res).toNew(req.chargeId)
@@ -206,7 +207,10 @@ module.exports = {
       delete payload.address
     }
     try {
-      const response = await connectorClient({ correlationId }).chargeAuth({ chargeId: req.chargeId, payload }, getLoggingFields(req))
+      const response = await connectorClient({ correlationId }).chargeAuth({
+        chargeId: req.chargeId,
+        payload
+      }, getLoggingFields(req))
       handleCreateResponse(req, res, charge, response)
     } catch (err) {
       logging.failedChargePatch(err.message, getLoggingFields(req))

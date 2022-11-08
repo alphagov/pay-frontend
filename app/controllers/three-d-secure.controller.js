@@ -70,8 +70,9 @@ const handleThreeDsResponse = (req, res, charge) => response => {
     case 409:
       redirect(res).toAuthWaiting(charge.id)
       break
+    case 402:
     case 500:
-      responseRouter.systemErrorResponse(req, res, '3DS response 500', withAnalytics(charge))
+      responseRouter.systemErrorResponse(req, res, `3DS response ${response.statusCode}`, withAnalytics(charge))
       break
     default:
       responseRouter.errorResponse(req, res, '3DS unknown response', withAnalytics(charge))

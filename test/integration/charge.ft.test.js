@@ -281,5 +281,27 @@ describe('chargeTests', function () {
         .expect(200)
         .end(done)
     })
+
+    it('should render error page when connector returns 402', function (done) {
+      const cookieValue = cookie.create(chargeId)
+      nock(process.env.CONNECTOR_HOST)
+        .patch('/v1/frontend/charges/23144323')
+        .reply(200)
+      defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS)
+      defaultAdminusersResponseForGetService(gatewayAccountId)
+
+      nock(adminUsersHost, defaultCorrelationHeader)
+        .get(`${servicesResource}?gatewayAccountId=${gatewayAccountId}`)
+        .reply(200, serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }))
+
+      mockSuccessCardIdResponse(defaultCardID)
+
+      connectorExpects(minimumConnectorCardData('4242424242424242'))
+        .reply(402)
+
+      postChargeRequest(app, cookieValue, minimumFormCardData('4242 4242 4242 4242'), chargeId)
+        .expect(500)
+        .end(done)
+    })
   })
 })
