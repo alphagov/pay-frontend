@@ -192,7 +192,6 @@ describe('The web payments handle auth response controller', () => {
     }
     const mockCookies = {
       getSessionVariable: (req, key) => {
-        // expect(key).to.be(`ch_${chargeId}.webPaymentAuthResponse`)
         return {
           statusCode: 200
         }
@@ -216,6 +215,40 @@ describe('The web payments handle auth response controller', () => {
     expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
+
+  it('should show error page and delete connector response if connector response is in the session and status is 402', done => {
+    const mockCharge = sinon.spy()
+    const res = {
+      redirect: sinon.spy(),
+      render: sinon.spy(),
+      status: sinon.spy()
+    }
+    const mockCookies = {
+      getSessionVariable: (req, key) => {
+        return {
+          statusCode: 402
+        }
+      },
+      deleteSessionVariable: sinon.spy()
+    }
+    const systemErrorObj = {
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
+      }
+    }
+    requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
+    done()
+  })
+
   it('show error page and delete connector response if connector response is in the session and status code is 400', done => {
     const mockCharge = () => {
       return {
@@ -235,7 +268,6 @@ describe('The web payments handle auth response controller', () => {
     }
     const mockCookies = {
       getSessionVariable: () => {
-        // expect(key).to.be(`ch_${chargeId}.webPaymentAuthResponse`)
         return {
           statusCode: 400
         }
