@@ -5,37 +5,33 @@ const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const { output, redact } = require('../../../utils/structured-logging-value-helper')
 const userIpAddress = require('../../../utils/user-ip-address')
 const humps = require('humps')
+const lodash = require('lodash')
 
-const logselectedPayloadProperties = req => {
-  const selectedPayloadProperties = {}
+const logSelectedPayloadProperties = req => {
   const payload = req.body
 
-  if (payload.paymentResponse && payload.paymentResponse.details
-    && payload.paymentResponse.details.paymentMethodData && payload.paymentResponse.details.paymentMethodData.info) {
-    selectedPayloadProperties.paymentResponse = {}
-    selectedPayloadProperties.paymentResponse.details = {}
-    selectedPayloadProperties.paymentResponse.details.paymentMethodData = {}
-    selectedPayloadProperties.paymentResponse.details.paymentMethodData.info = {}
+  const selectedPayloadProperties = lodash.pick(payload, [
+    'worldpay3dsFlexDdcResult',
+    'paymentResponse.payerName',
+    'paymentResponse.payerEmail',
+    'paymentResponse.details.paymentMethodData.info.cardDetails',
+    'paymentResponse.details.paymentMethodData.info.cardNetwork'
+  ])
 
-    if ('cardDetails' in payload.paymentResponse.details.paymentMethodData.info) {
-      selectedPayloadProperties.paymentResponse.details.paymentMethodData.info.cardDetails = output(payload.paymentResponse.details.paymentMethodData.info.cardDetails)
-    }
-
-    if ('cardNetwork' in payload.paymentResponse.details.paymentMethodData.info) {
-      selectedPayloadProperties.paymentResponse.details.paymentMethodData.info.cardNetwork = output(payload.paymentResponse.details.paymentMethodData.info.cardNetwork)
-    }
-
-    if ('payerName' in payload.paymentResponse) {
-      selectedPayloadProperties.paymentResponse.payerName = redact(payload.paymentResponse.payerName)
-    }
-
-    if ('payerEmail' in payload.paymentResponse) {
-      selectedPayloadProperties.paymentResponse.payerEmail = redact(payload.paymentResponse.payerEmail)
-    }
-
-    if ('worldpay3dsFlexDdcResult' in payload) {
-      selectedPayloadProperties.worldpay3dsFlexDdcResult = redact(payload.worldpay3dsFlexDdcResult)
-    }
+  if (lodash.has(payload, 'worldpay3dsFlexDdcResult')) {
+    selectedPayloadProperties.worldpay3dsFlexDdcResult = redact(payload.worldpay3dsFlexDdcResult)
+  }
+  if (lodash.has(payload, 'paymentResponse.payerName')) {
+    selectedPayloadProperties.paymentResponse.payerName = redact(payload.paymentResponse.payerName)
+  }
+  if (lodash.has(payload, 'paymentResponse.payerEmail')) {
+    selectedPayloadProperties.paymentResponse.payerEmail = redact(payload.paymentResponse.payerEmail)
+  }
+  if (lodash.has(payload, 'paymentResponse.details.paymentMethodData.info.cardDetails')) {
+    selectedPayloadProperties.paymentResponse.details.paymentMethodData.info.cardDetails = output(payload.paymentResponse.details.paymentMethodData.info.cardDetails)
+  }
+  if (lodash.has(payload, 'paymentResponse.details.paymentMethodData.info.cardNetwork')) {
+    selectedPayloadProperties.paymentResponse.details.paymentMethodData.info.cardNetwork = output(payload.paymentResponse.details.paymentMethodData.info.cardNetwork)
   }
 
   logger.info('Received Google Pay payload', {
@@ -80,7 +76,7 @@ const nullable = word => {
 }
 
 module.exports = req => {
-  logselectedPayloadProperties(req)
+  logSelectedPayloadProperties(req)
 
   const payload = req.body
 
