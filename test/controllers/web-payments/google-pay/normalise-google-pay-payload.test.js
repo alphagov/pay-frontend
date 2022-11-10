@@ -1,5 +1,19 @@
 const expect = require('chai').expect
-const normalise = require('../../../../app/controllers/web-payments/google-pay/normalise-google-pay-payload')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+
+const loggerInfoMock = sinon.spy()
+
+const proxyquireMocks = {
+  '../../../../app/utils/logger': () => {
+    return {
+      info: loggerInfoMock
+    }
+  }
+}
+
+const normalise = proxyquire('../../../../app/controllers/web-payments/google-pay/normalise-google-pay-payload.js',
+  proxyquireMocks)
 
 const headers = {
   'accept-for-html': 'text/html;q=1.0, */*;q=0.9',
@@ -54,6 +68,28 @@ describe('normalise Google Pay payload', () => {
         }
       }
     )
+
+    const loggingPayload = {
+      selected_payload_properties:
+        {
+          paymentResponse: {
+            details: {
+              paymentMethodData: {
+                info: {
+                  cardDetails: '4242',
+                  cardNetwork: 'MASTERCARD'
+                }
+              }
+            },
+            payerName: '(redacted non-blank string)',
+            payerEmail: '(redacted non-blank string)'
+          },
+          worldpay3dsFlexDdcResult: '(redacted non-blank string)'
+
+        }
+    }
+
+    sinon.assert.calledWithExactly(loggerInfoMock, 'Received Google Pay payload', loggingPayload)
   })
 
   it('should throw error for invalid the payload', () => {
@@ -80,7 +116,10 @@ describe('normalise Google Pay payload', () => {
       }
     }
 
-    expect(() => normalise({ headers: headers, body: googlePayPayload })).to.throw('Unrecognised card brand in Google Pay payload: UnSupportedCard')
+    expect(() => normalise({
+      headers: headers,
+      body: googlePayPayload
+    })).to.throw('Unrecognised card brand in Google Pay payload: UnSupportedCard')
   })
 
   it('should return the correct format for the payload with min data', () => {
@@ -124,6 +163,24 @@ describe('normalise Google Pay payload', () => {
         }
       }
     )
+
+    const loggingPayload = {
+      selected_payload_properties:
+        {
+          paymentResponse: {
+            details: {
+              paymentMethodData: {
+                info: {
+                  cardDetails: '4242',
+                  cardNetwork: 'MASTERCARD'
+                }
+              }
+            }
+          }
+        }
+    }
+
+    sinon.assert.calledWithExactly(loggerInfoMock, 'Received Google Pay payload', loggingPayload)
   })
 
   it('should return an empty string for last_digits_card_number when cardDetails does not have numeric values for the last 4 characters', () => {
