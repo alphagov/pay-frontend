@@ -1,4 +1,4 @@
-FROM node:16.17.1-alpine3.16@sha256:88d9d8da697877a4a771a40e5cbc10a12c2ad959e82f3b0f36ef35635e17f693 as builder
+FROM node:16.18.1-alpine3.16@sha256:868e2b6c8923d87a4bbfb157d757898061c9000aaaedf64472074fa7b62d0e72 as builder
 
 WORKDIR /app
 COPY package.json .
