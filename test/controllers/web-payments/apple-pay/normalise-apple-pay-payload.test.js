@@ -1,5 +1,19 @@
 const expect = require('chai').expect
-const normalise = require('../../../../app/controllers/web-payments/apple-pay/normalise-apple-pay-payload')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+
+const loggerInfoMock = sinon.spy()
+
+const proxyquireMocks = {
+  '../../../../app/utils/logger': () => {
+    return {
+      info: loggerInfoMock
+    }
+  }
+}
+
+const normalise = proxyquire('../../../../app/controllers/web-payments/apple-pay/normalise-apple-pay-payload.js',
+  proxyquireMocks)
 
 describe('normalise apple pay payload', function () {
   it('should return the correct format for the payload', function () {
@@ -52,6 +66,26 @@ describe('normalise apple pay payload', function () {
         }
       }
     )
+
+    const loggingPayload = {
+      selected_payload_properties:
+        {
+          token: {
+            paymentMethod: {
+              displayName: 'MasterCard 1358',
+              network: 'MasterCard',
+              type: 'debit'
+            }
+          },
+          shippingContact: {
+            givenName: '(redacted non-blank string)',
+            familyName: '(redacted non-blank string)',
+            emailAddress: '(redacted non-blank string)'
+          }
+        }
+    }
+
+    sinon.assert.calledWithExactly(loggerInfoMock, 'Received Apple Pay payload', loggingPayload)
   })
   it('should return an empty string for last_digits_card_number when displayName does not have numeric values for last 4 characters', function () {
     const applePayPayload = {
@@ -240,5 +274,20 @@ describe('normalise apple pay payload', function () {
         }
       }
     )
+
+    const loggingPayload = {
+      selected_payload_properties:
+        {
+          token: {
+            paymentMethod: {
+              displayName: 'MasterCard 1358',
+              network: 'MasterCard',
+              type: 'debit'
+            }
+          }
+        }
+    }
+
+    sinon.assert.calledWithExactly(loggerInfoMock, 'Received Apple Pay payload', loggingPayload)
   })
 })
