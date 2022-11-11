@@ -4,45 +4,37 @@ const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const { output, redact } = require('../../../utils/structured-logging-value-helper')
 const humps = require('humps')
+const lodash = require('lodash')
 
-const logselectedPayloadProperties = req => {
-  const selectedPayloadProperties = {}
+const logSelectedPayloadProperties = req => {
   const payload = req.body
 
-  if (payload.token) {
-    selectedPayloadProperties.token = {}
+  const selectedPayloadProperties = lodash.pick(payload, [
+    'token.paymentMethod.displayName',
+    'token.paymentMethod.network',
+    'token.paymentMethod.type',
+    'shippingContact.givenName',
+    'shippingContact.familyName',
+    'shippingContact.emailAddress'
+  ])
 
-    if (payload.token.paymentMethod) {
-      selectedPayloadProperties.token.paymentMethod = {}
-
-      if ('displayName' in payload.token.paymentMethod) {
-        selectedPayloadProperties.token.paymentMethod.displayName = output(payload.token.paymentMethod.displayName)
-      }
-
-      if ('network' in payload.token.paymentMethod) {
-        selectedPayloadProperties.token.paymentMethod.network = output(payload.token.paymentMethod.network)
-      }
-
-      if ('type' in payload.token.paymentMethod) {
-        selectedPayloadProperties.token.paymentMethod.type = output(payload.token.paymentMethod.type)
-      }
-    }
-
-    if (payload.shippingContact) {
-      selectedPayloadProperties.shippingContact = {}
-
-      if ('givenName' in payload.shippingContact) {
-        selectedPayloadProperties.shippingContact.givenName = redact(payload.shippingContact.givenName)
-      }
-
-      if ('familyName' in payload.shippingContact) {
-        selectedPayloadProperties.shippingContact.familyName = redact(payload.shippingContact.familyName)
-      }
-
-      if ('emailAddress' in payload.shippingContact) {
-        selectedPayloadProperties.shippingContact.emailAddress = redact(payload.shippingContact.emailAddress)
-      }
-    }
+  if (lodash.has(payload, 'token.paymentMethod.displayName')) {
+    selectedPayloadProperties.token.paymentMethod.displayName = output(payload.token.paymentMethod.displayName)
+  }
+  if (lodash.has(payload, 'token.paymentMethod.network')) {
+    selectedPayloadProperties.token.paymentMethod.network = output(payload.token.paymentMethod.network)
+  }
+  if (lodash.has(payload, 'token.paymentMethod.type')) {
+    selectedPayloadProperties.token.paymentMethod.type = output(payload.token.paymentMethod.type)
+  }
+  if (lodash.has(payload, 'shippingContact.givenName')) {
+    selectedPayloadProperties.shippingContact.givenName = redact(payload.shippingContact.givenName)
+  }
+  if (lodash.has(payload, 'shippingContact.familyName')) {
+    selectedPayloadProperties.shippingContact.familyName = redact(payload.shippingContact.familyName)
+  }
+  if (lodash.has(payload, 'shippingContact.emailAddress')) {
+    selectedPayloadProperties.shippingContact.emailAddress = redact(payload.shippingContact.emailAddress)
   }
 
   logger.info('Received Apple Pay payload', {
@@ -107,7 +99,7 @@ const normaliseEmail = payload => {
 }
 
 module.exports = req => {
-  logselectedPayloadProperties(req)
+  logSelectedPayloadProperties(req)
 
   const payload = req.body
 
