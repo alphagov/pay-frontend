@@ -41,6 +41,10 @@ const logSelectedPayloadProperties = req => {
 }
 
 const normaliseCardName = cardName => {
+  if (!cardName) {
+    throw new Error('Card brand is not available in Google Pay payload')
+  }
+
   switch (cardName) {
     case 'MASTERCARD':
       return 'master-card'
@@ -81,8 +85,8 @@ module.exports = req => {
   const payload = req.body
 
   const paymentInfo = {
-    last_digits_card_number: normaliseLastDigitsCardNumber(payload.paymentResponse.details.paymentMethodData.info.cardDetails),
-    brand: normaliseCardName(payload.paymentResponse.details.paymentMethodData.info.cardNetwork),
+    last_digits_card_number: normaliseLastDigitsCardNumber(lodash.get(payload, 'paymentResponse.details.paymentMethodData.info.cardDetails', '')),
+    brand: normaliseCardName(lodash.get(payload, 'paymentResponse.details.paymentMethodData.info.cardNetwork', '')),
     cardholder_name: nullable(payload.paymentResponse.payerName || ''),
     email: nullable(payload.paymentResponse.payerEmail || ''),
     worldpay_3ds_flex_ddc_result: nullable(payload.worldpay3dsFlexDdcResult || ''),
