@@ -115,7 +115,7 @@
     "@pact-foundation/pact-node": "^10.17.6",
     "@snyk/protect": "^1.1044.x",
     "browserify": "17.0.x",
-    "chai": "^4.3.6",
+    "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "chai-string": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
