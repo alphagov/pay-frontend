@@ -111,7 +111,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/preset-env": "^7.20.2",
-    "@pact-foundation/pact": "^9.18.1",
+    "@pact-foundation/pact": "^10.2.2",
     "@pact-foundation/pact-node": "^10.17.6",
     "@snyk/protect": "^1.1058.x",
     "browserify": "17.0.x",
