@@ -152,7 +152,7 @@
     "stylelint": "^14.16.0",
     "stylelint-config-gds": "^0.2.0",
     "stylelint-order": "^5.0.0",
-    "superagent": "^8.0.5",
+    "superagent": "^8.0.6",
     "supertest": "^6.3.2"
   },
   "overrides": {
