@@ -123,7 +123,7 @@
     "cypress": "7.7.0",
     "dotenv": "^16.0.3",
     "envfile": "^5.2.0",
-    "eslint": "^8.29.0",
+    "eslint": "^8.30.0",
     "eslint-plugin-import": "^2.26.0",
     "govuk-country-and-territory-autocomplete": "^1.0.2",
     "grunt": "1.5.3",
