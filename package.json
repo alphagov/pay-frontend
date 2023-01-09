@@ -151,7 +151,7 @@
     "standard": "^14.3.x",
     "stylelint": "^14.16.1",
     "stylelint-config-gds": "^0.2.0",
-    "stylelint-order": "^6.0.0",
+    "stylelint-order": "^6.0.1",
     "superagent": "^8.0.6",
     "supertest": "^6.3.3"
   },
