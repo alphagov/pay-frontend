@@ -10,7 +10,7 @@ const {
 const { adminUsersGetService } = require('../../utils/stub-builders/service-stubs')
 const { cardIdValidCardDetails } = require('../../utils/stub-builders/card-id-stubs')
 
-describe('Apple Pay payment flow', () => {
+describe.skip('Apple Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const returnURL = '?success'

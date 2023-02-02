@@ -3,7 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
-  {% if allowApplePay or allowGooglePay %}
+  {% if allowGooglePay %}
     {{ __p("cardDetails.enterPaymentDetails") }}
   {% else %}
     {{ __p("cardDetails.enterCardDetails") }}
@@ -39,13 +39,8 @@
 
 
 {% block bodyStart %}
-  {% if allowApplePay or allowGooglePay %}
+  {% if allowGooglePay %}
     <script nonce="{{ nonce }}">
-      {% if allowApplePay %}
-        if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
-          document.body.classList.add('apple-pay-available')
-        }
-      {% endif %}
       {% if allowGooglePay %}
         if (window.PaymentRequest) {
           var googleAvailableRequest = new PaymentRequest({{ googlePayRequestMethodData | dump | safe }}, {{ googlePayRequestDetails | dump | safe }}).canMakePayment()
@@ -56,11 +51,10 @@
           })
         }
       {% endif %}
-      {% if allowApplePay or allowGooglePay %}
+      {% if allowGooglePay %}
         {# If our JS bundle fails to load we need to undo the above Apple / Google Pay checks #}
         document.addEventListener('DOMContentLoaded', function (event) {
           if (!window.payScripts.webPayments) {
-            document.body.classList.remove('apple-pay-available')
             document.body.classList.remove('google-pay-available')
           }
         })
@@ -88,34 +82,10 @@
                 </ul>
               </div>
             </div>
-            {% if allowApplePay or allowGooglePay %}
+            {% if allowGooglePay %}
               <div class="web-payment-button-section govuk-!-margin-bottom-7">
                 <h1 class="govuk-heading-l">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
                 {{ paymentSummary() }}
-              </div>
-            {% endif %}
-            {% if allowApplePay %}
-              <div class="apple-pay-container">
-                <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithApplePay") }}</h2>
-
-                {% set ApplePayButtonHTML %}
-                <span class="govuk-visually-hidden">Apple Pay</span>
-                {% endset %}
-
-                <form class="govuk-!-width-three-quarters web-payments-container">
-                  <input type="hidden" name="payment-method" value="Apple Pay"/>
-                  {{
-                    govukButton({
-                      html: ApplePayButtonHTML,
-                      classes: "web-payment-button web-payment-button--apple-pay",
-                      attributes: {
-                        id: "apple-pay-payment-method-submit"
-                      }
-                    })
-                  }}
-                  <span id="apple-pay-payment-method-divider" class="pay-divider">
-                  <span id="apple-pay-payment-method-divider-word" class="pay-divider--word">or</span></span>
-                </form>
               </div>
             {% endif %}
             {% if allowGooglePay %}
@@ -145,7 +115,7 @@
             <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
 
             <div id="card-details-wrap">
-              {% if allowApplePay or allowGooglePay %}
+              {% if allowGooglePay %}
                 <h2 class="govuk-heading-m web-payment-button-section">{{ __p("cardDetails.enterCardDetails") }}</h2>
               {% endif %}
               <div class="non-web-payment-button-section govuk-!-margin-bottom-5">
@@ -358,7 +328,7 @@
                   <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
                       <fieldset class="govuk-fieldset" aria-describedby="address-hint">
                         <legend>
-                          {% if allowApplePay or allowGooglePay %}
+                          {% if allowGooglePay %}
                             <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-section">{{ __p("cardDetails.billingAddress") }}</h3>
                           {% endif %}
                           <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.billingAddress") }}</h2>
@@ -484,7 +454,7 @@
                     <fieldset class="govuk-fieldset" aria-describedby="email-hint">
                       <div>
                         <legend for="email" class="govuk-!-margin-bottom-6">
-                          {% if allowApplePay or allowGooglePay %}
+                          {% if allowGooglePay %}
                             <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h3>
                           {% endif %}
                           <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h2>
