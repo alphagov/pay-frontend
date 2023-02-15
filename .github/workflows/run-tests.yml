@@ -26,7 +26,6 @@ jobs:
       - name: Parse Node version
         id: parse-node-version
         run: echo "nvmrc=$(cat .nvmrc)" >> $GITHUB_OUTPUT
-
   install-and-compile:
     runs-on: ubuntu-latest
     name: Install and compile
