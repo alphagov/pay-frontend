@@ -144,7 +144,7 @@
     "nock": "13.3.0",
     "nodemon": "^2.0.21",
     "nyc": "15.1.x",
-    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.12.26/pay-product-page-4.12.26.tar",
+    "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.12.28/pay-product-page-4.12.28.tar",
     "proxyquire": "~2.1.3",
     "sass": "^1.58.3",
     "sinon": "15.0.x",
