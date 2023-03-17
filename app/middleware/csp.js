@@ -44,7 +44,7 @@ if (allowUnsafeEvalScripts) {
 }
 
 // Google Analytics, Google Pay
-const connectSourceCardDetails = ["'self'", 'https://www.google-analytics.com', 'https://google.com/pay']
+const connectSourceCardDetails = ["'self'", 'https://www.google-analytics.com', 'https://google.com/pay', 'https://pay.google.com']
 
 const skipSendingCspHeader = (req, res, next) => { next() }
 
