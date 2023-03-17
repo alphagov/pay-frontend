@@ -43,8 +43,8 @@ if (allowUnsafeEvalScripts) {
   scriptSourceCardDetails.push("'unsafe-eval'")
 }
 
-// Google analytics, Google pay uses standard Payment Request API so requires no exceptions
-const connectSourceCardDetails = ["'self'", 'https://www.google-analytics.com']
+// Google Analytics, Google Pay
+const connectSourceCardDetails = ["'self'", 'https://www.google-analytics.com', 'https://google.com/pay']
 
 const skipSendingCspHeader = (req, res, next) => { next() }
 
