@@ -56,15 +56,6 @@ updates:
   - govuk-pay
   - dependencies
   - docker
-  ignore:
-  - dependency-name: node
-    versions:
-    - ">= 14.a"
-    - "< 15"
-  - dependency-name: node
-    versions:
-    - ">= 15.a"
-    - "< 16"
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
