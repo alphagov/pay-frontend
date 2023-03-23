@@ -51,6 +51,10 @@ updates:
   schedule:
     interval: weekly
     time: "03:00"
+  ignore:
+  - dependency-name: "node"
+    versions:
+    - ">= 18"
   open-pull-requests-limit: 10
   labels:
   - govuk-pay
