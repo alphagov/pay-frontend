@@ -49,8 +49,12 @@ updates:
 - package-ecosystem: docker
   directory: "/"
   schedule:
-    interval: weekly
+    interval: daily
     time: "03:00"
+  ignore:
+  - dependency-name: "node"
+    versions:
+    - ">= 18"
   open-pull-requests-limit: 10
   labels:
   - govuk-pay
