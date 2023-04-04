@@ -7,7 +7,7 @@
 <noscript>
     <p class="govuk-body-l lede">{{ __p("authorisation.approved") }}</p>
 </noscript>
-<form name="three_ds_required" method="post" action="{{ threeDsHandlerUrl }}" target="_top">
+<form name="three_ds_required" method="post" action="{{ threeDsHandlerUrl }}" target="_top" novalidate>
     {% if paResponse %}
         <input type="hidden" name="PaRes" value="{{ paResponse }}"/>
     {% endif %}

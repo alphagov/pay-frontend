@@ -102,7 +102,7 @@
                 <span class="govuk-visually-hidden">Apple Pay</span>
                 {% endset %}
 
-                <form class="govuk-!-width-three-quarters web-payments-container">
+                <form class="govuk-!-width-three-quarters web-payments-container" novalidate>
                   <input type="hidden" name="payment-method" value="Apple Pay"/>
                   {{
                     govukButton({
@@ -126,7 +126,7 @@
                   <img class="google-pay-image" src="/images/google-pay-logo.svg" alt="Google Pay">
                 {% endset %}
 
-                <form class="govuk-!-width-three-quarters web-payments-container">
+                <form class="govuk-!-width-three-quarters web-payments-container" novalidate>
                   <input type="hidden" name="payment-method" value="Google Pay"/>
                   {{
                     govukButton({
@@ -579,7 +579,7 @@
                   {% endif %}
                 </div>
               </form>
-              <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form">
+              <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form" novalidate>
                 <div>
                   <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
                   <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
