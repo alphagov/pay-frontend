@@ -94,7 +94,7 @@
     "minimist": "1.2.8",
     "moment-timezone": "^0.5.43",
     "morgan": "1.10.x",
-    "nunjucks": "^3.2.3",
+    "nunjucks": "^3.2.4",
     "polyfill-array-includes": "^2.0.0",
     "promise-polyfill": "8.3.0",
     "punycode": "1.4.1",
