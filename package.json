@@ -141,7 +141,7 @@
     "lint-staged": "^13.2.2",
     "mocha": "10.2.x",
     "mountebank": "2.8.2",
-    "nock": "13.3.0",
+    "nock": "13.3.1",
     "nodemon": "^2.0.22",
     "nyc": "15.1.x",
     "pay-product-page": "https://github.com/alphagov/pay-product-page/releases/download/4.12.55/pay-product-page-4.12.55.tar",
