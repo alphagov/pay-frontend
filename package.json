@@ -161,6 +161,12 @@
     },
     "grunt-babel": {
       "grunt": "1.5.3"
+    },
+    "request": {
+      "qs": "6.11.1"
+    },
+    "cypress": {
+      "@cypress/request": "2.88.11"
     }
   },
   "nyc": {
