@@ -16,7 +16,7 @@ describe('Google Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const worldpaySessionId = 'test session Id'
-  const returnURL = '?success'
+  const returnURL = 'humans.txt?success'
   const webPaymentAuthRequestResponseBody = { url: `/${returnURL}` }
 
   const paymentDetails = {
@@ -120,8 +120,8 @@ describe('Google Pay payment flow', () => {
         })
 
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
 
@@ -152,8 +152,8 @@ describe('Google Pay payment flow', () => {
         })
 
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
 
@@ -191,8 +191,8 @@ describe('Google Pay payment flow', () => {
         })
 
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
 
@@ -230,8 +230,8 @@ describe('Google Pay payment flow', () => {
         })
 
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
 
@@ -365,8 +365,8 @@ describe('Google Pay payment flow', () => {
         })
 
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
   })
