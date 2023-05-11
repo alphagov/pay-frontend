@@ -13,7 +13,7 @@ const { cardIdValidCardDetails } = require('../../utils/stub-builders/card-id-st
 describe('Apple Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
-  const returnURL = '?success'
+  const returnURL = 'humans.txt?success'
 
   const validPaymentRequestResponse = email => {
     const response = {
@@ -130,8 +130,8 @@ describe('Apple Pay payment flow', () => {
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
 
@@ -168,8 +168,8 @@ describe('Apple Pay payment flow', () => {
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
 
@@ -308,8 +308,8 @@ describe('Apple Pay payment flow', () => {
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
       // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/')
-        expect(loc.search).to.eq(returnURL)
+        expect(loc.pathname).to.eq('/humans.txt')
+        expect(loc.search).to.eq('?success')
       })
     })
   })

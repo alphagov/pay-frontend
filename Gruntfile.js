@@ -45,14 +45,6 @@ module.exports = function (grunt) {
         dest: 'public/images/'
       }]
     },
-    payProductPage: {
-      files: [{
-        expand: true,
-        cwd: 'node_modules/pay-product-page',
-        src: ['**', '!package.json'],
-        dest: 'public'
-      }]
-    },
     worldpayIframe: {
       files: [{
         expand: true,
