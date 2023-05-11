@@ -184,7 +184,7 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     language: opts.language || 'en',
     status: opts.status || 'CREATED',
     charge_id: chargeId,
-    return_url: opts.returnUrl || '/?confirm',
+    return_url: opts.returnUrl || '/humans.txt?confirm',
     created_date: '2019-02-12T17:53:31.307Z',
     delayed_capture: false,
     moto: opts.moto || false,
@@ -238,7 +238,7 @@ const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
       href: `https://connector:9300/v1/frontend/charges/${chargeId}/capture`
     }],
     charge_id: chargeId,
-    return_url: opts.returnUrl || '/?confirm',
+    return_url: opts.returnUrl || '/humans.txt?confirm',
     // 'created_date': '2019-02-12T17:53:31.307Z',
     delayed_capture: false,
     moto: opts.moto || false,

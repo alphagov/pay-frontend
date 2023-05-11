@@ -177,7 +177,7 @@ describe('Standard card payment flow', () => {
       // 14. Get charge status before continuing - should be the same as authorised success (GET)
       // 15. Post to connector capture route (POST)
       // 16. Get charge status following post - should show capture success (GET)
-      cy.location('pathname').should('eq', '/')
+      cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
     })
   })
