@@ -6,7 +6,6 @@ const crypto = require('crypto')
 const express = require('express')
 const nunjucks = require('nunjucks')
 const favicon = require('serve-favicon')
-const bodyParser = require('body-parser')
 const i18n = require('i18n')
 const staticify = require('staticify')(path.join(__dirname, 'public'))
 const compression = require('compression')
@@ -69,8 +68,8 @@ function initialiseGlobalMiddleware (app) {
     next()
   })
 
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(express.json())
+  app.use(express.urlencoded())
 
   app.use(compression())
 
