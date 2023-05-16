@@ -35,8 +35,29 @@ const { views, preserveProperties } = require('../../config/charge.controller')
 const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { createChargeIdSessionKey } = require('../utils/session')
 const { getLoggingFields } = require('../utils/logging-fields-helper')
+const applePayEnabled = (process.env.APPLE_PAY_ENABLED || 'true') === 'true'
+const googlePayEnabled = (process.env.GOOGLE_PAY_ENABLED || 'true') === 'true'
+const payTestGatewayAccounts = (process.env.PAY_TEST_GATEWAY_ACCOUNTS || '').split(',')
 
-const appendChargeForNewView = async function appendChargeForNewView (charge, req, chargeId) {
+/*
+  we want to enable wallet payments in all circumstances for our test payment gateways
+  if the gateway account id is any of our test payment gateways then return true
+  for any other account respect the values of the wallet toggles
+ */
+const walletEnabled = (walletToggle, gatewayAccountId, payTestGatewayAccounts) => {
+  try {
+    if (payTestGatewayAccounts.includes(gatewayAccountId.toString()) && !walletToggle) {
+      logger.warn(`Overriding environment wallet setting to true for gateway account [gatewayAccountId=${gatewayAccountId}]`)
+      return true
+    }
+    return walletToggle
+  } catch (error) {
+    logger.error(`Error attempting to check charge gateway against test gateways: ${error.message}`)
+    return walletToggle
+  }
+}
+
+const appendChargeForNewView = async (charge, req, chargeId) => {
   const cardModel = Card(charge.gatewayAccount.cardTypes, charge.gatewayAccount.block_prepaid_cards, req.headers[CORRELATION_HEADER])
   charge.withdrawalText = cardModel.withdrawalTypes.join('_')
   charge.allowedCards = cardModel.allowed
@@ -50,8 +71,8 @@ const appendChargeForNewView = async function appendChargeForNewView (charge, re
   charge.exampleCardExpiryDateYear = getFutureYearAs2Digits()
   charge.post_card_action = routeFor('create', chargeId)
   charge.post_cancel_action = routeFor('cancel', chargeId)
-  charge.allowApplePay = charge.gatewayAccount.allowApplePay
-  charge.allowGooglePay = charge.gatewayAccount.allowGooglePay
+  charge.allowApplePay = walletEnabled(applePayEnabled, charge.gatewayAccount.gatewayAccountId, payTestGatewayAccounts) ? charge.gatewayAccount.allowApplePay : false
+  charge.allowGooglePay = walletEnabled(googlePayEnabled, charge.gatewayAccount.gatewayAccountId, payTestGatewayAccounts) ? charge.gatewayAccount.allowGooglePay : false
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
   charge.acceptHeader = req.headers.accept
 
@@ -114,6 +135,7 @@ const handleCreateResponse = (req, res, charge, response) => {
 module.exports = {
   new: (req, res) => {
     const charge = normalise.charge(req.chargeData, req.chargeId)
+
     return appendChargeForNewView(charge, req, charge.id).then(
       () => {
         charge.countries = countries
@@ -314,5 +336,6 @@ module.exports = {
           responseRouter.systemErrorResponse(req, res, 'Error cancelling charge', withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }), err)
         }
       )
-  }
+  },
+  walletEnabled
 }

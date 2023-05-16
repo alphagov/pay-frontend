@@ -15,8 +15,8 @@ ${APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY}
 -----END PRIVATE KEY-----`
 
 // When an Apple payment is initiated in Safari, it must check that the request
-// is coming from an registered and authoriesed Apple Merchant Account. The
-// browser will produce a url which we should dial with our certificates server side.
+// is coming from a registered and authorised Apple Merchant Account. The
+// browser will produce a URL which we should dial with our certificates server side.
 module.exports = (req, res) => {
   if (!req.body.url) {
     return res.sendStatus(400)
