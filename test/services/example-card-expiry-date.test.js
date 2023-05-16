@@ -1,14 +1,13 @@
 'use strict'
 
 const sinon = require('sinon')
-const moment = require('moment-timezone')
 const { expect } = require('chai')
 const { getFutureYearAs2Digits } = require('../../app/services/example-card-expiry-date.js')
 
-const mockNewDateToAlwaysReturn = (moment) => sinon.useFakeTimers({ now: moment.toDate(), toFake: ['Date'] })
+const mockNewDateToAlwaysReturn = (date) => sinon.useFakeTimers({ now: date, toFake: ['Date'] })
 
 describe('Example card expiry date year', () => {
-  var clock
+  let clock
 
   afterEach(() => {
     if (clock) {
@@ -16,8 +15,8 @@ describe('Example card expiry date year', () => {
     }
   })
 
-  it('should return ‘22’ when the current year in the United Kingdom is 2020', () => {
-    const nowIn2020 = moment.tz('2020-07-01 12:00', 'Europe/London')
+  it('should return ‘22’ when the current year is 2020', () => {
+    const nowIn2020 = new Date('2020-07-01T12:00:00')
     clock = mockNewDateToAlwaysReturn(nowIn2020)
 
     const result = getFutureYearAs2Digits()
@@ -25,8 +24,8 @@ describe('Example card expiry date year', () => {
     expect(result).to.equal('22')
   })
 
-  it('should return ‘23’ when the current year in the United Kingdom is 2021', () => {
-    const nowIn2021 = moment.tz('2021-07-01 12:00', 'Europe/London')
+  it('should return ‘23’ when the current year is 2021', () => {
+    const nowIn2021 = new Date('2021-07-01T12:00:00')
     clock = mockNewDateToAlwaysReturn(nowIn2021)
 
     const result = getFutureYearAs2Digits()
@@ -34,8 +33,8 @@ describe('Example card expiry date year', () => {
     expect(result).to.equal('23')
   })
 
-  it('should return ‘24’ when the current year in the United Kingdom is 2022', () => {
-    const nowIn2022 = moment.tz('2022-07-01 12:00', 'Europe/London')
+  it('should return ‘24’ when the current year is 2022', () => {
+    const nowIn2022 = new Date('2022-07-01T12:00:00')
     clock = mockNewDateToAlwaysReturn(nowIn2022)
 
     const result = getFutureYearAs2Digits()
