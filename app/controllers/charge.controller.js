@@ -45,16 +45,11 @@ const payTestGatewayAccounts = (process.env.PAY_TEST_GATEWAY_ACCOUNTS || '').spl
   for any other account respect the values of the wallet toggles
  */
 const walletEnabled = (walletToggle, gatewayAccountId, payTestGatewayAccounts) => {
-  try {
-    if (payTestGatewayAccounts.includes(gatewayAccountId.toString()) && !walletToggle) {
-      logger.warn(`Overriding environment wallet setting to true for gateway account [gatewayAccountId=${gatewayAccountId}]`)
-      return true
-    }
-    return walletToggle
-  } catch (error) {
-    logger.error(`Error attempting to check charge gateway against test gateways: ${error.message}`)
-    return walletToggle
+  if (payTestGatewayAccounts.includes(gatewayAccountId.toString()) && !walletToggle) {
+    logger.warn(`Overriding environment wallet setting to true for gateway account [gatewayAccountId=${gatewayAccountId}]`)
+    return true
   }
+  return walletToggle
 }
 
 const appendChargeForNewView = async (charge, req, chargeId) => {
