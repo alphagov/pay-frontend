@@ -74,7 +74,8 @@ const aChargeWithStatus = function (status) {
     gatewayAccount: {
       serviceName: 'Service Name',
       analyticsId: 'test-1234',
-      type: 'test'
+      type: 'test',
+      gatewayAccountId: '1'
     },
     id: '3'
   }
