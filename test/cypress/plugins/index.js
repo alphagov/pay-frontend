@@ -1,7 +1,4 @@
-const util = require('util')
-const request = require('request')
-
-const requestPromise = util.promisify(request)
+const axios = require('axios')
 
 module.exports = (on, config) => {
   const stubServerURL = `${config.env.MOUNTEBANK_URL}/imposters`
@@ -16,23 +13,28 @@ module.exports = (on, config) => {
      * the same call.
      */
     setupStubs (stubs) {
-      return requestPromise({
-        method: 'POST',
-        url: stubServerURL,
-        json: true,
-        body: {
+      return axios.post(stubServerURL,
+        {
           port: config.env.MOUNTEBANK_IMPOSTERS_PORT,
           protocol: 'http',
           stubs
         }
+      ).then(function (response) {
+        return ''
       })
+        .catch(function (error) {
+          throw error
+        })
     },
 
     clearStubs () {
-      return requestPromise({
-        method: 'DELETE',
-        url: stubServerURL
-      })
+      return axios.delete(stubServerURL)
+        .then(function (response) {
+          return ''
+        })
+        .catch(function (error) {
+          throw error
+        })
     }
   })
   return config
