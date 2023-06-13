@@ -250,6 +250,7 @@
                       <label class="govuk-label govuk-date-input__label" for="expiry-month">{{ __p("cardDetails.expiryMonth") }}</label>
                       <input
                   id="expiry-month"
+                  data-cy="expiry-month"
                   type="text"
                   inputmode="numeric"
                   pattern="[0-9]*"
@@ -264,6 +265,7 @@
                       <label for="expiry-year" class="govuk-label govuk-date-input__label">{{ __p("cardDetails.expiryYear") }}</label>
                       <input
                 id="expiry-year"
+                data-cy="expiry-year"
                 type="text"
                 inputmode="numeric"
                 pattern="[0-9]*"
@@ -295,6 +297,7 @@
                   {% endif %}
 
                   <input id="cardholder-name"
+                  data-cy="cardholder-name"
                   type="text"
                   name="cardholderName"
                   maxlength="200"

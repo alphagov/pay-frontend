@@ -160,11 +160,7 @@ var init = function () {
 
     var validation = validationFor(validationName)
 
-    if (validation) {
-      input.classList.add('govuk-input--error')
-    } else {
-      input.classList.remove('govuk-input--error')
-    }
+    toggleErrorCssClassOnField(validation, input)
 
     if (input === cardInput) {
       checkCardType(validation, formGroup)
@@ -172,6 +168,32 @@ var init = function () {
     }
 
     replaceOnError(validation, formGroup)
+  }
+
+  var toggleErrorCssClassOnField = function (validation, input) {
+    var CSS_ERROR_CLASS = 'govuk-input--error'
+    var EXPIRY_MONTH_ELEMENT_ID = 'expiry-month'
+    var EXPIRY_YEAR_ELEMENT_ID = 'expiry-year'
+    var expiryMonthElement = document.getElementById('expiry-month')
+    var expiryYearElement = document.getElementById('expiry-year')
+
+    var isAnExpiryDateField = (input.id === EXPIRY_MONTH_ELEMENT_ID) || (input.id === EXPIRY_YEAR_ELEMENT_ID)
+
+    if (validation) {
+      if (isAnExpiryDateField) {
+        expiryMonthElement.classList.add(CSS_ERROR_CLASS)
+        expiryYearElement.classList.add(CSS_ERROR_CLASS)
+      } else {
+        input.classList.add(CSS_ERROR_CLASS)
+      }
+    } else {
+      if (isAnExpiryDateField) {
+        expiryMonthElement.classList.remove(CSS_ERROR_CLASS)
+        expiryYearElement.classList.remove(CSS_ERROR_CLASS)
+      } else {
+        input.classList.remove(CSS_ERROR_CLASS)
+      }
+    }
   }
 
   var checkCardType = function (validation, formGroup) {
@@ -239,17 +261,17 @@ var init = function () {
     var label = formGroup.querySelectorAll('[data-label-replace]')[0]
     if (label.length === 0) return
 
-    var  errorElement = label.parentNode.parentNode.querySelector('.govuk-error-message') 
+    var errorElement = label.parentNode.parentNode.querySelector('.govuk-error-message')
 
     if (validation) {
-      if (errorElement){ 
+      if (errorElement) {
         errorElement.parentNode.removeChild(errorElement)
       }
 
       var errorElementHtml = '<p class="govuk-error-message" role="alert">' + validation + '</p>'
-      label.parentNode.insertAdjacentHTML("afterend", errorElementHtml)
+      label.parentNode.insertAdjacentHTML('afterend', errorElementHtml)
     } else {
-      if (errorElement){
+      if (errorElement) {
         errorElement.parentNode.removeChild(errorElement)
       }
     }

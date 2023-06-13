@@ -31,4 +31,23 @@ describe('Card details page validation', () => {
     cy.get('.address-city-label').should('exist')
     cy.get('.address-postcode-label').should('exist')
   })
+
+  it('Should perform inline validation of the expiry date correctly', () => {
+    cy.task('setupStubs', createPaymentChargeStubs)
+    cy.visit(`/secure/${tokenId}`)
+
+    cy.get('[data-cy=expiry-month]').type('01')
+    cy.get('[data-cy=expiry-year]').type('23')
+    cy.get('[data-cy=cardholder-name]').click()
+    cy.get('[data-cy=expiry-month]').should('have.class', 'govuk-input--error')
+    cy.get('[data-cy=expiry-year]').should('have.class', 'govuk-input--error')
+
+    const nextYearIn2Digits = (new Date().getFullYear() + 1).toString().slice(-2)
+
+    cy.get('[data-cy=expiry-year]').clear().type(nextYearIn2Digits)
+    cy.get('[data-cy=cardholder-name]').click()
+
+    cy.get('[data-cy=expiry-month]').not('have.class', 'govuk-input--error')
+    cy.get('[data-cy=expiry-year]').not('have.class', 'govuk-input--error')
+  })
 })
