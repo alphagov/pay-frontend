@@ -3,30 +3,15 @@ const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
 const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
-const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
 
 describe('Card details page validation', () => {
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
-  it('Should setup the payment and load the page', () => {
+  it('Should setup the payment and validate the fields correctly', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
-  })
 
-  it('Should enter card details', () => {
-    cy.task('setupStubs', checkCardDetailsStubs)
-    cy.server()
-    cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
-  })
-
-  it('Submitting confirmation should show errors', () => {
     cy.get('#card-details').submit()
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.get('#error-summary').should('exist')
