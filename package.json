@@ -110,7 +110,7 @@
     "@babel/preset-env": "^7.22.4",
     "@pact-foundation/pact": "^9.18.1",
     "@pact-foundation/pact-node": "^10.17.7",
-    "@snyk/protect": "^1.1171.x",
+    "@snyk/protect": "^1.1180.x",
     "axios": "^1.4.0",
     "browserify": "17.0.x",
     "chai": "^4.3.7",
