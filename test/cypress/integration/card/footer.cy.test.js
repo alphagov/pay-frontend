@@ -6,10 +6,6 @@ describe('The footer displayed on payment pages', () => {
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const language = 'en'
 
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   it('should display the service name and address when service has full organisation details', () => {
     // use a unique gateway account id per test as services are cached
     const gatewayAccountId = lodash.random(999999999)
