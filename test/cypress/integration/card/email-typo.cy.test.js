@@ -55,14 +55,8 @@ describe('Standard card payment flow', () => {
     connectorPostValidCaptureCharge(chargeId)
   ]
 
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
-  describe('Secure card payment page', () => {
-    it('Should setup the payment and load the page', () => {
+  describe('Email typo errors', () => {
+    it('Should show an email typo error for an email with a typo and allow user to select corrected email and proceed with payment', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       // Stubbing for Apple Pay to test this works even if Apple/Google Pay are enabled. Because we don’t want it popping up when it’s reloaded to show the typo error message
       cy.visit(`/secure/${tokenId}`, {
@@ -79,13 +73,17 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should enter valid payment details but bad email', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.log('Should enter valid payment details but bad email')
+
       cy.get('#card-no').type(validPayment.cardNumber)
+
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
@@ -94,12 +92,12 @@ describe('Standard card payment flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(likelyTypoEmail)
-    })
-  })
 
-  describe('Redirect back to enter card details page', () => {
-    it('Should show error about email typo', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(validPayment.email))
+
+      cy.log('Should show error about email typo after submmitting the form')
+
       cy.get('#card-details').submit()
 
       // 7. Page redirects to itself highlighting the typo and suggesting a fix
@@ -107,14 +105,14 @@ describe('Standard card payment flow', () => {
 
       cy.get('#error-summary').should('be.visible')
       cy.get('label[for="email-corrected"]').should('contain', validPayment.email)
-    })
-  })
 
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details should redirect to confirmation page and suggested email correction', () => {
       const lastFourCardDigits = validPayment.cardNumber.substr(-4)
 
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(validPayment.email))
+
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page and suggested email correction')
+
       cy.get('#card-details').submit()
 
       // 8. Charge status will be fetched - this will report the same as earlier as nothing has changed (GET)
@@ -128,12 +126,12 @@ describe('Standard card payment flow', () => {
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
-    })
-  })
 
-  describe('Secure payment submission', () => {
-    it('Confirming payment should successfully redirect to configured next_url', () => {
+
+      cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
+
+      cy.log('Confirming payment should successfully redirect to configured next_url')
 
       cy.get('#confirm').click()
 
@@ -143,10 +141,8 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
     })
-  })
 
-  describe('Secure card payment page', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should show an email typo error for an email with a typo and allow user to select uncorrected email and proceed with payment', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -157,13 +153,17 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should enter valid payment details but what looks like a suspect email', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.log('Should enter valid payment details but what looks like a suspect email')
+
       cy.get('#card-no').type(validPayment.cardNumber)
+
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
@@ -172,12 +172,12 @@ describe('Standard card payment flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(likelyTypoEmail)
-    })
-  })
 
-  describe('Redirect back to enter card details page', () => {
-    it('Should show error about email typo', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(likelyTypoEmail))
+
+      cy.log('Should show error about email typo')
+
       cy.get('#card-details').submit()
 
       // 7a. Page redirects to itself highlighting the typo and suggesting a fix
@@ -187,14 +187,14 @@ describe('Standard card payment flow', () => {
       cy.get('label[for="email-uncorrected"]').should('contain', likelyTypoEmail)
       // 7b. which the user chooses to ignore
       cy.get('#email-uncorrected').click()
-    })
-  })
 
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details should redirect to confirmation page and user should use uncorrected email address', () => {
       const lastFourCardDigits = validPayment.cardNumber.substr(-4)
 
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(likelyTypoEmail))
+
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page and user should use uncorrected email address')
+
       cy.get('#card-details').submit()
 
       // 8. Charge status will be fetched - this will report the same as earlier as nothing has changed (GET)
@@ -208,12 +208,11 @@ describe('Standard card payment flow', () => {
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(likelyTypoEmail))
-    })
-  })
 
-  describe('Secure payment submission', () => {
-    it('Confirming payment should successfully redirect to configured next_url', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
+
+      cy.log('Confirming payment should successfully redirect to configured next_url')
 
       cy.get('#confirm').click()
 
@@ -223,10 +222,8 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
     })
-  })
 
-  describe('Secure card payment page', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should show an email typo error for an email with a double typo and allow user to select corrected email and proceed with payment', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -237,13 +234,17 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should enter valid payment details but really bad email', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.log('Should enter valid payment details but really bad email')
+
       cy.get('#card-no').type(validPayment.cardNumber)
+
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
@@ -252,29 +253,29 @@ describe('Standard card payment flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(likelyDoubleTypoEmail)
-    })
-  })
 
-  describe('Redirect back to enter card details page', () => {
-    it('Should show error about email typo', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(likelyDoubleTypoEmailFix))
+
       cy.get('#card-details').submit()
 
       // 7. Page redirects to itself highlighting the typo and suggesting a fix
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
+      cy.log('Should show error about email typo')
+
       cy.get('#error-summary').should('be.visible')
       cy.get('label[for="email-corrected"]').should('contain', likelyDoubleTypoEmailFix)
       // Suggestion is still not their email address so user updates original email
       cy.get('#email').clear().type(validPayment.email)
-    })
-  })
 
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details should redirect to confirmation page and suggested email correction', () => {
       const lastFourCardDigits = validPayment.cardNumber.substr(-4)
 
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(validPayment.email))
+
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page and suggested email correction')
+
       cy.get('#card-details').submit()
 
       // 8. Charge status will be fetched - this will report the same as earlier as nothing has changed (GET)
@@ -288,12 +289,11 @@ describe('Standard card payment flow', () => {
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
-    })
-  })
 
-  describe('Secure payment submission', () => {
-    it('Confirming payment should successfully redirect to configured next_url', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
+
+      cy.log('Confirming payment should successfully redirect to configured next_url')
 
       cy.get('#confirm').click()
 
