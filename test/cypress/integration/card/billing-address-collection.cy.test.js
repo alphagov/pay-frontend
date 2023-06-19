@@ -27,9 +27,12 @@ describe('Billing address collection', () => {
       const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
         tokenId, chargeId, 'en', gatewayAccountId, serviceOpts, {}, {}, chargeOpts)
 
-      it('Should show the billing address section', () => {
+      it('Should show billing address section and populate with default billing address', () => {
+
         cy.task('setupStubs', createPaymentChargeStubs)
         cy.visit(`/secure/${tokenId}`)
+
+        cy.log('should show the billing address section')
 
         cy.get('h2').contains('Billing address').should('exist')
         cy.get('#address-country-select').should('exist')
@@ -37,9 +40,9 @@ describe('Billing address collection', () => {
         cy.get('#address-line-2').should('exist')
         cy.get('#address-city').should('exist')
         cy.get('#address-postcode').should('exist')
-      })
 
-      it('Should populate default billing address from service', () => {
+        cy.log('Should populate default billing address from service')
+
         // The select is hidden when JavaScript is enabled, and the govuk-country-and-territory-autocomplete is displayed instead
         // Doesn't seem possible to get the text displayed in the input using selectors, so just look at the select
         cy.get('#address-country-select').should('have.value', 'IE')
@@ -78,14 +81,12 @@ describe('Billing address collection', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
       tokenId, chargeId, 'en', gatewayAccountId, serviceOpts, {}, {}, chargeOpts)
 
-    beforeEach(() => {
-      // preserve cookies so we can prodeed with payment flow
-      Cypress.Cookies.preserveOnce('frontend_state')
-    })
+    it('Should not show the billing address section and allow valid card submission', () => {
 
-    it('Should not show the billing address section', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
+
+      cy.log('Should not show the billing address section')
 
       cy.get('h2').contains('Billing address').should('not.exist')
       cy.get('#address-country-select').should('not.exist')
@@ -93,14 +94,17 @@ describe('Billing address collection', () => {
       cy.get('#address-line-2').should('not.exist')
       cy.get('#address-city').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
-    })
 
-    it('Should enter card details', () => {
+
+      cy.task('clearStubs')
+
       const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should enter card details')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
@@ -110,9 +114,11 @@ describe('Billing address collection', () => {
       cy.get('#cardholder-name').type(validPayment.name)
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#email').type(validPayment.email)
-    })
 
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+
+      cy.task('clearStubs')
+
       const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, chargeOpts, serviceOpts)
       cy.task('setupStubs', confirmPaymentDetailsStubs)
       cy.get('#card-details').submit()
@@ -130,14 +136,11 @@ describe('Billing address collection', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
       tokenId, chargeId, 'en', gatewayAccountId, serviceOpts, {}, {}, chargeOpts)
 
-    beforeEach(() => {
-      // preserve cookies so we can proceed with payment flow
-      Cypress.Cookies.preserveOnce('frontend_state')
-    })
-
-    it('Should not show the billing address section', () => {
+    it('Should not show the billing address section and allow valid card submission', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
+
+      cy.log('should not show the billing address section')
 
       cy.get('h2').contains('Billing address').should('not.exist')
       cy.get('#address-country-select').should('not.exist')
@@ -145,9 +148,11 @@ describe('Billing address collection', () => {
       cy.get('#address-line-2').should('not.exist')
       cy.get('#address-city').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
-    })
 
-    it('Should enter card details', () => {
+      cy.log('should enter card details')
+
+      cy.task('clearStubs')
+
       const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
       cy.task('setupStubs', checkCardDetailsStubs)
 
@@ -162,9 +167,11 @@ describe('Billing address collection', () => {
       cy.get('#cardholder-name').type(validPayment.name)
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#email').type(validPayment.email)
-    })
 
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+
+      cy.task('clearStubs')
+
       const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, chargeOpts, serviceOpts)
       cy.task('setupStubs', confirmPaymentDetailsStubs)
       cy.get('#card-details').submit()
