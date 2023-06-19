@@ -29,25 +29,20 @@ const backButtonStubs = [
 ]
 
 describe('Enforce views to state', () => {
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
-  it('Should setup the payment and load the page', () => {
+  it('Should not allow the user to access the previous card details page', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
-  })
 
-  it('Should enter card details', () => {
+    cy.task('clearStubs')
     cy.task('setupStubs', checkCardDetailsStubs)
 
     cy.server()
     cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+    cy.log('Should enter card details')
 
     cy.get('#card-no').type(validPayment.cardNumber)
     cy.get('#card-no').blur()
@@ -60,10 +55,12 @@ describe('Enforce views to state', () => {
     cy.get('#address-city').type(validPayment.city)
     cy.get('#address-postcode').type(validPayment.postcode)
     cy.get('#email').type(validPayment.email)
-  })
 
-  it('Submitting confirmation with valid details should redirect to confirmation page', () => {
+    cy.task('clearStubs')
     cy.task('setupStubs', confirmPaymentDetailsStubs)
+
+    cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+
     cy.get('#card-details').submit()
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
@@ -74,14 +71,15 @@ describe('Enforce views to state', () => {
     cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
     cy.get('#address').should(($td) => expect($td).to.contain(validPayment.addressLine1))
     cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
-  })
 
-  it('Should not allow the user to access the previous card details page', () => {
+    cy.task('clearStubs')
     cy.task('setupStubs', backButtonStubs)
+
+    cy.log('Should not allow the user to access the previous card details page')
+
     cy.go('back')
     cy.get('#confirm-link').click()
 
-    const lastFourCardDigits = validPayment.cardNumber.substr(-4)
     cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
     cy.get('#expiry-date').should(($td) => expect($td).to.contain(`${validPayment.expiryMonth}/${validPayment.expiryYear}`))
     cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
