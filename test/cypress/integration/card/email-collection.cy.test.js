@@ -17,18 +17,12 @@ const validPayment = {
 }
 
 describe('Standard card payment flow', () => {
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   describe('Email collection off', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
       tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OFF' })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OFF' })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should redirect to the confirmation page when valid details are entered', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -36,13 +30,14 @@ describe('Standard card payment flow', () => {
       cy.window().its('chargeId').should('eq', `${chargeId}`)
 
       cy.get('#email').should('not.exist')
-    })
 
-    it('Should enter card details', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should enter card details')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
@@ -56,10 +51,12 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
 
       cy.get('#email').should('not.exist')
-    })
 
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
+
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
       cy.get('#email').should('not.exist')
@@ -70,19 +67,20 @@ describe('Standard card payment flow', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, {}, {})
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'MANDATORY' })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should show an error when an email is not provided', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Should enter card details', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should enter card details')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
@@ -96,9 +94,10 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
 
       cy.get('#email').should('exist')
-    })
 
-    it('Submitting confirmation should show email error', () => {
+      cy.log('Submitting confirmation should show email error')
+
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
@@ -112,15 +111,16 @@ describe('Standard card payment flow', () => {
       tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OPTIONAL' })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OPTIONAL' })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should show the confirmation page when an email is not provided', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Should enter card details', () => {
+      cy.log('Should enter card details')
+
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
@@ -138,9 +138,10 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
 
       cy.get('#email').should('exist')
-    })
 
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
