@@ -21,25 +21,21 @@ const validPayment = {
 }
 
 describe('Awaiting auth', () => {
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
-  it('Should setup the payment and load the page', () => {
+  it('should load the auth waiting page and redirect to confirm page when card details are entered', () => {
+    cy.log('Should setup the payment and load the page')
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
-  })
 
-  it('Should enter card details', () => {
+    cy.task('clearStubs')
     cy.task('setupStubs', checkCardDetailsStubs)
 
     cy.server()
     cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+    cy.log('Should enter card details')
 
     cy.get('#card-no').type(validPayment.cardNumber)
     cy.get('#card-no').blur()
@@ -52,9 +48,8 @@ describe('Awaiting auth', () => {
     cy.get('#address-city').type(validPayment.city)
     cy.get('#address-postcode').type(validPayment.postcode)
     cy.get('#email').type(validPayment.email)
-  })
 
-  it('Submitting confirmation should redirect to auth waiting page', () => {
+
     const paymentDetails = {
       cardNumber: validPayment.cardNumber,
       expiryMonth: validPayment.expiryMonth,
@@ -101,7 +96,11 @@ describe('Awaiting auth', () => {
       connectorValidPatchConfirmedChargeDetails(chargeId)
     ]
 
+    cy.task('clearStubs')
     cy.task('setupStubs', confirmPaymentDetailsStubs)
+
+    cy.log('Submitting confirmation should redirect to auth waiting page')
+
     cy.get('#card-details').submit()
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}/auth_waiting`)
