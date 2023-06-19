@@ -74,22 +74,14 @@ describe('Standard card payment flow', () => {
       moto: true
     })
 
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   describe('Secure card payment page - MOTO NOT enabled', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should NOT mask digits in the card number & security code input elements', () => {
       cy.task('setupStubs', createPaymentChargeStubsNoMoto)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Card number & security code input elements should NOT mask digits', () => {
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'text')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'cc-number')
 
@@ -99,15 +91,13 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page - MOTO NOT enabled but masking set for both card number and security code', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should NOT mask digits in the card number & security code input elements as it is not a MOTO service', () => {
       cy.task('setupStubs', createPaymentChargeStubsNoMotoMaskCardNumberAndSecurityCode)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Card number & security code input elements should NOT mask digits as it is not a MOTO service', () => {
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'text')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'cc-number')
 
@@ -117,15 +107,13 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page - MOTO NOT enabled but gateway account is MOTO enabled and masking set for both card number and security code', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should NOT mask digits in the card number & security code input elements as MOTO is false for this charge', () => {
       cy.task('setupStubs', createPaymentChargeStubsNoMotoGatewayMotoMaskCardNumberAndSecurityCode)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Card number & security code input elements should NOT mask digits as MOTO is false for this charge', () => {
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'text')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'cc-number')
 
@@ -135,37 +123,37 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page - with MOTO and only masking card number', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should only setup the card number input field to mask input', () => {
       cy.task('setupStubs', createPaymentChargeStubsMotoMaskCardNumberOnly)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Should only setup the card number input field to mask input', () => {
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'password')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'off')
 
       cy.get('#cvc').invoke('attr', 'type').should('eq', 'text')
       cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'cc-csc')
-    })
 
-    it('should display an error when a invalid card number is entered', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
+
+      cy.log('Should display an error when a invalid card number is entered')
 
       cy.get('#card-no').type('1234567890')
       cy.get('#card-no').blur()
 
       cy.get('#card-no').should('have.class', 'govuk-input--error')
       cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Card number is not the correct length')
-    })
 
-    it('should allow a valid card number to be entered and remove existing error messages', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should allow a valid card number to be entered and remove existing error messages')
 
       cy.get('#card-no').clear()
       cy.get('#card-no').type(validPayment.cardNumber)
@@ -178,32 +166,32 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page - with MOTO and only masking security code', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should only setup the security code input field to mask input', () => {
       cy.task('setupStubs', createPaymentChargeStubsMotoMaskSecurityCodeOnly)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Should only setup the security code input field to mask input', () => {
+      cy.log('Should only setup the security code input field to mask input')
+
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'text')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'cc-number')
 
       cy.get('#cvc').invoke('attr', 'type').should('eq', 'password')
       cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'off')
-    })
 
-    it('should display an error when a invalid security code is entered', () => {
+      cy.log('Should display an error when a invalid security code is entered')
+
       cy.get('#cvc').clear()
       cy.get('#cvc').type('11')
       cy.get('#cvc').blur()
 
       cy.get('#cvc').should('have.class', 'govuk-input--error')
       cy.get('#cvc-lbl').parent().find('.govuk-error-message').should('contain', 'Enter a valid card security code')
-    })
 
-    it('should allow a valid security code to be entered and remove existing error messages', () => {
+      cy.log('Should allow a valid security code to be entered and remove existing error messages')
+
       cy.get('#cvc').clear()
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#cvc').blur()
@@ -214,48 +202,45 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page - with MOTO and masking both card number and security code', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should mask digits in the card number & security code input elements', () => {
       cy.task('setupStubs', createPaymentChargeStubsMotoMaskCardNumberAndSecurityCode)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
-    })
 
-    it('Card number & security code input elements should mask digits', () => {
       cy.get('#card-no').invoke('attr', 'type').should('eq', 'password')
       cy.get('#card-no').invoke('attr', 'autocomplete').should('eq', 'off')
 
       cy.get('#cvc').invoke('attr', 'type').should('eq', 'password')
       cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'off')
-    })
 
-    it('Should enter and validate a correct card', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should enter and validate a correct card')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
 
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
-    })
 
-    it('Should enter payment details', () => {
+      cy.log('Should be able to enter the remaining payment details')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#email').type(validPayment.email)
-    })
-  })
 
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
-      const lastFourCardDigits = validPayment.cardNumber.substr(-4)
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+      const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
 
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
       cy.get('#card-details').submit()
 
