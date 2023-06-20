@@ -6,24 +6,20 @@ const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
 const createCancelChargeStub = cardPaymentStubs.buildCancelChargeStub(chargeId)
 
 describe('Cancelling payment from card details page', () => {
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   it('Should setup the payment and load the page', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
-  })
 
-  it('Show show the cancel page', () => {
+    cy.task('clearStubs')
     cy.task('setupStubs', createCancelChargeStub)
 
     cy.get('#cancel').submit()
+
+    cy.log('Should show the cancel page')
+
     cy.get('h1.user-cancel').should('exist')
     cy.get('h1.user-cancel').should('contain', 'Your payment has been cancelled')
   })
