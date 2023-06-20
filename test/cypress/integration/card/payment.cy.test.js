@@ -87,7 +87,7 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should show a paying user disclaimer that details will be saved when an agreement is being configured', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
 
@@ -108,23 +108,25 @@ describe('Standard card payment flow', () => {
 
       // Accept header will almost certainly contain either ‘text/html’ or ‘*/*’
       cy.get('body').should('have.attr', 'data-accept-header').and('match', /text\/html|\*\/\*/)
-    })
 
-    it('Should show a paying user disclaimer that details will be saved if an agreement is being configured ', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsWithSetupAgreementStubs)
+
+      cy.log('Should show a paying user disclaimer that details will be saved when an agreement is being configured')
 
       // load the same card page with agreement stubs set
       cy.reload()
       cy.get('#agreement-setup-disclaimer').should('exist')
       cy.get('#agreement-setup-disclaimer').should('contain', 'Your payment details will be saved for:')
       cy.get('#agreement-setup-disclaimer').should('contain', agreementDescription)
-    })
 
-    it('Should enter and validate a correct card', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should enter and validate a correct card')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
@@ -133,9 +135,9 @@ describe('Standard card payment flow', () => {
       // 8. CardID POST to verify that entered card is correct - this is configured to return valid
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
-    })
 
-    it('Should enter payment details', () => {
+      cy.log('Should enter payment details')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
@@ -144,14 +146,15 @@ describe('Standard card payment flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(validPayment.email)
-    })
-  })
 
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
-      const lastFourCardDigits = validPayment.cardNumber.substr(-4)
 
+      const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
+
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
+
+      cy.log('Should redirect to confirmation page when submitting confirmation with valid details ')
+
       cy.get('#card-details').submit()
 
       // 9. Charge status will be fetched - this will report the same as earlier as nothing has changed (GET)
@@ -165,12 +168,11 @@ describe('Standard card payment flow', () => {
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
-    })
-  })
 
-  describe('Secure payment submission', () => {
-    it('Confirming payment should successfully redirect to configured next_url', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
+
+      cy.log('Should successfully redirect to configured next_url when confirming payment')
 
       cy.get('#confirm').click()
 
@@ -215,7 +217,7 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page should show error', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should show English error when card number is less than 11 digits and English page', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
 
@@ -226,9 +228,8 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show error when card number is less than 11 digits', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
@@ -240,10 +241,8 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no').should('have.class', 'govuk-input--error')
       cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Card number is not the correct length')
     })
-  })
 
-  describe('Secure card payment page should show error', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should show Welsh error when card number is less than 11 digits and it is a Welsh payment page', () => {
       cy.task('setupStubs', createPaymentChargeStubsWelsh)
       cy.visit(`/secure/${tokenId}`)
 
@@ -254,9 +253,8 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show error when card number is less than 11 digits', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
@@ -271,7 +269,7 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page on Google Pay enabled browser but not Google Pay enabled service', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should allow payment', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
 
@@ -282,9 +280,8 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should enter and validate a correct card', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -303,6 +300,8 @@ describe('Standard card payment flow', () => {
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
 
+      cy.log('Should enter and validate a correct card')
+
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
 
@@ -310,9 +309,9 @@ describe('Standard card payment flow', () => {
       // 8. CardID POST to verify that entered card is correct - this is configured to return valid
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
-    })
 
-    it('Should enter payment details', () => {
+      cy.log('Should enter payment details')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
@@ -325,7 +324,7 @@ describe('Standard card payment flow', () => {
   })
 
   describe('Secure card payment page on Apple Pay enabled browser but not Apple Pay enabled service', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should allow payment', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
 
@@ -336,9 +335,8 @@ describe('Standard card payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should enter and validate a correct card', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -351,6 +349,8 @@ describe('Standard card payment flow', () => {
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
 
+      cy.log('Should enter and validate a correct card')
+
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
 
@@ -358,9 +358,9 @@ describe('Standard card payment flow', () => {
       // 8. CardID POST to verify that entered card is correct - this is configured to return valid
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
-    })
 
-    it('Should enter payment details', () => {
+      cy.log('Should enter payment details')
+
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
       cy.get('#cardholder-name').type(validPayment.name)
@@ -369,14 +369,14 @@ describe('Standard card payment flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(validPayment.email)
-    })
-  })
 
-  describe('Secure confirmation page', () => {
-    it('Submitting confirmation with valid details should redirect to confirmation page', () => {
-      const lastFourCardDigits = validPayment.cardNumber.substr(-4)
+      const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
 
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
+
+      cy.log('Submitting confirmation with valid details should redirect to confirmation page')
+
       cy.get('#card-details').submit()
 
       // 9. Charge status will be fetched - this will report the same as earlier as nothing has changed (GET)
