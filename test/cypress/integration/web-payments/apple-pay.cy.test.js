@@ -90,14 +90,8 @@ describe('Apple Pay payment flow', () => {
     }))
   }
 
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   describe('Secure card payment page', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should show Apple Pay as a payment option and allow user to choose Apple Pay', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -108,10 +102,10 @@ describe('Apple Pay payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Apple Pay as a payment option and user chooses Apple Pay', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -135,7 +129,7 @@ describe('Apple Pay payment flow', () => {
       })
     })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should show Apple Pay as a payment option with email address collection disabled and allow user to choose Apple Pay', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -146,10 +140,10 @@ describe('Apple Pay payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Apple Pay as a payment option with email address collection disabled and user chooses Apple Pay', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'OFF'))
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -173,7 +167,7 @@ describe('Apple Pay payment flow', () => {
       })
     })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should show Apple Pay as a payment option but allow user to pay with a card', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -184,10 +178,10 @@ describe('Apple Pay payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Apple Pay as a payment option but the user chooses to pay normally', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -206,7 +200,7 @@ describe('Apple Pay payment flow', () => {
       cy.get('#card-no').should('be.visible')
     })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should show Apple Pay but error because a bad email was entered', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -217,15 +211,16 @@ describe('Apple Pay payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Apple Pay but error because a bad email was entered', () => {
       // eslint-disable-next-line handle-callback-err
       cy.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from failing when the purpose of the test is an uncaught exception
         return false
       })
+
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
@@ -246,7 +241,7 @@ describe('Apple Pay payment flow', () => {
       cy.get('#error-summary').should('be.visible')
     })
 
-    it('Should setup the payment and load the page', () => {
+    it('Should not show Apple Pay as browser doesn’t support it', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -257,10 +252,10 @@ describe('Apple Pay payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should not show Apple Pay as browser doesn’t support it', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(false, false))
+
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
@@ -270,7 +265,7 @@ describe('Apple Pay payment flow', () => {
       cy.get('#card-no').should('be.visible')
     })
 
-    it('Should setup the payment and load the page and Google Pay is enabled for service as well', () => {
+    it('Should show Apple Pay as a payment option when Google pay is an option and allow user to use Apple Pay', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -281,15 +276,16 @@ describe('Apple Pay payment flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Apple Pay as a payment option and user chooses Apple Pay', () => {
       // eslint-disable-next-line handle-callback-err
       cy.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from failing when the purpose of the test is an uncaught exception
         return false
       })
+
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, true))
+
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           // Stub Apple Pay API (which only exists within Safari)
