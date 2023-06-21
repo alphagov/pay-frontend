@@ -23,16 +23,12 @@ describe('Re-use token flow', () => {
 
   const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
 
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
-  describe('Visiting the secure url for the first time', () => {
-    it('should load the Enter Card Details page', () => {
+  describe('Token reuse', () => {
+    it('Should display the payment screen in the right state when visiting it with token IDs that are in different states', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
+
+      cy.log('Should load the Enter Card Details page when visiting the secure url for the first time')
 
       // 1. Charge will be created using this id as a token (GET)
       // 2. Token will be marked as used (POST)
@@ -41,12 +37,10 @@ describe('Re-use token flow', () => {
       // 5. Charge status will be updated (PUT)
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
-  })
 
-  describe('Visiting the secure url again when state is ENTERING CARD DETAILS', () => {
-    it('should load the "Your payment is in progress" page with a link to the "Enter card details" page', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', usedTokenAndReturnPaymentCreatedChargeStubs)
+
       cy.visit(`/secure/${tokenId}`)
 
       // 1. Charge will be created using this id as a token (GET)
@@ -57,6 +51,8 @@ describe('Re-use token flow', () => {
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
 
+      cy.log('Should load the "Your payment is in progress" page with a link to the "Enter card details" page when visiting the secure url again and state is ENTERING CARD DETAILS')
+
       cy.get('#card-details-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#card-details-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}`))
       cy.get('#return-url').should(($a) => expect($a).to.contain('Cancel and go back to try the payment again'))
@@ -65,13 +61,14 @@ describe('Re-use token flow', () => {
       cy.get('#card-details-link').click()
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('and entering payment details', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
       cy.server()
       cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.log('Should allow entering payment details')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()
@@ -89,10 +86,10 @@ describe('Re-use token flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(validPayment.email)
-    })
 
-    it('should show the Confirm Your Payment page', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
+
       cy.get('#card-details').submit()
 
       const lastFourCardDigits = validPayment.cardNumber.substr(-4)
@@ -102,21 +99,23 @@ describe('Re-use token flow', () => {
       // 11. Update charge details on Connector with valid card details (PATCH)
       // 12. Create actual charge for the card details on Connector (expects success message) (POST)
       // 13. Get charge status after authorisation (GET)
+
+      cy.log('Should show the Confirm Your Payment page')
+
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
 
       // TD inner values are padded with white space - generic match
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
-    })
-  })
 
-  describe('Visiting the secure url again when state is AUTHORISATION SUCCESS', () => {
-    it('should show the "Your Payment Is In Progress" page with a link to the "Confirm your payment" page', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', usedTokenAndReturnPaymentAuthSuccessChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
+
+      cy.log('Should show the "Your Payment Is In Progress" page with a link to the "Confirm your payment" page when visiting the secure url again and state is AUTHORISATION SUCCESS')
 
       cy.get('#confirm-link').should(($a) => expect($a).to.contain('Continue with your payment'))
       cy.get('#confirm-link').should(($a) => expect($a).to.have.attr('href', `/card_details/${chargeId}/confirm`))
@@ -124,12 +123,12 @@ describe('Re-use token flow', () => {
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
       cy.get('#confirm-link').click()
-    })
-  })
 
-  describe('Visiting the secure url again when state is EXPIRED', () => {
-    it('should show the "Your payment session has expired" page', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', usedTokenAndReturnPaymentExpiredChargeStubs)
+
+      cy.log('Should show the "Your payment session has expired" page when visiting the secure url again when state is EXPIRED')
+
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
       cy.get('h1').should('contain', 'Your payment session has expired')
