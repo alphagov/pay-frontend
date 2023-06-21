@@ -49,17 +49,17 @@ describe('Google Pay payment flow', () => {
   const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled) => {
     return [
       connectorMultipleSubsequentChargeDetails([{
-          chargeId,
-          status: 'CREATED',
-          state: { finished: false, status: 'created' },
-          allowApplePay: applePayEnabled,
-          allowGooglePay: googlePayEnabled,
-          gatewayMerchantId: 'SMTHG12345UP',
-          requires3ds: true,
-          integrationVersion3ds: 2,
-          paymentProvider: 'worldpay'
-        },
-        {
+        chargeId,
+        status: 'CREATED',
+        state: { finished: false, status: 'created' },
+        allowApplePay: applePayEnabled,
+        allowGooglePay: googlePayEnabled,
+        gatewayMerchantId: 'SMTHG12345UP',
+        requires3ds: true,
+        integrationVersion3ds: 2,
+        paymentProvider: 'worldpay'
+      },
+      {
         chargeId,
         status: 'ENTERING CARD DETAILS',
         state: { finished: false, status: 'started' },
@@ -82,18 +82,15 @@ describe('Google Pay payment flow', () => {
   const worldpay3dsFlexDdcStub = worldpay3dsFlexDdcIframePost(worldpaySessionId, true)
   const worldpay3dsFlexDdcStubFailure = worldpay3dsFlexDdcIframePost(worldpaySessionId, false)
 
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   describe('Secure card payment page', () => {
-    it('Should setup the payment and load the page', () => {
+    it('Should handle Google pay correctly', () => {
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Google Pay as a payment option and user chooses it', () => {
+      cy.log('Should show Google Pay as a payment option and user chooses it')
+
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -106,7 +103,7 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
@@ -123,9 +120,8 @@ describe('Google Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
-    })
 
-    it('Should show Google Pay as a payment option and user chooses it but DDC fails', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -138,7 +134,9 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+
+      cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
@@ -155,9 +153,8 @@ describe('Google Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
-    })
 
-    it('Should show Google Pay as a payment option and user chooses it but fetch call fails first time', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -170,14 +167,16 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
+
+      cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails first time')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       cy.wait('@first-web-payments-auth-request-which-fails')
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
@@ -194,9 +193,8 @@ describe('Google Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
-    })
 
-    it('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -209,14 +207,16 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
+
+      cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       cy.wait('@first-web-payments-auth-request-which-fails')
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
@@ -233,9 +233,8 @@ describe('Google Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
-    })
 
-    it('Should show Google Pay as a payment option and user chooses standard method', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -249,6 +248,8 @@ describe('Google Pay payment flow', () => {
       })
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+
+      cy.log('Should show Google Pay as a payment option and user chooses standard method')
 
       cy.get('#card-no').should('be.visible')
 
@@ -274,9 +275,8 @@ describe('Google Pay payment flow', () => {
         const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
         expect(ddcStatusVal).to.eq('valid DDC result')
       })
-    })
 
-    it('Should show Google Pay as a payment option and user chooses it but fetch call fails so user uses standard method', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -289,7 +289,9 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, { forceNetworkError: true }).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, { forceNetworkError: true }).as('web-payments-auth-request')
+
+      cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails so user uses standard method')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
@@ -321,24 +323,26 @@ describe('Google Pay payment flow', () => {
         const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
         expect(ddcStatusVal).to.eq('valid DDC result')
       })
-    })
 
-    it('Should not show Google Pay as browser doesn’t support it', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`)
+
+      cy.log('Should not show Google Pay as browser doesn’t support it')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
       cy.get('#card-no').should('be.visible')
     })
 
-    it('Should setup the payment and load the page and Apple Pay is enabled for service as well', () => {
+    it('Should show Google Pay as a payment option when Apple Pay is enabled for the service and allow user to use it', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
+
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-    })
 
-    it('Should show Google Pay as a payment option and user chooses it', () => {
+      cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, true), worldpay3dsFlexDdcStub])
 
       cy.visit(`/card_details/${chargeId}`, {
@@ -351,7 +355,7 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {method: 'POST', times: 1}, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('web-payments-auth-request')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
