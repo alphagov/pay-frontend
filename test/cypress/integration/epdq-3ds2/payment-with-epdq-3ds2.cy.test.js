@@ -14,7 +14,7 @@ describe('Enter card details page', () => {
         integrationVersion3ds: 2
       }
       const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts)
-      it('Should setup the payment and load the page', () => {
+      it('Should have extra browser information on the page for ePDQ 3DS2', () => {
         cy.task('setupStubs', createPaymentChargeStubsEnglish)
         cy.visit(`/secure/${tokenId}`)
 
@@ -25,9 +25,7 @@ describe('Enter card details page', () => {
         // 5. Charge status will be updated (PUT)
         // 6. Client will be redirected to /card_details/:chargeId (304)
         cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-      })
 
-      it('Should have extra browser information for ePDQ 3DS2', () => {
         cy.window().then($win => {
           cy.get('#card-details input[name=jsScreenColorDepth]').should('exist')
           cy.get('#card-details input[name=jsScreenColorDepth]').should('have.attr', 'value', $win.screen.colorDepth.toString())
@@ -55,7 +53,7 @@ describe('Enter card details page', () => {
         integrationVersion3ds: 1
       }
       const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts)
-      it('Should setup the payment and load the page', () => {
+      it('Should NOT have extra browser information on the page for ePDQ 3DS2', () => {
         cy.task('setupStubs', createPaymentChargeStubsEnglish)
         cy.visit(`/secure/${tokenId}`)
 
@@ -66,9 +64,7 @@ describe('Enter card details page', () => {
         // 5. Charge status will be updated (PUT)
         // 6. Client will be redirected to /card_details/:chargeId (304)
         cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-      })
 
-      it('Should not have extra browser information for ePDQ 3DS2', () => {
         cy.get('#card-details input[name=jsScreenColorDepth]').should('not.exist')
         cy.get('#card-details input[name=jsScreenHeight]').should('not.exist')
         cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
@@ -84,7 +80,7 @@ describe('Enter card details page', () => {
         integrationVersion3ds: 2
       }
       const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts)
-      it('Should setup the payment and load the page', () => {
+      it('Should NOT have extra browser information on the page for ePDQ 3DS2', () => {
         cy.task('setupStubs', createPaymentChargeStubsEnglish)
         cy.visit(`/secure/${tokenId}`)
 
@@ -95,9 +91,7 @@ describe('Enter card details page', () => {
         // 5. Charge status will be updated (PUT)
         // 6. Client will be redirected to /card_details/:chargeId (304)
         cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-      })
 
-      it('Should not have extra browser information for ePDQ 3DS2', () => {
         cy.get('#card-details input[name=jsScreenColorDepth]').should('not.exist')
         cy.get('#card-details input[name=jsScreenHeight]').should('not.exist')
         cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
@@ -113,7 +107,7 @@ describe('Enter card details page', () => {
         integrationVersion3ds: 2
       }
       const createPaymentChargeStubsEnglish = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, sessionOpts, providerOpts)
-      it('Should setup the payment and load the page', () => {
+      it('Should NOT have extra browser information on the page for ePDQ 3DS2', () => {
         cy.task('setupStubs', createPaymentChargeStubsEnglish)
         cy.visit(`/secure/${tokenId}`)
 
@@ -124,9 +118,7 @@ describe('Enter card details page', () => {
         // 5. Charge status will be updated (PUT)
         // 6. Client will be redirected to /card_details/:chargeId (304)
         cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-      })
 
-      it('Should not have extra browser information for ePDQ 3DS2', () => {
         cy.get('#card-details input[name=jsScreenColorDepth]').should('not.exist')
         cy.get('#card-details input[name=jsScreenHeight]').should('not.exist')
         cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
