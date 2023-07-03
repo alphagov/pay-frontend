@@ -28,7 +28,6 @@ describe('Billing address collection', () => {
         tokenId, chargeId, 'en', gatewayAccountId, serviceOpts, {}, {}, chargeOpts)
 
       it('Should show billing address section and populate with default billing address', () => {
-
         cy.task('setupStubs', createPaymentChargeStubs)
         cy.visit(`/secure/${tokenId}`)
 
@@ -82,7 +81,6 @@ describe('Billing address collection', () => {
       tokenId, chargeId, 'en', gatewayAccountId, serviceOpts, {}, {}, chargeOpts)
 
     it('Should not show the billing address section and allow valid card submission', () => {
-
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -94,7 +92,6 @@ describe('Billing address collection', () => {
       cy.get('#address-line-2').should('not.exist')
       cy.get('#address-city').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
-
 
       cy.task('clearStubs')
 
