@@ -107,44 +107,6 @@ const paths = {
       path: '/humans.txt',
       action: 'get'
     }
-  },
-  connectorCharge: {
-    show: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId',
-      action: 'get'
-    },
-    updateStatus: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/status',
-      action: 'put'
-    },
-    capture: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/capture',
-      action: 'put'
-    },
-    cancel: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/cancel',
-      action: 'post'
-    },
-    findByToken: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId/charge',
-      action: 'get'
-    },
-    token: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/tokens/:chargeTokenId/used',
-      action: 'post'
-    },
-    allCards: {
-      path: process.env.CONNECTOR_HOST + '/v1/api/card-types',
-      action: 'get'
-    },
-    threeDs: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/3ds',
-      action: 'post'
-    },
-    cardAuth: {
-      path: process.env.CONNECTOR_HOST + '/v1/frontend/charges/:chargeId/cards',
-      action: 'post'
-    }
   }
 }
 
