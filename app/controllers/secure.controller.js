@@ -25,21 +25,33 @@ const paths = require('../paths')
 exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
   const correlationId = req.headers[CORRELATION_HEADER] || ''
-  var chargeId
   try {
-    const chargeData = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
-    chargeId = chargeData.charge.externalId
+    const tokenResponse = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
+    let chargeId, gatewayAccountId, gatewayAccountType
+
+    // Temporarily support both the new and old response schemas from connector
+    if (tokenResponse.charge.externalId) {
+      chargeId = tokenResponse.charge.externalId
+      gatewayAccountId = tokenResponse.charge.gatewayAccount.gateway_account_id
+      gatewayAccountType = tokenResponse.charge.gatewayAccount.type
+    } else {
+      chargeId = tokenResponse.charge.charge_id
+      gatewayAccountId = tokenResponse.charge.gateway_account.gateway_account_id
+      gatewayAccountType = tokenResponse.charge.gateway_account.type
+    }
+
+    const chargeStatus = tokenResponse.charge.status
 
     setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
-    setLoggingField(req, GATEWAY_ACCOUNT_ID, chargeData.charge.gatewayAccount.gateway_account_id)
-    setLoggingField(req, GATEWAY_ACCOUNT_TYPE, chargeData.charge.gatewayAccount.type)
+    setLoggingField(req, GATEWAY_ACCOUNT_ID, gatewayAccountId)
+    setLoggingField(req, GATEWAY_ACCOUNT_TYPE, gatewayAccountType)
 
-    if (chargeData.used === true) {
+    if (tokenResponse.used === true) {
       if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
         throw new Error('UNAUTHORISED')
       }
       logger.info('Payment token being reused', getLoggingFields(req))
-      const stateName = chargeData.charge.status.toUpperCase().replace(/\s/g, '_')
+      const stateName = chargeStatus.toUpperCase().replace(/\s/g, '_')
       responseRouter.response(req, res, stateName, {
         chargeId: chargeId,
         returnUrl: paths.generateRoute('card.return', { chargeId })
@@ -48,7 +60,7 @@ exports.new = async function (req, res) {
       logger.info('Payment token used for the first time', getLoggingFields(req))
       await Token.markTokenAsUsed(chargeTokenId, correlationId, getLoggingFields(req))
       setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
-      res.redirect(303, generateRoute(resolveActionName(chargeData.charge.status, 'get'), { chargeId }))
+      res.redirect(303, generateRoute(resolveActionName(chargeStatus, 'get'), { chargeId }))
     }
   } catch (err) {
     if (err.message === 'UNAUTHORISED') {

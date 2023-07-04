@@ -147,7 +147,6 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(validPayment.email)
 
-
       const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
 
       cy.task('clearStubs')

@@ -127,7 +127,6 @@ describe('Standard card payment flow', () => {
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
 
-
       cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
 

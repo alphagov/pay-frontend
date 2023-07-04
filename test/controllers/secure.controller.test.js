@@ -1,16 +1,16 @@
 'use strict'
 
-// NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = require('chai').expect
 
-// Local dependencies
 const paths = require('../../app/paths.js')
 const withAnalyticsError = require('../../app/utils/analytics').withAnalyticsError
+const { validChargeDetails } = require('../fixtures/payment.fixtures')
 
-// configure
 require('../test-helpers/html-assertions.js')
+
+const chargeId = 'ch_dh6kpbb4k82oiibbe4b9haujjk'
 
 const mockCharge = (function () {
   const mock = function (withSuccess, chargeObject) {
@@ -134,13 +134,27 @@ describe('secure controller', function () {
         })
       })
 
-      describe('then mark as used successfully', function () {
-        it('should store the service name into the session and redirect', async function () {
-          await requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess(), responseRouter).new(request, response)
-          expect(response.redirect.calledWith(303, paths.generateRoute('card.new', { chargeId: chargeObject.charge.externalId }))).to.be.true // eslint-disable-line
-          expect(request.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
-          expect(request.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
-            csrfSecret: 'foo' // pragma: allowlist secret
+      describe('when the token is used successfully', function () {
+        describe('old connector token response', () => {
+          it('should store the service name into the session and redirect', async function () {
+            await requireSecureController(mockCharge.withSuccess(chargeObject), mockToken.withSuccess(), responseRouter).new(request, response)
+            expect(response.redirect.calledWith(303, paths.generateRoute('card.new', {chargeId: chargeObject.charge.externalId}))).to.be.true // eslint-disable-line
+            expect(request.frontend_state).to.have.all.keys(chargeId)
+            expect(request.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
+              csrfSecret: 'foo' // pragma: allowlist secret
+            })
+          })
+        })
+
+        describe('new connector token response', () => {
+          it('should store the service name into the session and redirect', async function () {
+            const newChargeObject = validChargeDetails({ chargeId })
+            await requireSecureController(mockCharge.withSuccess(newChargeObject), mockToken.withSuccess(), responseRouter).new(request, response)
+            expect(response.redirect.calledWith(303, paths.generateRoute('card.new', {chargeId: chargeObject.charge.externalId}))).to.be.true // eslint-disable-line
+            expect(request.frontend_state).to.have.all.keys(chargeId)
+            expect(request.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
+              csrfSecret: 'foo' // pragma: allowlist secret
+            })
           })
         })
       })
@@ -253,7 +267,7 @@ describe('secure controller', function () {
             returnUrl: '/return/dh6kpbb4k82oiibbe4b9haujjk'
           }
           expect(responseRouter.response.calledWith(requestWithFrontendStateCookie, response, 'AUTHORISATION_SUCCESS', opts)).to.be.true // eslint-disable-line
-          expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_dh6kpbb4k82oiibbe4b9haujjk')
+          expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys(chargeId)
           expect(requestWithFrontendStateCookie.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
             csrfSecret: 'foo' // pragma: allowlist secret
           })

@@ -6,7 +6,7 @@ describe('walletEnabled', () => {
     { walletToggle: true, gatewayAccountId: '1', payTestGatewayAccounts: ['5', '10', '15', '20'], expected: true },
     { walletToggle: false, gatewayAccountId: '1', payTestGatewayAccounts: ['5', '10', '15', '20'], expected: false },
     { walletToggle: false, gatewayAccountId: '15', payTestGatewayAccounts: ['5', '10', '15', '20'], expected: true },
-    { walletToggle: false, gatewayAccountId: '15', payTestGatewayAccounts: [], expected: false },
+    { walletToggle: false, gatewayAccountId: '15', payTestGatewayAccounts: [], expected: false }
   ]
 
   testData.forEach(({ walletToggle, gatewayAccountId, payTestGatewayAccounts, expected }) => {

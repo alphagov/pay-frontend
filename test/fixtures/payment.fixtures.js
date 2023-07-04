@@ -258,9 +258,7 @@ const fixtures = {
   tokenResponse: (opts = {}) => {
     return {
       used: opts.used,
-      charge: {
-        externalId: opts.chargeExternalId
-      }
+      charge: {}
     }
   },
 

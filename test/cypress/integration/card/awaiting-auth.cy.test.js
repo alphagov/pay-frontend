@@ -49,7 +49,6 @@ describe('Awaiting auth', () => {
     cy.get('#address-postcode').type(validPayment.postcode)
     cy.get('#email').type(validPayment.email)
 
-
     const paymentDetails = {
       cardNumber: validPayment.cardNumber,
       expiryMonth: validPayment.expiryMonth,
