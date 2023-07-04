@@ -27,24 +27,13 @@ exports.new = async function (req, res) {
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   try {
     const tokenResponse = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
-    let chargeId, gatewayAccountId, gatewayAccountType
 
-    // Temporarily support both the new and old response schemas from connector
-    if (tokenResponse.charge.externalId) {
-      chargeId = tokenResponse.charge.externalId
-      gatewayAccountId = tokenResponse.charge.gatewayAccount.gateway_account_id
-      gatewayAccountType = tokenResponse.charge.gatewayAccount.type
-    } else {
-      chargeId = tokenResponse.charge.charge_id
-      gatewayAccountId = tokenResponse.charge.gateway_account.gateway_account_id
-      gatewayAccountType = tokenResponse.charge.gateway_account.type
-    }
-
+    const chargeId = tokenResponse.charge.charge_id
     const chargeStatus = tokenResponse.charge.status
 
     setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
-    setLoggingField(req, GATEWAY_ACCOUNT_ID, gatewayAccountId)
-    setLoggingField(req, GATEWAY_ACCOUNT_TYPE, gatewayAccountType)
+    setLoggingField(req, GATEWAY_ACCOUNT_ID, tokenResponse.charge.gateway_account.gateway_account_id)
+    setLoggingField(req, GATEWAY_ACCOUNT_TYPE, tokenResponse.charge.gateway_account.type)
 
     if (tokenResponse.used === true) {
       if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {

@@ -71,7 +71,7 @@ function buildCancelChargeStub (chargeId, gatewayAccountId = 42, providerOpts = 
 function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42,
   serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}, additionalChargeOpts = {}) {
   return [
-    tokenStubs.connectorCreateChargeFromToken({
+    tokenStubs.connectorFindChargeByToken({
       ...additionalChargeOpts,
       tokenId,
       gatewayAccountId,
@@ -113,7 +113,7 @@ function buildChargeFromTokenNotFound (tokenId) {
 
 function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
   return [
-    tokenStubs.connectorCreateChargeFromToken({ tokenId: tokenId, gatewayAccountId: gatewayAccountId, used: true, status: status }),
+    tokenStubs.connectorFindChargeByToken({ tokenId: tokenId, gatewayAccountId: gatewayAccountId, used: true, status: status }),
     tokenStubs.connectorMarkTokenAsUsed(tokenId),
     chargeStubs.connectorGetChargeDetails({
       chargeId,
@@ -129,7 +129,7 @@ function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, g
 
 function buildCreatePaymentChargeWithPrefilledCardholderDeatilsStubs (tokenId, chargeId, gatewayAccountId = 42, chargeOpts = {}, serviceOpts = {}) {
   return [
-    tokenStubs.connectorCreateChargeFromToken({ tokenId, gatewayAccountId }),
+    tokenStubs.connectorFindChargeByToken({ tokenId, gatewayAccountId }),
     tokenStubs.connectorMarkTokenAsUsed(tokenId),
     chargeStubs.connectorGetChargeDetailsWithPrefilledCardholderDetails({
       chargeId,

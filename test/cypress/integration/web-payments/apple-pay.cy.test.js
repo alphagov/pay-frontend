@@ -4,7 +4,7 @@ const {
   connectorUpdateChargeStatus
 } = require('../../utils/stub-builders/charge-stubs')
 const {
-  connectorCreateChargeFromToken,
+  connectorFindChargeByToken,
   connectorMarkTokenAsUsed
 } = require('../../utils/stub-builders/token-stubs')
 const { adminUsersGetService } = require('../../utils/stub-builders/service-stubs')
@@ -49,7 +49,7 @@ describe('Apple Pay payment flow', () => {
   }
 
   const createPaymentChargeStubs = [
-    connectorCreateChargeFromToken({ tokenId }),
+    connectorFindChargeByToken({ tokenId }),
     connectorMarkTokenAsUsed(tokenId),
     connectorGetChargeDetails({
       chargeId,

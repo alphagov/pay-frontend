@@ -255,50 +255,10 @@ const buildChargeDetailsWithPrefilledCardHolderDeatils = (opts) => {
 }
 
 const fixtures = {
-  tokenResponse: (opts = {}) => {
+  validTokenResponse: (opts = {}) => {
     return {
-      used: opts.used,
-      charge: {}
-    }
-  },
-
-  // intitial charge details returned have different API surface than charge others
-  validChargeCreatedByToken: (opts = { used: false }) => {
-    console.log('state passed in: ' + opts.status)
-    return {
-      used: opts.used,
-      charge: {
-        amount: opts.amount || 1000,
-        cardDetails: null,
-        corporateSurcharge: null,
-        delayedCapture: false,
-        description: opts.description || 'Example fixture payment',
-        email: null,
-        externalId: opts.chargeId || 'ub8de8r5mh4pb49rgm1ismaqfv',
-        gatewayAccount: buildGatewayAccount(opts),
-        gatewayTransactionId: null,
-        language: 'ENGLISH',
-        paymentGatewayName: 'SANDBOX',
-        providerSessionId: null,
-        reference: 'my payment reference',
-        refunds: [],
-        returnUrl: '/?confirm',
-        status: opts.status || 'CREATED',
-        version: 1,
-        walletType: null,
-        agreement_id: 'some-agreement-id',
-        agreement: {
-          description: 'A valid description',
-          reference: 'A valid reference'
-        },
-        save_payment_instrument_to_agreement: true,
-        moto: opts.moto || false,
-        events: [{
-          gatewayEventDate: null,
-          status: 'CREATED',
-          version: 1
-        }]
-      }
+      used: opts.used || false,
+      charge: buildChargeDetails(opts)
     }
   },
 

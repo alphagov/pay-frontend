@@ -3,10 +3,10 @@
 const { stubBuilder } = require('./stub-builder')
 const paymentFixtures = require('../../../fixtures/payment.fixtures')
 
-function connectorCreateChargeFromToken (opts) {
+function connectorFindChargeByToken (opts) {
   const path = `/v1/frontend/tokens/${opts.tokenId}`
   return stubBuilder('GET', path, 200, {
-    response: paymentFixtures.validChargeCreatedByToken(opts)
+    response: paymentFixtures.validTokenResponse(opts)
   })
 }
 
@@ -21,7 +21,7 @@ function connectorChargeFromTokenNotFound (tokenId) {
 }
 
 module.exports = {
-  connectorCreateChargeFromToken,
+  connectorFindChargeByToken,
   connectorMarkTokenAsUsed,
   connectorChargeFromTokenNotFound
 }
