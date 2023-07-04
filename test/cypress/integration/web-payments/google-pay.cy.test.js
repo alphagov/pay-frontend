@@ -5,7 +5,7 @@ const {
   connectorWorldpay3dsFlexDdcJwt
 } = require('../../utils/stub-builders/charge-stubs')
 const {
-  connectorCreateChargeFromToken,
+  connectorFindChargeByToken,
   connectorMarkTokenAsUsed
 } = require('../../utils/stub-builders/token-stubs')
 const { adminUsersGetService } = require('../../utils/stub-builders/service-stubs')
@@ -70,7 +70,7 @@ describe('Google Pay payment flow', () => {
         integrationVersion3ds: 2,
         paymentProvider: 'worldpay'
       }]),
-      connectorCreateChargeFromToken({ tokenId }),
+      connectorFindChargeByToken({ tokenId }),
       connectorMarkTokenAsUsed(tokenId),
       connectorUpdateChargeStatus(chargeId),
       adminUsersGetService(),
