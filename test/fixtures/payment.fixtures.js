@@ -16,14 +16,11 @@ const buildGatewayAccount = function buildGatewayAccount (opts = {}) {
     corporate_prepaid_debit_card_surcharge_amount: 0,
     email_collection_mode: opts.emailCollectionMode || 'MANDATORY',
     block_prepaid_cards: opts.blockPrepaidCards || false,
-    live: false,
     requires3ds: opts.requires3ds || false,
     service_name: 'My service',
     type: opts.gatewayAccountType || 'test',
-    version: 1,
     integration_version_3ds: opts.integrationVersion3ds || 1,
     card_types: cardTypes,
-    allow_moto: opts.allowMoto || false,
     moto_mask_card_number_input: opts.motoMaskCardNumberInput || false,
     moto_mask_card_security_code_input: opts.motoMaskCardSecurityCodeInput || false
   }
