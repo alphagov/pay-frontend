@@ -123,8 +123,7 @@ describe('Standard card payment flow', () => {
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.log('Should enter and validate a correct card')
 
@@ -190,9 +189,8 @@ describe('Standard card payment flow', () => {
 
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-      cy.server()
 
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
       cy.get('#card-no').type('4000160000000004')
       cy.get('#card-no').blur()
       cy.wait('@checkCard')
@@ -205,9 +203,8 @@ describe('Standard card payment flow', () => {
 
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
-      cy.server()
 
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
       cy.get('#card-no').type('4000160000000004')
       cy.get('#card-no').blur()
       cy.wait('@checkCard')
@@ -231,8 +228,7 @@ describe('Standard card payment flow', () => {
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.get('#card-no').type('1234567890')
       cy.get('#card-no').blur()
@@ -256,8 +252,7 @@ describe('Standard card payment flow', () => {
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.get('#card-no').type('1234567890')
       cy.get('#card-no').blur()
@@ -296,8 +291,7 @@ describe('Standard card payment flow', () => {
         }
       })
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.log('Should enter and validate a correct card')
 
@@ -345,8 +339,7 @@ describe('Standard card payment flow', () => {
         }
       })
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.log('Should enter and validate a correct card')
 

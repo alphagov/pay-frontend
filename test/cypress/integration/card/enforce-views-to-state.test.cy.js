@@ -39,8 +39,7 @@ describe('Enforce views to state', () => {
     cy.task('clearStubs')
     cy.task('setupStubs', checkCardDetailsStubs)
 
-    cy.server()
-    cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+    cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
     cy.log('Should enter card details')
 
