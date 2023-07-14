@@ -80,12 +80,6 @@ describe('Standard card payment flow', () => {
     connectorPostValidCaptureCharge(chargeId)
   ]
 
-  beforeEach(() => {
-    // this test is for the full process, the session should be maintained
-    // as it would for an actual payment flow
-    Cypress.Cookies.preserveOnce('frontend_state')
-  })
-
   describe('Secure card payment page', () => {
     it('Should show a paying user disclaimer that details will be saved when an agreement is being configured', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
