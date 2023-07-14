@@ -81,8 +81,7 @@ describe('Standard card payment flow', () => {
 
       cy.get('#card-no').type(validPayment.cardNumber)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
@@ -160,8 +159,8 @@ describe('Standard card payment flow', () => {
 
       cy.get('#card-no').type(validPayment.cardNumber)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
@@ -241,8 +240,8 @@ describe('Standard card payment flow', () => {
 
       cy.get('#card-no').type(validPayment.cardNumber)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
