@@ -98,8 +98,7 @@ describe('Billing address collection', () => {
       const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
       cy.task('setupStubs', checkCardDetailsStubs)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.log('Should enter card details')
 
@@ -153,8 +152,7 @@ describe('Billing address collection', () => {
       const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
       cy.task('setupStubs', checkCardDetailsStubs)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.get('#card-no').type(validPayment.cardNumber)
       cy.get('#card-no').blur()

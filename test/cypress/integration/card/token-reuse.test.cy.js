@@ -65,8 +65,7 @@ describe('Re-use token flow', () => {
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
-      cy.server()
-      cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
       cy.log('Should allow entering payment details')
 

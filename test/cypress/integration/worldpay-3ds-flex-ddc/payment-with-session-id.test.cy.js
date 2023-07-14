@@ -72,8 +72,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
     cy.task('clearStubs')
     cy.task('setupStubs', checkCardDetailsStubs)
 
-    cy.server()
-    cy.route('POST', `/check_card/${chargeId}`).as('checkCard')
+    cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
     cy.get('#card-no').type(validPayment.cardNumber)
     cy.get('#card-no').blur()
