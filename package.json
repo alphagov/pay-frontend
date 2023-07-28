@@ -71,7 +71,7 @@
   "dependencies": {
     "@aws-crypto/decrypt-node": "^1.0.3",
     "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
-    "@govuk-pay/pay-js-commons": "^3.11.1",
+    "@govuk-pay/pay-js-commons": "^3.11.2",
     "@sentry/node": "7.57.0",
     "cert-info": "^1.5.1",
     "change-case": "2.3.x",
