@@ -4,6 +4,7 @@ const crypto = require('crypto')
 
 // NPM dependencies
 const express = require('express')
+const metrics = require('@govuk-pay/pay-js-metrics')
 const nunjucks = require('nunjucks')
 const favicon = require('serve-favicon')
 const i18n = require('i18n')
@@ -167,6 +168,9 @@ function logApplePayCertificateTimeToExpiry () {
  */
 function initialise () {
   const app = unconfiguredApp
+  if (NODE_ENV !== 'test') {
+    app.use(metrics.initialise())
+  }
   app.use(Sentry.Handlers.requestHandler())
   initialiseProxy(app)
 
