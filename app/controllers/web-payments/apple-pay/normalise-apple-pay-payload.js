@@ -108,7 +108,11 @@ module.exports = req => {
     brand: normaliseCardName(payload.token.paymentMethod.network),
     card_type: payload.token.paymentMethod.type.toUpperCase(),
     cardholder_name: normaliseCardholderName(payload),
-    email: normaliseEmail(payload)
+    email: normaliseEmail(payload),
+    display_name: payload.token.paymentMethod.displayName,
+    network: payload.token.paymentMethod.network,
+    transaction_identifier: payload.token.transactionIdentifier,
+    raw_payment_data: JSON.stringify(payload.token.paymentData)
   }
 
   delete payload.token.paymentMethod
