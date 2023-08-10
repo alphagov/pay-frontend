@@ -67,7 +67,8 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
   charge.post_card_action = routeFor('create', chargeId)
   charge.post_cancel_action = routeFor('cancel', chargeId)
   charge.allowApplePay = walletEnabled(applePayEnabled, charge.gatewayAccount.gatewayAccountId, payTestGatewayAccounts) ? charge.gatewayAccount.allowApplePay : false
-  charge.allowGooglePay = walletEnabled(googlePayEnabled, charge.gatewayAccount.gatewayAccountId, payTestGatewayAccounts) ? charge.gatewayAccount.allowGooglePay : false
+  // charge.allowGooglePay = walletEnabled(googlePayEnabled, charge.gatewayAccount.gatewayAccountId, payTestGatewayAccounts) ? charge.gatewayAccount.allowGooglePay : false
+  charge.allowGooglePay = true
   charge.googlePayGatewayMerchantID = charge.gatewayAccount.gatewayMerchantId
   charge.acceptHeader = req.headers.accept
 

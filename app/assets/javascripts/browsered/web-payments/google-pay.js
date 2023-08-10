@@ -108,15 +108,15 @@ const processPayment = paymentData => {
   toggleSubmitButtons()
   showSpinnerAndHideMainContent()
 
-  if (typeof Charge.worldpay_3ds_flex_ddc_jwt !== 'string' || Charge.worldpay_3ds_flex_ddc_jwt === '') {
-    submitGooglePayAuthRequest(paymentData)
-  }
+  // if (typeof Charge.worldpay_3ds_flex_ddc_jwt !== 'string' || Charge.worldpay_3ds_flex_ddc_jwt === '') {
+  submitGooglePayAuthRequest(paymentData)
+  // }
 
-  if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {
-    submitGooglePayAuthRequest(paymentData)
-  } else {
-    performDeviceDataCollectionForGooglePay(paymentData)
-  }
+  // if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {
+  //   submitGooglePayAuthRequest(paymentData)
+  // } else {
+  //   performDeviceDataCollectionForGooglePay(paymentData)
+  // }
 }
 
 const createGooglePaymentRequest = () => {

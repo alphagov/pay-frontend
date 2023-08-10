@@ -77,8 +77,9 @@ const getGooglePaymentsConfiguration = () => {
   const tokenizationSpecification = {
     type: 'PAYMENT_GATEWAY',
     parameters: {
-      gateway: 'worldpay',
-      gatewayMerchantId: window.googlePayGatewayMerchantID
+      gateway: 'stripe',
+      'stripe:version': '2018-10-31',
+      'stripe:publishableKey': 'ADD STRIPE PUBLISHABLE KEY HERE'
     }
   }
 
@@ -93,7 +94,7 @@ const getGooglePaymentsConfiguration = () => {
   }
 
   return {
-    environment: (window.googlePayMerchantID.length > 0 && window.gatewayAccountType === 'live') ? 'PRODUCTION' : 'TEST',
+    environment: 'TEST',
     apiVersion: 2,
     apiVersionMinor: 0,
     merchantInfo: {
