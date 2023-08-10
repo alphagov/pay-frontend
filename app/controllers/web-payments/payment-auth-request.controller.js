@@ -21,7 +21,7 @@ module.exports = (req, res) => {
 
   const payload = provider === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
 
-  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload }, getLoggingFields(req))
+  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthStripeGooglePay({ chargeId, provider, payload }, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
         statusCode: data.statusCode

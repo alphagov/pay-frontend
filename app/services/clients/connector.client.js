@@ -3,7 +3,7 @@
 const logger = require('../../utils/logger')(__filename)
 const baseClient = require('./base.client/base.client')
 const requestLogger = require('../../utils/request-logger')
-const { getCounter } = require('../../metrics/graphite-reporter')
+const {getCounter} = require('../../metrics/graphite-reporter')
 
 const METRICS_PREFIX = 'internal-rest-call.connector'
 const SERVICE_NAME = 'connector'
@@ -55,7 +55,7 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-function _putConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
+function _putConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     ...loggingFields,
@@ -66,7 +66,7 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
   }
   requestLogger.logRequestStart(context, loggingFields)
   return baseClient
-    .put(url, { payload, correlationId })
+    .put(url, {payload, correlationId})
     .then(response => {
       logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       incrementStatusCodeCounter(callingFunctionName, response.statusCode)
@@ -95,7 +95,7 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
 }
 
 /** @private */
-function _postConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
+function _postConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -106,7 +106,7 @@ function _postConnector (url, payload, description, loggingFields = {}, callingF
   requestLogger.logRequestStart(context, loggingFields)
   return baseClient.post(
     url,
-    { payload, correlationId }
+    {payload, correlationId}
   ).then(response => {
     logger.info('POST to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.statusCode)
@@ -135,7 +135,7 @@ function _postConnector (url, payload, description, loggingFields = {}, callingF
 }
 
 /** @private */
-function _patchConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
+function _patchConnector(url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -146,7 +146,7 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
   requestLogger.logRequestStart(context, loggingFields)
   return baseClient.patch(
     url,
-    { payload, correlationId }
+    {payload, correlationId}
   ).then(response => {
     logger.info('PATCH to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.statusCode)
@@ -175,7 +175,7 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
 }
 
 /** @private */
-function _getConnector (url, description, loggingFields = {}, callingFunctionName) {
+function _getConnector(url, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -184,7 +184,7 @@ function _getConnector (url, description, loggingFields = {}, callingFunctionNam
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
-  return baseClient.get(url, { correlationId })
+  return baseClient.get(url, {correlationId})
     .then(response => {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       incrementStatusCodeCounter(callingFunctionName, response.statusCode)
@@ -230,6 +230,11 @@ const chargeAuth = (chargeOptions, loggingFields = {}) => {
 const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
   const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.provider)
   return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields, 'chargeAuthWithWallet')
+}
+
+const chargeAuthStripeGooglePay = (chargeOptions, loggingFields = {}) => {
+  const authUrl = baseUrl + '/v1/frontend/charges/{chargeId}/wallets/stripe/google'.replace('{chargeId}', chargeOptions.chargeId)
+  return _postConnector(authUrl, chargeOptions.payload, 'authorise stripe google pay payment', loggingFields, 'chargeAuthWithWallet')
 }
 
 const capture = (chargeOptions, loggingFields = {}) => {
@@ -281,6 +286,7 @@ module.exports = function (clientOptions = {}) {
   return {
     chargeAuth,
     chargeAuthWithWallet,
+    chargeAuthStripeGooglePay,
     threeDs,
     updateStatus,
     findCharge,

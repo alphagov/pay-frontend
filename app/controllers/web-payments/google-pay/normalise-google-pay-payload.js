@@ -95,11 +95,14 @@ module.exports = req => {
     ip_address: userIpAddress(req)
   }
 
-  const paymentData = humps.decamelizeKeys(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
+  const token = JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token);
+  console.log('Token ID ' + token.id)
+
+  // const paymentData = humps.decamelizeKeys(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
   delete payload.paymentResponse.details.paymentMethodData
 
   return {
     payment_info: paymentInfo,
-    encrypted_payment_data: paymentData
+    token_id: token.id
   }
 }
