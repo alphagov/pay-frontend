@@ -111,13 +111,13 @@ module.exports = req => {
     email: normaliseEmail(payload),
     display_name: payload.token.paymentMethod.displayName,
     network: payload.token.paymentMethod.network,
-    transaction_identifier: payload.token.transactionIdentifier
+    transaction_identifier: payload.token.transactionIdentifier,
+    raw_payment_data: JSON.stringify(payload.token.paymentData)
   }
 
   delete payload.token.paymentMethod
   delete payload.token.transactionIdentifier
   const paymentData = humps.decamelizeKeys(payload.token.paymentData)
-  console.log('Apple Pay payment data ' + JSON.stringify(paymentData))
   return {
     payment_info: paymentInfo,
     encrypted_payment_data: paymentData
