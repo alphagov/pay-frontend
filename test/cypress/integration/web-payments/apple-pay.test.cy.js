@@ -60,21 +60,39 @@ describe('Apple Pay payment flow', () => {
     adminUsersGetService()
   ]
 
-  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY') => {
+  const createPaymentChargeStubsWithAgreement = [
+    connectorFindChargeByToken({ tokenId }),
+    connectorMarkTokenAsUsed(tokenId),
+    connectorGetChargeDetails({
+      chargeId,
+      status: 'CREATED',
+      state: { finished: false, status: 'created' },
+      agreement: { agreement_id: 'an-agreement-id' }
+    }),
+    connectorUpdateChargeStatus(chargeId),
+    adminUsersGetService()
+  ]
+
+  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY', agreement) => {
+    const chargeDetails = {
+      chargeId,
+      status: 'ENTERING CARD DETAILS',
+      state: { finished: false, status: 'started' },
+      allowApplePay: applePayEnabled,
+      allowGooglePay: googlePayEnabled,
+      gatewayMerchantId: 'SMTHG12345UP',
+      emailCollectionMode: emailCollectionMode
+    }
+
+    if (agreement) {
+      chargeDetails.agreement = { agreement_id: 'an-agreement-id' }
+    }
+
     return [
-      connectorGetChargeDetails({
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' },
-        allowApplePay: applePayEnabled,
-        allowGooglePay: googlePayEnabled,
-        gatewayMerchantId: 'SMTHG12345UP',
-        emailCollectionMode: emailCollectionMode
-      }),
+      connectorGetChargeDetails(chargeDetails),
       cardIdValidCardDetails()
     ]
   }
-
   const mockFetchAPI = path => {
     // Mock merchant validation controller response
     if (path === '/apple-pay-merchant-validation') {
@@ -307,6 +325,30 @@ describe('Apple Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
+    })
+
+    it('Should not show Apple Pay as payment is a recurring one', () => {
+      cy.task('setupStubs', createPaymentChargeStubsWithAgreement)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be marked as used (POST)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+
+      cy.task('clearStubs')
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'MANDATORY', true))
+
+      cy.visit(`/card_details/${chargeId}`)
+
+      // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
+      cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('not.exist')
+
+      // 8. User should see normal payment form
+      cy.get('#card-no').should('be.visible')
     })
   })
 })
