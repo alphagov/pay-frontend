@@ -3,39 +3,45 @@
 // NPM dependencies
 const logger = require('../../utils/logger')(__filename)
 const logging = require('../../utils/logging')
-const { getLoggingFields } = require('../../utils/logging-fields-helper')
+const {getLoggingFields} = require('../../utils/logging-fields-helper')
 const connectorClient = require('../../services/clients/connector.client')
 const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payload')
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
-const { CORRELATION_HEADER } = require('../../../config/correlation-header')
-const { setSessionVariable } = require('../../utils/cookies')
+const {CORRELATION_HEADER} = require('../../../config/correlation-header')
+const {setSessionVariable} = require('../../utils/cookies')
 
-module.exports = (req, res) => {
-  const { chargeId, params } = req
-  const { provider } = params
+module.exports = async (req, res) => {
+  const {chargeId, params} = req
+  const {provider} = params
 
-  const { worldpay3dsFlexDdcStatus } = req.body
+  const {worldpay3dsFlexDdcStatus} = req.body
   if (worldpay3dsFlexDdcStatus) {
     logging.worldpay3dsFlexDdcStatus(worldpay3dsFlexDdcStatus, getLoggingFields(req))
   }
 
   const payload = provider === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
+  const client = connectorClient({correlationId: req.headers[CORRELATION_HEADER]});
 
-  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthStripeGooglePay({ chargeId, provider, payload }, getLoggingFields(req))
-    .then(data => {
-      setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-        statusCode: data.statusCode
-      })
-      logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
-      res.status(200)
-      res.send({ url: `/handle-payment-response/${chargeId}` })
+  try {
+    let data
+    if (provider === 'apple') {
+      data = await client.chargeAuthWithWallet({chargeId, provider, payload}, getLoggingFields(req))
+    }
+    else {
+      data = await client.chargeAuthStripeGooglePay({chargeId, provider, payload}, getLoggingFields(req))
+    }
+    setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
+      statusCode: data.statusCode
     })
-    .catch(err => {
-      logger.error(`Error while trying to authorise ${provider} Pay payment`, {
-        ...getLoggingFields(req),
-        error: err
-      })
-      res.status(200)
-      res.send({ url: `/handle-payment-response/${chargeId}` })
+    logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
+    res.status(200)
+    res.send({url: `/handle-payment-response/${chargeId}`})
+  } catch (err) {
+    logger.error(`Error while trying to authorise ${provider} Pay payment`, {
+      ...getLoggingFields(req),
+      error: err
     })
+    res.status(200)
+    res.send({url: `/handle-payment-response/${chargeId}`})
+  }
 }
