@@ -46,30 +46,39 @@ describe('Google Pay payment flow', () => {
     }
   }
 
-  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled) => {
+  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled, agreement) => {
+    const createdCharge = {
+      chargeId,
+      status: 'CREATED',
+      state: { finished: false, status: 'created' },
+      allowApplePay: applePayEnabled,
+      allowGooglePay: googlePayEnabled,
+      gatewayMerchantId: 'SMTHG12345UP',
+      requires3ds: true,
+      integrationVersion3ds: 2,
+      paymentProvider: 'worldpay'
+    }
+    if (agreement) {
+      createdCharge.agreement = { agreement_id: 'an-agreement-id' }
+    }
+    const enteringCardDetailsCharge = {
+      chargeId,
+      status: 'CREATED',
+      state: { finished: false, status: 'created' },
+      allowApplePay: applePayEnabled,
+      allowGooglePay: googlePayEnabled,
+      gatewayMerchantId: 'SMTHG12345UP',
+      requires3ds: true,
+      integrationVersion3ds: 2,
+      paymentProvider: 'worldpay'
+    }
+    if (agreement) {
+      enteringCardDetailsCharge.agreement = { agreement_id: 'an-agreement-id' }
+    }
     return [
-      connectorMultipleSubsequentChargeDetails([{
-        chargeId,
-        status: 'CREATED',
-        state: { finished: false, status: 'created' },
-        allowApplePay: applePayEnabled,
-        allowGooglePay: googlePayEnabled,
-        gatewayMerchantId: 'SMTHG12345UP',
-        requires3ds: true,
-        integrationVersion3ds: 2,
-        paymentProvider: 'worldpay'
-      },
-      {
-        chargeId,
-        status: 'ENTERING CARD DETAILS',
-        state: { finished: false, status: 'started' },
-        allowApplePay: applePayEnabled,
-        allowGooglePay: googlePayEnabled,
-        gatewayMerchantId: 'SMTHG12345UP',
-        requires3ds: true,
-        integrationVersion3ds: 2,
-        paymentProvider: 'worldpay'
-      }]),
+      connectorMultipleSubsequentChargeDetails([
+        createdCharge,
+        enteringCardDetailsCharge]),
       connectorFindChargeByToken({ tokenId }),
       connectorMarkTokenAsUsed(tokenId),
       connectorUpdateChargeStatus(chargeId),
@@ -333,6 +342,15 @@ describe('Google Pay payment flow', () => {
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
       cy.get('#card-no').should('be.visible')
+
+      cy.task('clearStubs')
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false, true)])
+
+      cy.visit(`/card_details/${chargeId}`)
+
+      cy.log('Should not show Google Pay as payment is a recurring one')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
     })
 
     it('Should show Google Pay as a payment option when Apple Pay is enabled for the service and allow user to use it', () => {
