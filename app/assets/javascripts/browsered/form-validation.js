@@ -44,7 +44,7 @@ const init = function () {
     }, false)
   }
 
-  var checkFormSubmission = function (e) {
+  const checkFormSubmission = function (e) {
     // ZAP tests need to be able to post bad form fields to be able to try all the pen test stuff so this allows us to do that
     const zapDisabler = document.getElementById('disable-for-zap')
     if (zapDisabler !== null) {
@@ -72,7 +72,7 @@ const init = function () {
     }
   }
 
-  var addValidationsErrors = function () {
+  const addValidationsErrors = function () {
     addAllValidations()
     generateHighlightBlock()
   }
@@ -84,14 +84,14 @@ const init = function () {
     formGroup.classList.add('govuk-form-group--error')
   }
 
-  var addAllValidations = function () {
+  const addAllValidations = function () {
     const fields = allFields()
     for (const field in fields) {
       checkValidation(fields[field])
     }
   }
 
-  var generateHighlightBlock = function () {
+  const generateHighlightBlock = function () {
     errorSummary.classList.remove('hidden')
     errorSummary.setAttribute('aria-hidden', 'false')
     document.getElementsByClassName('govuk-error-summary__list')[0].innerHTML = ''
@@ -103,7 +103,7 @@ const init = function () {
     }, 10)
   }
 
-  var appendHighlightErrors = function () {
+  const appendHighlightErrors = function () {
     const errors = allValidations().errorFields
     for (const key in errors) {
       const error = errors[key]
@@ -111,15 +111,15 @@ const init = function () {
     }
   }
 
-  var appendHighlightError = function (error) {
+  const appendHighlightError = function (error) {
     addHighlightError('append', error)
   }
 
-  var prependHighlightError = function (error) {
+  const prependHighlightError = function (error) {
     addHighlightError('prepend', error)
   }
 
-  var addHighlightError = function (addType, error) {
+  const addHighlightError = function (addType, error) {
     const listElement = document.createElement('li')
     const errorAnchor = document.createElement('a')
     errorAnchor.setAttribute('href', '#' + error.cssKey + '-lbl')
@@ -134,14 +134,14 @@ const init = function () {
     }
   }
 
-  var checkPreviousFocused = function (input) {
+  const checkPreviousFocused = function (input) {
     setTimeout(function () {
       // document.activelement is set to body unless you do this
       checkValidationInline(input)
     }, 50)
   }
 
-  var checkValidationInline = function (input) {
+  const checkValidationInline = function (input) {
     const blank = input.value.length === 0
     const group = getFormGroup(input)
     // validation happens on blur, check which input the user is on now
@@ -153,7 +153,7 @@ const init = function () {
     checkValidation(input)
   }
 
-  var checkValidation = function (input) {
+  const checkValidation = function (input) {
     const formGroup = getFormGroup(input)
 
     const validationName = getFormGroupValidation(formGroup)
@@ -170,7 +170,7 @@ const init = function () {
     replaceOnError(validation, formGroup)
   }
 
-  var toggleErrorCssClassOnField = function (validation, input) {
+  const toggleErrorCssClassOnField = function (validation, input) {
     const CSS_ERROR_CLASS = 'govuk-input--error'
     const EXPIRY_MONTH_ELEMENT_ID = 'expiry-month'
     const EXPIRY_YEAR_ELEMENT_ID = 'expiry-year'
@@ -196,7 +196,7 @@ const init = function () {
     }
   }
 
-  var checkCardType = function (validation, formGroup) {
+  const checkCardType = function (validation, formGroup) {
     clearCorporateCardSurchargeInformation()
     showCardType().checkCardtypeIsAllowed().then(
       function (result) {
@@ -208,7 +208,7 @@ const init = function () {
     replaceOnError(validation, formGroup)
   }
 
-  var updateCorporateCardSurchargeInformation = function (card) {
+  const updateCorporateCardSurchargeInformation = function (card) {
     if (window.Card && window.Card.corporate_card_surcharge_amounts && card.corporate) {
       if (card.type === 'CREDIT' && card.prepaid === 'NOT_PREPAID' && window.Card.corporate_card_surcharge_amounts.credit > 0) {
         showCorporateCardSurchargeInformation(card.type, window.Card.corporate_card_surcharge_amounts.credit)
@@ -220,7 +220,7 @@ const init = function () {
     }
   }
 
-  var showCorporateCardSurchargeInformation = function (cardType, corporateCardSurchargeAmount) {
+  const showCorporateCardSurchargeInformation = function (cardType, corporateCardSurchargeAmount) {
     const amountNumber = parseFloat(paymentSummaryAmountValue)
     const corporateCardSurchargeAmountNumber = corporateCardSurchargeAmount / 100
 
@@ -237,7 +237,7 @@ const init = function () {
     paymentSummaryBreakdownElement.classList.remove('hidden')
   }
 
-  var clearCorporateCardSurchargeInformation = function () {
+  const clearCorporateCardSurchargeInformation = function () {
     // card message
     corporateCardMessageElement.classList.add('hidden')
     corporateCardMessageElement.textContent = ''
@@ -248,7 +248,7 @@ const init = function () {
     paymentSummaryAmountElement.textContent = '£' + paymentSummaryAmountValue
   }
 
-  var replaceOnError = function (validation, formGroup) {
+  const replaceOnError = function (validation, formGroup) {
     const validated = validation === undefined
     replaceLabel(validation, formGroup)
     if (!validated) {
@@ -258,7 +258,7 @@ const init = function () {
     }
   }
 
-  var replaceLabel = function (validation, formGroup) {
+  const replaceLabel = function (validation, formGroup) {
     const label = formGroup.querySelectorAll('[data-label-replace]')[0]
     if (label.length === 0) return
 
@@ -278,7 +278,7 @@ const init = function () {
     }
   }
 
-  var validationFor = function (name) {
+  const validationFor = function (name) {
     const validation = allValidations().errorFields.filter(function (validation) {
       return validation.key === name
     })
@@ -286,7 +286,7 @@ const init = function () {
     return validation[0].value
   }
 
-  var allFields = function () {
+  const allFields = function () {
     const fields = {}
     required.forEach(function (requiredField) {
       const getField = findInputByKey(requiredField)
@@ -308,25 +308,25 @@ const init = function () {
     return values
   }
 
-  var allValidations = function () {
+  const allValidations = function () {
     return chargeValidations.verify(allFieldValues())
   }
 
-  var getFormGroup = function (input) {
+  const getFormGroup = function (input) {
     return getClosest(input, '.govuk-form-group')
   }
 
-  var getFormGroupValidation = function (formGroup) {
+  const getFormGroupValidation = function (formGroup) {
     return formGroup.getAttribute('data-validation')
   }
 
-  var findInputByKey = function (key) {
+  const findInputByKey = function (key) {
     const foundInput = document.querySelectorAll('input[name=' + key + '], select[name=' + key + ']')
     // Only return inputs that exist on the form
     return foundInput ? foundInput[0] : null
   }
 
-  var getClosest = function (elem, selector) {
+  const getClosest = function (elem, selector) {
     // Element.matches() polyfill
     if (!Element.prototype.matches) {
       Element.prototype.matches =
