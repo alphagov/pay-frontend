@@ -12,19 +12,19 @@ updates:
   - javascript
   ignore:
   - dependency-name: "@aws-crypto/decrypt-node"
-    versions: ["2.x"]
+    versions: ["2.x", "3.x", "4.x"]
   - dependency-name: "@aws-crypto/raw-rsa-keyring-node"
-    versions: ["2.x"]
+    versions: ["2.x", "3.x", "4.x"]
   - dependency-name: change-case
     versions: ["3.x", "4.x"]
   - dependency-name: credit-card-type
-    versions: ["9.x"]
+    versions: ["7.x", "8.x", "9.x"]
   - dependency-name: helmet
-    versions: ["4.x"]
+    versions: ["4.x", "5.x", "6.x", "7.x"]
   - dependency-name: standard
     versions: ["17.x"]
   - dependency-name: punycode
-    versions: ["1.5"]
+    versions: ["1.x", "2.x"]
   - dependency-name: "@pact-foundation/pact"
     versions: ["10.x", "11.x", "12.x"]
 - package-ecosystem: docker
