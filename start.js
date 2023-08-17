@@ -1,15 +1,15 @@
 (function () {
   'use strict'
 
-  var path = require('path')
-  var fs = require('fs')
+  const path = require('path')
+  const fs = require('fs')
   const logger = require('./app/utils/logger')(__filename)
-  var throng = require('throng')
-  var server = require('./server')
-  var environment = require('./app/services/environment')
-  var pidFile = path.join(__dirname, '/.start.pid')
-  var fileOptions = { encoding: 'utf-8' }
-  var pid
+  const throng = require('throng')
+  const server = require('./server')
+  const environment = require('./app/services/environment')
+  const pidFile = path.join(__dirname, '/.start.pid')
+  const fileOptions = { encoding: 'utf-8' }
+  let pid
 
   logger.info(`[process.version=${process.version}] [NODE_VERSION=${process.env.NODE_VERSION}]`)
 

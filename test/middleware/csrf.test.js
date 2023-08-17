@@ -1,22 +1,22 @@
-var assert = require('assert')
-var sinon = require('sinon')
-var _ = require('lodash')
-var expect = require('chai').expect
-var nock = require('nock')
-var helper = require('../test-helpers/test-helpers.js')
+const assert = require('assert')
+const sinon = require('sinon')
+const _ = require('lodash')
+const expect = require('chai').expect
+const nock = require('nock')
+const helper = require('../test-helpers/test-helpers.js')
 
-var { csrfCheck, csrfTokenGeneration } = require('../../app/middleware/csrf.js')
+const { csrfCheck, csrfTokenGeneration } = require('../../app/middleware/csrf.js')
 
 describe('retrieve param test', function () {
-  var response = {
+  const response = {
     status: function () {},
     render: function () {},
     locals: {}
   }
-  var status
-  var render
-  var next
-  var validGetRequest = {
+  let status
+  let render
+  let next
+  const validGetRequest = {
     method: 'GET',
     params: { chargeId: 'foo' },
     body: {},
@@ -29,40 +29,40 @@ describe('retrieve param test', function () {
     get: () => null
   }
 
-  var noSession = _.cloneDeep(validGetRequest)
+  const noSession = _.cloneDeep(validGetRequest)
   delete noSession.frontend_state.ch_foo
 
-  var noSecret = _.cloneDeep(validGetRequest)
+  const noSecret = _.cloneDeep(validGetRequest)
   delete noSecret.frontend_state.ch_foo.csrfSecret
 
-  var invalidPost = _.cloneDeep(validGetRequest)
+  const invalidPost = _.cloneDeep(validGetRequest)
   delete invalidPost.method
-  var invalidPut = _.cloneDeep(invalidPost)
+  const invalidPut = _.cloneDeep(invalidPost)
 
   invalidPost.method = 'POST'
   invalidPut.method = 'PUT'
 
-  var validPost = _.cloneDeep(invalidPost)
+  const validPost = _.cloneDeep(invalidPost)
   validPost.body.csrfToken = helper.csrfToken()
 
-  var validPut = _.cloneDeep(invalidPut)
+  const validPut = _.cloneDeep(invalidPut)
   validPut.body.csrfToken = helper.csrfToken()
 
-  var assertErrorRequest = function (next, resp, status, render) {
+  const assertErrorRequest = function (next, resp, status, render) {
     expect(next.called).to.not.be.true // eslint-disable-line
     expect(resp.locals.csrf).to.be.undefined // eslint-disable-line
     assert(status.calledWith(500))
     assert(render.calledWith('errors/system-error', { viewName: 'SYSTEM_ERROR' }))
   }
 
-  var assertUnauthorisedRequest = function (next, resp, status, render) {
+  const assertUnauthorisedRequest = function (next, resp, status, render) {
     expect(next.called).to.not.be.true // eslint-disable-line
     expect(resp.locals.csrf).to.be.undefined // eslint-disable-line
     assert(status.calledWith(403))
     assert(render.calledWith('errors/incorrect-state/session-expired', { viewName: 'UNAUTHORISED' }))
   }
 
-  var assertValidRequest = function (next, resp, status, render) {
+  const assertValidRequest = function (next, resp, status, render) {
     expect(next.called).to.be.true // eslint-disable-line
     expect(resp.locals.csrf).to.not.be.undefined // eslint-disable-line
   }
@@ -80,25 +80,25 @@ describe('retrieve param test', function () {
   })
 
   it('should append csrf on get request', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfTokenGeneration(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
   })
 
   it('should error if no charge in session', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(noSession, resp, next)
     assertUnauthorisedRequest(next, resp, status, render)
   })
 
   it('should error if no secret in session', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(noSecret, resp, next)
     assertUnauthorisedRequest(next, resp, status, render)
   })
 
   it('should be successful on post if valid post and append token to used tokens', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(validPost, resp, next)
     csrfTokenGeneration(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
@@ -106,32 +106,32 @@ describe('retrieve param test', function () {
   })
 
   it('should be unsuccessful on post if token is already used', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(validPost, resp, next)
     assertErrorRequest(next, resp, status, render)
   })
 
   it('should error if no csrfToken in post request', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(invalidPost, resp, next)
     assertErrorRequest(next, resp, status, render)
   })
 
   it('should be successful on post if valid put', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(validPut, resp, next)
     csrfTokenGeneration(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
   })
 
   it('should be unsuccessful on put if token is already used', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(validPut, resp, next)
     assertErrorRequest(next, resp, status, render)
   })
 
   it('should error if no csrfToken in put request', function () {
-    var resp = _.cloneDeep(response)
+    const resp = _.cloneDeep(response)
     csrfCheck(invalidPut, resp, next)
     assertErrorRequest(next, resp, status, render)
   })

@@ -1,11 +1,11 @@
-var randomString = require('randomstring')
-var validationLib = require('../../app/utils/charge-validation-fields')
-var cardFactory = require('../../app/models/card.js')
-var card = cardFactory()
-var fieldValidators = validationLib(card).fieldValidations
+const randomString = require('randomstring')
+const validationLib = require('../../app/utils/charge-validation-fields')
+const cardFactory = require('../../app/models/card.js')
+const card = cardFactory()
+const fieldValidators = validationLib(card).fieldValidations
 
-var chai = require('chai')
-var expect = chai.expect
+const chai = require('chai')
+const expect = chai.expect
 
 describe('form validations', function () {
   it('should allow a correctly formatted email', function () {

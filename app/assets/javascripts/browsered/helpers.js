@@ -4,7 +4,7 @@ const setGlobalChargeId = () => {
 }
 
 const initialiseAddressCountryAutocomplete = () => {
-  var autocompleteScript = document.createElement('script')
+  const autocompleteScript = document.createElement('script')
 
   autocompleteScript.onload = function () {
     openregisterLocationPicker({
@@ -40,17 +40,17 @@ const showSpinnerAndHideMainContent = () => {
   errorSummary.classList.add('hidden')
   errorSummary.setAttribute('aria-hidden', 'true')
 
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
+  const paymentDetailsHeader = document.querySelector('.web-payment-button-section')
   if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
     paymentDetailsHeader.style.display = 'none'
   }
 
-  var applePayContainer = document.querySelector('.apple-pay-container')
+  const applePayContainer = document.querySelector('.apple-pay-container')
   if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
     applePayContainer.style.display = 'none'
   }
 
-  var googlePayContainer = document.querySelector('.google-pay-container')
+  const googlePayContainer = document.querySelector('.google-pay-container')
   if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
     googlePayContainer.style.display = 'none'
   }
@@ -67,17 +67,17 @@ const hideSpinnerAndShowMainContent = () => {
     errorSummary.setAttribute('aria-hidden', 'false')
   }
 
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
+  const paymentDetailsHeader = document.querySelector('.web-payment-button-section')
   if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
     paymentDetailsHeader.style.display = 'block'
   }
 
-  var applePayContainer = document.querySelector('.apple-pay-container')
+  const applePayContainer = document.querySelector('.apple-pay-container')
   if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
     applePayContainer.style.display = 'block'
   }
 
-  var googlePayContainer = document.querySelector('.google-pay-container')
+  const googlePayContainer = document.querySelector('.google-pay-container')
   if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
     googlePayContainer.style.display = 'block'
   }

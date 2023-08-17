@@ -5,7 +5,7 @@ const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMa
 const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 
 const submitGooglePayAuthRequest = (paymentResponse) => {
-  var requestBody = {
+  const requestBody = {
     paymentResponse: paymentResponse
   }
 
@@ -80,7 +80,7 @@ const performDeviceDataCollectionForGooglePay = (paymentData) => {
     submitGooglePayAuthRequest(paymentData)
   }, DDC_TIMEOUT_IN_MILLISECONDS)
 
-  var iframe = document.getElementById('googlePayWorldpay3dsFlexDdcIframe')
+  const iframe = document.getElementById('googlePayWorldpay3dsFlexDdcIframe')
   const iframeWindow = iframe.contentWindow
   const iframeDocument = iframeWindow.document
 
