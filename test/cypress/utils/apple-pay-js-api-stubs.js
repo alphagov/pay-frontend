@@ -24,14 +24,6 @@ const getMockApplePayClass = (validPaymentRequestResponse, email = null) => {
         )
       }
     }
-
-    set onvalidatemerchant (value) {
-      this._onvalidatemerchant = value
-    }
-
-    set onpaymentauthorized (value) {
-      this._onpaymentauthorized = value
-    }
   }
 
   // Mock function to trick JS into thinking Apple Pay is available
