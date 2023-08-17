@@ -25,6 +25,8 @@ updates:
     versions: ["17.x"]
   - dependency-name: punycode
     versions: ["1.5"]
+  - dependency-name: "@pact-foundation/pact"
+    versions: ["10.x", "11.x", "12.x"]
 - package-ecosystem: docker
   directory: "/"
   schedule:
