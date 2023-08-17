@@ -9,6 +9,7 @@ module.exports = (allowedCardTypes, provider) => {
     if (type.debit || type.credit) {
       return type.brand
     }
+    return true
   })
 
   let filteredAvailableNetworks = availableNetworks
