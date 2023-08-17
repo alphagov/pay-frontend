@@ -5,8 +5,8 @@ const punycode = require('punycode/')
 
 // Regexes and validation taken from Notify's internal validation
 // https://github.com/alphagov/notifications-utils
-const hostnamePartRegex = new RegExp('^(xn|[a-z0-9]+)(-?-[a-z0-9]+)*$', 'i')
-const tldPartRegex = new RegExp('^([a-z]{2,63}|xn--([a-z0-9]+-)*[a-z0-9]+)$', 'i')
+const hostnamePartRegex = /^(xn|[a-z0-9]+)(-?-[a-z0-9]+)*$/i
+const tldPartRegex = /^([a-z]{2,63}|xn--([a-z0-9]+-)*[a-z0-9]+)$/i
 const validLocalChars = 'a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~\\-'
 const emailRegex = new RegExp(`^[${validLocalChars}]+@([^.@][^@\\s]+)$`)
 
