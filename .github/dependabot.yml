@@ -12,40 +12,21 @@ updates:
   - javascript
   ignore:
   - dependency-name: "@aws-crypto/decrypt-node"
-    versions:
-    - ">= 2.a"
-    - "< 3"
+    versions: ["2.x"]
   - dependency-name: "@aws-crypto/raw-rsa-keyring-node"
-    versions:
-    - ">= 2.a"
-    - "< 3"
+    versions: ["2.x"]
   - dependency-name: change-case
-    versions:
-    - ">= 3.a"
-    - "< 4"
-  - dependency-name: change-case
-    versions:
-    - ">= 4.a"
-    - "< 5"
+    versions: ["3.x", "4.x"]
   - dependency-name: credit-card-type
-    versions:
-    - ">= 9.a"
-    - "< 10"
-  - dependency-name: cypress
-    versions:
-    - ">= 5.a"
-    - "< 6"
+    versions: ["9.x"]
   - dependency-name: helmet
-    versions:
-    - ">= 4.a"
-    - "< 5"
+    versions: ["4.x"]
   - dependency-name: standard
-    versions:
-    - ">= 16.a"
-    - "< 17"
+    versions: ["17.x"]
   - dependency-name: punycode
-    versions:
-    - ">= 1.5"
+    versions: ["1.5"]
+  - dependency-name: "@pact-foundation/pact"
+    versions: ["10.x", "11.x", "12.x"]
 - package-ecosystem: docker
   directory: "/"
   schedule:
@@ -65,7 +46,7 @@ updates:
   schedule:
     interval: daily
     time: "03:00"
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 0
   labels:
   - govuk-pay
   - dependencies
