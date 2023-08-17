@@ -338,7 +338,7 @@ const init = function () {
         function (s) {
           const matches = (this.document || this.ownerDocument).querySelectorAll(s)
 
-          let i = matches.length
+          const i = matches.length
           return i > -1
         }
     }
