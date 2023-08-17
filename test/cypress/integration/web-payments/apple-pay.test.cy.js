@@ -236,6 +236,7 @@ describe('Apple Pay payment flow', () => {
       // eslint-disable-next-line handle-callback-err
       cy.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from failing when the purpose of the test is an uncaught exception
+        console.log('Expected error', err)
         return false
       })
 
@@ -301,6 +302,7 @@ describe('Apple Pay payment flow', () => {
       // eslint-disable-next-line handle-callback-err
       cy.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from failing when the purpose of the test is an uncaught exception
+        console.log('Expected error', err)
         return false
       })
 
