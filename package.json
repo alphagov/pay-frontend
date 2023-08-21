@@ -142,7 +142,7 @@
     "sass": "^1.65.1",
     "sinon": "15.2.x",
     "standard": "^14.3.x",
-    "stylelint": "^15.10.2",
+    "stylelint": "^15.10.3",
     "stylelint-config-gds": "^1.0.0",
     "supertest": "^6.3.3"
   },
