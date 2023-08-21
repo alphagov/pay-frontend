@@ -239,8 +239,9 @@
                         </span>
                       </div>
                     </legend>
-                    <span class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
-                      {{ __p("cardDetails.expiryHint", exampleCardExpiryDateYear) }}</span>
+                    <div class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
+                      {{ __p("cardDetails.expiryHint", exampleCardExpiryDateYear) }}
+                    </div>
                     {% if highlightErrorFields.expiryMonth %}
                       <p class="govuk-error-message" id="error-expiry-date">
                         {{ highlightErrorFields.expiryMonth }}
@@ -305,28 +306,27 @@
                   value="{{ cardholderName }}"
                   autocomplete="cc-name"/>
                 </div>
+
                 <div class="govuk-form-group{% if highlightErrorFields.cvc %} govuk-form-group--error{% endif %} cvc govuk-clearfix" data-validation="cvc">
                   <label id="cvc-lbl" for="cvc" class="govuk-label govuk-label--s">
-                    <span
-              class="cvc-label"
-              data-label-replace="cvc"
-              data-original-label="{{ __p("cardDetails.cvc") }}">
+                    <span class="cvc-label" data-label-replace="cvc" data-original-label="{{ __p("cardDetails.cvc") }}">
                       {{ __p("cardDetails.cvc") }}
                     </span>
-                    <span class="govuk-hint govuk-!-margin-bottom-2">
-                      <span class="generic-cvc">
-                        {{ __p("cardDetails.cvcTip") }}
+                  </label>
+
+                  <div class="govuk-hint govuk-!-margin-bottom-2">
+                    <span class="generic-cvc">
+                      {{ __p("cardDetails.cvcTip") }}
+                    </span>
+                    <span class="amex-cvc hidden">
+                      <span class="hidden">
+                        {{ __p("cardDetails.amexcvcNonjs") }}
                       </span>
-                      <span class="amex-cvc hidden">
-                        <span class="hidden">
-                          {{ __p("cardDetails.amexcvcNonjs") }}
-                        </span>
-                        <span class="no-js-lowercase">
-                          {{ __p("cardDetails.amexcvcTip") }}
-                        </span>
+                      <span class="no-js-lowercase">
+                        {{ __p("cardDetails.amexcvcTip") }}
                       </span>
                     </span>
-                  </label>
+                  </div>
 
                   {% if highlightErrorFields.cvc %}
                     <p class="govuk-error-message" id="error-cvc">
