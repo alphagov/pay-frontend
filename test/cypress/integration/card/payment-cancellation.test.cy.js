@@ -13,6 +13,8 @@ describe('Cancelling payment from card details page', () => {
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
 
+    cy.percySnapshot()
+
     cy.task('clearStubs')
     cy.task('setupStubs', createCancelChargeStub)
 
@@ -22,5 +24,7 @@ describe('Cancelling payment from card details page', () => {
 
     cy.get('h1.user-cancel').should('exist')
     cy.get('h1.user-cancel').should('contain', 'Your payment has been cancelled')
+
+    cy.percySnapshot()
   })
 })

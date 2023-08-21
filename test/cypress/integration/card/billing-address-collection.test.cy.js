@@ -46,6 +46,7 @@ describe('Billing address collection', () => {
         // Doesn't seem possible to get the text displayed in the input using selectors, so just look at the select
         cy.get('#address-country-select').should('have.value', 'IE')
         cy.get('#address-country-select').find('option:selected').should('have.text', 'Ireland')
+        cy.percySnapshot()
       })
     })
 
@@ -68,6 +69,7 @@ describe('Billing address collection', () => {
         // Doesn't seem possible to get the text displayed in the input using selectors, so just look at the select
         cy.get('#address-country-select').should('have.value', null)
         cy.get('#address-country-select').find('option:selected').should('have.text', 'Pick a country or territory')
+        cy.percySnapshot()
       })
     })
   })
@@ -92,6 +94,7 @@ describe('Billing address collection', () => {
       cy.get('#address-line-2').should('not.exist')
       cy.get('#address-city').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
+      cy.percySnapshot()
 
       cy.task('clearStubs')
 
@@ -111,6 +114,8 @@ describe('Billing address collection', () => {
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#email').type(validPayment.email)
 
+      cy.percySnapshot()
+
       cy.log('Submitting confirmation with valid details should redirect to confirmation page')
 
       cy.task('clearStubs')
@@ -121,6 +126,7 @@ describe('Billing address collection', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
 
       cy.get('th').contains('Billing address').should('not.exist')
+      cy.percySnapshot()
     })
   })
 
@@ -145,6 +151,8 @@ describe('Billing address collection', () => {
       cy.get('#address-city').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
 
+      cy.percySnapshot()
+
       cy.log('should enter card details')
 
       cy.task('clearStubs')
@@ -163,6 +171,8 @@ describe('Billing address collection', () => {
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#email').type(validPayment.email)
 
+      cy.percySnapshot()
+
       cy.log('Submitting confirmation with valid details should redirect to confirmation page')
 
       cy.task('clearStubs')
@@ -173,6 +183,7 @@ describe('Billing address collection', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
 
       cy.get('th').contains('Billing address').should('not.exist')
+      cy.percySnapshot()
     })
   })
 })

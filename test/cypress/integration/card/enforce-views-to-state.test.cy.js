@@ -55,6 +55,8 @@ describe('Enforce views to state', () => {
     cy.get('#address-postcode').type(validPayment.postcode)
     cy.get('#email').type(validPayment.email)
 
+    cy.percySnapshot()
+
     cy.task('clearStubs')
     cy.task('setupStubs', confirmPaymentDetailsStubs)
 
@@ -71,6 +73,8 @@ describe('Enforce views to state', () => {
     cy.get('#address').should(($td) => expect($td).to.contain(validPayment.addressLine1))
     cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
 
+    cy.percySnapshot()
+
     cy.task('clearStubs')
     cy.task('setupStubs', backButtonStubs)
 
@@ -84,5 +88,7 @@ describe('Enforce views to state', () => {
     cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
     cy.get('#address').should(($td) => expect($td).to.contain(validPayment.addressLine1))
     cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
+
+    cy.percySnapshot()
   })
 })

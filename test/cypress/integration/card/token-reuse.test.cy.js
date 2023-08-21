@@ -38,6 +38,8 @@ describe('Re-use token flow', () => {
       // 6. Client will be redirected to /card_details/:chargeId (304)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', usedTokenAndReturnPaymentCreatedChargeStubs)
 
@@ -58,6 +60,8 @@ describe('Re-use token flow', () => {
       cy.get('#return-url').should(($a) => expect($a).to.contain('Cancel and go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
+      cy.percySnapshot()
+
       cy.get('#card-details-link').click()
 
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
@@ -76,6 +80,8 @@ describe('Re-use token flow', () => {
       // 8. CardID POST to verify that entered card is correct - this is configured to return valid
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
+
+      cy.percySnapshot()
 
       cy.get('#expiry-month').type(validPayment.expiryMonth)
       cy.get('#expiry-year').type(validPayment.expiryYear)
@@ -108,6 +114,8 @@ describe('Re-use token flow', () => {
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', usedTokenAndReturnPaymentAuthSuccessChargeStubs)
       cy.visit(`/secure/${tokenId}`)
@@ -121,6 +129,8 @@ describe('Re-use token flow', () => {
       cy.get('#return-url').should(($a) => expect($a).to.contain('Cancel and go back to try the payment again'))
       cy.get('#return-url').should(($a) => expect($a).to.have.attr('href', `/return/${chargeId}`))
 
+      cy.percySnapshot()
+
       cy.get('#confirm-link').click()
 
       cy.task('clearStubs')
@@ -131,6 +141,8 @@ describe('Re-use token flow', () => {
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
       cy.get('h1').should('contain', 'Your payment session has expired')
+
+      cy.percySnapshot()
     })
   })
 })

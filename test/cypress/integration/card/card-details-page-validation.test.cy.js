@@ -30,6 +30,8 @@ describe('Card details page validation', () => {
     cy.get('.address-line-1-label').should('exist')
     cy.get('.address-city-label').should('exist')
     cy.get('.address-postcode-label').should('exist')
+
+    cy.percySnapshot()
   })
 
   it('Should perform inline validation of the expiry date correctly', () => {
@@ -42,6 +44,8 @@ describe('Card details page validation', () => {
     cy.get('[data-cy=expiry-month]').should('have.class', 'govuk-input--error')
     cy.get('[data-cy=expiry-year]').should('have.class', 'govuk-input--error')
 
+    cy.percySnapshot()
+
     const nextYearIn2Digits = (new Date().getFullYear() + 1).toString().slice(-2)
 
     cy.get('[data-cy=expiry-year]').clear().type(nextYearIn2Digits)
@@ -49,5 +53,7 @@ describe('Card details page validation', () => {
 
     cy.get('[data-cy=expiry-month]').not('have.class', 'govuk-input--error')
     cy.get('[data-cy=expiry-year]').not('have.class', 'govuk-input--error')
+
+    cy.percySnapshot()
   })
 })

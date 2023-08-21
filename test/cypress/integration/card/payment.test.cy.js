@@ -103,6 +103,8 @@ describe('Standard card payment flow', () => {
       // Accept header will almost certainly contain either ‘text/html’ or ‘*/*’
       cy.get('body').should('have.attr', 'data-accept-header').and('match', /text\/html|\*\/\*/)
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsWithSetupAgreementStubs)
 
@@ -113,6 +115,8 @@ describe('Standard card payment flow', () => {
       cy.get('#agreement-setup-disclaimer').should('exist')
       cy.get('#agreement-setup-disclaimer').should('contain', 'Your payment details will be saved for:')
       cy.get('#agreement-setup-disclaimer').should('contain', agreementDescription)
+
+      cy.percySnapshot()
 
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
@@ -142,6 +146,8 @@ describe('Standard card payment flow', () => {
 
       const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
 
@@ -161,6 +167,8 @@ describe('Standard card payment flow', () => {
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
 
@@ -173,6 +181,8 @@ describe('Standard card payment flow', () => {
       // 16. Get charge status following post - should show capture success (GET)
       cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
+
+      cy.percySnapshot()
     })
   })
 
@@ -189,6 +199,8 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no').blur()
       cy.wait('@checkCard')
       cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Prepaid cards are not accepted')
+
+      cy.percySnapshot()
     })
 
     it('should allow prepaid cards if gateway account is configured to allow', () => {
@@ -203,6 +215,8 @@ describe('Standard card payment flow', () => {
       cy.get('#card-no').blur()
       cy.wait('@checkCard')
       cy.get('#card-no-lbl').should('not.contain', 'Prepaid cards are not accepted')
+
+      cy.percySnapshot()
     })
   })
 
@@ -229,6 +243,8 @@ describe('Standard card payment flow', () => {
 
       cy.get('#card-no').should('have.class', 'govuk-input--error')
       cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Card number is not the correct length')
+
+      cy.percySnapshot()
     })
 
     it('Should show Welsh error when card number is less than 11 digits and it is a Welsh payment page', () => {
@@ -253,6 +269,8 @@ describe('Standard card payment flow', () => {
 
       cy.get('#card-no').should('have.class', 'govuk-input--error')
       cy.get('#card-no-lbl').parent().find('.govuk-error-message').should('contain', 'Nid yw rhif y cerdyn yr hyd cywir')
+
+      cy.percySnapshot()
     })
   })
 
@@ -297,6 +315,8 @@ describe('Standard card payment flow', () => {
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
 
+      cy.percySnapshot()
+
       cy.log('Should enter payment details')
 
       cy.get('#expiry-month').type(validPayment.expiryMonth)
@@ -307,6 +327,8 @@ describe('Standard card payment flow', () => {
       cy.get('#address-city').type(validPayment.city)
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(validPayment.email)
+
+      cy.percySnapshot()
     })
   })
 
@@ -345,6 +367,8 @@ describe('Standard card payment flow', () => {
       cy.wait('@checkCard')
       cy.get('#card-no').should('not.have.class', 'govuk-input--error')
 
+      cy.percySnapshot()
+
       cy.log('Should enter payment details')
 
       cy.get('#expiry-month').type(validPayment.expiryMonth)
@@ -357,6 +381,8 @@ describe('Standard card payment flow', () => {
       cy.get('#email').type(validPayment.email)
 
       const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
+
+      cy.percySnapshot()
 
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
@@ -376,6 +402,8 @@ describe('Standard card payment flow', () => {
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
+
+      cy.percySnapshot()
     })
   })
 
@@ -400,6 +428,8 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').should('have.value', opts.postcode)
       cy.get('#address-country').should('have.value', 'United Kingdom')
       cy.get('#email').should('have.value', opts.email)
+
+      cy.percySnapshot()
     })
 
     it('should load partial cardholder details to page', () => {
@@ -414,6 +444,8 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.get('#address-country').should('have.value', 'United Kingdom')
+
+      cy.percySnapshot()
     })
 
     it('should load country to page', () => {
@@ -425,6 +457,8 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.get('#address-country').should('have.value', 'Ireland')
+
+      cy.percySnapshot()
     })
 
     it('should load United Kingdom when invalid country code', () => {
@@ -436,6 +470,8 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.get('#address-country').should('have.value', 'United Kingdom')
+
+      cy.percySnapshot()
     })
 
     it('should load United Kingdom when no country code', () => {
@@ -446,6 +482,8 @@ describe('Standard card payment flow', () => {
       cy.visit(`/secure/${tokenId}`)
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.get('#address-country').should('have.value', 'United Kingdom')
+
+      cy.percySnapshot()
     })
   })
 })

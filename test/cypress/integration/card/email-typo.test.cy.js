@@ -92,8 +92,12 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(likelyTypoEmail)
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(validPayment.email))
+
+      cy.percySnapshot()
 
       cy.log('Should show error about email typo after submmitting the form')
 
@@ -104,6 +108,8 @@ describe('Standard card payment flow', () => {
 
       cy.get('#error-summary').should('be.visible')
       cy.get('label[for="email-corrected"]').should('contain', validPayment.email)
+
+      cy.percySnapshot()
 
       const lastFourCardDigits = validPayment.cardNumber.substr(-4)
 
@@ -126,6 +132,8 @@ describe('Standard card payment flow', () => {
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
 
@@ -138,6 +146,8 @@ describe('Standard card payment flow', () => {
       // 15. Get charge status following post - should show capture success (GET)
       cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
+
+      cy.percySnapshot()
     })
 
     it('Should show an email typo error for an email with a typo and allow user to select uncorrected email and proceed with payment', () => {
@@ -170,6 +180,8 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(likelyTypoEmail)
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(likelyTypoEmail))
 
@@ -182,6 +194,9 @@ describe('Standard card payment flow', () => {
 
       cy.get('#error-summary').should('be.visible')
       cy.get('label[for="email-uncorrected"]').should('contain', likelyTypoEmail)
+
+      cy.percySnapshot()
+
       // 7b. which the user chooses to ignore
       cy.get('#email-uncorrected').click()
 
@@ -206,6 +221,8 @@ describe('Standard card payment flow', () => {
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(likelyTypoEmail))
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
 
@@ -218,6 +235,8 @@ describe('Standard card payment flow', () => {
       // 15. Get charge status following post - should show capture success (GET)
       cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
+
+      cy.percySnapshot()
     })
 
     it('Should show an email typo error for an email with a double typo and allow user to select corrected email and proceed with payment', () => {
@@ -250,6 +269,8 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
       cy.get('#email').type(likelyDoubleTypoEmail)
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs(likelyDoubleTypoEmailFix))
 
@@ -262,6 +283,9 @@ describe('Standard card payment flow', () => {
 
       cy.get('#error-summary').should('be.visible')
       cy.get('label[for="email-corrected"]').should('contain', likelyDoubleTypoEmailFix)
+
+      cy.percySnapshot()
+
       // Suggestion is still not their email address so user updates original email
       cy.get('#email').clear().type(validPayment.email)
 
@@ -286,6 +310,8 @@ describe('Standard card payment flow', () => {
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', submitPaymentCaptureStubs)
 
@@ -298,6 +324,8 @@ describe('Standard card payment flow', () => {
       // 15. Get charge status following post - should show capture success (GET)
       cy.location('pathname').should('eq', '/humans.txt')
       cy.location('search').should('eq', '?confirm')
+
+      cy.percySnapshot()
     })
   })
 })

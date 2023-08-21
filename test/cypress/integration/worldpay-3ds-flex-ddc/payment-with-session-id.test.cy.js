@@ -92,6 +92,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
     cy.get('#address-city').type(validPayment.city)
     cy.get('#address-postcode').type(validPayment.postcode)
     cy.get('#email').type(validPayment.email)
+
+    cy.percySnapshot()
   }
 
   describe('Valid DDC response', () => {
@@ -108,6 +110,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       enterCardPaymentDetails()
+
+      cy.percySnapshot()
 
       cy.task('clearStubs')
       cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStub])
@@ -138,6 +142,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
 
       enterCardPaymentDetails()
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', [...confirmPaymentDetailsStubs, worldpay3dsFlexDdcStubFailure])
 
@@ -166,6 +172,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       enterCardPaymentDetails()
+
+      cy.percySnapshot()
 
       const confirmPaymentDetailsStubsPop = _.cloneDeep(confirmPaymentDetailsStubs)
       confirmPaymentDetailsStubsPop.pop()
@@ -211,6 +219,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
 
       enterCardPaymentDetails()
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
 
@@ -222,6 +232,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
 
       cy.get('.google-pay-container').should('have.attr', 'style', 'display: none;')
       cy.get('.web-payment-button-section').should('have.attr', 'style', 'display: none;')
+
+      cy.percySnapshot()
     })
   })
 })

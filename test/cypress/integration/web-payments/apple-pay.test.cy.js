@@ -137,6 +137,9 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.visible')
+
+      cy.percySnapshot()
+
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
@@ -145,6 +148,8 @@ describe('Apple Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
+
+      cy.percySnapshot()
     })
 
     it('Should show Apple Pay as a payment option with email address collection disabled and allow user to choose Apple Pay', () => {
@@ -175,6 +180,9 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.visible')
+
+      cy.percySnapshot()
+
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
@@ -183,6 +191,8 @@ describe('Apple Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
+
+      cy.percySnapshot()
     })
 
     it('Should show Apple Pay as a payment option but allow user to pay with a card', () => {
@@ -216,6 +226,8 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+
+      cy.percySnapshot()
     })
 
     it('Should show Apple Pay but error because a bad email was entered', () => {
@@ -253,10 +265,15 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.visible')
+
+      cy.percySnapshot()
+
       cy.get('#apple-pay-payment-method-submit').click()
 
       // 8. User clicks though the native payment UI but the email is invalid and we throw an error
       cy.get('#error-summary').should('be.visible')
+
+      cy.percySnapshot()
     })
 
     it('Should not show Apple Pay as browser doesn’t support it', () => {
@@ -281,6 +298,8 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+
+      cy.percySnapshot()
     })
 
     it('Should show Apple Pay as a payment option when Google pay is an option and allow user to use Apple Pay', () => {
@@ -317,6 +336,9 @@ describe('Apple Pay payment flow', () => {
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.visible')
+
+      cy.percySnapshot()
+
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').click()
 
       // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
@@ -325,6 +347,8 @@ describe('Apple Pay payment flow', () => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
       })
+
+      cy.percySnapshot()
     })
 
     it('Should not show Apple Pay as payment is a recurring one', () => {
@@ -349,6 +373,8 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+
+      cy.percySnapshot()
     })
   })
 })

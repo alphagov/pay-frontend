@@ -43,6 +43,8 @@ describe('Enter card details page', () => {
           cy.get('#card-details input[name=jsNavigatorLanguage]').should('exist')
           cy.get('#card-details input[name=jsNavigatorLanguage]').should('have.attr', 'value', $win.navigator.language.toString())
         })
+
+        cy.percySnapshot()
       })
     })
 
@@ -70,6 +72,8 @@ describe('Enter card details page', () => {
         cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
         cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('not.exist')
         cy.get('#card-details input[name=jsNavigatorLanguage]').should('not.exist')
+
+        cy.percySnapshot()
       })
     })
 
@@ -97,6 +101,8 @@ describe('Enter card details page', () => {
         cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
         cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('not.exist')
         cy.get('#card-details input[name=jsNavigatorLanguage]').should('not.exist')
+
+        cy.percySnapshot()
       })
     })
 
@@ -124,6 +130,8 @@ describe('Enter card details page', () => {
         cy.get('#card-details input[name=jsScreenWidth]').should('not.exist')
         cy.get('#card-details input[name=jsTimezoneOffsetMins]').should('not.exist')
         cy.get('#card-details input[name=jsNavigatorLanguage]').should('not.exist')
+
+        cy.percySnapshot()
       })
     })
   }

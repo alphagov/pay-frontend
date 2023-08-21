@@ -26,6 +26,8 @@ describe('Awaiting auth', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
 
+    cy.percySnapshot()
+
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
 
@@ -47,6 +49,8 @@ describe('Awaiting auth', () => {
     cy.get('#address-city').type(validPayment.city)
     cy.get('#address-postcode').type(validPayment.postcode)
     cy.get('#email').type(validPayment.email)
+
+    cy.percySnapshot()
 
     const paymentDetails = {
       cardNumber: validPayment.cardNumber,
@@ -102,6 +106,7 @@ describe('Awaiting auth', () => {
     cy.get('#card-details').submit()
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}/auth_waiting`)
+    cy.percySnapshot()
     cy.get('p.lede').should('exist')
 
     cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)

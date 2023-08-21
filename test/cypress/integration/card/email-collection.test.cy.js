@@ -116,6 +116,8 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.window().its('chargeId').should('eq', `${chargeId}`)
 
+      cy.percySnapshot()
+
       cy.log('Should enter card details')
 
       cy.task('clearStubs')
@@ -136,6 +138,8 @@ describe('Standard card payment flow', () => {
 
       cy.get('#email').should('exist')
 
+      cy.percySnapshot()
+
       cy.log('Submitting confirmation with valid details should redirect to confirmation page')
 
       cy.task('clearStubs')
@@ -143,6 +147,8 @@ describe('Standard card payment flow', () => {
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
       cy.get('#email').should('not.exist')
+
+      cy.percySnapshot()
     })
   })
 })

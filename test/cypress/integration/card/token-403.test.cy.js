@@ -17,6 +17,7 @@ describe('Re-using token results in 403 flow', () => {
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
       cy.get('h1').should('contain', 'Your payment session has expired')
       cy.get('#return-url').should('not.exist')
+      cy.percySnapshot()
     })
   })
 
@@ -27,6 +28,7 @@ describe('Re-using token results in 403 flow', () => {
       cy.location('pathname').should('eq', `/secure/${tokenId}`)
       cy.get('h1').should('contain', 'Your payment session has expired')
       cy.get('#return-url').should('not.exist')
+      cy.percySnapshot()
     })
   })
 })

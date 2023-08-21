@@ -27,6 +27,8 @@ describe('The footer displayed on payment pages', () => {
     cy.get('.merchant-details').should('exist')
     cy.get('.merchant-details-line-1').should('have.text', 'Service provided by Org')
     cy.get('.merchant-details-line-2').should('have.text', 'Street, Borough, City AW1H 9UX United Kingdom')
+
+    cy.percySnapshot()
   })
 
   it('should display the service name and address when service does not have a second line', () => {
@@ -48,6 +50,7 @@ describe('The footer displayed on payment pages', () => {
     cy.get('.merchant-details').should('exist')
     cy.get('.merchant-details-line-1').should('have.text', 'Service provided by Org')
     cy.get('.merchant-details-line-2').should('have.text', 'Street, City AW1H 9UX United Kingdom')
+    cy.percySnapshot()
   })
 
   it('should display just the service name when mandatory address fields are missing', () => {
@@ -68,6 +71,8 @@ describe('The footer displayed on payment pages', () => {
     cy.get('.merchant-details').should('exist')
     cy.get('.merchant-details-line-1').should('have.text', 'Service provided by Org')
     cy.get('.merchant-details-line-2').should('not.exist')
+
+    cy.percySnapshot()
   })
 
   it('should not display the service details if there are no organisation for the service', () => {
@@ -81,6 +86,8 @@ describe('The footer displayed on payment pages', () => {
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('not.exist')
+
+    cy.percySnapshot()
   })
 
   it('should not display the service details if there is an organisation address but no organisation name', () => {
@@ -99,5 +106,7 @@ describe('The footer displayed on payment pages', () => {
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('.merchant-details').should('not.exist')
+
+    cy.percySnapshot()
   })
 })

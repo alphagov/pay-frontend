@@ -214,6 +214,8 @@ describe('Standard card payment flow', () => {
       cy.get('#cvc').invoke('attr', 'type').should('eq', 'password')
       cy.get('#cvc').invoke('attr', 'autocomplete').should('eq', 'off')
 
+      cy.percySnapshot()
+
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubs)
 
@@ -235,6 +237,8 @@ describe('Standard card payment flow', () => {
       cy.get('#cvc').type(validPayment.securityCode)
       cy.get('#email').type(validPayment.email)
 
+      cy.percySnapshot()
+
       cy.log('Submitting confirmation with valid details should redirect to confirmation page')
       const lastFourCardDigits = validPayment.cardNumber.toString().slice(-4)
 
@@ -246,6 +250,8 @@ describe('Standard card payment flow', () => {
       cy.get('#card-number').should(($td) => expect($td).to.contain(`●●●●●●●●●●●●${lastFourCardDigits}`))
       cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
       cy.get('#email').should(($td) => expect($td).to.contain(validPayment.email))
+
+      cy.percySnapshot()
     })
   })
 })
