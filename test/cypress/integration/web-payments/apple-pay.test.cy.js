@@ -54,7 +54,8 @@ describe('Apple Pay payment flow', () => {
     connectorGetChargeDetails({
       chargeId,
       status: 'CREATED',
-      state: { finished: false, status: 'created' }
+      state: { finished: false, status: 'created' },
+      paymentProvider: 'worldpay'
     }),
     connectorUpdateChargeStatus(chargeId),
     adminUsersGetService()
@@ -67,7 +68,8 @@ describe('Apple Pay payment flow', () => {
       chargeId,
       status: 'CREATED',
       state: { finished: false, status: 'created' },
-      agreement: { agreement_id: 'an-agreement-id' }
+      agreement: { agreement_id: 'an-agreement-id' },
+      paymentProvider: 'worldpay'
     }),
     connectorUpdateChargeStatus(chargeId),
     adminUsersGetService()
@@ -81,7 +83,8 @@ describe('Apple Pay payment flow', () => {
       allowApplePay: applePayEnabled,
       allowGooglePay: googlePayEnabled,
       gatewayMerchantId: 'SMTHG12345UP',
-      emailCollectionMode: emailCollectionMode
+      emailCollectionMode: emailCollectionMode,
+      paymentProvider: 'worldpay'
     }
 
     if (agreement) {
