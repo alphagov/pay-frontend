@@ -52,7 +52,10 @@ describe('normalise apple pay payload', function () {
           brand: 'master-card',
           card_type: 'DEBIT',
           cardholder_name: 'mr payment',
-          email: 'jonheslop@bla.test'
+          email: 'jonheslop@bla.test',
+          display_name: 'MasterCard 1358',
+          network: 'MasterCard',
+          transaction_identifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
         },
         encrypted_payment_data: {
           version: 'EC_v1',
@@ -122,7 +125,10 @@ describe('normalise apple pay payload', function () {
         brand: 'master-card',
         card_type: 'DEBIT',
         cardholder_name: 'mr payment',
-        email: 'jonheslop@bla.test'
+        email: 'jonheslop@bla.test',
+        display_name: 'MasterCard ABDC',
+        network: 'MasterCard',
+        transaction_identifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
       })
   })
   it('should return an empty string for last_digits_card_number when displayName is shorter than 4 characters', function () {
@@ -160,7 +166,10 @@ describe('normalise apple pay payload', function () {
         brand: 'master-card',
         card_type: 'DEBIT',
         cardholder_name: 'mr payment',
-        email: 'jonheslop@bla.test'
+        email: 'jonheslop@bla.test',
+        display_name: '123',
+        network: 'MasterCard',
+        transaction_identifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
       })
   })
   it('should return an empty string for last_digits_card_number when displayName is a blank string', function () {
@@ -198,7 +207,10 @@ describe('normalise apple pay payload', function () {
         brand: 'master-card',
         card_type: 'DEBIT',
         cardholder_name: 'mr payment',
-        email: 'jonheslop@bla.test'
+        email: 'jonheslop@bla.test',
+        display_name: '       ',
+        network: 'MasterCard',
+        transaction_identifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
       })
   })
   it('should return an error when an unrecognizable card brand is passed in', function () {
@@ -260,7 +272,10 @@ describe('normalise apple pay payload', function () {
           brand: 'master-card',
           card_type: 'DEBIT',
           cardholder_name: null,
-          email: null
+          email: null,
+          display_name: 'MasterCard 1358',
+          network: 'MasterCard',
+          transaction_identifier: '372C3858122B6BC39C6095ECA2F994A8AA012F3B025D0D72ECFD449C2A5877F9'
         },
         encrypted_payment_data: {
           version: 'EC_v1',
