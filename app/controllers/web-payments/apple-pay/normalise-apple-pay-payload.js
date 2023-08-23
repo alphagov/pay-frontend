@@ -116,6 +116,7 @@ module.exports = req => {
   const paymentData = humps.decamelizeKeys(payload.token.paymentData)
   return {
     payment_info: paymentInfo,
-    encrypted_payment_data: paymentData
+    encrypted_payment_data: paymentData,
+    payment_data: JSON.stringify(payload.token.paymentData)
   }
 }
