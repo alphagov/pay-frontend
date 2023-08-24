@@ -73,7 +73,7 @@
     "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
     "@govuk-pay/pay-js-commons": "^3.11.2",
     "@govuk-pay/pay-js-metrics": "^1.0.1",
-    "@sentry/node": "7.57.0",
+    "@sentry/node": "7.64.0",
     "cert-info": "^1.5.1",
     "change-case": "2.3.x",
     "chokidar": "^3.5.3",
