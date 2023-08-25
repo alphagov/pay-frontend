@@ -4,15 +4,36 @@ const request = require('requestretry')
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 
-// Local constants
-const { APPLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_DOMAIN, APPLE_PAY_MERCHANT_ID_CERTIFICATE, APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY } = process.env
-
-const APPLE_PAY_MERCHANT_ID_CERTIFICATE_MULTILINE = `-----BEGIN CERTIFICATE-----
-${APPLE_PAY_MERCHANT_ID_CERTIFICATE}
+function getCertificateMultiline (cert) {
+  return `-----BEGIN CERTIFICATE-----
+${cert}
 -----END CERTIFICATE-----`
-const APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY_MULTILINE = `-----BEGIN PRIVATE KEY-----
-${APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY}
+}
+
+function getPrivateKeyMultiline (key) {
+  return `-----BEGIN PRIVATE KEY-----
+${key}
 -----END PRIVATE KEY-----`
+}
+
+function getApplePayMerchantIdentityVariables (paymentProvider) {
+  if (paymentProvider === 'worldpay') {
+    return {
+      merchantIdentifier: process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID,
+      cert: getCertificateMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+      key: getPrivateKeyMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+    }
+  } else if (paymentProvider === 'stripe') {
+    return {
+      merchantIdentifier: process.env.STRIPE_APPLE_PAY_MERCHANT_ID,
+      cert: getCertificateMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+      key: getPrivateKeyMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+    }
+  } else {
+    logger.error(`Unexpected payment provider [${paymentProvider}] when getting Merchant Identity variables for Apple Pay`)
+    return false
+  }
+}
 
 // When an Apple payment is initiated in Safari, it must check that the request
 // is coming from a registered and authorised Apple Merchant Account. The
@@ -21,17 +42,22 @@ module.exports = (req, res) => {
   if (!req.body.url) {
     return res.sendStatus(400)
   }
+  const { url, paymentProvider } = req.body
+  const merchantIdentityVars = getApplePayMerchantIdentityVariables(paymentProvider)
+  if (!merchantIdentityVars) {
+    return res.sendStatus(400)
+  }
 
   const options = {
-    url: req.body.url,
-    cert: APPLE_PAY_MERCHANT_ID_CERTIFICATE_MULTILINE,
-    key: APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY_MULTILINE,
+    url: url,
+    cert: merchantIdentityVars.cert,
+    key: merchantIdentityVars.key,
     method: 'post',
     body: {
-      merchantIdentifier: APPLE_PAY_MERCHANT_ID,
+      merchantIdentifier: merchantIdentityVars.merchantIdentifier,
       displayName: 'GOV.UK Pay',
       initiative: 'web',
-      initiativeContext: APPLE_PAY_MERCHANT_DOMAIN
+      initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
     },
     json: true
   }

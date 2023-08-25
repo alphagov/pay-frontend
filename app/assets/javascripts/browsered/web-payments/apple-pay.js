@@ -15,7 +15,10 @@ module.exports = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ url })
+      body: JSON.stringify({
+        url,
+        paymentProvider: window.Charge.payment_provider
+      })
     }).then(response => {
       if (response.status >= 200 && response.status < 300) {
         return response.json().then(data => {

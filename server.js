@@ -27,7 +27,14 @@ const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
 
 // Global constants
-const { NODE_ENV, PORT, ANALYTICS_TRACKING_ID, GOOGLE_PAY_MERCHANT_ID, APPLE_PAY_MERCHANT_ID_CERTIFICATE } = process.env
+const {
+  NODE_ENV,
+  PORT,
+  ANALYTICS_TRACKING_ID,
+  GOOGLE_PAY_MERCHANT_ID,
+  WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE,
+  STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE
+} = process.env
 const CSS_PATH = '/stylesheets/application.min.css'
 const JAVASCRIPT_PATH = '/javascripts/application.min.js'
 const argv = require('minimist')(process.argv.slice(2))
@@ -155,10 +162,17 @@ function listen () {
 }
 
 function logApplePayCertificateTimeToExpiry () {
-  if (APPLE_PAY_MERCHANT_ID_CERTIFICATE !== undefined) {
-    const merchantIdCert = certinfo.info(APPLE_PAY_MERCHANT_ID_CERTIFICATE)
+  if (WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE !== undefined) {
+    const merchantIdCert = certinfo.info(WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE)
     const certificateTimeToExpiry = Math.floor((merchantIdCert.expiresAt - Date.now()) / 1000 / 60 / 60 / 24)
-    logger.info(`The Apple Pay Merchant identity cert will expire in ${certificateTimeToExpiry} days`)
+    // used by Splunk alert
+    logger.info(`The Apple Pay Merchant identity cert will expire in ${certificateTimeToExpiry} days for Worldpay`)
+  }
+  if (STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE !== undefined) {
+    const merchantIdCert = certinfo.info(STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE)
+    const certificateTimeToExpiry = Math.floor((merchantIdCert.expiresAt - Date.now()) / 1000 / 60 / 60 / 24)
+    // used by Splunk alert
+    logger.info(`The Apple Pay Merchant identity cert will expire in ${certificateTimeToExpiry} days for Stripe`)
   }
 }
 
