@@ -1,6 +1,7 @@
 'use strict'
 
-const generateRoute = require('./utils/generate-route.js')
+// eslint-disable-next-line no-var
+var generateRoute = require('./utils/generate-route.js')
 
 if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST environment variable is not defined')
 // please structure each route as follows
