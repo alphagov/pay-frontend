@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 'use strict'
 
 const chargeValidation = require('../../../utils/charge-validation')
@@ -226,7 +227,8 @@ var init = function () {
 
     // card message
     var corporateCardSurchargeMessage = cardType === 'CREDIT'
-      ? i18n.cardDetails.corporateCreditCardSurchargeMessage : i18n.cardDetails.corporateDebitCardSurchargeMessage
+      ? i18n.cardDetails.corporateCreditCardSurchargeMessage
+      : i18n.cardDetails.corporateDebitCardSurchargeMessage
     corporateCardMessageElement.textContent = corporateCardSurchargeMessage.replace('%s', corporateCardSurchargeAmountNumber.toFixed(2))
     corporateCardMessageElement.classList.remove('hidden')
     // payment summary
@@ -338,7 +340,6 @@ var init = function () {
           var matches = (this.document || this.ownerDocument).querySelectorAll(s)
 
           var i = matches.length
-          while (--i >= 0 && matches.item(i) !== this) { }
           return i > -1
         }
     }

@@ -10,7 +10,7 @@ describe('The /healthcheck endpoint returned json', function () {
       .set('Accept', 'application/json')
       .expect(200)
       .expect(function (res) {
-        var response = JSON.parse(res.text)
+        const response = JSON.parse(res.text)
         expect(response).to.deep.equal(expectedResponse)
       }).end(done)
   })

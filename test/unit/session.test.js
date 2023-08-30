@@ -5,23 +5,23 @@ const session = require('../../app/utils/session')
 
 const chargeId = 'foo'
 
-var EMPTY_RESPONSE = { params: {}, body: {}, get: () => null }
+const EMPTY_RESPONSE = { params: {}, body: {}, get: () => null }
 
-var NO_SESSION_GET_RESPONSE = {
+const NO_SESSION_GET_RESPONSE = {
   params: { chargeId: chargeId },
   body: {},
   method: 'GET',
   get: () => null
 }
 
-var NO_SESSION_POST_RESPONSE = {
+const NO_SESSION_POST_RESPONSE = {
   params: {},
   body: { chargeId: chargeId },
   method: 'POST',
   get: () => null
 }
 
-var VALID_GET_RESPONSE = {
+const VALID_GET_RESPONSE = {
   params: { chargeId: chargeId },
   body: {},
   method: 'GET',
@@ -29,7 +29,7 @@ var VALID_GET_RESPONSE = {
   get: () => null
 }
 
-var VALID_POST_RESPONSE = {
+const VALID_POST_RESPONSE = {
   params: {},
   body: { chargeId: chargeId },
   method: 'POST',

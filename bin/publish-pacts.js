@@ -2,7 +2,8 @@
 const { unlink, readdir, stat } = require('fs').promises
 
 const pact = require('@pact-foundation/pact-node')
-const pactDirPath = `${__dirname}/../pacts/`
+const path = require('path')
+const pactDirPath = path.join(`${__dirname}`, '/../pacts/')
 
 async function publish () {
   const opts = {
@@ -23,7 +24,7 @@ async function removePactsNotToBePublished () {
   // todo: fix this 'to-be' nonsense
   files
     .filter(filename => filename.includes('to-be'))
-    .forEach(async filename => await unlink(pactDirPath + filename))
+    .forEach(async filename => await unlink(path.join(pactDirPath, filename)))
 }
 
 async function run () {

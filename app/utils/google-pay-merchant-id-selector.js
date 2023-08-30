@@ -5,7 +5,7 @@ const {
 } = process.env
 
 const getMerchantId = (gatewayAccountId) => {
-  var gatewayAccountIdsForGooglePayMerchantId2 = []
+  let gatewayAccountIdsForGooglePayMerchantId2 = []
 
   if (GATEWAY_ACCOUNT_IDS_FOR_GOOGLE_PAY_MERCHANT_ID_2) {
     gatewayAccountIdsForGooglePayMerchantId2 = GATEWAY_ACCOUNT_IDS_FOR_GOOGLE_PAY_MERCHANT_ID_2.trim().split(' ')

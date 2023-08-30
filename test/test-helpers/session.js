@@ -1,7 +1,7 @@
 'use strict'
 
-var clientSessions = require('client-sessions')
-var cookies = require('../../app/utils/cookies.js')
+const clientSessions = require('client-sessions')
+const cookies = require('../../app/utils/cookies.js')
 
 function createSessionChargeKey (chargeId) {
   return 'ch_' + chargeId
@@ -14,7 +14,7 @@ function createReturnUrlKey (chargeId) {
 function createSessionWithReturnUrl (chargeId, chargeSession, returnUrl) {
   chargeSession = chargeSession || {}
   chargeSession.csrfSecret = process.env.CSRF_USER_SECRET
-  var session = {}
+  const session = {}
   if (arguments.length > 0) {
     session[createSessionChargeKey(chargeId)] = chargeSession
     session[createReturnUrlKey(chargeId)] = encodeURIComponent(returnUrl)
@@ -33,7 +33,7 @@ module.exports = {
   },
 
   decrypt: function decryptCookie (res, chargeId) {
-    var content = clientSessions.util.decode(cookies.namedCookie('frontend_state', process.env.SESSION_ENCRYPTION_KEY), res.headers['set-cookie'][0].split(';')[0].split('=')[1]).content
+    const content = clientSessions.util.decode(cookies.namedCookie('frontend_state', process.env.SESSION_ENCRYPTION_KEY), res.headers['set-cookie'][0].split(';')[0].split('=')[1]).content
     return chargeId ? content[createSessionChargeKey(chargeId)] : content
   }
 }

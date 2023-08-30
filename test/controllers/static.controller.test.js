@@ -1,14 +1,14 @@
 require('../test-helpers/html-assertions.js')
-var sinon = require('sinon')
-var expect = require('chai').expect
+const sinon = require('sinon')
+const expect = require('chai').expect
 
-var requireStaticController = function () {
+const requireStaticController = function () {
   return require('../../app/controllers/static.controller.js')
 }
 
 describe('static controller', function () {
   describe('naxsi system error endpoint', function () {
-    var request, response
+    let request, response
 
     before(function () {
       request = {

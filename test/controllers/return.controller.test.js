@@ -1,12 +1,12 @@
 require('../test-helpers/html-assertions.js')
-var proxyquire = require('proxyquire')
-var chai = require('chai')
-var chaiAsPromised = require('chai-as-promised')
+const proxyquire = require('proxyquire')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 
-var assert = require('assert')
-var sinon = require('sinon')
-var nock = require('nock')
-var expect = chai.expect
+const assert = require('assert')
+const sinon = require('sinon')
+const nock = require('nock')
+const expect = chai.expect
 
 chai.use(chaiAsPromised)
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 const setGlobalChargeId = () => {
   const chargeId = document.getElementById('charge-id').value
   window.chargeId = chargeId

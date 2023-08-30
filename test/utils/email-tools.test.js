@@ -15,7 +15,9 @@ describe('When Mailcheck is given a valid email ', () => {
       it(`${email} is invalid, should be ${corrected.full}`, () => {
         expect(corrected).to.deep.equal(domain.valid)
       })
+      return true
     })
+    return true
   })
   // I tested with 3000 de-deduped anonymised emails and it works, I don’t want to publish this list to the repo as I guess even domains can give away a persons identity, for example my email is jon@jonheslop.com and even after making it your.name@jonheslop.com it’s pretty obv who that is.
   // validEmailList.map(email => {

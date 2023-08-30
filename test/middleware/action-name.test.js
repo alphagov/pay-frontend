@@ -1,13 +1,13 @@
-var assert = require('assert')
-var expect = require('chai').expect
-var actionName = require('../../app/middleware/action-name.js')
+const assert = require('assert')
+const expect = require('chai').expect
+const actionName = require('../../app/middleware/action-name.js')
 
-var sinon = require('sinon')
+const sinon = require('sinon')
 
 describe('actionName', function () {
   it('should append the viewname to the request', function () {
-    var next = sinon.spy()
-    var req = {
+    const next = sinon.spy()
+    const req = {
       method: 'POST',
       route: {
         path: '/card_details/:chargeId'
@@ -19,8 +19,8 @@ describe('actionName', function () {
   })
 
   it('should not append the viewname to the request if it cannot match', function () {
-    var next = sinon.spy()
-    var req = {
+    const next = sinon.spy()
+    const req = {
       method: 'POST',
       route: {
         path: '/invalid'

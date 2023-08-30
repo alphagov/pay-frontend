@@ -241,6 +241,7 @@ module.exports = {
               const response = JSON.parse(res.text)
               Object.keys(expectedResponse).map(function (key) {
                 expectedResponse[key].should.equal(response[key])
+                return true
               })
               done()
             })

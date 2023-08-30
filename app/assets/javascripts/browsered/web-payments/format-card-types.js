@@ -5,6 +5,7 @@ module.exports = (allowedCardTypes, provider) => {
     return []
   }
 
+  // eslint-disable-next-line array-callback-return
   const availableNetworks = allowedCardTypes.map(type => {
     if (type.debit || type.credit) {
       return type.brand
