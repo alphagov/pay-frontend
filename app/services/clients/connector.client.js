@@ -28,7 +28,12 @@ const _getFindChargeUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{ch
 const _getAuthUrlFor = chargeId => baseUrl + CARD_AUTH_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _getWalletAuthUrlFor = (chargeId, provider) => baseUrl + WALLET_AUTH_PATH.replace('{chargeId}', chargeId).replace('{provider}', provider)
+const _getWalletAuthUrlFor = (chargeId, provider) => {
+  if (provider === 'google') {
+    return baseUrl + WALLET_AUTH_PATH.replace('{chargeId}', chargeId).replace('{provider}', 'google/worldpay')
+  }
+  return baseUrl + WALLET_AUTH_PATH.replace('{chargeId}', chargeId).replace('{provider}', provider)
+}
 
 /** @private */
 const _getThreeDsFor = chargeId => baseUrl + CARD_3DS_PATH.replace('{chargeId}', chargeId)

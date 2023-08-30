@@ -10,7 +10,7 @@ const chaiAsPromised = require('chai-as-promised')
 
 // Constants
 const TEST_CHARGE_ID = 'testChargeId'
-const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google`
+const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google/worldpay`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASEURL = `http://localhost:${PORT}`
 
