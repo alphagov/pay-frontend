@@ -3,7 +3,6 @@
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const { output, redact } = require('../../../utils/structured-logging-value-helper')
-const humps = require('humps')
 const lodash = require('lodash')
 
 const logSelectedPayloadProperties = req => {
@@ -116,10 +115,8 @@ module.exports = req => {
 
   delete payload.token.paymentMethod
   delete payload.token.transactionIdentifier
-  const paymentData = humps.decamelizeKeys(payload.token.paymentData)
   return {
     payment_info: paymentInfo,
-    encrypted_payment_data: paymentData,
     payment_data: JSON.stringify(payload.token.paymentData)
   }
 }
