@@ -21,8 +21,6 @@ updates:
     versions: ["7.x", "8.x", "9.x"]
   - dependency-name: helmet
     versions: ["4.x", "5.x", "6.x", "7.x"]
-  - dependency-name: standard
-    versions: ["17.x"]
   - dependency-name: punycode
     versions: ["1.x", "2.x"]
   - dependency-name: "@pact-foundation/pact"
