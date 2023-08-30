@@ -60,7 +60,7 @@ describe('chargeTests', function () {
           .reply(200, {
             amount: 2345,
             description: 'Payment Description',
-            status: status,
+            status,
             return_url: 'http://www.example.com/service',
             payment_provider: 'sandbox',
             gateway_account: {

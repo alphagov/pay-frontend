@@ -88,9 +88,9 @@ module.exports = correlationId => {
 
   const patch = async function (chargeId, op, path, value, loggingFields = {}) {
     const payload = {
-      op: op,
-      path: path,
-      value: value
+      op,
+      path,
+      value
     }
     const response = await connectorClient({ correlationId }).patch({ chargeId, payload }, loggingFields)
     if (response.statusCode !== 200) {

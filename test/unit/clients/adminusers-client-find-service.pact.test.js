@@ -27,7 +27,7 @@ describe('adminusers client - services API', function () {
   const provider = new Pact({
     consumer: 'frontend-to-be',
     provider: 'adminusers',
-    port: port,
+    port,
     log: path.resolve(process.cwd(), 'logs', 'mockserver-integration.log'),
     dir: path.resolve(process.cwd(), 'pacts'),
     spec: 2,
@@ -44,7 +44,7 @@ describe('adminusers client - services API', function () {
       before((done) => {
         provider.addInteraction(
           new PactInteractionBuilder(`${SERVICES_PATH}`)
-            .withQuery({ gatewayAccountId: gatewayAccountId })
+            .withQuery({ gatewayAccountId })
             .withState('a service exists with the given gateway account id association')
             .withUponReceiving('a valid find service request')
             .withResponseBody(pactify(getServiceResponse))
@@ -55,7 +55,7 @@ describe('adminusers client - services API', function () {
       afterEach(() => provider.verify())
       setTimeout(() => {
         it('should return service successfully', function (done) {
-          adminusersClient.findServiceBy({ gatewayAccountId: gatewayAccountId }).then(service => {
+          adminusersClient.findServiceBy({ gatewayAccountId }).then(service => {
             expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
             done()
           }).catch((err) => done('should not be hit: ' + JSON.stringify(err)))

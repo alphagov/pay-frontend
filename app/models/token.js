@@ -17,5 +17,5 @@ const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = 
 }
 
 module.exports = {
-  markTokenAsUsed: markTokenAsUsed
+  markTokenAsUsed
 }

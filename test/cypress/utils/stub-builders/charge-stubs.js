@@ -45,7 +45,7 @@ function connectorMultipleSubsequentChargeDetails (...chargesArr) {
 function connectorValidPatchConfirmedChargeDetails (chargeId) {
   const path = `/v1/frontend/charges/${chargeId}`
   const response = paymentFixtures.validChargeDetails({
-    chargeId: chargeId,
+    chargeId,
     status: 'ENTERING CARD DETAILS',
     state: { finished: false, status: 'started' }
   })

@@ -27,7 +27,7 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
     if (cardNo.length > 0 && cardNo.length < 11) {
       return reject(new Error(i18n.__('fieldErrors.fields.cardNo.numberIncorrectLength')))
     }
-    cardIdClient.post({ payload: data, correlationId: correlationId })
+    cardIdClient.post({ payload: data, correlationId })
       .then((response) => {
         incrementStatusCodeCounter('checkCard', response.statusCode)
         logger.info('POST to %s ended - total time %dms', cardIdClient.CARD_URL, new Date() - startTime, loggingFields)
@@ -119,7 +119,7 @@ module.exports = function (allowedCards, blockPrepaidCards, correlationId) {
   if (_.filter(allowedCards, { credit: true }).length !== 0) withdrawalTypes.push('credit')
 
   return {
-    withdrawalTypes: withdrawalTypes,
+    withdrawalTypes,
     allowed: _.clone(allowed),
     checkCard: (cardNo, language, loggingFields = {}) => {
       return checkCard(cardNo, allowed, blockPrepaidCards, language, correlationId, loggingFields)

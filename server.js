@@ -202,6 +202,6 @@ if (argv.i) {
 }
 
 module.exports = {
-  start: start,
+  start,
   getApp: initialise
 }

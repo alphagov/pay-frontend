@@ -64,7 +64,7 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: payload,
+          payload,
           paymentProvider: 'worldpay'
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
@@ -99,7 +99,7 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: payload,
+          payload,
           paymentProvider: 'worldpay'
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
@@ -193,7 +193,7 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: payload,
+          payload,
           paymentProvider: 'worldpay'
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')

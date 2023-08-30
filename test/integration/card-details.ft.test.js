@@ -76,7 +76,7 @@ describe('Enter card details page tests', function () {
       cardholder_name: 'Jimi Hendrix',
       card_type: cardType,
       corporate_card: corporate,
-      prepaid: prepaid,
+      prepaid,
       address: {
         line1: '32 Whip Ma Whop Ma Avenue',
         city: 'Willy wonka',
@@ -91,7 +91,7 @@ describe('Enter card details page tests', function () {
     return {
       returnUrl: RETURN_URL,
       cardUrl: connectorAuthUrl,
-      chargeId: chargeId,
+      chargeId,
       cardNo: cardNumber,
       cvc: '234',
       expiryMonth: '11',

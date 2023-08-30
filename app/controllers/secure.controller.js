@@ -42,7 +42,7 @@ exports.new = async function (req, res) {
       logger.info('Payment token being reused', getLoggingFields(req))
       const stateName = chargeStatus.toUpperCase().replace(/\s/g, '_')
       responseRouter.response(req, res, stateName, {
-        chargeId: chargeId,
+        chargeId,
         returnUrl: paths.generateRoute('card.return', { chargeId })
       })
     } else {

@@ -48,7 +48,7 @@ describe('normalise Google Pay payload', () => {
       worldpay3dsFlexDdcResult: 'some long opaque string that’s a device data collection result'
     }
 
-    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
+    const normalisedPayload = normalise({ headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
@@ -117,7 +117,7 @@ describe('normalise Google Pay payload', () => {
     }
 
     expect(() => normalise({
-      headers: headers,
+      headers,
       body: googlePayPayload
     })).to.throw('Unrecognised card brand in Google Pay payload: UnSupportedCard')
   })
@@ -146,7 +146,7 @@ describe('normalise Google Pay payload', () => {
     }
 
     expect(() => normalise({
-      headers: headers,
+      headers,
       body: googlePayPayload
     })).to.throw('Card brand is not available in Google Pay payload')
   })
@@ -172,7 +172,7 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
+    const normalisedPayload = normalise({ headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
@@ -233,7 +233,7 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
+    const normalisedPayload = normalise({ headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {
@@ -276,7 +276,7 @@ describe('normalise Google Pay payload', () => {
         }
       }
     }
-    const normalisedPayload = normalise({ headers: headers, body: googlePayPayload })
+    const normalisedPayload = normalise({ headers, body: googlePayPayload })
     expect(normalisedPayload).to.eql(
       {
         payment_info: {

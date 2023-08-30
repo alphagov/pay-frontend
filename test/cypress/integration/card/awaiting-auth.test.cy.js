@@ -71,21 +71,21 @@ describe('Awaiting auth', () => {
         // the charge below needs to have AUTHORISATION READY status to force the page to the auth_waiting page
         {
           chargeId,
-          paymentDetails: paymentDetails,
+          paymentDetails,
           status: 'AUTHORISATION READY',
           state: { finished: false, status: 'submitted' }
         },
         // status of AUTHORISATION SUCCESS to move the page from auth_waiting to confirm page
         {
           chargeId,
-          paymentDetails: paymentDetails,
+          paymentDetails,
           status: 'AUTHORISATION SUCCESS',
           state: { finished: false, status: 'submitted' }
         },
         // another charge below to satisfy the state enforcer so we go to the correct confirm page
         {
           chargeId,
-          paymentDetails: paymentDetails,
+          paymentDetails,
           status: 'AUTHORISATION SUCCESS',
           state: { finished: false, status: 'submitted' }
         }

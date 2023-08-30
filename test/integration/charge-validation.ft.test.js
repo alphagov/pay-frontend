@@ -49,7 +49,7 @@ describe('checks for PAN-like numbers', () => {
     const formWithAllFieldsContainingTooManyDigits = {
       returnUrl: RETURN_URL,
       cardUrl: connectorAuthUrl,
-      chargeId: chargeId,
+      chargeId,
       cardNo: '4242424242424242',
       cvc: '234',
       expiryMonth: '11',
@@ -98,7 +98,7 @@ describe('checks for PAN-like numbers', () => {
     const formWithAllFieldsContainingTooManyDigits = {
       returnUrl: RETURN_URL,
       cardUrl: connectorAuthUrl,
-      chargeId: chargeId,
+      chargeId,
       cardNo: '4242424242424242',
       cvc: '234',
       expiryMonth: '11',
@@ -135,7 +135,7 @@ describe('checks for PAN-like numbers', () => {
     const formWithAllFieldsContainingTooManyDigits = {
       returnUrl: RETURN_URL,
       cardUrl: connectorAuthUrl,
-      chargeId: chargeId,
+      chargeId,
       cardNo: '4242424242424242',
       cvc: '234',
       expiryMonth: '11',

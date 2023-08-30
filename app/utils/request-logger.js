@@ -36,6 +36,6 @@ exports.logRequestError = (context, error, loggingFields = {}) => {
     service: context.service,
     method: context.method,
     url: context.url,
-    error: error
+    error
   })
 }

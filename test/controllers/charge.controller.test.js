@@ -26,14 +26,14 @@ const mockCharge = (function () {
         }
       }
       return {
-        updateToEnterDetails: updateToEnterDetails,
-        capture: capture
+        updateToEnterDetails,
+        capture
       }
     }
   }
 
   return {
-    mock: mock
+    mock
   }
 }())
 
@@ -61,14 +61,14 @@ const mockSession = (function () {
   }
 
   return {
-    retrieve: retrieve
+    retrieve
   }
 }())
 
 const aChargeWithStatus = function (status) {
   return {
     externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
-    status: status,
+    status,
     amount: '4.99',
     paymentProvider: 'sandbox',
     gatewayAccount: {
@@ -108,7 +108,7 @@ describe('card details endpoint', function () {
   const aResponseWithStatus = function (status) {
     return {
       externalId: 'dh6kpbb4k82oiibbe4b9haujjk',
-      status: status,
+      status,
       gatewayAccount: {
         serviceName: 'Service Name',
         analyticsId: 'test-1234',

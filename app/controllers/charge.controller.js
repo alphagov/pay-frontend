@@ -76,7 +76,7 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
     charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2
 }
 
-const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
+const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId })
 
 const redirect = res => {
   return {
@@ -270,8 +270,8 @@ module.exports = {
     const confirmPath = routeFor('confirm', charge.id)
     responseRouter.response(req, res, views.CONFIRM_VIEW, withAnalytics(charge, {
       hitPage: routeFor('new', charge.id) + '/success',
-      charge: charge,
-      confirmPath: confirmPath,
+      charge,
+      confirmPath,
       post_cancel_action: routeFor('cancel', charge.id)
     }, confirmPath))
   },

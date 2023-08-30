@@ -41,8 +41,8 @@ module.exports = (req, res) => {
       logger.info('Error generating Apple Pay session', {
         ...getLoggingFields(req),
         error: err,
-        response: response,
-        body: body
+        response,
+        body
       })
       res.status(500).send(body)
     }

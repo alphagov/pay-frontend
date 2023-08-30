@@ -62,9 +62,9 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
   const startTime = new Date()
   const context = {
     ...loggingFields,
-    url: url,
+    url,
     method: 'PUT',
-    description: description,
+    description,
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
@@ -79,7 +79,7 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
           service: 'connector',
           method: 'PUT',
           status_code: response.statusCode,
-          url: url
+          url
         })
       }
       return response
@@ -89,7 +89,7 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
         ...loggingFields,
         service: 'connector',
         method: 'PUT',
-        url: url,
+        url,
         error: err
       })
       incrementStatusCodeCounter(callingFunctionName, 'error')
@@ -101,9 +101,9 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
 function _postConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
-    url: url,
+    url,
     method: 'POST',
-    description: description,
+    description,
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
@@ -119,7 +119,7 @@ function _postConnector (url, payload, description, loggingFields = {}, callingF
         service: 'connector',
         method: 'POST',
         status_code: response.statusCode,
-        url: url
+        url
       })
     }
     return response
@@ -129,7 +129,7 @@ function _postConnector (url, payload, description, loggingFields = {}, callingF
       ...loggingFields,
       service: 'connector',
       method: 'POST',
-      url: url,
+      url,
       error: err
     })
     incrementStatusCodeCounter(callingFunctionName, 'error')
@@ -141,9 +141,9 @@ function _postConnector (url, payload, description, loggingFields = {}, callingF
 function _patchConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
-    url: url,
+    url,
     method: 'PATCH',
-    description: description,
+    description,
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
@@ -159,7 +159,7 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
         service: 'connector',
         method: 'PATCH',
         status_code: response.statusCode,
-        url: url
+        url
       })
     }
     return response
@@ -169,7 +169,7 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
       ...loggingFields,
       service: 'connector',
       method: 'PATCH',
-      url: url,
+      url,
       error: err
     })
     incrementStatusCodeCounter(callingFunctionName, 'error')
@@ -181,9 +181,9 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
 function _getConnector (url, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
-    url: url,
+    url,
     method: 'GET',
-    description: description,
+    description,
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
@@ -197,7 +197,7 @@ function _getConnector (url, description, loggingFields = {}, callingFunctionNam
           service: 'connector',
           method: 'GET',
           status_code: response.statusCode,
-          url: url
+          url
         })
       }
       return response
@@ -207,7 +207,7 @@ function _getConnector (url, description, loggingFields = {}, callingFunctionNam
         ...loggingFields,
         service: 'connector',
         method: 'GET',
-        url: url,
+        url,
         error: err
       })
       incrementStatusCodeCounter(callingFunctionName, 'error')

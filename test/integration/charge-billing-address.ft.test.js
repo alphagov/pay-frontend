@@ -95,7 +95,7 @@ describe('chargeTests - billing address', function () {
     return {
       returnUrl: RETURN_URL,
       cardUrl: connectorAuthUrl,
-      chargeId: chargeId,
+      chargeId,
       cardNo: cardNumber,
       cvc: '234',
       expiryMonth: '11',

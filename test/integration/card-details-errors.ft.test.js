@@ -93,7 +93,7 @@ describe('chargeTests', function () {
       cardholder_name: 'Jimi Hendrix',
       card_type: cardType,
       corporate_card: corporate,
-      prepaid: prepaid,
+      prepaid,
       address: {
         line1: '32 Whip Ma Whop Ma Avenue',
         city: 'Willy wonka',
@@ -114,7 +114,7 @@ describe('chargeTests', function () {
     return {
       returnUrl: RETURN_URL,
       cardUrl: connectorAuthUrl,
-      chargeId: chargeId,
+      chargeId,
       cardNo: cardNumber,
       cvc: '234',
       expiryMonth: '11',
@@ -130,7 +130,7 @@ describe('chargeTests', function () {
 
   function missingFormCardData () {
     return {
-      chargeId: chargeId,
+      chargeId,
       returnUrl: RETURN_URL
     }
   }
@@ -374,7 +374,7 @@ describe('chargeTests', function () {
         .post(frontendCardDetailsPostPath)
         .set('Cookie', ['frontend_state=' + cookieValue])
         .send({
-          chargeId: chargeId,
+          chargeId,
           cardNo: '5105 1051 0510 5100',
           cvc: '234',
           expiryDate: '11/99'

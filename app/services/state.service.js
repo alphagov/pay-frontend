@@ -45,7 +45,7 @@ module.exports = (function () {
     return validActionNames[0]
   }
   return {
-    resolveStates: resolveStates,
-    resolveActionName: resolveActionName
+    resolveStates,
+    resolveActionName
   }
 }())

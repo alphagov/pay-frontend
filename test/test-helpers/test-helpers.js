@@ -114,7 +114,7 @@ function rawSuccessfulGetChargeWithPaymentProvider (status, returnUrl, chargeId,
   const charge = {
     amount: 2345,
     description: 'Payment Description',
-    status: status,
+    status,
     return_url: returnUrl,
     email: 'bob@example.com',
     payment_provider: paymentProvider,

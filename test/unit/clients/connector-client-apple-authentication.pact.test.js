@@ -62,7 +62,7 @@ describe('connectors client - apple authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'apple',
-          payload: payload
+          payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -93,7 +93,7 @@ describe('connectors client - apple authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'apple',
-          payload: payload
+          payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -125,7 +125,7 @@ describe('connectors client - apple authentication API', function () {
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
         provider: 'apple',
-        payload: payload
+        payload
       }).then(res => {
         expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
         done()

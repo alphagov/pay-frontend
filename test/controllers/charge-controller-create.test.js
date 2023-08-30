@@ -15,7 +15,7 @@ const card = paymentFixtures.validCardDetails()
 const chargeData = paymentFixtures.validChargeDetails({ emailCollectionMode: 'OFF' })
 
 const paymentDetailsWithoutAddress = {
-  chargeId: chargeId,
+  chargeId,
   cardNo: '4242424242424242',
   expiryMonth: '01',
   expiryYear: '20',
@@ -61,9 +61,9 @@ describe('with valid payment details', function () {
     it('should send worldpay_3ds_flex_ddc_result to connector when the request includes a worldpay3dsFlexDdcResult parameter', async function () {
       paymentDetails.worldpay3dsFlexDdcResult = 'a-worldpay-3ds-flex-ddc-result'
       const request = {
-        chargeData: chargeData,
+        chargeData,
         body: paymentDetails,
-        chargeId: chargeId,
+        chargeId,
         header: sinon.spy(),
         headers: {
           'x-request-id': 'unique-id',
@@ -94,17 +94,17 @@ describe('with valid payment details', function () {
 
       expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
         {
-          chargeId: chargeId,
-          payload: payload
+          chargeId,
+          payload
         }
       ))).to.be.true // eslint-disable-line
     })
 
     it('should not send worldpay_3ds_flex_ddc_result to connector when the request does not include a worldpay3dsFlexDdcResult parameter', async function () {
       const request = {
-        chargeData: chargeData,
+        chargeData,
         body: paymentDetails,
-        chargeId: chargeId,
+        chargeId,
         header: sinon.spy(),
         headers: {
           'x-request-id': 'unique-id',
@@ -133,8 +133,8 @@ describe('with valid payment details', function () {
 
       expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
         {
-          chargeId: chargeId,
-          payload: payload
+          chargeId,
+          payload
         }
       ))).to.be.true // eslint-disable-line
     })
@@ -143,9 +143,9 @@ describe('with valid payment details', function () {
       response.locals.collectBillingAddress = false
 
       const request = {
-        chargeData: chargeData,
+        chargeData,
         body: paymentDetailsWithoutAddress,
-        chargeId: chargeId,
+        chargeId,
         header: sinon.spy(),
         headers: {
           'x-request-id': 'unique-id',
@@ -171,8 +171,8 @@ describe('with valid payment details', function () {
 
       expect(chargeAuthStub.calledWith(sinon.match( // eslint-disable-line
         {
-          chargeId: chargeId,
-          payload: payload
+          chargeId,
+          payload
         }
       ))).to.be.true // eslint-disable-line
     })
@@ -189,9 +189,9 @@ describe('with invalid payment details', function () {
     describe('POST /card_details/{chargeId} endpoint', function () {
       it('should show a validation error omitting card data', async function () {
         const request = {
-          chargeData: chargeData,
+          chargeData,
           body: paymentDetails,
-          chargeId: chargeId,
+          chargeId,
           header: sinon.stub(),
           headers: {
             'x-request-id': 'unique-id',
@@ -229,9 +229,9 @@ describe('with invalid payment details', function () {
     describe('POST /card_details/{chargeId} endpoint', function () {
       it('should show a validation error including card data', async function () {
         const request = {
-          chargeData: chargeData,
+          chargeData,
           body: paymentDetails,
-          chargeId: chargeId,
+          chargeId,
           header: sinon.spy(),
           headers: {
             'x-request-id': 'unique-id',

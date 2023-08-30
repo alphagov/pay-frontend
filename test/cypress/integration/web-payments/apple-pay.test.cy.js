@@ -83,7 +83,7 @@ describe('Apple Pay payment flow', () => {
       allowApplePay: applePayEnabled,
       allowGooglePay: googlePayEnabled,
       gatewayMerchantId: 'SMTHG12345UP',
-      emailCollectionMode: emailCollectionMode,
+      emailCollectionMode,
       paymentProvider: 'worldpay'
     }
 

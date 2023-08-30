@@ -113,12 +113,12 @@ function buildChargeFromTokenNotFound (tokenId) {
 
 function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
   return [
-    tokenStubs.connectorFindChargeByToken({ tokenId: tokenId, gatewayAccountId: gatewayAccountId, used: true, status: status }),
+    tokenStubs.connectorFindChargeByToken({ tokenId, gatewayAccountId, used: true, status }),
     tokenStubs.connectorMarkTokenAsUsed(tokenId),
     chargeStubs.connectorGetChargeDetails({
       chargeId,
       gatewayAccountId,
-      status: status,
+      status,
       state: { finished: false, status },
       language: 'en'
     }),

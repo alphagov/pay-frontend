@@ -19,15 +19,15 @@ let correlationId
 function _getAdminUsers (url, description, findOptions, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
-    url: url,
-    startTime: startTime,
+    url,
+    startTime,
     method: 'GET',
-    description: description,
+    description,
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
   const params = {
-    correlationId: correlationId,
+    correlationId,
     qs: {
       gatewayAccountId: findOptions.gatewayAccountId
     }
@@ -46,7 +46,7 @@ function _getAdminUsers (url, description, findOptions, loggingFields = {}, call
             service: 'adminusers',
             method: 'GET',
             status_code: response.statusCode,
-            url: url
+            url
           })
         }
         return response.body
@@ -71,6 +71,6 @@ module.exports = function (clientOptions = {}) {
   baseUrl = clientOptions.baseUrl || process.env.ADMINUSERS_URL
   correlationId = clientOptions.correlationId || ''
   return {
-    findServiceBy: findServiceBy
+    findServiceBy
   }
 }

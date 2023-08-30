@@ -240,7 +240,7 @@ describe('behaviour of terminal actions with direct redirect enabled on service'
   const chargeData = testHelpers.rawSuccessfulGetCharge('capture error', returnUrl)
 
   const request = {
-    chargeData: chargeData
+    chargeData
   }
 
   const response = {

@@ -73,28 +73,28 @@ const jsScreenWidth = '1440'
 const jsTimezoneOffsetMins = '-60'
 
 const formSubmissionData = {
-  chargeId: chargeId,
+  chargeId,
   cardNo: cardNumber,
-  cvc: cvc,
-  expiryMonth: expiryMonth,
-  expiryYear: expiryYear,
-  cardholderName: cardholderName,
-  addressLine1: addressLine1,
-  addressLine2: addressLine2,
-  addressPostcode: addressPostcode,
-  addressCity: addressCity,
+  cvc,
+  expiryMonth,
+  expiryYear,
+  cardholderName,
+  addressLine1,
+  addressLine2,
+  addressPostcode,
+  addressCity,
   email: 'payer@example.test',
-  addressCountry: addressCountry,
-  jsNavigatorLanguage: jsNavigatorLanguage,
-  jsScreenColorDepth: jsScreenColorDepth,
-  jsScreenHeight: jsScreenHeight,
-  jsScreenWidth: jsScreenWidth,
-  jsTimezoneOffsetMins: jsTimezoneOffsetMins
+  addressCountry,
+  jsNavigatorLanguage,
+  jsScreenColorDepth,
+  jsScreenHeight,
+  jsScreenWidth,
+  jsTimezoneOffsetMins
 }
 
 const expectedDataSentToConnector = {
   card_number: cardNumber,
-  cvc: cvc,
+  cvc,
   card_brand: 'visa',
   expiry_date: expiryMonth + '/' + expiryYear,
   cardholder_name: cardholderName,

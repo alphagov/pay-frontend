@@ -37,7 +37,7 @@ describe('normalise', function () {
       header: headerName => {
         return headers[headerName]
       },
-      headers: headers
+      headers
     }
 
     expect(normalise.apiPayload(payload, card).accept_language_header).to.eql('fr;q=0.9, fr-CH;q=1.0, en;q=0.8, de;q=0.7, *;q=0.5')
@@ -57,7 +57,7 @@ describe('normalise', function () {
       header: headerName => {
         return headers[headerName]
       },
-      headers: headers
+      headers
     }
 
     expect(normalise.apiPayload(payload, card).accept_language_header).to.eql(undefined)

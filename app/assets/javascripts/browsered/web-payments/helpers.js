@@ -86,7 +86,7 @@ const getGooglePaymentsConfiguration = () => {
     type: 'CARD',
     parameters: {
       allowedAuthMethods: allowedCardAuthMethods,
-      allowedCardNetworks: allowedCardNetworks,
+      allowedCardNetworks,
       assuranceDetailsRequired: true
     },
     tokenizationSpecification

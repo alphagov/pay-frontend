@@ -87,7 +87,7 @@ describe('resolve service middleware', function () {
     const req = {
       headers: [],
       chargeId: '111',
-      chargeData: chargeData
+      chargeData
     }
     const res = {
       status: sinon.spy(),

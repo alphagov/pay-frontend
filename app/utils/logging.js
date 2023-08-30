@@ -7,7 +7,7 @@ exports.authChargePost = (url, loggingFields = {}) => {
     ...loggingFields,
     service: 'connector',
     method: 'POST',
-    url: url
+    url
   })
 }
 

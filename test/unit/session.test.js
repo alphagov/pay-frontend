@@ -8,7 +8,7 @@ const chargeId = 'foo'
 const EMPTY_RESPONSE = { params: {}, body: {}, get: () => null }
 
 const NO_SESSION_GET_RESPONSE = {
-  params: { chargeId: chargeId },
+  params: { chargeId },
   body: {},
   method: 'GET',
   get: () => null
@@ -16,13 +16,13 @@ const NO_SESSION_GET_RESPONSE = {
 
 const NO_SESSION_POST_RESPONSE = {
   params: {},
-  body: { chargeId: chargeId },
+  body: { chargeId },
   method: 'POST',
   get: () => null
 }
 
 const VALID_GET_RESPONSE = {
-  params: { chargeId: chargeId },
+  params: { chargeId },
   body: {},
   method: 'GET',
   frontend_state: { ch_foo: true },
@@ -31,7 +31,7 @@ const VALID_GET_RESPONSE = {
 
 const VALID_POST_RESPONSE = {
   params: {},
-  body: { chargeId: chargeId },
+  body: { chargeId },
   method: 'POST',
   frontend_state: { ch_foo: true },
   get: () => null
