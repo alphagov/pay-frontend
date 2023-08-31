@@ -21,7 +21,7 @@ const { pactify } = require('../../test-helpers/pact/pact-base')()
 // Global setup
 const expect = chai.expect
 chai.use(chaiAsPromised)
-const adminusersClient = getAdminUsersClient({ baseUrl: `http://localhost:${port}` })
+const adminusersClient = getAdminUsersClient({ baseUrl: `http://127.0.0.1:${port}` })
 
 describe('adminusers client - services API', function () {
   const provider = new Pact({

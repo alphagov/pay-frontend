@@ -12,7 +12,7 @@ describe('add proxy test', () => {
       process.env.FORWARD_PROXY_URL = forwardProxy.href
       const addProxy = proxyquire('../../app/utils/add-proxy', {})
 
-      const proxiedUrl = addProxy.addProxy(urlParse('http://localhost:8080'))
+      const proxiedUrl = addProxy.addProxy(urlParse('http://127.0.0.1:8080'))
       expect(proxiedUrl.hostname).to.equal(forwardProxy.hostname)
       expect(proxiedUrl.port).to.equal(forwardProxy.port)
       expect(proxiedUrl.protocol).to.equal(forwardProxy.protocol)
@@ -24,7 +24,7 @@ describe('add proxy test', () => {
       delete process.env.FORWARD_PROXY_URL
       const addProxy = proxyquire('../../app/utils/add-proxy', {})
 
-      const url = urlParse('http://localhost:8080')
+      const url = urlParse('http://127.0.0.1:8080')
       expect(addProxy.addProxy(url)).to.equal(url)
     })
   })

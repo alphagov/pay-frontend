@@ -12,7 +12,7 @@ const chaiAsPromised = require('chai-as-promised')
 const TEST_CHARGE_ID = 'testChargeId'
 const APPLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/apple`
 const PORT = Math.floor(Math.random() * 48127) + 1024
-const BASEURL = `http://localhost:${PORT}`
+const BASEURL = `http://127.0.0.1:${PORT}`
 
 // Custom dependencies
 const connectorClient = require('../../../app/services/clients/connector.client')

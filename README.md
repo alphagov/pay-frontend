@@ -32,7 +32,7 @@ npm run start:dev
 ```
 
 Make a create payment request to the locally running Public API app, and visit the `next_url` with the host changed
-to http://localhost:3000.
+to http://127.0.0.1:3000.
 
 ### Debug using Visual Studio Code
 
