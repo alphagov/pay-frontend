@@ -20,6 +20,7 @@ describe('The web payments auth request controller', () => {
         'x-request-id': 'aaa'
       },
       chargeId,
+      paymentProvider: 'worldpay',
       params: {
         provider
       },
@@ -86,6 +87,7 @@ describe('The web payments auth request controller', () => {
         'x-request-id': 'aaa'
       },
       chargeId,
+      paymentProvider: 'worldpay',
       params: {
         provider
       },
@@ -113,7 +115,7 @@ describe('The web payments auth request controller', () => {
         statusCode: 200
       }
       nock(process.env.CONNECTOR_HOST)
-        .post(`/v1/frontend/charges/${chargeId}/wallets/${provider}`)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/${provider}/worldpay`)
         .reply(200)
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
