@@ -10,7 +10,7 @@ const chaiAsPromised = require('chai-as-promised')
 
 // Constants
 const TEST_CHARGE_ID = 'testChargeId'
-const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google`
+const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google/worldpay`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASEURL = `http://localhost:${PORT}`
 
@@ -64,7 +64,8 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: payload
+          payload: payload,
+          paymentProvider: 'worldpay'
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -98,7 +99,8 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: payload
+          payload: payload,
+          paymentProvider: 'worldpay'
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -129,7 +131,8 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: declinedGoogleAuthRequest
+          payload: declinedGoogleAuthRequest,
+          paymentProvider: 'worldpay'
         }).then(() => {
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
@@ -159,7 +162,8 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: errorGoogleAuthRequest
+          payload: errorGoogleAuthRequest,
+          paymentProvider: 'worldpay'
         }).then(() => {
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
@@ -189,7 +193,8 @@ describe('connectors client - google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           provider: 'google',
-          payload: payload
+          payload: payload,
+          paymentProvider: 'worldpay'
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()

@@ -11,7 +11,7 @@ const { CORRELATION_HEADER } = require('../../../config/correlation-header')
 const { setSessionVariable } = require('../../utils/cookies')
 
 module.exports = (req, res) => {
-  const { chargeId, params } = req
+  const { chargeId, params, paymentProvider } = req
   const { provider } = params
 
   const { worldpay3dsFlexDdcStatus } = req.body
@@ -21,7 +21,7 @@ module.exports = (req, res) => {
 
   const payload = provider === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
 
-  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, payload }, getLoggingFields(req))
+  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, paymentProvider, payload }, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
         statusCode: data.statusCode
