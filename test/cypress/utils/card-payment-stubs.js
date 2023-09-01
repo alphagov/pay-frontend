@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const { adminUsersGetService } = require('./stub-builders/service-stubs')
@@ -113,12 +114,12 @@ function buildChargeFromTokenNotFound (tokenId) {
 
 function buildUsedTokenAndReturnPaymentChargeStubs (tokenId, chargeId, status, gatewayAccountId = 42, serviceOpts = {}) {
   return [
-    tokenStubs.connectorFindChargeByToken({ tokenId, gatewayAccountId, used: true, status }),
+    tokenStubs.connectorFindChargeByToken({ tokenId: tokenId, gatewayAccountId: gatewayAccountId, used: true, status: status }),
     tokenStubs.connectorMarkTokenAsUsed(tokenId),
     chargeStubs.connectorGetChargeDetails({
-      chargeId,
-      gatewayAccountId,
-      status,
+      chargeId: chargeId,
+      gatewayAccountId: gatewayAccountId,
+      status: status,
       state: { finished: false, status },
       language: 'en'
     }),
