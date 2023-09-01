@@ -12,7 +12,7 @@ const { PactInteractionBuilder } = require('../../test-helpers/pact/pact-interac
 const { pactify } = require('../../test-helpers/pact/pact-base')()
 
 const PORT = Math.floor(Math.random() * 48127) + 1024
-const BASE_URL = `http://localhost:${PORT}`
+const BASE_URL = `http://127.0.0.1:${PORT}`
 const TOKEN = 'testToken'
 const FRONTEND_TOKEN_URL = `/v1/frontend/tokens/${TOKEN}`
 
