@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const logger = require('../utils/logger')(__filename)
@@ -88,9 +89,9 @@ module.exports = correlationId => {
 
   const patch = async function (chargeId, op, path, value, loggingFields = {}) {
     const payload = {
-      op,
-      path,
-      value
+      op: op,
+      path: path,
+      value: value
     }
     const response = await connectorClient({ correlationId }).patch({ chargeId, payload }, loggingFields)
     if (response.statusCode !== 200) {

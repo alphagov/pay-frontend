@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 // Local dependencies
@@ -17,5 +18,5 @@ const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = 
 }
 
 module.exports = {
-  markTokenAsUsed
+  markTokenAsUsed: markTokenAsUsed
 }

@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const request = require('requestretry')
@@ -41,8 +42,8 @@ module.exports = (req, res) => {
       logger.info('Error generating Apple Pay session', {
         ...getLoggingFields(req),
         error: err,
-        response,
-        body
+        response: response,
+        body: body
       })
       res.status(500).send(body)
     }

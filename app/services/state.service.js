@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const _ = require('lodash')
@@ -45,7 +46,7 @@ module.exports = (function () {
     return validActionNames[0]
   }
   return {
-    resolveStates,
-    resolveActionName
+    resolveStates: resolveStates,
+    resolveActionName: resolveActionName
   }
 }())

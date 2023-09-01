@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const supportedNetworksFormattedByProvider = require('./format-card-types')
@@ -86,7 +87,7 @@ const getGooglePaymentsConfiguration = () => {
     type: 'CARD',
     parameters: {
       allowedAuthMethods: allowedCardAuthMethods,
-      allowedCardNetworks,
+      allowedCardNetworks: allowedCardNetworks,
       assuranceDetailsRequired: true
     },
     tokenizationSpecification

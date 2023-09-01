@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 // Polyfill for ZAP webdriver
@@ -44,7 +45,7 @@ module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
      needed for validation.
      */
   const chargeValidationFields = {
-    creditCardType,
+    creditCardType: creditCardType,
     allowedCards: Card.allowed,
     fieldValidations: {
       cardNo: cardNo.bind(Card),
@@ -56,7 +57,7 @@ module.exports = (Card, chargeOptions = { collect_billing_address: true }) => {
       addressLine1: addressLine,
       addressLine2: addressLine,
       addressCity: addressLine,
-      creditCardType,
+      creditCardType: creditCardType,
       allowedCards: Card.allowed
     },
     requiredFormFields: REQUIRED_FORM_FIELDS,

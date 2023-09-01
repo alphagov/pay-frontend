@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 // NPM dependencies
 const _ = require('lodash')
 
@@ -14,7 +15,7 @@ const connectorClient = require('../services/clients/connector.client')
 const { views, threeDsEPDQResults } = require('../../config/charge.controller')
 const { CORRELATION_HEADER } = require('../../config/correlation-header')
 
-const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId })
+const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
 
 const redirect = res => {
   return {
@@ -111,8 +112,8 @@ module.exports = {
     if (issuerUrl && paRequest) {
       const data = {
         postUrl: issuerUrl,
-        paRequest,
-        threeDSReturnUrl
+        paRequest: paRequest,
+        threeDSReturnUrl: threeDSReturnUrl
       }
       if (md) {
         data.md = md
@@ -137,7 +138,7 @@ module.exports = {
         : process.env.WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL
       const data = {
         postUrl: challengeUrl,
-        worldpayChallengeJwt
+        worldpayChallengeJwt: worldpayChallengeJwt
       }
 
       logger.info('Rendering form to post to Worldpay to initiate 3DS authentication', {

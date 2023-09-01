@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const logger = require('./logger')(__filename)
@@ -7,7 +8,7 @@ exports.authChargePost = (url, loggingFields = {}) => {
     ...loggingFields,
     service: 'connector',
     method: 'POST',
-    url
+    url: url
   })
 }
 

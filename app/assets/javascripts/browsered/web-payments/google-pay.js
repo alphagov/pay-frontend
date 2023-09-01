@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers')
@@ -7,7 +8,7 @@ const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
 const submitGooglePayAuthRequest = (paymentResponse) => {
   // eslint-disable-next-line no-var
   var requestBody = {
-    paymentResponse
+    paymentResponse: paymentResponse
   }
 
   if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {

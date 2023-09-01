@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 'use strict'
 
 const logger = require('./logger')(__filename)
@@ -36,6 +37,6 @@ exports.logRequestError = (context, error, loggingFields = {}) => {
     service: context.service,
     method: context.method,
     url: context.url,
-    error
+    error: error
   })
 }
