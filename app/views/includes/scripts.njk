@@ -32,7 +32,8 @@
     collect_billing_address: {{ "true" if collectBillingAddress else "false" }},
     collect_additional_browser_data_for_epdq_3ds: {{"true" if collectAdditionalBrowserDataForEpdq3ds else "false" }},
     worldpay_3ds_flex_ddc_jwt: '{{ worldpay3dsFlexDdcJwt }}',
-    worldpay_3ds_flex_ddc_url: '{{ worldpay3dsFlexDdcUrl }}'
+    worldpay_3ds_flex_ddc_url: '{{ worldpay3dsFlexDdcUrl }}',
+    payment_provider: '{{ paymentProvider }}'
   }
 
   var mainWrap = document.getElementsByTagName('main')[0]
