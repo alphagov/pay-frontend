@@ -61,7 +61,7 @@ describe('connectors client - apple authentication API', function () {
         const payload = appleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'apple',
+          wallet: 'apple',
           payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
@@ -92,7 +92,7 @@ describe('connectors client - apple authentication API', function () {
         const payload = appleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'apple',
+          wallet: 'apple',
           payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
@@ -124,7 +124,7 @@ describe('connectors client - apple authentication API', function () {
       const payload = appleAuthRequest
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
-        provider: 'apple',
+        wallet: 'apple',
         payload: payload
       }).then(res => {
         expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
@@ -152,7 +152,7 @@ describe('connectors client - apple authentication API', function () {
     it('should return authorisation declined', function (done) {
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
-        provider: 'apple',
+        wallet: 'apple',
         payload: appleAuthRequest
       }).then(() => {
         done()
@@ -179,7 +179,7 @@ describe('connectors client - apple authentication API', function () {
     it('should return authorisation declined', function (done) {
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
-        provider: 'apple',
+        wallet: 'apple',
         payload: appleAuthRequest
       }).then(() => {
         done()
