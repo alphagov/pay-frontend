@@ -9,29 +9,37 @@ const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payloa
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
 const { CORRELATION_HEADER } = require('../../../config/correlation-header')
 const { setSessionVariable } = require('../../utils/cookies')
+const normalise = require("../../services/normalise-charge");
 
 module.exports = (req, res) => {
-  const { chargeId, params, paymentProvider } = req
-  const { provider } = params
+  const { chargeData, chargeId, params } = req
+  const charge = normalise.charge(chargeData, chargeId)
+  const wallet = params.provider
 
   const { worldpay3dsFlexDdcStatus } = req.body
   if (worldpay3dsFlexDdcStatus) {
     logging.worldpay3dsFlexDdcStatus(worldpay3dsFlexDdcStatus, getLoggingFields(req))
   }
 
-  const payload = provider === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
+  const payload = wallet === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
 
-  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet({ chargeId, provider, paymentProvider, payload }, getLoggingFields(req))
+  const walletAuthOpts = {
+    chargeId,
+    wallet,
+    paymentProvider: charge.paymentProvider,
+    payload
+  }
+  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(walletAuthOpts, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
         statusCode: data.statusCode
       })
-      logger.info(`Successful auth for ${provider} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
+      logger.info(`Successful auth for ${wallet} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
       res.status(200)
       res.send({ url: `/handle-payment-response/${chargeId}` })
     })
     .catch(err => {
-      logger.error(`Error while trying to authorise ${provider} Pay payment`, {
+      logger.error(`Error while trying to authorise ${wallet} Pay payment`, {
         ...getLoggingFields(req),
         error: err
       })

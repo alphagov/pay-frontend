@@ -5,6 +5,7 @@ const { expect } = require('chai')
 const nock = require('nock')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
+const paymentFixtures = require('../../fixtures/payment.fixtures')
 
 // Local dependencies
 require('../../test-helpers/html-assertions')
@@ -20,7 +21,7 @@ describe('The web payments auth request controller', () => {
         'x-request-id': 'aaa'
       },
       chargeId,
-      paymentProvider: 'worldpay',
+      chargeData: paymentFixtures.validChargeDetails({ paymentProvider: 'worldpay' }),
       params: {
         provider
       },
@@ -87,7 +88,7 @@ describe('The web payments auth request controller', () => {
         'x-request-id': 'aaa'
       },
       chargeId,
-      paymentProvider: 'worldpay',
+      chargeData: paymentFixtures.validChargeDetails({ paymentProvider: 'worldpay' }),
       params: {
         provider
       },
@@ -115,7 +116,7 @@ describe('The web payments auth request controller', () => {
         statusCode: 200
       }
       nock(process.env.CONNECTOR_HOST)
-        .post(`/v1/frontend/charges/${chargeId}/wallets/${provider}/worldpay`)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/google/worldpay`)
         .reply(200)
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line

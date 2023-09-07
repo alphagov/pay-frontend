@@ -63,7 +63,7 @@ describe('connectors client - google authentication API', function () {
         const payload = successfulGoogleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'google',
+          wallet: 'google',
           payload: payload,
           paymentProvider: 'worldpay'
         }).then(res => {
@@ -98,7 +98,7 @@ describe('connectors client - google authentication API', function () {
         const payload = successfulGoogleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'google',
+          wallet: 'google',
           payload: payload,
           paymentProvider: 'worldpay'
         }).then(res => {
@@ -130,7 +130,7 @@ describe('connectors client - google authentication API', function () {
       it('should return authorisation declined', function (done) {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'google',
+          wallet: 'google',
           payload: declinedGoogleAuthRequest,
           paymentProvider: 'worldpay'
         }).then(() => {
@@ -161,7 +161,7 @@ describe('connectors client - google authentication API', function () {
       it('should return authorisation declined', function (done) {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'google',
+          wallet: 'google',
           payload: errorGoogleAuthRequest,
           paymentProvider: 'worldpay'
         }).then(() => {
@@ -192,7 +192,7 @@ describe('connectors client - google authentication API', function () {
         const payload = successfulGoogleAuthRequest
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
-          provider: 'google',
+          wallet: 'google',
           payload: payload,
           paymentProvider: 'worldpay'
         }).then(res => {

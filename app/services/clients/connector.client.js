@@ -231,7 +231,7 @@ const chargeAuth = (chargeOptions, loggingFields = {}) => {
 }
 
 const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
-  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.provider, chargeOptions.paymentProvider)
+  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.wallet, chargeOptions.paymentProvider)
   return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields, 'chargeAuthWithWallet')
 }
 
