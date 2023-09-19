@@ -220,8 +220,8 @@ describe('Worldpay 3ds flex card payment flow', () => {
 
       cy.log('Should hide the web payment text on the DDC spinner screen')
 
-      cy.get('.google-pay-container').should('have.attr', 'style', 'display: none;')
-      cy.get('.web-payment-button-section').should('have.attr', 'style', 'display: none;')
+      cy.get('.web-payment-button-section').should('not.be.visible')
+      cy.get('.google-pay-container').should('not.be.visible')
     })
   })
 })

@@ -37,50 +37,23 @@ const toggleSubmitButtons = () => {
 
 const showSpinnerAndHideMainContent = () => {
   document.getElementById('card-details-wrap').classList.add('hidden')
+  document.getElementById('wallet-options').classList.add('hidden')
+
   const errorSummary = document.getElementById('error-summary')
   errorSummary.classList.add('hidden')
   errorSummary.setAttribute('aria-hidden', 'true')
-
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
-  if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
-    paymentDetailsHeader.style.display = 'none'
-  }
-
-  var applePayContainer = document.querySelector('.apple-pay-container')
-  if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
-    applePayContainer.style.display = 'none'
-  }
-
-  var googlePayContainer = document.querySelector('.google-pay-container')
-  if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
-    googlePayContainer.style.display = 'none'
-  }
 
   document.getElementById('spinner').classList.remove('hidden')
 }
 
 const hideSpinnerAndShowMainContent = () => {
   document.getElementById('card-details-wrap').classList.remove('hidden')
+  document.getElementById('wallet-options').classList.remove('hidden')
 
   if (document.getElementsByClassName('govuk-error-summary__list')[0].childElementCount > 0) {
     const errorSummary = document.getElementById('error-summary')
     errorSummary.classList.remove('hidden')
     errorSummary.setAttribute('aria-hidden', 'false')
-  }
-
-  var paymentDetailsHeader = document.querySelector('.web-payment-button-section')
-  if (typeof paymentDetailsHeader !== 'undefined' && paymentDetailsHeader !== null) {
-    paymentDetailsHeader.style.display = 'block'
-  }
-
-  var applePayContainer = document.querySelector('.apple-pay-container')
-  if (typeof applePayContainer !== 'undefined' && applePayContainer !== null) {
-    applePayContainer.style.display = 'block'
-  }
-
-  var googlePayContainer = document.querySelector('.google-pay-container')
-  if (typeof googlePayContainer !== 'undefined' && googlePayContainer !== null) {
-    googlePayContainer.style.display = 'block'
   }
 
   document.getElementById('spinner').classList.add('hidden')
