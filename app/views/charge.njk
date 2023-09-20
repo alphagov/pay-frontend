@@ -16,6 +16,8 @@
   'data-accept-header': acceptHeader
 } %}
 
+{% set shouldShowEmail = (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
+
 {% macro paymentSummary() %}
   <div class="payment-summary-wrap">
     <div class="payment-summary">
@@ -456,7 +458,7 @@
                             value="{{ addressCity }}"
                             autocomplete="billing address-level2"/>
                         </div>
-                        <div class="govuk-form-group{% if highlightErrorFields.addressPostcode %} govuk-form-group--error{% endif %} govuk-!-margin-bottom-0" data-validation="addressPostcode">
+                        <div class="govuk-form-group{% if highlightErrorFields.addressPostcode %} govuk-form-group--error{% endif %} {% if shouldShowEmail %} govuk-!-margin-bottom-0{% endif %}" data-validation="addressPostcode">
                           <label id="address-postcode-lbl" for="address-postcode" class="govuk-label">
                             <span
                               class="address-postcode-label"
@@ -483,7 +485,6 @@
                     </fieldset>
                   </div>
                 {% endif %}
-                {% set shouldShowEmail = (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
                 {% if shouldShowEmail %}
                   <div class="govuk-!-width-three-quarters email-container govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
                     <fieldset class="govuk-fieldset" aria-describedby="email-hint">
