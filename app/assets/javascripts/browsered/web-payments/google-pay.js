@@ -65,6 +65,7 @@ const performDeviceDataCollectionForGooglePay = (paymentData) => {
           Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = 'DDC result did not have Status of true'
         } else {
           Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = 'no SessionID string in DDC result'
+          Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus = 'no SessionID string in DDC result'
         }
         window.clearTimeout(deviceDataCollectionTimeout)
         window.removeEventListener('message', deviceDataCollectionFinishedEventListener)
