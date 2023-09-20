@@ -121,15 +121,27 @@ const processPayment = paymentData => {
   }
 }
 
+const shortenGooglePayDescription = (fullPaymentDescription) => {
+  const MAX_LENGTH_PAYMENT_DESCRIPTION = 18
+
+  if (fullPaymentDescription.length > MAX_LENGTH_PAYMENT_DESCRIPTION) {
+    return fullPaymentDescription.substring(0, MAX_LENGTH_PAYMENT_DESCRIPTION - 1) + '…'
+  } else {
+    return fullPaymentDescription
+  }
+}
+
 const createGooglePaymentRequest = () => {
   const methodData = [{
     supportedMethods: 'https://google.com/pay',
     data: getGooglePaymentsConfiguration()
   }]
 
+  const shortenedPaymentDescription = shortenGooglePayDescription(window.paymentDetails.description)
+
   const details = {
     total: {
-      label: window.paymentDetails.description,
+      label: shortenedPaymentDescription,
       amount: {
         currency: 'GBP',
         value: window.paymentDetails.amount
@@ -159,5 +171,6 @@ const googlePayNow = () => {
 
 module.exports = {
   createGooglePaymentRequest,
-  googlePayNow
+  googlePayNow,
+  shortenGooglePayDescription
 }
