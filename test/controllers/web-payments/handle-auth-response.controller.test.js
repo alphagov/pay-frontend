@@ -128,6 +128,7 @@ describe('The web payments handle auth response controller', () => {
     expect(res.redirect.calledWith(303, '/card_details/chargeId/auth_waiting')).to.be.ok // eslint-disable-line
     done()
   })
+
   it('show capture failed page and delete connector response if connector response is in the session and and capture failed', done => {
     const mockCharge = () => {
       return {
@@ -171,6 +172,7 @@ describe('The web payments handle auth response controller', () => {
     expect(res.render.calledWith('errors/incorrect-state/capture-failure', systemErrorObj)).to.be.true // eslint-disable-line
     done()
   })
+
   it('show error page and delete connector response if connector response is in the session and error', done => {
     const mockCharge = () => {
       return {
@@ -249,13 +251,15 @@ describe('The web payments handle auth response controller', () => {
     done()
   })
 
-  it('show error page and delete connector response if connector response is in the session and status code is 400', done => {
+  it('should render the auth_failure view and delete connector response if connector response is in the session and status code is 400', done => {
     const mockCharge = () => {
       return {
         capture: () => {
           return {
-            then: function (success) {
-              return success()
+            then: function (success, fail) {
+              return fail({
+                message: 'AUTHORISATION_REJECTED'
+              })
             }
           }
         }
@@ -274,23 +278,25 @@ describe('The web payments handle auth response controller', () => {
       },
       deleteSessionVariable: sinon.spy()
     }
-    const systemErrorObj = {
-      viewName: 'SYSTEM_ERROR',
+    const authErrorObj = {
+      viewName: 'AUTHORISATION_REJECTED',
       returnUrl: '/return/3',
       analytics: {
+        path: '/handle-payment-response/3/auth_failure',
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
-        path: '/handle-payment-response/3/error',
         amount: '4.99',
         testingVariant: 'original'
       }
     }
+
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
     expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
+    expect(res.render.calledWith('errors/incorrect-state/auth-failure', authErrorObj)).to.be.true // eslint-disable-line
     done()
   })
+
   it('should return error if connector response has not been saved in the session', done => {
     const res = {
       redirect: sinon.spy(),

@@ -64,6 +64,12 @@ const handleAuthResponse = (req, res, charge) => response => {
       }
       break
     case 400:
+      logging.failedChargePost(response.statusCode, getLoggingFields(req))
+      return responseRouter.response(req, res, 'AUTHORISATION_REJECTED', withAnalytics(
+        charge,
+        { returnUrl: routeFor('return', charge.id) },
+        webPaymentsRouteFor('handlePaymentResponse', charge.id))
+      )
     case 402:
     case 500:
       logging.failedChargePost(response.statusCode, getLoggingFields(req))
