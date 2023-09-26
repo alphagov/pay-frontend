@@ -28,7 +28,7 @@ const GOOGLE_DDC_RESULT = 'some long opaque string that’s a device data collec
 
 describe('connectors client - google authentication API', function () {
   const provider = new Pact({
-    consumer: 'frontend-to-be',
+    consumer: 'frontend',
     provider: 'connector',
     port: PORT,
     log: path.resolve(process.cwd(), 'logs', 'mockserver-integration.log'),
@@ -151,7 +151,7 @@ describe('connectors client - google authentication API', function () {
           .withMethod('POST')
           .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid google pay auth request which should return an error')
-          .withStatusCode(400)
+          .withStatusCode(402)
           .build()
         return provider.addInteraction(builder)
       })

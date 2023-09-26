@@ -26,7 +26,7 @@ chai.use(chaiAsPromised)
 
 describe('connectors client - apple authentication API', function () {
   const provider = new Pact({
-    consumer: 'frontend-to-be',
+    consumer: 'frontend',
     provider: 'connector',
     port: PORT,
     log: path.resolve(process.cwd(), 'logs', 'mockserver-integration.log'),
@@ -169,7 +169,7 @@ describe('connectors client - apple authentication API', function () {
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid apple pay auth request which should return an error')
-        .withStatusCode(400)
+        .withStatusCode(402)
         .build()
       return provider.addInteraction(builder)
     })
