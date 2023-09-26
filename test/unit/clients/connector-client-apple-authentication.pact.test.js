@@ -26,7 +26,7 @@ chai.use(chaiAsPromised)
 
 describe('connectors client - apple authentication API', function () {
   const provider = new Pact({
-    consumer: 'frontend',
+    consumer: 'frontend-to-be',
     provider: 'connector',
     port: PORT,
     log: path.resolve(process.cwd(), 'logs', 'mockserver-integration.log'),

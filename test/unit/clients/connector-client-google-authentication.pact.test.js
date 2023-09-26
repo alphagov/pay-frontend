@@ -28,7 +28,7 @@ const GOOGLE_DDC_RESULT = 'some long opaque string that’s a device data collec
 
 describe('connectors client - google authentication API', function () {
   const provider = new Pact({
-    consumer: 'frontend',
+    consumer: 'frontend-to-be',
     provider: 'connector',
     port: PORT,
     log: path.resolve(process.cwd(), 'logs', 'mockserver-integration.log'),
