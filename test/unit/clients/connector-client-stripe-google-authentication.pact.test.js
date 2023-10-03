@@ -131,7 +131,7 @@ describe('connectors client - stripe google authentication API', function () {
     })
 
     describe('authorisation error', function () {
-      const errorGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails({
+      const errorGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails({
         lastDigitsCardNumber: '0119'
       })
 
