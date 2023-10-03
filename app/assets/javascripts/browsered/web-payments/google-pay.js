@@ -2,7 +2,7 @@
 
 const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers')
 const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
-const { email_collection_mode } = window.Charge // eslint-disable-line camelcase
+const { email_collection_mode, payment_provider } = window.Charge // eslint-disable-line camelcase
 
 const submitGooglePayAuthRequest = (paymentResponse) => {
   // eslint-disable-next-line no-var
@@ -110,14 +110,18 @@ const processPayment = paymentData => {
   toggleSubmitButtons()
   showSpinnerAndHideMainContent()
 
-  if (typeof Charge.worldpay_3ds_flex_ddc_jwt !== 'string' || Charge.worldpay_3ds_flex_ddc_jwt === '') {
-    submitGooglePayAuthRequest(paymentData)
-  }
-
-  if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {
-    submitGooglePayAuthRequest(paymentData)
+  // attempt device data collection for worldpay only
+  if (payment_provider === 'worldpay') { // eslint-disable-line camelcase
+    if (typeof Charge.worldpay_3ds_flex_ddc_jwt !== 'string' || Charge.worldpay_3ds_flex_ddc_jwt === '') {
+      submitGooglePayAuthRequest(paymentData)
+    }
+    if (typeof Charge.googlePayWorldpay3dsFlexDeviceDataCollectionStatus === 'string') {
+      submitGooglePayAuthRequest(paymentData)
+    } else {
+      performDeviceDataCollectionForGooglePay(paymentData)
+    }
   } else {
-    performDeviceDataCollectionForGooglePay(paymentData)
+    submitGooglePayAuthRequest(paymentData)
   }
 }
 
@@ -134,7 +138,7 @@ const shortenGooglePayDescription = (fullPaymentDescription) => {
 const createGooglePaymentRequest = () => {
   const methodData = [{
     supportedMethods: 'https://google.com/pay',
-    data: getGooglePaymentsConfiguration()
+    data: getGooglePaymentsConfiguration(payment_provider) // eslint-disable-line camelcase
   }]
 
   const shortenedPaymentDescription = shortenGooglePayDescription(window.paymentDetails.description)

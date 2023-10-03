@@ -7,7 +7,7 @@
     description: '{{description}}',
     amount: '{{amount}}',
     chargeID: '{{id}}'
-  };
+  }
 
   window.Card = {
     allowed:
@@ -26,7 +26,7 @@
           prepaidDebit: 0
         }
       {% endif %}
-  };
+  }
   window.Charge = {
     email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
     collect_billing_address: {{ "true" if collectBillingAddress else "false" }},
@@ -38,36 +38,37 @@
 
   var mainWrap = document.getElementsByTagName('main')[0]
   document.addEventListener('DOMContentLoaded', function() {
-    window.GOVUKFrontend.initAll();
+    window.GOVUKFrontend.initAll()
     if (mainWrap.classList.contains('charge-new')) {
-      window.payScripts.helpers.setGlobalChargeId();
-      showCardType().init();
+      window.payScripts.helpers.setGlobalChargeId()
+      showCardType().init()
       {% if collectBillingAddress %}
-        window.payScripts.helpers.initialiseAddressCountryAutocomplete();
+        window.payScripts.helpers.initialiseAddressCountryAutocomplete()
       {% endif %}
-      window.payScripts.inputConfirm.init();
-      window.payScripts.formValidation.init();
-      window.payScripts.epdq3ds2.init();
+      window.payScripts.inputConfirm.init()
+      window.payScripts.formValidation.init()
+      window.payScripts.epdq3ds2.init()
     } else if (mainWrap.classList.contains('confirm-page')) {
       var confirmationForm = document.getElementById('confirmation')
       var confirmButton = document.getElementById('confirm')
       confirmationForm.addEventListener('submit', function () {
         confirmButton.setAttribute('disabled', 'disabled')
       })
-      analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}');
+      analyticsTrackConfirmClick().init('{{analytics.analyticsId}}', '{{analytics.type}}', '{{analytics.paymentProvider}}', '{{analytics.amount}}', '{{hitPage}}')
     }
     {% if allowGooglePay%}
-      window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}';
-      window.googlePayMerchantID = '{{ googlePayMerchantID }}';
+      window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}'
+      window.googlePayMerchantID = '{{ googlePayMerchantID }}'
       window.gatewayAccountType = '{{ gatewayAccount.type }}'
+      window.stripePublishableKey = '{{ stripePublishableKey }}'
     {% endif %}
     {% if allowApplePay and allowGooglePay%}
-      window.payScripts.webPayments.init('all');
+      window.payScripts.webPayments.init('all')
     {% elif allowApplePay %}
-      window.payScripts.webPayments.init('apple');
+      window.payScripts.webPayments.init('apple')
     {% elif allowGooglePay %}
-      window.payScripts.webPayments.init('google');
+      window.payScripts.webPayments.init('google')
     {% endif %}
-  });
+  })
 </script>
 <script src="{{ js_path }}"></script>

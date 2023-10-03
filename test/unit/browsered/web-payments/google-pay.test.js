@@ -25,5 +25,5 @@ describe('Google Pay', () => {
     it('should tuncate the description to 17 characters and add the elipses character when length > 18', () => {
       expect(shortenGooglePayDescription(STRING_19_CHAR_LENGTH)).to.equal('abcdefghijklmnopq…')
     })
-})
+  })
 })

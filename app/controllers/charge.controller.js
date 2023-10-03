@@ -10,7 +10,9 @@ const {
   WORLDPAY_3DS_FLEX_DDC_LIVE_URL,
   DECRYPT_AND_OMIT_CARD_DATA,
   GOOGLE_PAY_MERCHANT_ID,
-  GOOGLE_PAY_MERCHANT_ID_2
+  GOOGLE_PAY_MERCHANT_ID_2,
+  STRIPE_TEST_PUBLISHABLE_API_KEY,
+  STRIPE_LIVE_PUBLISHABLE_API_KEY
 } = process.env
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
@@ -70,7 +72,14 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
 
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId, getLoggingFields(req))
-  charge.worldpay3dsFlexDdcUrl = charge.gatewayAccount.type !== 'live' ? WORLDPAY_3DS_FLEX_DDC_TEST_URL : WORLDPAY_3DS_FLEX_DDC_LIVE_URL
+
+  if (charge.gatewayAccount.type !== 'live') {
+    charge.worldpay3dsFlexDdcUrl = WORLDPAY_3DS_FLEX_DDC_TEST_URL
+    charge.stripePublishableKey = STRIPE_TEST_PUBLISHABLE_API_KEY
+  } else {
+    charge.worldpay3dsFlexDdcUrl = WORLDPAY_3DS_FLEX_DDC_LIVE_URL
+    charge.stripePublishableKey = STRIPE_LIVE_PUBLISHABLE_API_KEY
+  }
 
   charge.collectAdditionalBrowserDataForEpdq3ds = charge.paymentProvider === 'epdq' &&
     charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2

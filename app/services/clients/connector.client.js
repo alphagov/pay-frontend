@@ -7,7 +7,7 @@ const { getCounter } = require('../../metrics/graphite-reporter')
 
 const METRICS_PREFIX = 'internal-rest-call.connector'
 const SERVICE_NAME = 'connector'
-const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/{provider}'
+const WALLET_AUTH_PATH = '/v1/frontend/charges/{chargeId}/wallets/{walletType}'
 const CARD_AUTH_PATH = '/v1/frontend/charges/{chargeId}/cards'
 const CARD_3DS_PATH = '/v1/frontend/charges/{chargeId}/3ds'
 const CARD_STATUS_PATH = '/v1/frontend/charges/{chargeId}/status'
@@ -28,10 +28,18 @@ const _getFindChargeUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{ch
 const _getAuthUrlFor = chargeId => baseUrl + CARD_AUTH_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _getWalletAuthUrlFor = (chargeId, provider, paymentProvider) => baseUrl + WALLET_AUTH_PATH
-  .replace('{chargeId}', chargeId)
-  .replace('{provider}', provider)
-  .concat((paymentProvider === 'worldpay' && provider === 'google') ? '/worldpay' : '')
+const _getWalletAuthUrlFor = (chargeId, walletType, paymentProvider) => {
+  let walletAuthUrl = baseUrl + WALLET_AUTH_PATH
+    .replace('{chargeId}', chargeId)
+    .replace('{walletType}', walletType)
+
+  if (walletType === 'google') {
+    if (paymentProvider === 'worldpay' || paymentProvider === 'stripe') {
+      walletAuthUrl = walletAuthUrl.concat(`/${paymentProvider}`)
+    }
+  }
+  return walletAuthUrl
+}
 
 /** @private */
 const _getThreeDsFor = chargeId => baseUrl + CARD_3DS_PATH.replace('{chargeId}', chargeId)
