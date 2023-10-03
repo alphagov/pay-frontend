@@ -9,7 +9,7 @@ const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payloa
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
 const { CORRELATION_HEADER } = require('../../../config/correlation-header')
 const { setSessionVariable } = require('../../utils/cookies')
-const normalise = require("../../services/normalise-charge");
+const normalise = require('../../services/normalise-charge')
 
 module.exports = (req, res) => {
   const { chargeData, chargeId, params } = req

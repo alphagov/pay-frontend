@@ -111,7 +111,7 @@ const processPayment = paymentData => {
   showSpinnerAndHideMainContent()
 
   // attempt device data collection for worldpay only
-  if (payment_provider === 'worldpay') {
+  if (payment_provider === 'worldpay') { // eslint-disable-line camelcase
     if (typeof Charge.worldpay_3ds_flex_ddc_jwt !== 'string' || Charge.worldpay_3ds_flex_ddc_jwt === '') {
       submitGooglePayAuthRequest(paymentData)
     }
@@ -138,7 +138,7 @@ const shortenGooglePayDescription = (fullPaymentDescription) => {
 const createGooglePaymentRequest = () => {
   const methodData = [{
     supportedMethods: 'https://google.com/pay',
-    data: getGooglePaymentsConfiguration(payment_provider)
+    data: getGooglePaymentsConfiguration(payment_provider) // eslint-disable-line camelcase
   }]
 
   const shortenedPaymentDescription = shortenGooglePayDescription(window.paymentDetails.description)

@@ -64,7 +64,7 @@ describe('connectors client - stripe google authentication API', function () {
       it('should return authorisation success', function (done) {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           ...CHARGE_OPTIONS,
-          payload: successfulGoogleAuthRequest,
+          payload: successfulGoogleAuthRequest
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -94,7 +94,7 @@ describe('connectors client - stripe google authentication API', function () {
       it('should return authorisation success', function (done) {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           ...CHARGE_OPTIONS,
-          payload: successfulGoogleAuthRequest,
+          payload: successfulGoogleAuthRequest
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()

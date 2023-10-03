@@ -72,7 +72,7 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
 
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId, getLoggingFields(req))
-  
+
   if (charge.gatewayAccount.type !== 'live') {
     charge.worldpay3dsFlexDdcUrl = WORLDPAY_3DS_FLEX_DDC_TEST_URL
     charge.stripePublishableKey = STRIPE_TEST_PUBLISHABLE_API_KEY
