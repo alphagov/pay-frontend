@@ -71,14 +71,21 @@ const prepareAppleRequestObject = () => {
   }
 }
 
-const getGooglePaymentsConfiguration = () => {
+const getGooglePaymentsConfiguration = (paymentProvider) => {
   const allowedCardNetworks = supportedNetworksFormattedByProvider(allowedCardTypes, 'google')
   const allowedCardAuthMethods = ['PAN_ONLY', 'CRYPTOGRAM_3DS']
   const tokenizationSpecification = {
     type: 'PAYMENT_GATEWAY',
     parameters: {
-      gateway: 'worldpay',
-      gatewayMerchantId: window.googlePayGatewayMerchantID
+      ...(paymentProvider === 'stripe' && {
+        gateway: 'stripe',
+        'stripe:version': '2018-10-31',
+        'stripe:publishableKey': window.stripePublishableKey
+      }),
+      ...(paymentProvider === 'worldpay' && {
+        gateway: 'worldpay',
+        gatewayMerchantId: window.googlePayGatewayMerchantID
+      })
     }
   }
 

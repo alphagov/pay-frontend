@@ -1,7 +1,7 @@
-const successfulLastDigitsCardNumber = 4242
+const successfulLastDigitsCardNumber = '4242'
 
 const fixtures = {
-  googleAuthRequestDetails: (ops = {}) => {
+  worldpayGoogleAuthRequestDetails: (ops = {}) => {
     const data = {
       payment_info: {
         last_digits_card_number: ops.lastDigitsCardNumber !== undefined ? ops.lastDigitsCardNumber : successfulLastDigitsCardNumber,
@@ -20,6 +20,21 @@ const fixtures = {
       }
     }
     return data
+  },
+  stripeGoogleAuthRequestDetails: (ops = {}) => {
+    return {
+      payment_info: {
+        last_digits_card_number: ops.lastDigitsCardNumber !== undefined ? ops.lastDigitsCardNumber : successfulLastDigitsCardNumber,
+        brand: 'visa',
+        cardholder_name: 'Name',
+        email: 'name@example.com',
+        worldpay_3ds_flex_ddc_result: null,
+        accept_header: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        user_agent_header: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+        ip_address: '203.0.113.1'
+      },
+      token_id: 'tok_notARealToken123abc'
+    }
   },
   webPaymentSuccessResponse: () => {
     return {

@@ -79,7 +79,7 @@ const nullable = word => {
   return word
 }
 
-module.exports = req => {
+module.exports = (req, paymentProvider) => {
   logSelectedPayloadProperties(req)
 
   const payload = req.body
@@ -98,8 +98,15 @@ module.exports = req => {
   const paymentData = humps.decamelizeKeys(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
   delete payload.paymentResponse.details.paymentMethodData
 
-  return {
-    payment_info: paymentInfo,
-    encrypted_payment_data: paymentData
+  if (paymentProvider === 'stripe') {
+    return {
+      payment_info: paymentInfo,
+      token_id: paymentData.id
+    }
+  } else {
+    return {
+      payment_info: paymentInfo,
+      encrypted_payment_data: paymentData
+    }
   }
 }

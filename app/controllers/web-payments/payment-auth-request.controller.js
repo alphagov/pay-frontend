@@ -15,21 +15,23 @@ module.exports = (req, res) => {
   const { chargeData, chargeId, params } = req
   const charge = normalise.charge(chargeData, chargeId)
   const wallet = params.provider
+  const paymentProvider = charge.paymentProvider
 
   const { worldpay3dsFlexDdcStatus } = req.body
   if (worldpay3dsFlexDdcStatus) {
     logging.worldpay3dsFlexDdcStatus(worldpay3dsFlexDdcStatus, getLoggingFields(req))
   }
 
-  const payload = wallet === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req)
+  const payload = wallet === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req, paymentProvider)
 
-  const walletAuthOpts = {
+  const chargeOptions = {
     chargeId,
     wallet,
-    paymentProvider: charge.paymentProvider,
+    paymentProvider,
     payload
   }
-  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(walletAuthOpts, getLoggingFields(req))
+
+  return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(chargeOptions, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
         statusCode: data.statusCode
