@@ -48,11 +48,19 @@ const handleAuthResponse = (req, res, charge) => response => {
             },
             err => {
               if (err.message === 'CAPTURE_FAILED') {
+                logger.error('Failed capture for digital wallet payment.', {
+                  ...getLoggingFields(req),
+                  error: err
+                })
                 return responseRouter.response(req, res, 'CAPTURE_FAILURE', withAnalytics(
                   charge,
                   {},
                   webPaymentsRouteFor('handlePaymentResponse', charge.id)))
               } else {
+                logger.error('Wallet auth response capture payment attempt error', {
+                  ...getLoggingFields(req),
+                  error: err
+                })
                 responseRouter.systemErrorResponse(req, res, 'Wallet auth response capture payment attempt error', withAnalytics(
                   charge,
                   { returnUrl: routeFor('return', charge.id) },
