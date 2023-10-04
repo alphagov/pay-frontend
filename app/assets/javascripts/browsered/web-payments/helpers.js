@@ -10,6 +10,7 @@ const showErrorSummary = (title, body) => {
   errorSummary.classList.remove('hidden')
   errorSummary.querySelectorAll('h2')[0].innerText = title
   if (body) {
+    errorSummary.querySelectorAll('ul')[0].innerHTML = ''
     const error = document.createElement('li')
     error.innerText = body
     errorSummary.querySelectorAll('ul')[0].appendChild(error)

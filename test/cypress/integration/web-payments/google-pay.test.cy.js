@@ -178,19 +178,38 @@ describe('Google Pay payment flow', () => {
 
       cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, { forceNetworkError: true }).as('first-web-payments-auth-request-which-fails')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails first time')
+      cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails and shows one error')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       cy.wait('@first-web-payments-auth-request-which-fails')
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('second-web-payments-auth-request-which-succeeds')
+      cy.get('[data-cy=error-summary]').find('li')
+        .should('have.length', 1)
+        .eq(0).should('have.text', 'No money has been taken from your account, please try again')
+
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, { forceNetworkError: true }).as('second-web-payments-auth-request-which-fails')
+
+      cy.log('Should show Google Pay as a payment option and user chooses it again but fetch call fails and shows one error')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@second-web-payments-auth-request-which-succeeds')
+      cy.wait('@second-web-payments-auth-request-which-fails')
+
+      cy.get('[data-cy=error-summary]').find('li')
+        .should('have.length', 1)
+        .eq(0).should('have.text', 'No money has been taken from your account, please try again')
+
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, { method: 'POST', times: 1 }, webPaymentAuthRequestResponseBody).as('third-web-payments-auth-request-which-succeeds')
+
+      cy.log('Should show Google Pay as a payment option and user chooses it again and fetch call succeeds')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+
+      cy.wait('@third-web-payments-auth-request-which-succeeds')
         .then((interception) => {
           // eslint-disable-next-line no-unused-expressions
           expect(interception.request.body.paymentResponse).to.exist
