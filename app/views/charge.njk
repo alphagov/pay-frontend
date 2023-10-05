@@ -76,7 +76,7 @@
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
       <main class="charge-new govuk-grid-column-two-thirds" id="main-content" role="main">
           <div class="charge-new__content">
-            <div id="error-summary" class="govuk-error-summary {% if not hasError %}hidden{% endif %}" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <div id="error-summary" data-cy="error-summary" class="govuk-error-summary {% if not hasError %}hidden{% endif %}" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
               <h2 class="govuk-error-summary__title" id="error-summary-title">
                 {{ __p("fieldErrors.summary") }}
               </h2>

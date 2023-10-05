@@ -7,6 +7,7 @@ const { email_collection_mode } = window.Charge || {} // eslint-disable-line cam
 
 const showErrorSummary = (title, body) => {
   const errorSummary = document.getElementById('error-summary')
+  errorSummary.querySelectorAll('ul')[0].innerHTML = ''
   errorSummary.classList.remove('hidden')
   errorSummary.querySelectorAll('h2')[0].innerText = title
   if (body) {
