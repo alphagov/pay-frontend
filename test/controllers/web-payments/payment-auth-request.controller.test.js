@@ -60,24 +60,24 @@ describe('The web payments auth request controller', () => {
       )
     })
 
-    it('should not set payload in the session and return handle payment url if error', done => {
+    it('should call the `next` function when the Apple Pay normalise function throws an error', done => {
       const res = {
         status: sinon.spy(),
         send: sinon.spy()
       }
-      const mockCookies = {
-        setSessionVariable: sinon.spy()
+
+      const mockCookies = () => {}
+      const error = new Error('Error normalising Apple Pay payload')
+      const next = sinon.spy()
+
+      const mockNormaliseThrowException = function (object) {
+        throw error
       }
-      nock(process.env.CONNECTOR_HOST)
-        .post(`/v1/frontend/charges/${chargeId}/wallets/apple`)
-        .replyWithError('oops')
-      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
-          expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-          expect(res.send.calledWith({url: `/handle-payment-response/${chargeId}`})).to.be.ok // eslint-disable-line
-          expect(mockCookies.setSessionVariable.called).to.be.false // eslint-disable-line
-        done()
-      }
-      )
+
+      requirePaymentAuthRequestController(mockNormaliseThrowException, mockCookies)(req, res, next)
+      sinon.assert.calledWith(next, error)
+
+      done()
     })
   })
 
@@ -145,6 +145,26 @@ describe('The web payments auth request controller', () => {
         done()
       }
       )
+    })
+
+    it('should call the `next` function when the Google Pay normalise function throws an error', done => {
+      const res = {
+        status: sinon.spy(),
+        send: sinon.spy()
+      }
+
+      const mockCookies = () => {}
+      const error = new Error('Error normalising Google Pay payload')
+      const next = sinon.spy()
+
+      const mockNormaliseThrowException = function (object) {
+        throw error
+      }
+
+      requirePaymentAuthRequestController(mockNormaliseThrowException, mockCookies)(req, res, next)
+      sinon.assert.calledWith(next, error)
+
+      done()
     })
   })
 })
