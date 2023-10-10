@@ -325,8 +325,10 @@ describe('The web payments handle auth response controller', () => {
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
+
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.render, 'errors/system-error', systemErrorObj)
+
     done()
   })
 
