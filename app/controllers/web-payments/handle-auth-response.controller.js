@@ -39,6 +39,7 @@ const handleAuthResponse = (req, res, charge) => response => {
         logger.info('Requesting 3DS1 for Google payment, redirect to auth 3ds page', getLoggingFields(req))
         return redirect(res).toAuth3dsRequired(req.chargeId)
       } else {
+        logger.info('Requesting capture for digital wallet payment', getLoggingFields(req))
         Charge(req.headers[CORRELATION_HEADER])
           .capture(req.chargeId, getLoggingFields(req))
           .then(
@@ -70,17 +71,13 @@ const handleAuthResponse = (req, res, charge) => response => {
         { returnUrl: routeFor('return', charge.id) },
         webPaymentsRouteFor('handlePaymentResponse', charge.id))
       )
-    case 402:
-    case 500:
+    default:
       logging.failedChargePost(response.statusCode, getLoggingFields(req))
       responseRouter.systemErrorResponse(req, res, 'Wallet authorisation error response', withAnalytics(
         charge,
         { returnUrl: routeFor('return', charge.id) },
         webPaymentsRouteFor('handlePaymentResponse', charge.id))
       )
-      break
-    default:
-      redirect(res).toNew(req.chargeId)
   }
 }
 

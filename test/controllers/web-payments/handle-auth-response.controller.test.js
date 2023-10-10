@@ -297,6 +297,39 @@ describe('The web payments handle auth response controller', () => {
     done()
   })
 
+  it('should show error page and delete connector response if connector response is in the session and status is not recognised', done => {
+    const mockCharge = sinon.spy()
+    const res = {
+      redirect: sinon.spy(),
+      render: sinon.spy(),
+      status: sinon.spy()
+    }
+    const mockCookies = {
+      getSessionVariable: (req, key) => {
+        return {
+          statusCode: 'unknown-status-code'
+        }
+      },
+      deleteSessionVariable: sinon.spy()
+    }
+    const systemErrorObj = {
+      viewName: 'SYSTEM_ERROR',
+      returnUrl: '/return/3',
+      analytics: {
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        path: '/handle-payment-response/3/error',
+        amount: '4.99',
+        testingVariant: 'original'
+      }
+    }
+    requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
+    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
+    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
+    done()
+  })
+
   it('should return error if connector response has not been saved in the session', done => {
     const res = {
       redirect: sinon.spy(),
