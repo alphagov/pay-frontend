@@ -33,13 +33,13 @@ module.exports = (req, res) => {
 
   return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(chargeOptions, getLoggingFields(req))
     .then(data => {
-      if(data.body === undefined || data.body.error_identifier === undefined){
-        setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-          statusCode: data.statusCode
-        })
-      }else if (data.body.error_identifier !== undefined ){
+      if(data.body && data.body.error_identifier){
         setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
           statusCode: data.statusCode, errorIdentifier: data.body.error_identifier
+        })
+      }else{
+        setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
+          statusCode: data.statusCode
         })
       }
 
