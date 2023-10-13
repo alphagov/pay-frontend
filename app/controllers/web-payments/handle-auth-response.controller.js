@@ -79,7 +79,6 @@ const handleAuthResponse = (req, res, charge) => response => {
           webPaymentsRouteFor('handlePaymentResponse', charge.id))
         )
       }
-      break
     default:
       logging.failedChargePost(response.statusCode, getLoggingFields(req))
       responseRouter.systemErrorResponse(req, res, 'Wallet authorisation error response', withAnalytics(
