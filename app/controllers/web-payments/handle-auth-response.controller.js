@@ -66,11 +66,19 @@ const handleAuthResponse = (req, res, charge) => response => {
       break
     case 400:
       logging.failedChargePost(response.statusCode, getLoggingFields(req))
-      return responseRouter.response(req, res, 'AUTHORISATION_REJECTED', withAnalytics(
-        charge,
-        { returnUrl: routeFor('return', charge.id) },
-        webPaymentsRouteFor('handlePaymentResponse', charge.id))
-      )
+      if (response.errorIdentifier === 'AUTHORISATION_REJECTED') {
+        return responseRouter.authorisationRejectedErrorResponse(req, res, 'AUTHORISATION_REJECTED', withAnalytics(
+          charge,
+          { returnUrl: routeFor('return', charge.id) },
+          webPaymentsRouteFor('handlePaymentResponse', charge.id))
+        )
+      } else {
+        return responseRouter.errorResponse(req, res, 'GENERIC', withAnalytics(
+          charge,
+          { returnUrl: routeFor('return', charge.id) },
+          webPaymentsRouteFor('handlePaymentResponse', charge.id))
+        )
+      }
     default:
       logging.failedChargePost(response.statusCode, getLoggingFields(req))
       responseRouter.systemErrorResponse(req, res, 'Wallet authorisation error response', withAnalytics(
