@@ -251,7 +251,7 @@ describe('The web payments handle auth response controller', () => {
     done()
   })
 
-  it('should render the auth_failure view and delete connector response if connector response is in the session and status code is 400', done => {
+  it('should render the auth_failure view and delete connector response if connector response is in the session and status code is 400 Authorisation Rejected', done => {
     const mockCharge = () => {
       return {
         capture: () => {
@@ -273,7 +273,8 @@ describe('The web payments handle auth response controller', () => {
     const mockCookies = {
       getSessionVariable: () => {
         return {
-          statusCode: 400
+          statusCode: 400,
+          errorIdentifier: 'AUTHORISATION_REJECTED'
         }
       },
       deleteSessionVariable: sinon.spy()

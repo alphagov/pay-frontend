@@ -34,7 +34,7 @@ module.exports = (req, res) => {
   return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(chargeOptions, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-        statusCode: data.statusCode
+        statusCode: data.statusCode, errorIdentifier: data.body.error_identifier
       })
       logger.info(`Successful auth for ${wallet} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
       res.status(200)

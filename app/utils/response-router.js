@@ -253,6 +253,13 @@ exports.systemErrorResponse = function systemErrorResponse (req, res, reason, op
   redirectOrRender(req, res, actions.SYSTEM_ERROR, options)
 }
 
+exports.authorisationRejectedErrorResponse = function authorisationRejectedErrorResponse (req, res, reason, options = {}, error) {
+  const action = actions.AUTHORISATION_REJECTED
+  logErrorPageShown(action.view, reason, getLoggingFields(req), error)
+  options.viewName = 'AUTHORISATION_REJECTED'
+  redirectOrRender(req, res, actions.AUTHORISATION_REJECTED, options)
+}
+
 exports.response = function response (req, res, actionName, options) {
   options = options || {}
   options.viewName = actionName
