@@ -11,18 +11,28 @@ const { CORRELATION_HEADER } = require('../../../config/correlation-header')
 const { setSessionVariable } = require('../../utils/cookies')
 const normalise = require('../../services/normalise-charge')
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const { chargeData, chargeId, params } = req
   const charge = normalise.charge(chargeData, chargeId)
   const wallet = params.provider
   const paymentProvider = charge.paymentProvider
+  let payload
 
   const { worldpay3dsFlexDdcStatus } = req.body
   if (worldpay3dsFlexDdcStatus) {
     logging.worldpay3dsFlexDdcStatus(worldpay3dsFlexDdcStatus, getLoggingFields(req))
   }
-
-  const payload = wallet === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req, paymentProvider)
+  try {
+    payload = wallet === 'apple' ? normaliseApplePayPayload(req) : normaliseGooglePayPayload(req, paymentProvider)
+  } catch (error) {
+    logger.error('Exception normalising Wallet payload', {
+      ...getLoggingFields(req),
+      charge_status: charge.status,
+      error,
+      wallet
+    })
+    return next(error)
+  }
 
   const chargeOptions = {
     chargeId,
@@ -33,17 +43,12 @@ module.exports = (req, res) => {
 
   return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(chargeOptions, getLoggingFields(req))
     .then(data => {
-      if(data.body && data.body.error_identifier){
-        setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-          statusCode: data.statusCode, errorIdentifier: data.body.error_identifier
-        })
-      }else{
-        setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-          statusCode: data.statusCode
-        })
-      }
+      setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
+        statusCode: data.statusCode,
+        ...data.body && data.body.error_identifier && { errorIdentifier: data.body.error_identifier }
+      })
 
-      logger.info(`Successful auth for ${wallet} Pay payment. ChargeID: ${chargeId}`, getLoggingFields(req))
+      // Always return 200 - the redirect checks if there are any errors
       res.status(200)
       res.send({ url: `/handle-payment-response/${chargeId}` })
     })
@@ -53,6 +58,7 @@ module.exports = (req, res) => {
         error: err
       })
       res.status(200)
+      // Always return 200 - the redirect handles the error
       res.send({ url: `/handle-payment-response/${chargeId}` })
     })
 }
