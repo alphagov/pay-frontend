@@ -251,20 +251,8 @@ describe('The web payments handle auth response controller', () => {
     done()
   })
 
-  it('should render the auth_failure view and delete connector response if connector response is in the session and status code is 400', done => {
-    const mockCharge = () => {
-      return {
-        capture: () => {
-          return {
-            then: function (success, fail) {
-              return fail({
-                message: 'AUTHORISATION_REJECTED'
-              })
-            }
-          }
-        }
-      }
-    }
+  it('should render the auth_failure view and delete connector response if connector response is in the session and status code is 400 Authorisation Rejected', done => {
+    const mockCharge = sinon.spy()
     const res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
@@ -273,7 +261,8 @@ describe('The web payments handle auth response controller', () => {
     const mockCookies = {
       getSessionVariable: () => {
         return {
-          statusCode: 400
+          statusCode: 400,
+          errorIdentifier: 'AUTHORISATION_REJECTED'
         }
       },
       deleteSessionVariable: sinon.spy()
@@ -294,6 +283,43 @@ describe('The web payments handle auth response controller', () => {
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
     expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
     expect(res.render.calledWith('errors/incorrect-state/auth-failure', authErrorObj)).to.be.true // eslint-disable-line
+    done()
+  })
+
+  it('should render the error page and delete connector response if connector response is in the session ' +
+      'and status code is 400, but for a Non Authorisation Rejection Error Identifier', done => {
+    const mockCharge = sinon.spy()
+    const res = {
+      redirect: sinon.spy(),
+      render: sinon.spy(),
+      status: sinon.spy()
+    }
+    const mockCookies = {
+      getSessionVariable: () => {
+        return {
+          statusCode: 400,
+          errorIdentifier: 'NON_AUTHORISATION_REJECTED'
+        }
+      },
+      deleteSessionVariable: sinon.spy()
+    }
+    const authErrorObj = {
+      message: 'There is a problem, please try again later',
+      analytics: {
+        path: '/handle-payment-response/3',
+        analyticsId: 'test-1234',
+        type: 'test',
+        paymentProvider: 'sandbox',
+        amount: '4.99',
+        testingVariant: 'original'
+      },
+      returnUrl: '/return/3',
+      viewName: 'ERROR'
+    }
+
+    requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.render, 'error', authErrorObj)
     done()
   })
 

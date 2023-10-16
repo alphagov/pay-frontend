@@ -127,6 +127,32 @@ describe('The web payments auth request controller', () => {
       )
     })
 
+    it('should set error identifier in the session for declined transaction, if it is present in the response body ' +
+      'and return handle payment url', done => {
+      const res = {
+        status: sinon.spy(),
+        send: sinon.spy()
+      }
+      const mockCookies = {
+        setSessionVariable: sinon.spy()
+      }
+      const expectedBodySavedInSession = {
+        statusCode: 200,
+        errorIdentifier: 'AUTHORISATION_REJECTED'
+      }
+      nock(process.env.CONNECTOR_HOST)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/google/worldpay`)
+        .reply(200, { error_identifier: 'AUTHORISATION_REJECTED' })
+
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+          expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+          expect(res.send.calledWith({ url: `/handle-payment-response/${chargeId}` })).to.be.ok // eslint-disable-line
+          expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+        done()
+      }
+      )
+    })
+
     it('should not set payload in the session and return handle payment url if error', done => {
       const res = {
         status: sinon.spy(),
