@@ -133,4 +133,4 @@ jobs:
         run: |
           npm run cypress:server > /dev/null 2>&1 &
           sleep 5
-          npm run cypress:test
+          npm run percy:cypress:test
