@@ -112,6 +112,8 @@
     "@babel/preset-env": "^7.23.2",
     "@pact-foundation/pact": "^9.18.1",
     "@pact-foundation/pact-node": "^10.17.7",
+    "@percy/cli": "^1.27.3",
+    "@percy/cypress": "^3.1.2",
     "@snyk/protect": "^1.1234.x",
     "axios": "^1.4.0",
     "browserify": "17.0.x",

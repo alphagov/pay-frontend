@@ -130,6 +130,8 @@ jobs:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{ steps.parse-cypress-version.outputs.CYPRESS_VERSION }}
       - name: Run cypress tests
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
         run: |
           npm run cypress:server > /dev/null 2>&1 &
           sleep 5

@@ -26,6 +26,8 @@ describe('Awaiting auth', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
 
+    cy.percySnapshot()
+
     cy.location('pathname').should('eq', `/card_details/${chargeId}`)
     cy.window().its('chargeId').should('eq', `${chargeId}`)
 
