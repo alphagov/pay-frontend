@@ -119,7 +119,7 @@ ${stripeKey}
     sinon.assert.calledWith(res.sendStatus, 400)
   })
 
-  it('should return 400 for unexpected payment provider', async () => {
+  it('should return a payload for a Sandbox payment if Merchant is valid', async () => {
     const mockRequest = sinon.stub().yields(null, appleResponse, appleResponseBody)
     const controller = getControllerWithMocks(mockRequest)
 
@@ -127,6 +127,39 @@ ${stripeKey}
       body: {
         url,
         paymentProvider: 'sandbox'
+      }
+    }
+    await controller(req, res)
+
+    sinon.assert.calledWith(mockRequest, {
+      url,
+      body: {
+        merchantIdentifier: worldpayMerchantId,
+        displayName: 'GOV.UK Pay',
+        initiative: 'web',
+        initiativeContext: merchantDomain
+      },
+      method: 'post',
+      json: true,
+      cert: `-----BEGIN CERTIFICATE-----
+${worldpayCertificate}
+-----END CERTIFICATE-----`,
+      key: `-----BEGIN PRIVATE KEY-----
+${worldpayKey}
+-----END PRIVATE KEY-----`
+    })
+    sinon.assert.calledWith(res.status, 200)
+    sinon.assert.calledWith(sendSpy, appleResponseBody)
+  })
+
+  it('should return 400 for unexpected payment provider', async () => {
+    const mockRequest = sinon.stub().yields(null, appleResponse, appleResponseBody)
+    const controller = getControllerWithMocks(mockRequest)
+
+    const req = {
+      body: {
+        url,
+        paymentProvider: 'mystery'
       }
     }
     await controller(req, res)
