@@ -3,8 +3,8 @@
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const { output, redact } = require('../../../utils/structured-logging-value-helper')
+const keyCamelizer = require('../../../utils/key-camelizer')
 const userIpAddress = require('../../../utils/user-ip-address')
-const humps = require('humps')
 const lodash = require('lodash')
 
 const logSelectedPayloadProperties = req => {
@@ -95,7 +95,8 @@ module.exports = (req, paymentProvider) => {
     ip_address: userIpAddress(req)
   }
 
-  const paymentData = humps.decamelizeKeys(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
+  const paymentData = keyCamelizer.decamelize(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
+
   delete payload.paymentResponse.details.paymentMethodData
 
   if (paymentProvider === 'stripe') {
