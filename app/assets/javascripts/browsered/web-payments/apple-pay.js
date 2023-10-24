@@ -3,6 +3,7 @@
 const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
 const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
 const { validateEmail } = require('../../../../utils/email-validation')
+const Sentry = require('@sentry/browser')
 const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
 module.exports = () => {
@@ -25,6 +26,7 @@ module.exports = () => {
           return data
         })
       } else {
+        Sentry.captureMessage('Apple Pay Merchant ID not valid');
         ga('send', 'event', 'Apple Pay', 'Error', 'Merchant ID not valid')
         return session.abort()
       }

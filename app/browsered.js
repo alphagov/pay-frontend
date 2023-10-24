@@ -4,6 +4,7 @@ const analytics = require('gaap-analytics')
 const formValidation = require('./assets/javascripts/browsered/form-validation')
 const epdq3ds2 = require('./assets/javascripts/browsered/epdq-3ds2')
 const helpers = require('./assets/javascripts/browsered/helpers')
+const sentry = require('./assets/javascripts/browsered/sentry')
 
 exports.chargeValidation = require('./utils/charge-validation')
 analytics.eventTracking.init()
@@ -14,7 +15,8 @@ window.payScripts = { // eslint-disable-line no-unused-vars
   inputConfirm,
   webPayments,
   formValidation,
-  epdq3ds2
+  epdq3ds2,
+  sentry
 }
 
 // GA tracking if an email typo is spotted

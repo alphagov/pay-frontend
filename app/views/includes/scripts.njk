@@ -3,6 +3,9 @@
   var i18n = {{ translationStrings | safe }}
   {% endif %}
 
+  window.sentryDSN = '{{ sentryDSN }}'
+  window.environment = '{{ environment }}'
+
   window.paymentDetails = {
     description: '{{description}}',
     amount: '{{amount}}',
@@ -38,6 +41,8 @@
 
   var mainWrap = document.getElementsByTagName('main')[0]
   document.addEventListener('DOMContentLoaded', function() {
+    window.payScripts.sentry.initialiseSentry()
+    myUndefinedFunction();
     window.GOVUKFrontend.initAll()
     if (mainWrap.classList.contains('charge-new')) {
       window.payScripts.helpers.setGlobalChargeId()

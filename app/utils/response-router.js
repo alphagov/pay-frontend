@@ -293,7 +293,12 @@ function shouldRedirect (req, res, action) {
 }
 
 function render (res, action, options) {
-  options = (action.locals) ? lodash.merge({}, action.locals, options) : options
+  options = {
+    ...options,
+    ...action.locals,
+    sentryDSN: process.env.SENTRY_DSN,
+    environment: process.env.ENVIRONMENT
+  }
   if (lodash.get(options, 'analytics.path')) {
     options.analytics.path = options.analytics.path + lodash.get(action, 'analyticsPage', '')
   }
