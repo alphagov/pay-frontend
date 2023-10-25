@@ -6,7 +6,7 @@ function applePayEnabled (charge) {
   const applePayEnabledForWorldpay = (process.env.WORLDPAY_APPLE_PAY_ENABLED || 'true') === 'true'
   const applePayEnabledForStripe = (process.env.STRIPE_APPLE_PAY_ENABLED || 'true') === 'true'
 
-  const globallyEnabledForProvider = (charge.paymentProvider === 'worldpay' && applePayEnabledForWorldpay) ||
+  const globallyEnabledForProvider = ((charge.paymentProvider === 'worldpay' || charge.paymentProvider === 'sandbox') && applePayEnabledForWorldpay) ||
     (charge.paymentProvider === 'stripe' && applePayEnabledForStripe)
 
   return (globallyEnabledForProvider || shouldOverrideGlobalWalletFlagForGatewayAccount(charge)) &&

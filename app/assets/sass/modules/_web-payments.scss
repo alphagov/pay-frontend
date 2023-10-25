@@ -44,6 +44,7 @@
   //https://developer.apple.com/documentation/apple_pay_on_the_web/displaying_apple_pay_buttons
   &--apple-pay{
     @supports (-webkit-appearance: -apple-pay-button) {
+      border-radius: 4px;
       min-width: 200px;
       width: 100%;
       min-height: 32px;

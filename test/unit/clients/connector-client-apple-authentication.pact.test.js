@@ -133,58 +133,57 @@ describe('connectors client - apple authentication API', function () {
     })
   })
 
-  // TODO: re-enable these pact tests with new state providers once https://github.com/alphagov/pay-connector/pull/4754 is merged
-  // describe('authorisation declined', function () {
-  //   const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0002' })
-  //
-  //   before(() => {
-  //     const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-  //       .withRequestBody(appleAuthRequest)
-  //       .withMethod('POST')
-  //       .withState('a sandbox account exists with a charge with id testChargeId and description DECLINED that is in state ENTERING_CARD_DETAILS.')
-  //       .withUponReceiving('a valid apple pay auth request which should be declined')
-  //       .withStatusCode(400)
-  //       .build()
-  //     return provider.addInteraction(builder)
-  //   })
-  //
-  //   afterEach(() => provider.verify())
-  //
-  //   it('should return authorisation declined', function (done) {
-  //     connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-  //       chargeId: TEST_CHARGE_ID,
-  //       wallet: 'apple',
-  //       payload: appleAuthRequest
-  //     }).then(() => {
-  //       done()
-  //     }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
-  //   })
-  // })
-  //
-  // describe('authorisation error', function () {
-  //   const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0119' })
-  //
-  //   before(() => {
-  //     const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
-  //       .withRequestBody(appleAuthRequest)
-  //       .withMethod('POST')
-  //       .withState('a sandbox account exists with a charge with id testChargeId and description ERROR that is in state ENTERING_CARD_DETAILS.')
-  //       .withUponReceiving('a valid apple pay auth request which should return an error')
-  //       .withStatusCode(402)
-  //       .build()
-  //     return provider.addInteraction(builder)
-  //   })
-  //
-  //   afterEach(() => provider.verify())
-  //
-  //   it('should return authorisation declined', function (done) {
-  //     connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-  //       chargeId: TEST_CHARGE_ID,
-  //       wallet: 'apple',
-  //       payload: appleAuthRequest
-  //     }).then(() => {
-  //       done()
-  //     }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
-  //   })
-  // })
+  describe('authorisation declined', function () {
+    const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0002' })
+
+    before(() => {
+      const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
+        .withRequestBody(appleAuthRequest)
+        .withMethod('POST')
+        .withState('a sandbox account exists with a charge with id testChargeId and description DECLINED that is in state ENTERING_CARD_DETAILS.')
+        .withUponReceiving('a valid apple pay auth request which should be declined')
+        .withStatusCode(400)
+        .build()
+      return provider.addInteraction(builder)
+    })
+
+    afterEach(() => provider.verify())
+
+    it('should return authorisation declined', function (done) {
+      connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+        chargeId: TEST_CHARGE_ID,
+        wallet: 'apple',
+        payload: appleAuthRequest
+      }).then(() => {
+        done()
+      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+    })
+  })
+
+  describe('authorisation error', function () {
+    const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0119' })
+
+    before(() => {
+      const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
+        .withRequestBody(appleAuthRequest)
+        .withMethod('POST')
+        .withState('a sandbox account exists with a charge with id testChargeId and description ERROR that is in state ENTERING_CARD_DETAILS.')
+        .withUponReceiving('a valid apple pay auth request which should return an error')
+        .withStatusCode(402)
+        .build()
+      return provider.addInteraction(builder)
+    })
+
+    afterEach(() => provider.verify())
+
+    it('should return authorisation declined', function (done) {
+      connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+        chargeId: TEST_CHARGE_ID,
+        wallet: 'apple',
+        payload: appleAuthRequest
+      }).then(() => {
+        done()
+      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+    })
+  })
 })

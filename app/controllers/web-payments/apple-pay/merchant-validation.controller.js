@@ -17,7 +17,7 @@ ${key}
 }
 
 function getApplePayMerchantIdentityVariables (paymentProvider) {
-  if (paymentProvider === 'worldpay') {
+  if (paymentProvider === 'worldpay' || paymentProvider === 'sandbox') {
     return {
       merchantIdentifier: process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID,
       cert: getCertificateMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
