@@ -37,7 +37,6 @@ module.exports = (req, res, next) => {
   const chargeOptions = {
     chargeId,
     wallet,
-    paymentProvider,
     payload
   }
 

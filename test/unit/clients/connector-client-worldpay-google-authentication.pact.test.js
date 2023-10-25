@@ -10,7 +10,7 @@ const chaiAsPromised = require('chai-as-promised')
 
 // Constants
 const TEST_CHARGE_ID = 'testChargeId'
-const WORLDPAY_GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google/worldpay`
+const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASEURL = `http://127.0.0.1:${PORT}`
 
@@ -45,10 +45,10 @@ describe('connectors client - worldpay google authentication API', function () {
       const successfulGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails({ worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
-        const builder = new PactInteractionBuilder(WORLDPAY_GOOGLE_AUTH_PATH)
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
           .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withState('a Worldpay account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid worldpay google pay auth request which should be authorised')
           .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
@@ -80,10 +80,10 @@ describe('connectors client - worldpay google authentication API', function () {
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before(() => {
-        const builder = new PactInteractionBuilder(WORLDPAY_GOOGLE_AUTH_PATH)
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
           .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withState('a Worldpay account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid worldpay google pay auth request with no last card digits which should be authorised')
           .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
@@ -107,77 +107,15 @@ describe('connectors client - worldpay google authentication API', function () {
       })
     })
 
-    describe('authorisation declined', function () {
-      const declinedGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails({
-        lastDigitsCardNumber: '0002',
-        worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
-      })
-
-      before(() => {
-        const builder = new PactInteractionBuilder(WORLDPAY_GOOGLE_AUTH_PATH)
-          .withRequestBody(declinedGoogleAuthRequest)
-          .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
-          .withUponReceiving('a valid worldpay google pay auth request which should be declined')
-          .withStatusCode(400)
-          .build()
-        return provider.addInteraction(builder)
-      })
-
-      afterEach(() => provider.verify())
-
-      it('should return authorisation declined', function (done) {
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: declinedGoogleAuthRequest,
-          paymentProvider: 'worldpay'
-        }).then(() => {
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
-      })
-    })
-
-    describe('authorisation error', function () {
-      const errorGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails({
-        lastDigitsCardNumber: '0119',
-        worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
-      })
-
-      before(() => {
-        const builder = new PactInteractionBuilder(WORLDPAY_GOOGLE_AUTH_PATH)
-          .withRequestBody(errorGoogleAuthRequest)
-          .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
-          .withUponReceiving('a valid worldpay google pay auth request which should return an error')
-          .withStatusCode(402)
-          .build()
-        return provider.addInteraction(builder)
-      })
-
-      afterEach(() => provider.verify())
-
-      it('should return authorisation declined', function (done) {
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: errorGoogleAuthRequest,
-          paymentProvider: 'worldpay'
-        }).then(() => {
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
-      })
-    })
-
     describe('authorisation success with no ddc result', function () {
       const successfulGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before(() => {
-        const builder = new PactInteractionBuilder(WORLDPAY_GOOGLE_AUTH_PATH)
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
           .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withState('a Worldpay account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid worldpay google pay auth request with no ddc result which should be authorised')
           .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)

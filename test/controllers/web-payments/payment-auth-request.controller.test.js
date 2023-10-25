@@ -116,7 +116,7 @@ describe('The web payments auth request controller', () => {
         statusCode: 200
       }
       nock(process.env.CONNECTOR_HOST)
-        .post(`/v1/frontend/charges/${chargeId}/wallets/google/worldpay`)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/google`)
         .reply(200)
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
@@ -141,7 +141,7 @@ describe('The web payments auth request controller', () => {
         errorIdentifier: 'AUTHORISATION_REJECTED'
       }
       nock(process.env.CONNECTOR_HOST)
-        .post(`/v1/frontend/charges/${chargeId}/wallets/google/worldpay`)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/google`)
         .reply(200, { error_identifier: 'AUTHORISATION_REJECTED' })
 
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {

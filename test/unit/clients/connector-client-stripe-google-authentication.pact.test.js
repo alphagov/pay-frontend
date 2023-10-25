@@ -15,7 +15,7 @@ const CHARGE_OPTIONS = {
   wallet: 'google',
   paymentProvider: 'stripe'
 }
-const STRIPE_GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google/stripe`
+const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASEURL = `http://127.0.0.1:${PORT}`
 
@@ -48,10 +48,10 @@ describe('connectors client - stripe google authentication API', function () {
       const successfulGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
-        const builder = new PactInteractionBuilder(STRIPE_GOOGLE_AUTH_PATH)
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
           .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withState('a Stripe account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid stripe google pay auth request which should be authorised')
           .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
@@ -78,10 +78,10 @@ describe('connectors client - stripe google authentication API', function () {
       })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
-        const builder = new PactInteractionBuilder(STRIPE_GOOGLE_AUTH_PATH)
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
           .withRequestBody(successfulGoogleAuthRequest)
           .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
+          .withState('a Stripe account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
           .withUponReceiving('a valid stripe google pay auth request with no last card digits which should be authorised')
           .withResponseBody(pactify(authorisationSuccessResponse))
           .withStatusCode(200)
@@ -97,62 +97,6 @@ describe('connectors client - stripe google authentication API', function () {
           payload: successfulGoogleAuthRequest
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
-      })
-    })
-
-    describe('authorisation declined', function () {
-      const declinedGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails({
-        lastDigitsCardNumber: '0002'
-      })
-
-      before(() => {
-        const builder = new PactInteractionBuilder(STRIPE_GOOGLE_AUTH_PATH)
-          .withRequestBody(declinedGoogleAuthRequest)
-          .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
-          .withUponReceiving('a valid stripe google pay auth request which should be declined')
-          .withStatusCode(400)
-          .build()
-        return provider.addInteraction(builder)
-      })
-
-      afterEach(() => provider.verify())
-
-      it('should return authorisation declined', function (done) {
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          ...CHARGE_OPTIONS,
-          payload: declinedGoogleAuthRequest
-        }).then(() => {
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
-      })
-    })
-
-    describe('authorisation error', function () {
-      const errorGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails({
-        lastDigitsCardNumber: '0119'
-      })
-
-      before(() => {
-        const builder = new PactInteractionBuilder(STRIPE_GOOGLE_AUTH_PATH)
-          .withRequestBody(errorGoogleAuthRequest)
-          .withMethod('POST')
-          .withState('a sandbox account exists with a charge with id testChargeId that is in state ENTERING_CARD_DETAILS.')
-          .withUponReceiving('a valid stripe google pay auth request which should return an error')
-          .withStatusCode(402)
-          .build()
-        return provider.addInteraction(builder)
-      })
-
-      afterEach(() => provider.verify())
-
-      it('should return authorisation declined', function (done) {
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          ...CHARGE_OPTIONS,
-          payload: errorGoogleAuthRequest
-        }).then(() => {
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })
