@@ -1,7 +1,7 @@
 'use strict'
 
 function convertToCamelCase (objectKey) {
-  const camelizedString = objectKey.replace(/[\-_\s]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '')
+  const camelizedString = objectKey.replace(/[-_\s]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '')
   return camelizedString.substr(0, 1).toLowerCase() + camelizedString.substr(1)
 }
 
