@@ -10,6 +10,7 @@ const webPaymentsMakePayment = require('./controllers/web-payments/payment-auth-
 const webPaymentsHandlePaymentResponse = require('./controllers/web-payments/handle-auth-response.controller')
 const returnCont = require('./controllers/return.controller.js')
 const { healthcheck } = require('./controllers/healthcheck.controller.js')
+const { log } = require('./controllers/client-side-logging.controller')
 const paths = require('./paths.js')
 
 // Express middleware
@@ -57,6 +58,8 @@ exports.bind = function (app) {
     retrieveCharge,
     resolveLanguage
   ]
+
+  app.post(paths.log.path, chargeCookieRequiredMiddlewareStack, log)
 
   app.get(card.new.path, standardMiddlewareStack, csp.cardDetails, charge.new)
   app.get(card.authWaiting.path, standardMiddlewareStack, charge.authWaiting)
