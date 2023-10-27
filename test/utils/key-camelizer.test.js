@@ -107,32 +107,32 @@ const camelizedNestedNullObj = {
 }
 
 const objectTests = [
-  {nonCamelCase: simpleSnakeObj, camelizedCase: simpleCamelObj, objectName: 'simple snake object keys'},
-  {nonCamelCase: simplePascalObj, camelizedCase: simpleCamelObj, objectName: 'simple pascal object keys'},
-  {nonCamelCase: complexSnakeObj, camelizedCase: complexCamelObj, objectName: 'complex snake object keys'},
-  {nonCamelCase: complexPascalObj, camelizedCase: complexCamelObj, objectName: 'complex pascal object keys'},
-  {nonCamelCase: complexCustomObj, camelizedCase: complexCamelObj, objectName: 'complex custom object keys'},
-  {nonCamelCase: nestedNullObj, camelizedCase: camelizedNestedNullObj, objectName: 'simple snake object with nested null property'},
+  { nonCamelCase: simpleSnakeObj, camelizedCase: simpleCamelObj, objectName: 'simple snake object keys' },
+  { nonCamelCase: simplePascalObj, camelizedCase: simpleCamelObj, objectName: 'simple pascal object keys' },
+  { nonCamelCase: complexSnakeObj, camelizedCase: complexCamelObj, objectName: 'complex snake object keys' },
+  { nonCamelCase: complexPascalObj, camelizedCase: complexCamelObj, objectName: 'complex pascal object keys' },
+  { nonCamelCase: complexCustomObj, camelizedCase: complexCamelObj, objectName: 'complex custom object keys' },
+  { nonCamelCase: nestedNullObj, camelizedCase: camelizedNestedNullObj, objectName: 'simple snake object with nested null property' }
 ]
 
 const primitiveTypeTests = [
-  {primitiveType: 34, objectName: 'number'},
-  {primitiveType: 'Test string', objectName: 'string'},
-  {primitiveType: true, objectName: 'boolean'}
+  { primitiveType: 34, objectName: 'number' },
+  { primitiveType: 'Test string', objectName: 'string' },
+  { primitiveType: true, objectName: 'boolean' }
 ]
 
-const objectsForDecamelizingTests = objectTests.filter(obj => obj.objectName.includes('snake'));
+const objectsForDecamelizingTests = objectTests.filter(obj => obj.objectName.includes('snake'))
 
 describe('camelize', () => {
-  objectTests.forEach( test => {
-    const {nonCamelCase, camelizedCase, objectName} = test
+  objectTests.forEach(test => {
+    const { nonCamelCase, camelizedCase, objectName } = test
     it(`converts a ${objectName} to camel case`, () => {
       const result = keysToCamelCase(nonCamelCase)
       expect(result).to.deep.equal(camelizedCase)
     })
   })
-  primitiveTypeTests.forEach( test => {
-    const {primitiveType, objectName} = test
+  primitiveTypeTests.forEach(test => {
+    const { primitiveType, objectName } = test
     it(`does not convert a ${objectName} to camel case and returns an unchanged argument`, () => {
       const result = keysToCamelCase(primitiveType)
       expect(result).to.deep.equal(primitiveType)
@@ -141,15 +141,15 @@ describe('camelize', () => {
 })
 
 describe('camelCaseToSnakeCase', () => {
-  objectsForDecamelizingTests.forEach( test => {
-    const {nonCamelCase, camelizedCase, objectName} = test
+  objectsForDecamelizingTests.forEach(test => {
+    const { nonCamelCase, camelizedCase, objectName } = test
     it(`converts a ${objectName} to snake case`, () => {
       const result = keysToSnakeCase(camelizedCase)
       expect(result).to.deep.equal(nonCamelCase)
     })
   })
-  primitiveTypeTests.forEach( test => {
-    const {primitiveType, objectName} = test
+  primitiveTypeTests.forEach(test => {
+    const { primitiveType, objectName } = test
     it(`does not convert a ${objectName} to camel case and returns and returns an unchanged argument`, () => {
       const result = keysToSnakeCase(primitiveType)
       expect(result).to.deep.equal(primitiveType)

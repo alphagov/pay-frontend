@@ -5,8 +5,8 @@ function convertToCamelCase (objectKey) {
   return camelizedString.substr(0, 1).toLowerCase() + camelizedString.substr(1)
 }
 
-function convertToSnakeCase(objectKey, separator = '_', split = /(?=[A-Z])/) {
-  return objectKey.split(split).join(separator).toLowerCase();
+function convertToSnakeCase (objectKey, separator = '_', split = /(?=[A-Z])/) {
+  return objectKey.split(split).join(separator).toLowerCase()
 }
 
 function keysToCamelCase (obj) {
