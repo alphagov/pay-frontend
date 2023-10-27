@@ -123,7 +123,7 @@ const primitiveTypeTests = [
 
 const objectsForDecamelizingTests = objectTests.filter(obj => obj.objectName.includes('snake'))
 
-describe('camelize', () => {
+describe('keysToCamelCase', () => {
   objectTests.forEach(test => {
     const { nonCamelCase, camelizedCase, objectName } = test
     it(`converts a ${objectName} to camel case`, () => {
@@ -140,7 +140,7 @@ describe('camelize', () => {
   })
 })
 
-describe('camelCaseToSnakeCase', () => {
+describe('keysToSnakeCase', () => {
   objectsForDecamelizingTests.forEach(test => {
     const { nonCamelCase, camelizedCase, objectName } = test
     it(`converts a ${objectName} to snake case`, () => {
