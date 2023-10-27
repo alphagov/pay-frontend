@@ -1,6 +1,7 @@
 'use strict'
 
 const expect = require('chai').expect
+const { result } = require('lodash')
 const { camelize, decamelize } = require('../../app/utils/key-camelizer')
 
 const simpleSnakeObj = {
@@ -106,60 +107,53 @@ const camelizedNestedNullObj = {
   }
 }
 
+const objectTests = [
+  {nonCamelCase: simpleSnakeObj, camelizedCase: simpleCamelObj, objectName: 'simple snake object keys'},
+  {nonCamelCase: simplePascalObj, camelizedCase: simpleCamelObj, objectName: 'simple pascal object keys'},
+  {nonCamelCase: complexSnakeObj, camelizedCase: complexCamelObj, objectName: 'complex snake object keys'},
+  {nonCamelCase: complexPascalObj, camelizedCase: complexCamelObj, objectName: 'complex pascal object keys'},
+  {nonCamelCase: complexCustomObj, camelizedCase: complexCamelObj, objectName: 'complex custom object keys'},
+  {nonCamelCase: nestedNullObj, camelizedCase: camelizedNestedNullObj, objectName: 'simple snake object with nested null property'},
+]
+
+const primitiveTypeTests = [
+  {primitiveType: 34, objectName: 'number'},
+  {primitiveType: 'Test string', objectName: 'string'},
+  {primitiveType: true, objectName: 'boolean'}
+]
+
+const objectsForDecamelizingTests = objectTests.filter(obj => obj.objectName.includes('snake'));
+
 describe('camelize', () => {
-  it('converts a simple snake case object keys to camel case', () => {
-    const result = camelize(simpleSnakeObj)
-    expect(result).to.deep.equal(simpleCamelObj)
+  objectTests.forEach( test => {
+    const {nonCamelCase, camelizedCase, objectName} = test
+    it(`converts a ${objectName} to camel case`, () => {
+      const result = camelize(nonCamelCase)
+      expect(result).to.deep.equal(camelizedCase)
+    })
   })
-  it('converts a simple pascal case object to camel case', () => {
-    const result = camelize(simplePascalObj)
-    expect(result).to.deep.equal(simpleCamelObj)
-  })
-  it('converts a complex snake case object to camel case', () => {
-    const result = camelize(complexSnakeObj)
-    expect(result).to.deep.equal(complexCamelObj)
-  })
-  it('converts a complex pascal case object to camel case', () => {
-    const result = camelize(complexPascalObj)
-    expect(result).to.deep.equal(complexCamelObj)
-  })
-  it('converts a complex custom object to camel case', () => {
-    const result = camelize(complexCustomObj)
-    expect(result).to.deep.equal(complexCamelObj)
-  })
-  it('converts an object which has a property value of null', () => {
-    const result = camelize(nestedNullObj)
-    expect(result).to.deep.equal(camelizedNestedNullObj)
-  })
-  it('does not convert anything if a number is passed to it', () => {
-    const result = camelize(34)
-    expect(result).to.deep.equal(34)
-  })
-  it('does not convert anything if a string is passed to it', () => {
-    const result = camelize('Test string')
-    expect(result).to.deep.equal('Test string')
+  primitiveTypeTests.forEach( test => {
+    const {primitiveType, objectName} = test
+    it(`does not convert a ${objectName} to camel case and returns an unchanged argument`, () => {
+      const result = camelize(primitiveType)
+      expect(result).to.deep.equal(primitiveType)
+    })
   })
 })
 
 describe('decamelize', () => {
-  it('converts a simple camel case object keys to snake case', () => {
-    const result = decamelize(simpleCamelObj)
-    expect(result).to.deep.equal(simpleSnakeObj)
+  objectsForDecamelizingTests.forEach( test => {
+    const {nonCamelCase, camelizedCase, objectName} = test
+    it(`converts a ${objectName} to snake case`, () => {
+      const result = decamelize(camelizedCase)
+      expect(result).to.deep.equal(nonCamelCase)
+    })
   })
-  it('converst a complex camel cased object to snake case', () => {
-    const result = decamelize(complexCamelObj)
-    expect(result).to.deep.equal(complexSnakeObj)
-  })
-  it('converts an object which has a property value of null', () => {
-    const result = decamelize(camelizedNestedNullObj)
-    expect(result).to.deep.equal(nestedNullObj)
-  })
-  it('does not convert anything if a number is passed to it', () => {
-    const result = decamelize(34)
-    expect(result).to.deep.equal(34)
-  })
-  it('does not convert anything if a string is passed to it', () => {
-    const result = decamelize('Test string')
-    expect(result).to.deep.equal('Test string')
+  primitiveTypeTests.forEach( test => {
+    const {primitiveType, objectName} = test
+    it(`does not convert a ${objectName} to camel case and returns and returns an unchanged argument`, () => {
+      const result = decamelize(primitiveType)
+      expect(result).to.deep.equal(primitiveType)
+    })
   })
 })
