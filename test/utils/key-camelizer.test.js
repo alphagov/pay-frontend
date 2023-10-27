@@ -1,7 +1,7 @@
 'use strict'
 
 const expect = require('chai').expect
-const { camelize, decamelize } = require('../../app/utils/key-camelizer')
+const { keysToCamelCase, keysToSnakeCase } = require('../../app/utils/key-camelizer')
 
 const simpleSnakeObj = {
   attr_one: 'foo',
@@ -127,31 +127,31 @@ describe('camelize', () => {
   objectTests.forEach( test => {
     const {nonCamelCase, camelizedCase, objectName} = test
     it(`converts a ${objectName} to camel case`, () => {
-      const result = camelize(nonCamelCase)
+      const result = keysToCamelCase(nonCamelCase)
       expect(result).to.deep.equal(camelizedCase)
     })
   })
   primitiveTypeTests.forEach( test => {
     const {primitiveType, objectName} = test
     it(`does not convert a ${objectName} to camel case and returns an unchanged argument`, () => {
-      const result = camelize(primitiveType)
+      const result = keysToCamelCase(primitiveType)
       expect(result).to.deep.equal(primitiveType)
     })
   })
 })
 
-describe('decamelize', () => {
+describe('camelCaseToSnakeCase', () => {
   objectsForDecamelizingTests.forEach( test => {
     const {nonCamelCase, camelizedCase, objectName} = test
     it(`converts a ${objectName} to snake case`, () => {
-      const result = decamelize(camelizedCase)
+      const result = keysToSnakeCase(camelizedCase)
       expect(result).to.deep.equal(nonCamelCase)
     })
   })
   primitiveTypeTests.forEach( test => {
     const {primitiveType, objectName} = test
     it(`does not convert a ${objectName} to camel case and returns and returns an unchanged argument`, () => {
-      const result = decamelize(primitiveType)
+      const result = keysToSnakeCase(primitiveType)
       expect(result).to.deep.equal(primitiveType)
     })
   })
