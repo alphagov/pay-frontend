@@ -1,7 +1,6 @@
 'use strict'
 
 const expect = require('chai').expect
-const { result } = require('lodash')
 const { camelize, decamelize } = require('../../app/utils/key-camelizer')
 
 const simpleSnakeObj = {
