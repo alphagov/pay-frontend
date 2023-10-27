@@ -3,7 +3,7 @@
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const { output, redact } = require('../../../utils/structured-logging-value-helper')
-const keyCamelizer = require('../../../utils/key-camelizer')
+const { keysToSnakeCase } = require('../../../utils/key-camelizer')
 const userIpAddress = require('../../../utils/user-ip-address')
 const lodash = require('lodash')
 
@@ -95,7 +95,7 @@ module.exports = (req, paymentProvider) => {
     ip_address: userIpAddress(req)
   }
 
-  const paymentData = keyCamelizer.decamelize(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
+  const paymentData = keysToSnakeCase(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
 
   delete payload.paymentResponse.details.paymentMethodData
 

@@ -7,7 +7,7 @@ const lodash = require('lodash')
 const countries = require('../services/countries')
 const normaliseCards = require('../services/normalise-cards')
 const userIpAddress = require('../utils/user-ip-address')
-const keyCamelizer = require('../utils/key-camelizer')
+const { keysToCamelCase } = require('../utils/key-camelizer')
 
 module.exports = (function () {
   const charge = function (charge, chargeId) {
@@ -92,7 +92,7 @@ module.exports = (function () {
 
   const _normaliseConfirmationDetails = function (cardDetails) {
     cardDetails.cardNumber = '●●●●●●●●●●●●' + cardDetails.last_digits_card_number
-    const normalisedDetails = keyCamelizer.camelize(cardDetails)
+    const normalisedDetails = keysToCamelCase(cardDetails)
     delete normalisedDetails.lastDigitsCardNumber
     if (cardDetails.billing_address) {
       normalisedDetails.billingAddress = _normaliseAddress(cardDetails.billing_address)
@@ -124,7 +124,7 @@ module.exports = (function () {
   }
 
   const _normaliseGatewayAccountDetails = function (accountDetails) {
-    const gatewayAccountDetails = keyCamelizer.camelize(accountDetails)
+    const gatewayAccountDetails = keysToCamelCase(accountDetails)
     gatewayAccountDetails.cardTypes = normaliseCards(gatewayAccountDetails.cardTypes)
     return gatewayAccountDetails
   }
