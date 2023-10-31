@@ -31,8 +31,8 @@ module.exports = () => {
         })
       } else {
         ga('send', 'event', 'Apple Pay', 'Error', 'Merchant ID not valid')
-        return sendLogMessage(window.chargeId, 'ApplePayMerchantIdNotValid')
-          .finally(() => (session.abort()))
+        sendLogMessage(window.chargeId, 'ApplePayMerchantIdNotValid')
+        return session.abort()
       }
     })
   }
@@ -44,8 +44,8 @@ module.exports = () => {
       }).catch(err => {
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'Error completing Merchant validation')
-        return sendLogMessage(window.chargeId, 'ApplePayMerchantValidationError')
-          .finally(() => (err))
+        sendLogMessage(window.chargeId, 'ApplePayMerchantValidationError')
+        return err
       })
   }
 
