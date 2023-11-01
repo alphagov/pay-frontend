@@ -28,16 +28,10 @@ const _getFindChargeUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{ch
 const _getAuthUrlFor = chargeId => baseUrl + CARD_AUTH_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _getWalletAuthUrlFor = (chargeId, walletType, paymentProvider) => {
-  let walletAuthUrl = baseUrl + WALLET_AUTH_PATH
+const _getWalletAuthUrlFor = (chargeId, walletType) => {
+  const walletAuthUrl = baseUrl + WALLET_AUTH_PATH
     .replace('{chargeId}', chargeId)
     .replace('{walletType}', walletType)
-
-  if (walletType === 'google') {
-    if (paymentProvider === 'worldpay' || paymentProvider === 'stripe') {
-      walletAuthUrl = walletAuthUrl.concat(`/${paymentProvider}`)
-    }
-  }
   return walletAuthUrl
 }
 
@@ -239,7 +233,7 @@ const chargeAuth = (chargeOptions, loggingFields = {}) => {
 }
 
 const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
-  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.wallet, chargeOptions.paymentProvider)
+  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.wallet)
   return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields, 'chargeAuthWithWallet')
 }
 
