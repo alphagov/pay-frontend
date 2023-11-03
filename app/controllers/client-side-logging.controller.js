@@ -6,6 +6,7 @@ const logger = require('../utils/logger')(__filename)
 const LOG_CODES = {
   ApplePayAvailable: 'Apple Pay is available on this device',
   ApplePayStarted: 'User chose Apple Pay method',
+  ApplePayAborted: 'Apple Pay attempt aborted by user',
   ApplePayMerchantIdNotValid: 'Apple Pay Merchant ID not valid',
   ApplePayMerchantValidationError: 'Error completing Apple Pay merchant validation',
   GooglePayAvailable: 'Google Pay is available on this device',

@@ -100,5 +100,9 @@ module.exports = () => {
     })
   }
 
+  session.oncancel = event => {
+    sendLogMessage(window.chargeId, 'ApplePayAborted')
+  }
+
   session.begin()
 }
