@@ -70,7 +70,7 @@ module.exports = (req, res) => {
         response: response,
         body: body
       })
-      res.status(500).send(body)
+      return res.status(500).send(body)
     }
     res.status(200).send(body)
   })

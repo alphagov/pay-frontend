@@ -59,10 +59,24 @@ const hideSpinnerAndShowMainContent = () => {
   document.getElementById('spinner').classList.add('hidden')
 }
 
+const sendLogMessage = (chargeId, logCode) => {
+  return fetch(`/log/${chargeId}`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      code: logCode
+    })
+  })
+}
+
 module.exports = {
   setGlobalChargeId,
   toggleSubmitButtons,
   showSpinnerAndHideMainContent,
   hideSpinnerAndShowMainContent,
-  initialiseAddressCountryAutocomplete
+  initialiseAddressCountryAutocomplete,
+  sendLogMessage
 }

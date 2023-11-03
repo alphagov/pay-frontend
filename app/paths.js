@@ -13,6 +13,10 @@ if (process.env.CONNECTOR_HOST === undefined) throw new Error('CONNECTOR_HOST en
 // routes when we have duplicate paths on different actions
 
 const paths = {
+  log: {
+    path: '/log/:chargeId',
+    action: 'post'
+  },
   card: {
     new: {
       path: '/card_details/:chargeId',

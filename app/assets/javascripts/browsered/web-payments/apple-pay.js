@@ -1,7 +1,12 @@
 'use strict'
 
 const { prepareAppleRequestObject, showErrorSummary } = require('./helpers')
-const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
+const {
+  toggleSubmitButtons,
+  showSpinnerAndHideMainContent,
+  hideSpinnerAndShowMainContent,
+  sendLogMessage
+} = require('../helpers')
 const { validateEmail } = require('../../../../utils/email-validation')
 const { email_collection_mode } = window.Charge || {} // eslint-disable-line camelcase
 
@@ -26,6 +31,7 @@ module.exports = () => {
         })
       } else {
         ga('send', 'event', 'Apple Pay', 'Error', 'Merchant ID not valid')
+        sendLogMessage(window.chargeId, 'ApplePayMerchantIdNotValid')
         return session.abort()
       }
     })
@@ -38,6 +44,7 @@ module.exports = () => {
       }).catch(err => {
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'Error completing Merchant validation')
+        sendLogMessage(window.chargeId, 'ApplePayMerchantValidationError')
         return err
       })
   }
@@ -49,7 +56,7 @@ module.exports = () => {
 
     if (email_collection_mode !== 'OFF') { // eslint-disable-line camelcase
       if (!payment.shippingContact || typeof payment.shippingContact.emailAddress !== 'string' ||
-          !validateEmail(payment.shippingContact.emailAddress).valid) {
+        !validateEmail(payment.shippingContact.emailAddress).valid) {
         hideSpinnerAndShowMainContent()
         toggleSubmitButtons()
         showErrorSummary(i18n.fieldErrors.summary, i18n.fieldErrors.fields.email.message)

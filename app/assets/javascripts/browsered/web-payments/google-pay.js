@@ -1,7 +1,7 @@
 'use strict'
 
 const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers')
-const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent } = require('../helpers')
+const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent, sendLogMessage } = require('../helpers')
 const { email_collection_mode, payment_provider } = window.Charge // eslint-disable-line camelcase
 
 const submitGooglePayAuthRequest = (paymentResponse) => {
@@ -170,6 +170,7 @@ const googlePayNow = () => {
     })
     .catch(dismissed => {
       ga('send', 'event', 'Google Pay', 'Aborted', 'by user')
+      sendLogMessage(window.chargeId, 'GooglePayAborted')
     })
 }
 
