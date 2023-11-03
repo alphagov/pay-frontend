@@ -4,6 +4,10 @@ function initialiseSentry () {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.ENVIRONMENT,
+    ignoreErrors: [
+      'www.facebook.com',
+      'spay.samsung.com'
+    ],
     beforeSend (event) {
       if (event.request) {
         delete event.request // This can include sensitive data such as card numbers
