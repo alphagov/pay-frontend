@@ -106,23 +106,23 @@ describe('Google Pay payment flow', () => {
         }
       })
 
-      // cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-      //   method: 'POST',
-      //   times: 1
-      // },
-      // {
-      //   statusCode: 500
-      // }).as('first-web-payments-auth-request-which-fails')
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+        method: 'POST',
+        times: 1
+      },
+      {
+        statusCode: 500
+      }).as('first-web-payments-auth-request-which-fails')
 
       cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      // cy.wait('@first-web-payments-auth-request-which-fails')
+      cy.wait('@first-web-payments-auth-request-which-fails')
 
-      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/humans.txt')
