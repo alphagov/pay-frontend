@@ -46,6 +46,9 @@
       {% if allowApplePay %}
         if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
           document.body.classList.add('apple-pay-available')
+          document.addEventListener('DOMContentLoaded', function (event) {
+            window.payScripts.helpers.sendLogMessage(window.paymentDetails.chargeID, 'ApplePayAvailable')
+          })
         }
       {% endif %}
       {% if allowGooglePay %}
@@ -54,6 +57,13 @@
           googleAvailableRequest.then(function (canMakeGooglePayPayment) {
             if (canMakeGooglePayPayment) {
               document.body.classList.add('google-pay-available')
+              if (document.readyState === "loading") {
+                document.addEventListener('DOMContentLoaded', function (event) {
+                  window.payScripts.helpers.sendLogMessage(window.paymentDetails.chargeID, 'GooglePayAvailable')
+                })
+              } else {
+                window.payScripts.helpers.sendLogMessage(window.paymentDetails.chargeID, 'GooglePayAvailable')
+              }
             }
           })
         }
