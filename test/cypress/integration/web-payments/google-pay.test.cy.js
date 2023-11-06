@@ -208,6 +208,14 @@ describe('Google Pay payment flow', () => {
         expect(loc.search).to.eq('?confirm')
       })
 
+      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+        method: 'POST',
+        times: 1
+      },
+      {
+        statusCode: 500
+      }).as('fetch-call-fails-when-ddc-fails')
+
       cy.task('clearStubs')
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
 
@@ -222,14 +230,6 @@ describe('Google Pay payment flow', () => {
           }
         }
       })
-
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-        method: 'POST',
-        times: 1
-      },
-      {
-        statusCode: 500
-      }).as('fetch-call-fails-when-ddc-fails')
 
       cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time')
 
