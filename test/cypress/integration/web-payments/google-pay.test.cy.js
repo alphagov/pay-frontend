@@ -87,7 +87,7 @@ describe('Google Pay payment flow', () => {
     ]
   }
 
-  const worldpay3dsFlexDdcStub = worldpay3dsFlexDdcIframePost(worldpaySessionId, true)
+  // const worldpay3dsFlexDdcStub = worldpay3dsFlexDdcIframePost(worldpaySessionId, true)
   const worldpay3dsFlexDdcStubFailure = worldpay3dsFlexDdcIframePost(worldpaySessionId, false)
 
   describe('Secure card payment page', () => {
