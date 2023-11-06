@@ -58,7 +58,7 @@ describe('Google Pay payment flow', () => {
     if (agreement) {
       createdCharge.agreement = { agreement_id: 'an-agreement-id' }
     }
-    const captureApprovedCharge = {
+    const captureApprovedCharge2 = {
       chargeId,
       status: 'CAPTURE APPROVED',
       state: { finished: true, status: 'success' },
@@ -70,12 +70,12 @@ describe('Google Pay payment flow', () => {
       paymentProvider: 'worldpay'
     }
     if (agreement) {
-      captureApprovedCharge.agreement = { agreement_id: 'an-agreement-id' }
+      captureApprovedCharge2.agreement = { agreement_id: 'an-agreement-id' }
     }
     return [
       connectorMultipleSubsequentChargeDetails([
         createdCharge,
-        captureApprovedCharge]),
+        captureApprovedCharge2]),
       connectorFindChargeByToken({ tokenId }),
       connectorMarkTokenAsUsed(tokenId),
       connectorUpdateChargeStatus(chargeId),
