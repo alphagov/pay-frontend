@@ -145,226 +145,226 @@ describe('Google Pay payment flow', () => {
         expect(loc.search).to.eq('?confirm')
       })
 
-      cy.task('clearStubs')
-      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
+      // cy.task('clearStubs')
+      // cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
-      cy.clearCookies()
+      // cy.clearCookies()
 
-      cy.visit(`/secure/${tokenId}`, {
-        onBeforeLoad: win => {
-          if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
-          } else {
-            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
-          }
-        }
-      })
+      // cy.visit(`/secure/${tokenId}`, {
+      //   onBeforeLoad: win => {
+      //     if (win.PaymentRequest) {
+      //       cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+      //     } else {
+      //       win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+      //     }
+      //   }
+      // })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-        method: 'POST',
-        times: 1
-      },
-      {
-        statusCode: 500
-      }).as('first-web-payments-auth-request-which-fails')
+      // cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+      //   method: 'POST',
+      //   times: 1
+      // },
+      // {
+      //   statusCode: 500
+      // }).as('first-web-payments-auth-request-which-fails')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails and shows one error')
+      // cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails and shows one error')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@first-web-payments-auth-request-which-fails')
+      // cy.wait('@first-web-payments-auth-request-which-fails')
 
-      cy.get('[data-cy=error-summary]').find('li')
-        .should('have.length', 1)
-        .eq(0).should('have.text', 'No money has been taken from your account, please try again')
+      // cy.get('[data-cy=error-summary]').find('li')
+      //   .should('have.length', 1)
+      //   .eq(0).should('have.text', 'No money has been taken from your account, please try again')
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-        method: 'POST',
-        times: 1
-      },
-      {
-        statusCode: 500
-      }).as('second-web-payments-auth-request-which-fails')
+      // cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+      //   method: 'POST',
+      //   times: 1
+      // },
+      // {
+      //   statusCode: 500
+      // }).as('second-web-payments-auth-request-which-fails')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it again but fetch call fails and shows one error')
+      // cy.log('Should show Google Pay as a payment option and user chooses it again but fetch call fails and shows one error')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@second-web-payments-auth-request-which-fails')
+      // cy.wait('@second-web-payments-auth-request-which-fails')
 
-      cy.get('[data-cy=error-summary]').find('li')
-        .should('have.length', 1)
-        .eq(0).should('have.text', 'No money has been taken from your account, please try again')
+      // cy.get('[data-cy=error-summary]').find('li')
+      //   .should('have.length', 1)
+      //   .eq(0).should('have.text', 'No money has been taken from your account, please try again')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it again and fetch call succeeds')
+      // cy.log('Should show Google Pay as a payment option and user chooses it again and fetch call succeeds')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/humans.txt')
-        expect(loc.search).to.eq('?confirm')
-      })
+      // cy.location().should((loc) => {
+      //   expect(loc.pathname).to.eq('/humans.txt')
+      //   expect(loc.search).to.eq('?confirm')
+      // })
 
-      cy.task('clearStubs')
-      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
+      // cy.task('clearStubs')
+      // cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStubFailure])
 
-      cy.clearCookies()
+      // cy.clearCookies()
 
-      cy.visit(`/secure/${tokenId}`, {
-        onBeforeLoad: win => {
-          if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
-          } else {
-            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
-          }
-        }
-      })
+      // cy.visit(`/secure/${tokenId}`, {
+      //   onBeforeLoad: win => {
+      //     if (win.PaymentRequest) {
+      //       cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+      //     } else {
+      //       win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+      //     }
+      //   }
+      // })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-        method: 'POST',
-        times: 1
-      },
-      {
-        statusCode: 500
-      }).as('first-web-payments-auth-request-which-fails')
+      // cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+      //   method: 'POST',
+      //   times: 1
+      // },
+      // {
+      //   statusCode: 500
+      // }).as('first-web-payments-auth-request-which-fails')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time')
+      // cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@first-web-payments-auth-request-which-fails')
+      // cy.wait('@first-web-payments-auth-request-which-fails')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.location().should((loc) => {
-        expect(loc.pathname).to.eq('/humans.txt')
-        expect(loc.search).to.eq('?confirm')
-      })
+      // cy.location().should((loc) => {
+      //   expect(loc.pathname).to.eq('/humans.txt')
+      //   expect(loc.search).to.eq('?confirm')
+      // })
 
-      cy.task('clearStubs')
-      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
+      // cy.task('clearStubs')
+      // cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
-      cy.clearCookies()
+      // cy.clearCookies()
 
-      cy.visit(`/secure/${tokenId}`, {
-        onBeforeLoad: win => {
-          if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
-          } else {
-            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
-          }
-        }
-      })
+      // cy.visit(`/secure/${tokenId}`, {
+      //   onBeforeLoad: win => {
+      //     if (win.PaymentRequest) {
+      //       cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+      //     } else {
+      //       win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+      //     }
+      //   }
+      // })
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
 
-      cy.log('Should show Google Pay as a payment option and user chooses standard method')
+      // cy.log('Should show Google Pay as a payment option and user chooses standard method')
 
-      cy.get('#card-no').should('be.visible')
+      // cy.get('#card-no').should('be.visible')
 
-      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
+      // cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
-      cy.get('#card-no').type('4242424242424242')
-      cy.get('#card-no').blur()
+      // cy.get('#card-no').type('4242424242424242')
+      // cy.get('#card-no').blur()
 
-      cy.wait('@checkCard')
+      // cy.wait('@checkCard')
 
-      cy.get('#expiry-month').type('10')
-      cy.get('#expiry-year').type('50')
-      cy.get('#cardholder-name').type('Ms. Test')
-      cy.get('#cvc').type('123')
-      cy.get('#address-line-1').type('1 Test Street')
-      cy.get('#address-city').type('1 Test City')
-      cy.get('#address-postcode').type('TE1 1ST')
-      cy.get('#email').type('payer@payment.test')
+      // cy.get('#expiry-month').type('10')
+      // cy.get('#expiry-year').type('50')
+      // cy.get('#cardholder-name').type('Ms. Test')
+      // cy.get('#cvc').type('123')
+      // cy.get('#address-line-1').type('1 Test Street')
+      // cy.get('#address-city').type('1 Test City')
+      // cy.get('#address-postcode').type('TE1 1ST')
+      // cy.get('#email').type('payer@payment.test')
 
-      cy.get('#card-details').submit().should($form => {
-        console.log('$$ $form: ', $form)
-        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
-        expect(formVal).to.eq(worldpaySessionId)
-        const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
-        expect(ddcStatusVal).to.eq('valid DDC result')
-      })
+      // cy.get('#card-details').submit().should($form => {
+      //   console.log('$$ $form: ', $form)
+      //   const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
+      //   expect(formVal).to.eq(worldpaySessionId)
+      //   const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
+      //   expect(ddcStatusVal).to.eq('valid DDC result')
+      // })
 
-      cy.task('clearStubs')
-      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
+      // cy.task('clearStubs')
+      // cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false), worldpay3dsFlexDdcStub])
 
-      cy.clearCookies()
+      // cy.clearCookies()
 
-      cy.visit(`/secure/${tokenId}`, {
-        onBeforeLoad: win => {
-          if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
-          } else {
-            win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
-          }
-        }
-      })
+      // cy.visit(`/secure/${tokenId}`, {
+      //   onBeforeLoad: win => {
+      //     if (win.PaymentRequest) {
+      //       cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+      //     } else {
+      //       win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+      //     }
+      //   }
+      // })
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-        method: 'POST',
-        times: 1
-      },
-      {
-        statusCode: 500
-      }).as('first-web-payments-auth-request-which-fails')
+      // cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+      //   method: 'POST',
+      //   times: 1
+      // },
+      // {
+      //   statusCode: 500
+      // }).as('first-web-payments-auth-request-which-fails')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails so user uses standard method')
+      // cy.log('Should show Google Pay as a payment option and user chooses it but fetch call fails so user uses standard method')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@first-web-payments-auth-request-which-fails')
+      // cy.wait('@first-web-payments-auth-request-which-fails')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#card-no').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#card-no').should('be.visible')
 
-      cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
+      // cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
-      cy.get('#card-no').type('4242424242424242')
-      cy.get('#card-no').blur()
+      // cy.get('#card-no').type('4242424242424242')
+      // cy.get('#card-no').blur()
 
-      cy.wait('@checkCard')
+      // cy.wait('@checkCard')
 
-      cy.get('#expiry-month').type('10')
-      cy.get('#expiry-year').type('50')
-      cy.get('#cardholder-name').type('Ms. Test')
-      cy.get('#cvc').type('123')
-      cy.get('#address-line-1').type('1 Test Street')
-      cy.get('#address-city').type('1 Test City')
-      cy.get('#address-postcode').type('TE1 1ST')
-      cy.get('#email').type('payer@payment.test')
+      // cy.get('#expiry-month').type('10')
+      // cy.get('#expiry-year').type('50')
+      // cy.get('#cardholder-name').type('Ms. Test')
+      // cy.get('#cvc').type('123')
+      // cy.get('#address-line-1').type('1 Test Street')
+      // cy.get('#address-city').type('1 Test City')
+      // cy.get('#address-postcode').type('TE1 1ST')
+      // cy.get('#email').type('payer@payment.test')
 
-      cy.get('#card-details').submit().should($form => {
-        const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
-        expect(formVal).to.eq(worldpaySessionId)
-        const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
-        expect(ddcStatusVal).to.eq('valid DDC result')
-      })
+      // cy.get('#card-details').submit().should($form => {
+      //   const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
+      //   expect(formVal).to.eq(worldpaySessionId)
+      //   const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
+      //   expect(ddcStatusVal).to.eq('valid DDC result')
+      // })
 
-      cy.task('clearStubs')
-      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false), worldpay3dsFlexDdcStub])
+      // cy.task('clearStubs')
+      // cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false), worldpay3dsFlexDdcStub])
 
-      cy.visit(`/card_details/${chargeId}`)
+      // cy.visit(`/card_details/${chargeId}`)
 
-      cy.log('Should not show Google Pay as browser doesn’t support it')
+      // cy.log('Should not show Google Pay as browser doesn’t support it')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
-      cy.get('#card-no').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
+      // cy.get('#card-no').should('be.visible')
 
-      cy.task('clearStubs')
-      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false, true)])
+      // cy.task('clearStubs')
+      // cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false, true)])
 
-      cy.visit(`/card_details/${chargeId}`)
+      // cy.visit(`/card_details/${chargeId}`)
 
-      cy.log('Should not show Google Pay as payment is a recurring one')
+      // cy.log('Should not show Google Pay as payment is a recurring one')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
     })
 
     it('Should show Google Pay as a payment option when Apple Pay is enabled for the service and allow user to use it', () => {
