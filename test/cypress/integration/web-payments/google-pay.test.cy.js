@@ -58,7 +58,7 @@ describe('Google Pay payment flow', () => {
     if (agreement) {
       createdCharge.agreement = { agreement_id: 'an-agreement-id' }
     }
-    const captureApprovedCharge2 = {
+    const captureApprovedCharge = {
       chargeId,
       status: 'CAPTURE APPROVED',
       state: { finished: true, status: 'success' },
@@ -70,12 +70,12 @@ describe('Google Pay payment flow', () => {
       paymentProvider: 'worldpay'
     }
     if (agreement) {
-      captureApprovedCharge2.agreement = { agreement_id: 'an-agreement-id' }
+      captureApprovedCharge.agreement = { agreement_id: 'an-agreement-id' }
     }
     return [
       connectorMultipleSubsequentChargeDetails([
         createdCharge,
-        captureApprovedCharge2]),
+        captureApprovedCharge]),
       connectorFindChargeByToken({ tokenId }),
       connectorMarkTokenAsUsed(tokenId),
       connectorUpdateChargeStatus(chargeId),
@@ -229,14 +229,14 @@ describe('Google Pay payment flow', () => {
       },
       {
         statusCode: 500
-      }).as('fetch-fails')
+      }).as('first-web-payments-auth-request-which-fails')
 
       cy.log('Should show Google Pay as a payment option and user chooses it but DDC fails and the fetch call fails first time')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@fetch-fails')
+      cy.wait('@first-web-payments-auth-request-which-fails')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
@@ -284,7 +284,6 @@ describe('Google Pay payment flow', () => {
       cy.get('#email').type('payer@payment.test')
 
       cy.get('#card-details').submit().should($form => {
-        console.log('$$ $form: ', $form)
         const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
         expect(formVal).to.eq(worldpaySessionId)
         const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
