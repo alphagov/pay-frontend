@@ -284,7 +284,6 @@ describe('Google Pay payment flow', () => {
       cy.get('#email').type('payer@payment.test')
 
       cy.get('#card-details').submit().should($form => {
-        console.log('$$ $form: ', $form)
         const formVal = $form.first()[0].elements.worldpay3dsFlexDdcResult.value
         expect(formVal).to.eq(worldpaySessionId)
         const ddcStatusVal = $form.first()[0].elements.worldpay3dsFlexDdcStatus.value
