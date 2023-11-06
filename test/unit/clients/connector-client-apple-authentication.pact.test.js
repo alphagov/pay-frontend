@@ -135,6 +135,7 @@ describe('connectors client - apple authentication API', function () {
 
   describe('authorisation declined', function () {
     const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0002' })
+    const authorisationDeclinedResponse = fixtures.webPaymentDeclinedResponse()
 
     before(() => {
       const builder = new PactInteractionBuilder(APPLE_AUTH_PATH)
@@ -142,6 +143,7 @@ describe('connectors client - apple authentication API', function () {
         .withMethod('POST')
         .withState('a sandbox account exists with a charge with id testChargeId and description DECLINED that is in state ENTERING_CARD_DETAILS.')
         .withUponReceiving('a valid apple pay auth request which should be declined')
+        .withResponseBody(pactify(authorisationDeclinedResponse))
         .withStatusCode(400)
         .build()
       return provider.addInteraction(builder)
@@ -154,7 +156,8 @@ describe('connectors client - apple authentication API', function () {
         chargeId: TEST_CHARGE_ID,
         wallet: 'apple',
         payload: appleAuthRequest
-      }).then(() => {
+      }).then(res => {
+        expect(res.body.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
         done()
       }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
     })

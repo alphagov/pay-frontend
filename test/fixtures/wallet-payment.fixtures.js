@@ -41,6 +41,11 @@ const fixtures = {
       status: 'AUTHORISATION SUCCESS'
     }
   },
+  webPaymentDeclinedResponse: () => {
+    return {
+      error_identifier: 'AUTHORISATION_REJECTED'
+    }
+  },
   appleAuthRequestDetails: (ops = {}) => {
     const lastDigitsCardNumber = ops.lastDigitsCardNumber !== undefined ? ops.lastDigitsCardNumber : successfulLastDigitsCardNumber
     const data = {
