@@ -11,7 +11,8 @@ const LOG_CODES = {
   ApplePayMerchantValidationError: 'Error completing Apple Pay merchant validation',
   GooglePayAvailable: 'Google Pay is available on this device',
   GooglePayStarted: 'User chose Google Pay method',
-  GooglePayAborted: 'Google Pay attempt aborted by user'
+  GooglePayAborted: 'Google Pay attempt aborted by user',
+  WebPaymentScriptNotLoaded: 'Wallet payments buttons removed as scripts failed to load'
 }
 
 function log (req, res) {
