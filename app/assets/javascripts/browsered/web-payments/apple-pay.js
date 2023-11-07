@@ -79,6 +79,7 @@ module.exports = () => {
     }).then(response => {
       if (response.status >= 200 && response.status < 300) {
         ga('send', 'event', 'Apple Pay', 'Successful', 'auth/capture request')
+        sendLogMessage(window.paymentDetails.chargeID, 'ApplePaySuccessfulAuthorisation')
         return response.json().then(data => {
           session.completePayment(ApplePaySession.STATUS_SUCCESS)
           window.location.href = data.url
@@ -89,6 +90,7 @@ module.exports = () => {
         toggleSubmitButtons()
         showErrorSummary(i18n.fieldErrors.webPayments.apple)
         ga('send', 'event', 'Apple Pay', 'Error', 'During authorisation/capture')
+        sendLogMessage(window.paymentDetails.chargeID, 'ApplePayFailedAuthorisation')
       }
     }).catch(err => {
       session.abort()
@@ -96,6 +98,7 @@ module.exports = () => {
       toggleSubmitButtons()
       showErrorSummary(i18n.fieldErrors.webPayments.apple)
       ga('send', 'event', 'Apple Pay', 'Error', 'Couldn’t post to /web-payments-auth-request/apple/{chargeId}')
+      sendLogMessage(window.paymentDetails.chargeID, 'ApplePayErrorMakingRequestToAuthorise')
       return err
     })
   }
