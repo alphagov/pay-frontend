@@ -10,20 +10,6 @@ const { sendLogMessage } = require('../helpers')
 const paymentMethodForms = Array.prototype.slice.call(document.getElementsByClassName('web-payments-container'))
 const standardMethodForm = document.getElementById('card-details')
 
-const initApplePayIfAvailable = () => {
-  if (document.body.classList.contains('apple-pay-available')) {
-    ga('send', 'event', 'Apple Pay', 'Enabled', 'Apple pay available on this device')
-    sendLogMessage(window.chargeId, 'ApplePayAvailable')
-  }
-}
-
-const initGooglePayIfAvailable = () => {
-  if (document.body.classList.contains('google-pay-available')) {
-    ga('send', 'event', 'Google Pay', 'Enabled', 'Google pay available on this device')
-    sendLogMessage(window.chargeId, 'GooglePayAvailable')
-  }
-}
-
 const setupEventListener = () => {
   if (window.PaymentRequest || window.ApplePaySession) {
     paymentMethodForms.forEach(form => {
@@ -52,18 +38,6 @@ const setupEventListener = () => {
 }
 
 const init = provider => {
-  switch (provider) {
-    case 'apple':
-      initApplePayIfAvailable()
-      break
-    case 'google':
-      initGooglePayIfAvailable()
-      break
-    default:
-      initApplePayIfAvailable()
-      initGooglePayIfAvailable()
-      break
-  }
   setupEventListener()
 }
 
