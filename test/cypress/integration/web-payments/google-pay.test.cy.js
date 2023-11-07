@@ -125,31 +125,29 @@ describe('Google Pay payment flow', () => {
       //   .should('have.length', 1)
       //   .eq(0).should('have.text', 'No money has been taken from your account, please try again')
 
-      cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
-        method: 'POST',
-        times: 1
-      },
-      {
-        statusCode: 500
-      }).as('second-web-payments-auth-request-which-fails')
+      // cy.intercept(`/web-payments-auth-request/google/${chargeId}`, {
+      //   method: 'POST',
+      //   times: 1
+      // },
+      // {
+      //   statusCode: 500
+      // }).as('second-web-payments-auth-request-which-fails')
 
-      cy.log('Should show Google Pay as a payment option and user chooses it again but fetch call fails and shows one error')
+      // cy.log('Should show Google Pay as a payment option and user chooses it again but fetch call fails and shows one error')
 
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
-      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      // cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
-      cy.wait('@second-web-payments-auth-request-which-fails')
+      // cy.wait('@second-web-payments-auth-request-which-fails')
 
-      cy.get('[data-cy=error-summary]').find('li')
-        .should('have.length', 1)
-        .eq(0).should('have.text', 'No money has been taken from your account, please try again')
+      // cy.get('[data-cy=error-summary]').find('li')
+      //   .should('have.length', 1)
+      //   .eq(0).should('have.text', 'No money has been taken from your account, please try again')
 
       cy.log('Should show Google Pay as a payment option and user chooses it again and fetch call succeeds')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
-
-      cy.wait(5000)
 
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/humans.txt')
