@@ -151,7 +151,7 @@ describe('connectors client - apple authentication API', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return authorisation declined', function (done) {
+    it('should return authorisation declined with error identifier in response payload', function (done) {
       connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
         chargeId: TEST_CHARGE_ID,
         wallet: 'apple',
