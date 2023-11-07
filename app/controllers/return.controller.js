@@ -10,6 +10,9 @@ const cookies = require('../utils/cookies')
 const { createChargeIdSessionKey } = require('../utils/session')
 
 exports.return = (req, res) => {
+  console.log('@@ req.chargeData.status: ', req.chargeData.status)
+  console.log('@@ req.chargeData.return_url: ', req.chargeData.return_url)
+  console.log('@@ req.url: ', req.get('host') + req.originalUrl)
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   const charge = Charge(correlationId)
   // Remove the charge data from the cookie
