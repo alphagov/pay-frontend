@@ -29,7 +29,6 @@ const submitGooglePayAuthRequest = (paymentResponse) => {
   })
     .then(response => {
       ga('send', 'event', 'Google Pay', 'Successful', 'auth/capture request')
-      sendLogMessage(window.paymentDetails.chargeID, 'GooglePaySuccessfulAuthorisation')
       if (response.status >= 200 && response.status < 300) {
         return response.json().then(data => {
           window.location.href = data.url
@@ -39,7 +38,6 @@ const submitGooglePayAuthRequest = (paymentResponse) => {
         toggleSubmitButtons()
         showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
         ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
-        sendLogMessage(window.paymentDetails.chargeID, 'GooglePayFailedAuthorisation')
       }
     })
     .catch(err => {
@@ -47,7 +45,6 @@ const submitGooglePayAuthRequest = (paymentResponse) => {
       toggleSubmitButtons()
       showErrorSummary(i18n.fieldErrors.webPayments.failureTitle, i18n.fieldErrors.webPayments.failureBody)
       ga('send', 'event', 'Google Pay', 'Error', 'During authorisation/capture')
-      sendLogMessage(window.paymentDetails.chargeID, 'GooglePayErrorMakingRequestToAuthorise')
       return err
     })
 }
