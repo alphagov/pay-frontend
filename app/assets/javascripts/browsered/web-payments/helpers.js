@@ -86,6 +86,12 @@ const getGooglePaymentsConfiguration = (paymentProvider) => {
       ...(paymentProvider === 'worldpay' && {
         gateway: 'worldpay',
         gatewayMerchantId: window.googlePayGatewayMerchantID
+      }),
+      // Providing 'worldpay' as the gateway with a blank gatewayMerchantId allows us to initiate a Google Pay payment
+      // when we're using the Google Pay test environment, which allows us to complete a Google Pay payment for sandbox
+      ...(paymentProvider === 'sandbox' && {
+        gateway: 'worldpay',
+        gatewayMerchantId: ''
       })
     }
   }

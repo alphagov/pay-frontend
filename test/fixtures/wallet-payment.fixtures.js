@@ -1,7 +1,7 @@
 const successfulLastDigitsCardNumber = '4242'
 
 const fixtures = {
-  worldpayGoogleAuthRequestDetails: (ops = {}) => {
+  worldpayOrSandboxGoogleAuthRequestDetails: (ops = {}) => {
     const data = {
       payment_info: {
         last_digits_card_number: ops.lastDigitsCardNumber !== undefined ? ops.lastDigitsCardNumber : successfulLastDigitsCardNumber,

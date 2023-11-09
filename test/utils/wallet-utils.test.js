@@ -91,6 +91,43 @@ describe('Wallet utils', () => {
         expect(applePayEnabled(charge)).to.eq(false)
       })
     })
+
+    describe('Sandbox account', () => {
+      it('should return true if globally enabled for Worldpay (and sandbox) and enabled for account', () => {
+        process.env.WORLDPAY_APPLE_PAY_ENABLED = 'true'
+        process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
+        process.env.STRIPE_APPLE_PAY_ENABLED = 'false'
+        process.env.STRIPE_GOOGLE_PAY_ENABLED = 'false'
+        const charge = createChargeWithApplePayEnabled('sandbox')
+        expect(applePayEnabled(charge)).to.eq(true)
+      })
+
+      it('should return true if environment variable not set and enabled for account', () => {
+        const charge = createChargeWithApplePayEnabled('sandbox')
+        expect(applePayEnabled(charge)).to.eq(true)
+      })
+
+      it('should return false if globally disabled for Worldpay (and sandbox) and account is not in test account list', () => {
+        process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
+        process.env.PAY_TEST_GATEWAY_ACCOUNTS = ['33']
+        const charge = createChargeWithApplePayEnabled('sandbox')
+        expect(applePayEnabled(charge)).to.eq(false)
+      })
+
+      it('should return true if globally disabled for Worldpay (and sandbox) but account is in test account list', () => {
+        process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
+        process.env.PAY_TEST_GATEWAY_ACCOUNTS = [gatewayAccountId.toString()]
+
+        const charge = createChargeWithApplePayEnabled('sandbox')
+        expect(applePayEnabled(charge)).to.eq(true)
+      })
+
+      it('should return false if not enabled for account', () => {
+        process.env.WORLDPAY_APPLE_PAY_ENABLED = 'true'
+        const charge = createCharge('sandbox', false, true)
+        expect(applePayEnabled(charge)).to.eq(false)
+      })
+    })
   })
 
   describe('googlePayEnabled', () => {
@@ -164,6 +201,26 @@ describe('Wallet utils', () => {
       it('should return false if not enabled for account', () => {
         process.env.STRIPE_GOOGLE_PAY_ENABLED = 'true'
         const charge = createCharge('stripe', true, false)
+        expect(googlePayEnabled(charge)).to.eq(false)
+      })
+    })
+
+    describe('Sandbox account', () => {
+      it('should return true if enabled for gateway account', () => {
+        process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
+        process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
+        process.env.STRIPE_APPLE_PAY_ENABLED = 'false'
+        process.env.STRIPE_GOOGLE_PAY_ENABLED = 'false'
+        const charge = createChargeWithGooglePayEnabled('sandbox')
+        expect(googlePayEnabled(charge)).to.eq(true)
+      })
+
+      it('should return false if not enabled for gateway account', () => {
+        process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
+        process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
+        process.env.STRIPE_APPLE_PAY_ENABLED = 'false'
+        process.env.STRIPE_GOOGLE_PAY_ENABLED = 'false'
+        const charge = createCharge('sandbox', true, false)
         expect(googlePayEnabled(charge)).to.eq(false)
       })
     })
