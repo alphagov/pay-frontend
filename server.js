@@ -22,9 +22,16 @@ const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
-const csp = require('./app/middleware/csp')
+const {
+  worldpayIframe,
+  rateLimitMiddleware,
+  captureEventMiddleware,
+  requestParseMiddleware,
+  detectErrorsMiddleware
+} = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
+const paths = require('./app/paths')
 
 // Global constants
 const {
@@ -93,6 +100,9 @@ function initialisei18n (app) {
 
 function initialiseProxy (app) {
   app.enable('trust proxy')
+  // this is 2 because frontend is sat behind ALB and NGINX reverse proxy when deployed to ECS
+  // see https://github.com/express-rate-limit/express-rate-limit/wiki/Troubleshooting-Proxy-Issues
+  app.set('trust proxy', 2)
 }
 
 function initialiseCookies (app) {
@@ -127,7 +137,7 @@ function initialiseTemplateEngine (app) {
 
 function initialisePublic (app) {
   app.use('/.well-known/apple-developer-merchantid-domain-association.txt', express.static(path.join(__dirname, `/app/assets/apple-pay/${process.env.ENVIRONMENT}/apple-developer-merchantid-domain-association.txt`)))
-  app.use('/public/worldpay', csp.worldpayIframe, express.static(path.join(__dirname, '/public/worldpay/'), publicCaching))
+  app.use('/public/worldpay', worldpayIframe, express.static(path.join(__dirname, '/public/worldpay/'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/public'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/app/data'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk-country-and-territory-autocomplete'), publicCaching))
@@ -176,6 +186,16 @@ function logApplePayCertificateTimeToExpiry () {
   }
 }
 
+const cspMiddlewareStack = [
+  rateLimitMiddleware,
+  requestParseMiddleware(2000),
+  detectErrorsMiddleware,
+  captureEventMiddleware([
+    'www.facebook.com',
+    'spay.samsung.com'
+  ])
+]
+
 /**
  * Configures app
  * @return app
@@ -184,6 +204,7 @@ function initialise () {
   const app = unconfiguredApp
   if (NODE_ENV !== 'test') {
     app.use(metrics.initialise())
+    app.use(paths.csp.path, cspMiddlewareStack) // CSP violation monitoring
   }
   app.use(Sentry.Handlers.requestHandler())
   initialiseProxy(app)
