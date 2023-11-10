@@ -37,7 +37,7 @@ const setupEventListener = () => {
   }
 }
 
-const init = provider => {
+const init = () => {
   setupEventListener()
 }
 

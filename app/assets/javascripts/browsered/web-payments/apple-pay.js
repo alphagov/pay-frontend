@@ -79,7 +79,6 @@ module.exports = () => {
     }).then(response => {
       if (response.status >= 200 && response.status < 300) {
         ga('send', 'event', 'Apple Pay', 'Successful', 'auth/capture request')
-        sendLogMessage(window.paymentDetails.chargeID, 'ApplePayAuthResponseProcessed')
         return response.json().then(data => {
           session.completePayment(ApplePaySession.STATUS_SUCCESS)
           window.location.href = data.url

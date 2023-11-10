@@ -4,7 +4,8 @@
 const {
   GATEWAY_ACCOUNT_ID,
   GATEWAY_ACCOUNT_TYPE,
-  PROVIDER
+  PROVIDER,
+  WALLET
 } = require('@govuk-pay/pay-js-commons').logging.keys
 
 // Local dependencies
@@ -23,6 +24,9 @@ module.exports = (req, res, next) => {
       setLoggingField(req, GATEWAY_ACCOUNT_ID, data.gateway_account.gateway_account_id)
       setLoggingField(req, GATEWAY_ACCOUNT_TYPE, data.gateway_account.type)
       setLoggingField(req, PROVIDER, data.payment_provider)
+      if (data.wallet_type) {
+        setLoggingField(req, WALLET, data.wallet_type)
+      }
       next()
     })
     .catch((err) => {

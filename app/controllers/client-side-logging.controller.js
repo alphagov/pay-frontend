@@ -10,13 +10,11 @@ const LOG_CODES = {
   ApplePayMerchantIdNotValid: 'Apple Pay Merchant ID not valid',
   ApplePayMerchantValidationError: 'Error completing Apple Pay merchant validation',
   ApplePayErrorMakingRequestToAuthorise: 'There was an error making a request to the server to authorise an Apple Pay payment',
-  ApplePayAuthResponseProcessed: 'Processed Apple Pay authorisation response',
   ApplePayServerError: 'The server returned a non-success response for request to authorise an Apple Pay Payment',
   GooglePayAvailable: 'Google Pay is available on this device',
   GooglePayStarted: 'User chose Google Pay method',
   GooglePayAborted: 'Google Pay attempt aborted by user',
   GooglePayErrorMakingRequestToAuthorise: 'There was an error making a request to the server to authorise a Google Pay payment',
-  GooglePayAuthResponseProcessed: 'Processed Google Pay authorisation response',
   GooglePayServerError: 'The server returned a non-success response for request to authorise a Google Pay Payment'
 }
 
