@@ -63,8 +63,7 @@ describe('Connector Client - Google Pay authorisation API - Worldpay payment', f
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -98,8 +97,7 @@ describe('Connector Client - Google Pay authorisation API - Worldpay payment', f
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -130,8 +128,7 @@ describe('Connector Client - Google Pay authorisation API - Worldpay payment', f
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()

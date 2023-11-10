@@ -55,8 +55,7 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
