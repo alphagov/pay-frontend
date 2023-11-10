@@ -28,6 +28,7 @@ const redirect = res => {
 }
 
 const handleAuthResponse = (req, res, charge) => response => {
+  logger.info('Handling authorisation response for digital wallet payment', getLoggingFields(req))
   switch (response.statusCode) {
     case 202:
     case 409:

@@ -62,12 +62,8 @@
       window.gatewayAccountType = '{{ gatewayAccount.type }}'
       window.stripePublishableKey = '{{ stripePublishableKey }}'
     {% endif %}
-    {% if allowApplePay and allowGooglePay%}
-      window.payScripts.webPayments.init('all')
-    {% elif allowApplePay %}
-      window.payScripts.webPayments.init('apple')
-    {% elif allowGooglePay %}
-      window.payScripts.webPayments.init('google')
+    {% if allowApplePay or allowGooglePay %}
+      window.payScripts.webPayments.init()
     {% endif %}
   })
 </script>
