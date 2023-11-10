@@ -29,7 +29,7 @@ const { pactify } = require('../../test-helpers/pact/pact-base')()
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-describe('connectors client - stripe google authentication API', function () {
+describe('Connectors Client - Google Pay authorisation API - Stripe payment', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',
@@ -43,7 +43,7 @@ describe('connectors client - stripe google authentication API', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('Authenticate Stripe google payment', function () {
+  describe('Authorise Stripe Google Pay payment', function () {
     describe('authorisation success', function () {
       const successfulGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()

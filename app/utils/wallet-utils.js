@@ -18,7 +18,8 @@ function googlePayEnabled (charge) {
   const googlePayEnabledForStripe = (process.env.STRIPE_GOOGLE_PAY_ENABLED || 'true') === 'true'
 
   const globallyEnabledForProvider = (charge.paymentProvider === 'worldpay' && googlePayEnabledForWorldpay) ||
-    (charge.paymentProvider === 'stripe' && googlePayEnabledForStripe)
+    (charge.paymentProvider === 'stripe' && googlePayEnabledForStripe) ||
+    charge.paymentProvider === 'sandbox'
 
   return (globallyEnabledForProvider || shouldOverrideGlobalWalletFlagForGatewayAccount(charge)) &&
     charge.gatewayAccount.allowGooglePay

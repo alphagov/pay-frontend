@@ -26,7 +26,7 @@ chai.use(chaiAsPromised)
 
 const GOOGLE_DDC_RESULT = 'some long opaque string that’s a device data collection result'
 
-describe('connectors client - worldpay google authentication API', function () {
+describe('Connector Client - Google Pay authorisation API - Worldpay payment', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',
@@ -40,9 +40,9 @@ describe('connectors client - worldpay google authentication API', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('Authenticate Worldpay google payment', function () {
+  describe('Authorise Worldpay Google Pay payment', function () {
     describe('authorisation success', function () {
-      const successfulGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails({ worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT })
+      const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails({ worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
         const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
@@ -63,8 +63,7 @@ describe('connectors client - worldpay google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -73,7 +72,7 @@ describe('connectors client - worldpay google authentication API', function () {
     })
 
     describe('authorisation success with no last card digits', function () {
-      const successfulGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails({
+      const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails({
         lastDigitsCardNumber: '',
         worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
       })
@@ -98,8 +97,7 @@ describe('connectors client - worldpay google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
@@ -108,7 +106,7 @@ describe('connectors client - worldpay google authentication API', function () {
     })
 
     describe('authorisation success with no ddc result', function () {
-      const successfulGoogleAuthRequest = fixtures.worldpayGoogleAuthRequestDetails()
+      const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
       before(() => {
@@ -130,8 +128,7 @@ describe('connectors client - worldpay google authentication API', function () {
         connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'google',
-          payload: payload,
-          paymentProvider: 'worldpay'
+          payload: payload
         }).then(res => {
           expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
