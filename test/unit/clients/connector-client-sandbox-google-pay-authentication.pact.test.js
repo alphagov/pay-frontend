@@ -62,5 +62,35 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })
     })
+
+    describe('authorisation declined', function () {
+      const googlePayAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails()
+      const authorisationDeclinedResponse = fixtures.webPaymentDeclinedResponse()
+      before(() => {
+        const builder = new PactInteractionBuilder(GOOGLE_AUTH_PATH)
+          .withRequestBody(googlePayAuthRequest)
+          .withMethod('POST')
+          .withState('a sandbox account exists with a charge with id testChargeId and description DECLINED that is in state ENTERING_CARD_DETAILS.')
+          .withUponReceiving('a valid sandbox google pay auth request which should be declined')
+          .withResponseBody(pactify(authorisationDeclinedResponse))
+          .withStatusCode(400)
+          .build()
+        return provider.addInteraction(builder)
+      })
+
+      afterEach(() => provider.verify())
+
+      it('should return authorisation declined with error identifier in response payloads', function (done) {
+        const payload = googlePayAuthRequest
+        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          chargeId: TEST_CHARGE_ID,
+          wallet: 'google',
+          payload: payload
+        }).then(res => {
+          expect(res.body.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
+          done()
+        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+      })
+    })
   })
 })
