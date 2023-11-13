@@ -52,6 +52,14 @@ function connectorValidPatchConfirmedChargeDetails (chargeId) {
   return stubBuilder('PATCH', path, 200, { response })
 }
 
+function connectorAuthWalletCharge (chargeId, walletType, paymentProvider) {
+  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}/${paymentProvider}`
+
+  const response = paymentFixtures.validAuthorisationRequest()
+
+  return stubBuilder('POST', path, 200, { response })
+}
+
 function connectorGetChargeDetails (opts) {
   const path = `/v1/frontend/charges/${opts.chargeId}`
   return stubBuilder('GET', path, 200, {
@@ -104,5 +112,6 @@ module.exports = {
   connectorGetChargeDetailsWithPrefilledCardholderDetails,
   connectorWorldpay3dsFlexDdcJwt,
   connectorPostValidChargeCardDetailsAuthorisation,
-  connectorPostValidCaptureCharge
+  connectorPostValidCaptureCharge,
+  connectorAuthWalletCharge
 }
