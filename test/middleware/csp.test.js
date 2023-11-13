@@ -36,7 +36,7 @@ const cspMiddlewareStack = [
 describe('CSP report endpoint', () => {
   const underTest = express()
   underTest.enable('trust proxy')
-  underTest.set('trust proxy', 1)
+  underTest.set('trust proxy', 3)
   underTest.use('/test', cspMiddlewareStack)
 
   beforeEach(() => {
@@ -126,18 +126,34 @@ describe('CSP report endpoint', () => {
       .expect(400)
   })
 
-  it('should return 429 if too many requests are made', async () => {
+  it('should return 429 if too many requests are made and respect trust proxy settings', async () => {
+
+    // X-Forwarded-For: <client>, <proxy1>, <proxy2>, https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
+    // make 10 requests for each 'IP', the 11th should be rate limited
+
     for (let i = 0; i < 10; i++) {
       await request(underTest)
         .post('/test')
-        .set('x-forwarded-for', '9.9.9.9')
+        .set('x-forwarded-for', '1.2.3.4, 2.2.2.2, 3.3.3.3')
+        .send(validPayload)
+        .expect(204)
+
+      await request(underTest)
+        .post('/test')
+        .set('x-forwarded-for', '5.6.7.8, 2.2.2.2, 3.3.3.3')
         .send(validPayload)
         .expect(204)
     }
 
     await request(underTest)
       .post('/test')
-      .set('x-forwarded-for', '9.9.9.9')
+      .set('x-forwarded-for', '1.2.3.4, 2.2.2.2, 3.3.3.3')
+      .send(validPayload)
+      .expect(429)
+
+    await request(underTest)
+      .post('/test')
+      .set('x-forwarded-for', '5.6.7.8, 2.2.2.2, 3.3.3.3')
       .send(validPayload)
       .expect(429)
   })

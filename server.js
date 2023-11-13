@@ -22,13 +22,7 @@ const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
-const {
-  worldpayIframe,
-  rateLimitMiddleware,
-  captureEventMiddleware,
-  requestParseMiddleware,
-  detectErrorsMiddleware
-} = require('./app/middleware/csp')
+const { worldpayIframe } = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
 const paths = require('./app/paths')
@@ -100,9 +94,10 @@ function initialisei18n (app) {
 
 function initialiseProxy (app) {
   app.enable('trust proxy')
-  // this is 2 because frontend is sat behind ALB and NGINX reverse proxy when deployed to ECS
-  // see https://github.com/express-rate-limit/express-rate-limit/wiki/Troubleshooting-Proxy-Issues
-  app.set('trust proxy', 2)
+  // this is 3 because frontend is sat behind an ALB and NGINX reverse proxy when deployed to ECS meaning the client
+  // address is the third in the 'x-forwarded-for' header, we care about this because we use rate limiting middleware
+  // see https://expressjs.com/en/guide/behind-proxies.html
+  app.set('trust proxy', 3)
 }
 
 function initialiseCookies (app) {
@@ -186,16 +181,6 @@ function logApplePayCertificateTimeToExpiry () {
   }
 }
 
-const cspMiddlewareStack = [
-  rateLimitMiddleware,
-  requestParseMiddleware(2000),
-  detectErrorsMiddleware,
-  captureEventMiddleware([
-    'www.facebook.com',
-    'spay.samsung.com'
-  ])
-]
-
 /**
  * Configures app
  * @return app
@@ -204,7 +189,6 @@ function initialise () {
   const app = unconfiguredApp
   if (NODE_ENV !== 'test') {
     app.use(metrics.initialise())
-    app.use(paths.csp.path, cspMiddlewareStack) // CSP violation monitoring
   }
   app.use(Sentry.Handlers.requestHandler())
   initialiseProxy(app)

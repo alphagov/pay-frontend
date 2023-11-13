@@ -15,13 +15,19 @@ const paths = require('./paths.js')
 
 // Express middleware
 const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
-const csp = require('./middleware/csp')
 const actionName = require('./middleware/action-name.js')
 const stateEnforcer = require('./middleware/state-enforcer.js')
 const retrieveCharge = require('./middleware/retrieve-charge.js')
 const enforceSessionCookie = require('./middleware/enforce-session-cookie.js')
 const resolveService = require('./middleware/resolve-service.js')
 const resolveLanguage = require('./middleware/resolve-language.js')
+const {
+  cardDetails,
+  rateLimitMiddleware,
+  requestParseMiddleware,
+  detectErrorsMiddleware,
+  captureEventMiddleware
+} = require('./middleware/csp')
 const decryptCardData = require('./middleware/decrypt-card-data')(process.env)
 
 // Import AB test when we need to use it
@@ -59,9 +65,20 @@ exports.bind = function (app) {
     resolveLanguage
   ]
 
+  const cspMiddlewareStack = [
+    rateLimitMiddleware,
+    requestParseMiddleware(2000),
+    detectErrorsMiddleware,
+    captureEventMiddleware([
+      'www.facebook.com',
+      'spay.samsung.com'
+    ])
+  ]
+
+  app.post(paths.csp.path, cspMiddlewareStack) // CSP violation monitoring
   app.post(paths.log.path, chargeCookieRequiredMiddlewareStack, log)
 
-  app.get(card.new.path, standardMiddlewareStack, csp.cardDetails, charge.new)
+  app.get(card.new.path, standardMiddlewareStack, cardDetails, charge.new)
   app.get(card.authWaiting.path, standardMiddlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, standardMiddlewareStack, charge.captureWaiting)
   app.post(card.create.path, standardMiddlewareStack, charge.create)
