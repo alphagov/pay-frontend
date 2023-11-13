@@ -15,7 +15,7 @@ const chargeId = 'chargeId'
 
 describe('The web payments auth request controller', () => {
   describe('when processing an Apple Pay payment', () => {
-    const provider = 'apple'
+    const wallet = 'apple'
     const req = {
       headers: {
         'x-request-id': 'aaa'
@@ -23,7 +23,7 @@ describe('The web payments auth request controller', () => {
       chargeId,
       chargeData: paymentFixtures.validChargeDetails({ paymentProvider: 'worldpay' }),
       params: {
-        provider
+        wallet
       },
       body: {}
     }
@@ -49,11 +49,11 @@ describe('The web payments auth request controller', () => {
         statusCode: 200
       }
       nock(process.env.CONNECTOR_HOST)
-        .post(`/v1/frontend/charges/${chargeId}/wallets/${provider}`)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/${wallet}`)
         .reply(200)
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
           expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-          expect(res.send.calledWith({url: `/handle-payment-response/${chargeId}`})).to.be.ok // eslint-disable-line
+          expect(res.send.calledWith({url: `/handle-payment-response/apple/${chargeId}`})).to.be.ok // eslint-disable-line
           expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
       }
@@ -82,7 +82,7 @@ describe('The web payments auth request controller', () => {
   })
 
   describe('when processing a Google Pay payment', () => {
-    const provider = 'google'
+    const wallet = 'google'
     const req = {
       headers: {
         'x-request-id': 'aaa'
@@ -90,7 +90,7 @@ describe('The web payments auth request controller', () => {
       chargeId,
       chargeData: paymentFixtures.validChargeDetails({ paymentProvider: 'worldpay' }),
       params: {
-        provider
+        wallet
       },
       body: {}
     }
@@ -120,7 +120,7 @@ describe('The web payments auth request controller', () => {
         .reply(200)
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-        expect(res.send.calledWith({ url: `/handle-payment-response/${chargeId}` })).to.be.ok // eslint-disable-line
+        expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
         expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
       }
@@ -146,7 +146,7 @@ describe('The web payments auth request controller', () => {
 
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
           expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-          expect(res.send.calledWith({ url: `/handle-payment-response/${chargeId}` })).to.be.ok // eslint-disable-line
+          expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
           expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
       }
@@ -166,7 +166,7 @@ describe('The web payments auth request controller', () => {
         .replyWithError('oops')
       requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-        expect(res.send.calledWith({ url: `/handle-payment-response/${chargeId}` })).to.be.ok // eslint-disable-line
+        expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
         expect(mockCookies.setSessionVariable.called).to.be.false // eslint-disable-line
         done()
       }

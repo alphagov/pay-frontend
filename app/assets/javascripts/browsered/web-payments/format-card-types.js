@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (allowedCardTypes, provider) => {
+module.exports = (allowedCardTypes, wallet) => {
   if (!allowedCardTypes) {
     return []
   }
@@ -16,11 +16,11 @@ module.exports = (allowedCardTypes, provider) => {
     .filter(brand => brand !== 'diners-club')
     .filter(brand => brand !== 'unionpay')
 
-  if (provider === 'google') {
+  if (wallet === 'google') {
     filteredAvailableNetworks = filteredAvailableNetworks.filter(brand => brand !== 'maestro')
   }
 
-  if (provider === 'apple' && filteredAvailableNetworks.includes('visa')) {
+  if (wallet === 'apple' && filteredAvailableNetworks.includes('visa')) {
     filteredAvailableNetworks.push('electron')
   }
 
@@ -29,6 +29,6 @@ module.exports = (allowedCardTypes, provider) => {
       let formattedBrand = brand
       if (brand === 'master-card') formattedBrand = 'masterCard'
       if (brand === 'american-express') formattedBrand = 'amex'
-      return provider === 'google' ? formattedBrand.toUpperCase() : formattedBrand
+      return wallet === 'google' ? formattedBrand.toUpperCase() : formattedBrand
     })
 }
