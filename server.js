@@ -25,7 +25,6 @@ const Sentry = require('./app/utils/sentry.js').initialiseSentry()
 const { worldpayIframe } = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
-const paths = require('./app/paths')
 
 // Global constants
 const {
