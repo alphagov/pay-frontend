@@ -1,11 +1,8 @@
 'use strict'
 
-// NPM dependencies
-const { expect } = require('chai')
-// NPM dependencies
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
-// Local dependencies
+
 require('../../test-helpers/html-assertions')
 
 const mockNormaliseCharge = {
@@ -17,6 +14,9 @@ const req = {
     'x-request-id': 'aaa'
   },
   chargeId,
+  params: {
+    wallet: 'google'
+  },
   body: {},
   chargeData: {
     id: 3,
@@ -41,7 +41,13 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
 }
 
 describe('The web payments handle auth response controller', () => {
+  let res
   beforeEach(() => {
+    res = {
+      redirect: sinon.spy(),
+      render: sinon.spy(),
+      status: sinon.spy()
+    }
     req.chargeData.status = 'AUTHORISATION SUCCESS'
   })
 
@@ -57,11 +63,6 @@ describe('The web payments handle auth response controller', () => {
         }
       }
     }
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: () => {
         return {
@@ -71,19 +72,14 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.redirect.calledWith(303, '/return/chargeId')).to.be.ok // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.redirect, 303, '/return/chargeId')
     done()
   })
 
   it('redirect to 3ds page if connector response status code is 200 and charge status is 200', done => {
     req.chargeData.status = 'AUTHORISATION 3DS REQUIRED'
     const mockCharge = () => {}
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: () => {
         return {
@@ -93,8 +89,8 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.redirect.calledWith(303, `/card_details/${chargeId}/3ds_required`)).to.be.ok // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.redirect, 303, `/card_details/${chargeId}/3ds_required`)
     done()
   })
 
@@ -110,11 +106,6 @@ describe('The web payments handle auth response controller', () => {
         }
       }
     }
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: () => {
         return {
@@ -124,8 +115,8 @@ describe('The web payments handle auth response controller', () => {
       deleteSessionVariable: sinon.spy()
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.redirect.calledWith(303, '/card_details/chargeId/auth_waiting')).to.be.ok // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.redirect, 303, '/card_details/chargeId/auth_waiting')
     done()
   })
 
@@ -143,11 +134,6 @@ describe('The web payments handle auth response controller', () => {
         }
       }
     }
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: () => {
         return {
@@ -162,14 +148,14 @@ describe('The web payments handle auth response controller', () => {
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
-        path: '/handle-payment-response/3/capture_failure',
+        path: '/handle-payment-response/google/3/capture_failure',
         amount: '4.99',
         testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/incorrect-state/capture-failure', systemErrorObj)).to.be.true // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.render, 'errors/incorrect-state/capture-failure', systemErrorObj)
     done()
   })
 
@@ -187,11 +173,6 @@ describe('The web payments handle auth response controller', () => {
         }
       }
     }
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: (req, key) => {
         return {
@@ -207,24 +188,19 @@ describe('The web payments handle auth response controller', () => {
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
-        path: '/handle-payment-response/3/error',
+        path: '/handle-payment-response/google/3/error',
         amount: '4.99',
         testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.render, 'errors/system-error', systemErrorObj)
     done()
   })
 
   it('should show error page and delete connector response if connector response is in the session and status is 402', done => {
     const mockCharge = sinon.spy()
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: (req, key) => {
         return {
@@ -240,24 +216,19 @@ describe('The web payments handle auth response controller', () => {
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
-        path: '/handle-payment-response/3/error',
+        path: '/handle-payment-response/google/3/error',
         amount: '4.99',
         testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.render, 'errors/system-error', systemErrorObj)
     done()
   })
 
   it('should render the auth_failure view and delete connector response if connector response is in the session and status code is 400 Authorisation Rejected', done => {
     const mockCharge = sinon.spy()
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: () => {
         return {
@@ -271,7 +242,7 @@ describe('The web payments handle auth response controller', () => {
       viewName: 'AUTHORISATION_REJECTED',
       returnUrl: '/return/3',
       analytics: {
-        path: '/handle-payment-response/3/auth_failure',
+        path: '/handle-payment-response/google/3/auth_failure',
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
@@ -281,19 +252,14 @@ describe('The web payments handle auth response controller', () => {
     }
 
     requireHandleAuthResponseController(mockCharge, mockNormaliseCharge, mockCookies)(req, res)
-    expect(mockCookies.deleteSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
-    expect(res.render.calledWith('errors/incorrect-state/auth-failure', authErrorObj)).to.be.true // eslint-disable-line
+    sinon.assert.calledWith(mockCookies.deleteSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
+    sinon.assert.calledWith(res.render, 'errors/incorrect-state/auth-failure', authErrorObj)
     done()
   })
 
   it('should render the error page and delete connector response if connector response is in the session ' +
-      'and status code is 400, but for a Non Authorisation Rejection Error Identifier', done => {
+    'and status code is 400, but for a Non Authorisation Rejection Error Identifier', done => {
     const mockCharge = sinon.spy()
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: () => {
         return {
@@ -306,7 +272,7 @@ describe('The web payments handle auth response controller', () => {
     const authErrorObj = {
       message: 'There is a problem, please try again later',
       analytics: {
-        path: '/handle-payment-response/3',
+        path: '/handle-payment-response/google/3',
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
@@ -325,11 +291,6 @@ describe('The web payments handle auth response controller', () => {
 
   it('should show error page and delete connector response if connector response is in the session and status is not recognised', done => {
     const mockCharge = sinon.spy()
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: (req, key) => {
         return {
@@ -345,7 +306,7 @@ describe('The web payments handle auth response controller', () => {
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
-        path: '/handle-payment-response/3/error',
+        path: '/handle-payment-response/google/3/error',
         amount: '4.99',
         testingVariant: 'original'
       }
@@ -359,11 +320,6 @@ describe('The web payments handle auth response controller', () => {
   })
 
   it('should return error if connector response has not been saved in the session', done => {
-    const res = {
-      redirect: sinon.spy(),
-      render: sinon.spy(),
-      status: sinon.spy()
-    }
     const mockCookies = {
       getSessionVariable: sinon.spy(),
       deleteSessionVariable: sinon.spy()
@@ -375,14 +331,14 @@ describe('The web payments handle auth response controller', () => {
         analyticsId: 'test-1234',
         type: 'test',
         paymentProvider: 'sandbox',
-        path: '/handle-payment-response/3/error',
+        path: '/handle-payment-response/google/3/error',
         amount: '4.99',
         testingVariant: 'original'
       }
     }
     requireHandleAuthResponseController(() => { }, mockNormaliseCharge, mockCookies)(req, res)
-    expect(res.render.calledWith('errors/system-error', systemErrorObj)).to.be.true // eslint-disable-line
-    expect(mockCookies.getSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`)).to.be.ok // eslint-disable-line
+    sinon.assert.calledWith(res.render, 'errors/system-error', systemErrorObj)
+    sinon.assert.calledWith(mockCookies.getSessionVariable, req, `ch_${chargeId}.webPaymentAuthResponse`)
     done()
   })
 })

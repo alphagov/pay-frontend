@@ -102,7 +102,6 @@ exports.bind = function (app) {
   // Generic Web payments endpoint
   app.post(paths.webPayments.authRequest.path, chargeCookieRequiredMiddlewareStack, webPaymentsMakePayment)
   app.get(paths.webPayments.handlePaymentResponse.path, chargeCookieRequiredMiddlewareStack, webPaymentsHandlePaymentResponse)
-  app.get(paths.webPayments.handlePaymentResponseNew.path, chargeCookieRequiredMiddlewareStack, webPaymentsHandlePaymentResponse)
 
   // secure controller
   app.get(paths.secure.get.path, secure.new)
