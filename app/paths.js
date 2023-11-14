@@ -91,10 +91,6 @@ const paths = {
       action: 'post'
     },
     handlePaymentResponse: {
-      path: '/handle-payment-response/:chargeId',
-      action: 'get'
-    },
-    handlePaymentResponseNew: {
       path: '/handle-payment-response/:wallet/:chargeId',
       action: 'get'
     }
