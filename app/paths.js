@@ -87,11 +87,15 @@ const paths = {
   },
   webPayments: {
     authRequest: {
-      path: '/web-payments-auth-request/:provider/:chargeId',
+      path: '/web-payments-auth-request/:wallet/:chargeId',
       action: 'post'
     },
     handlePaymentResponse: {
       path: '/handle-payment-response/:chargeId',
+      action: 'get'
+    },
+    handlePaymentResponseNew: {
+      path: '/handle-payment-response/:wallet/:chargeId',
       action: 'get'
     }
   },

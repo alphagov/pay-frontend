@@ -14,7 +14,7 @@ const normalise = require('../../services/normalise-charge')
 module.exports = (req, res, next) => {
   const { chargeData, chargeId, params } = req
   const charge = normalise.charge(chargeData, chargeId)
-  const wallet = params.provider
+  const { wallet } = params
   const paymentProvider = charge.paymentProvider
   let payload
 
@@ -49,7 +49,7 @@ module.exports = (req, res, next) => {
 
       // Always return 200 - the redirect checks if there are any errors
       res.status(200)
-      res.send({ url: `/handle-payment-response/${chargeId}` })
+      res.send({ url: `/handle-payment-response/${wallet}/${chargeId}` })
     })
     .catch(err => {
       logger.error(`Error while trying to authorise ${wallet} Pay payment`, {
@@ -58,6 +58,6 @@ module.exports = (req, res, next) => {
       })
       res.status(200)
       // Always return 200 - the redirect handles the error
-      res.send({ url: `/handle-payment-response/${chargeId}` })
+      res.send({ url: `/handle-payment-response/${wallet}/${chargeId}` })
     })
 }
