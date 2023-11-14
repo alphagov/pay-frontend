@@ -22,7 +22,7 @@ const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
-const csp = require('./app/middleware/csp')
+const { worldpayIframe } = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
 
@@ -93,6 +93,10 @@ function initialisei18n (app) {
 
 function initialiseProxy (app) {
   app.enable('trust proxy')
+  // this is 3 because frontend is sat behind an ALB and NGINX reverse proxy when deployed to ECS meaning the client
+  // address is the third in the 'x-forwarded-for' header, we care about this because we use rate limiting middleware
+  // see https://expressjs.com/en/guide/behind-proxies.html
+  app.set('trust proxy', 3)
 }
 
 function initialiseCookies (app) {
@@ -127,7 +131,7 @@ function initialiseTemplateEngine (app) {
 
 function initialisePublic (app) {
   app.use('/.well-known/apple-developer-merchantid-domain-association.txt', express.static(path.join(__dirname, `/app/assets/apple-pay/${process.env.ENVIRONMENT}/apple-developer-merchantid-domain-association.txt`)))
-  app.use('/public/worldpay', csp.worldpayIframe, express.static(path.join(__dirname, '/public/worldpay/'), publicCaching))
+  app.use('/public/worldpay', worldpayIframe, express.static(path.join(__dirname, '/public/worldpay/'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/public'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/app/data'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk-country-and-territory-autocomplete'), publicCaching))

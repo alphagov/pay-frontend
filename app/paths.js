@@ -17,6 +17,10 @@ const paths = {
     path: '/log/:chargeId',
     action: 'post'
   },
+  csp: {
+    path: '/csp-report',
+    action: 'post'
+  },
   card: {
     new: {
       path: '/card_details/:chargeId',
