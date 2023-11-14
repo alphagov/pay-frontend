@@ -52,8 +52,8 @@ function connectorValidPatchConfirmedChargeDetails (chargeId) {
   return stubBuilder('PATCH', path, 200, { response })
 }
 
-function connectorAuthWalletCharge (chargeId, walletType, paymentProvider) {
-  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}/${paymentProvider}`
+function connectorAuthWalletCharge (chargeId, walletType) {
+  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}`
 
   const response = paymentFixtures.validAuthorisationRequest()
 

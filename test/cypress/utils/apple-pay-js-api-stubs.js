@@ -14,7 +14,7 @@ const getMockApplePayClass = (validPaymentRequestResponse, email = null) => {
     begin () {
       if (this._onvalidatemerchant) {
         this._onvalidatemerchant(
-          { validationURL: 'https://fakeapple.url' }
+          { validationURL: 'https://fakeapple.url/fake-apple-merchant-validation' }
         )
       }
 

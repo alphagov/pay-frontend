@@ -81,7 +81,7 @@ describe('Google Pay payment flow', () => {
       connectorUpdateChargeStatus(chargeId),
       adminUsersGetService(),
       cardIdValidCardDetails(),
-      connectorAuthWalletCharge(chargeId, 'google', 'worldpay'),
+      connectorAuthWalletCharge(chargeId, 'google'),
       connectorPostValidCaptureCharge(chargeId),
       connectorWorldpay3dsFlexDdcJwt(chargeId)
     ]
