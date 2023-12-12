@@ -27,7 +27,7 @@ var init = function () {
     window.Card,
     window.Charge
   )
-  var required = chargeValidations.required
+  var formFields = chargeValidations.required.concat(chargeValidations.optional)
 
   form.addEventListener('submit', function (e) {
     checkFormSubmission(e)
@@ -289,7 +289,7 @@ var init = function () {
 
   var allFields = function () {
     var fields = {}
-    required.forEach(function (requiredField) {
+    formFields.forEach(function (requiredField) {
       var getField = findInputByKey(requiredField)
       if (getField) {
         fields[requiredField] = getField
@@ -300,7 +300,7 @@ var init = function () {
 
   var allFieldValues = function () {
     var values = {}
-    required.forEach(function (requiredField) {
+    formFields.forEach(function (requiredField) {
       var getField = findInputByKey(requiredField)
       if (getField) {
         values[requiredField] = getField.value.trim()

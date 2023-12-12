@@ -5,6 +5,9 @@ const _ = require('lodash')
 const nock = require('nock')
 const logger = require('../../app/utils/logger')(__filename)
 const proxyquire = require('proxyquire')
+const cheerio = require('cheerio')
+const chai = require('chai')
+const expect = chai.expect
 
 // Local dependencies
 const cookie = require('../test-helpers/session')
@@ -26,8 +29,6 @@ const app = proxyquire('../../server.js',
       '@global': true
     }
   }).getApp()
-
-const EMPTY_BODY = ''
 
 const gatewayAccount = {
   gatewayAccountId: '12345',
@@ -189,51 +190,31 @@ describe('chargeTests', function () {
         .end(done)
     })
 
-    it('should ignore empty/null address lines when second address line populated', function (done) {
-      const cookieValue = cookie.create(chargeId)
-      mockSuccessCardIdResponse(defaultCardID)
-      const cardData = minimumConnectorCardData('5105105105105100')
-      cardData.address.line1 = 'bla bla'
-      delete cardData.address.line3
-
-      nock(process.env.CONNECTOR_HOST)
-        .patch('/v1/frontend/charges/23144323')
-        .reply(200)
-      defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
-      defaultAdminusersResponseForGetService(gatewayAccountId)
-
-      connectorExpects(cardData).reply(200)
-      const formData = minimumFormCardData('5105105105105100')
-      formData.addressLine1 = ''
-      formData.addressLine2 = cardData.address.line1
-
-      postChargeRequest(app, cookieValue, formData, chargeId)
-        .expect(303, EMPTY_BODY)
-        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
-        .end(done)
-    })
-
-    it('should ignore empty/null address lines when only second address line populated', function (done) {
+    it('should show an error when only the second address line is populated', function (done) {
       const cookieValue = cookie.create(chargeId)
       mockSuccessCardIdResponse(defaultCardID)
       const cardData = minimumConnectorCardData('5105105105105100')
       cardData.address.line1 = 'bla bla'
       delete cardData.address.line2
 
+      nock(process.env.CONNECTOR_HOST)
+        .patch('/v1/frontend/charges/23144323')
+        .reply(200)
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
 
       connectorExpects(cardData).reply(200)
-      nock(process.env.CONNECTOR_HOST)
-        .patch('/v1/frontend/charges/23144323')
-        .reply(200)
       const formData = minimumFormCardData('5105105105105100')
       formData.addressLine1 = ''
       formData.addressLine2 = cardData.address.line1
 
       postChargeRequest(app, cookieValue, formData, chargeId)
-        .expect(303, EMPTY_BODY)
-        .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
+        .expect(200)
+        .expect(function (res) {
+          const $ = cheerio.load(res.text)
+          expect($('#address-line-1-error').text()).to.contains('Enter a valid address line 1')
+          expect($('#error-address-line-1').text()).to.contains('Enter address line 1, typically the building and street')
+        })
         .end(done)
     })
   })

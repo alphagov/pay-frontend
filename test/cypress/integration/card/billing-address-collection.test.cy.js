@@ -34,10 +34,10 @@ describe('Billing address collection', () => {
         cy.log('should show the billing address section')
 
         cy.get('h2').contains('Billing address').should('exist')
-        cy.get('#address-country-select').should('exist')
         cy.get('#address-line-1').should('exist')
         cy.get('#address-line-2').should('exist')
         cy.get('#address-city').should('exist')
+        cy.get('#address-country-select').should('exist')
         cy.get('#address-postcode').should('exist')
 
         cy.log('Should populate default billing address from service')
@@ -87,10 +87,10 @@ describe('Billing address collection', () => {
       cy.log('Should not show the billing address section')
 
       cy.get('h2').contains('Billing address').should('not.exist')
-      cy.get('#address-country-select').should('not.exist')
       cy.get('#address-line-1').should('not.exist')
       cy.get('#address-line-2').should('not.exist')
       cy.get('#address-city').should('not.exist')
+      cy.get('#address-country-select').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
 
       cy.task('clearStubs')
@@ -139,10 +139,10 @@ describe('Billing address collection', () => {
       cy.log('should not show the billing address section')
 
       cy.get('h2').contains('Billing address').should('not.exist')
-      cy.get('#address-country-select').should('not.exist')
       cy.get('#address-line-1').should('not.exist')
       cy.get('#address-line-2').should('not.exist')
       cy.get('#address-city').should('not.exist')
+      cy.get('#address-country-select').should('not.exist')
       cy.get('#address-postcode').should('not.exist')
 
       cy.log('should enter card details')

@@ -30,6 +30,37 @@ describe('Card details page validation', () => {
     cy.get('.address-line-1-label').should('exist')
     cy.get('.address-city-label').should('exist')
     cy.get('.address-postcode-label').should('exist')
+
+    cy.log('No errors should be shown for the optional field address line 2')
+    cy.get('#address-line-2-error').should('not.exist')
+    cy.get('.address-line-2-label').should('exist')
+  })
+
+  it('Should perform validation of optional address line 2 correctly', () => {
+    cy.task('setupStubs', createPaymentChargeStubs)
+    cy.visit(`/secure/${tokenId}`)
+
+    cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    cy.window().its('chargeId').should('eq', `${chargeId}`)
+
+    cy.get('#card-details').submit()
+    cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+
+    cy.log('No errors should be shown for the optional field address line 2 as the field is not being used')
+    cy.get('#address-line-2-error').should('not.exist')
+    cy.get('.address-line-2-label').should('exist')
+
+    cy.log('Should error when address line 2 contains an invalid data')
+    cy.get('[data-cy=address-line-2]').type('1111111111111111')
+    cy.get('#card-details').submit()
+
+    cy.get('#address-line-2-error').should('exist')
+
+    cy.log('Should not sure an error when the optional address line 2 is cleared')
+    cy.get('[data-cy=address-line-2]').clear()
+    cy.get('#card-details').submit()
+
+    cy.get('#address-line-2-error').should('not.exist')
   })
 
   it('Should perform inline validation of the expiry date correctly', () => {

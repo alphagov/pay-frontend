@@ -303,21 +303,6 @@ describe('normalise', () => {
     })
   })
 
-  describe('addresslines', () => {
-    it('should return the body with adressline 2 moved to address line 1 if filled', () => {
-      const passedByReference = { addressLine2: 'foo' }
-      normalise.addressLines(passedByReference)
-      expect(passedByReference).to.deep.equal({ addressLine1: 'foo' })
-      expect(passedByReference.addressLine2).to.be.undefined // eslint-disable-line
-    })
-
-    it('should do nothing if there is addressLine1', () => {
-      const passedByReference = { addressLine1: 'bar', addressLine2: 'foo' }
-      normalise.addressLines(passedByReference)
-      expect(passedByReference).to.deep.equal({ addressLine1: 'bar', addressLine2: 'foo' })
-    })
-  })
-
   describe('whitespace', () => {
     it('should return the body with no surrounding whitespace', () => {
       const passedByReference = {

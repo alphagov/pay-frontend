@@ -147,7 +147,6 @@ module.exports = {
     }
     const validator = chargeValidator(i18n.__('fieldErrors'), logger, cardModel, chargeOptions, getLoggingFields(req))
 
-    normalise.addressLines(req.body)
     normalise.whitespace(req.body)
 
     const { worldpay3dsFlexDdcStatus } = req.body

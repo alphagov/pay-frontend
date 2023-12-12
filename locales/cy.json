@@ -26,7 +26,8 @@
 		"cardholderName": "Enw ar y cerdyn",
 		"billingAddress": "Cyfeiriad bilio",
 		"billingAddressHint": "Hwn yw’r cyfeiriad sy’n gysylltiedig â’r cerdyn",
-		"building": "Rhif neu enw’r adeilad a heol",
+		"addressLine1": "Llinell cyfeiriad 1",
+		"addressLine2": "Llinell cyfeiriad 2 (dewisol)",
 		"city": "Tref neu ddinas",
 		"postcode": "Cod post",
 		"country": "Gwlad neu diriogaeth",
@@ -143,14 +144,14 @@
 				"invalidYear": "Nid yw’r flwyddyn dod i ben hwn yn ddilys"
 			},
 			"addressLine1": {
-				"name": "enw/rhif yr adeilad a heol",
-				"message": "Rhowch gyfeiriad bilio dilys",
-				"containsTooManyDigits": "Rhowch gyfeiriad bilio dilys"
+				"name": "llinell cyfeiriad 1",
+				"message": "Rhowch linell cyfeiriad 1, fel arfer yr adeilad a'r stryd",
+				"containsTooManyDigits": "Rhowch linell cyfeiriad 1, fel arfer yr adeilad a'r stryd"
 			},
 			"addressLine2": {
-				"name": "llinell cyfeiriad ychwanegol",
-				"message": "Rhowch wybodaeth cyfeiriad dilys",
-				"containsTooManyDigits": "Rhowch wybodaeth cyfeiriad dilys"
+				"name": "llinell cyfeiriad 2",
+				"message": "Rhowch linell cyfeiriad 2",
+				"containsTooManyDigits": "Rhowch linell cyfeiriad 2"
 			},
 			"addressCity": {
 				"name": "dref/ddinas",
