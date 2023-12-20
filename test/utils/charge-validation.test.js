@@ -56,7 +56,7 @@ describe('charge validator', () => {
       })
 
       it('it should run custom validators against any defined fields', () => {
-        expect(result.errorFields.find(field => field.key === 'addressLine2').value).to.eq('Enter valid address information')
+        expect(result.errorFields.find(field => field.key === 'addressLine2').value).to.eq('Enter address line 2')
       })
     })
   })

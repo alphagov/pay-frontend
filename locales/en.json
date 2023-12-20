@@ -23,7 +23,8 @@
 		"cardholderName": "Name on card",
 		"billingAddress": "Billing address",
 		"billingAddressHint": "This is the address associated with the card",
-		"building": "Building number or name and street",
+		"addressLine1": "Address line 1",
+		"addressLine2": "Address line 2 (optional)",
 		"city": "Town or city",
 		"postcode": "Postcode",
 		"country": "Country or territory",
@@ -140,14 +141,14 @@
 				"invalidYear": "This expiry year is not a valid"
 			},
 			"addressLine1": {
-				"name": "building name/number and street",
-				"message": "Enter a valid billing address",
-				"containsTooManyDigits": "Enter a valid billing address"
+				"name": "address line 1",
+				"message": "Enter address line 1, typically the building and street",
+				"containsTooManyDigits": "Enter address line 1, typically the building and street"
 			},
 			"addressLine2": {
-				"name": "additional address line",
-				"message": "Enter valid address information",
-				"containsTooManyDigits": "Enter valid address information"
+				"name": "address line 2",
+				"message": "Enter address line 2",
+				"containsTooManyDigits": "Enter address line 2"
 			},
 			"addressCity": {
 				"name": "town/city",

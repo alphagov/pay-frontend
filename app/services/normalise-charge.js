@@ -69,13 +69,7 @@ module.exports = (function () {
       country: body.addressCountry
     }
   }
-  // body is passed by reference
-  const addressLines = function (body) {
-    if (!body.addressLine1 && body.addressLine2) {
-      body.addressLine1 = body.addressLine2
-      delete body.addressLine2
-    }
-  }
+
   const whitespace = function (body) {
     const toIgnore = [
       'submitCardDetails',
@@ -195,7 +189,6 @@ module.exports = (function () {
   return {
     charge,
     addressForApi,
-    addressLines,
     whitespace,
     creditCard,
     expiryDate,

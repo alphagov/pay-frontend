@@ -75,7 +75,7 @@ describe('checks for PAN-like numbers', () => {
         const $ = cheerio.load(res.text)
         const errorMessages = {
           cardholder: 'Enter the name as it appears on the card',
-          addressLine1: 'Enter a valid billing address',
+          addressLine1: 'Enter address line 1, typically the building and street',
           city: 'Enter a valid town/city',
           postcode: 'Enter a valid postcode'
         }
@@ -83,7 +83,7 @@ describe('checks for PAN-like numbers', () => {
         expect($('#error-cardholder-name').text()).to.contains(errorMessages.cardholder)
         expect($('#address-line-1-error').text()).to.contains(errorMessages.addressLine1)
         expect($('#error-address-line-1').text()).to.contains(errorMessages.addressLine1)
-        expect($('#address-line-2-error').text()).to.contains('Enter valid address information')
+        expect($('#address-line-2-error').text()).to.contains('Enter address line 2')
         expect($('#address-city-error').text()).to.contains(errorMessages.city)
         expect($('#error-address-city').text()).to.contains(errorMessages.city)
         expect($('#address-postcode-error').text()).to.contains(errorMessages.postcode)
