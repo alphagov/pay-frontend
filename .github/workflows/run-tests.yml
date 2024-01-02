@@ -137,4 +137,4 @@ jobs:
           npm run cypress:test
 
   check-docker-base-images-are-manifests:
-    uses: alphagov/pay-ci/.github/workflows/_validate_docker_image_is_manifest.yml@pp-12015/add-reusable-workflow-to-check-manifests
+    uses: alphagov/pay-ci/.github/workflows/_validate_docker_image_is_manifest.yml@master
