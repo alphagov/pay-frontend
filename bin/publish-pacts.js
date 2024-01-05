@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { unlink, readdir, stat } = require('fs').promises
 
-const pact = require('@pact-foundation/pact-node')
+const pact = require('@pact-foundation/pact-core')
 const path = require('path')
 const pactDirPath = path.join(`${__dirname}`, '/../pacts/')
 
