@@ -1,4 +1,4 @@
-const wrapper = require('@pact-foundation/pact-node')
+const wrapper = require('@pact-foundation/pact-core')
 const pactBrokerUrl = 'http://192.168.99.100'
 const path = require('path')
 
