@@ -21,7 +21,7 @@ const validPayment = {
 }
 
 describe('Awaiting auth', () => {
-  it('should load the auth waiting page and redirect to confirm page when card details are entered', () => {
+  it.only('should load the auth waiting page and redirect to confirm page when card details are entered', () => {
     cy.log('Should setup the payment and load the page')
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)
@@ -35,6 +35,8 @@ describe('Awaiting auth', () => {
     cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
 
     cy.log('Should enter card details')
+
+    cy.percySnapshot()
 
     cy.get('#card-no').type(validPayment.cardNumber)
     cy.get('#card-no').blur()
