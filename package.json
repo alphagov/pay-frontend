@@ -49,6 +49,7 @@
     "test": "rm -rf ./pacts && NODE_ENV=test mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
     "cypress:server": "mb | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
+    "cypress:percy": "percy exec -- cypress run",
     "cypress:test-headed": "cypress open",
     "snyk-protect": "snyk-protect",
     "publish-pacts": "./bin/publish-pacts.js"
@@ -112,6 +113,8 @@
     "@babel/preset-env": "^7.23.2",
     "@pact-foundation/pact": "^12.1.1",
     "@pact-foundation/pact-core": "^14.0.5",
+    "@percy/cli": "^1.27.7",
+    "@percy/cypress": "^3.1.2",
     "@snyk/protect": "^1.1235.x",
     "axios": "^1.6.4",
     "browserify": "17.0.x",
