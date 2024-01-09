@@ -130,11 +130,13 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{ steps.parse-cypress-version.outputs.CYPRESS_VERSION }}
-      - name: Run cypress tests
+      name: Run Cypress tests with Percy
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
         run: |
           npm run cypress:server > /dev/null 2>&1 &
           sleep 5
-          npm run cypress:test
+          npm run cypress:percy
 
   check-docker-base-images-are-manifests:
     uses: alphagov/pay-ci/.github/workflows/_validate_docker_image_is_manifest.yml@master
