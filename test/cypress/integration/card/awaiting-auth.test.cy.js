@@ -36,6 +36,8 @@ describe('Awaiting auth', () => {
 
     cy.log('Should enter card details')
 
+    cy.percySnapshot()
+
     cy.get('#card-no').type(validPayment.cardNumber)
     cy.get('#card-no').blur()
     cy.wait('@checkCard')
