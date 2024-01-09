@@ -68,6 +68,40 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+  unit-tests:
+    runs-on: ubuntu-latest
+    name: Unit tests
+    needs: [version, install-and-compile]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+      - name: Setup
+        uses: actions/setup-node@bea5baf987ba7aa777a8a0b4ace377a21c45c381
+        with:
+          node-version: ${{ needs.version.outputs.node-version }}
+      - name: Cache build directories
+        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+        with:
+          path: |
+            node_modules
+            govuk_modules
+            public
+          key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}
+      - name: Cache pacts directory
+        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+        with:
+          path: pacts
+          key: ${{ runner.os }}-build-id-${{ github.head_ref }}-${{ github.sha }}-pacts
+      - name: Run unit tests
+        run: npm test -- --forbid-only --forbid-pending
+      - name: Check for generated pacts
+        run: |
+          if [ ! -d pacts ]; then
+            echo "The pact files were not generated, this means that no pact results will be published and this build will fail to deploy"
+            exit 1
+          fi
+
   cypress-tests:
     runs-on: ubuntu-latest
     name: Cypress tests
@@ -96,13 +130,11 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{ steps.parse-cypress-version.outputs.CYPRESS_VERSION }}
-      name: Run Cypress tests with Percy
-        env:
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+      - name: Run cypress tests
         run: |
           npm run cypress:server > /dev/null 2>&1 &
           sleep 5
-          npm run cypress:percy
+          npm run cypress:test
 
   check-docker-base-images-are-manifests:
     uses: alphagov/pay-ci/.github/workflows/_validate_docker_image_is_manifest.yml@master
