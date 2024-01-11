@@ -130,6 +130,9 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{ steps.parse-cypress-version.outputs.CYPRESS_VERSION }}
+      - name: Check Percy secret
+        if: ${{ !env.PERCY_TOKEN }}
+        run: echo "::warning title=GitHub Actions secrets::Workflow requires 'PERCY_TOKEN' secret"
       - name: Run cypress tests with Percy
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
