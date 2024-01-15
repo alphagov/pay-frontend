@@ -96,6 +96,8 @@ describe('Awaiting auth', () => {
       connectorValidPatchConfirmedChargeDetails(chargeId)
     ]
 
+    cy.percySnapshot()
+
     cy.task('clearStubs')
     cy.task('setupStubs', confirmPaymentDetailsStubs)
 
@@ -109,5 +111,7 @@ describe('Awaiting auth', () => {
     cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
     cy.get('#expiry-date').should(($td) => expect($td).to.contain(`${validPayment.expiryMonth}/${validPayment.expiryYear}`))
     cy.get('#cardholder-name').should(($td) => expect($td).to.contain(validPayment.name))
+
+    cy.percySnapshot()
   })
 })
