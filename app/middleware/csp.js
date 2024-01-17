@@ -52,7 +52,7 @@ const skipSendingCspHeader = (req, res, next) => { next() }
 
 const cardDetailsCSP = helmet.contentSecurityPolicy({
   directives: {
-    reportUri: paths.csp.path,
+    reportTo: paths.csp.path,
     frameSrc: frameAndChildSourceCardDetails,
     childSrc: frameAndChildSourceCardDetails,
     imgSrc: imgSourceCardDetails,
@@ -73,7 +73,7 @@ const cardDetailsCSP = helmet.contentSecurityPolicy({
 
 const worldpayIframeCSP = helmet.contentSecurityPolicy({
   directives: {
-    reportUri: paths.csp.path,
+    reportTo: paths.csp.path,
     defaultSrc: CSP_NONE,
     formAction: formActionWP3DS,
     frameAncestors: CSP_SELF,
