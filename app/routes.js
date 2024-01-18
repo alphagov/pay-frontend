@@ -26,7 +26,8 @@ const {
   rateLimitMiddleware,
   requestParseMiddleware,
   detectErrorsMiddleware,
-  captureEventMiddleware
+  captureEventMiddleware,
+  setResponseCspReportingEndpointName
 } = require('./middleware/csp')
 const decryptCardData = require('./middleware/decrypt-card-data')(process.env)
 
@@ -78,7 +79,7 @@ exports.bind = function (app) {
   app.post(paths.csp.path, cspMiddlewareStack) // CSP violation monitoring
   app.post(paths.log.path, chargeCookieRequiredMiddlewareStack, log)
 
-  app.get(card.new.path, standardMiddlewareStack, cardDetails, charge.new)
+  app.get(card.new.path, standardMiddlewareStack, setResponseCspReportingEndpointName, cardDetails, charge.new)
   app.get(card.authWaiting.path, standardMiddlewareStack, charge.authWaiting)
   app.get(card.captureWaiting.path, standardMiddlewareStack, charge.captureWaiting)
   app.post(card.create.path, standardMiddlewareStack, charge.create)
