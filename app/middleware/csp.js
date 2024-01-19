@@ -52,8 +52,16 @@ const connectSourceCardDetails = ['\'self\'', 'https://www.google-analytics.com'
 
 const skipSendingCspHeader = (req, res, next) => { next() }
 
-const setResponseCspReportingEndpointName = (req, res, next) => {
-  res.setHeader('Reporting-Endpoints', `${CSP_REPORTING_ENDPOINT_NAME}="${paths.csp.path}"`)
+const cspEndpointJson = {
+  group: CSP_REPORTING_ENDPOINT_NAME,
+  max_age: 100000,
+  endpoints: [
+    { url: `${paths.csp.path}` }
+  ]
+}
+
+const setResponseCspReportingEndpoint = (req, res, next) => {
+  res.setHeader('Report-To', cspEndpointJson)
   next()
 }
 
@@ -153,5 +161,5 @@ module.exports = {
   captureEventMiddleware,
   requestParseMiddleware,
   detectErrorsMiddleware,
-  setResponseCspReportingEndpointName
+  setResponseCspReportingEndpoint
 }
