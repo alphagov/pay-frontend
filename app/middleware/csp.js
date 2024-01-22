@@ -31,8 +31,6 @@ const styleSourceCardDetails = ['\'self\'', '\'unsafe-eval\'', '\'unsafe-inline\
 const formActionWP3DS = ['\'self\'', 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect',
   'https://secure-test.worldpay.com/shopper/3ds/ddc.html']
 
-const CSP_REPORTING_ENDPOINT_NAME = 'csp-endpoint'
-
 // Direct redirect use case lets post to any given site
 const formActionCardDetails = (req, res) => {
   if (res.locals && res.locals.service &&
@@ -52,14 +50,9 @@ const connectSourceCardDetails = ['\'self\'', 'https://www.google-analytics.com'
 
 const skipSendingCspHeader = (req, res, next) => { next() }
 
-const setResponseCspReportingEndpointName = (req, res, next) => {
-  res.setHeader('Reporting-Endpoints', `${CSP_REPORTING_ENDPOINT_NAME}="${paths.csp.path}"`)
-  next()
-}
-
 const cardDetailsCSP = helmet.contentSecurityPolicy({
   directives: {
-    reportTo: CSP_REPORTING_ENDPOINT_NAME,
+    reportUri: paths.csp.path,
     frameSrc: frameAndChildSourceCardDetails,
     childSrc: frameAndChildSourceCardDetails,
     imgSrc: imgSourceCardDetails,
@@ -80,7 +73,7 @@ const cardDetailsCSP = helmet.contentSecurityPolicy({
 
 const worldpayIframeCSP = helmet.contentSecurityPolicy({
   directives: {
-    reportTo: CSP_REPORTING_ENDPOINT_NAME,
+    reportUri: paths.csp.path,
     defaultSrc: CSP_NONE,
     formAction: formActionWP3DS,
     frameAncestors: CSP_SELF,
@@ -152,6 +145,5 @@ module.exports = {
   rateLimitMiddleware,
   captureEventMiddleware,
   requestParseMiddleware,
-  detectErrorsMiddleware,
-  setResponseCspReportingEndpointName
+  detectErrorsMiddleware
 }
