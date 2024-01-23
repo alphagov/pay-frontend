@@ -177,7 +177,7 @@ describe('CSP middleware', () => {
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
-    const response = { setHeader: sinon.spy() }
+    const response = { setHeader: sinon.spy(), removeHeader: sinon.spy() }
     csp.cardDetails(mockRequest, response, next)
 
     expect(next.called).to.be.true
@@ -190,7 +190,7 @@ describe('CSP middleware', () => {
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
-    const response = { setHeader: sinon.spy() }
+    const response = { setHeader: sinon.spy(), removeHeader: sinon.spy() }
     csp.cardDetails(mockRequest, response, next)
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy-Report-Only')
@@ -202,10 +202,22 @@ describe('CSP middleware', () => {
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
-    const response = { setHeader: sinon.spy() }
+    const response = { setHeader: sinon.spy(), removeHeader: sinon.spy() }
     csp.cardDetails(mockRequest, response, next)
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy')
+  })
+
+  it('should set Reporting-Endpoints header if enforce policy is switched on', () => {
+    process.env.CSP_SEND_HEADER = 'true'
+    process.env.CSP_ENFORCE = 'true'
+    const csp = requireHelper('../../app/middleware/csp')
+
+    const next = sinon.spy()
+    const response = { setHeader: sinon.spy(), removeHeader: sinon.spy() }
+    csp.setReportingEndpoints(mockRequest, response, next)
+
+    sinon.assert.calledWith(response.setHeader, 'Reporting-Endpoints')
   })
 
   it('should add `unsafe-eval` to Content-Security-Policy header when included in configuration', () => {
@@ -214,7 +226,7 @@ describe('CSP middleware', () => {
     const csp = requireHelper('../../app/middleware/csp')
 
     const next = sinon.spy()
-    const response = { setHeader: sinon.spy() }
+    const response = { setHeader: sinon.spy(), removeHeader: sinon.spy() }
     csp.cardDetails(mockRequest, response, next)
 
     sinon.assert.calledWith(response.setHeader, 'Content-Security-Policy', sinon.match(/'unsafe-eval'/g))

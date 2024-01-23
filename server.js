@@ -22,7 +22,7 @@ const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
-const { worldpayIframe } = require('./app/middleware/csp')
+const { setReportingEndpoints, worldpayIframe } = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
 
@@ -189,6 +189,7 @@ function initialise () {
   if (NODE_ENV !== 'test') {
     app.use(metrics.initialise())
   }
+  app.use(setReportingEndpoints) // adds reporting-endpoints header to all responses
   app.use(Sentry.Handlers.requestHandler())
   initialiseProxy(app)
 

@@ -31,6 +31,8 @@ const styleSourceCardDetails = ['\'self\'', '\'unsafe-eval\'', '\'unsafe-inline\
 const formActionWP3DS = ['\'self\'', 'https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect',
   'https://secure-test.worldpay.com/shopper/3ds/ddc.html']
 
+const reportingEndpointName = 'govukpay-csp-reporting'
+
 // Direct redirect use case lets post to any given site
 const formActionCardDetails = (req, res) => {
   if (res.locals && res.locals.service &&
@@ -50,50 +52,47 @@ const connectSourceCardDetails = ['\'self\'', 'https://www.google-analytics.com'
 
 const skipSendingCspHeader = (req, res, next) => { next() }
 
-const cspEndpointJson = {
-  group: 'csp-endpoint',
-  max_age: 604800,
-  endpoints: [
-    { url: paths.csp.path }
-  ]
+const cardDetailsCSP = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      reportUri: [paths.csp.path],
+      reportTo: [reportingEndpointName],
+      frameSrc: frameAndChildSourceCardDetails,
+      childSrc: frameAndChildSourceCardDetails,
+      imgSrc: imgSourceCardDetails,
+      scriptSrc: scriptSourceCardDetails,
+      connectSrc: connectSourceCardDetails,
+      styleSrc: styleSourceCardDetails,
+      formAction: [formActionCardDetails],
+      fontSrc: CSP_SELF,
+      frameAncestors: CSP_SELF,
+      manifestSrc: CSP_NONE,
+      mediaSrc: CSP_NONE,
+      objectSrc: CSP_NONE,
+      baseUri: CSP_NONE
+    },
+    reportOnly: !enforceCsp,
+  },
+})
+
+const worldpayIframeCSP = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      reportUri: [paths.csp.path],
+      reportTo: [reportingEndpointName],
+      defaultSrc: CSP_NONE,
+      formAction: formActionWP3DS,
+      frameAncestors: CSP_SELF,
+      baseUri: CSP_NONE,
+    },
+    reportOnly: !enforceCsp,
+  },
+})
+
+const setReportingEndpoints = (req, res, next) => {
+  res.setHeader('Reporting-Endpoints', `${reportingEndpointName}=${paths.csp.path}`)
+  next()
 }
-
-const cardDetailsCSP = helmet.contentSecurityPolicy({
-  directives: {
-    reportTo: cspEndpointJson.group,
-    reportUri: paths.csp.path,
-    frameSrc: frameAndChildSourceCardDetails,
-    childSrc: frameAndChildSourceCardDetails,
-    imgSrc: imgSourceCardDetails,
-    scriptSrc: scriptSourceCardDetails,
-    connectSrc: connectSourceCardDetails,
-    styleSrc: styleSourceCardDetails,
-    formAction: [formActionCardDetails],
-    fontSrc: CSP_SELF,
-    frameAncestors: CSP_SELF,
-    manifestSrc: CSP_NONE,
-    mediaSrc: CSP_NONE,
-    objectSrc: CSP_NONE,
-    baseUri: CSP_NONE,
-    blockAllMixedContent: true
-  },
-  reportOnly: !enforceCsp,
-  reportTo: cspEndpointJson
-})
-
-const worldpayIframeCSP = helmet.contentSecurityPolicy({
-  directives: {
-    reportTo: cspEndpointJson.group,
-    reportUri: paths.csp.path,
-    defaultSrc: CSP_NONE,
-    formAction: formActionWP3DS,
-    frameAncestors: CSP_SELF,
-    baseUri: CSP_NONE,
-    blockAllMixedContent: true
-  },
-  reportOnly: !enforceCsp,
-  reportTo: cspEndpointJson
-})
 
 const rateLimitMiddleware = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
@@ -152,6 +151,7 @@ const captureEventMiddleware = (ignoredStrings) => {
 }
 
 module.exports = {
+  setReportingEndpoints: sendCspHeader ? setReportingEndpoints : skipSendingCspHeader,
   cardDetails: sendCspHeader ? cardDetailsCSP : skipSendingCspHeader,
   worldpayIframe: sendCspHeader ? worldpayIframeCSP : skipSendingCspHeader,
   rateLimitMiddleware,
