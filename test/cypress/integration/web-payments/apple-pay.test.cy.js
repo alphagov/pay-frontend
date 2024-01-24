@@ -61,6 +61,20 @@ describe('Apple Pay payment flow', () => {
     adminUsersGetService()
   ]
 
+  const createPaymentChargeStubsWithMoto = [
+    connectorFindChargeByToken({ tokenId }),
+    connectorMarkTokenAsUsed(tokenId),
+    connectorGetChargeDetails({
+      chargeId,
+      status: 'CREATED',
+      state: { finished: false, status: 'created' },
+      paymentProvider: 'worldpay',
+      moto: true
+    }),
+    connectorUpdateChargeStatus(chargeId),
+    adminUsersGetService()
+  ]
+
   const createPaymentChargeStubsWithAgreement = [
     connectorFindChargeByToken({ tokenId }),
     connectorMarkTokenAsUsed(tokenId),
@@ -75,7 +89,7 @@ describe('Apple Pay payment flow', () => {
     adminUsersGetService()
   ]
 
-  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY', agreement) => {
+  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY', agreement, moto) => {
     const chargeDetails = {
       chargeId,
       status: 'ENTERING CARD DETAILS',
@@ -89,6 +103,10 @@ describe('Apple Pay payment flow', () => {
 
     if (agreement) {
       chargeDetails.agreement = { agreement_id: 'an-agreement-id' }
+    }
+
+    if (moto) {
+      chargeDetails.moto = moto
     }
 
     return [
@@ -346,6 +364,30 @@ describe('Apple Pay payment flow', () => {
 
       cy.task('clearStubs')
       cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'MANDATORY', true))
+
+      cy.visit(`/card_details/${chargeId}`)
+
+      // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
+      cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('not.exist')
+
+      // 8. User should see normal payment form
+      cy.get('#card-no').should('be.visible')
+    })
+
+    it('Should not show Apple Pay as service is moto', () => {
+      cy.task('setupStubs', createPaymentChargeStubsWithMoto)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be marked as used (POST)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+
+      cy.task('clearStubs')
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'MANDATORY', false, true))
 
       cy.visit(`/card_details/${chargeId}`)
 

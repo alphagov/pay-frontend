@@ -41,7 +41,7 @@
 
 
 {% block bodyStart %}
-  {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement %}
+  {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement and not moto%}
     <script nonce="{{ nonce }}">
       {% if allowApplePay %}
         if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.ApplePaySession.supportsVersion(4)) {
@@ -101,13 +101,13 @@
                 </div>
               </div>
             <div id="wallet-options">
-            {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement %}
+            {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement and not moto%}
               <div class="web-payment-button-section govuk-!-margin-bottom-7">
                 <h1 class="govuk-heading-l">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
                 {{ paymentSummary() }}
               </div>
             {% endif %}
-            {% if allowApplePay and not savePaymentInstrumentToAgreement%}
+            {% if allowApplePay and not savePaymentInstrumentToAgreement and not moto%}
               <div class="apple-pay-container">
                 <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithApplePay") }}</h2>
 
@@ -131,7 +131,7 @@
                 </form>
               </div>
             {% endif %}
-            {% if allowGooglePay and not savePaymentInstrumentToAgreement %}
+            {% if allowGooglePay and not savePaymentInstrumentToAgreement and not moto%}
               <div class="google-pay-container">
                 <h2 class="govuk-heading-m">{{ __p("cardDetails.webPayments.payWithGooglePay") }}</h2>
 
@@ -159,7 +159,7 @@
             <div id="spinner" class="hidden"><img src="/images/spinner.gif" alt="{{ __p("authorisation.spinnerAltText") }}"/></div>
 
             <div id="card-details-wrap">
-              {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement %}
+              {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement and not moto%}
                 <h2 class="govuk-heading-m web-payment-button-section">{{ __p("cardDetails.enterCardDetails") }}</h2>
               {% endif %}
               <div class="non-web-payment-button-section govuk-!-margin-bottom-5">
