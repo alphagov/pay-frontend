@@ -52,6 +52,9 @@ module.exports = (function () {
     if (charge.wallet_type) {
       chargeObj.walletType = charge.wallet_type
     }
+    if (charge.moto) {
+      chargeObj.moto = charge.moto
+    }
 
     return chargeObj
   }

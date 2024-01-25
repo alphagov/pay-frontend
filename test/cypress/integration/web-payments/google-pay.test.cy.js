@@ -43,7 +43,7 @@ describe('Google Pay payment flow', () => {
     complete: () => true
   }
 
-  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled, agreement) => {
+  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled, agreement, moto) => {
     const createdCharge = {
       chargeId,
       status: 'CREATED',
@@ -57,6 +57,9 @@ describe('Google Pay payment flow', () => {
     }
     if (agreement) {
       createdCharge.agreement = { agreement_id: 'an-agreement-id' }
+    }
+    if (moto) {
+      createdCharge.moto = moto
     }
     const captureApprovedCharge = {
       chargeId,
@@ -324,6 +327,15 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`)
 
       cy.log('Should not show Google Pay as payment is a recurring one')
+
+      cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
+
+      cy.task('clearStubs')
+      cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false, true, true)])
+
+      cy.visit(`/card_details/${chargeId}`)
+
+      cy.log('Should not show Google Pay as service is moto')
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('not.exist')
     })
