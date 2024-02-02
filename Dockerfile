@@ -8,7 +8,7 @@ RUN npm ci --quiet
 COPY . .
 RUN npm run compile
 
-FROM node:18.19.0-alpine3.18@sha256:4bdb3f3105718f0742bc8d64bb4e36e8f955ebbee295325e40ae80bc8ef78833 AS final
+FROM node:18.19.0-alpine3.18@sha256:93f218ddcbc7b9a0b1e70f9c92ee72dc939085ff1f3442e5d091a86c90fd538a AS final
 
 RUN ["apk", "--no-cache", "upgrade"]
 
