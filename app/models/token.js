@@ -1,12 +1,12 @@
 'use strict'
 
 // Local dependencies
-const connectorClient = require('../services/clients/connector.client')
+const paymentsClient = require('../services/clients/payments.client')
 
 const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = {}) {
   let response
   try {
-    response = await connectorClient({ correlationId }).markTokenAsUsed({ tokenId }, loggingFields)
+    response = await paymentsClient.markTokenAsUsed(tokenId, loggingFields)
   } catch (err) {
     throw new Error('CLIENT_UNAVAILABLE', err)
   }

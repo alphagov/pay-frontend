@@ -2,6 +2,7 @@
 
 const logger = require('../utils/logger')(__filename)
 const connectorClient = require('../services/clients/connector.client')
+const paymentsClient = require('../services/clients/payments.client')
 const State = require('../../config/state.js')
 const StateModel = require('../../config/state')
 
@@ -76,7 +77,7 @@ module.exports = correlationId => {
   const findByToken = async function (tokenId, loggingFields = {}) {
     let response
     try {
-      response = await connectorClient({ correlationId }).findByToken({ tokenId }, loggingFields)
+      response = await paymentsClient.findByToken(tokenId, loggingFields)
     } catch (err) {
       throw new Error('CLIENT_UNAVAILABLE', err)
     }

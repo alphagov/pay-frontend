@@ -28,12 +28,12 @@ exports.new = async function (req, res) {
   try {
     const tokenResponse = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
 
-    const chargeId = tokenResponse.charge.charge_id
-    const chargeStatus = tokenResponse.charge.status
+    const chargeId = tokenResponse.payment.external_id
+    const chargeStatus = 'CREATED' // tokenResponse.payment.status
 
     setLoggingField(req, PAYMENT_EXTERNAL_ID, chargeId)
-    setLoggingField(req, GATEWAY_ACCOUNT_ID, tokenResponse.charge.gateway_account.gateway_account_id)
-    setLoggingField(req, GATEWAY_ACCOUNT_TYPE, tokenResponse.charge.gateway_account.type)
+    setLoggingField(req, GATEWAY_ACCOUNT_ID, tokenResponse.payment.gateway_account_id)
+    // setLoggingField(req, GATEWAY_ACCOUNT_TYPE, tokenResponse.charge.gateway_account.type)
 
     if (tokenResponse.used === true) {
       if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
