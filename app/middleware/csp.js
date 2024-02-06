@@ -9,7 +9,7 @@ const hasSubstr = require('../utils/has-substr')
 const sendCspHeader = process.env.CSP_SEND_HEADER === 'true'
 const enforceCsp = process.env.CSP_ENFORCE === 'true'
 const allowUnsafeEvalScripts = process.env.CSP_ALLOW_UNSAFE_EVAL_SCRIPTS === 'true'
-
+const frontendUrl = process.env.FRONTEND_URL || ''
 // Script responsible for setting 'js-enabled' class, extends GOV.UK frontend `layout` which we have no control over
 // and never changes
 const govUkFrontendLayoutJsEnabledScriptHash = '\'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=\''
@@ -90,7 +90,7 @@ const worldpayIframeCSP = helmet({
 })
 
 const setReportingEndpoints = (req, res, next) => {
-  res.setHeader('Reporting-Endpoints', `${reportingEndpointName}=${paths.csp.path}`)
+  res.setHeader('Reporting-Endpoints', `${reportingEndpointName}=${frontendUrl}${paths.csp.path}`)
   next()
 }
 
