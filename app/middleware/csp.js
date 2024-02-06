@@ -90,7 +90,7 @@ const worldpayIframeCSP = helmet({
 })
 
 const setReportingEndpoints = (req, res, next) => {
-  res.setHeader('Reporting-Endpoints', `${reportingEndpointName}=${paths.csp.path}`)
+  res.setHeader('Reporting-Endpoints', `${reportingEndpointName}=http://127.0.0.1:${process.env.PORT}${paths.csp.path}`)
   next()
 }
 
