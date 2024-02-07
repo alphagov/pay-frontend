@@ -44,29 +44,69 @@ describe('CSP report endpoint', () => {
     sentrySpy.resetHistory()
   })
 
-  const validPayload = {
+  const validReportUriPayload = {
     'csp-report': {
-      'blocked-uri': 'https://www.example.com',
-      'violated-directive': 'connect-src'
+      'document-uri': 'https://example.com/page-with-violation',
+      'referrer': '',
+      'violated-directive': 'script-src \'self\'',
+      'effective-directive': 'script-src',
+      'original-policy': 'default-src \'none\'; script-src \'self\'; object-src \'self\'; report-to: default',
+      'disposition': 'enforce',
+      'blocked-uri': 'https://evil.example.com/malicious.js',
+      'line-number': 22,
+      'column-number': 13,
+      'source-file': 'https://example.com/script.js',
+      'status-code': 200,
+      'script-sample': ''
     }
   }
 
-  it('should return 204 and send to sentry if a valid csp report is present', async () => {
-    await request(underTest)
-      .post('/test')
-      .set('user-agent', 'supertest')
-      .send(validPayload)
-      .expect(204)
-
-    expect(sentrySpy.calledOnce).to.be.true
-    expect(sentrySpy.calledWith({
-      message: 'Blocked connect-src from https://www.example.com',
-      level: 'warning',
-      extra: {
-        'cspReport': validPayload['csp-report'],
-        'userAgent': 'supertest'
+  const validReportingAPIPayload = [
+    {
+      'type': 'csp-violation',
+      'age': 310,
+      'url': 'https://example.com/page-with-violation',
+      'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36',
+      'body': {
+        'document-uri': 'https://example.com/page-with-violation',
+        'referrer': '',
+        'violated-directive': 'script-src \'self\'',
+        'effective-directive': 'script-src',
+        'original-policy': 'default-src \'none\'; script-src \'self\'; object-src \'self\'; report-to: default',
+        'disposition': 'enforce',
+        'blocked-uri': 'https://evil.example.com/malicious.js',
+        'line-number': 22,
+        'column-number': 13,
+        'source-file': 'https://example.com/script.js',
+        'status-code': 200,
+        'script-sample': ''
       }
-    })).to.be.true
+    }
+  ]
+
+  const validPayloads = [
+    { arg: validReportUriPayload, expected: validReportUriPayload['csp-report'], type: 'report-uri' },
+    { arg: validReportingAPIPayload, expected: validReportingAPIPayload[0]['body'], type: 'reporting api' }
+  ]
+
+  validPayloads.forEach(test => {
+    it(`should return 204 and send to sentry if a valid ${test.type} csp report is present`, async () => {
+      await request(underTest)
+        .post('/test')
+        .set('user-agent', 'supertest')
+        .send(test.arg)
+        .expect(204)
+
+      expect(sentrySpy.calledOnce).to.be.true
+      expect(sentrySpy.calledWith({
+        message: 'Blocked script-src \'self\' from https://evil.example.com/malicious.js',
+        level: 'warning',
+        extra: {
+          'cspReport': test.expected,
+          'userAgent': 'supertest'
+        }
+      })).to.be.true
+    })
   })
 
   it('should return 204 and not send to sentry if a valid csp report is present but the blocked-uri is ignored', async () => {
@@ -88,14 +128,14 @@ describe('CSP report endpoint', () => {
     await request(underTest)
       .post('/test')
       .set('content-type', 'application/x-www-form-urlencoded')
-      .send(validPayload)
+      .send(validReportUriPayload)
       .expect(400)
   })
 
   it('should return 400 if payload is too large', async () => {
 
     const largePayload = {
-      ...validPayload,
+      ...validReportUriPayload,
       'large_value': 'some text here x1000'.repeat(1000)
     }
 
@@ -116,7 +156,7 @@ describe('CSP report endpoint', () => {
       .expect(400)
 
     expect(loggingSpy.calledOnce).to.be.true
-    expect(loggingSpy.calledWith('CSP violation request payload could not be parsed')).to.be.true
+    expect(loggingSpy.calledWith('CSP violation request payload did not match expected content type')).to.be.true
   })
 
   it('should return 400 if json does not included expected values', async () => {
@@ -135,26 +175,26 @@ describe('CSP report endpoint', () => {
       await request(underTest)
         .post('/test')
         .set('x-forwarded-for', '1.2.3.4, 2.2.2.2, 3.3.3.3')
-        .send(validPayload)
+        .send(validReportingAPIPayload)
         .expect(204)
 
       await request(underTest)
         .post('/test')
         .set('x-forwarded-for', '5.6.7.8, 2.2.2.2, 3.3.3.3')
-        .send(validPayload)
+        .send(validReportUriPayload)
         .expect(204)
     }
 
     await request(underTest)
       .post('/test')
       .set('x-forwarded-for', '1.2.3.4, 2.2.2.2, 3.3.3.3')
-      .send(validPayload)
+      .send(validReportUriPayload)
       .expect(429)
 
     await request(underTest)
       .post('/test')
       .set('x-forwarded-for', '5.6.7.8, 2.2.2.2, 3.3.3.3')
-      .send(validPayload)
+      .send(validReportingAPIPayload)
       .expect(429)
   })
 })
