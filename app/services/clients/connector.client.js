@@ -285,6 +285,15 @@ function getGatewayAccount (accountId, loggingFields = {}) {
   return _getConnector(url, 'get gateway account', loggingFields, 'getGatewayAccount')
 }
 
+function createAndAuthoriseCharge (paymentData, authCardDetails, loggingFields = {}) {
+  const url = baseUrl + `/v1/frontend/account/${paymentData.gateway_account_id}/charges/create-and-authorise`
+  const request = {
+    ...paymentData,
+    auth_card_details: authCardDetails
+  }
+  return _postConnector(url, request, 'create an authorise charge', loggingFields, 'createAndAuthoriseCharge')
+}
+
 module.exports = function (clientOptions = {}) {
   baseUrl = clientOptions.baseUrl || process.env.CONNECTOR_HOST
   correlationId = clientOptions.correlationId || ''
@@ -300,6 +309,7 @@ module.exports = function (clientOptions = {}) {
     patch,
     markTokenAsUsed,
     getWorldpay3dsFlexJwt,
-    getGatewayAccount
+    getGatewayAccount,
+    createAndAuthoriseCharge
   }
 }

@@ -181,11 +181,12 @@ module.exports = {
         userEmail = emailChanged ? req.body.email : req.body['email-typo-sugestion']
         emailTypos = req.body['email-typo-sugestion'] !== req.body.originalemail ? commonTypos(userEmail) : null
       }
-      try {
-        await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, getLoggingFields(req))
-      } catch (err) {
-        return responseRouter.systemErrorResponse(req, res, 'Error patching email address on Charge', withAnalytics(charge), err)
-      }
+      // TODO: charge doesn't exist in connector to patch the email address on. Need to figure out where we store this
+      // try {
+      //   await Charge(req.headers[CORRELATION_HEADER]).patch(req.chargeId, 'replace', 'email', userEmail, getLoggingFields(req))
+      // } catch (err) {
+      //   return responseRouter.systemErrorResponse(req, res, 'Error patching email address on Charge', withAnalytics(charge), err)
+      // }
     }
 
     if (data.validation.hasError || emailTypos) {
@@ -218,10 +219,10 @@ module.exports = {
       delete payload.address
     }
     try {
-      const response = await connectorClient({ correlationId }).chargeAuth({
-        chargeId: req.chargeId,
-        payload
-      }, getLoggingFields(req))
+      const response = await connectorClient({ correlationId }).createAndAuthoriseCharge(
+        req.chargeData,
+        payload,
+        getLoggingFields(req))
       handleCreateResponse(req, res, charge, response)
     } catch (err) {
       logging.failedChargePatch(err.message, getLoggingFields(req))

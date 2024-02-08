@@ -54,7 +54,8 @@ exports.bind = function (app) {
     resolveAccount,
     resolveLanguage,
     resolveService,
-    stateEnforcer,
+    // TODO disable the state enforcer - we'll probably need to rethink how this works
+    // stateEnforcer,
     decryptCardData
   ]
 
