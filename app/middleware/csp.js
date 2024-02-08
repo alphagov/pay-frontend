@@ -117,7 +117,7 @@ const requestParseMiddleware = (maxPayloadBytes) => {
 const detectErrorsMiddleware = (err, req, res, next) => {
   if (err) {
     if (err.type === 'entity.too.large') logger.info('CSP violation request payload exceeds maximum size')
-    if (err.type === 'entity.parse.failed') logger.info('CSP violation request payload could not be parsed')
+    if (err.type === 'entity.parse.failed') logger.info('CSP violation request payload did not match expected content type')
     return res.status(400).end()
   }
   next()
@@ -125,26 +125,36 @@ const detectErrorsMiddleware = (err, req, res, next) => {
 
 const captureEventMiddleware = (ignoredStrings) => {
   return (req, res) => {
-    const cspReport = req.body['csp-report']
+    let reports = undefined
+    if (Array.isArray(req.body) && req.body.length > 0) {
+      reports = req.body.filter(report => report.type === 'csp-violation') // new style reporting-api
+    } else if (req.body['csp-report'] !== undefined) {
+      reports = [{ body: req.body['csp-report'] }] // old style report-uri
+    }
     const userAgent = req.headers['user-agent']
-    if (cspReport !== undefined) {
-      const blockedUri = cspReport['blocked-uri']
-      const violatedDirective = cspReport['violated-directive']
-      if (violatedDirective === undefined || blockedUri === undefined) {
-        return res.status(400).end()
-      } else {
-        if (hasSubstr(ignoredStrings, blockedUri)) return res.status(204).end()
-        Sentry.captureEvent({
-          message: `Blocked ${violatedDirective} from ${blockedUri}`,
-          level: 'warning',
-          extra: {
-            cspReport: cspReport,
-            userAgent: userAgent
-          }
-        })
-        return res.status(204).end()
-      }
+    if (reports !== undefined) {
+      reports.forEach(report => {
+        const body = report.body
+        const blockedUri = body['blocked-uri']
+        const violatedDirective = body['violated-directive']
+        if (violatedDirective === undefined || blockedUri === undefined) {
+          logger.info('CSP violation report is invalid')
+          return res.status(400).end()
+        } else {
+          if (hasSubstr(ignoredStrings, blockedUri)) return res.status(204).end()
+          Sentry.captureEvent({
+            message: `Blocked ${violatedDirective} from ${blockedUri}`,
+            level: 'warning',
+            extra: {
+              cspReport: body,
+              userAgent: userAgent
+            }
+          })
+          return res.status(204).end()
+        }
+      })
     } else {
+      logger.info('CSP violation report missing')
       return res.status(400).end()
     }
   }
