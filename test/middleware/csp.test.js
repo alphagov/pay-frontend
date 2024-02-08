@@ -63,30 +63,26 @@ describe('CSP report endpoint', () => {
 
   const validReportingAPIPayload = [
     {
-      'type': 'csp-violation',
-      'age': 310,
-      'url': 'https://example.com/page-with-violation',
-      'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36',
+      'age': 2,
       'body': {
-        'document-uri': 'https://example.com/page-with-violation',
-        'referrer': '',
-        'violated-directive': 'script-src \'self\'',
-        'effective-directive': 'script-src',
-        'original-policy': 'default-src \'none\'; script-src \'self\'; object-src \'self\'; report-to: default',
+        'blockedURL': 'https://site2.example/script.js',
         'disposition': 'enforce',
-        'blocked-uri': 'https://evil.example.com/malicious.js',
-        'line-number': 22,
-        'column-number': 13,
-        'source-file': 'https://example.com/script.js',
-        'status-code': 200,
-        'script-sample': ''
-      }
+        'documentURL': 'https://site.example',
+        'effectiveDirective': 'script-src-elem',
+        'originalPolicy': 'script-src \'self\'; object-src \'none\'; report-to main-endpoint;',
+        'referrer': 'https://site.example',
+        'sample': '',
+        'statusCode': 200
+      },
+      'type': 'csp-violation',
+      'url': 'https://site.example',
+      'user_agent': 'Mozilla/5.0... Chrome/92.0.4504.0'
     }
   ]
 
   const validPayloads = [
-    { arg: validReportUriPayload, expected: validReportUriPayload['csp-report'], type: 'report-uri' },
-    { arg: validReportingAPIPayload, expected: validReportingAPIPayload[0]['body'], type: 'reporting api' }
+    { arg: validReportUriPayload, expectedMessage: 'Blocked script-src \'self\' from https://evil.example.com/malicious.js', expectedReport: validReportUriPayload['csp-report'], type: 'report-uri' },
+    { arg: validReportingAPIPayload, expectedMessage: 'Blocked script-src-elem from https://site2.example/script.js', expectedReport: validReportingAPIPayload[0]['body'], type: 'reporting api' }
   ]
 
   validPayloads.forEach(test => {
@@ -99,10 +95,10 @@ describe('CSP report endpoint', () => {
 
       expect(sentrySpy.calledOnce).to.be.true
       expect(sentrySpy.calledWith({
-        message: 'Blocked script-src \'self\' from https://evil.example.com/malicious.js',
+        message: test.expectedMessage,
         level: 'warning',
         extra: {
-          'cspReport': test.expected,
+          'cspReport': test.expectedReport,
           'userAgent': 'supertest'
         }
       })).to.be.true
