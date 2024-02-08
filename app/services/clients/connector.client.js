@@ -280,6 +280,11 @@ const markTokenAsUsed = (chargeOptions, loggingFields = {}) => {
   return _postConnector(markUsedTokenUrl, undefined, 'mark token as used', loggingFields, 'markTokenAsUsed')
 }
 
+function getGatewayAccount (accountId, loggingFields = {}) {
+  const url = baseUrl + `/v1/frontend/accounts/${accountId}`
+  return _getConnector(url, 'get gateway account', loggingFields, 'getGatewayAccount')
+}
+
 module.exports = function (clientOptions = {}) {
   baseUrl = clientOptions.baseUrl || process.env.CONNECTOR_HOST
   correlationId = clientOptions.correlationId || ''
@@ -294,6 +299,7 @@ module.exports = function (clientOptions = {}) {
     findByToken,
     patch,
     markTokenAsUsed,
-    getWorldpay3dsFlexJwt
+    getWorldpay3dsFlexJwt,
+    getGatewayAccount
   }
 }

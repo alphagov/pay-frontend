@@ -275,6 +275,7 @@ function logErrorPageShown (page, reason, loggingFields, error) {
     page,
     reason,
     error,
+    message: error && error.message,
     ...loggingFields
   })
 }

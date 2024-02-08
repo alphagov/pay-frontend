@@ -18,7 +18,9 @@ const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
 const actionName = require('./middleware/action-name.js')
 const stateEnforcer = require('./middleware/state-enforcer.js')
 const retrieveCharge = require('./middleware/retrieve-charge.js')
+const retrievePayment = require('./middleware/retrieve-payment')
 const enforceSessionCookie = require('./middleware/enforce-session-cookie.js')
+const resolveAccount = require('./middleware/resolve-account')
 const resolveService = require('./middleware/resolve-service.js')
 const resolveLanguage = require('./middleware/resolve-language.js')
 const {
@@ -47,7 +49,9 @@ exports.bind = function (app) {
     csrfTokenGeneration,
     actionName,
     enforceSessionCookie,
-    retrieveCharge,
+    // retrieveCharge,
+    retrievePayment,
+    resolveAccount,
     resolveLanguage,
     resolveService,
     stateEnforcer,

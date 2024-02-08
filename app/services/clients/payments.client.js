@@ -103,7 +103,13 @@ function markTokenAsUsed (tokenId, loggingFields = {}) {
   return _postPayments(url, undefined, 'mark token as used', loggingFields, 'markTokenAsUsed')
 }
 
+function findPayment (externalId, loggingFields = {}) {
+  const url = BASE_URL + `/v1/frontend/payment/${externalId}`
+  return _getPayments(url, 'find payment by external ID', loggingFields, 'findPayment')
+}
+
 module.exports = {
   findByToken,
-  markTokenAsUsed
+  markTokenAsUsed,
+  findPayment
 }

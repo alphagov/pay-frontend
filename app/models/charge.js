@@ -50,6 +50,11 @@ module.exports = correlationId => {
     })
   }
 
+  async function findPaymentInPaymentsService (externalId, loggingFields) {
+    const response = await paymentsClient.findPayment(externalId, loggingFields)
+    return response.body
+  }
+
   const capture = function (chargeId, loggingFields = {}) {
     return new Promise(function (resolve, reject) {
       connectorClient({ correlationId }).capture({ chargeId }, loggingFields)
@@ -151,6 +156,7 @@ module.exports = correlationId => {
     updateStatus,
     updateToEnterDetails,
     find,
+    findPaymentInPaymentsService,
     capture,
     findByToken,
     cancel,

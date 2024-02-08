@@ -130,9 +130,10 @@ module.exports = {
         charge.countries = countries
         if (charge.status === State.ENTERING_CARD_DETAILS) return responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
         // else
-        Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id, getLoggingFields(req)).then(
-          () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
-          () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
+        // Charge(req.headers[CORRELATION_HEADER]).updateToEnterDetails(charge.id, getLoggingFields(req)).then(
+        //   () => responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge)),
+        //   () => responseRouter.response(req, res, 'NOT_FOUND', withAnalyticsError()))
+        responseRouter.response(req, res, views.CHARGE_VIEW, withAnalytics(charge, charge))
       },
       err => {
         responseRouter.systemErrorResponse(req, res, 'Calling connector to get a Worldpay 3DS Flex DDC JWT threw exception', withAnalytics(charge), err)

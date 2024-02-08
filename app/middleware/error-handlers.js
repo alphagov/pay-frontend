@@ -7,6 +7,6 @@ module.exports = {
     if (res.headersSent) {
       return next(err)
     }
-    responseRouter.systemErrorResponse(req, res, 'Unhandled error caught by the default error handler', err)
+    responseRouter.systemErrorResponse(req, res, 'Unhandled error caught by the default error handler', {}, err)
   }
 }

@@ -20,7 +20,7 @@ const serviceCache = new Cache()
 //                is an issue in favour of correctly passing an new Error object
 //                through to `next`
 module.exports = function resolveServiceMiddleware (req, res, next) {
-  const gatewayAccountId = lodash.get(req, 'chargeData.gateway_account.gateway_account_id')
+  const gatewayAccountId = req.chargeData && req.chargeData.gateway_account_id
   if (!req.chargeId && !req.chargeData) return responseRouter.response(req, res, 'UNAUTHORISED', withAnalyticsError())
   const cachedService = serviceCache.get(gatewayAccountId)
   if (cachedService) {
@@ -39,7 +39,7 @@ module.exports = function resolveServiceMiddleware (req, res, next) {
         next()
       })
       .catch((err) => {
-        logger.error(`Failed to retrieve service information for service: ${req.chargeData.gateway_account.serviceName}`, {
+        logger.error(`Failed to retrieve service information for gateway account ${gatewayAccountId}`, {
           ...getLoggingFields(req),
           error: err
         })
