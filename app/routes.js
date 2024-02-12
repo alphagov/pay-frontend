@@ -67,7 +67,7 @@ exports.bind = function (app) {
 
   const cspMiddlewareStack = [
     rateLimitMiddleware,
-    requestParseMiddleware(4000),
+    requestParseMiddleware(50000),
     detectErrorsMiddleware,
     captureEventMiddleware([
       'www.facebook.com',
