@@ -274,7 +274,7 @@ function logErrorPageShown (page, reason, loggingFields, error) {
   logger.info('Rendering error response', {
     page,
     reason,
-    error,
+    error: (error && error.message) || error,
     ...loggingFields
   })
 }

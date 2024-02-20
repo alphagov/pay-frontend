@@ -122,7 +122,7 @@ describe('rendering behaviour', () => {
   })
 
   it('should render error response', () => {
-    responseRouter.errorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, 'err')
+    responseRouter.errorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, new Error('err'))
     expect(render.lastCall.args).to.deep.equal(['error', {
       returnUrl: 'http://example.com',
       viewName: 'ERROR',
@@ -136,7 +136,7 @@ describe('rendering behaviour', () => {
   })
 
   it('should render system error response', () => {
-    responseRouter.systemErrorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, 'err')
+    responseRouter.systemErrorResponse(request, response, 'A reason', { returnUrl: 'http://example.com' }, new Error('err'))
     expect(render.lastCall.args).to.deep.equal(['errors/system-error', {
       returnUrl: 'http://example.com',
       viewName: 'SYSTEM_ERROR'
