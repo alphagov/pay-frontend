@@ -89,7 +89,21 @@ describe('Apple Pay payment flow', () => {
     adminUsersGetService()
   ]
 
-  const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY', agreement, moto) => {
+  const createPaymentChargeStubsWelsh = [
+    connectorFindChargeByToken({ tokenId }),
+    connectorMarkTokenAsUsed(tokenId),
+    connectorGetChargeDetails({
+      chargeId,
+      status: 'CREATED',
+      state: { finished: false, status: 'created' },
+      paymentProvider: 'worldpay',
+      language: 'cy'
+    }),
+    connectorUpdateChargeStatus(chargeId),
+    adminUsersGetService()
+  ]
+
+  const checkCardDetailsStubsWithApplePayOrGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY', agreement, moto, language = 'en') => {
     const chargeDetails = {
       chargeId,
       status: 'ENTERING CARD DETAILS',
@@ -98,7 +112,8 @@ describe('Apple Pay payment flow', () => {
       allowGooglePay: googlePayEnabled,
       gatewayMerchantId: 'SMTHG12345UP',
       emailCollectionMode: emailCollectionMode,
-      paymentProvider: 'worldpay'
+      paymentProvider: 'worldpay',
+      language
     }
 
     if (agreement) {
@@ -143,7 +158,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false))
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -157,11 +172,17 @@ describe('Apple Pay payment flow', () => {
       })
 
       // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
+      // 8. Text will display correctly in English
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.visible')
+      cy.get('#wallet-options>.web-payment-button-section>.govuk-heading-l').should('contain', 'Enter payment details')
+      cy.get('#wallet-options>.apple-pay-container>.govuk-heading-m').should('contain', 'Pay with Apple Pay')
+      cy.get('#apple-pay-payment-method-divider-word').should('contain', 'or')
+      cy.get('#card-details-wrap>.web-payment-button-section').should('contain', 'Enter card details')
+
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').click()
 
-      // 8. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
-      // 9. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
+      // 9. User clicks though the native payment UI and passes their tokenised card data to the auth request handler
+      // 10. The auth response comes back from connector and frontend sends capture request and redirects the user the success page
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?success')
@@ -181,7 +202,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'OFF'))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false, 'OFF'))
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -219,7 +240,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false))
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -259,7 +280,7 @@ describe('Apple Pay payment flow', () => {
       })
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false))
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -294,7 +315,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(false, false))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(false, false))
 
       cy.visit(`/card_details/${chargeId}`)
 
@@ -325,7 +346,7 @@ describe('Apple Pay payment flow', () => {
       })
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, true))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, true))
 
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
@@ -363,7 +384,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'MANDATORY', true))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false, 'MANDATORY', true))
 
       cy.visit(`/card_details/${chargeId}`)
 
@@ -387,7 +408,7 @@ describe('Apple Pay payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
 
       cy.task('clearStubs')
-      cy.task('setupStubs', checkCardDetailsStubsWithApplePayorGooglePay(true, false, 'MANDATORY', false, true))
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false, 'MANDATORY', false, true))
 
       cy.visit(`/card_details/${chargeId}`)
 
@@ -396,6 +417,44 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+    })
+  })
+
+  describe('Apple Pay Welsh language payment flow', () => {
+    describe('Secure card payment page', () => {
+      it('Should show Apple Pay as a payment option in Welsh', () => {
+        cy.task('setupStubs', createPaymentChargeStubsWelsh)
+        cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be marked as used (POST)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+        cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+
+        cy.task('clearStubs')
+        cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false, 'MANDATORY', null, null, 'cy'))
+
+        cy.visit(`/card_details/${chargeId}`, {
+          onBeforeLoad: win => {
+            // Stub Apple Pay API (which only exists within Safari)
+            win.ApplePaySession = getMockApplePayClass(validPaymentRequestResponse, 'jonheslop@bla.test')
+            // Stub fetch so we can simulate
+            // 1. The merchant validation call to Apple
+            // 2. The auth call to connector
+            cy.stub(win, 'fetch', mockFetchAPI)
+          }
+        })
+
+        // 7. Javascript will detect browser is payment Request compatible and show the option to pay with Apple Pay
+        // 8. Text will display correctly in Welsh
+        cy.get('#wallet-options>.web-payment-button-section>.govuk-heading-l').should('contain', 'Rhowch fanylion taliad')
+        cy.get('#wallet-options>.apple-pay-container>.govuk-heading-m').should('contain', 'Talu gyda Apple Pay')
+        cy.get('#apple-pay-payment-method-divider-word').should('contain', 'neu')
+        cy.get('#card-details-wrap>.web-payment-button-section').should('contain', 'Rhowch fanylion y cerdyn')
+      })
     })
   })
 })
