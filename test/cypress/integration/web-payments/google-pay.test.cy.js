@@ -43,7 +43,7 @@ describe('Google Pay payment flow', () => {
     complete: () => true
   }
 
-  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled, agreement, moto) => {
+  const chargeStubsWithGooglePayOrApplePayEnabled = (googlePayEnabled, applePayEnabled, agreement, moto, language = 'en') => {
     const createdCharge = {
       chargeId,
       status: 'CREATED',
@@ -53,7 +53,8 @@ describe('Google Pay payment flow', () => {
       gatewayMerchantId: 'SMTHG12345UP',
       requires3ds: true,
       integrationVersion3ds: 2,
-      paymentProvider: 'worldpay'
+      paymentProvider: 'worldpay',
+      language
     }
     if (agreement) {
       createdCharge.agreement = { agreement_id: 'an-agreement-id' }
@@ -70,7 +71,8 @@ describe('Google Pay payment flow', () => {
       gatewayMerchantId: 'SMTHG12345UP',
       requires3ds: true,
       integrationVersion3ds: 2,
-      paymentProvider: 'worldpay'
+      paymentProvider: 'worldpay',
+      language
     }
     if (agreement) {
       captureApprovedCharge.agreement = { agreement_id: 'an-agreement-id' }
@@ -116,6 +118,11 @@ describe('Google Pay payment flow', () => {
       })
 
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').should('be.visible')
+      cy.get('#wallet-options>.web-payment-button-section>.govuk-heading-l').should('contain', 'Enter payment details')
+      cy.get('#wallet-options>.google-pay-container>.govuk-heading-m').should('contain', 'Pay with Google Pay')
+      cy.get('#google-pay-payment-method-divider-word').should('contain', 'or')
+      cy.get('#card-details-wrap>.web-payment-button-section').should('contain', 'Enter card details')
+
       cy.get('#google-pay-payment-method-submit.web-payment-button--google-pay').click()
 
       cy.location().should((loc) => {
@@ -366,6 +373,37 @@ describe('Google Pay payment flow', () => {
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq('/humans.txt')
         expect(loc.search).to.eq('?confirm')
+      })
+    })
+  })
+
+  describe('Google Pay Welsh language payment flow', () => {
+    describe('Secure card payment page', () => {
+      it('Should show Google Pay as a payment option in Welsh', () => {
+        cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
+        cy.visit(`/secure/${tokenId}`)
+
+        cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+
+        cy.log('Should show Google Pay as a payment option and user chooses it')
+
+        cy.task('clearStubs')
+        cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(true, false, null, null, 'cy'), worldpay3dsFlexDdcStub])
+
+        cy.visit(`/card_details/${chargeId}`, {
+          onBeforeLoad: win => {
+            if (win.PaymentRequest) {
+              cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            } else {
+              win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
+            }
+          }
+        })
+
+        cy.get('#wallet-options>.web-payment-button-section>.govuk-heading-l').should('contain', 'Rhowch fanylion taliad')
+        cy.get('#wallet-options>.google-pay-container>.govuk-heading-m').should('contain', 'Talu gyda Google Pay')
+        cy.get('#google-pay-payment-method-divider-word').should('contain', 'neu')
+        cy.get('#card-details-wrap>.web-payment-button-section').should('contain', 'Rhowch fanylion y cerdyn')
       })
     })
   })
