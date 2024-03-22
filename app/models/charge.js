@@ -38,10 +38,10 @@ module.exports = correlationId => {
     return new Promise(function (resolve, reject) {
       connectorClient({ correlationId }).findCharge({ chargeId }, loggingFields)
         .then(response => {
-          if (response.statusCode !== 200) {
+          if (response.status !== 200) {
             return reject(new Error('GET_FAILED'))
           }
-          resolve(response.body)
+          resolve(response.data)
         })
         .catch(err => {
           clientUnavailable(err, { resolve, reject })

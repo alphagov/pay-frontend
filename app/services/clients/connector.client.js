@@ -2,6 +2,8 @@
 
 const logger = require('../../utils/logger')(__filename)
 const baseClient = require('./base.client/base.client')
+const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-client/axios-base-client')
+const { configureClient } = require('./base/config')
 const requestLogger = require('../../utils/request-logger')
 const { getCounter } = require('../../metrics/graphite-reporter')
 
@@ -17,6 +19,8 @@ const CARD_FIND_BY_TOKEN_PATH = '/v1/frontend/tokens/{chargeTokenId}'
 const TOKEN_USED_PATH = '/v1/frontend/tokens/{chargeTokenId}/used'
 const CARD_CHARGE_PATH = '/v1/frontend/charges/{chargeId}'
 const WORLDPAY_3DS_FLEX_JWT_PATH = '/v1/frontend/charges/{chargeId}/worldpay/3ds-flex/ddc'
+
+const client = new Client(SERVICE_NAME)
 
 let baseUrl
 let correlationId
@@ -60,7 +64,7 @@ const _getPatchUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeI
 const _getWorldpay3dsFlexUrlFor = chargeId => baseUrl + WORLDPAY_3DS_FLEX_JWT_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-function _putConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
+async function _putConnector (url, payload, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     ...loggingFields,
@@ -97,6 +101,34 @@ function _putConnector (url, payload, description, loggingFields = {}, callingFu
       incrementStatusCodeCounter(callingFunctionName, 'error')
       throw err
     })
+
+  // try {
+  //   configureClient(client, url)
+  //   const response = await client.put( url, { payload: payload }, 'update status' )
+  //   logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+  //   incrementStatusCodeCounter(callingFunctionName, response.status)
+  //   if (response.status > 499 && response.status < 600) {
+  //     logger.error(`Error communicating with ${url}`, {
+  //       ...loggingFields,
+  //       service: 'connector',
+  //       method: 'PUT',
+  //       status_code: response.status,
+  //       url: url
+  //     })
+  //   }
+  //   return response
+  // } catch (err) {
+  //   logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+  //   logger.error('Calling connector threw exception', {
+  //     ...loggingFields,
+  //     service: 'connector',
+  //     method: 'PUT',
+  //     url: url,
+  //     error: err
+  //   })
+  //   incrementStatusCodeCounter(callingFunctionName, 'error')
+  //   throw err
+  // }
 }
 
 /** @private */
@@ -180,7 +212,7 @@ function _patchConnector (url, payload, description, loggingFields = {}, calling
 }
 
 /** @private */
-function _getConnector (url, description, loggingFields = {}, callingFunctionName) {
+async function _getConnector (url, description, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -189,21 +221,49 @@ function _getConnector (url, description, loggingFields = {}, callingFunctionNam
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
-  return baseClient.get(url, { correlationId })
-    .then(response => {
+  // return baseClient.get(url, { correlationId })
+  //   .then(response => {
+  //     logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+  //     incrementStatusCodeCounter(callingFunctionName, response.statusCode)
+  //     if (response.statusCode !== 200) {
+  //       logger.error(`Error communicating with ${url}`, {
+  //         ...loggingFields,
+  //         service: 'connector',
+  //         method: 'GET',
+  //         status_code: response.statusCode,
+  //         url: url
+  //       })
+  //     }
+  //     return response
+  //   }).catch(err => {
+  //     logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
+  //     logger.error('Calling connector threw exception', {
+  //       ...loggingFields,
+  //       service: 'connector',
+  //       method: 'GET',
+  //       url: url,
+  //       error: err
+  //     })
+  //     incrementStatusCodeCounter(callingFunctionName, 'error')
+  //     throw err
+  //   })
+    try {
+      configureClient(client, url)
+
+      const response = await client.get( `${url}`, 'log request start', {additionalLoggingFields: loggingFields})
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
-      incrementStatusCodeCounter(callingFunctionName, response.statusCode)
-      if (response.statusCode !== 200) {
+      incrementStatusCodeCounter(callingFunctionName, response.status)
+      if (response.status !== 200) {
         logger.error(`Error communicating with ${url}`, {
           ...loggingFields,
           service: 'connector',
           method: 'GET',
-          status_code: response.statusCode,
+          status_code: response.status,
           url: url
         })
       }
       return response
-    }).catch(err => {
+    } catch(err) {
       logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
       logger.error('Calling connector threw exception', {
         ...loggingFields,
@@ -214,7 +274,7 @@ function _getConnector (url, description, loggingFields = {}, callingFunctionNam
       })
       incrementStatusCodeCounter(callingFunctionName, 'error')
       throw err
-    })
+    }
 }
 
 const incrementStatusCodeCounter = (callingFunctionName, statusCode) => {
