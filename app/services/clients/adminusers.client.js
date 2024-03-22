@@ -1,7 +1,9 @@
 'use strict'
 
 // Local dependencies
-const baseClient = require('./base.client/base.client')
+// const baseClient = require('./base.client/base.client')
+const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-client/axios-base-client')
+const { configureClient } = require('./base/config')
 const logger = require('../../utils/logger')(__filename)
 const requestLogger = require('../../utils/request-logger')
 const Service = require('../../models/Service.class')
@@ -16,7 +18,7 @@ let baseUrl
 let correlationId
 
 /** @private */
-function _getAdminUsers (url, description, findOptions, loggingFields = {}, callingFunctionName) {
+async function _getAdminUsers (url, description, findOptions, loggingFields = {}, callingFunctionName) {
   const startTime = new Date()
   const context = {
     url: url,
@@ -32,30 +34,60 @@ function _getAdminUsers (url, description, findOptions, loggingFields = {}, call
       gatewayAccountId: findOptions.gatewayAccountId
     }
   }
-  return baseClient
-    .get(url, params, null)
-    .then(response => {
-      requestLogger.logRequestEnd(context, response.statusCode, loggingFields)
-      incrementStatusCodeCounter(callingFunctionName, response.statusCode)
-      if (SUCCESS_CODES.includes(response.statusCode)) {
-        return new Service(response.body)
-      } else {
-        if (response.statusCode > 499 && response.statusCode < 600) {
-          logger.error(`Error communicating with ${url}`, {
-            ...loggingFields,
-            service: 'adminusers',
-            method: 'GET',
-            status_code: response.statusCode,
-            url: url
-          })
-        }
-        return response.body
+  // return baseClient
+  // .get(url, params, null)
+  // .then(response => {
+  //   requestLogger.logRequestEnd(context, response.statusCode, loggingFields)
+  //   incrementStatusCodeCounter(callingFunctionName, response.statusCode)
+  //   if (SUCCESS_CODES.includes(response.statusCode)) {
+  //     return new Service(response.body)
+  //   } else {
+  //     if (response.statusCode > 499 && response.statusCode < 600) {
+  //       logger.error(`Error communicating with ${url}`, {
+  //         ...loggingFields,
+  //         service: 'adminusers',
+  //         method: 'GET',
+  //         status_code: response.statusCode,
+  //         url: url
+  //       })
+  //     }
+  //     return response.body
+  //   }
+  // }).catch(err => {
+  //   requestLogger.logRequestError(context, err, loggingFields)
+  //   incrementStatusCodeCounter(callingFunctionName, 'error')
+  //   throw err
+  // })
+
+  const client = new Client(SERVICE_NAME)
+  configureClient(client, url)
+
+  try {
+    const fullUrl = `${url}?gatewayAccountId=${findOptions.gatewayAccountId}`
+    const response = await client.get(fullUrl, description)
+  
+    requestLogger.logRequestEnd(context, response.status, loggingFields)
+    incrementStatusCodeCounter(callingFunctionName, response.status)
+    if (SUCCESS_CODES.includes(response.status)) {
+      return new Service(response.data)
+    } else {
+      if (response.status > 499 && response.status < 600) {
+        logger.error(`Error communicating with ${url}`, {
+          ...loggingFields,
+          service: 'adminusers',
+          method: 'GET',
+          status_code: response.status,
+          url: fullUrl
+        })
       }
-    }).catch(err => {
-      requestLogger.logRequestError(context, err, loggingFields)
-      incrementStatusCodeCounter(callingFunctionName, 'error')
-      throw err
-    })
+      return response.data
+      // return response.body
+    }
+  } catch(err) {
+    requestLogger.logRequestError(context, err, loggingFields)
+    incrementStatusCodeCounter(callingFunctionName, 'error')
+    throw err
+  }
 }
 
 const incrementStatusCodeCounter = (callingFunctionName, statusCode) => {
