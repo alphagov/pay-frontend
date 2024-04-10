@@ -3,7 +3,7 @@
 const { CORRELATION_ID } = require('@govuk-pay/pay-js-commons').logging.keys
 
 const { AsyncLocalStorage } = require('async_hooks')
-const { CORRELATION_HEADER } = require('./config')
+const { CORRELATION_HEADER } = require('../../../../config/correlation-header')
 
 const asyncLocalStorage = new AsyncLocalStorage()
 
