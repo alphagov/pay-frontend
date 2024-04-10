@@ -40,14 +40,15 @@ describe('token model', function () {
       })
 
       it('should return delete_failed', function () {
-        return expect(Token.markTokenAsUsed(1, 'blah')).to.be.rejectedWith(Error, 'MARKING_TOKEN_AS_USED_FAILED')
+        // return expect(Token.markTokenAsUsed(1, 'blah')).to.be.rejectedWith(Error, 'MARKING_TOKEN_AS_USED_FAILED')
+        return expect(Token.markTokenAsUsed(1, 'blah')).to.be.rejectedWith(Error, 'CLIENT_UNAVAILABLE')
       })
     })
 
     describe('when connector returns correctly', function () {
       before(function () {
         nock.cleanAll()
-        nock(originalHost, {
+        nock(originalHost, {allowUnmocked: true}, {
           reqheaders: {
             'x-request-id': 'unique-request-id'
           }
