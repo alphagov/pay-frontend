@@ -29,7 +29,7 @@ module.exports = correlationId => {
           updateComplete(response, { resolve, reject }, loggingFields)
         })
         .catch(err => {
-          clientUnavailable(err, { resolve, reject })
+          err.errorCode === 422 ? clientUpdateFailed(err, { resolve, reject }) : clientUnavailable(err, { resolve, reject })
         })
     })
   }
@@ -56,7 +56,9 @@ module.exports = correlationId => {
           captureComplete(response, { resolve, reject })
         })
         .catch(err => {
-          captureFail(err, { resolve, reject })
+          err.errorCode === 400 ? clientCaptureFailed(err, { resolve, reject }) :
+          err.errorCode === 410 ? clientPostFailed(err, { resolve, reject }) :
+          clientUnavailable(err, { resolve, reject })
         })
     })
   }
@@ -80,10 +82,10 @@ module.exports = correlationId => {
     } catch (err) {
       throw new Error('CLIENT_UNAVAILABLE', err)
     }
-    if (response.statusCode !== 200) {
+    if (response.status !== 200) {
       throw new Error('UNAUTHORISED')
     }
-    return response.body
+    return response.data
   }
 
   const patch = async function (chargeId, op, path, value, loggingFields = {}) {
@@ -93,13 +95,13 @@ module.exports = correlationId => {
       value: value
     }
     const response = await connectorClient({ correlationId }).patch({ chargeId, payload }, loggingFields)
-    if (response.statusCode !== 200) {
+    if (response.status !== 200) {
       throw new Error('Calling connector to patch a charge returned an unexpected status code')
     }
   }
 
   const cancelComplete = function (response, defer, loggingFields = {}) {
-    const code = response.statusCode
+    const code = response.status
     if (code === 204) return defer.resolve()
     logger.error('Calling connector cancel a charge failed', {
       ...loggingFields,
@@ -116,7 +118,7 @@ module.exports = correlationId => {
   }
 
   const captureComplete = function (response, defer) {
-    const code = response.statusCode
+    const code = response.status
     if (code === 204) return defer.resolve()
     if (code === 400) return defer.reject(new Error('CAPTURE_FAILED'))
     return defer.reject(new Error('POST_FAILED'))
@@ -127,10 +129,10 @@ module.exports = correlationId => {
   }
 
   const updateComplete = function (response, defer, loggingFields = {}) {
-    if (response.statusCode !== 204) {
+    if (response.status !== 204) {
       logger.error('Calling connector to update charge status failed', {
         ...loggingFields,
-        status_code: response.statusCode
+        status_code: response.status
       })
       defer.reject(new Error('UPDATE_FAILED'))
       return
@@ -146,6 +148,17 @@ module.exports = correlationId => {
     defer.reject(new Error('CLIENT_UNAVAILABLE'), error)
   }
 
+  const clientUpdateFailed = function (error, defer) {
+    defer.reject(new Error('UPDATE_FAILED'), error)
+  }
+
+  const clientCaptureFailed = function (error, defer) {
+    defer.reject(new Error('CAPTURE_FAILED'), error)
+  }
+
+  const clientPostFailed = function (error, defer) {
+    defer.reject(new Error('POST_FAILED'), error)
+  }
   return {
     updateStatus,
     updateToEnterDetails,
