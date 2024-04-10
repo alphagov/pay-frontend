@@ -55,8 +55,8 @@ describe('connector client - tokens', function () {
       const res = await connectorClient({ baseUrl: BASE_URL }).findByToken({
         tokenId: TOKEN
       })
-      expect(res.body.used).to.be.equal(false)
-      expect(res.body.charge).to.have.property('charge_id').eq(chargeId)
+      expect(res.data.used).to.be.equal(false)
+      expect(res.data.charge).to.have.property('charge_id').eq(chargeId)
     })
   })
 })

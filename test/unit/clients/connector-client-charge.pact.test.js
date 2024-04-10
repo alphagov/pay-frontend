@@ -55,7 +55,7 @@ describe('Connector client - charge tests', function () {
         chargeId: TEST_CHARGE_ID,
         payload: authRequest
       })
-      expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+      expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
     })
   })
 
@@ -82,7 +82,7 @@ describe('Connector client - charge tests', function () {
         chargeId: TEST_CHARGE_ID,
         payload: authRequest
       })
-      expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+      expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
     })
   })
 
@@ -107,7 +107,7 @@ describe('Connector client - charge tests', function () {
 
     it('should return charge', async function () {
       const res = await connectorClient({ baseUrl: BASE_URL }).findCharge({ chargeId: TEST_CHARGE_ID })
-      expect(res.body.charge_id).to.be.equal(TEST_CHARGE_ID)
+      expect(res.data.charge_id).to.be.equal(TEST_CHARGE_ID)
     })
   })
 })
