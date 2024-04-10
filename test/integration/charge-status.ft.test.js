@@ -55,7 +55,7 @@ describe('chargeTests', function () {
   describe('The /charge endpoint', function () {
     describe('Different statuses', function () {
       function get (status) {
-        nock(process.env.CONNECTOR_HOST, defaultCorrelationHeader)
+        nock(process.env.CONNECTOR_HOST)
           .get('/v1/frontend/charges/23144323')
           .reply(200, {
             amount: 2345,
@@ -81,7 +81,7 @@ describe('chargeTests', function () {
             }
           })
 
-        nock(process.env.CONNECTOR_HOST, defaultCorrelationHeader)
+        nock(process.env.CONNECTOR_HOST)
           .put('/v1/frontend/charges/23144323/status')
           .reply(204)
 
