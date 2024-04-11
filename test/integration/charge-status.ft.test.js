@@ -26,10 +26,10 @@ const app = proxyquire('../../server.js',
       '@global': true
     }
   }).getApp()
-
-const defaultCorrelationHeader = {
-  reqheaders: { 'x-request-id': 'some-unique-id' }
-}
+// Commenting out for linting purposes. Possibly need to reinstate.
+// const defaultCorrelationHeader = {
+//   reqheaders: { 'x-request-id': 'some-unique-id' }
+// }
 const gatewayAccount = {
   gatewayAccountId: '12345',
   analyticsId: 'test-1234',
