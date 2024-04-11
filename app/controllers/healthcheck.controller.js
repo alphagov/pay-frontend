@@ -38,7 +38,6 @@ module.exports.healthcheck = async (req, res) => {
       })
       respond(res, 502, _.merge(healthyPingResponse, { proxy: { healthy: false } })) 
     }
-    done()
   } else {
     respond(res, 200, healthyPingResponse)
   }

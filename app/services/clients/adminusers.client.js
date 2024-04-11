@@ -69,7 +69,7 @@ const findServiceBy = function findServiceBy (findOptions, loggingFields = {}) {
 
 module.exports = function (clientOptions = {}) {
   baseUrl = clientOptions.baseUrl || process.env.ADMINUSERS_URL
-  correlationId = clientOptions.correlationId || ''
+  // correlationId = clientOptions.correlationId || ''
   return {
     findServiceBy: findServiceBy
   }
