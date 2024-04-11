@@ -14,7 +14,7 @@ const METRICS_PREFIX = 'internal-rest-call.adminusers'
 const SUCCESS_CODES = [200, 201, 202, 204, 206]
 
 let baseUrl
-let correlationId
+// let correlationId
 
 /** @private */
 async function _getAdminUsers (url, description, findOptions, loggingFields = {}, callingFunctionName) {
@@ -34,7 +34,7 @@ async function _getAdminUsers (url, description, findOptions, loggingFields = {}
   try {
     const fullUrl = `${url}?gatewayAccountId=${findOptions.gatewayAccountId}`
     const response = await client.get(fullUrl, description)
-  
+
     requestLogger.logRequestEnd(context, response.status, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.status)
     if (SUCCESS_CODES.includes(response.status)) {
@@ -51,7 +51,7 @@ async function _getAdminUsers (url, description, findOptions, loggingFields = {}
       }
       return response.data
     }
-  } catch(err) {
+  } catch (err) {
     requestLogger.logRequestError(context, err, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, 'error')
     throw err
