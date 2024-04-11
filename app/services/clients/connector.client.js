@@ -1,7 +1,6 @@
 'use strict'
 
 const logger = require('../../utils/logger')(__filename)
-const baseClient = require('./base.client/base.client')
 const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-client/axios-base-client')
 const { configureClient } = require('./base/config')
 const requestLogger = require('../../utils/request-logger')
@@ -23,7 +22,7 @@ const WORLDPAY_3DS_FLEX_JWT_PATH = '/v1/frontend/charges/{chargeId}/worldpay/3ds
 const client = new Client(SERVICE_NAME)
 
 let baseUrl
-let correlationId
+// let correlationId // commenting out for linting, may need to be reinstated
 
 /** @private */
 const _getFindChargeUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{chargeId}', chargeId)
@@ -288,7 +287,7 @@ const markTokenAsUsed = (chargeOptions, loggingFields = {}) => {
 
 module.exports = function (clientOptions = {}) {
   baseUrl = clientOptions.baseUrl || process.env.CONNECTOR_HOST
-  correlationId = clientOptions.correlationId || ''
+  // correlationId = clientOptions.correlationId || '' // commenting out for linting, may need to be reinstated
   return {
     chargeAuth,
     chargeAuthWithWallet,
