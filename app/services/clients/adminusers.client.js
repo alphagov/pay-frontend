@@ -1,7 +1,6 @@
 'use strict'
 
 // Local dependencies
-// const baseClient = require('./base.client/base.client')
 const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-client/axios-base-client')
 const { configureClient } = require('./base/config')
 const logger = require('../../utils/logger')(__filename)
@@ -28,36 +27,6 @@ async function _getAdminUsers (url, description, findOptions, loggingFields = {}
     service: SERVICE_NAME
   }
   requestLogger.logRequestStart(context, loggingFields)
-  const params = {
-    correlationId: correlationId,
-    qs: {
-      gatewayAccountId: findOptions.gatewayAccountId
-    }
-  }
-  // return baseClient
-  // .get(url, params, null)
-  // .then(response => {
-  //   requestLogger.logRequestEnd(context, response.statusCode, loggingFields)
-  //   incrementStatusCodeCounter(callingFunctionName, response.statusCode)
-  //   if (SUCCESS_CODES.includes(response.statusCode)) {
-  //     return new Service(response.body)
-  //   } else {
-  //     if (response.statusCode > 499 && response.statusCode < 600) {
-  //       logger.error(`Error communicating with ${url}`, {
-  //         ...loggingFields,
-  //         service: 'adminusers',
-  //         method: 'GET',
-  //         status_code: response.statusCode,
-  //         url: url
-  //       })
-  //     }
-  //     return response.body
-  //   }
-  // }).catch(err => {
-  //   requestLogger.logRequestError(context, err, loggingFields)
-  //   incrementStatusCodeCounter(callingFunctionName, 'error')
-  //   throw err
-  // })
 
   const client = new Client(SERVICE_NAME)
   configureClient(client, url)
@@ -81,7 +50,6 @@ async function _getAdminUsers (url, description, findOptions, loggingFields = {}
         })
       }
       return response.data
-      // return response.body
     }
   } catch(err) {
     requestLogger.logRequestError(context, err, loggingFields)
