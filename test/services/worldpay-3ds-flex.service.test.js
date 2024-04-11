@@ -24,8 +24,8 @@ describe('Worldpay 3DS Flex service', () => {
       const jwtResponse = validDdcJwt(TEST_JWT)
       getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
         {
-          statusCode: 200,
-          body: jwtResponse
+          status: 200,
+          data: jwtResponse
         })
       connectorClientStub = sinon.stub().callsFake(() => {
         return {
