@@ -124,10 +124,6 @@ module.exports = correlationId => {
     return defer.reject(new Error('POST_FAILED'))
   }
 
-  const captureFail = function (err, defer) {
-    clientUnavailable(err, defer)
-  }
-
   const updateComplete = function (response, defer, loggingFields = {}) {
     if (response.status !== 204) {
       logger.error('Calling connector to update charge status failed', {
