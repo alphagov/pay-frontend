@@ -20,7 +20,7 @@ configureClient(client, CARD_URL)
 // exports.post = (args) => baseClient.post(CARD_URL, args, null)
 exports.post = async (args) => {
   try {
-    const response = await client.post(CARD_URL, args, 'card id')
+    const response = await client.post(CARD_URL, args.payload, 'card id')
     return response
   } catch (err) {
     return { status: err.errorCode }
