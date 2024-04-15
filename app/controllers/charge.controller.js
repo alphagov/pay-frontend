@@ -228,6 +228,8 @@ module.exports = {
         redirect(res).toNew(req.chargeId)
       } else if (err.errorCode === 409){
         redirect(res).toAuthWaiting(req.chargeId)
+      } else if (err.errorCode === 402){
+        responseRouter.systemErrorResponse(req, res, `${err.errorCode} response when authorising charge`, withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       } else {
         responseRouter.errorResponse(req, res, 'Error when calling connector to authorise the charge', withAnalyticsError(), err)
       }
