@@ -29,28 +29,28 @@ const checkCard = function (cardNo, allowed, blockPrepaidCards, language, correl
     }
     cardIdClient.post({ payload: data, correlationId: correlationId })
       .then((response) => {
-        incrementStatusCodeCounter('checkCard', response.statusCode)
+        incrementStatusCodeCounter('checkCard', response.status)
         logger.info('POST to %s ended - total time %dms', cardIdClient.CARD_URL, new Date() - startTime, loggingFields)
 
-        if (response.statusCode === 404) {
+        if (response.status === 404) {
           return reject(new Error('Your card is not supported'))
         }
-        if (response.statusCode === 422) {
+        if (response.status === 422) {
           return reject(new Error(i18n.__('fieldErrors.fields.cardNo.message')))
         }
         // if the server is down, or returns non 500, just continue
-        if (response.statusCode !== 200) {
+        if (response.status !== 200) {
           logger.error(`Error communicating with ${cardIdClient.CARD_URL}`, {
             ...loggingFields,
             service: 'cardid',
             method: 'POST',
-            status_code: response.statusCode,
+            status_code: response.status,
             url: cardIdClient.CARD_URL
           })
           return resolve()
         }
 
-        const body = response.body
+        const body = response.data
 
         const card = {
           brand: changeCase.paramCase(body.brand),
