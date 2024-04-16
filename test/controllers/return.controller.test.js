@@ -61,9 +61,11 @@ describe('return controller', function () {
       .reply(204)
 
     requireReturnController().return(request, response)
-      .should.be.fulfilled.then(() => {
+      .then(() => {
         assert(response.redirect.calledWith('http://a_return_url.com'))
-      }).should.notify(done)
+        done()
+      })
+      .catch(done)
   })
 
   it('should show an error if cancel fails', function (done) {
@@ -76,10 +78,11 @@ describe('return controller', function () {
       .reply(500)
 
     requireReturnController().return(request, response)
-      .should.be.fulfilled.then(() => {
+      .then(() => {
         expect(response.render.called).to.equal(true)
         expect(response.render.getCall(0).args[0]).to.equal('errors/system-error')
         expect(response.render.getCall(0).args[1].viewName).to.equal('SYSTEM_ERROR')
-      }).should.notify(done)
+        done()
+      }).catch(done)
   })
 })

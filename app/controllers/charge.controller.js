@@ -98,14 +98,14 @@ const redirect = res => {
 }
 
 const handleCreateResponse = (req, res, charge, response) => {
-  switch (response.statusCode) {
+  switch (response.status) {
     case 202:
     case 409:
       logging.failedChargePost(409, getLoggingFields(req))
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
-      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
+      if (_.get(response.data, 'status') === State.AUTH_3DS_REQUIRED) {
         redirect(res).toAuth3dsRequired(req.chargeId)
       } else {
         redirect(res).toConfirm(req.chargeId)
@@ -224,7 +224,15 @@ module.exports = {
       handleCreateResponse(req, res, charge, response)
     } catch (err) {
       logging.failedChargePatch(err.message, getLoggingFields(req))
-      responseRouter.errorResponse(req, res, 'Error when calling connector to authorise the charge', withAnalyticsError(), err)
+      if (err.errorCode === 400) {
+        redirect(res).toNew(req.chargeId)
+      } else if (err.errorCode === 409){
+        redirect(res).toAuthWaiting(req.chargeId)
+      } else if (err.errorCode === 402){
+        responseRouter.systemErrorResponse(req, res, `${err.errorCode} response when authorising charge`, withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+      } else {
+        responseRouter.errorResponse(req, res, 'Error when calling connector to authorise the charge', withAnalyticsError(), err)
+      }
     }
   },
   checkCard: (req, res) => {
