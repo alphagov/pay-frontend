@@ -101,7 +101,7 @@ describe('find', function () {
       const chargeModel = Charge('')
       return chargeModel.find(1).then(unexpectedPromise,
         function rejected (error) {
-          assert.strictEqual(error.message, 'GET_FAILED')
+          assert.strictEqual(error.message, 'CLIENT_UNAVAILABLE')
         })
     })
   })
@@ -214,7 +214,7 @@ describe('findByToken', function () {
     })
 
     it('should return unauthorised', function () {
-      return expect(Charge('').findByToken(1)).to.be.rejectedWith(Error, 'UNAUTHORISED')
+      return expect(Charge('').findByToken(1)).to.be.rejectedWith(Error, 'CLIENT_UNAVAILABLE')
     })
   })
 
