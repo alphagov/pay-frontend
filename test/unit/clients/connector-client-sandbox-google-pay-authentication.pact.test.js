@@ -57,7 +57,7 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
           wallet: 'google',
           payload: payload
         }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })
@@ -87,9 +87,16 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
           wallet: 'google',
           payload: payload
         }).then(res => {
-          expect(res.body.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
+          expect(res.data.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
           done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+        }).catch((err) => {
+          if (err.errorCode === 400){
+            expect(err.errorIdentifier).to.be.equal('AUTHORISATION_REJECTED')
+            done()
+          } else {
+            done(new Error('should not be hit: ' + JSON.stringify(err)))
+          }
+        })
       })
     })
   })

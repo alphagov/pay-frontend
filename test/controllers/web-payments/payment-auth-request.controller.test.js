@@ -51,13 +51,14 @@ describe('The web payments auth request controller', () => {
       nock(process.env.CONNECTOR_HOST)
         .post(`/v1/frontend/charges/${chargeId}/wallets/${wallet}`)
         .reply(200)
-      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
-          expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-          expect(res.send.calledWith({url: `/handle-payment-response/apple/${chargeId}`})).to.be.ok // eslint-disable-line
-          expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res)
+      .then(() => {
+        expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+        expect(res.send.calledWith({url: `/handle-payment-response/apple/${chargeId}`})).to.be.ok // eslint-disable-line
+        expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
-      }
-      )
+      })
+      .catch(done)
     })
 
     it('should call the `next` function when the Apple Pay normalise function throws an error', done => {
@@ -118,13 +119,14 @@ describe('The web payments auth request controller', () => {
       nock(process.env.CONNECTOR_HOST)
         .post(`/v1/frontend/charges/${chargeId}/wallets/google`)
         .reply(200)
-      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res)
+      .then(() => {
         expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
         expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
         expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
-      }
-      )
+      })
+      .catch(done)
     })
 
     it('should set error identifier in the session for declined transaction, if it is present in the response body ' +
@@ -149,8 +151,8 @@ describe('The web payments auth request controller', () => {
           expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
           expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
-      }
-      )
+      })
+      .catch(done)
     })
 
     it('should not set payload in the session and return handle payment url if error', done => {

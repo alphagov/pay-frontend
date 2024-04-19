@@ -56,10 +56,10 @@ const build3dsPayload = (chargeId, req) => {
 }
 
 const handleThreeDsResponse = (req, res, charge) => response => {
-  switch (response.statusCode) {
+  switch (response.status) {
     case 200:
     case 400:
-      if (_.get(response, 'body.status', '') === 'AUTHORISATION 3DS REQUIRED') {
+      if (_.get(response, 'data.status', '') === 'AUTHORISATION 3DS REQUIRED') {
         logger.info('3DS required again', getLoggingFields(req))
         redirect(res).toAuth3dsRequired(charge.id)
       } else {
@@ -92,7 +92,18 @@ module.exports = {
           charge_status: charge.status,
           error: err
         })
-        responseRouter.errorResponse(req, res, 'Exception in auth3dsHandler', withAnalytics(charge), err)
+        if (err.errorCode === 400) {
+          if (_.get(res, 'req.chargeData.status', '') === 'AUTHORISATION 3DS REQUIRED') {
+           logger.info('3DS required again', getLoggingFields(req))
+           redirect(res).toAuth3dsRequired(charge.id)
+          } else {
+           redirect(res).toConfirm(charge.id)
+          }
+        } else if (err.errorCode === 409) {
+           redirect(res).toAuthWaiting(charge.id)
+        } else {
+          responseRouter.errorResponse(req, res, 'Exception in auth3dsHandler', withAnalytics(charge), err)
+        }
       })
   },
   auth3dsRequired: (req, res) => {

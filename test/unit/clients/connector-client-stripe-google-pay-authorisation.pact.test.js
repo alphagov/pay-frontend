@@ -66,7 +66,7 @@ describe('Connectors Client - Google Pay authorisation API - Stripe payment', fu
           ...CHARGE_OPTIONS,
           payload: successfulGoogleAuthRequest
         }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })
@@ -96,7 +96,7 @@ describe('Connectors Client - Google Pay authorisation API - Stripe payment', fu
           ...CHARGE_OPTIONS,
           payload: successfulGoogleAuthRequest
         }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
           done()
         }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
       })

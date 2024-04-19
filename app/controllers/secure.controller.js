@@ -52,7 +52,7 @@ exports.new = async function (req, res) {
       res.redirect(303, generateRoute(resolveActionName(chargeStatus, 'get'), { chargeId }))
     }
   } catch (err) {
-    if (err.message === 'UNAUTHORISED') {
+    if (err.message === 'UNAUTHORISED' || err.message === 'CLIENT_UNAVAILABLE') {
       logger.info('Call to /secure/{tokenId} is Unauthorised. This could be due to the token not existing, ' +
         'the frontend state cookie not existing, or the frontend state cookie containing an invalid value.',
       getLoggingFields(req))

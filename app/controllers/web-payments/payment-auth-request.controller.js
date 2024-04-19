@@ -43,8 +43,8 @@ module.exports = (req, res, next) => {
   return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(chargeOptions, getLoggingFields(req))
     .then(data => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-        statusCode: data.statusCode,
-        ...data.body && data.body.error_identifier && { errorIdentifier: data.body.error_identifier }
+        statusCode: data.status,
+        ...data.data && data.data.error_identifier && { errorIdentifier: data.data.error_identifier }
       })
 
       // Always return 200 - the redirect checks if there are any errors
