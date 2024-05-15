@@ -104,7 +104,7 @@ describe('The web payments auth request controller', () => {
       return proxyquire('../../../app/controllers/web-payments/payment-auth-request.controller.js', proxyquireMocks)
     }
 
-    it('should set payload in the session and return handle payment url', async () => {
+    it('should set payload in the session and return handle payment url', done => {
       const res = {
         status: sinon.spy(),
         send: sinon.spy()
@@ -118,15 +118,17 @@ describe('The web payments auth request controller', () => {
       nock(process.env.CONNECTOR_HOST)
         .post(`/v1/frontend/charges/${chargeId}/wallets/google`)
         .reply(200)
-
-      await requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res)
-      expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-      expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
-      expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+        expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+        expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
+        expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+        done()
+      }
+      )
     })
 
     it('should set error identifier in the session for declined transaction, if it is present in the response body ' +
-      'and return handle payment url', async () => {
+      'and return handle payment url', done => {
       const res = {
         status: sinon.spy(),
         send: sinon.spy()
@@ -142,13 +144,16 @@ describe('The web payments auth request controller', () => {
         .post(`/v1/frontend/charges/${chargeId}/wallets/google`)
         .reply(200, { error_identifier: 'AUTHORISATION_REJECTED' })
 
-      await requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res)
-      expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-      expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
-      expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+          expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+          expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
+          expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+        done()
+      }
+      )
     })
 
-    it('should not set payload in the session and return handle payment url if error', async () => {
+    it('should not set payload in the session and return handle payment url if error', done => {
       const res = {
         status: sinon.spy(),
         send: sinon.spy()
@@ -159,14 +164,16 @@ describe('The web payments auth request controller', () => {
       nock(process.env.CONNECTOR_HOST)
         .post(`/v1/frontend/charges/${chargeId}/wallets/apple`)
         .replyWithError('oops')
-
-      await requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res)
-      expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
-      expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
-      expect(mockCookies.setSessionVariable.called).to.be.false // eslint-disable-line
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+        expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+        expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
+        expect(mockCookies.setSessionVariable.called).to.be.false // eslint-disable-line
+        done()
+      }
+      )
     })
 
-    it('should call the `next` function when the Google Pay normalise function throws an error', async () => {
+    it('should call the `next` function when the Google Pay normalise function throws an error', done => {
       const res = {
         status: sinon.spy(),
         send: sinon.spy()
@@ -180,8 +187,10 @@ describe('The web payments auth request controller', () => {
         throw error
       }
 
-      await requirePaymentAuthRequestController(mockNormaliseThrowException, mockCookies)(req, res, next)
+      requirePaymentAuthRequestController(mockNormaliseThrowException, mockCookies)(req, res, next)
       sinon.assert.calledWith(next, error)
+
+      done()
     })
   })
 })
