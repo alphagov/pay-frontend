@@ -43,6 +43,9 @@ describe('card', function () {
     describe('when an unexpected response code', function () {
       before(function () {
         nock.cleanAll()
+        nock(process.env.CARDID_HOST)
+        .post('/v1/api/card')
+        .reply(406)
 
         nock(process.env.CARDID_HOST, aCorrelationHeader)
           .post('/v1/api/card')
