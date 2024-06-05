@@ -41,76 +41,81 @@ describe('adminusers client - services API', function () {
     describe('success', function () {
       const gatewayAccountId = '101'
       const getServiceResponse = serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] })
-      before((done) => {
-        provider.addInteraction(
-          new PactInteractionBuilder(`${SERVICES_PATH}`)
-            .withQuery({ gatewayAccountId: gatewayAccountId })
-            .withState('a service exists with the given gateway account id association')
-            .withUponReceiving('a valid find service request')
-            .withResponseBody(pactify(getServiceResponse))
-            .withStatusCode(200)
-            .build()
-        ).then(() => done())
+      before(() => {
+        const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)
+          .withQuery({ gatewayAccountId: gatewayAccountId })
+          .withState('a service exists with the given gateway account id association')
+          .withUponReceiving('a valid find service request')
+          .withResponseBody(pactify(getServiceResponse))
+          .withStatusCode(200)
+          .build()
+
+        return provider.addInteraction(builder)
       })
+
       afterEach(() => provider.verify())
-      setTimeout(() => {
-        it('should return service successfully', function (done) {
-          adminusersClient.findServiceBy({ gatewayAccountId: gatewayAccountId }).then(service => {
-            expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
-            done()
-          }).catch((err) => done('should not be hit: ' + JSON.stringify(err)))
+
+      it('should return service successfully', function (done) {
+        adminusersClient.findServiceBy({ gatewayAccountId: gatewayAccountId }).then(service => {
+          expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
+          done()
+        }).catch((err) => {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
         })
-      }, 2000)
+      })
     })
 
     describe('bad request', function () {
       const invalidGatewayAccountId = 'not-a-number'
-      beforeEach((done) => {
-        provider.addInteraction(
-          new PactInteractionBuilder(`${SERVICES_PATH}`)
-            .withQuery({ gatewayAccountId: invalidGatewayAccountId })
-            .withState('a service exists with the given gateway account id association')
-            .withUponReceiving('an invalid find service request')
-            .withStatusCode(400)
-            .build()
-        ).then(() => done())
+      beforeEach(() => {
+        const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)
+          .withQuery({ gatewayAccountId: invalidGatewayAccountId })
+          .withState('a service exists with the given gateway account id association')
+          .withUponReceiving('an invalid find service request')
+          .withStatusCode(400)
+          .build()
+
+        return provider.addInteraction(builder)
       })
+
       afterEach(() => provider.verify())
-      setTimeout(() => {
-        it('error 400', function (done) {
-          adminusersClient.findServiceBy({ gatewayAccountId: invalidGatewayAccountId })
-            .then(() => done('should not be hit'))
-            .catch(response => {
-              expect(response.errorCode).to.be.equal(400)
-              done()
-            })
-        })
-      }, 3000)
+
+      it('error 400', function (done) {
+        adminusersClient.findServiceBy({ gatewayAccountId: invalidGatewayAccountId })
+          .then(() => {
+            throw new Error('should not be hit')
+          })
+          .catch(response => {
+            expect(response.errorCode).to.be.equal(400)
+            done()
+          })
+      })
     })
 
     describe('not found', function () {
       const nonAssociatedGatewayAccountId = '999'
-      beforeEach((done) => {
-        provider.addInteraction(
-          new PactInteractionBuilder(`${SERVICES_PATH}`)
-            .withQuery({ gatewayAccountId: nonAssociatedGatewayAccountId })
-            .withState('a service with given gateway account id does not exist')
-            .withUponReceiving('a valid find service request')
-            .withStatusCode(404)
-            .build()
-        ).then(() => done())
+      beforeEach(() => {
+        const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)
+          .withQuery({ gatewayAccountId: nonAssociatedGatewayAccountId })
+          .withState('a service with given gateway account id does not exist')
+          .withUponReceiving('a valid find service request')
+          .withStatusCode(404)
+          .build()
+
+        return provider.addInteraction(builder)
       })
       afterEach(() => provider.verify())
-      setTimeout(() => {
-        it('error 400', function (done) {
-          adminusersClient.findServiceBy({ gatewayAccountId: nonAssociatedGatewayAccountId })
-            .then(() => done('should not be hit'))
-            .catch(response => {
-              expect(response.errorCode).to.be.equal(404)
-              done()
-            })
-        })
-      }, 4000)
+
+      it('error 400', function (done) {
+        adminusersClient.findServiceBy({ gatewayAccountId: nonAssociatedGatewayAccountId })
+          .then(() => {
+            throw new Error('should not be hit')
+          })
+          .catch(response => {
+            expect(response.errorCode).to.be.equal(404)
+            done()
+          })
+      })
     })
   })
 })
