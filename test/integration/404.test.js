@@ -2,7 +2,7 @@ const request = require('supertest')
 const app = require('../../server.js').getApp()
 const { expect } = require('chai')
 
-describe('Invalid pages redirect to 404 page', function () {
+describe.only('Invalid pages redirect to 404 page', function () {
   it('should return 302 to gov.uk when not found', function (done) {
     request(app)
       .get('/notapage')
