@@ -43,8 +43,8 @@ describe.only('Connectors Client - Google Pay authorisation API - Stripe payment
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('Authorise Stripe Google Pay payment', function () {
-    describe('authorisation success', function () {
+  describe.only('Authorise Stripe Google Pay payment', function () {
+    describe.only('authorisation success', function () {
       const successfulGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
@@ -72,7 +72,7 @@ describe.only('Connectors Client - Google Pay authorisation API - Stripe payment
       })
     })
 
-    describe('authorisation success with no last card digits', function () {
+    describe.only('authorisation success with no last card digits', function () {
       const successfulGoogleAuthRequest = fixtures.stripeGoogleAuthRequestDetails({
         lastDigitsCardNumber: ''
       })

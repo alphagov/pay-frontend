@@ -32,8 +32,8 @@ describe.only('Connector Client - Google Pay authorisation API - Sandbox payment
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('Authorise Sandbox Google Pay payment', function () {
-    describe('authorisation success', function () {
+  describe.only('Authorise Sandbox Google Pay payment', function () {
+    describe.only('authorisation success', function () {
       const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
@@ -63,7 +63,7 @@ describe.only('Connector Client - Google Pay authorisation API - Sandbox payment
       })
     })
 
-    describe('authorisation declined', function () {
+    describe.only('authorisation declined', function () {
       const googlePayAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails()
       const authorisationDeclinedResponse = fixtures.webPaymentDeclinedResponse()
       before(() => {

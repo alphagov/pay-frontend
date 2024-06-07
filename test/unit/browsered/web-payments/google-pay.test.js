@@ -13,7 +13,7 @@ const STRING_18_CHAR_LENGTH = 'abcdefghijklmnopqr'
 const STRING_19_CHAR_LENGTH = 'abcdefghijklmnopqrs'
 
 describe.only('Google Pay', () => {
-  describe('shorten payment description for Google pay', () => {
+  describe.only('shorten payment description for Google pay', () => {
     it('should return the original description when the length < 18', () => {
       expect(shortenGooglePayDescription(STRING_17_CHAR_LENGTH)).to.equal(STRING_17_CHAR_LENGTH)
     })

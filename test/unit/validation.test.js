@@ -7,7 +7,7 @@ const fieldValidators = validationLib(card).fieldValidations
 const chai = require('chai')
 const expect = chai.expect
 
-describe('form validations', function () {
+describe.only('form validations', function () {
   it('should allow a correctly formatted email', function () {
     expect(fieldValidators.email('bob@bobbington.cbobbjb')).to.equal(true)
     expect(fieldValidators.email('b@bobbington.cbobbjb.dwf')).to.equal(true)

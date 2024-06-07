@@ -14,12 +14,12 @@ const requireService = function (mockedConnectorClient) {
   })
 }
 
-describe('Worldpay 3DS Flex service', () => {
+describe.only('Worldpay 3DS Flex service', () => {
   let service
   let connectorClientStub
   let getWorldpay3dsFlexJwtStub
 
-  describe('get DDC JWT success', () => {
+  describe.only('get DDC JWT success', () => {
     beforeEach(() => {
       const jwtResponse = validDdcJwt(TEST_JWT)
       getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
@@ -35,7 +35,7 @@ describe('Worldpay 3DS Flex service', () => {
       service = requireService(connectorClientStub)
     })
 
-    describe('payment provider is Worldpay, 3DS is enabled and integration version is 2', () => {
+    describe.only('payment provider is Worldpay, 3DS is enabled and integration version is 2', () => {
       it('should call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
@@ -55,7 +55,7 @@ describe('Worldpay 3DS Flex service', () => {
       })
     })
 
-    describe('payment provider is Worldpay, 3DS is enabled and integration version is 1', () => {
+    describe.only('payment provider is Worldpay, 3DS is enabled and integration version is 1', () => {
       it('should not call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
@@ -73,7 +73,7 @@ describe('Worldpay 3DS Flex service', () => {
       })
     })
 
-    describe('payment provider is Worldpay, 3DS is disabled', () => {
+    describe.only('payment provider is Worldpay, 3DS is disabled', () => {
       it('should not call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
@@ -91,7 +91,7 @@ describe('Worldpay 3DS Flex service', () => {
       })
     })
 
-    describe('payment provider is not Worldpay', () => {
+    describe.only('payment provider is not Worldpay', () => {
       it('should not call connector to get a JWT', async () => {
         const charge = {
           id: 'a-charge-id',
@@ -110,7 +110,7 @@ describe('Worldpay 3DS Flex service', () => {
     })
   })
 
-  describe('Get DDC JWT error', () => {
+  describe.only('Get DDC JWT error', () => {
     beforeEach(() => {
       getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
         {
@@ -124,7 +124,7 @@ describe('Worldpay 3DS Flex service', () => {
       service = requireService(connectorClientStub)
     })
 
-    describe('connector returns a non 200 response', () => {
+    describe.only('connector returns a non 200 response', () => {
       it('should throw an error', async () => {
         const charge = {
           id: 'a-charge-id',

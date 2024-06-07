@@ -38,19 +38,19 @@ const VALID_POST_RESPONSE = {
 }
 
 describe.only('session utils ', () => {
-  describe('createChargeIdSessionKey ', () => {
+  describe.only('createChargeIdSessionKey ', () => {
     it('should return chargeId with prefix ch_', function () {
       expect(session.createChargeIdSessionKey(chargeId)).to.equal('ch_foo')
     })
   })
 
-  describe('retrieve ', () => {
+  describe.only('retrieve ', () => {
     it('should return session', function () {
             expect(session.retrieve(VALID_GET_RESPONSE, chargeId)).to.be.true // eslint-disable-line
     })
   })
 
-  describe('validateSessionCookie ', () => {
+  describe.only('validateSessionCookie ', () => {
     it('should return true for GET request with valid session cookie', function () {
             expect(session.validateSessionCookie(VALID_GET_RESPONSE)).to.be.true // eslint-disable-line
     })

@@ -37,8 +37,8 @@ describe.only('adminusers client - services API', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('FIND service by gateway account id', function () {
-    describe('success', function () {
+  describe.only('FIND service by gateway account id', function () {
+    describe.only('success', function () {
       const gatewayAccountId = '101'
       const getServiceResponse = serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] })
       before(() => {
@@ -62,7 +62,7 @@ describe.only('adminusers client - services API', function () {
       })
     })
 
-    describe('bad request', function () {
+    describe.only('bad request', function () {
       const invalidGatewayAccountId = 'not-a-number'
       before(() => {
         const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)
@@ -86,7 +86,7 @@ describe.only('adminusers client - services API', function () {
       })
     })
 
-    describe('not found', function () {
+    describe.only('not found', function () {
       const nonAssociatedGatewayAccountId = '999'
       before(() => {
         const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)

@@ -122,7 +122,7 @@ describe.only('cookie configuration', function () {
   })
 })
 
-describe('setting value on session', function () {
+describe.only('setting value on session', function () {
   let initialEnvironmentVariables
   before(() => {
     initialEnvironmentVariables = Object.assign({}, process.env)
@@ -203,7 +203,7 @@ describe('setting value on session', function () {
   })
 })
 
-describe('getting value from session', function () {
+describe.only('getting value from session', function () {
   it('should get value on frontend_state if only SESSION_ENCRYPTION_KEY set', function () {
     const cookies = getCookiesUtil()
     const req = {
@@ -252,7 +252,7 @@ describe('getting value from session', function () {
     delete process.env.SESSION_ENCRYPTION_KEY_2
   })
 })
-describe('removing value from session', function () {
+describe.only('removing value from session', function () {
   it('should remove value from frontend_state', function () {
     process.env.SESSION_ENCRYPTION_KEY = 'key1key1key1key1'
     process.env.SESSION_ENCRYPTION_KEY_2 = ''

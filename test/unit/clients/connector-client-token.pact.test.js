@@ -32,7 +32,7 @@ describe.only('connector client - tokens', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('get charge data for valid token', function () {
+  describe.only('get charge data for valid token', function () {
     before(() => {
       const response = validTokenResponse({
         used: false,

@@ -38,8 +38,8 @@ describe.only('connectors client - apple authentication API', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('Authenticate apple payment', function () {
-    describe('authorisation success', function () {
+  describe.only('Authenticate apple payment', function () {
+    describe.only('authorisation success', function () {
       const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test' })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
@@ -70,7 +70,7 @@ describe.only('connectors client - apple authentication API', function () {
       })
     })
 
-    describe('authorisation success with no last card digits', function () {
+    describe.only('authorisation success with no last card digits', function () {
       const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '' })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
@@ -102,7 +102,7 @@ describe.only('connectors client - apple authentication API', function () {
     })
   })
 
-  describe('authorisation success with no email', function () {
+  describe.only('authorisation success with no email', function () {
     const appleAuthRequest = fixtures.appleAuthRequestDetails()
     const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
@@ -133,7 +133,7 @@ describe.only('connectors client - apple authentication API', function () {
     })
   })
 
-  describe('authorisation declined', function () {
+  describe.only('authorisation declined', function () {
     const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0002' })
     const authorisationDeclinedResponse = fixtures.webPaymentDeclinedResponse()
 
@@ -163,7 +163,7 @@ describe.only('connectors client - apple authentication API', function () {
     })
   })
 
-  describe('authorisation error', function () {
+  describe.only('authorisation error', function () {
     const appleAuthRequest = fixtures.appleAuthRequestDetails({ email: 'name@email.test', lastDigitsCardNumber: '0119' })
 
     before(() => {
