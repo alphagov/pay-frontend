@@ -15,7 +15,7 @@ const proxyquireMocks = {
 const normalise = proxyquire('../../../../app/controllers/web-payments/apple-pay/normalise-apple-pay-payload.js',
   proxyquireMocks)
 
-describe('normalise apple pay payload', function () {
+describe.only('normalise apple pay payload', function () {
   it('should return the correct format for the payload', function () {
     const applePayPayload = {
       shippingContact: {

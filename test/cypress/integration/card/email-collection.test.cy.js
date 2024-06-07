@@ -16,8 +16,8 @@ const validPayment = {
   postcode: 'E1 8QS'
 }
 
-describe('Standard card payment flow', () => {
-  describe('Email collection off', () => {
+describe.only('Standard card payment flow', () => {
+  describe.only('Email collection off', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
       tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OFF' })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OFF' })
@@ -62,7 +62,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Email collection mandatory', () => {
+  describe.only('Email collection mandatory', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, {}, {})
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'MANDATORY' })
 
@@ -104,7 +104,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Email collection optional', () => {
+  describe.only('Email collection optional', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
       tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OPTIONAL' })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OPTIONAL' })

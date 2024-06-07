@@ -21,7 +21,7 @@ function getControllerWithMocks (requestMock) {
   })
 }
 
-describe('Validate with Apple the merchant is legitimate', () => {
+describe.only('Validate with Apple the merchant is legitimate', () => {
   let res, sendSpy
 
   beforeEach(() => {

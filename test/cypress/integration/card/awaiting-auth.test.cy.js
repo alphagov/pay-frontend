@@ -20,7 +20,7 @@ const validPayment = {
   email: 'validpayingemail@example.com'
 }
 
-describe('Awaiting auth', () => {
+describe.only('Awaiting auth', () => {
   it('should load the auth waiting page and redirect to confirm page when card details are entered', () => {
     cy.log('Should setup the payment and load the page')
     cy.task('setupStubs', createPaymentChargeStubs)

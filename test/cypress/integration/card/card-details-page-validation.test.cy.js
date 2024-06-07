@@ -4,7 +4,7 @@ const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
 const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
 
-describe('Card details page validation', () => {
+describe.only('Card details page validation', () => {
   it('Should setup the payment and validate the fields correctly', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)

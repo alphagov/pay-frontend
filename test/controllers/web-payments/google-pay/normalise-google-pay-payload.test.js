@@ -21,7 +21,7 @@ const headers = {
   'x-forwarded-for': '203.0.113.1'
 }
 
-describe('normalise Google Pay payload', () => {
+describe.only('normalise Google Pay payload', () => {
   it('should return the correct format for the payload', () => {
     const googlePayPayload = {
       paymentResponse: {

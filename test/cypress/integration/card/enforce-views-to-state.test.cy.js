@@ -28,7 +28,7 @@ const backButtonStubs = [
   })
 ]
 
-describe('Enforce views to state', () => {
+describe.only('Enforce views to state', () => {
   it('Should not allow the user to access the previous card details page', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)

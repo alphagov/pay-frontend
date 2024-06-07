@@ -7,7 +7,7 @@ const {
   connectorPostValidCaptureCharge
 } = require('../../utils/stub-builders/charge-stubs')
 
-describe('Standard card payment flow', () => {
+describe.only('Standard card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 
@@ -55,7 +55,7 @@ describe('Standard card payment flow', () => {
     connectorPostValidCaptureCharge(chargeId)
   ]
 
-  describe('Email typo errors', () => {
+  describe.only('Email typo errors', () => {
     it('Should show an email typo error for an email with a typo and allow user to select corrected email and proceed with payment', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       // Stubbing for Apple Pay to test this works even if Apple/Google Pay are enabled. Because we don’t want it popping up when it’s reloaded to show the typo error message

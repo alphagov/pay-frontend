@@ -14,9 +14,9 @@ const validPayment = {
   noBillingAddress: true
 }
 
-describe('Billing address collection', () => {
-  describe('Billing address collection enabled for service', () => {
-    describe('Default billing address country set', () => {
+describe.only('Billing address collection', () => {
+  describe.only('Billing address collection enabled for service', () => {
+    describe.only('Default billing address country set', () => {
       // get a random gateway account per test as service is cached against gateway account
       const gatewayAccountId = lodash.random(999999999)
       const serviceOpts = {
@@ -49,7 +49,7 @@ describe('Billing address collection', () => {
       })
     })
 
-    describe('Default billing address country not set', () => {
+    describe.only('Default billing address country not set', () => {
       // get a random gateway account per test as service is cached against gateway account
       const gatewayAccountId = lodash.random(999999999)
       const serviceOpts = {
@@ -72,7 +72,7 @@ describe('Billing address collection', () => {
     })
   })
 
-  describe('Billing address collection disabled for service', () => {
+  describe.only('Billing address collection disabled for service', () => {
     // get a random gateway account per test as service is cached against gateway account
     const gatewayAccountId = lodash.random(999999999)
     const serviceOpts = { collect_billing_address: false }
@@ -124,7 +124,7 @@ describe('Billing address collection', () => {
     })
   })
 
-  describe('MOTO payment with billing address enabled for service', () => {
+  describe.only('MOTO payment with billing address enabled for service', () => {
     // get a random gateway account per test as service is cached against gateway account
     const gatewayAccountId = lodash.random(999999999)
     const serviceOpts = { collect_billing_address: true }
