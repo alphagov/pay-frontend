@@ -23,9 +23,9 @@ const aCorrelationHeader = {
   }
 }
 
-describe('card', function () {
-  describe('check card', function () {
-    describe('when card is not found', function () {
+describe.only('card', function () {
+  describe.only('check card', function () {
+    describe.only('when card is not found', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -40,7 +40,7 @@ describe('card', function () {
       })
     })
 
-    describe('when an unexpected response code', function () {
+    describe.only('when an unexpected response code', function () {
       before(function () {
         nock.cleanAll()
 
@@ -54,7 +54,7 @@ describe('card', function () {
       })
     })
 
-    describe('an unknown card', function () {
+    describe.only('an unknown card', function () {
       before(function () {
         nock.cleanAll()
 
@@ -68,7 +68,7 @@ describe('card', function () {
       })
     })
 
-    describe('a card that is not allowed', function () {
+    describe.only('a card that is not allowed', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -85,7 +85,7 @@ describe('card', function () {
     })
 
     // public enum PrepaidStatus { PREPAID, NOT_PREPAID, UNKNOWN}
-    describe('a prepaid card', () => {
+    describe.only('a prepaid card', () => {
       const gatewayAccountAllowCardsConfiguration = [{ brand: 'bar', label: 'bar', type: 'CREDIT', id: 'id-0' }]
 
       beforeEach(function () {
@@ -111,7 +111,7 @@ describe('card', function () {
       })
     })
 
-    describe('a card that is not allowed debit withdrawal type', function () {
+    describe.only('a card that is not allowed debit withdrawal type', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -127,7 +127,7 @@ describe('card', function () {
       })
     })
 
-    describe('a card that is not allowed credit withdrawal type', function () {
+    describe.only('a card that is not allowed credit withdrawal type', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -143,7 +143,7 @@ describe('card', function () {
       })
     })
 
-    describe('a corporate credit card that is allowed', function () {
+    describe.only('a corporate credit card that is allowed', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -162,7 +162,7 @@ describe('card', function () {
       })
     })
 
-    describe('a non corporate debit card that is allowed', function () {
+    describe.only('a non corporate debit card that is allowed', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -181,7 +181,7 @@ describe('card', function () {
       })
     })
 
-    describe('a card that is allowed but of CD type', function () {
+    describe.only('a card that is allowed but of CD type', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -199,7 +199,7 @@ describe('card', function () {
       })
     })
 
-    describe('a card that is allowed but of unknown type', function () {
+    describe.only('a card that is allowed but of unknown type', function () {
       before(function () {
         nock.cleanAll()
         nock(process.env.CARDID_HOST)
@@ -218,7 +218,7 @@ describe('card', function () {
     })
   })
 
-  describe('allowedCards', function () {
+  describe.only('allowedCards', function () {
     it('should return the passed in cards', function () {
       const cards = [{ brand: 'foo', debit: true }]
       const Card = CardModel(cards)
@@ -240,7 +240,7 @@ describe('card', function () {
     })
   })
 
-  describe('withdrawalTypes', function () {
+  describe.only('withdrawalTypes', function () {
     it('should return the passed in cards withdrawal types', function () {
       const debitOnly = CardModel([{ brand: 'foo', debit: true }])
       const creditOnly = CardModel([{ brand: 'foo', credit: true }])
