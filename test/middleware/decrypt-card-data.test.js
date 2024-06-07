@@ -2,7 +2,7 @@ const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 const { expect } = require('chai')
 
-describe('decryptCardData middleware', function () {
+describe.only('decryptCardData middleware', function () {
   let next
   beforeEach(function () {
     next = sinon.stub()
@@ -11,7 +11,7 @@ describe('decryptCardData middleware', function () {
     )
   })
 
-  describe('with mocked crypto', function () {
+  describe.only('with mocked crypto', function () {
     const decryptCardDataFactory = proxyquire('../../app/middleware/decrypt-card-data.js', {
       '@aws-crypto/decrypt-node': {
         decrypt: (_, cipherText) => Promise.resolve({ plaintext: Buffer.from(`decrypted(${cipherText})`) })
@@ -39,7 +39,7 @@ describe('decryptCardData middleware', function () {
       ).to.throw('DECRYPT_CARD_DATA_KEY_NAMESPACE is required')
     })
 
-    describe('when disabled', function () {
+    describe.only('when disabled', function () {
       const decryptCardDataMiddleware = decryptCardDataFactory({
         DECRYPT_AND_OMIT_CARD_DATA: undefined,
         DECRYPT_CARD_DATA_PRIVATE_KEY: 'some-value-that-should-not-matter',
@@ -66,7 +66,7 @@ describe('decryptCardData middleware', function () {
       })
     })
 
-    describe('when enabled', function () {
+    describe.only('when enabled', function () {
       const decryptCardDataMiddleware = decryptCardDataFactory({
         DECRYPT_AND_OMIT_CARD_DATA: 'true',
         DECRYPT_CARD_DATA_PRIVATE_KEY: '-----FAKE RSA KEY-----',
@@ -120,7 +120,7 @@ describe('decryptCardData middleware', function () {
     })
   })
 
-  describe('when enabled with real crypto', function () {
+  describe.only('when enabled with real crypto', function () {
     // This key is committed to a public repository, so you MUST NOT use it in
     // production.
     const privateKey = `-----BEGIN RSA PRIVATE KEY-----

@@ -33,7 +33,7 @@ const cspMiddlewareStack = [
   ])
 ]
 
-describe('CSP report endpoint', () => {
+describe.only('CSP report endpoint', () => {
   const underTest = express()
   underTest.enable('trust proxy')
   underTest.set('trust proxy', 3)
@@ -207,7 +207,7 @@ const requireHelper = function requireHelper (module) {
   return require(module)
 }
 
-describe('CSP middleware', () => {
+describe.only('CSP middleware', () => {
   it('should not set the Content-Security-Policy header if the feature is switched off', () => {
     process.env.CSP_SEND_HEADER = 'false'
     const csp = requireHelper('../../app/middleware/csp')

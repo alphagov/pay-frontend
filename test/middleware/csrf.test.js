@@ -7,7 +7,7 @@ const helper = require('../test-helpers/test-helpers.js')
 
 const { csrfCheck, csrfTokenGeneration } = require('../../app/middleware/csrf.js')
 
-describe('retrieve param test', function () {
+describe.only('retrieve param test', function () {
   const response = {
     status: function () {},
     render: function () {},

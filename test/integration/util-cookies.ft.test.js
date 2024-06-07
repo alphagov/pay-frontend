@@ -4,7 +4,7 @@
 const { expect } = require('chai')
 const proxyquire = require('proxyquire').noPreserveCache()
 
-describe('frontend cookie', function () {
+describe.only('frontend cookie', function () {
   let initialEnvironmentVariables
   before(() => {
     initialEnvironmentVariables = Object.assign({}, process.env)

@@ -4,7 +4,7 @@ const actionName = require('../../app/middleware/action-name.js')
 
 const sinon = require('sinon')
 
-describe('actionName', function () {
+describe.only('actionName', function () {
   it('should append the viewname to the request', function () {
     const next = sinon.spy()
     const req = {
