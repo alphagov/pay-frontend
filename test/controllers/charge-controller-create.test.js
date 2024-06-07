@@ -31,8 +31,8 @@ const paymentDetails = {
   addressPostcode: 'E1 8QS'
 }
 
-describe('with valid payment details', function () {
-  describe('POST /card_details/{chargeId} endpoint', function () {
+describe.only('with valid payment details', function () {
+  describe.only('POST /card_details/{chargeId} endpoint', function () {
     let response
     let chargeAuthStub
     let mockedConnectorClient
@@ -179,14 +179,14 @@ describe('with valid payment details', function () {
   })
 })
 
-describe('with invalid payment details', function () {
-  describe('when DECRYPT_AND_OMIT_CARD_DATA is set', function () {
+describe.only('with invalid payment details', function () {
+  describe.only('when DECRYPT_AND_OMIT_CARD_DATA is set', function () {
     let chargeController
     beforeEach(() => {
       chargeController = requireChargeController(sinon.stub(), { failValidation: true, decryptAndOmitCardData: true })
     })
 
-    describe('POST /card_details/{chargeId} endpoint', function () {
+    describe.only('POST /card_details/{chargeId} endpoint', function () {
       it('should show a validation error omitting card data', async function () {
         const request = {
           chargeData: chargeData,
@@ -221,12 +221,12 @@ describe('with invalid payment details', function () {
     })
   })
 
-  describe('when DECRYPT_AND_OMIT_CARD_DATA is not set', function () {
+  describe.only('when DECRYPT_AND_OMIT_CARD_DATA is not set', function () {
     let chargeController
     beforeEach(() => {
       chargeController = requireChargeController(sinon.stub(), { failValidation: true, decryptAndOmitCardData: undefined })
     })
-    describe('POST /card_details/{chargeId} endpoint', function () {
+    describe.only('POST /card_details/{chargeId} endpoint', function () {
       it('should show a validation error including card data', async function () {
         const request = {
           chargeData: chargeData,

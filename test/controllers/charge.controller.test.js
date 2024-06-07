@@ -102,7 +102,7 @@ const requireChargeController = function (mockedCharge, mockedNormalise, mockedC
   return proxyquire('../../app/controllers/charge.controller.js', proxyquireMocks)
 }
 
-describe('card details endpoint', function () {
+describe.only('card details endpoint', function () {
   let request, response, mockedConnectorClient
 
   const aResponseWithStatus = function (status) {
@@ -227,7 +227,7 @@ describe('card details endpoint', function () {
   })
 })
 
-describe('check card endpoint', function () {
+describe.only('check card endpoint', function () {
   const mockedCard = function (allowedCards, correlationId) {
     const card = {
       brand: 'VISA',

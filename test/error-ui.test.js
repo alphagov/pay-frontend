@@ -1,6 +1,6 @@
 const renderTemplate = require('./test-helpers/html-assertions.js').render
 
-describe('The error view', function () {
+describe.only('The error view', function () {
   it('should render an error message', function () {
     const msg = 'shut up and take my money!'
     const body = renderTemplate('error', { message: msg })
