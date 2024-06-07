@@ -4,7 +4,7 @@ var path = require('path')
 var renderTemplate = require('./test-helpers/html-assertions.js').render
 var should = require('chai').should() // eslint-disable-line
 
-describe('Frontend analytics', function () {
+describe.only('Frontend analytics', function () {
   var googleAnalyticsScript = '//www.google-analytics.com/analytics.js'
   var googleAnalyticsCustomDimensions = {
     analyticsId: 'testId',

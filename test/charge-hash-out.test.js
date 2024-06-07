@@ -3,7 +3,7 @@ const chai = require('chai')
 chai.use(require('chai-string'))
 var should = chai.should() // eslint-disable-line
 
-describe('Card number masking', function () {
+describe.only('Card number masking', function () {
   const cardNumbers12To19 = [
     '12345678AAAA',
     '123456789AAAA', // pragma: allowlist secret

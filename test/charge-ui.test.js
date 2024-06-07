@@ -37,7 +37,7 @@ const generateConfirmViewTemplateData = (templateData = {}) => {
   }
 }
 
-describe('The charge view', function () {
+describe.only('The charge view', function () {
   it('should render the amount', function () {
     const templateData = {
       amount: '50.00'
@@ -121,7 +121,7 @@ describe('The charge view', function () {
   })
 })
 
-describe('The confirm view', function () {
+describe.only('The confirm view', function () {
   const successTemplateDataWithCollectBillingAddress = generateConfirmViewTemplateData()
 
   it('should render cardNumber, expiryDate, amount and cardholder details fields', function () {
