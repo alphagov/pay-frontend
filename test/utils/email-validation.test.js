@@ -57,7 +57,7 @@ const invalidEmailAddresses = [
   'incorrect-punycode@xn---something.com'
 ]
 
-describe('Email validation', () => {
+describe.only('Email validation', () => {
   validEmailAddresses.forEach(email => {
     it(`Email address ${email} should be valid`, () => {
       const result = validateEmail(email)

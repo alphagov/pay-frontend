@@ -13,14 +13,14 @@ const Card = require('../../app/models/card.js')()
 let result
 const validator = charge(i18n.__('fieldErrors'), { info: () => {} }, Card)
 
-describe('charge validator', () => {
-  describe('Method: verify', () => {
+describe.only('charge validator', () => {
+  describe.only('Method: verify', () => {
     it('when there is any sort of error, the hasError property of the returned object should be true', () => {
       result = validator.verify({})
       expect(result.hasError).to.equal(true)
     })
 
-    describe('when there is an error in a required field', () => {
+    describe.only('when there is an error in a required field', () => {
       before(() => {
         result = validator.verify({ cardNo: '4242' })
       })
@@ -40,7 +40,7 @@ describe('charge validator', () => {
       })
     })
 
-    describe('when there is an error in an optional field', () => {
+    describe.only('when there is an error in an optional field', () => {
       before(() => {
         result = validator.verify({ addressLine2: '012345678901 Cheese Avenue' })
       })

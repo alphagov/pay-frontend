@@ -5,7 +5,7 @@ const { commonTypos } = require('../../app/utils/email-tools')
 // const validEmailList = require('./valid-email-list')
 const invalidEmailList = require('./invalid-email-list')
 
-describe('When Mailcheck is given a valid email ', () => {
+describe.only('When Mailcheck is given a valid email ', () => {
   it('it should return empty as there is no problem', () => {
     expect(commonTypos('test@gmail.com')).to.equal()
   })

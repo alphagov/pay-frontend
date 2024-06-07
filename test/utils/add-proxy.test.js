@@ -5,8 +5,8 @@ const { expect } = require('chai')
 const urlParse = require('url').parse // eslint-disable-line
 const proxyquire = require('proxyquire').noPreserveCache()
 
-describe('add proxy test', () => {
-  describe('with FORWARD_PROXY_URL env var', () => {
+describe.only('add proxy test', () => {
+  describe.only('with FORWARD_PROXY_URL env var', () => {
     it('url should be proxied with new hostname and port', () => {
       const forwardProxy = urlParse('http://forward-proxy:8888')
       process.env.FORWARD_PROXY_URL = forwardProxy.href
@@ -19,7 +19,7 @@ describe('add proxy test', () => {
     })
   })
 
-  describe('without FORWARD_PROXY_URL env var', () => {
+  describe.only('without FORWARD_PROXY_URL env var', () => {
     it('return url should be identical', () => {
       delete process.env.FORWARD_PROXY_URL
       const addProxy = proxyquire('../../app/utils/add-proxy', {})

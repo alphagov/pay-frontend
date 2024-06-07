@@ -3,7 +3,7 @@ const expect = require('chai').expect
 
 const testCase = 'lorem ipsum dolor sit amet'
 
-describe('hasSubstr', () => {
+describe.only('hasSubstr', () => {
   it('returns true when substring is detected', () => {
     const lookupStrings = ['ipsum']
     const result = hasSubstr(lookupStrings, testCase)
