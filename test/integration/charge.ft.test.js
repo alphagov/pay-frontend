@@ -51,7 +51,7 @@ const mockSuccessCardIdResponse = function (data) {
     .reply(200, data)
 }
 
-describe('chargeTests', function () {
+describe.only('chargeTests', function () {
   const localServer = process.env.CONNECTOR_HOST
   const adminUsersHost = process.env.ADMINUSERS_URL
 
@@ -126,7 +126,7 @@ describe('chargeTests', function () {
     logger.level = 'none'
   })
 
-  describe('The /charge endpoint', function () {
+  describe.only('The /charge endpoint', function () {
     it('should redirect user to auth_waiting when connector returns 202', function (done) {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)

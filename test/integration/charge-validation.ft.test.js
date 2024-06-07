@@ -39,7 +39,7 @@ const gatewayAccountId = '12345'
 const RETURN_URL = 'http://www.example.com/service'
 
 const connectorAuthUrl = localServer + connectorChargePath + chargeId + '/cards'
-describe('checks for PAN-like numbers', () => {
+describe.only('checks for PAN-like numbers', () => {
   beforeEach(function () {
     nock.cleanAll()
   })
