@@ -17,7 +17,7 @@ const app = proxyquire('../../server.js',
     }
   }).getApp()
 
-describe('Client side logging tests', () => {
+describe.only('Client side logging tests', () => {
   const chargeId = '23144323'
 
   it('should return a 200 status code when cookie is present', (done) => {

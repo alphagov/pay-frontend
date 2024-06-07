@@ -2,7 +2,7 @@ const request = require('supertest')
 const app = require('../../server.js').getApp()
 const expect = require('chai').expect
 
-describe('The /healthcheck endpoint returned json', function () {
+describe.only('The /healthcheck endpoint returned json', function () {
   it('should return 200 and be healthy', function (done) {
     const expectedResponse = { ping: { healthy: true } }
     request(app)

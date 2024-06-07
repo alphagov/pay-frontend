@@ -38,7 +38,7 @@ const gatewayAccount = {
 
 let mockServer
 
-describe('Confirm page tests', function () {
+describe.only('Confirm page tests', function () {
   const localServer = process.env.CONNECTOR_HOST
   const connectorChargePath = '/v1/frontend/charges/'
   const chargeId = '23144323'
@@ -55,7 +55,7 @@ describe('Confirm page tests', function () {
     logger.level = 'none'
   })
 
-  describe('The /card_details/charge_id/confirm endpoint', function () {
+  describe.only('The /card_details/charge_id/confirm endpoint', function () {
     beforeEach(function () {
       nock.cleanAll()
     })
