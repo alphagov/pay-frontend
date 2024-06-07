@@ -33,8 +33,8 @@ describe.only('connector client - Worldpay 3DS flex tests', function () {
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('get Worldpay 3DS flex JWT', function () {
-    describe('success', function () {
+  describe.only('get Worldpay 3DS flex JWT', function () {
+    describe.only('success', function () {
       const response = worlpay3dsFlexFixtures.validDdcJwt()
 
       before(() => {
@@ -57,7 +57,7 @@ describe.only('connector client - Worldpay 3DS flex tests', function () {
     })
   })
 
-  describe('get charge in 3DS required has a 3DS flex challenge JWT', function () {
+  describe.only('get charge in 3DS required has a 3DS flex challenge JWT', function () {
     before(() => {
       const response = paymentFixtures.validChargeDetails({
         chargeId: TEST_CHARGE_ID,

@@ -6,7 +6,7 @@ const { expect } = require('chai')
 // Local dependencies
 const abTest = require('../../app/utils/ab-test')
 
-describe('ab test helper', function () {
+describe.only('ab test helper', function () {
   it('should uniformly generate a random number', () => {
     const uniformModNumber = abTest.uniformlyGeneratedRandomNumber()
     expect(uniformModNumber).to.not.be.null  // eslint-disable-line

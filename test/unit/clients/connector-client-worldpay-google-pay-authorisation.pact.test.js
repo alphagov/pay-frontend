@@ -40,8 +40,8 @@ describe.only('Connector Client - Google Pay authorisation API - Worldpay paymen
   before(() => provider.setup())
   after(() => provider.finalize())
 
-  describe('Authorise Worldpay Google Pay payment', function () {
-    describe('authorisation success', function () {
+  describe.only('Authorise Worldpay Google Pay payment', function () {
+    describe.only('authorisation success', function () {
       const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails({ worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT })
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
       before(() => {
@@ -71,7 +71,7 @@ describe.only('Connector Client - Google Pay authorisation API - Worldpay paymen
       })
     })
 
-    describe('authorisation success with no last card digits', function () {
+    describe.only('authorisation success with no last card digits', function () {
       const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails({
         lastDigitsCardNumber: '',
         worldpay3dsFlexDdcResult: GOOGLE_DDC_RESULT
@@ -105,7 +105,7 @@ describe.only('Connector Client - Google Pay authorisation API - Worldpay paymen
       })
     })
 
-    describe('authorisation success with no ddc result', function () {
+    describe.only('authorisation success with no ddc result', function () {
       const successfulGoogleAuthRequest = fixtures.worldpayOrSandboxGoogleAuthRequestDetails()
       const authorisationSuccessResponse = fixtures.webPaymentSuccessResponse()
 
