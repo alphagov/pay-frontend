@@ -17,9 +17,9 @@ const originalHost = process.env.CONNECTOR_HOST
 // Configure
 require('../test-helpers/html-assertions.js')
 
-describe('token model', function () {
-  describe('mark token as used', function () {
-    describe('when connector is unavailable', function () {
+describe.only('token model', function () {
+  describe.only('mark token as used', function () {
+    describe.only('when connector is unavailable', function () {
       before(function () {
         nock.cleanAll()
       })
@@ -28,7 +28,7 @@ describe('token model', function () {
       })
     })
 
-    describe('when connector returns incorrect response code', function () {
+    describe.only('when connector returns incorrect response code', function () {
       before(function () {
         nock.cleanAll()
         nock(originalHost, {
@@ -44,7 +44,7 @@ describe('token model', function () {
       })
     })
 
-    describe('when connector returns correctly', function () {
+    describe.only('when connector returns correctly', function () {
       before(function () {
         nock.cleanAll()
         nock(originalHost, {

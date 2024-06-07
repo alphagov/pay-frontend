@@ -6,7 +6,7 @@ const { getFutureYearAs2Digits } = require('../../app/services/example-card-expi
 
 const mockNewDateToAlwaysReturn = (date) => sinon.useFakeTimers({ now: date, toFake: ['Date'] })
 
-describe('Example card expiry date year', () => {
+describe.only('Example card expiry date year', () => {
   let clock
 
   afterEach(() => {

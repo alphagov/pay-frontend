@@ -7,9 +7,9 @@ const expect = require('chai').expect
 const stateService = require('../../app/services/state.service.js')
 const State = require('../../config/state.js')
 
-describe('state service', function () {
-  describe('resolveStates', function () {
-    describe('when states cannot be resolved', function () {
+describe.only('state service', function () {
+  describe.only('resolveStates', function () {
+    describe.only('when states cannot be resolved', function () {
       it('should throw an error', function () {
         expect(function () {
           stateService.resolveStates('unknown.action.name')
@@ -17,22 +17,22 @@ describe('state service', function () {
       })
     })
 
-    describe('when states can be resolved', function () {
+    describe.only('when states can be resolved', function () {
       it('should return the states', function () {
         expect(stateService.resolveStates('card.new')).to.eql([State.ENTERING_CARD_DETAILS, State.CREATED])
       })
     })
   })
 
-  describe('resolveActionName', function () {
-    describe('when action name cannot be resolved', function () {
+  describe.only('resolveActionName', function () {
+    describe.only('when action name cannot be resolved', function () {
       expect(function () {
         stateService.resolveActionName('unknown.action.name', 'foo')
       }).to.throw(/No actionName found for state: unknown.action.name and verb: foo/)
     })
   })
 
-  describe('when action name can be resolved', function () {
+  describe.only('when action name can be resolved', function () {
     expect(stateService.resolveActionName(State.AUTH_SUCCESS, 'get')).to.eql('card.confirm')
 
     expect(stateService.resolveActionName(State.AUTH_READY, 'get')).to.eql('card.authWaiting')

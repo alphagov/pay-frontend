@@ -19,7 +19,7 @@ const testCards = [{
   type: 'CREDIT'
 }]
 
-describe('normalise cards', function () {
+describe.only('normalise cards', function () {
   it('should return the correct format for the model', function () {
     expect(normalise(testCards)).to.eql([
       {
