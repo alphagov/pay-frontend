@@ -29,7 +29,7 @@ const { pactify } = require('../../test-helpers/pact/pact-base')()
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-describe('Connectors Client - Google Pay authorisation API - Stripe payment', function () {
+describe.only('Connectors Client - Google Pay authorisation API - Stripe payment', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',

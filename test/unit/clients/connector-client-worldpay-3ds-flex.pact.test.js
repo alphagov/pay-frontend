@@ -19,7 +19,7 @@ const GET_CHARGE_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASE_URL = `http://127.0.0.1:${PORT}`
 
-describe('connector client - Worldpay 3DS flex tests', function () {
+describe.only('connector client - Worldpay 3DS flex tests', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',

@@ -37,7 +37,7 @@ const VALID_POST_RESPONSE = {
   get: () => null
 }
 
-describe('session utils ', () => {
+describe.only('session utils ', () => {
   describe('createChargeIdSessionKey ', () => {
     it('should return chargeId with prefix ch_', function () {
       expect(session.createChargeIdSessionKey(chargeId)).to.equal('ch_foo')

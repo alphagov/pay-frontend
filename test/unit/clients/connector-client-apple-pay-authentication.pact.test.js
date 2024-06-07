@@ -24,7 +24,7 @@ const { pactify } = require('../../test-helpers/pact/pact-base')()
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-describe('connectors client - apple authentication API', function () {
+describe.only('connectors client - apple authentication API', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',

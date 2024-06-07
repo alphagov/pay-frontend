@@ -18,7 +18,7 @@ const FRONTEND_TOKEN_URL = `/v1/frontend/tokens/${TOKEN}`
 
 const chargeId = 'chargeExternalId'
 
-describe('connector client - tokens', function () {
+describe.only('connector client - tokens', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',

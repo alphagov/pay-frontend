@@ -13,7 +13,7 @@ const arbitraryRequestData = { foo: 'bar' }
 const arbitraryCorrelationId = 123
 const arbitraryResponseData = { response: 'I am a response' }
 
-describe('base client', () => {
+describe.only('base client', () => {
   beforeEach(function () {
     nock.cleanAll()
   })

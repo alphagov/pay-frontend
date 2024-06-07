@@ -5,7 +5,7 @@ const { expect } = require('chai')
 
 const app = require('../../server').getApp()
 
-describe('server config:', () => {
+describe.only('server config:', () => {
   it('should not return the \'x-powered-by\' header by default', done => {
     request(app)
       .get('/')

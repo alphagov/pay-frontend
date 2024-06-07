@@ -11,7 +11,7 @@ const getCookiesUtil = clientSessionsStub => {
   return proxyquire('../../app/utils/cookies', {})
 }
 
-describe('cookie configuration', function () {
+describe.only('cookie configuration', function () {
   let initialEnvironmentVariables
   before(() => {
     initialEnvironmentVariables = Object.assign({}, process.env)

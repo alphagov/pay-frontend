@@ -23,7 +23,7 @@ const expect = chai.expect
 chai.use(chaiAsPromised)
 const adminusersClient = getAdminUsersClient({ baseUrl: `http://127.0.0.1:${port}` })
 
-describe('adminusers client - services API', function () {
+describe.only('adminusers client - services API', function () {
   const provider = new Pact({
     consumer: 'frontend-to-be',
     provider: 'adminusers',
@@ -55,19 +55,16 @@ describe('adminusers client - services API', function () {
 
       afterEach(() => provider.verify())
 
-      it('should return service successfully', function (done) {
-        adminusersClient.findServiceBy({ gatewayAccountId: gatewayAccountId }).then(service => {
-          expect(service.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
-          done()
-        }).catch((err) => {
-          throw new Error('should not be hit: ' + JSON.stringify(err))
-        })
+      it('should return service successfully', async () => {
+        const response = await adminusersClient.findServiceBy({ gatewayAccountId: gatewayAccountId })
+        console.log('** - response:', response)
+        expect(response.gatewayAccountIds[0]).to.be.equal(gatewayAccountId)
       })
     })
 
     describe('bad request', function () {
       const invalidGatewayAccountId = 'not-a-number'
-      beforeEach(() => {
+      before(() => {
         const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)
           .withQuery({ gatewayAccountId: invalidGatewayAccountId })
           .withState('a service exists with the given gateway account id association')
@@ -80,21 +77,18 @@ describe('adminusers client - services API', function () {
 
       afterEach(() => provider.verify())
 
-      it('error 400', function (done) {
-        adminusersClient.findServiceBy({ gatewayAccountId: invalidGatewayAccountId })
-          .then(() => {
-            throw new Error('should not be hit')
-          })
-          .catch(response => {
-            expect(response.errorCode).to.be.equal(400)
-            done()
-          })
+      it('error 400', async () => {
+        try {
+          await adminusersClient.findServiceBy({ gatewayAccountId: invalidGatewayAccountId })
+        } catch (error) {
+          expect(error.errorCode).to.be.equal(400)
+        }
       })
     })
 
     describe('not found', function () {
       const nonAssociatedGatewayAccountId = '999'
-      beforeEach(() => {
+      before(() => {
         const builder = new PactInteractionBuilder(`${SERVICES_PATH}`)
           .withQuery({ gatewayAccountId: nonAssociatedGatewayAccountId })
           .withState('a service with given gateway account id does not exist')
@@ -104,17 +98,17 @@ describe('adminusers client - services API', function () {
 
         return provider.addInteraction(builder)
       })
+
       afterEach(() => provider.verify())
 
-      it('error 400', function (done) {
-        adminusersClient.findServiceBy({ gatewayAccountId: nonAssociatedGatewayAccountId })
-          .then(() => {
-            throw new Error('should not be hit')
-          })
-          .catch(response => {
-            expect(response.errorCode).to.be.equal(404)
-            done()
-          })
+      it('error 400', async () => {
+        try {
+          await adminusersClient.findServiceBy({ gatewayAccountId: nonAssociatedGatewayAccountId })
+
+          throw new Error('should not be hit')
+        } catch (error) {
+          expect(error.errorCode).to.be.equal(404)
+        }
       })
     })
   })

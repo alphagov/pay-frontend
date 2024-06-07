@@ -18,7 +18,7 @@ const GOOGLE_AUTH_PATH = `/v1/frontend/charges/${TEST_CHARGE_ID}/wallets/google`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASEURL = `http://127.0.0.1:${PORT}`
 
-describe('Connector Client - Google Pay authorisation API - Sandbox payment', function () {
+describe.only('Connector Client - Google Pay authorisation API - Sandbox payment', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',

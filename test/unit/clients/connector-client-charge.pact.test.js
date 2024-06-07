@@ -18,7 +18,7 @@ const AUTHORISE_CHARGE_URL = `/v1/frontend/charges/${TEST_CHARGE_ID}/cards`
 const PORT = Math.floor(Math.random() * 48127) + 1024
 const BASE_URL = `http://127.0.0.1:${PORT}`
 
-describe('Connector client - charge tests', function () {
+describe.only('Connector client - charge tests', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',

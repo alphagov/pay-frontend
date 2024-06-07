@@ -26,7 +26,7 @@ chai.use(chaiAsPromised)
 
 const GOOGLE_DDC_RESULT = 'some long opaque string that’s a device data collection result'
 
-describe('Connector Client - Google Pay authorisation API - Worldpay payment', function () {
+describe.only('Connector Client - Google Pay authorisation API - Worldpay payment', function () {
   const provider = new Pact({
     consumer: 'frontend',
     provider: 'connector',
