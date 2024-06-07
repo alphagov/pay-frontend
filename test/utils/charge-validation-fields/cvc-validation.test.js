@@ -3,7 +3,7 @@ const cardTypes = require('../../test-helpers/test-helpers.js').cardTypes()
 const Card = require('../../../app/models/card.js')(cardTypes)
 const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
-describe('card validation: cvc', function () {
+describe.only('card validation: cvc', function () {
   it('should true if correct', function () {
     const result = fields.fieldValidations.cvc('123')
     expect(result).to.equal(true)

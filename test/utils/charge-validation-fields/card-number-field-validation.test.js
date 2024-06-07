@@ -3,7 +3,7 @@ const cardTypes = require('../../test-helpers/test-helpers.js').cardTypes()
 const Card = require('../../../app/models/card.js')(cardTypes)
 const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
-describe('card validation: card number', function () {
+describe.only('card validation: card number', function () {
   it('should return true when the card is correct', function () {
     const result = fields.fieldValidations.cardNo('4242424242424242')
     expect(result).to.equal(true)

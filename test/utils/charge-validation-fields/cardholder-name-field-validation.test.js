@@ -7,8 +7,8 @@ const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
 let result
 
-describe('card validation: cardholder name', function () {
-  describe('should validate if it is not suspected of containing a PAN or CVV', () => {
+describe.only('card validation: cardholder name', function () {
+  describe.only('should validate if it is not suspected of containing a PAN or CVV', () => {
     it('and it contains only text', () => {
       result = fields.fieldValidations.cardholderName('Mr Peter Griffin')
       expect(result).to.equal(true)
@@ -35,7 +35,7 @@ describe('card validation: cardholder name', function () {
     })
   })
 
-  describe('should not validate if it contains a suspected PAN', () => {
+  describe.only('should not validate if it contains a suspected PAN', () => {
     it('and it consists entirely of an excessive amount of digits', () => {
       result = fields.fieldValidations.cardholderName('012345678901')
       expect(result).to.equal('containsTooManyDigits')
@@ -52,7 +52,7 @@ describe('card validation: cardholder name', function () {
     })
   })
 
-  describe('it should not validate if it contains a suspected CVV', () => {
+  describe.only('it should not validate if it contains a suspected CVV', () => {
     it('because it consists of a number that is 3 digits long', () => {
       result = fields.fieldValidations.cardholderName(170)
       expect(result).to.equal('containsSuspectedCVC')

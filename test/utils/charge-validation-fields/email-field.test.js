@@ -7,8 +7,8 @@ const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
 let result
 
-describe('card validation: email', function () {
-  describe('should validate if does not contain 12 digits', () => {
+describe.only('card validation: email', function () {
+  describe.only('should validate if does not contain 12 digits', () => {
     it('and it contains only text', () => {
       result = fields.fieldValidations.email('pumpkinlover@example.com')
       expect(result).to.equal(true)

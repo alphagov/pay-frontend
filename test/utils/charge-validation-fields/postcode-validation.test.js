@@ -4,7 +4,7 @@ const Card = require('../../../app/models/card.js')(cardTypes)
 const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 let result
 
-describe('card validation: postcode', function () {
+describe.only('card validation: postcode', function () {
   it('should return true if a valid postcode', function () {
     result = fields.fieldValidations.addressPostcode('N4 2BQ', { addressCountry: 'GB' })
     expect(result).to.equal(true)
@@ -30,7 +30,7 @@ describe('card validation: postcode', function () {
     expect(result).to.equal('message')
   })
 
-  describe('should not validate if a UK postcode and its length is', () => {
+  describe.only('should not validate if a UK postcode and its length is', () => {
     it('too long', function () {
       result = fields.fieldValidations.addressPostcode('N4 2BQQ', { addressCountry: 'GB' })
       expect(result).to.equal('message')
@@ -42,7 +42,7 @@ describe('card validation: postcode', function () {
     })
   })
 
-  describe('should validate if does not contain 12 digits', () => {
+  describe.only('should validate if does not contain 12 digits', () => {
     it('and it contains only text', () => {
       result = fields.fieldValidations.addressPostcode('ABCDEF', { addressCountry: 'US' })
       expect(result).to.equal(true)
@@ -54,7 +54,7 @@ describe('card validation: postcode', function () {
     })
   })
 
-  describe('should not validate if it contains 12 or more digits', () => {
+  describe.only('should not validate if it contains 12 or more digits', () => {
     it('and it contains only digits', () => {
       result = fields.fieldValidations.addressPostcode('012345678901', { addressCountry: 'US' })
       expect(result).to.equal('containsTooManyDigits')

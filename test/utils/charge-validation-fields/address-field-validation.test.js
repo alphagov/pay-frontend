@@ -7,9 +7,9 @@ const fields = require('../../../app/utils/charge-validation-fields.js')(Card)
 
 let result
 
-describe('card validation: address', () => {
-  describe('addressLine1', function () {
-    describe('should validate if does not contain 12 digits', () => {
+describe.only('card validation: address', () => {
+  describe.only('addressLine1', function () {
+    describe.only('should validate if does not contain 12 digits', () => {
       it('and it contains only text', () => {
         result = fields.fieldValidations.addressLine1('Spooner Street')
         expect(result).to.equal(true)
@@ -21,7 +21,7 @@ describe('card validation: address', () => {
       })
     })
 
-    describe('should not validate if it contains 12 or more digits', () => {
+    describe.only('should not validate if it contains 12 or more digits', () => {
       it('and it contains only digits', () => {
         result = fields.fieldValidations.addressLine1('012345678901')
         expect(result).to.equal('containsTooManyDigits')
@@ -39,8 +39,8 @@ describe('card validation: address', () => {
     })
   })
 
-  describe('addressLine2', function () {
-    describe('should validate if does not contain 12 digits', () => {
+  describe.only('addressLine2', function () {
+    describe.only('should validate if does not contain 12 digits', () => {
       it('and it contains only text', () => {
         result = fields.fieldValidations.addressLine2('Spooner Street')
         expect(result).to.equal(true)
@@ -52,7 +52,7 @@ describe('card validation: address', () => {
       })
     })
 
-    describe('should not validate if it contains 12 or more digits', () => {
+    describe.only('should not validate if it contains 12 or more digits', () => {
       it('and it contains only digits', () => {
         result = fields.fieldValidations.addressLine2('012345678901')
         expect(result).to.equal('containsTooManyDigits')
@@ -70,8 +70,8 @@ describe('card validation: address', () => {
     })
   })
 
-  describe('addressCity', function () {
-    describe('should validate if does not contain 12 digits', () => {
+  describe.only('addressCity', function () {
+    describe.only('should validate if does not contain 12 digits', () => {
       it('and it contains only text', () => {
         result = fields.fieldValidations.addressCity('Mr Quahog')
         expect(result).to.equal(true)
@@ -83,7 +83,7 @@ describe('card validation: address', () => {
       })
     })
 
-    describe('should not validate if it contains 12 or more digits', () => {
+    describe.only('should not validate if it contains 12 or more digits', () => {
       it('and it contains only digits', () => {
         result = fields.fieldValidations.addressCity('012345678901')
         expect(result).to.equal('containsTooManyDigits')

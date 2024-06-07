@@ -7,7 +7,7 @@ const { expect } = require('chai')
 const sinon = require('sinon')
 const mockNewDateToAlwaysReturn = (date) => sinon.useFakeTimers({ now: date, toFake: ['Date'] })
 
-describe('Card expiry date validation', function () {
+describe.only('Card expiry date validation', function () {
   let clock
 
   before(() => {
