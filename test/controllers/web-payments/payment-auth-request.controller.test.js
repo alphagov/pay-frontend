@@ -13,8 +13,8 @@ require('../../test-helpers/html-assertions')
 const mockNormalise = object => object
 const chargeId = 'chargeId'
 
-describe('The web payments auth request controller', () => {
-  describe('when processing an Apple Pay payment', () => {
+describe.only('The web payments auth request controller', () => {
+  describe.only('when processing an Apple Pay payment', () => {
     const wallet = 'apple'
     const req = {
       headers: {
@@ -81,7 +81,7 @@ describe('The web payments auth request controller', () => {
     })
   })
 
-  describe('when processing a Google Pay payment', () => {
+  describe.only('when processing a Google Pay payment', () => {
     const wallet = 'google'
     const req = {
       headers: {

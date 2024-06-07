@@ -6,8 +6,8 @@ const requireStaticController = function () {
   return require('../../app/controllers/static.controller.js')
 }
 
-describe('static controller', function () {
-  describe('naxsi system error endpoint', function () {
+describe.only('static controller', function () {
+  describe.only('naxsi system error endpoint', function () {
     let request, response
 
     before(function () {

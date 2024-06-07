@@ -24,7 +24,7 @@ const requireReturnController = function () {
   return proxyquire('../../app/controllers/return.controller.js', mocks)
 }
 
-describe('return controller', function () {
+describe.only('return controller', function () {
   let request, response
 
   beforeEach(function () {

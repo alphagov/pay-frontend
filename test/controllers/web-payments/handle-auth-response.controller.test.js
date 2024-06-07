@@ -40,7 +40,7 @@ const requireHandleAuthResponseController = (mockedCharge, mockedNormaliseCharge
   return proxyquire('../../../app/controllers/web-payments/handle-auth-response.controller', proxyquireMocks)
 }
 
-describe('The web payments handle auth response controller', () => {
+describe.only('The web payments handle auth response controller', () => {
   let res
   beforeEach(() => {
     res = {

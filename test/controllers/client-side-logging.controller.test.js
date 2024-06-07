@@ -14,7 +14,7 @@ const clientSideLoggingController = proxyquire('../../app/controllers/client-sid
   })
 })
 
-describe('The client-side logging controller', () => {
+describe.only('The client-side logging controller', () => {
   beforeEach(() => {
     loggingSpy.resetHistory()
   })
