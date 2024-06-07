@@ -2,7 +2,7 @@ const expect = require('chai').expect
 
 const userIpAddress = require('../../app/utils/user-ip-address')
 
-describe('user ip address', () => {
+describe.only('user ip address', () => {
   it('returns the address provided in x-forwarded-for header', () => {
     const result = userIpAddress({
       headers: { 'x-forwarded-for': '127.0.0.1, 0.0.0.0' },

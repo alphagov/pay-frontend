@@ -64,7 +64,7 @@ const terminalActions = [
   'AWAITING_CAPTURE_REQUEST'
 ]
 
-describe('rendering behaviour', () => {
+describe.only('rendering behaviour', () => {
   const service = serviceFixtures.validServiceResponse()
 
   const request = {}
@@ -196,7 +196,7 @@ describe('rendering behaviour', () => {
   })
 })
 
-describe('behaviour of non-terminal actions with direct redirect enabled on service', () => {
+describe.only('behaviour of non-terminal actions with direct redirect enabled on service', () => {
   const service = serviceFixtures.validServiceResponse({
     redirect_to_service_immediately_on_terminal_state: true
   })
@@ -232,7 +232,7 @@ describe('behaviour of non-terminal actions with direct redirect enabled on serv
   })
 })
 
-describe('behaviour of terminal actions with direct redirect enabled on service', () => {
+describe.only('behaviour of terminal actions with direct redirect enabled on service', () => {
   const service = serviceFixtures.validServiceResponse({
     redirect_to_service_immediately_on_terminal_state: true
   })
@@ -268,7 +268,7 @@ describe('behaviour of terminal actions with direct redirect enabled on service'
   })
 })
 
-describe('behaviour of terminal actions with direct redirect disabled on service', () => {
+describe.only('behaviour of terminal actions with direct redirect disabled on service', () => {
   const service = serviceFixtures.validServiceResponse({
     redirect_to_service_immediately_on_terminal_state: false
   })

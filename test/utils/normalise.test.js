@@ -263,31 +263,31 @@ const normalisedApiAddress = {
   country: 'GB'
 }
 
-describe('normalise', () => {
-  describe('charge', () => {
-    describe('without card details', () => {
+describe.only('normalise', () => {
+  describe.only('charge', () => {
+    describe.only('without card details', () => {
       it('should return a refined state with a countryCode', () => {
         const result = normalise.charge(unNormalisedCharge, 1, service)
         expect(result).to.deep.equal(normalisedCharge)
       })
     })
 
-    describe('with card details', () => {
-      describe('prefilled card details have billing address country', () => {
+    describe.only('with card details', () => {
+      describe.only('prefilled card details have billing address country', () => {
         it('should return a refined state with country from prefilled details', () => {
           const result = normalise.charge(unNormalisedChargeWithCardDetails, 1, service)
           expect(result).to.deep.equal(normalisedChargeWithCardDetails)
         })
       })
 
-      describe('prefilled card details have no billing address country', () => {
+      describe.only('prefilled card details have no billing address country', () => {
         it('should return a refined state with countryCode GB', () => {
           const result = normalise.charge(unNormalisedChargeWithCardDetailsWithNoCountry, 1, service)
           expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountry)
         })
       })
 
-      describe('payment has associated agreement', () => {
+      describe.only('payment has associated agreement', () => {
         it('should return agreement id on the payment screen', () => {
           const result = normalise.charge(unNormalisedChargeWithCardDetailsAndAgreement, 1, service)
           expect(result).to.deep.equal(normalisedChargeWithCardDetailsAndDefaultCountryAndAgreement)
@@ -296,14 +296,14 @@ describe('normalise', () => {
     })
   })
 
-  describe('api address', () => {
+  describe.only('api address', () => {
     it('should return a refined address for the api', () => {
       const result = normalise.addressForApi(unNormalisedAddress)
       expect(result).to.deep.equal(normalisedApiAddress)
     })
   })
 
-  describe('whitespace', () => {
+  describe.only('whitespace', () => {
     it('should return the body with no surrounding whitespace', () => {
       const passedByReference = {
         email: ' foo@foo.com',
@@ -333,7 +333,7 @@ describe('normalise', () => {
     })
   })
 
-  describe('credit card', () => {
+  describe.only('credit card', () => {
     it('should return stripping spaces', () => {
       const card = '1234 5678'
       const address = normalise.creditCard(card)

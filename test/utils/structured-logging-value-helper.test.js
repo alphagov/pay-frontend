@@ -4,7 +4,7 @@ const expect = require('chai').expect
 
 const { output, redact } = require('../../app/utils/structured-logging-value-helper.js')
 
-describe('The output function', () => {
+describe.only('The output function', () => {
   it('returns "(null)" for a null value', () => {
     expect(output(null)).to.equal('(null)')
   })
@@ -42,7 +42,7 @@ describe('The output function', () => {
   })
 })
 
-describe('The redact function', () => {
+describe.only('The redact function', () => {
   it('returns "(null)" for a null value', () => {
     expect(redact(null)).to.equal('(null)')
   })

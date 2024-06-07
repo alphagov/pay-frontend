@@ -8,7 +8,7 @@ const normalise = require('../../app/services/normalise-charge')
 
 const gatewayAccountId = 6
 
-describe('Wallet utils', () => {
+describe.only('Wallet utils', () => {
   beforeEach(() => {
     delete process.env.WORLDPAY_APPLE_PAY_ENABLED
     delete process.env.WORLDPAY_GOOGLE_PAY_ENABLED
@@ -17,8 +17,8 @@ describe('Wallet utils', () => {
     delete process.env.PAY_TEST_GATEWAY_ACCOUNTS
   })
 
-  describe('applePayEnabled', () => {
-    describe('Worldpay account', () => {
+  describe.only('applePayEnabled', () => {
+    describe.only('Worldpay account', () => {
       it('should return true if globally enabled for Worldpay and enabled for account', () => {
         process.env.WORLDPAY_APPLE_PAY_ENABLED = 'true'
         process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
@@ -55,7 +55,7 @@ describe('Wallet utils', () => {
       })
     })
 
-    describe('Stripe account', () => {
+    describe.only('Stripe account', () => {
       it('should return true if globally enabled for Stripe and enabled for account', () => {
         process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
         process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
@@ -92,7 +92,7 @@ describe('Wallet utils', () => {
       })
     })
 
-    describe('Sandbox account', () => {
+    describe.only('Sandbox account', () => {
       it('should return true if globally enabled for Worldpay (and sandbox) and enabled for account', () => {
         process.env.WORLDPAY_APPLE_PAY_ENABLED = 'true'
         process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
@@ -130,8 +130,8 @@ describe('Wallet utils', () => {
     })
   })
 
-  describe('googlePayEnabled', () => {
-    describe('Worldpay account', () => {
+  describe.only('googlePayEnabled', () => {
+    describe.only('Worldpay account', () => {
       it('should return true if globally enabled for Worldpay and enabled for account', () => {
         process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
         process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'true'
@@ -168,7 +168,7 @@ describe('Wallet utils', () => {
       })
     })
 
-    describe('Stripe account', () => {
+    describe.only('Stripe account', () => {
       it('should return true if globally enabled for Stripe and enabled for account', () => {
         process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
         process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
@@ -205,7 +205,7 @@ describe('Wallet utils', () => {
       })
     })
 
-    describe('Sandbox account', () => {
+    describe.only('Sandbox account', () => {
       it('should return true if enabled for gateway account', () => {
         process.env.WORLDPAY_APPLE_PAY_ENABLED = 'false'
         process.env.WORLDPAY_GOOGLE_PAY_ENABLED = 'false'
