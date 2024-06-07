@@ -16,7 +16,7 @@ const ANALYTICS_ERROR = {
   }
 }
 
-describe('retrieve charge test', () => {
+describe.only('retrieve charge test', () => {
   const response = {
     status: () => { },
     render: () => { },

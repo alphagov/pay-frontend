@@ -40,7 +40,7 @@ const analyticsDataForErrors = {
   amount: '0.00'
 }
 
-describe('resolve service middleware', function () {
+describe.only('resolve service middleware', function () {
   it('should resolve service from gateway account id', function (done) {
     const gatewayAccountId = '1'
     const service = new Service(serviceFixtures.validServiceResponse({ gateway_account_ids: [gatewayAccountId] }))

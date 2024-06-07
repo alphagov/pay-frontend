@@ -11,7 +11,7 @@ const res = {
   locals: {}
 }
 
-describe('Resolve language from Charge object', function () {
+describe.only('Resolve language from Charge object', function () {
   beforeEach(function () {
     i18n.configure({
       locales: ['en', 'cy'],
@@ -22,7 +22,7 @@ describe('Resolve language from Charge object', function () {
     })
   })
 
-  describe('If language is set to English', function () {
+  describe.only('If language is set to English', function () {
     const req = {
       chargeData: {
         language: 'en'
@@ -39,7 +39,7 @@ describe('Resolve language from Charge object', function () {
     })
   })
 
-  describe('If no language is set', function () {
+  describe.only('If no language is set', function () {
     const req = {
       chargeData: {
       }
@@ -55,7 +55,7 @@ describe('Resolve language from Charge object', function () {
     })
   })
 
-  describe('If language is set to Welsh', function () {
+  describe.only('If language is set to Welsh', function () {
     const req = {
       chargeData: {
         language: 'cy'

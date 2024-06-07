@@ -6,7 +6,7 @@ const stateEnforcer = require('../../app/middleware/state-enforcer.js')
 
 const sinon = require('sinon')
 
-describe('state enforcer', function () {
+describe.only('state enforcer', function () {
   const response = {
     status: function () {},
     render: function () {}

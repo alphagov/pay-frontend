@@ -17,7 +17,7 @@ const ANALYTICS_ERROR = {
   }
 }
 
-describe('enforce session cookie test', () => {
+describe.only('enforce session cookie test', () => {
   const response = {
     status: () => {},
     render: () => {},
