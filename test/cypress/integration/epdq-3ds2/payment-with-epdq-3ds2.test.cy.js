@@ -1,13 +1,13 @@
 const cardPaymentStubs = require('../../utils/card-payment-stubs')
 
-describe('Enter card details page', () => {
+describe.only('Enter card details page', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const gatewayAccountId = 42
   const sessionOpts = {}
 
   const setUpAndCheckCardPaymentPage = () => {
-    describe('ePDQ gateway account with 3DS2 enabled', () => {
+    describe.only('ePDQ gateway account with 3DS2 enabled', () => {
       const providerOpts = {
         paymentProvider: 'epdq',
         requires3ds: true,
@@ -46,7 +46,7 @@ describe('Enter card details page', () => {
       })
     })
 
-    describe('ePDQ gateway account with 3DS1 enabled', () => {
+    describe.only('ePDQ gateway account with 3DS1 enabled', () => {
       const providerOpts = {
         paymentProvider: 'epdq',
         requires3ds: true,
@@ -73,7 +73,7 @@ describe('Enter card details page', () => {
       })
     })
 
-    describe('ePDQ gateway account with 3DS disabled', () => {
+    describe.only('ePDQ gateway account with 3DS disabled', () => {
       const providerOpts = {
         paymentProvider: 'epdq',
         requires3ds: false,
@@ -100,7 +100,7 @@ describe('Enter card details page', () => {
       })
     })
 
-    describe('Worldpay gateway account with 3DS2 enabled', () => {
+    describe.only('Worldpay gateway account with 3DS2 enabled', () => {
       const providerOpts = {
         paymentProvider: 'worldpay',
         requires3ds: false,

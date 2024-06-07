@@ -14,7 +14,7 @@ const { adminUsersGetService } = require('../../utils/stub-builders/service-stub
 const { cardIdValidCardDetails } = require('../../utils/stub-builders/card-id-stubs')
 const { worldpay3dsFlexDdcIframePost } = require('../../utils/stub-builders/worldpay-stubs')
 
-describe('Google Pay payment flow', () => {
+describe.only('Google Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const worldpaySessionId = 'test session Id'
@@ -95,7 +95,7 @@ describe('Google Pay payment flow', () => {
   const worldpay3dsFlexDdcStub = worldpay3dsFlexDdcIframePost(worldpaySessionId, true)
   const worldpay3dsFlexDdcStubFailure = worldpay3dsFlexDdcIframePost(worldpaySessionId, false)
 
-  describe('Secure card payment page', () => {
+  describe.only('Secure card payment page', () => {
     it('Should handle Google pay correctly', () => {
       cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
       cy.visit(`/secure/${tokenId}`)
@@ -377,8 +377,8 @@ describe('Google Pay payment flow', () => {
     })
   })
 
-  describe('Google Pay Welsh language payment flow', () => {
-    describe('Secure card payment page', () => {
+  describe.only('Google Pay Welsh language payment flow', () => {
+    describe.only('Secure card payment page', () => {
       it('Should show Google Pay as a payment option in Welsh', () => {
         cy.task('setupStubs', [...chargeStubsWithGooglePayOrApplePayEnabled(false, false)])
         cy.visit(`/secure/${tokenId}`)

@@ -31,7 +31,7 @@ const validPaymentRequestResponse = {
 
 const agreementDescription = 'Human readable agreement description'
 
-describe('Standard card payment flow', () => {
+describe.only('Standard card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 
@@ -80,7 +80,7 @@ describe('Standard card payment flow', () => {
     connectorPostValidCaptureCharge(chargeId)
   ]
 
-  describe('Secure card payment page', () => {
+  describe.only('Secure card payment page', () => {
     it('Should show a paying user disclaimer that details will be saved when an agreement is being configured', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
@@ -176,7 +176,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Prepaid card blocking', () => {
+  describe.only('Prepaid card blocking', () => {
     it('should block a prepaid card if gateway account is configured to not allow them', () => {
       const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: true })
       cy.task('setupStubs', blockedPrepaidStubs)
@@ -206,7 +206,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page should show error', () => {
+  describe.only('Secure card payment page should show error', () => {
     it('Should show English error when card number is less than 11 digits and English page', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
@@ -256,7 +256,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page on Google Pay enabled browser but not Google Pay enabled service', () => {
+  describe.only('Secure card payment page on Google Pay enabled browser but not Google Pay enabled service', () => {
     it('Should allow payment', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
@@ -310,7 +310,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page on Apple Pay enabled browser but not Apple Pay enabled service', () => {
+  describe.only('Secure card payment page on Apple Pay enabled browser but not Apple Pay enabled service', () => {
     it('Should allow payment', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
@@ -379,7 +379,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page with prefilled cardholder details', () => {
+  describe.only('Secure card payment page with prefilled cardholder details', () => {
     it('should load all cardholder details to page', () => {
       const opts = {
         email: 'joe.bogs@example.org',

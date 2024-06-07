@@ -4,7 +4,7 @@ const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const { getMockPaymentRequest } = require('../../utils/payment-request-api-stub')
 const { worldpay3dsFlexDdcIframePost } = require('../../utils/stub-builders/worldpay-stubs')
 
-describe('Worldpay 3ds flex card payment flow', () => {
+describe.only('Worldpay 3ds flex card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const worldpaySessionId = 'test session Id'
@@ -94,7 +94,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
     cy.get('#email').type(validPayment.email)
   }
 
-  describe('Valid DDC response', () => {
+  describe.only('Valid DDC response', () => {
     it('Should submit the payment form with the session ID from a valid DDC response', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
@@ -123,7 +123,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
     })
   })
 
-  describe('Worldpay responds with status=false', () => {
+  describe.only('Worldpay responds with status=false', () => {
     it('Should not include the hidden input containing the session ID when submitting confirmation ', () => {
       cy.task('setupStubs', createPaymentChargeStubsEnglish)
       cy.visit(`/secure/${tokenId}`)
@@ -150,7 +150,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
     })
   })
 
-  describe('DDC times out', () => {
+  describe.only('DDC times out', () => {
     it('Should submit the form from the iframe post without the worldpaySessionId ', () => {
       cy.log('Should setup a standard payment page')
 
@@ -182,7 +182,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
     })
   })
 
-  describe('DDC times out when Google pay is an option', () => {
+  describe.only('DDC times out when Google pay is an option', () => {
     it('Should submit the form from the iframe post without the worldpaySessionId when Google pay option is present', () => {
       cy.log('Should setup a Google pay payment page')
 

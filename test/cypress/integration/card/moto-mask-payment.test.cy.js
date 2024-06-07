@@ -1,7 +1,7 @@
 const cardPaymentStubs = require('../../utils/card-payment-stubs')
 const gatewayAccountId = 42
 
-describe('Standard card payment flow', () => {
+describe.only('Standard card payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 
@@ -74,7 +74,7 @@ describe('Standard card payment flow', () => {
       moto: true
     })
 
-  describe('Secure card payment page - MOTO NOT enabled', () => {
+  describe.only('Secure card payment page - MOTO NOT enabled', () => {
     it('Should NOT mask digits in the card number & security code input elements', () => {
       cy.task('setupStubs', createPaymentChargeStubsNoMoto)
       cy.visit(`/secure/${tokenId}`)
@@ -90,7 +90,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page - MOTO NOT enabled but masking set for both card number and security code', () => {
+  describe.only('Secure card payment page - MOTO NOT enabled but masking set for both card number and security code', () => {
     it('Should NOT mask digits in the card number & security code input elements as it is not a MOTO service', () => {
       cy.task('setupStubs', createPaymentChargeStubsNoMotoMaskCardNumberAndSecurityCode)
       cy.visit(`/secure/${tokenId}`)
@@ -106,7 +106,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page - MOTO NOT enabled but gateway account is MOTO enabled and masking set for both card number and security code', () => {
+  describe.only('Secure card payment page - MOTO NOT enabled but gateway account is MOTO enabled and masking set for both card number and security code', () => {
     it('Should NOT mask digits in the card number & security code input elements as MOTO is false for this charge', () => {
       cy.task('setupStubs', createPaymentChargeStubsNoMotoGatewayMotoMaskCardNumberAndSecurityCode)
       cy.visit(`/secure/${tokenId}`)
@@ -122,7 +122,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page - with MOTO and only masking card number', () => {
+  describe.only('Secure card payment page - with MOTO and only masking card number', () => {
     it('Should only setup the card number input field to mask input', () => {
       cy.task('setupStubs', createPaymentChargeStubsMotoMaskCardNumberOnly)
       cy.visit(`/secure/${tokenId}`)
@@ -164,7 +164,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page - with MOTO and only masking security code', () => {
+  describe.only('Secure card payment page - with MOTO and only masking security code', () => {
     it('Should only setup the security code input field to mask input', () => {
       cy.task('setupStubs', createPaymentChargeStubsMotoMaskSecurityCodeOnly)
       cy.visit(`/secure/${tokenId}`)
@@ -200,7 +200,7 @@ describe('Standard card payment flow', () => {
     })
   })
 
-  describe('Secure card payment page - with MOTO and masking both card number and security code', () => {
+  describe.only('Secure card payment page - with MOTO and masking both card number and security code', () => {
     it('Should mask digits in the card number & security code input elements', () => {
       cy.task('setupStubs', createPaymentChargeStubsMotoMaskCardNumberAndSecurityCode)
       cy.visit(`/secure/${tokenId}`)

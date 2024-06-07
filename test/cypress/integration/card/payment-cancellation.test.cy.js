@@ -5,7 +5,7 @@ const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
 const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en')
 const createCancelChargeStub = cardPaymentStubs.buildCancelChargeStub(chargeId)
 
-describe('Cancelling payment from card details page', () => {
+describe.only('Cancelling payment from card details page', () => {
   it('Should setup the payment and load the page', () => {
     cy.task('setupStubs', createPaymentChargeStubs)
     cy.visit(`/secure/${tokenId}`)

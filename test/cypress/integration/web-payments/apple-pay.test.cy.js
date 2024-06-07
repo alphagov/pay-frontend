@@ -10,7 +10,7 @@ const {
 const { adminUsersGetService } = require('../../utils/stub-builders/service-stubs')
 const { cardIdValidCardDetails } = require('../../utils/stub-builders/card-id-stubs')
 
-describe('Apple Pay payment flow', () => {
+describe.only('Apple Pay payment flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const returnURL = 'humans.txt?success'
@@ -144,7 +144,7 @@ describe('Apple Pay payment flow', () => {
     }))
   }
 
-  describe('Secure card payment page', () => {
+  describe.only('Secure card payment page', () => {
     it('Should show Apple Pay as a payment option and allow user to choose Apple Pay', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
@@ -420,8 +420,8 @@ describe('Apple Pay payment flow', () => {
     })
   })
 
-  describe('Apple Pay Welsh language payment flow', () => {
-    describe('Secure card payment page', () => {
+  describe.only('Apple Pay Welsh language payment flow', () => {
+    describe.only('Secure card payment page', () => {
       it('Should show Apple Pay as a payment option in Welsh', () => {
         cy.task('setupStubs', createPaymentChargeStubsWelsh)
         cy.visit(`/secure/${tokenId}`)

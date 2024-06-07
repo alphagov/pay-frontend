@@ -1,6 +1,6 @@
 const cardPaymentStubs = require('../../utils/card-payment-stubs')
 
-describe('Re-use token flow', () => {
+describe.only('Re-use token flow', () => {
   const tokenId = 'be88a908-3b99-4254-9807-c855d53f6b2b'
   const chargeId = 'ub8de8r5mh4pb49rgm1ismaqfv'
   const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId)
@@ -23,7 +23,7 @@ describe('Re-use token flow', () => {
 
   const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment)
 
-  describe('Token reuse', () => {
+  describe.only('Token reuse', () => {
     it('Should display the payment screen in the right state when visiting it with token IDs that are in different states', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
