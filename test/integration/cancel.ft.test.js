@@ -36,7 +36,7 @@ const gatewayAccount = {
   type: 'test'
 }
 
-describe('Cancel tests', function () {
+describe.only('Cancel tests', function () {
   const chargeId = '23144323'
   const frontendCardDetailsPath = '/card_details'
   const gatewayAccountId = gatewayAccount.gatewayAccountId
@@ -50,7 +50,7 @@ describe('Cancel tests', function () {
     logger.level = 'none'
   })
 
-  describe('The cancel endpoint', function () {
+  describe.only('The cancel endpoint', function () {
     it('should take user to cancel page on successful cancel when charge in entering card details state', function (done) {
       const cancelEndpoint = frontendCardDetailsPath + '/' + chargeId + '/cancel'
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
