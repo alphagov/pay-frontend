@@ -36,7 +36,7 @@ const gatewayAccount = {
   type: 'test'
 }
 
-describe('chargeTests', function () {
+describe.only('chargeTests', function () {
   const chargeId = '23144323'
   const frontendCardDetailsPostPath = '/card_details/' + chargeId
   const gatewayAccountId = gatewayAccount.gatewayAccountId
@@ -52,8 +52,8 @@ describe('chargeTests', function () {
     logger.level = 'none'
   })
 
-  describe('The /charge endpoint', function () {
-    describe('Different statuses', function () {
+  describe.only('The /charge endpoint', function () {
+    describe.only('Different statuses', function () {
       function get (status) {
         nock(process.env.CONNECTOR_HOST, defaultCorrelationHeader)
           .get('/v1/frontend/charges/23144323')
