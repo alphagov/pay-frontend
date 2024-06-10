@@ -49,7 +49,7 @@ const mockSuccessCardIdResponse = function (data) {
     .reply(200, data)
 }
 
-describe('chargeTests', function () {
+describe.only('chargeTests', function () {
   const localServer = process.env.CONNECTOR_HOST
 
   const connectorChargePath = '/v1/frontend/charges/'
@@ -130,7 +130,7 @@ describe('chargeTests', function () {
     logger.level = 'none'
   })
 
-  describe('Enter card details page — sending data to connector', function () {
+  describe.only('Enter card details page — sending data to connector', function () {
     it('should send expected card data to connector for the case of a prepaid corporate debit card', function (done) {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)

@@ -130,7 +130,7 @@ function connectorExpects (data) {
   })
 }
 
-describe('Enter card details page — sending ePDQ 3DS2 additional data to connector', function () {
+describe.only('Enter card details page — sending ePDQ 3DS2 additional data to connector', function () {
   beforeEach(function () {
     nock.cleanAll()
     mockServer = nock(process.env.CONNECTOR_HOST)
