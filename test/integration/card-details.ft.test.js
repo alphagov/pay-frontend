@@ -41,7 +41,7 @@ const gatewayAccount = {
 
 let mockServer
 
-describe('Enter card details page tests', function () {
+describe.only('Enter card details page tests', function () {
   const localServer = process.env.CONNECTOR_HOST
 
   const connectorChargePath = '/v1/frontend/charges/'
@@ -115,7 +115,7 @@ describe('Enter card details page tests', function () {
     logger.level = 'none'
   })
 
-  describe('The /card_details/charge_id endpoint', function () {
+  describe.only('The /card_details/charge_id endpoint', function () {
     it('It should show card details page if charge status is in "ENTERING CARD DETAILS" state', function (done) {
       const cookieValue = cookie.create(chargeId)
       nock(process.env.CONNECTOR_HOST)
