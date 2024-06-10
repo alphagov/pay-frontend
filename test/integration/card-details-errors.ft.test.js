@@ -59,7 +59,7 @@ const mockSuccessPatchEmail = function (chargeId) {
     .reply(200)
 }
 
-describe('chargeTests', function () {
+describe.only('chargeTests', function () {
   const localServer = process.env.CONNECTOR_HOST
 
   const connectorChargePath = '/v1/frontend/charges/'
@@ -145,7 +145,7 @@ describe('chargeTests', function () {
     logger.level = 'none'
   })
 
-  describe('Enter card details page — errors ', function () {
+  describe.only('Enter card details page — errors ', function () {
     it('should error without csrf', function (done) {
       const cookieValue = cookie.create(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
