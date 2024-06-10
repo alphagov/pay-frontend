@@ -33,7 +33,7 @@ const gatewayAccount = {
   type: 'test'
 }
 
-describe('Capture waiting page tests', function () {
+describe.only('Capture waiting page tests', function () {
   const chargeId = '23144323'
   const frontendCardDetailsPath = '/card_details'
   const gatewayAccountId = gatewayAccount.gatewayAccountId
@@ -47,7 +47,7 @@ describe('Capture waiting page tests', function () {
     logger.level = 'none'
   })
 
-  describe('capture waiting endpoint', function () {
+  describe.only('capture waiting endpoint', function () {
     it('should keep user in /capture_waiting when connector returns a capture ready state', function (done) {
       const cookieValue = cookie.create(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.CAPTURE_READY, gatewayAccountId)
