@@ -31,7 +31,8 @@ function configureClient (client, baseUrl) {
     transformRequestAddHeaders,
     onRequestStart,
     onSuccessResponse,
-    onFailureResponse
+    onFailureResponse,
+    acceptAllStatusCodes: true
   })
 }
 

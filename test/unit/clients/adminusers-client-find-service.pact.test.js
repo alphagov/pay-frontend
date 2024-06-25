@@ -80,12 +80,12 @@ describe('adminusers client - services API', function () {
 
       it('error 400', async function () {
         try {
-          await adminUsersClient({ baseUrl: BASE_URL }).findServiceBy(
+          const response = await adminUsersClient({ baseUrl: BASE_URL }).findServiceBy(
             { gatewayAccountId: invalidGatewayAccountId }
           )
-          throw new Error('should not be hit')
+          expect(response.status).to.be.equal(400)
         } catch (error) {
-          expect(error.errorCode).to.be.equal(400)
+          throw new Error('should not be hit')
         }
       })
     })
@@ -107,12 +107,12 @@ describe('adminusers client - services API', function () {
 
       it('error 404', async function () {
         try {
-          await adminUsersClient({ baseUrl: BASE_URL }).findServiceBy(
+          const response = await adminUsersClient({ baseUrl: BASE_URL }).findServiceBy(
             { gatewayAccountId: nonAssociatedGatewayAccountId }
           )
-          throw new Error('should not be hit')
+          expect(response.status).to.be.equal(404)
         } catch (error) {
-          expect(error.errorCode).to.be.equal(404)
+          throw new Error('should not be hit')
         }
       })
     })
