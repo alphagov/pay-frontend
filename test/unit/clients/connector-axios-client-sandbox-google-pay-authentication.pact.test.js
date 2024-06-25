@@ -87,17 +87,16 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
       it('should return authorisation declined with error identifier in response payloads', async () => {
         const payload = googlePayAuthRequest
         try {
-          await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          const response = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
             chargeId: TEST_CHARGE_ID,
             wallet: 'google',
             payload: payload
           })
+
+          expect(response.status).to.be.equal(400)
+          expect(response.data.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
         } catch (err) {
-          if (err.errorCode === 400) {
-            expect(err.errorIdentifier).to.be.equal('AUTHORISATION_REJECTED')
-          } else {
-            throw new Error('should not be hit: ' + JSON.stringify(err))
-          }
+          throw new Error('should not be hit: ' + JSON.stringify(err))
         }
       })
     })
