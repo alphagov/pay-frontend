@@ -48,7 +48,7 @@ async function _getAdminUsers (url, description, findOptions, loggingFields = {}
           url: fullUrl
         })
       }
-      return response.data
+      return response
     }
   } catch (err) {
     requestLogger.logRequestError(context, err, loggingFields)

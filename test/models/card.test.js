@@ -17,11 +17,6 @@ require('../test-helpers/html-assertions.js')
 
 // Constants
 const aRequestId = 'unique-request-id'
-const aCorrelationHeader = {
-  reqheaders: {
-    'x-request-id': aRequestId
-  }
-}
 
 describe('card', function () {
   describe('check card', function () {
@@ -44,13 +39,47 @@ describe('card', function () {
       before(function () {
         nock.cleanAll()
 
-        nock(process.env.CARDID_HOST, aCorrelationHeader)
+        nock(process.env.CARDID_HOST)
           .post('/v1/api/card')
           .reply(201)
       })
 
       it('should resolve', function () {
         return CardModel({}, aRequestId).checkCard(1234).then(() => {}, unexpectedPromise)
+      })
+    })
+
+    describe('when receiving a 404 status', function () {
+      before(function () {
+        nock.cleanAll()
+
+        nock(process.env.CARDID_HOST)
+          .post('/v1/api/card')
+          .reply(404)
+      })
+
+      it('should reject with appropriate message', function () {
+        return CardModel({}, aRequestId).checkCard(1234).then(
+          unexpectedPromise, function (error) {
+            assert.strictEqual(error.message, 'Your card is not supported')
+          })
+      })
+    })
+
+    describe('when receiving a 422 status code', function () {
+      before(function () {
+        nock.cleanAll()
+
+        nock(process.env.CARDID_HOST)
+          .post('/v1/api/card')
+          .reply(422)
+      })
+
+      it('should reject with appropriate message', function () {
+        return CardModel({}, aRequestId).checkCard(1234).then(
+          unexpectedPromise, function (error) {
+            assert.strictEqual(error.message, 'Enter a valid card number')
+          })
       })
     })
 
