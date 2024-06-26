@@ -165,17 +165,16 @@ describe('connectors client - apple authentication API', function () {
 
     it('should return authorisation declined with error identifier in response payload', async () => {
       try {
-        await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+        const response = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'apple',
           payload: appleAuthRequest
         })
+
+        expect(response.status).to.be.equal(400)
+        expect(response.data.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
       } catch (err) {
-        if (err.errorCode === 400) {
-          expect(err.errorIdentifier).to.be.equal('AUTHORISATION_REJECTED')
-        } else {
-          throw new Error('should not be hit: ' + JSON.stringify(err))
-        }
+        throw new Error('should not be hit: ' + JSON.stringify(err))
       }
     })
   })
@@ -198,13 +197,15 @@ describe('connectors client - apple authentication API', function () {
 
     it('should return authorisation declined', async () => {
       try {
-        await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+        const response = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
           chargeId: TEST_CHARGE_ID,
           wallet: 'apple',
           payload: appleAuthRequest
         })
+
+        expect(response.status).to.be.equal(402)
       } catch (err) {
-        expect(err.errorCode).to.be.equal(402)
+        throw new Error('should not be hit: ' + JSON.stringify(err))
       }
     })
   })
