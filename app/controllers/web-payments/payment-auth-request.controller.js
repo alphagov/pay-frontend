@@ -4,7 +4,7 @@
 const logger = require('../../utils/logger')(__filename)
 const logging = require('../../utils/logging')
 const { getLoggingFields } = require('../../utils/logging-fields-helper')
-const connectorClient = require('../../services/clients/connector.client')
+const connectorClient = require('../../services/clients/connector-axios.client')
 const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payload')
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
 const { CORRELATION_HEADER } = require('../../../config/correlation-header')
@@ -41,10 +41,10 @@ module.exports = (req, res, next) => {
   }
 
   return connectorClient({ correlationId: req.headers[CORRELATION_HEADER] }).chargeAuthWithWallet(chargeOptions, getLoggingFields(req))
-    .then(data => {
+    .then(response => {
       setSessionVariable(req, `ch_${(chargeId)}.webPaymentAuthResponse`, {
-        statusCode: data.statusCode,
-        ...data.body && data.body.error_identifier && { errorIdentifier: data.body.error_identifier }
+        statusCode: response.status,
+        ...response.data && response.data.error_identifier && { errorIdentifier: response.data.error_identifier }
       })
 
       // Always return 200 - the redirect checks if there are any errors
