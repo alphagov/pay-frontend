@@ -10,7 +10,7 @@ const TEST_JWT = 'a-jwt-returned-from-connector'
 
 const requireService = function (mockedConnectorClient) {
   return proxyquire('../../app/services/worldpay-3ds-flex.service', {
-    './clients/connector.client': mockedConnectorClient
+    './clients/connector-axios.client': mockedConnectorClient
   })
 }
 
@@ -24,8 +24,8 @@ describe('Worldpay 3DS Flex service', () => {
       const jwtResponse = validDdcJwt(TEST_JWT)
       getWorldpay3dsFlexJwtStub = sinon.stub().resolves(
         {
-          statusCode: 200,
-          body: jwtResponse
+          status: 200,
+          data: jwtResponse
         })
       connectorClientStub = sinon.stub().callsFake(() => {
         return {
