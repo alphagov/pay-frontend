@@ -8,7 +8,7 @@ const responseRouter = require('../utils/response-router')
 const normalise = require('../services/normalise-charge')
 const paths = require('../paths')
 const { withAnalytics } = require('../utils/analytics')
-const connectorClient = require('../services/clients/connector.client')
+const connectorClient = require('../services/clients/connector-axios.client')
 
 // Constants
 const { views, threeDsEPDQResults } = require('../../config/charge.controller')
@@ -56,10 +56,10 @@ const build3dsPayload = (chargeId, req) => {
 }
 
 const handleThreeDsResponse = (req, res, charge) => response => {
-  switch (response.statusCode) {
+  switch (response.status) {
     case 200:
     case 400:
-      if (_.get(response, 'body.status', '') === 'AUTHORISATION 3DS REQUIRED') {
+      if (_.get(response, 'data.status', '') === 'AUTHORISATION 3DS REQUIRED') {
         logger.info('3DS required again', getLoggingFields(req))
         redirect(res).toAuth3dsRequired(charge.id)
       } else {
