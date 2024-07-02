@@ -1,7 +1,7 @@
 'use strict'
 
 // Local dependencies
-const connectorClient = require('../services/clients/connector.client')
+const connectorClient = require('../services/clients/connector-axios.client')
 
 const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = {}) {
   let response
@@ -10,10 +10,10 @@ const markTokenAsUsed = async function (tokenId, correlationId, loggingFields = 
   } catch (err) {
     throw new Error('CLIENT_UNAVAILABLE', err)
   }
-  if (response.statusCode !== 204) {
+  if (response.status !== 204) {
     throw new Error('MARKING_TOKEN_AS_USED_FAILED')
   }
-  return response.body
+  return response.data
 }
 
 module.exports = {

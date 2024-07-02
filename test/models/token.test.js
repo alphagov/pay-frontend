@@ -31,11 +31,8 @@ describe('token model', function () {
     describe('when connector returns incorrect response code', function () {
       before(function () {
         nock.cleanAll()
-        nock(originalHost, {
-          reqheaders: {
-            'x-request-id': 'blah'
-          }
-        }).post('/v1/frontend/tokens/1/used')
+        nock(originalHost)
+          .post('/v1/frontend/tokens/1/used')
           .reply(404, '{}')
       })
 
@@ -47,11 +44,8 @@ describe('token model', function () {
     describe('when connector returns correctly', function () {
       before(function () {
         nock.cleanAll()
-        nock(originalHost, {
-          reqheaders: {
-            'x-request-id': 'unique-request-id'
-          }
-        }).post('/v1/frontend/tokens/1/used')
+        nock(originalHost)
+          .post('/v1/frontend/tokens/1/used')
           .reply(204)
       })
 
