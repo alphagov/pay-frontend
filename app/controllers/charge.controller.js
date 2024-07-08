@@ -28,7 +28,7 @@ const { countries } = require('../services/countries')
 const { commonTypos } = require('../utils/email-tools')
 const { withAnalyticsError, withAnalytics } = require('../utils/analytics')
 const { getMerchantId } = require('../utils/google-pay-merchant-id-selector')
-const connectorClient = require('../services/clients/connector.client')
+const connectorClient = require('../services/clients/connector-axios.client')
 const cookies = require('../utils/cookies')
 const { getGooglePayMethodData, googlePayDetails } = require('../utils/google-pay-check-request')
 const supportedNetworksFormattedByProvider = require('../assets/javascripts/browsered/web-payments/format-card-types')
@@ -98,14 +98,14 @@ const redirect = res => {
 }
 
 const handleCreateResponse = (req, res, charge, response) => {
-  switch (response.statusCode) {
+  switch (response.status) {
     case 202:
     case 409:
       logging.failedChargePost(409, getLoggingFields(req))
       redirect(res).toAuthWaiting(req.chargeId)
       break
     case 200:
-      if (_.get(response.body, 'status') === State.AUTH_3DS_REQUIRED) {
+      if (_.get(response.data, 'status') === State.AUTH_3DS_REQUIRED) {
         redirect(res).toAuth3dsRequired(req.chargeId)
       } else {
         redirect(res).toConfirm(req.chargeId)
@@ -113,8 +113,8 @@ const handleCreateResponse = (req, res, charge, response) => {
       break
     case 402:
     case 500:
-      logging.failedChargePost(response.statusCode, getLoggingFields(req))
-      responseRouter.systemErrorResponse(req, res, `${response.statusCode} response when authorising charge`, withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
+      logging.failedChargePost(response.status, getLoggingFields(req))
+      responseRouter.systemErrorResponse(req, res, `${response.status} response when authorising charge`, withAnalytics(charge, { returnUrl: routeFor('return', charge.id) }))
       break
     default:
       redirect(res).toNew(req.chargeId)
