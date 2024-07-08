@@ -40,8 +40,8 @@ describe('with valid payment details', function () {
     beforeEach(() => {
       chargeAuthStub = sinon.stub().resolves(
         {
-          statusCode: 200,
-          body: {
+          status: 200,
+          data: {
             status: 'AUTHORISATION SUCCESS'
           }
         })
@@ -270,7 +270,7 @@ function requireChargeController (mockedConnectorClient, { failValidation, decry
 
   const proxyquireMocks = {
     '../utils/charge-validation-backend': mockedChargeValidationBackend,
-    '../services/clients/connector.client': mockedConnectorClient
+    '../services/clients/connector-axios.client': mockedConnectorClient
   }
   const oldDecryptAndOmitCardData = process.env.DECRYPT_AND_OMIT_CARD_DATA
   if (decryptAndOmitCardData) {
