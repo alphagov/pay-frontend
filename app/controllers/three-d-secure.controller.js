@@ -72,7 +72,7 @@ const handleThreeDsResponse = (req, res, charge) => response => {
       break
     case 402:
     case 500:
-      responseRouter.systemErrorResponse(req, res, `3DS response ${response.statusCode}`, withAnalytics(charge))
+      responseRouter.systemErrorResponse(req, res, `3DS response ${response.status}`, withAnalytics(charge))
       break
     default:
       responseRouter.errorResponse(req, res, '3DS unknown response', withAnalytics(charge))
