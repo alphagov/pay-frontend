@@ -4,7 +4,7 @@
 const logger = require('../../utils/logger')(__filename)
 const logging = require('../../utils/logging')
 const { getLoggingFields } = require('../../utils/logging-fields-helper')
-const connectorClient = require('../../services/clients/connector-axios.client')
+const connectorClient = require('../../services/clients/connector.client')
 const normaliseApplePayPayload = require('./apple-pay/normalise-apple-pay-payload')
 const normaliseGooglePayPayload = require('./google-pay/normalise-google-pay-payload')
 const { CORRELATION_HEADER } = require('../../../config/correlation-header')

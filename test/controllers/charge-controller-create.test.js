@@ -270,7 +270,7 @@ function requireChargeController (mockedConnectorClient, { failValidation, decry
 
   const proxyquireMocks = {
     '../utils/charge-validation-backend': mockedChargeValidationBackend,
-    '../services/clients/connector-axios.client': mockedConnectorClient
+    '../services/clients/connector.client': mockedConnectorClient
   }
   const oldDecryptAndOmitCardData = process.env.DECRYPT_AND_OMIT_CARD_DATA
   if (decryptAndOmitCardData) {

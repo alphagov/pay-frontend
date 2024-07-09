@@ -8,7 +8,7 @@ const responseRouter = require('../utils/response-router')
 const normalise = require('../services/normalise-charge')
 const paths = require('../paths')
 const { withAnalytics } = require('../utils/analytics')
-const connectorClient = require('../services/clients/connector-axios.client')
+const connectorClient = require('../services/clients/connector.client')
 
 // Constants
 const { views, threeDsEPDQResults } = require('../../config/charge.controller')

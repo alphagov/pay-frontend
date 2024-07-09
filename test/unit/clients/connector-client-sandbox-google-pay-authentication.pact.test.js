@@ -50,16 +50,20 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
+      it('should return authorisation success', async () => {
         const payload = successfulGoogleAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: payload
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'google',
+            payload: payload
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
 
@@ -80,16 +84,20 @@ describe('Connector Client - Google Pay authorisation API - Sandbox payment', fu
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation declined with error identifier in response payloads', function (done) {
+      it('should return authorisation declined with error identifier in response payloads', async () => {
         const payload = googlePayAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: payload
-        }).then(res => {
-          expect(res.body.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+        try {
+          const response = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'google',
+            payload: payload
+          })
+
+          expect(response.status).to.be.equal(400)
+          expect(response.data.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
   })

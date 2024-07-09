@@ -58,16 +58,20 @@ describe('Connector Client - Google Pay authorisation API - Worldpay payment', f
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
+      it('should return authorisation success', async () => {
         const payload = successfulGoogleAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: payload
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'google',
+            payload: payload
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
 
@@ -92,16 +96,20 @@ describe('Connector Client - Google Pay authorisation API - Worldpay payment', f
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
+      it('should return authorisation success', async () => {
         const payload = successfulGoogleAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: payload
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'google',
+            payload: payload
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
 
@@ -123,16 +131,20 @@ describe('Connector Client - Google Pay authorisation API - Worldpay payment', f
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
+      it('should return authorisation success', async () => {
         const payload = successfulGoogleAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'google',
-          payload: payload
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'google',
+            payload: payload
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
   })

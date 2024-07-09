@@ -61,14 +61,17 @@ describe('Connectors Client - Google Pay authorisation API - Stripe payment', fu
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          ...CHARGE_OPTIONS,
-          payload: successfulGoogleAuthRequest
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+      it('should return authorisation success', async () => {
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            ...CHARGE_OPTIONS,
+            payload: successfulGoogleAuthRequest
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
 
@@ -91,14 +94,17 @@ describe('Connectors Client - Google Pay authorisation API - Stripe payment', fu
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          ...CHARGE_OPTIONS,
-          payload: successfulGoogleAuthRequest
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+      it('should return authorisation success', async () => {
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            ...CHARGE_OPTIONS,
+            payload: successfulGoogleAuthRequest
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
   })
