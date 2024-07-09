@@ -83,7 +83,7 @@ const aChargeWithStatus = function (status) {
 
 const requireChargeController = function (mockedCharge, mockedNormalise, mockedConnectorClient, mockedCard) {
   const proxyquireMocks = {
-    '../services/clients/connector.client': mockedConnectorClient,
+    '../services/clients/connector-axios.client': mockedConnectorClient,
     '../models/charge.js': mockedCharge,
     '../services/normalise-charge.js': mockedNormalise,
     '../utils/session.js': mockSession,
