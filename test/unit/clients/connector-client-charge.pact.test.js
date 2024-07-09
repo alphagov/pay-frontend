@@ -50,12 +50,17 @@ describe('Connector client - charge tests', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return authorisation success', async function () {
-      const res = await connectorClient({ baseUrl: BASE_URL }).chargeAuth({
-        chargeId: TEST_CHARGE_ID,
-        payload: authRequest
-      })
-      expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+    it('should return authorisation success', async () => {
+      try {
+        const res = await connectorClient({ baseUrl: BASE_URL }).chargeAuth({
+          chargeId: TEST_CHARGE_ID,
+          payload: authRequest
+        })
+
+        expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+      } catch (err) {
+        throw new Error('should not be hit: ' + JSON.stringify(err))
+      }
     })
   })
 
@@ -77,12 +82,12 @@ describe('Connector client - charge tests', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return authorisation success', async function () {
+    it('should return authorisation success', async () => {
       const res = await connectorClient({ baseUrl: BASE_URL }).chargeAuth({
         chargeId: TEST_CHARGE_ID,
         payload: authRequest
       })
-      expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
+      expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
     })
   })
 
@@ -105,9 +110,9 @@ describe('Connector client - charge tests', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return charge', async function () {
+    it('should return charge', async () => {
       const res = await connectorClient({ baseUrl: BASE_URL }).findCharge({ chargeId: TEST_CHARGE_ID })
-      expect(res.body.charge_id).to.be.equal(TEST_CHARGE_ID)
+      expect(res.data.charge_id).to.be.equal(TEST_CHARGE_ID)
     })
   })
 })

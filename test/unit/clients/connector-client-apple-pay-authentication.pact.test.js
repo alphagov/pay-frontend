@@ -57,16 +57,20 @@ describe('connectors client - apple authentication API', function () {
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
+      it('should return authorisation success', async () => {
         const payload = appleAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'apple',
-          payload: payload
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'apple',
+            payload: payload
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
 
@@ -88,16 +92,20 @@ describe('connectors client - apple authentication API', function () {
 
       afterEach(() => provider.verify())
 
-      it('should return authorisation success', function (done) {
+      it('should return authorisation success', async () => {
         const payload = appleAuthRequest
-        connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-          chargeId: TEST_CHARGE_ID,
-          wallet: 'apple',
-          payload: payload
-        }).then(res => {
-          expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-          done()
-        }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+        try {
+          const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+            chargeId: TEST_CHARGE_ID,
+            wallet: 'apple',
+            payload: payload
+          })
+
+          expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+        } catch (err) {
+          throw new Error('should not be hit: ' + JSON.stringify(err))
+        }
       })
     })
   })
@@ -120,16 +128,20 @@ describe('connectors client - apple authentication API', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return authorisation success', function (done) {
+    it('should return authorisation success', async () => {
       const payload = appleAuthRequest
-      connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-        chargeId: TEST_CHARGE_ID,
-        wallet: 'apple',
-        payload: payload
-      }).then(res => {
-        expect(res.body.status).to.be.equal('AUTHORISATION SUCCESS')
-        done()
-      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+
+      try {
+        const res = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          chargeId: TEST_CHARGE_ID,
+          wallet: 'apple',
+          payload: payload
+        })
+
+        expect(res.data.status).to.be.equal('AUTHORISATION SUCCESS')
+      } catch (err) {
+        throw new Error('should not be hit: ' + JSON.stringify(err))
+      }
     })
   })
 
@@ -151,15 +163,19 @@ describe('connectors client - apple authentication API', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return authorisation declined with error identifier in response payload', function (done) {
-      connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-        chargeId: TEST_CHARGE_ID,
-        wallet: 'apple',
-        payload: appleAuthRequest
-      }).then(res => {
-        expect(res.body.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
-        done()
-      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+    it('should return authorisation declined with error identifier in response payload', async () => {
+      try {
+        const response = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          chargeId: TEST_CHARGE_ID,
+          wallet: 'apple',
+          payload: appleAuthRequest
+        })
+
+        expect(response.status).to.be.equal(400)
+        expect(response.data.error_identifier).to.be.equal('AUTHORISATION_REJECTED')
+      } catch (err) {
+        throw new Error('should not be hit: ' + JSON.stringify(err))
+      }
     })
   })
 
@@ -179,14 +195,18 @@ describe('connectors client - apple authentication API', function () {
 
     afterEach(() => provider.verify())
 
-    it('should return authorisation declined', function (done) {
-      connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
-        chargeId: TEST_CHARGE_ID,
-        wallet: 'apple',
-        payload: appleAuthRequest
-      }).then(() => {
-        done()
-      }).catch((err) => done(new Error('should not be hit: ' + JSON.stringify(err))))
+    it('should return authorisation declined', async () => {
+      try {
+        const response = await connectorClient({ baseUrl: BASEURL }).chargeAuthWithWallet({
+          chargeId: TEST_CHARGE_ID,
+          wallet: 'apple',
+          payload: appleAuthRequest
+        })
+
+        expect(response.status).to.be.equal(402)
+      } catch (err) {
+        throw new Error('should not be hit: ' + JSON.stringify(err))
+      }
     })
   })
 })

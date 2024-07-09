@@ -10,7 +10,7 @@ const TEST_JWT = 'a-jwt-returned-from-connector'
 
 const requireService = function (mockedConnectorClient) {
   return proxyquire('../../app/services/worldpay-3ds-flex.service', {
-    './clients/connector-axios.client': mockedConnectorClient
+    './clients/connector.client': mockedConnectorClient
   })
 }
 

@@ -52,7 +52,7 @@ describe('connector client - Worldpay 3DS flex tests', function () {
 
       it('should return jwt', async function () {
         const res = await connectorClient({ baseUrl: BASE_URL }).getWorldpay3dsFlexJwt({ chargeId: TEST_CHARGE_ID })
-        expect(res.body.jwt).to.be.equal(response.jwt)
+        expect(res.data.jwt).to.be.equal(response.jwt)
       })
     })
   })
@@ -81,7 +81,7 @@ describe('connector client - Worldpay 3DS flex tests', function () {
 
     it('should return charge with worldpayChallengeJwt', async function () {
       const res = await connectorClient({ baseUrl: BASE_URL }).findCharge({ chargeId: TEST_CHARGE_ID })
-      expect(res.body.charge_id).to.be.equal(TEST_CHARGE_ID)
+      expect(res.data.charge_id).to.be.equal(TEST_CHARGE_ID)
     })
   })
 })
