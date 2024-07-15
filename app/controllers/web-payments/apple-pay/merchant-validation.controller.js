@@ -1,8 +1,12 @@
 'use strict'
 
-const request = require('requestretry')
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
+const axios = require('axios')
+const https = require('https')
+const { HttpsProxyAgent } = require('https-proxy-agent')
+const proxyUrl = process.env.HTTPS_PROXY_URL
+
 
 function getCertificateMultiline (cert) {
   return `-----BEGIN CERTIFICATE-----
@@ -38,7 +42,9 @@ function getApplePayMerchantIdentityVariables (paymentProvider) {
 // When an Apple payment is initiated in Safari, it must check that the request
 // is coming from a registered and authorised Apple Merchant Account. The
 // browser will produce a URL which we should dial with our certificates server side.
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
+  let agent
+
   if (!req.body.url) {
     return res.sendStatus(400)
   }
@@ -48,30 +54,41 @@ module.exports = (req, res) => {
     return res.sendStatus(400)
   }
 
+  if (proxyUrl) {
+    agent = new HttpsProxyAgent(proxyUrl, {
+      cert: merchantIdentityVars.cert,
+      key: merchantIdentityVars.key
+    })
+  } else {
+    agent = new https.Agent({
+      cert: merchantIdentityVars.cert,
+      key: merchantIdentityVars.key
+    })
+  }
+
   const options = {
     url: url,
-    cert: merchantIdentityVars.cert,
-    key: merchantIdentityVars.key,
     method: 'post',
-    body: {
+    headers: { 'Content-Type': 'application/json' },
+    data: {
       merchantIdentifier: merchantIdentityVars.merchantIdentifier,
       displayName: 'GOV.UK Pay',
       initiative: 'web',
       initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
     },
-    json: true
+    httpsAgent: agent
   }
 
-  request(options, (err, response, body) => {
-    if (err) {
-      logger.info('Error generating Apple Pay session', {
-        ...getLoggingFields(req),
-        error: err,
-        response: response,
-        body: body
-      })
-      return res.status(500).send(body)
-    }
-    res.status(200).send(body)
-  })
+  try {
+    const response = await axios(options)
+    res.status(200).send(response.data)
+  } catch (error) {
+    logger.info('Error generating Apple Pay session', {
+      ...getLoggingFields(req),
+      error: error,
+      response: error.response,
+      data: error.response ? error.response.data : null
+    })
+    res.status(500).send(error.response ? error.response.data : 'Apple Pay Error')
+  }
 }
