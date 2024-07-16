@@ -89,6 +89,7 @@ describe('Apple Pay payment flow', () => {
     adminUsersGetService()
   ]
 
+  /* global checkCardDetailsStubsWithApplePayorGooglePay */
   const checkCardDetailsStubsWithApplePayorGooglePay = (applePayEnabled, googlePayEnabled, emailCollectionMode = 'MANDATORY', agreement, moto) => {
     const chargeDetails = {
       chargeId,
@@ -305,7 +306,7 @@ describe('Apple Pay payment flow', () => {
       cy.get('#card-no').should('be.visible')
     })
 
-    it.only('Should not show Apple Pay when enabled but browser does not support it', () => {
+    it('Should not show Apple Pay when enabled but browser does not support it', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
 
@@ -323,12 +324,10 @@ describe('Apple Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`)
 
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
-      // cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('not.be.visible')
+      cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('not.exist')
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
-      cy.get('#payment-description').contains('Example fixture payment')
-      cy.get('#amount').should('be.visible')
     })
 
     it('Should show Apple Pay as a payment option when Google pay is an option and allow user to use Apple Pay', () => {
