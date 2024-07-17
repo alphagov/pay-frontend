@@ -326,6 +326,33 @@ describe('Apple Pay payment flow', () => {
       cy.get('#card-no').should('be.visible')
     })
 
+
+    it('Should not show Apple Pay when enabled but browser does not support it', () => {
+      cy.task('setupStubs', createPaymentChargeStubs)
+      cy.visit(`/secure/${tokenId}`)
+
+      // 1. Charge will be created using this id as a token (GET)
+      // 2. Token will be marked as used (POST)
+      // 3. Charge will be fetched (GET)
+      // 4. Service related to charge will be fetched (GET)
+      // 5. Charge status will be updated (PUT)
+      // 6. Client will be redirected to /card_details/:chargeId (304)
+      cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+
+      cy.task('clearStubs')
+      cy.task('setupStubs', checkCardDetailsStubsWithApplePayOrGooglePay(true, false))
+
+      cy.visit(`/card_details/${chargeId}`)
+
+      // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
+      cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.hidden')
+
+      // 8. User should see normal payment form
+      cy.get('#card-no').should('be.visible')
+      cy.get('#payment-description').contains('Example fixture payment')
+      cy.get('#amount').should('be.visible')
+    })
+
     it('Should show Apple Pay as a payment option when Google pay is an option and allow user to use Apple Pay', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
       cy.visit(`/secure/${tokenId}`)
