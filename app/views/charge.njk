@@ -18,22 +18,22 @@
 
 {% set shouldShowEmail = (gatewayAccount.emailCollectionMode === 'MANDATORY') or (gatewayAccount.emailCollectionMode === 'OPTIONAL') %}
 
-{% macro paymentSummary() %}
+{% macro paymentSummary(walletPayment = false) %}
   <div class="payment-summary-wrap">
     <div class="payment-summary">
         <h2 class="govuk-heading-m">{{ __p("paymentSummary.title") }}</h2>
-        <p id="payment-description" class="govuk-body">
+        <p id="{{ 'wallet-payment-description' if walletPayment else 'payment-description' }}" class="govuk-body">
         {{ description }}
         </p>
-        <p class="govuk-body hidden" id="payment-summary-breakdown">
+        <p class="govuk-body hidden" id="{{ 'wallet-payment-summary-breakdown' if walletPayment else 'payment-summary-breakdown' }}">
         {{ __p("paymentSummary.amount") }}
-        <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br/>
+        <span class="govuk-!-font-weight-bold" id="{{ 'wallet-payment-summary-breakdown-amount' if walletPayment else 'payment-summary-breakdown-amount' }}"></span><br/>
         {{ __p("paymentSummary.corporateCardFee") }}
-        <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
+        <span class="govuk-!-font-weight-bold" id="{{ 'wallet-payment-summary-corporate-card-fee' if walletPayment else 'payment-summary-corporate-card-fee' }}"></span>
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
         {{ __p("paymentSummary.totalAmount") }}
-        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
+        <span id="{{ 'wallet-amount' if walletPayment else 'amount' }}" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold" data-amount="{{ amount }}">£{{ amount }}</span>
         </p>
     </div>
   </div>
@@ -104,7 +104,7 @@
             {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement and not moto %}
               <div class="web-payment-button-section govuk-!-margin-bottom-7">
                 <h1 class="govuk-heading-l">{{ __p("cardDetails.enterPaymentDetails") }}</h1>
-                {{ paymentSummary() }}
+                {{ paymentSummary(true) }}
               </div>
             {% endif %}
             {% if allowApplePay and not savePaymentInstrumentToAgreement and not moto %}
