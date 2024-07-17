@@ -258,6 +258,10 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+
+      // 9. User should see the payment summary for the wallet option
+      cy.get('#amount').should('be.hidden')
+      cy.get('#wallet-amount').should('be.visible')
     })
 
     it('Should show Apple Pay but error because a bad email was entered', () => {
@@ -324,8 +328,11 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
-    })
 
+      // 9. User should see the payment summary for the non-wallet option
+      cy.get('#amount').should('be.visible')
+      cy.get('#wallet-amount').should('not.exist')
+    })
 
     it('Should not show Apple Pay when enabled but browser does not support it', () => {
       cy.task('setupStubs', createPaymentChargeStubs)
@@ -347,10 +354,13 @@ describe('Apple Pay payment flow', () => {
       // 7. Javascript will not detect browser has Apple Pay and won’t show it as an option
       cy.get('#apple-pay-payment-method-submit.web-payment-button--apple-pay').should('be.hidden')
 
-      // 8. User should see normal payment form
+      // 8. User should see normal payment form and summary
       cy.get('#card-no').should('be.visible')
       cy.get('#payment-description').contains('Example fixture payment')
       cy.get('#amount').should('be.visible')
+
+      // 9. User should not see the payment summary for the wallet option
+      cy.get('#wallet-amount').should('be.hidden')
     })
 
     it('Should show Apple Pay as a payment option when Google pay is an option and allow user to use Apple Pay', () => {
@@ -444,6 +454,10 @@ describe('Apple Pay payment flow', () => {
 
       // 8. User should see normal payment form
       cy.get('#card-no').should('be.visible')
+
+      // 9. User should see the payment summary for the non-wallet option
+      cy.get('#amount').should('be.visible')
+      cy.get('#wallet-amount').should('not.exist')
     })
   })
 
@@ -481,6 +495,10 @@ describe('Apple Pay payment flow', () => {
         cy.get('#wallet-options>.apple-pay-container>.govuk-heading-m').should('contain', 'Talu gyda Apple Pay')
         cy.get('#apple-pay-payment-method-divider-word').should('contain', 'neu')
         cy.get('#card-details-wrap>.web-payment-button-section').should('contain', 'Rhowch fanylion y cerdyn')
+
+        // 9. User should see the payment summary for the wallet option
+        cy.get('#amount').should('be.hidden')
+        cy.get('#wallet-amount').should('be.visible')
       })
     })
   })
