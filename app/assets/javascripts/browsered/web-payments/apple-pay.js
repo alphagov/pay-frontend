@@ -25,11 +25,13 @@ module.exports = () => {
         paymentProvider: window.Charge.payment_provider
       })
     }).then(response => {
+      console.log('** - JS - success')
       if (response.status >= 200 && response.status < 300) {
         return response.json().then(data => {
           return data
         })
       } else {
+        console.log('** - JS - error')
         ga('send', 'event', 'Apple Pay', 'Error', 'Merchant ID not valid')
         sendLogMessage(window.chargeId, 'ApplePayMerchantIdNotValid')
         return session.abort()
