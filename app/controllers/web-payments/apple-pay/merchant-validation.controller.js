@@ -69,6 +69,10 @@ module.exports = async (req, res) => {
 
   try {
     const response = await axios(options)
+    logger.info('** - SUCCESS - generating Apple Pay session', {
+      ...getLoggingFields(req),
+      response: response
+    })
     res.status(200).send(response.data)
   } catch (error) {
     logger.info('Error generating Apple Pay session', {
