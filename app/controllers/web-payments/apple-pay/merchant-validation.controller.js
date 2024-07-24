@@ -5,7 +5,7 @@ const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const axios = require('axios')
 const https = require('https')
 const { HttpsProxyAgent } = require('https-proxy-agent')
-const proxyUrl = process.env.HTTPS_PROXY_URL
+const proxyUrl = process.env.HTTPS_PROXY
 
 
 function getCertificateMultiline (cert) {
