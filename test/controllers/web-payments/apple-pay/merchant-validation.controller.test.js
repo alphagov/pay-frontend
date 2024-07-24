@@ -26,7 +26,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
   let res, sendSpy, axiosStub
 
   beforeEach(() => {
-    delete process.env.HTTPS_PROXY_URL
+    delete process.env.HTTPS_PROXY
 
     process.env.APPLE_PAY_MERCHANT_DOMAIN = merchantDomain
     process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID = worldpayMerchantId
@@ -83,7 +83,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
 
   describe('when there is a proxy', () => {
     it('should return a payload for a Worldpay payment if Merchant is valid', async () => {
-      process.env.HTTPS_PROXY_URL = 'https://fakeproxy.com'
+      process.env.HTTPS_PROXY = 'https://fakeproxy.com'
       const controller = getControllerWithMocks(axiosStub)
 
       const req = {
@@ -119,7 +119,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
     })
 
     it('should return a payload for a Stripe payment if Merchant is valid', async () => {
-      process.env.HTTPS_PROXY_URL = 'https://fakeproxy.com'
+      process.env.HTTPS_PROXY = 'https://fakeproxy.com'
       const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
       const controller = getControllerWithMocks(axiosStub)
 
@@ -170,7 +170,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
     })
 
     it('should return a payload for a Sandbox payment if Merchant is valid', async () => {
-      process.env.HTTPS_PROXY_URL = 'https://fakeproxy.com'
+      process.env.HTTPS_PROXY = 'https://fakeproxy.com'
       const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
       const controller = getControllerWithMocks(axiosStub)
 
