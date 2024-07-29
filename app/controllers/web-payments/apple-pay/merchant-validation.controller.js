@@ -1,11 +1,13 @@
 'use strict'
 
+const request = require('requestretry') // to be removed once axios is in use
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
 const axios = require('axios')
 const https = require('https')
 const { HttpsProxyAgent } = require('https-proxy-agent')
 const proxyUrl = process.env.HTTPS_PROXY
+const applePayMerchantValidationViaAxios = process.env.APPLE_PAY_MERCHANT_VALIDATION_VIA_AXIOS === 'true'
 
 
 function getCertificateMultiline (cert) {
@@ -60,35 +62,71 @@ module.exports = async (req, res) => {
 
   const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : null
 
-  const options = {
-    url: url,
-    method: 'post',
-    headers: { 'Content-Type': 'application/json' },
-    data: {
-      merchantIdentifier: merchantIdentityVars.merchantIdentifier,
-      displayName: 'GOV.UK Pay',
-      initiative: 'web',
-      initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
-    },
-    httpsAgent: proxyUrl ? proxyAgent : httpsAgent
-  }
-
-  try {
-    let response
-
-    if (proxyUrl) {
-      response = await axios(options, httpsAgent)
-    } else {
-      response = await axios(options)
+  const options = applePayMerchantValidationViaAxios ?
+    {
+      url: url,
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      data: {
+        merchantIdentifier: merchantIdentityVars.merchantIdentifier,
+        displayName: 'GOV.UK Pay',
+        initiative: 'web',
+        initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
+      },
+      httpsAgent: proxyUrl ? proxyAgent : httpsAgent
+    } :
+    {
+      url: url,
+      cert: merchantIdentityVars.cert,
+      key: merchantIdentityVars.key,
+      method: 'post',
+      body: {
+        merchantIdentifier: merchantIdentityVars.merchantIdentifier,
+        displayName: 'GOV.UK Pay',
+        initiative: 'web',
+        initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
+      },
+      json: true
     }
-    res.status(200).send(response.data)
-  } catch (error) {
-    logger.info('Error generating Apple Pay session', {
-      ...getLoggingFields(req),
-      error: error,
-      response: error.response,
-      data: error.response ? error.response.data : null
+
+  if (applePayMerchantValidationViaAxios) {
+    logger.info('Generating Apple Pay session via axios')
+    try {
+      let response
+
+      if (proxyUrl) {
+        response = await axios(options, httpsAgent)
+      } else {
+        response = await axios(options)
+      }
+      logger.info('Apple Pay session successfully generated via axios')
+      res.status(200).send(response.data)
+    } catch (error) {
+      const errorResponseData = error.response ? error.response.data : null
+      logger.info('Error generating Apple Pay session', {
+        ...getLoggingFields(req),
+        error: error,
+        response: error.response,
+        data: errorResponseData
+      })
+      logger.info('Apple Pay session via axios failed', errorResponseData ? errorResponseData : 'Apple Pay Error')
+      res.status(500).send(errorResponseData ? errorResponseData : 'Apple Pay Error')
+    }
+  } else {
+    logger.info('Generating Apple Pay session via request retry')
+    request(options, (err, response, body) => {
+      if (err) {
+        logger.info('Error generating Apple Pay session', {
+          ...getLoggingFields(req),
+          error: err,
+          response: response,
+          body: body
+        })
+        logger.info('Apple Pay session via request retry failed', body)
+        return res.status(500).send(body)
+      }
+      logger.info('Apple Pay session successfully generated via request retry')
+      res.status(200).send(body)
     })
-    res.status(500).send(error.response ? error.response.data : 'Apple Pay Error')
   }
 }

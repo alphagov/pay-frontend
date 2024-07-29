@@ -35,6 +35,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID = stripeMerchantId
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE = stripeCertificate
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = stripeKey
+    process.env.APPLE_PAY_MERCHANT_VALIDATION_VIA_AXIOS = 'true'
 
     sendSpy = sinon.spy()
     res = {
