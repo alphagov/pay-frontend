@@ -66,6 +66,8 @@ module.exports = async (req, res) => {
     {
       url: url,
       method: 'post',
+      cert: merchantIdentityVars.cert,
+      key: merchantIdentityVars.key,
       headers: { 'Content-Type': 'application/json' },
       data: {
         merchantIdentifier: merchantIdentityVars.merchantIdentifier,
