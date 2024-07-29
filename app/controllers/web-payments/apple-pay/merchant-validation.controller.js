@@ -1,8 +1,14 @@
 'use strict'
 
-const request = require('requestretry')
+const request = require('requestretry') // to be removed once axios is in use
 const logger = require('../../../utils/logger')(__filename)
 const { getLoggingFields } = require('../../../utils/logging-fields-helper')
+const axios = require('axios')
+const https = require('https')
+const { HttpsProxyAgent } = require('https-proxy-agent')
+const proxyUrl = process.env.HTTPS_PROXY
+const applePayMerchantValidationViaAxios = process.env.APPLE_PAY_MERCHANT_VALIDATION_VIA_AXIOS === 'true'
+
 
 function getCertificateMultiline (cert) {
   return `-----BEGIN CERTIFICATE-----
@@ -38,7 +44,8 @@ function getApplePayMerchantIdentityVariables (paymentProvider) {
 // When an Apple payment is initiated in Safari, it must check that the request
 // is coming from a registered and authorised Apple Merchant Account. The
 // browser will produce a URL which we should dial with our certificates server side.
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
+
   if (!req.body.url) {
     return res.sendStatus(400)
   }
@@ -48,30 +55,80 @@ module.exports = (req, res) => {
     return res.sendStatus(400)
   }
 
-  const options = {
-    url: url,
+  const httpsAgent = new https.Agent({
     cert: merchantIdentityVars.cert,
-    key: merchantIdentityVars.key,
-    method: 'post',
-    body: {
-      merchantIdentifier: merchantIdentityVars.merchantIdentifier,
-      displayName: 'GOV.UK Pay',
-      initiative: 'web',
-      initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
-    },
-    json: true
-  }
+    key: merchantIdentityVars.key
+  });
 
-  request(options, (err, response, body) => {
-    if (err) {
+  const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : null
+
+  const options = applePayMerchantValidationViaAxios ?
+    {
+      url: url,
+      method: 'post',
+      cert: merchantIdentityVars.cert,
+      key: merchantIdentityVars.key,
+      headers: { 'Content-Type': 'application/json' },
+      data: {
+        merchantIdentifier: merchantIdentityVars.merchantIdentifier,
+        displayName: 'GOV.UK Pay',
+        initiative: 'web',
+        initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
+      },
+      httpsAgent: proxyUrl ? proxyAgent : httpsAgent
+    } :
+    {
+      url: url,
+      cert: merchantIdentityVars.cert,
+      key: merchantIdentityVars.key,
+      method: 'post',
+      body: {
+        merchantIdentifier: merchantIdentityVars.merchantIdentifier,
+        displayName: 'GOV.UK Pay',
+        initiative: 'web',
+        initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
+      },
+      json: true
+    }
+
+  if (applePayMerchantValidationViaAxios) {
+    logger.info('Generating Apple Pay session via axios')
+    try {
+      let response
+
+      if (proxyUrl) {
+        response = await axios(options, httpsAgent)
+      } else {
+        response = await axios(options)
+      }
+      logger.info('Apple Pay session successfully generated via axios')
+      res.status(200).send(response.data)
+    } catch (error) {
+      const errorResponseData = error.response ? error.response.data : null
       logger.info('Error generating Apple Pay session', {
         ...getLoggingFields(req),
-        error: err,
-        response: response,
-        body: body
+        error: error,
+        response: error.response,
+        data: errorResponseData
       })
-      return res.status(500).send(body)
+      logger.info('Apple Pay session via axios failed', errorResponseData ? errorResponseData : 'Apple Pay Error')
+      res.status(500).send(errorResponseData ? errorResponseData : 'Apple Pay Error')
     }
-    res.status(200).send(body)
-  })
+  } else {
+    logger.info('Generating Apple Pay session via request retry')
+    request(options, (err, response, body) => {
+      if (err) {
+        logger.info('Error generating Apple Pay session', {
+          ...getLoggingFields(req),
+          error: err,
+          response: response,
+          body: body
+        })
+        logger.info('Apple Pay session via request retry failed', body)
+        return res.status(500).send(body)
+      }
+      logger.info('Apple Pay session successfully generated via request retry')
+      res.status(200).send(body)
+    })
+  }
 }
