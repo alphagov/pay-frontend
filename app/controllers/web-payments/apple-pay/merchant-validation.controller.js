@@ -107,7 +107,7 @@ module.exports = async (req, res) => {
       const errorResponseData = error.response ? error.response.data : null
       logger.info('Error generating Apple Pay session', {
         ...getLoggingFields(req),
-        error: error,
+        error: error.message,
         response: error.response,
         data: errorResponseData
       })
@@ -120,7 +120,7 @@ module.exports = async (req, res) => {
       if (err) {
         logger.info('Error generating Apple Pay session', {
           ...getLoggingFields(req),
-          error: err,
+          error: err.message,
           response: response,
           body: body
         })
