@@ -104,15 +104,12 @@ module.exports = async (req, res) => {
       logger.info('Apple Pay session successfully generated via axios')
       res.status(200).send(response.data)
     } catch (error) {
-      const errorResponseData = error.response ? error.response.data : null
       logger.info('Error generating Apple Pay session', {
         ...getLoggingFields(req),
-        error: error.message,
-        response: error.response,
-        data: errorResponseData
+        error: error.message
       })
-      logger.info('Apple Pay session via axios failed', errorResponseData ? errorResponseData : 'Apple Pay Error')
-      res.status(500).send(errorResponseData ? errorResponseData : 'Apple Pay Error')
+      logger.info('Apple Pay session via axios failed', 'Apple Pay Error')
+      res.status(500).send('Apple Pay Error')
     }
   } else {
     logger.info('Generating Apple Pay session via request retry')
@@ -120,7 +117,7 @@ module.exports = async (req, res) => {
       if (err) {
         logger.info('Error generating Apple Pay session', {
           ...getLoggingFields(req),
-          error: err.message,
+          error: err,
           response: response,
           body: body
         })
