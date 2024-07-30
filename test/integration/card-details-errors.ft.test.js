@@ -256,7 +256,7 @@ describe('chargeTests', function () {
           }
           expect($('#card-no-error').text()).to.contains(errorMessages.cardNo)
           expect($('#error-card-no').text()).to.contains(errorMessages.cardNo)
-          expect($('#expiry-date-error').text()).to.contains(errorMessages.expiryDate)
+          expect($('#expiry-month-error').text()).to.contains(errorMessages.expiryDate)
           expect($('#error-expiry-date').text()).to.contains(errorMessages.expiryDate)
           expect($('#cardholder-name-error').text()).to.contains('Enter a valid name')
           expect($('#error-cardholder-name').text()).to.contains('Enter the name as it appears on the card')

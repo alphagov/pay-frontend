@@ -6,15 +6,6 @@ const changeCase = require('change-case')
 // Local dependencies
 const chargeValidationFields = require('./charge-validation-fields')
 
-// Constants
-const CUSTOM_ERRORS = {
-  expiryYear: {
-    skip: true
-  },
-  expiryMonth: {
-    cssKey: 'expiry-date'
-  }
-}
 
 module.exports = (translations, logger, Card, chargeOptions = { collect_billing_address: true }) => {
   const validations = chargeValidationFields(Card, chargeOptions)
@@ -48,7 +39,7 @@ module.exports = (translations, logger, Card, chargeOptions = { collect_billing_
         const messageTemplate = translations.generic
         const problem = value || isOptional ? translation[customValidation] : messageTemplate.replace('%s', translation.name)
         // Push to Error Fields
-        const customError = CUSTOM_ERRORS[name] || {}
+        const customError = name === "expiryYear" ? {skip: true} : {}
         const cssKey = customError.cssKey || changeCase.paramCase(name)
         if (!customError.skip) checkResult.errorFields.push({ cssKey, key: name, value: problem })
         // Push to Highlight Fields

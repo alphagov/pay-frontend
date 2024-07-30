@@ -123,7 +123,7 @@ var init = function () {
   var addHighlightError = function (addType, error) {
     var listElement = document.createElement('li')
     var errorAnchor = document.createElement('a')
-    errorAnchor.setAttribute('href', '#' + error.cssKey + '-lbl')
+    errorAnchor.setAttribute('href', '#' + error.cssKey)
     errorAnchor.id = error.cssKey + '-error'
     errorAnchor.innerText = error.value
     listElement.appendChild(errorAnchor)
