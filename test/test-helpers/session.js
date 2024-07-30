@@ -2,6 +2,7 @@
 
 const clientSessions = require('client-sessions')
 const cookies = require('../../app/utils/cookies.js')
+const { ChargeState } = require('../../app/models/ChargeState')
 
 function createSessionChargeKey (chargeId) {
   return 'ch_' + chargeId
@@ -12,10 +13,11 @@ function createReturnUrlKey (chargeId) {
 }
 
 function createSessionWithReturnUrl (chargeId, chargeSession, returnUrl) {
-  chargeSession = chargeSession || {}
+  chargeSession = chargeSession || { data: new ChargeState().toString() }
   chargeSession.csrfSecret = process.env.CSRF_USER_SECRET
   const session = {}
   if (arguments.length > 0) {
+    session.csrfSecret = process.env.CSRF_USER_SECRET
     session[createSessionChargeKey(chargeId)] = chargeSession
     session[createReturnUrlKey(chargeId)] = encodeURIComponent(returnUrl)
   }

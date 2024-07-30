@@ -6,15 +6,24 @@ const Charge = require('../models/charge')
 const responseRouter = require('../utils/response-router')
 const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { withAnalyticsError } = require('../utils/analytics')
-const cookies = require('../utils/cookies')
 const { createChargeIdSessionKey } = require('../utils/session')
+const cookies = require('../utils/cookies')
 
 exports.return = (req, res) => {
   const correlationId = req.headers[CORRELATION_HEADER] || ''
   const charge = Charge(correlationId)
-  // Remove the charge data from the cookie
-  const cookieKey = createChargeIdSessionKey(req.chargeId)
-  cookies.deleteSessionVariable(req, cookieKey)
+  const chargeKey = createChargeIdSessionKey(req.chargeId)
+  const chargeState = cookies.getSessionChargeState(req, chargeKey)
+  if (chargeState) {
+    chargeState.markTerminal()
+    cookies.setSessionChargeState(req, chargeKey, chargeState)
+  } else {
+    /* TODO: remove after PP-12546 has been merged
+    /  we no longer need to delete the session variable in the return controller as the cookie is cleaned up in the
+    /  secure controller, we're just cleaning up any existing payment journeys prior to the merge of PP-12546
+    */
+    cookies.deleteSessionVariable(req, chargeKey)
+  }
   if (charge.isCancellableCharge(req.chargeData.status)) {
     return charge.cancel(req.chargeId, getLoggingFields(req))
       .then(() => logger.warn('Return controller cancelled payment', getLoggingFields(req)))

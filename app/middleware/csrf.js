@@ -8,11 +8,21 @@ const logger = require('../utils/logger')(__filename)
 const { getLoggingFields } = require('../utils/logging-fields-helper')
 const session = require('../utils/session')
 const responseRouter = require('../utils/response-router')
+const cookies = require('../utils/cookies')
+
+exports.csrfSetSecret = (req, _, next) => {
+  const csrfSecret = cookies.getSessionCsrfSecret(req)
+  if (!csrfSecret) {
+    logger.info('Setting CSRF secret for session')
+    cookies.setSessionVariable(req, 'csrfSecret', csrf().secretSync())
+  }
+  next()
+}
 
 exports.csrfTokenGeneration = (req, res, next) => {
   const chargeId = fetchAndValidateChargeId(req)
   const chargeSession = session.retrieve(req, chargeId)
-  res.locals.csrf = csrf().create(chargeSession.csrfSecret)
+  res.locals.csrf = csrf().create(chargeSession.csrfSecret) // TODO: generate tokens using the session secret
   next()
 }
 
@@ -23,11 +33,11 @@ exports.csrfCheck = (req, res, next) => {
     return responseRouter.response(req, res, 'UNAUTHORISED')
   }
 
-  const chargeSession = session.retrieve(req, chargeId) || {}
+  const chargeSession = session.retrieve(req, chargeId) || {} // TODO: remove after PP-12546 has been merged
+  const sessionCsrfSecret = cookies.getSessionCsrfSecret(req)
   const csrfToken = req.body.csrfToken
-  chargeSession.csrfTokens = chargeSession.csrfTokens || []
 
-  if (!chargeSession.csrfSecret) {
+  if (!chargeSession.csrfSecret && !sessionCsrfSecret) {
     responseRouter.response(req, res, 'UNAUTHORISED')
     logger.warn('CSRF secret is not defined', {
       ...getLoggingFields(req),
@@ -35,10 +45,9 @@ exports.csrfCheck = (req, res, next) => {
       url: req.originalUrl,
       method: req.method
     })
-  } else if (!csrfValid(csrfToken, chargeSession, req)) {
+  } else if (!csrfValid(csrfToken, chargeSession.csrfSecret, req) && !csrfValid(csrfToken, sessionCsrfSecret, req)) {
     responseRouter.systemErrorResponse(req, res, 'CSRF is invalid')
   } else {
-    chargeSession.csrfTokens.push(csrfToken)
     next()
   }
 }
@@ -50,13 +59,13 @@ function fetchAndValidateChargeId (req) {
   return false
 }
 
-function csrfValid (csrfToken, chargeSession, req) {
+function csrfValid (csrfToken, secret, req) {
+  if (!secret) {
+    return false
+  }
   if (!['put', 'post'].includes(req.method.toLowerCase())) {
     return true
-  } else if (chargeSession.csrfTokens.includes(csrfToken)) {
-    logger.warn('CSRF token was already used', getLoggingFields(req))
-    return false
   } else {
-    return csrf().verify(chargeSession.csrfSecret, csrfToken)
+    return csrf().verify(secret, csrfToken)
   }
 }

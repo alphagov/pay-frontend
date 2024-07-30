@@ -1,7 +1,7 @@
 'use strict'
 
-// NPM dependencies
 const csrf = require('csrf')
+
 const {
   PAYMENT_EXTERNAL_ID,
   GATEWAY_ACCOUNT_ID,
@@ -16,11 +16,12 @@ const Token = require('../models/token')
 const Charge = require('../models/charge')
 const responseRouter = require('../utils/response-router')
 const { createChargeIdSessionKey } = require('../utils/session')
-const { setSessionVariable, getSessionVariable } = require('../utils/cookies')
+const cookies = require('../utils/cookies')
 const CORRELATION_HEADER = require('../../config/correlation-header').CORRELATION_HEADER
 const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const { resolveActionName } = require('../services/state.service')
 const paths = require('../paths')
+const { ChargeState } = require('../models/ChargeState')
 
 exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
@@ -36,7 +37,7 @@ exports.new = async function (req, res) {
     setLoggingField(req, GATEWAY_ACCOUNT_TYPE, tokenResponse.charge.gateway_account.type)
 
     if (tokenResponse.used === true) {
-      if (!getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
+      if (!cookies.getSessionVariable(req, createChargeIdSessionKey(chargeId))) {
         throw new Error('UNAUTHORISED')
       }
       logger.info('Payment token being reused', getLoggingFields(req))
@@ -48,7 +49,12 @@ exports.new = async function (req, res) {
     } else {
       logger.info('Payment token used for the first time', getLoggingFields(req))
       await Token.markTokenAsUsed(chargeTokenId, correlationId, getLoggingFields(req))
-      setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() })
+      if (cookies.getChargesOnSession(req).length >= 10) {
+        const chargeToDelete = cookies.findSessionChargeToDelete(req)
+        cookies.deleteSessionVariable(req, chargeToDelete)
+      }
+      cookies.setSessionChargeState(req, createChargeIdSessionKey(chargeId), new ChargeState())
+      cookies.setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() }) // TODO: remove after PP-12546 has been merged
       res.redirect(303, generateRoute(resolveActionName(chargeStatus, 'get'), { chargeId }))
     }
   } catch (err) {

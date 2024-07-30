@@ -18,7 +18,6 @@ const loggingMiddleware = require('./app/middleware/logging-middleware')
 const router = require('./app/routes')
 const cookies = require('./app/utils/cookies')
 const noCache = require('./app/utils/no-cache')
-const session = require('./app/utils/session')
 const i18nConfig = require('./config/i18n')
 const i18nPayTranslation = require('./config/pay-translation')
 const Sentry = require('./app/utils/sentry.js').initialiseSentry()
@@ -71,9 +70,6 @@ function initialiseGlobalMiddleware (app) {
     } else {
       res.locals.analyticsTrackingId = ANALYTICS_TRACKING_ID
     }
-    res.locals.session = function () {
-      return session.retrieve(req, req.chargeId)
-    }
     res.locals.nonce = crypto.randomBytes(16).toString('hex')
     next()
   })
@@ -84,7 +80,6 @@ function initialiseGlobalMiddleware (app) {
   app.use(compression())
 
   app.disable('x-powered-by')
-
 
   app.use(correlationHeader)
 }

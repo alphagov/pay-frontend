@@ -14,7 +14,7 @@ const { log } = require('./controllers/client-side-logging.controller')
 const paths = require('./paths.js')
 
 // Express middleware
-const { csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
+const { csrfSetSecret, csrfCheck, csrfTokenGeneration } = require('./middleware/csrf.js')
 const actionName = require('./middleware/action-name.js')
 const stateEnforcer = require('./middleware/state-enforcer.js')
 const retrieveCharge = require('./middleware/retrieve-charge.js')
@@ -43,6 +43,7 @@ exports.bind = function (app) {
   const card = paths.card
 
   const standardMiddlewareStack = [
+    csrfSetSecret,
     csrfCheck,
     csrfTokenGeneration,
     actionName,
