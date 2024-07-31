@@ -1,7 +1,5 @@
 'use strict'
 
-const csrf = require('csrf')
-
 const {
   PAYMENT_EXTERNAL_ID,
   GATEWAY_ACCOUNT_ID,
@@ -54,7 +52,6 @@ exports.new = async function (req, res) {
         cookies.deleteSessionVariable(req, chargeToDelete)
       }
       cookies.setSessionChargeState(req, createChargeIdSessionKey(chargeId), new ChargeState())
-      cookies.setSessionVariable(req, createChargeIdSessionKey(chargeId), { csrfSecret: csrf().secretSync() }) // TODO: remove after PP-12546 has been merged
       res.redirect(303, generateRoute(resolveActionName(chargeStatus, 'get'), { chargeId }))
     }
   } catch (err) {
