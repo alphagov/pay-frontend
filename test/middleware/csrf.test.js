@@ -22,6 +22,7 @@ describe('retrieve param test', function () {
     body: {},
     route: { methods: { get: true } },
     frontend_state: {
+      csrfSecret: process.env.CSRF_USER_SECRET_TWO,
       ch_foo: {
         csrfSecret: process.env.CSRF_USER_SECRET
       }
@@ -34,6 +35,7 @@ describe('retrieve param test', function () {
 
   const noSecret = _.cloneDeep(validGetRequest)
   delete noSecret.frontend_state.ch_foo.csrfSecret
+  delete noSecret.frontend_state.csrfSecret
 
   const invalidPost = _.cloneDeep(validGetRequest)
   delete invalidPost.method
@@ -47,16 +49,13 @@ describe('retrieve param test', function () {
 
   const validPostWithSessionSecretAndChargeSecretAndChargeSecretGeneratedToken = _.cloneDeep(invalidPost)
   validPostWithSessionSecretAndChargeSecretAndChargeSecretGeneratedToken.body.csrfToken = helper.csrfToken(process.env.CSRF_USER_SECRET)
-  validPostWithSessionSecretAndChargeSecretAndChargeSecretGeneratedToken.frontend_state.csrfSecret = process.env.CSRF_USER_SECRET_TWO
 
   const validPostWithSessionSecretAndChargeSecretAndSessionSecretGeneratedToken = _.cloneDeep(invalidPost)
   validPostWithSessionSecretAndChargeSecretAndSessionSecretGeneratedToken.body.csrfToken = helper.csrfToken(process.env.CSRF_USER_SECRET_TWO)
-  validPostWithSessionSecretAndChargeSecretAndSessionSecretGeneratedToken.frontend_state.csrfSecret = process.env.CSRF_USER_SECRET_TWO
 
   const validPostWithSessionSecretAndSessionSecretGeneratedToken = _.cloneDeep(invalidPost)
   delete validPostWithSessionSecretAndSessionSecretGeneratedToken.frontend_state.ch_foo.csrfSecret
   validPostWithSessionSecretAndSessionSecretGeneratedToken.body.csrfToken = helper.csrfToken(process.env.CSRF_USER_SECRET_TWO)
-  validPostWithSessionSecretAndSessionSecretGeneratedToken.frontend_state.csrfSecret = process.env.CSRF_USER_SECRET_TWO
 
   const validPut = _.cloneDeep(invalidPut)
   validPut.body.csrfToken = helper.csrfToken()

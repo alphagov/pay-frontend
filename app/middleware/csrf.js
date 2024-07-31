@@ -20,16 +20,14 @@ exports.csrfSetSecret = (req, _, next) => {
 }
 
 exports.csrfTokenGeneration = (req, res, next) => {
-  const chargeId = fetchAndValidateChargeId(req)
-  const chargeSession = session.retrieve(req, chargeId)
-  res.locals.csrf = csrf().create(chargeSession.csrfSecret) // TODO: generate tokens using the session secret
+  const csrfSecret = cookies.getSessionCsrfSecret(req)
+  res.locals.csrf = csrf().create(csrfSecret)
   next()
 }
 
 exports.csrfCheck = (req, res, next) => {
   const chargeId = fetchAndValidateChargeId(req)
   if (!chargeId) {
-    logger.warn('Session cookie is not present, rendering unauthorised page', getLoggingFields(req))
     return responseRouter.response(req, res, 'UNAUTHORISED')
   }
 
