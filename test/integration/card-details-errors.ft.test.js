@@ -217,7 +217,7 @@ describe('chargeTests', function () {
     })
 
     it('should return country list when invalid fields submitted', (done) => {
-      const cookieValue = cookie.create(chargeId, {})
+      const cookieValue = cookie.create(chargeId, {}) // empty charge session left here to prove backwards compatability prior to merge of PP-12546, remove once backcompat code is deleted
       mockSuccessCardIdResponse(defaultCardID)
       mockSuccessPatchEmail(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
@@ -231,7 +231,7 @@ describe('chargeTests', function () {
     })
 
     it('shows an error when a card is submitted with missing fields', function (done) {
-      const cookieValue = cookie.create(chargeId, {})
+      const cookieValue = cookie.create(chargeId, {}) // empty charge session left here to prove backwards compatability prior to merge of PP-12546, remove once backcompat code is deleted
       mockSuccessCardIdResponse(defaultCardID)
       mockSuccessPatchEmail(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
@@ -277,7 +277,7 @@ describe('chargeTests', function () {
     })
 
     it('shows an error when a card is submitted that is not supported', function (done) {
-      const cookieValue = cookie.create(chargeId, {})
+      const cookieValue = cookie.create(chargeId, {}) // empty charge session left here to prove backwards compatability prior to merge of PP-12546, remove once backcompat code is deleted
       nock.cleanAll()
       mockSuccessPatchEmail(chargeId)
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
@@ -304,7 +304,7 @@ describe('chargeTests', function () {
     })
 
     it('shows an error when a card is submitted that is not supported withdrawal type', function (done) {
-      const cookieValue = cookie.create(chargeId, {})
+      const cookieValue = cookie.create(chargeId, {}) // empty charge session left here to prove backwards compatability prior to merge of PP-12546, remove once backcompat code is deleted
       nock.cleanAll()
       nock(process.env.CARDID_HOST)
         .post('/v1/api/card', () => {
@@ -332,7 +332,7 @@ describe('chargeTests', function () {
     })
 
     it('preserve card fields, cardholder name, address lines and email when a card is submitted with validation errors', function (done) {
-      const cookieValue = cookie.create(chargeId, {})
+      const cookieValue = cookie.create(chargeId, {}) // empty charge session left here to prove backwards compatability prior to merge of PP-12546, remove once backcompat code is deleted
       defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
       defaultAdminusersResponseForGetService(gatewayAccountId)
       mockSuccessPatchEmail(chargeId)

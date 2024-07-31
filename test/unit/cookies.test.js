@@ -5,6 +5,7 @@ const { expect } = require('chai')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noPreserveCache()
 const { createChargeIdSessionKey } = require('../../app/utils/session')
+const { ChargeState, epochSecondsNow } = require('../../app/models/ChargeState')
 
 const getCookiesUtil = clientSessionsStub => {
   if (clientSessionsStub) return proxyquire('../../app/utils/cookies', { 'client-sessions': clientSessionsStub })
@@ -119,6 +120,130 @@ describe('cookie configuration', function () {
     const cookies = getCookiesUtil(clientSessionsStub)
 
     expect(() => cookies.configureSessionCookie({})).to.throw(/cookie encryption key is not set/)
+  })
+})
+
+describe('find session charge to delete', () => {
+  let initialEnvironmentVariables
+  const now = epochSecondsNow()
+  const overTwentyFourHoursAgo = (now - 86400) - 120
+  const ninetyFiveMinutesAgo = now - 5700
+  const ninetyMinutesAgo = now - 5400
+  const thirtyMinutesAgo = now - 1800
+  const twentyMinutesAgo = now - 1200
+
+  before(() => {
+    initialEnvironmentVariables = Object.assign({}, process.env)
+  })
+
+  afterEach(() => {
+    for (const envVar in process.env) {
+      process.env[envVar] = initialEnvironmentVariables[envVar]
+    }
+  })
+
+  // it returns earliest accessed charge that is older than 24 hours for deletion
+  // OR
+  // it returns the earliest accessed completed charge
+  // OR
+  // it returns earliest accessed charge that is older than ninety minutes
+  // OR
+  // it returns the earliest accessed charge
+
+  it('should return the earliest accessed charge that is older than 24 hours', function () {
+    const cookies = getCookiesUtil()
+
+    const req = {
+      frontend_state: {
+        ch_1: {
+          data: new ChargeState(ninetyMinutesAgo, (now), false).toString()
+        },
+        ch_2: {
+          data: new ChargeState(ninetyMinutesAgo, (now - 5), true).toString()
+        },
+        ch_3: {
+          data: new ChargeState(overTwentyFourHoursAgo, (now - 10), false).toString()
+        },
+        ch_4: {
+          data: new ChargeState(overTwentyFourHoursAgo, (now - 20), false).toString()
+        }
+      }
+    }
+
+    const result = cookies.findSessionChargeToDelete(req)
+    expect(result).to.equal('ch_4')
+  })
+
+  it('should return the earliest accessed completed charge', function () {
+    const cookies = getCookiesUtil()
+
+    const req = {
+      frontend_state: {
+        ch_1: {
+          data: new ChargeState(thirtyMinutesAgo, (now), true).toString()
+        },
+        ch_2: {
+          data: new ChargeState(ninetyFiveMinutesAgo, (now - 5), true).toString()
+        },
+        ch_3: {
+          data: new ChargeState(thirtyMinutesAgo, (now - 30), true).toString()
+        },
+        ch_4: {
+          data: new ChargeState(thirtyMinutesAgo, (now - 40), false).toString()
+        }
+      }
+    }
+
+    const result = cookies.findSessionChargeToDelete(req)
+    expect(result).to.equal('ch_3')
+  })
+
+  it('should return the earliest accessed charge that is older than ninety minutes', function () {
+    const cookies = getCookiesUtil()
+
+    const req = {
+      frontend_state: {
+        ch_1: {
+          data: new ChargeState(thirtyMinutesAgo, (now - 50), false).toString()
+        },
+        ch_2: {
+          data: new ChargeState(ninetyFiveMinutesAgo, (now - 45), false).toString()
+        },
+        ch_3: {
+          data: new ChargeState(ninetyFiveMinutesAgo, (now - 30), false).toString()
+        },
+        ch_4: {
+          data: new ChargeState(ninetyFiveMinutesAgo, (now - 40), false).toString()
+        }
+      }
+    }
+
+    const result = cookies.findSessionChargeToDelete(req)
+    expect(result).to.equal('ch_2')
+  })
+
+  it('should return the earliest accessed charge', function () {
+    const cookies = getCookiesUtil()
+
+    const req = {
+      frontend_state: {
+        ch_1: {
+          data: new ChargeState(twentyMinutesAgo, (now - 50), false).toString()
+        },
+        ch_2: {
+          data: new ChargeState(twentyMinutesAgo, (now - 45), false).toString()
+        },
+        ch_3: {
+          data: new ChargeState(twentyMinutesAgo, (now - 30), false).toString()
+        },
+        ch_4: {
+          data: new ChargeState(twentyMinutesAgo, (now - 40), false).toString()
+        }
+      }
+    }
+
+    const result = cookies.findSessionChargeToDelete(req)
+    expect(result).to.equal('ch_1')
   })
 })
 
@@ -251,7 +376,33 @@ describe('getting value from session', function () {
 
     delete process.env.SESSION_ENCRYPTION_KEY_2
   })
+
+  it('should return charge keys for session where data object exists', () => {
+    const cookies = getCookiesUtil()
+    const req = {
+      frontend_state: {
+        ch_1: {
+          data: 'blah'
+        },
+        ch_2: {
+          data: 'blah'
+        },
+        ch_3: {
+          data: 'blah'
+        },
+        ch_4: {
+          data: 'blah'
+        },
+        ch_5: {
+          notDataObj: 'blah'
+        }
+      }
+    }
+    expect(cookies.getChargesOnSession(req)).to.deep.equal(['ch_1', 'ch_2', 'ch_3', 'ch_4'])
+    expect(cookies.getChargesOnSession(req).length).to.equal(4)
+  })
 })
+
 describe('removing value from session', function () {
   it('should remove value from frontend_state', function () {
     process.env.SESSION_ENCRYPTION_KEY = 'key1key1key1key1'

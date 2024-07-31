@@ -1,6 +1,7 @@
 'use strict'
 
 const clientSessions = require('client-sessions')
+const { chargeStateFromString, epochSecondsNow } = require('../models/ChargeState')
 const logger = require('../utils/logger')(__filename)
 
 // Constants
@@ -17,7 +18,11 @@ module.exports = {
   namedCookie,
   deleteSessionVariable,
   isSessionPresent,
-  getSessionVariableNames
+  getChargesOnSession,
+  getSessionCsrfSecret,
+  getSessionChargeState,
+  setSessionChargeState,
+  findSessionChargeToDelete
 }
 
 /**
@@ -134,6 +139,49 @@ function deleteSessionVariable (req, key) {
 }
 
 /**
+ * @param {Request} req
+ * @returns {string}
+ */
+function findSessionChargeToDelete (req) {
+  const now = epochSecondsNow()
+  const yesterday = now - 86400
+  const ninetyMinutesAgo = now - 5400
+
+  const chargesSortedByAccessedDate = getChargesOnSession(req)
+    .map(chargeId => {
+      return {
+        chargeId,
+        state: getSessionChargeState(req, chargeId)
+      }
+    })
+    .sort(({ state: a }, { state: b }) => a.accessedAt - b.accessedAt)
+
+  logger.info(`User session contains ${chargesSortedByAccessedDate.length} charges`)
+
+  const leastRecentlyAccessedChargeCreatedMoreThanTwentyFourHoursAgo = chargesSortedByAccessedDate.find(charge => charge.state.createdAt < yesterday)
+
+  if (leastRecentlyAccessedChargeCreatedMoreThanTwentyFourHoursAgo) {
+    return leastRecentlyAccessedChargeCreatedMoreThanTwentyFourHoursAgo.chargeId
+  }
+
+  const leastRecentlyAccessedTerminalCharge = chargesSortedByAccessedDate.find(charge => charge.state.isTerminal)
+
+  if (leastRecentlyAccessedTerminalCharge) {
+    return leastRecentlyAccessedTerminalCharge.chargeId
+  }
+
+  const leastRecentlyAccessedChargeCreatedMoreThanNinetyMinutesAgo = chargesSortedByAccessedDate.find(charge => charge.state.createdAt < ninetyMinutesAgo)
+
+  if (leastRecentlyAccessedChargeCreatedMoreThanNinetyMinutesAgo) {
+    return leastRecentlyAccessedChargeCreatedMoreThanNinetyMinutesAgo.chargeId
+  }
+
+  logger.info('No preferred charges found for deletion on session, defaulting to least recently accessed charge')
+  const leastRecentlyAccessedCharge = chargesSortedByAccessedDate[0]
+  return leastRecentlyAccessedCharge.chargeId
+}
+
+/**
  * Sets session[key] = value for all valid sessions, based on existence of encryption key,
  * and the existence of relevant cookie on the request
  *
@@ -152,6 +200,18 @@ function setSessionVariable (req, key, value) {
 }
 
 /**
+ * @param {Request} req
+ * @param {string} key
+ * @param {ChargeState} chargeState
+ */
+function setSessionChargeState (req, key, chargeState) {
+  const chargeStateObject = {
+    data: chargeState.toString()
+  }
+  setSessionVariable(req, key, chargeStateObject)
+}
+
+/**
  * Gets value of key from session, based on existence of encryption key
  *
  * @param {Request} req
@@ -160,7 +220,24 @@ function setSessionVariable (req, key, value) {
  */
 function getSessionVariable (req, key) {
   const session = req[getSessionCookieName()]
-  return session && session[key]
+  return session && session?.[key]
+}
+
+/**
+ * @param {Request} req
+ * @param {string} key
+ * @returns {ChargeState}
+ */
+function getSessionChargeState (req, key) {
+  return chargeStateFromString(getSessionVariable(req, key).data)
+}
+
+/**
+ * @param {Request} req
+ * @returns {string}
+ */
+function getSessionCsrfSecret (req) {
+  return getSessionVariable(req, 'csrfSecret')
 }
 
 function isSessionPresent (req) {
@@ -168,7 +245,13 @@ function isSessionPresent (req) {
   return session && Object.getOwnPropertyNames(session).length > 0
 }
 
-function getSessionVariableNames (req) {
+/**
+ * @param {Request} req
+ * @returns {string[]}
+ */
+function getChargesOnSession (req) {
   const session = req[getSessionCookieName()]
-  return Object.keys(session)
+  return Object.keys(session).filter(key => {
+    return key.startsWith('ch_') && Object.keys(session[key]).includes('data')
+  })
 }

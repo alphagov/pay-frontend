@@ -74,7 +74,7 @@ async function _putConnector (url, payload, description, loggingFields = {}, cal
   requestLogger.logRequestStart(context, loggingFields)
   try {
     configureClient(client, url)
-    const response = await client.put(url, payload, description )
+    const response = await client.put(url, payload, description)
     logger.info('PUT to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.status)
     if (response.status > 499 && response.status < 600) {

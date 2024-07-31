@@ -9,9 +9,10 @@ const withAnalyticsError = require('../../app/utils/analytics').withAnalyticsErr
 const { validTokenResponse } = require('../fixtures/payment.fixtures')
 
 require('../test-helpers/html-assertions.js')
+const { ChargeState, chargeStateFromString } = require('../../app/models/ChargeState')
 
 const chargeId = 'dh6kpbb4k82oiibbe4b9haujjk'
-
+const chargeStateString = new ChargeState(1721300000, 1721300000, false).toString()
 const findByTokenFailureStub = () => Promise.reject(new Error('UNAUTHORISED'))
 
 function getFindByTokenSuccessStub (used, chargeStatus) {
@@ -32,10 +33,7 @@ const requireSecureController = function (findByTokenStub, markTokenAsUsedSucces
     }),
     '../models/token.js': {
       markTokenAsUsed: markTokenAsUsedStub
-    },
-    csrf: () => ({
-      secretSync: () => 'foo'
-    })
+    }
   })
 }
 
@@ -80,13 +78,58 @@ describe('secure controller', function () {
       })
 
       describe('and the token is marked as used successfully', function () {
-        it('should store the service name into the session and redirect', async function () {
+        it('should store the charge on the session and redirect', async function () {
           await requireSecureController(getFindByTokenSuccessStub(false, 'CREATED'), true, responseRouter).new(request, response)
           expect(response.redirect.calledWith(303, paths.generateRoute('card.new', {chargeId: chargeId}))).to.be.true // eslint-disable-line
           expect(request.frontend_state).to.have.all.keys('ch_' + chargeId)
-          expect(request.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
-            csrfSecret: 'foo' // pragma: allowlist secret
-          })
+          const result = chargeStateFromString(request.frontend_state[`ch_${chargeId}`].data)
+          expect(result.accessedAt).to.equal(result.createdAt) // when charges are added to the session by the secure controller, createdAt and accessedAt should be the same
+          expect(result.isTerminal).to.equal(false)
+        })
+
+        it('should remove a charge from the session if there are more than 10', async function () {
+          const data = new ChargeState(1721390050, 1721390080, false).toString()
+          const shouldRemove = new ChargeState(1721390000, 1721390020, true).toString()
+          const requestWithTenChargesOnCookie = {
+            frontend_state: {
+              ch_1: {
+                data
+              },
+              ch_2: {
+                data
+              },
+              ch_3: {
+                data
+              },
+              ch_4: {
+                data
+              },
+              ch_5: {
+                data
+              },
+              ch_6: {
+                data
+              },
+              ch_7: {
+                data
+              },
+              ch_8: {
+                data
+              },
+              ch_9: {
+                data: shouldRemove
+              },
+              ch_10: {
+                data
+              }
+            },
+            params: { chargeTokenId: 1 },
+            headers: { 'x-Request-id': 'unique-id' }
+          }
+          await requireSecureController(getFindByTokenSuccessStub(false, 'CREATED'), true, responseRouter).new(requestWithTenChargesOnCookie, response)
+          expect(response.redirect.calledWith(303, paths.generateRoute('card.new', {chargeId: chargeId}))).to.be.true // eslint-disable-line
+          expect(requestWithTenChargesOnCookie.frontend_state).to.have.all.keys(`ch_${chargeId}`, 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'ch_6', 'ch_7', 'ch_8', 'ch_10')
+          expect(requestWithTenChargesOnCookie.frontend_state).to.not.have.key('ch_9')
         })
       })
 
@@ -118,7 +161,7 @@ describe('secure controller', function () {
           const requestWithWrongCookie = {
             frontend_state: {
               ch_xxxx: {
-                csrfSecret: 'foo' // pragma: allowlist secret
+                data: chargeStateString
               }
             },
             params: { chargeTokenId: 1 },
@@ -134,7 +177,7 @@ describe('secure controller', function () {
           const requestWithFrontendStateCookie = {
             frontend_state: {
               ch_dh6kpbb4k82oiibbe4b9haujjk: {
-                csrfSecret: 'foo' // pragma: allowlist secret
+                data: chargeStateString
               }
             },
             params: { chargeTokenId: 1 },
@@ -149,7 +192,7 @@ describe('secure controller', function () {
           expect(responseRouter.response.calledWith(requestWithFrontendStateCookie, response, 'AUTHORISATION_SUCCESS', opts)).to.be.true // eslint-disable-line
           expect(requestWithFrontendStateCookie.frontend_state).to.have.all.keys('ch_' + chargeId)
           expect(requestWithFrontendStateCookie.frontend_state.ch_dh6kpbb4k82oiibbe4b9haujjk).to.eql({
-            csrfSecret: 'foo' // pragma: allowlist secret
+            data: chargeStateString
           })
         })
       })

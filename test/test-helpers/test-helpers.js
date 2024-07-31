@@ -336,8 +336,8 @@ module.exports = {
     throw new Error('Promise was unexpectedly fulfilled.')
   },
 
-  csrfToken: function () {
-    return csrf().create(process.env.CSRF_USER_SECRET)
+  csrfToken: function (secret = process.env.CSRF_USER_SECRET) {
+    return csrf().create(secret)
   },
 
   cardTypes

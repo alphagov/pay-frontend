@@ -4,14 +4,14 @@
 const { PAYMENT_EXTERNAL_ID } = require('@govuk-pay/pay-js-commons').logging.keys
 const logger = require('../utils/logger')(__filename)
 const { setLoggingField, getLoggingFields } = require('../utils/logging-fields-helper')
-const cookie = require('../utils/cookies')
+const cookies = require('../utils/cookies')
 
 const createChargeIdSessionKey = function createChargeIdSessionKey (chargeId) {
   return 'ch_' + chargeId
 }
 
 const retrieve = function retrieve (req, chargeId) {
-  return cookie.getSessionVariable(req, createChargeIdSessionKey(chargeId))
+  return cookies.getSessionVariable(req, createChargeIdSessionKey(chargeId))
 }
 
 const validateSessionCookie = function validateSessionCookie (req) {
@@ -21,7 +21,9 @@ const validateSessionCookie = function validateSessionCookie (req) {
   if (!chargeId) {
     logger.error('ChargeId was not found in request', getLoggingFields(req))
     return false
-  } else if (!cookie.getSessionCookieName() || !cookie.isSessionPresent(req)) {
+  }
+  const chargeKey = createChargeIdSessionKey(chargeId)
+  if (!cookies.getSessionCookieName() || !cookies.isSessionPresent(req)) {
     logger.info('Session cookie is not present', {
       ...getLoggingFields(req),
       referrer: req.get('Referrer'),
@@ -29,20 +31,33 @@ const validateSessionCookie = function validateSessionCookie (req) {
       method: req.method
     })
     return false
-  } else if (!cookie.getSessionVariable(req, 'ch_' + chargeId)) {
+  } else if (!cookies.getSessionVariable(req, chargeKey)) {
     logger.info('ChargeId was not found on the session', {
       ...getLoggingFields(req),
       referrer: req.get('Referrer'),
       url: req.originalUrl,
       method: req.method,
-      session_keys: cookie.getSessionVariableNames(req)
+      session_keys: cookies.getChargesOnSession(req)
     })
     return false
   }
   logger.info('ChargeId found on session', {
     ...getLoggingFields(req),
-    number_of_payments_on_cookie: cookie.getSessionVariableNames(req).length
+    number_of_payments_on_cookie: cookies.getChargesOnSession(req).length
   })
+  const chargeState = cookies.getSessionChargeState(req, chargeKey)
+  if (chargeState) {
+    chargeState.updateAccessedAt()
+    cookies.setSessionChargeState(req, createChargeIdSessionKey(chargeId), chargeState)
+  } else {
+    /* TODO remove this else condition post merge of PP-12546
+    / this is here to support any existing payment journeys
+    */
+    logger.warn('ChargeId found on session but charge state was not found', {
+      ...getLoggingFields(req)
+    })
+  }
+
   return true
 }
 
