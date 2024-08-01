@@ -61,6 +61,9 @@ module.exports = async (req, res) => {
   });
 
   const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : null
+  if (proxyUrl) {
+    logger.info('Using proxy URL')
+  }
 
   const options = applePayMerchantValidationViaAxios ?
     {
@@ -94,13 +97,8 @@ module.exports = async (req, res) => {
   if (applePayMerchantValidationViaAxios) {
     logger.info('Generating Apple Pay session via axios')
     try {
-      let response
+      const response = await axios(options)
 
-      if (proxyUrl) {
-        response = await axios(options, httpsAgent)
-      } else {
-        response = await axios(options)
-      }
       logger.info('Apple Pay session successfully generated via axios')
       res.status(200).send(response.data)
     } catch (error) {
