@@ -18,11 +18,9 @@ exports.return = (req, res) => {
     chargeState.markTerminal()
     cookies.setSessionChargeState(req, chargeKey, chargeState)
   } else {
-    /* TODO: remove after PP-12546 has been merged
-    /  we no longer need to delete the session variable in the return controller as the cookie is cleaned up in the
-    /  secure controller, we're just cleaning up any existing payment journeys prior to the merge of PP-12546
-    */
-    cookies.deleteSessionVariable(req, chargeKey)
+    logger.error(`Session charge [${chargeKey}] could not be marked terminal`, {
+      ...getLoggingFields(req)
+    })
   }
   if (charge.isCancellableCharge(req.chargeData.status)) {
     return charge.cancel(req.chargeId, getLoggingFields(req))
