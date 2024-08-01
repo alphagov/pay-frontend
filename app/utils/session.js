@@ -50,14 +50,10 @@ const validateSessionCookie = function validateSessionCookie (req) {
     chargeState.updateAccessedAt()
     cookies.setSessionChargeState(req, createChargeIdSessionKey(chargeId), chargeState)
   } else {
-    /* TODO remove this else condition post merge of PP-12546
-    / this is here to support any existing payment journeys
-    */
-    logger.warn('ChargeId found on session but charge state was not found', {
+    logger.error('ChargeId found on session but charge state could not be parsed', {
       ...getLoggingFields(req)
     })
   }
-
   return true
 }
 
