@@ -4,7 +4,6 @@ const _ = require('lodash')
 const expect = require('chai').expect
 const nock = require('nock')
 const helper = require('../test-helpers/test-helpers.js')
-
 const { csrfCheck, csrfTokenGeneration } = require('../../app/middleware/csrf.js')
 
 describe('retrieve param test', function () {
@@ -22,9 +21,9 @@ describe('retrieve param test', function () {
     body: {},
     route: { methods: { get: true } },
     frontend_state: {
-      csrfSecret: process.env.CSRF_USER_SECRET_TWO,
+      csrfSecret: process.env.CSRF_USER_SECRET,
       ch_foo: {
-        csrfSecret: process.env.CSRF_USER_SECRET
+       data: 'blah'
       }
     },
     get: () => null
@@ -34,7 +33,6 @@ describe('retrieve param test', function () {
   delete noCharge.frontend_state.ch_foo
 
   const noSecret = _.cloneDeep(validGetRequest)
-  delete noSecret.frontend_state.ch_foo.csrfSecret
   delete noSecret.frontend_state.csrfSecret
 
   const invalidPost = _.cloneDeep(validGetRequest)
@@ -46,16 +44,6 @@ describe('retrieve param test', function () {
 
   const validPost = _.cloneDeep(invalidPost)
   validPost.body.csrfToken = helper.csrfToken()
-
-  const validPostWithSessionSecretAndChargeSecretAndChargeSecretGeneratedToken = _.cloneDeep(invalidPost)
-  validPostWithSessionSecretAndChargeSecretAndChargeSecretGeneratedToken.body.csrfToken = helper.csrfToken(process.env.CSRF_USER_SECRET)
-
-  const validPostWithSessionSecretAndChargeSecretAndSessionSecretGeneratedToken = _.cloneDeep(invalidPost)
-  validPostWithSessionSecretAndChargeSecretAndSessionSecretGeneratedToken.body.csrfToken = helper.csrfToken(process.env.CSRF_USER_SECRET_TWO)
-
-  const validPostWithSessionSecretAndSessionSecretGeneratedToken = _.cloneDeep(invalidPost)
-  delete validPostWithSessionSecretAndSessionSecretGeneratedToken.frontend_state.ch_foo.csrfSecret
-  validPostWithSessionSecretAndSessionSecretGeneratedToken.body.csrfToken = helper.csrfToken(process.env.CSRF_USER_SECRET_TWO)
 
   const validPut = _.cloneDeep(invalidPut)
   validPut.body.csrfToken = helper.csrfToken()
@@ -120,24 +108,6 @@ describe('retrieve param test', function () {
     csrfCheck(validPut, resp, next)
     csrfTokenGeneration(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
-  })
-
-  it('should use charge secret for csrf check when session secret, charge secret and charge secret generated token are present', function () {
-    const resp = _.cloneDeep(response)
-    csrfCheck(validPostWithSessionSecretAndChargeSecretAndChargeSecretGeneratedToken, resp, next)
-    expect(next.called).to.be.true // eslint-disable-line
-  })
-
-  it('should use session secret for csrf check when session secret, charge secret and session secret generated token are present', function () {
-    const resp = _.cloneDeep(response)
-    csrfCheck(validPostWithSessionSecretAndChargeSecretAndSessionSecretGeneratedToken, resp, next)
-    expect(next.called).to.be.true // eslint-disable-line
-  })
-
-  it('should use session secret for csrf check when only session secret is set', function () {
-    const resp = _.cloneDeep(response)
-    csrfCheck(validPostWithSessionSecretAndSessionSecretGeneratedToken, resp, next)
-    expect(next.called).to.be.true // eslint-disable-line
   })
 
   it('should error if no csrfToken in put request', function () {

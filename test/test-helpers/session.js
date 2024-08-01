@@ -14,7 +14,6 @@ function createReturnUrlKey (chargeId) {
 
 function createSessionWithReturnUrl (chargeId, chargeSession, returnUrl) {
   chargeSession = chargeSession || { data: new ChargeState().toString() }
-  chargeSession.csrfSecret = process.env.CSRF_USER_SECRET
   const session = {}
   if (arguments.length > 0) {
     session.csrfSecret = process.env.CSRF_USER_SECRET

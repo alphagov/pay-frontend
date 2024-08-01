@@ -31,11 +31,10 @@ exports.csrfCheck = (req, res, next) => {
     return responseRouter.response(req, res, 'UNAUTHORISED')
   }
 
-  const chargeSession = session.retrieve(req, chargeId) || {} // TODO: remove after PP-12546 has been merged
   const sessionCsrfSecret = cookies.getSessionCsrfSecret(req)
   const csrfToken = req.body.csrfToken
 
-  if (!chargeSession.csrfSecret && !sessionCsrfSecret) {
+  if (!sessionCsrfSecret) {
     responseRouter.response(req, res, 'UNAUTHORISED')
     logger.warn('CSRF secret is not defined', {
       ...getLoggingFields(req),
@@ -43,7 +42,7 @@ exports.csrfCheck = (req, res, next) => {
       url: req.originalUrl,
       method: req.method
     })
-  } else if (!csrfValid(csrfToken, chargeSession.csrfSecret, req) && !csrfValid(csrfToken, sessionCsrfSecret, req)) {
+  } else if (!csrfValid(csrfToken, sessionCsrfSecret, req)) {
     responseRouter.systemErrorResponse(req, res, 'CSRF is invalid')
   } else {
     next()
