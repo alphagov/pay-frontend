@@ -60,7 +60,13 @@ module.exports = async (req, res) => {
     key: merchantIdentityVars.key
   });
 
-  const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : null
+  const proxyAgentOptions = {
+    cert: merchantIdentityVars.cert,
+    key: merchantIdentityVars.key
+  };
+
+  const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl, proxyAgentOptions) : null;
+
   if (proxyUrl) {
     logger.info('Using proxy URL')
   }
