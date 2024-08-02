@@ -108,7 +108,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
           initiativeContext: merchantDomain
         }),
         sinon.match({
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
           httpsAgent: sinon.match.instanceOf(HttpsProxyAgent)
         })
       )
@@ -145,7 +145,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
           initiativeContext: merchantDomain
         }),
         sinon.match({
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
           httpsAgent: sinon.match.instanceOf(HttpsProxyAgent)
         })
       )
@@ -197,7 +197,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
           initiativeContext: merchantDomain
         }),
         sinon.match({
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
           httpsAgent: sinon.match.instanceOf(HttpsProxyAgent)
         })
       )

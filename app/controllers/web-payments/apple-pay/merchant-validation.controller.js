@@ -108,19 +108,20 @@ module.exports = async (req, res) => {
       }
 
       const alternativeOptions = {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
         httpsAgent: proxyAgent
       }
 
       try {
         const response = await axios.post(url, data, alternativeOptions)
 
-        logger.info('Apple Pay session successfully generated via axios')
+        logger.info('Apple Pay session successfully generated via axios and https proxy agent')
         res.status(200).send(response.data)
       } catch (error) {
         logger.info('Error generating Apple Pay session', {
           ...getLoggingFields(req),
-          error: error.message
+          error: error.message,
+          status: error.response ? error.response.status : 'No status'
         })
         logger.info('Apple Pay session via axios and https proxy agent failed', 'Apple Pay Error')
         res.status(500).send('Apple Pay Error')
