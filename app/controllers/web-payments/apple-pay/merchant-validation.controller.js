@@ -78,7 +78,7 @@ module.exports = async (req, res) => {
         initiative: 'web',
         initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
       },
-      httpsAgent: proxyUrl ? proxyAgent : httpsAgent
+      httpsAgent: httpsAgent
     } :
     {
       url: url,
@@ -95,20 +95,53 @@ module.exports = async (req, res) => {
     }
 
   if (applePayMerchantValidationViaAxios) {
-    logger.info('Generating Apple Pay session via axios')
-    try {
-      const response = await axios(options)
+    if (proxyUrl) {
+      logger.info('Generating Apple Pay session via axios and https proxy agent')
 
-      logger.info('Apple Pay session successfully generated via axios')
-      res.status(200).send(response.data)
-    } catch (error) {
-      logger.info('Error generating Apple Pay session', {
-        ...getLoggingFields(req),
-        error: error.message
-      })
-      logger.info('Apple Pay session via axios failed', 'Apple Pay Error')
-      res.status(500).send('Apple Pay Error')
+      const data = {
+        cert: merchantIdentityVars.cert,
+        key: merchantIdentityVars.key,
+        merchantIdentifier: merchantIdentityVars.merchantIdentifier,
+        displayName: 'GOV.UK Pay',
+        initiative: 'web',
+        initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
+      }
+
+      const alternativeOptions = {
+        headers: { 'Content-Type': 'application/json' },
+        httpsAgent: proxyAgent
+      }
+
+      try {
+        const response = await axios.post(url, data, alternativeOptions)
+
+        logger.info('Apple Pay session successfully generated via axios')
+        res.status(200).send(response.data)
+      } catch (error) {
+        logger.info('Error generating Apple Pay session', {
+          ...getLoggingFields(req),
+          error: error.message
+        })
+        logger.info('Apple Pay session via axios and https proxy agent failed', 'Apple Pay Error')
+        res.status(500).send('Apple Pay Error')
+      }
+    } else {
+      logger.info('Generating Apple Pay session via axios and https agent (local machine)')
+      try {
+        const response = await axios(options)
+
+        logger.info('Apple Pay session successfully generated via axios and https agent')
+        res.status(200).send(response.data)
+      } catch (error) {
+        logger.info('Error generating Apple Pay session', {
+          ...getLoggingFields(req),
+          error: error.message
+        })
+        logger.info('Apple Pay session via axios and https agent failed', 'Apple Pay Error')
+        res.status(500).send('Apple Pay Error')
+      }
     }
+
   } else {
     logger.info('Generating Apple Pay session via request retry')
     request(options, (err, response, body) => {
