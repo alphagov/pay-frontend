@@ -60,13 +60,6 @@ module.exports = async (req, res) => {
     key: merchantIdentityVars.key
   });
 
-  const proxyAgentOptions = {
-    cert: merchantIdentityVars.cert,
-    key: merchantIdentityVars.key
-  };
-
-  const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl, proxyAgentOptions) : null;
-
   if (proxyUrl) {
     logger.info('Using proxy URL')
   }
@@ -113,13 +106,22 @@ module.exports = async (req, res) => {
         initiativeContext: process.env.APPLE_PAY_MERCHANT_DOMAIN
       }
 
-      const alternativeOptions = {
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        httpsAgent: proxyAgent
-      }
+
+      const httpsProxyAgent = new HttpsProxyAgent(proxyUrl);
+
+      const httpsAgent = new https.Agent({
+        cert: merchantIdentityVars.cert,
+        key: merchantIdentityVars.key,
+        proxy: httpsProxyAgent
+      });
+
+      const axiosInstance = axios.create({
+        httpsAgent: httpsAgent
+      });
+
 
       try {
-        const response = await axios.post(url, data, alternativeOptions)
+        const response = await axiosInstance.post(url, data, { headers: { 'Content-Type': 'application/json; charset=utf-8' } })
 
         logger.info('Apple Pay session successfully generated via axios and https proxy agent')
         res.status(200).send(response.data)
