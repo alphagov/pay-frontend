@@ -107,16 +107,17 @@ module.exports = async (req, res) => {
       }
 
 
-      const httpsProxyAgent = new HttpsProxyAgent(proxyUrl);
-
-      const httpsAgent = new https.Agent({
+      const httpsProxyAgent = new HttpsProxyAgent(proxyUrl, {
         cert: merchantIdentityVars.cert,
-        key: merchantIdentityVars.key,
-        proxy: httpsProxyAgent
+        key: merchantIdentityVars.key
       });
 
+      // const httpsAgent = new https.Agent({
+      //   proxy: httpsProxyAgent
+      // });
+
       const axiosInstance = axios.create({
-        httpsAgent: httpsAgent
+        httpsAgent: httpsProxyAgent
       });
 
 
