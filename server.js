@@ -129,7 +129,7 @@ function initialiseTemplateEngine (app) {
 }
 
 function initialisePublic (app) {
-  app.use('/.well-known/apple-developer-merchantid-domain-association.txt', express.static(path.join(__dirname, `/app/assets/apple-pay/${process.env.ENVIRONMENT}/apple-developer-merchantid-domain-association.txt`)))
+  app.use('/.well-known/apple-developer-merchantid-domain-association.txt', express.static(path.join(__dirname, `/app/assets/apple-pay/${process.env.ENVIRONMENT}/.well-known/apple-developer-merchantid-domain-association.txt`)))
   app.use('/public/worldpay', worldpayIframe, express.static(path.join(__dirname, '/public/worldpay/'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/public'), publicCaching))
   app.use('/public', express.static(path.join(__dirname, '/app/data'), publicCaching))
