@@ -2,7 +2,6 @@
 
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
-const https = require('https')
 
 const merchantDomain = 'www.pymnt.uk'
 const worldpayMerchantId = 'worldpay.merchant.id'
@@ -15,14 +14,19 @@ const url = 'https://fakeapple.url'
 
 const appleResponse = { status: 200, data: { foo: 'bar' } }
 
+const hpagentMock = {
+  HttpsProxyAgent: sinon.stub().returns({})
+}
+
 function getControllerWithMocks (axiosMock) {
   return proxyquire('../../../../app/controllers/web-payments/apple-pay/merchant-validation.controller', {
-    axios: axiosMock
+    axios: axiosMock,
+    hpagent: hpagentMock
   })
 }
 
 describe('Validate with Apple the merchant is legitimate', () => {
-  let res, sendSpy, axiosStub
+  let res, sendSpy
 
   beforeEach(() => {
     delete process.env.HTTPS_PROXY
@@ -41,12 +45,11 @@ describe('Validate with Apple the merchant is legitimate', () => {
       status: sinon.spy(() => ({ send: sendSpy })),
       sendStatus: sinon.spy()
     }
-
-    axiosStub = sinon.stub().resolves(appleResponse)
   })
 
   describe('when running locally with no proxy', () => {
     it('should return a payload for a Worldpay payment if Merchant is valid', async () => {
+      const axiosStub = sinon.stub().resolves(appleResponse)
       const controller = getControllerWithMocks(axiosStub)
 
       const req = {
@@ -57,23 +60,21 @@ describe('Validate with Apple the merchant is legitimate', () => {
       }
       await controller(req, res)
 
-      sinon.assert.calledWith(axiosStub, sinon.match({
-        url,
+      sinon.assert.calledOnce(axiosStub)
+      const axiosCallArg = axiosStub.getCall(0).args[0]
+
+      sinon.assert.match(axiosCallArg, {
+        url: url,
         method: 'post',
+        cert: sinon.match(cert => cert.includes(worldpayCertificate)),
+        key: sinon.match(key => key.includes(worldpayKey)),
         headers: { 'Content-Type': 'application/json' },
         data: {
           merchantIdentifier: worldpayMerchantId,
           displayName: 'GOV.UK Pay',
           initiative: 'web',
           initiativeContext: merchantDomain
-        },
-        httpsAgent: sinon.match.instanceOf(https.Agent)
-      }))
-
-      const httpsAgentArg = axiosStub.getCall(0).args[0].httpsAgent
-      sinon.assert.match(httpsAgentArg.options, {
-        cert: sinon.match(cert => cert.includes(worldpayCertificate)),
-        key: sinon.match(key => key.includes(worldpayKey))
+        }
       })
 
       sinon.assert.calledWith(res.status, 200)
@@ -82,13 +83,15 @@ describe('Validate with Apple the merchant is legitimate', () => {
   })
 
   describe('when there is a proxy', () => {
-    it('should return a payload for a Worldpay payment if Merchant is valid', async () => {
+    beforeEach(() => {
       process.env.HTTPS_PROXY = 'https://fakeproxy.com'
+    })
+
+    it('should return a payload for a Worldpay payment if Merchant is valid', async () => {
       const axiosPostStub = sinon.stub().resolves(appleResponse)
       const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
       const axiosStub = {
-        create: axiosCreateStub,
-        post: sinon.stub().resolves(appleResponse)
+        create: axiosCreateStub
       }
       const controller = getControllerWithMocks(axiosStub)
 
@@ -100,9 +103,16 @@ describe('Validate with Apple the merchant is legitimate', () => {
       }
       await controller(req, res)
 
-      // sinon.assert.calledWith(axiosCreateStub, sinon.match({
-      //   httpsAgent: sinon.match.instanceOf(https.Agent)
-      // }))
+      sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
+        proxy: 'https://fakeproxy.com',
+        cert: sinon.match(cert => cert.includes(worldpayCertificate)),
+        key: sinon.match(key => key.includes(worldpayKey))
+      }))
+
+      sinon.assert.calledWith(axiosCreateStub, sinon.match({
+        httpsAgent: sinon.match.any,
+        proxy: false
+      }))
 
       sinon.assert.calledWith(axiosPostStub,
         sinon.match(url),
@@ -122,12 +132,10 @@ describe('Validate with Apple the merchant is legitimate', () => {
     })
 
     it('should return a payload for a Stripe payment if Merchant is valid', async () => {
-      process.env.HTTPS_PROXY = 'https://fakeproxy.com'
       const axiosPostStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
       const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
       const axiosStub = {
-        create: axiosCreateStub,
-        post: sinon.stub().resolves({ data: appleResponse.data, status: 200 })
+        create: axiosCreateStub
       }
       const controller = getControllerWithMocks(axiosStub)
 
@@ -139,9 +147,16 @@ describe('Validate with Apple the merchant is legitimate', () => {
       }
       await controller(req, res)
 
-      // sinon.assert.calledWith(axiosCreateStub, sinon.match({
-      //   httpsAgent: sinon.match.instanceOf(https.Agent)
-      // }))
+      sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
+        proxy: 'https://fakeproxy.com',
+        cert: sinon.match(cert => cert.includes(stripeCertificate)),
+        key: sinon.match(key => key.includes(stripeKey))
+      }))
+
+      sinon.assert.calledWith(axiosCreateStub, sinon.match({
+        httpsAgent: sinon.match.any,
+        proxy: false
+      }))
 
       sinon.assert.calledWith(axiosPostStub,
         sinon.match(url),
@@ -160,27 +175,11 @@ describe('Validate with Apple the merchant is legitimate', () => {
       sinon.assert.calledWith(sendSpy, appleResponse.data)
     })
 
-    it('should return 400 if no url is provided', async () => {
-      const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
-      const controller = getControllerWithMocks(axiosStub)
-
-      const req = {
-        body: {
-          paymentProvider: 'worldpay'
-        }
-      }
-      await controller(req, res)
-      sinon.assert.calledWith(res.sendStatus, 400)
-      sinon.assert.notCalled(axiosStub)
-    })
-
     it('should return a payload for a Sandbox payment if Merchant is valid', async () => {
-      process.env.HTTPS_PROXY = 'https://fakeproxy.com'
       const axiosPostStub = sinon.stub().resolves(appleResponse)
       const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
       const axiosStub = {
-        create: axiosCreateStub,
-        post: sinon.stub().resolves(appleResponse)
+        create: axiosCreateStub
       }
       const controller = getControllerWithMocks(axiosStub)
 
@@ -193,9 +192,16 @@ describe('Validate with Apple the merchant is legitimate', () => {
 
       await controller(req, res)
 
-      // sinon.assert.calledWith(axiosCreateStub, sinon.match({
-      //   httpsAgent: sinon.match.instanceOf(https.Agent)
-      // }))
+      sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
+        proxy: 'https://fakeproxy.com',
+        cert: sinon.match(cert => cert.includes(worldpayCertificate)),
+        key: sinon.match(key => key.includes(worldpayKey))
+      }))
+
+      sinon.assert.calledWith(axiosCreateStub, sinon.match({
+        httpsAgent: sinon.match.any,
+        proxy: false
+      }))
 
       sinon.assert.calledWith(axiosPostStub,
         sinon.match(url),
@@ -213,35 +219,53 @@ describe('Validate with Apple the merchant is legitimate', () => {
       sinon.assert.calledWith(res.status, 200)
       sinon.assert.calledWith(sendSpy, appleResponse.data)
     })
+  })
 
-    it('should return 400 for unexpected payment provider', async () => {
-      const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
-      const controller = getControllerWithMocks(axiosStub)
+  it('should return 400 if no url is provided', async () => {
+    const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
+    const controller = getControllerWithMocks(axiosStub)
 
-      const req = {
-        body: {
-          url,
-          paymentProvider: 'mystery'
-        }
+    const req = {
+      body: {
+        paymentProvider: 'worldpay'
       }
-      await controller(req, res)
-      sinon.assert.calledWith(res.sendStatus, 400)
-      sinon.assert.notCalled(axiosStub)
-    })
+    }
+    await controller(req, res)
+    sinon.assert.calledWith(res.sendStatus, 400)
+    sinon.assert.notCalled(axiosStub)
+  })
 
-    it('should return an error if Apple Pay returns an error', async () => {
-      const axiosErrorStub = sinon.stub().rejects(new Error('Whatever error from Apple Pay'))
-      const controller = getControllerWithMocks(axiosErrorStub)
+  it('should return 400 for unexpected payment provider', async () => {
+    const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
+    const controller = getControllerWithMocks(axiosStub)
 
-      const req = {
-        body: {
-          url,
-          paymentProvider: 'worldpay'
-        }
+    const req = {
+      body: {
+        url,
+        paymentProvider: 'mystery'
       }
-      await controller(req, res)
-      sinon.assert.calledWith(res.status, 500)
-      sinon.assert.calledWith(sendSpy, 'Apple Pay Error')
-    })
+    }
+    await controller(req, res)
+    sinon.assert.calledWith(res.sendStatus, 400)
+    sinon.assert.notCalled(axiosStub)
+  })
+
+  it('should return an error if Apple Pay returns an error', async () => {
+    const axiosPostStub = sinon.stub().rejects(new Error('Whatever error from Apple Pay'))
+    const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
+    const axiosStub = {
+      create: axiosCreateStub
+    }
+    const controller = getControllerWithMocks(axiosStub)
+
+    const req = {
+      body: {
+        url,
+        paymentProvider: 'worldpay'
+      }
+    }
+    await controller(req, res)
+    sinon.assert.calledWith(res.status, 500)
+    sinon.assert.calledWith(sendSpy, 'Apple Pay Error')
   })
 })
