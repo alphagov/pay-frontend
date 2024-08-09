@@ -38,48 +38,12 @@ describe('Validate with Apple the merchant is legitimate', () => {
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID = stripeMerchantId
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE = stripeCertificate
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = stripeKey
-    process.env.APPLE_PAY_MERCHANT_VALIDATION_VIA_AXIOS = 'true'
 
     sendSpy = sinon.spy()
     res = {
       status: sinon.spy(() => ({ send: sendSpy })),
       sendStatus: sinon.spy()
     }
-  })
-
-  describe('when running locally with no proxy', () => {
-    it('should return a payload for a Worldpay payment if Merchant is valid', async () => {
-      const axiosStub = sinon.stub().resolves(appleResponse)
-      const controller = getControllerWithMocks(axiosStub)
-
-      const req = {
-        body: {
-          url,
-          paymentProvider: 'worldpay'
-        }
-      }
-      await controller(req, res)
-
-      sinon.assert.calledOnce(axiosStub)
-      const axiosCallArg = axiosStub.getCall(0).args[0]
-
-      sinon.assert.match(axiosCallArg, {
-        url: url,
-        method: 'post',
-        cert: sinon.match(cert => cert.includes(worldpayCertificate)),
-        key: sinon.match(key => key.includes(worldpayKey)),
-        headers: { 'Content-Type': 'application/json' },
-        data: {
-          merchantIdentifier: worldpayMerchantId,
-          displayName: 'GOV.UK Pay',
-          initiative: 'web',
-          initiativeContext: merchantDomain
-        }
-      })
-
-      sinon.assert.calledWith(res.status, 200)
-      sinon.assert.calledWith(sendSpy, appleResponse.data)
-    })
   })
 
   describe('when there is a proxy', () => {
