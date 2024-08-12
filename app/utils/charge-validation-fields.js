@@ -155,7 +155,8 @@ function containsSuspectedCVV (input) {
 
 // Must be bound prior to use
 function cardNo (cardNo) {
-  if (!cardNo) return 'message' // default message
+  const numbersAndSpacesOnly = /^[\d ]+$/;
+  if (!cardNo || !numbersAndSpacesOnly.test(cardNo)) return 'message' // default message
   cardNo = cardNo.replace(/\D/g, '')
   const cardType = creditCardType(cardNo)
   if (!cardNo || cardNo.length < 12 || cardNo.length > 19) return 'numberIncorrectLength'
