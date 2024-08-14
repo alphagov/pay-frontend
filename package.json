@@ -152,9 +152,6 @@
     },
     "grunt-babel": {
       "grunt": "1.5.3"
-    },
-    "cypress": {
-      "@cypress/request": "2.88.11"
     }
   },
   "snyk": true
