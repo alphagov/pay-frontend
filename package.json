@@ -100,7 +100,6 @@
     "promise-polyfill": "8.3.0",
     "punycode": "1.4.1",
     "randomstring": "^1.3.0",
-    "request": "^2.88.2",
     "serve-favicon": "2.5.0",
     "staticify": "5.0.x",
     "throng": "5.0.x",
@@ -153,9 +152,6 @@
     },
     "grunt-babel": {
       "grunt": "1.5.3"
-    },
-    "request": {
-      "qs": "6.11.1"
     },
     "cypress": {
       "@cypress/request": "2.88.11"
