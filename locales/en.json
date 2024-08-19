@@ -100,6 +100,7 @@
 	"fieldErrors": {
 		"summary": "The following fields are missing or contain errors",
 		"generic": "Enter a valid %s",
+		"visuallyHiddenError": "Error:",
 		"fields": {
 			"cardholderName": {
 				"name": "name",

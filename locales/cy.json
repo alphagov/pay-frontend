@@ -103,6 +103,7 @@
 	"fieldErrors": {
 		"summary": "Mae’r meysydd canlynol yn wag neu yn cynnwys camgymeriadau",
 		"generic": "Rhowch %s dilys",
+		"visuallyHiddenError": "Gwall:",
 		"fields": {
 			"cardholderName": {
 				"name": "enw",
