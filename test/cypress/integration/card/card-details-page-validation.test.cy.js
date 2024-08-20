@@ -18,7 +18,7 @@ describe('Card details page validation', () => {
     cy.get('#error-summary-title').should(($td) => expect($td).to.contain('The following fields are missing or contain errors'))
     cy.get('#cardholder-name-error').should('exist')
     cy.get('#cvc-error').should('exist')
-    cy.get('#expiry-date-error').should('exist')
+    cy.get('#expiry-month-error').should('exist')
     cy.get('#address-line-1-error').should('exist')
     cy.get('#address-city-error').should('exist')
     cy.get('#address-postcode-error').should('exist')

@@ -9,9 +9,9 @@ describe('card validation: card number', function () {
     expect(result).to.equal(true)
   })
 
-  it('should strip non numbers', function () {
+  it('should return invalid if cardNo contains non-numbers', function () {
     const result = fields.fieldValidations.cardNo('42424242424242dsakljl42')
-    expect(result).to.equal(true)
+    expect(result).to.equal('message')
   })
 
   it('should return incorrect length', function () {

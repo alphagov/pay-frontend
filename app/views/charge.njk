@@ -181,14 +181,13 @@
                   <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-width-three-quarters">
                     <span
                         class="card-no-label"
-                        data-label-replace="cardNo"
                         data-original-label="{{ __p("cardDetails.cardNo") }}">
                       {{ __p("cardDetails.cardNo") }}
                     </span>
                   </label>
-
                   {% if highlightErrorFields.cardNo %}
                     <p class="govuk-error-message" id="error-card-no">
+                      <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                       {{ highlightErrorFields.cardNo }}
                     </p>
                   {% endif %}
@@ -204,12 +203,15 @@
                   <p class="govuk-body accepted-cards-hint withdrawal-text govuk-!-margin-bottom-0">
                     {% if withdrawalText === 'debit_credit' %}
                       {{ __p("cardDetails.withdrawalText").debit_credit }}
+                      <span data-label-replace="cardNo"></span>
                     {% endif %}
                     {% if withdrawalText === 'debit' %}
                       {{ __p("cardDetails.withdrawalText").debit }}
+                      <span data-label-replace="cardNo"></span>
                     {% endif %}
                     {% if withdrawalText === 'credit' %}
                       {{ __p("cardDetails.withdrawalText").credit }}
+                      <span data-label-replace="cardNo"></span>
                     {% endif %}
                   </p>
 
@@ -247,17 +249,18 @@
                     <legend>
                       <div class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
                         <span class="expiry-date-label"
-                  data-label-replace="expiryMonth"
                   data-original-label="{{ __p("cardDetails.expiry") }}">
                           {{ __p("cardDetails.expiry") }}
                         </span>
                       </div>
                     </legend>
-                    <div class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
+                    <div class="govuk-hint govuk-!-margin-bottom-0" id="expiry-date-hint">
                       {{ __p("cardDetails.expiryHint", exampleCardExpiryDateYear) }}
+                      <span data-label-replace="expiryMonth"></span>
                     </div>
                     {% if highlightErrorFields.expiryMonth %}
                       <p class="govuk-error-message" id="error-expiry-date">
+                        <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                         {{ highlightErrorFields.expiryMonth }}
                       </p>
                     {% endif %}
@@ -307,6 +310,7 @@
 
                   {% if highlightErrorFields.cardholderName %}
                     <p class="govuk-error-message" id="error-cardholder-name">
+                      <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                       {{ highlightErrorFields.cardholderName }}
                     </p>
                   {% endif %}
@@ -323,7 +327,7 @@
 
                 <div class="govuk-form-group{% if highlightErrorFields.cvc %} govuk-form-group--error{% endif %} cvc govuk-clearfix" data-validation="cvc">
                   <label id="cvc-lbl" for="cvc" class="govuk-label govuk-label--s">
-                    <span class="cvc-label" data-label-replace="cvc" data-original-label="{{ __p("cardDetails.cvc") }}">
+                    <span class="cvc-label" data-original-label="{{ __p("cardDetails.cvc") }}" >
                       {{ __p("cardDetails.cvc") }}
                     </span>
                   </label>
@@ -331,6 +335,7 @@
                   <div class="govuk-hint govuk-!-margin-bottom-2">
                     <span class="generic-cvc">
                       {{ __p("cardDetails.cvcTip") }}
+                    <span data-label-replace="cvc"></span>
                     </span>
                     <span class="amex-cvc hidden">
                       <span class="hidden">
@@ -344,6 +349,7 @@
 
                   {% if highlightErrorFields.cvc %}
                     <p class="govuk-error-message" id="error-cvc">
+                      <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                       {{ highlightErrorFields.cvc }}
                     </p>
                   {% endif %}
@@ -395,6 +401,7 @@
 
                           {% if highlightErrorFields.addressLine1 %}
                             <p class="govuk-error-message" id="error-address-line-1">
+                              <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                               {{ highlightErrorFields.addressLine1 }}
                             </p>
                           {% endif %}
@@ -448,6 +455,7 @@
 
                           {% if highlightErrorFields.addressCity %}
                             <p class="govuk-error-message" id="error-address-city">
+                              <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                               {{ highlightErrorFields.addressCity }}
                             </p>
                           {% endif %}
@@ -473,6 +481,7 @@
 
                           {% if highlightErrorFields.addressCountry %}
                             <p class="govuk-error-message" id="error-address-country">
+                              <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                               {{ highlightErrorFields.addressCountry }}
                             </p>
                           {% endif %}
@@ -502,6 +511,7 @@
 
                           {% if highlightErrorFields.addressPostcode %}
                               <p class="govuk-error-message" id="error-address-postcode">
+                                <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                                 {{ highlightErrorFields.addressPostcode }}
                               </p>
                           {% endif %}
@@ -541,6 +551,7 @@
 
                           {% if highlightErrorFields.email %}
                               <p class="govuk-error-message" id="error-email">
+                                <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
                                 {{ highlightErrorFields.email }}
                               </p>
                             {% endif %}
