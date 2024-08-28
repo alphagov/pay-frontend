@@ -125,7 +125,7 @@ var init = function () {
     var errorAnchor = document.createElement('a')
     errorAnchor.setAttribute('href', '#' + error.cssKey)
     errorAnchor.id = error.cssKey + '-error'
-    if(!document.getElementById(errorAnchor.id)){
+    if (!document.getElementById(errorAnchor.id)) {
       errorAnchor.innerText = error.value
       listElement.appendChild(errorAnchor)
       if (addType === 'append') {
@@ -192,8 +192,14 @@ var init = function () {
       if (isAnExpiryDateField) {
         expiryMonthElement.classList.remove(CSS_ERROR_CLASS)
         expiryYearElement.classList.remove(CSS_ERROR_CLASS)
+        if (document.getElementById('expiry-month-error')) {
+          document.getElementById('expiry-month-error').remove()
+        }
       } else {
         input.classList.remove(CSS_ERROR_CLASS)
+        if (document.getElementById(`${input.id}-error`)) {
+          document.getElementById(`${input.id}-error`).remove()
+        }
       }
     }
   }
