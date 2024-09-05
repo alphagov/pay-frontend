@@ -30,6 +30,7 @@ const { requestContextMiddleware } = require('./app/services/clients/base/reques
 const {
   NODE_ENV,
   PORT,
+  BIND_HOST,
   ANALYTICS_TRACKING_ID,
   GOOGLE_PAY_MERCHANT_ID,
   WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE,
@@ -160,8 +161,10 @@ function setNoCacheHeadersForRoutes (app) {
 
 function listen () {
   const app = initialise()
-  app.listen(PORT || 3000)
-  logger.info('Listening on port ' + PORT || 3000)
+  const DEFAULT_PORT = 3000
+  const DEFAULT_BIND_HOST = "127.0.0.1"
+  app.listen(PORT || DEFAULT_PORT, BIND_HOST || DEFAULT_BIND_HOST)
+  logger.info(`Listening on ${BIND_HOST || DEFAULT_BIND_HOST}:${PORT || DEFAULT_PORT}`)
 }
 
 function logApplePayCertificateTimeToExpiry () {
