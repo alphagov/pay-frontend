@@ -59,9 +59,9 @@ function initialiseGlobalMiddleware (app) {
   app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware())
   app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/govuk/assets/images', 'favicon.ico')))
   app.use(staticify.middleware)
+  app.use(requestContextMiddleware)
 
   app.use(function (req, res, next) {
-    app.use(requestContextMiddleware)
     res.locals.asset_path = '/public/'
     res.locals.googlePayMerchantID = GOOGLE_PAY_MERCHANT_ID
     if (typeof ANALYTICS_TRACKING_ID === 'undefined') {

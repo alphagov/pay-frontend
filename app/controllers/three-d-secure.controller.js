@@ -9,10 +9,12 @@ const normalise = require('../services/normalise-charge')
 const paths = require('../paths')
 const { withAnalytics } = require('../utils/analytics')
 const connectorClient = require('../services/clients/connector.client')
+const crypto = require('crypto')
 
 // Constants
 const { views, threeDsEPDQResults } = require('../../config/charge.controller')
 const { CORRELATION_HEADER } = require('../../config/correlation-header')
+const { getRequestCorrelationIDField } = require('../services/clients/base/request-context')
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })
 
@@ -82,7 +84,7 @@ const handleThreeDsResponse = (req, res, charge) => response => {
 module.exports = {
   auth3dsHandler (req, res) {
     const charge = normalise.charge(req.chargeData, req.chargeId)
-    const correlationId = req.headers[CORRELATION_HEADER] || ''
+    const correlationId = req.headers[CORRELATION_HEADER] || getRequestCorrelationIDField() || crypto.randomBytes(16).toString('hex')
     const payload = build3dsPayload(charge.id, req)
     connectorClient({ correlationId }).threeDs({ chargeId: charge.id, payload }, getLoggingFields(req))
       .then(handleThreeDsResponse(req, res, charge))

@@ -38,6 +38,8 @@ const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { createChargeIdSessionKey } = require('../utils/session')
 const { getLoggingFields } = require('../utils/logging-fields-helper')
 const { applePayEnabled, googlePayEnabled } = require('../utils/wallet-utils')
+const crypto = require('crypto')
+const { getRequestCorrelationIDField } = require('../services/clients/base/request-context')
 
 const appendChargeForNewView = async (charge, req, chargeId) => {
   const cardModel = Card(charge.gatewayAccount.cardTypes, charge.gatewayAccount.block_prepaid_cards, req.headers[CORRELATION_HEADER])
@@ -70,7 +72,7 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
   })
   charge.googlePayRequestDetails = googlePayDetails
 
-  const correlationId = req.headers[CORRELATION_HEADER] || ''
+  const correlationId = req.headers[CORRELATION_HEADER] || getRequestCorrelationIDField() || crypto.randomBytes(16).toString('hex')
   charge.worldpay3dsFlexDdcJwt = await worlpay3dsFlexService.getDdcJwt(charge, correlationId, getLoggingFields(req))
 
   if (charge.gatewayAccount.type !== 'live') {
@@ -211,7 +213,7 @@ module.exports = {
       return responseRouter.response(req, res, views.CHARGE_VIEW, data.validation)
     }
 
-    const correlationId = req.headers[CORRELATION_HEADER] || ''
+    const correlationId = req.headers[CORRELATION_HEADER] || getRequestCorrelationIDField() || crypto.randomBytes(16).toString('hex')
     const payload = normalise.apiPayload(req, card)
     if (res.locals.collectBillingAddress === false) {
       delete payload.address

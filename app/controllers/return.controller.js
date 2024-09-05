@@ -8,9 +8,11 @@ const { CORRELATION_HEADER } = require('../../config/correlation-header')
 const { withAnalyticsError } = require('../utils/analytics')
 const { createChargeIdSessionKey } = require('../utils/session')
 const cookies = require('../utils/cookies')
+const crypto = require('crypto')
+const { getRequestCorrelationIDField } = require('../services/clients/base/request-context')
 
 exports.return = (req, res) => {
-  const correlationId = req.headers[CORRELATION_HEADER] || ''
+  const correlationId = req.headers[CORRELATION_HEADER] || getRequestCorrelationIDField() || crypto.randomBytes(16).toString('hex')
   const charge = Charge(correlationId)
   const chargeKey = createChargeIdSessionKey(req.chargeId)
   const chargeState = cookies.getSessionChargeState(req, chargeKey)
