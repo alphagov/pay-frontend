@@ -1,4 +1,4 @@
-var showCardType = function() {
+window.showCardType = function() {
   var form = document.getElementById('card-details')
   var acceptedCards = form.querySelector('.accepted-cards')
   var cardInput = form.querySelector('#card-no')

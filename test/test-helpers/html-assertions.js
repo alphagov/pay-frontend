@@ -5,7 +5,7 @@ const nunjucks = require('nunjucks')
 const lodash = require('lodash')
 
 // Global initialisation
-const views = ['./app/views', './node_modules/govuk-frontend']
+const views = ['./app/views', './node_modules/govuk-frontend/dist']
 const environment = nunjucks.configure(views)
 const strings = require('./../../locales/en.json')
 
