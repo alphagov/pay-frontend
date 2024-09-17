@@ -25,7 +25,7 @@ const initialiseAddressCountryAutocomplete = () => {
 
 const toggleButton = (button) => {
   if (button) {
-    button[button.hasAttribute('disabled') ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled')
+    button[button.getAttribute('disabled') ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled')
   }
 }
 
