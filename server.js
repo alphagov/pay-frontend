@@ -45,7 +45,7 @@ const publicCaching = { maxAge: oneYear }
 
 // Define app views
 const APP_VIEWS = [
-  path.join(__dirname, 'node_modules/govuk-frontend/'),
+  path.join(__dirname, 'node_modules/govuk-frontend/dist/'),
   path.join(__dirname, '/app/views')
 ]
 
@@ -58,7 +58,7 @@ function initialiseGlobalMiddleware (app) {
   app.set('settings', { getVersionedPath: staticify.getVersionedPath })
 
   app.use(/\/((?!images|public|stylesheets|javascripts).)*/, loggingMiddleware())
-  app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/govuk/assets/images', 'favicon.ico')))
+  app.use(favicon(path.join(__dirname, '/node_modules/govuk-frontend/dist/govuk/assets/images', 'favicon.ico')))
   app.use(staticify.middleware)
 
   app.use(function (req, res, next) {
@@ -140,9 +140,9 @@ function initialisePublic (app) {
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/assets/stylesheets'), publicCaching))
 
   if (process.env.NGINX_CACHING_ENABLED === 'true') {
-    app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/govuk/'), publicCaching))
+    app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/dist/govuk/'), publicCaching))
   } else {
-    app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/govuk/')))
+    app.use('/', express.static(path.join(__dirname, '/node_modules/govuk-frontend/dist/govuk/')))
   }
 
   app.use('/public', express.static(path.join(__dirname, '/node_modules/@govuk-pay/pay-js-commons/')))

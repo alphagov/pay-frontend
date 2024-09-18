@@ -12,7 +12,7 @@ const allowUnsafeEvalScripts = process.env.CSP_ALLOW_UNSAFE_EVAL_SCRIPTS === 'tr
 const frontendUrl = process.env.FRONTEND_URL || ''
 // Script responsible for setting 'js-enabled' class, extends GOV.UK frontend `layout` which we have no control over
 // and never changes
-const govUkFrontendLayoutJsEnabledScriptHash = '\'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=\''
+const govUkFrontendLayoutJsEnabledScriptHash = '\'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=\''
 
 const CSP_NONE = ['\'none\'']
 const CSP_SELF = ['\'self\'']
@@ -66,7 +66,7 @@ const cardDetailsCSP = helmet({
       formAction: [formActionCardDetails],
       fontSrc: CSP_SELF,
       frameAncestors: CSP_SELF,
-      manifestSrc: CSP_NONE,
+      manifestSrc: CSP_SELF,
       mediaSrc: CSP_NONE,
       objectSrc: CSP_NONE,
       baseUri: CSP_NONE
