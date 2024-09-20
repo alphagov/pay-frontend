@@ -81,4 +81,22 @@ describe('Card details page validation', () => {
     cy.get('[data-cy=expiry-month]').not('have.class', 'govuk-input--error')
     cy.get('[data-cy=expiry-year]').not('have.class', 'govuk-input--error')
   })
+
+  it('Should remove summary field errors after clicking out of a correctly validated field', () => {
+    cy.task('setupStubs', createPaymentChargeStubs)
+    cy.visit(`/secure/${tokenId}`)
+
+    cy.location('pathname').should('eq', `/card_details/${chargeId}`)
+    cy.window().its('chargeId').should('eq', `${chargeId}`)
+    
+    cy.get('[data-cy=cardholder-name]').invoke('val', '')
+    cy.get('#card-details').submit()
+    
+    cy.get('#cardholder-name-error').should('exist')
+
+    cy.get('[data-cy=cardholder-name]').clear().type('Jeff')
+    cy.get('[data-cy=expiry-month]').click()
+
+    cy.get('#cardholder-name-error').should('not.exist')
+  })
 })
