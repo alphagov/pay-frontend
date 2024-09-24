@@ -20,10 +20,12 @@ const withAnalyticsError = require('../utils/analytics').withAnalyticsError
 const { resolveActionName } = require('../services/state.service')
 const paths = require('../paths')
 const { ChargeState } = require('../models/ChargeState')
+const crypto = require('crypto')
+const { getRequestCorrelationIDField } = require('../services/clients/base/request-context')
 
 exports.new = async function (req, res) {
   const chargeTokenId = req.params.chargeTokenId || req.body.chargeTokenId
-  const correlationId = req.headers[CORRELATION_HEADER] || ''
+  const correlationId = req.headers[CORRELATION_HEADER] || getRequestCorrelationIDField() || crypto.randomBytes(16).toString('hex')
   try {
     const tokenResponse = await Charge(correlationId).findByToken(chargeTokenId, getLoggingFields(req))
 
