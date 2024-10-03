@@ -1,8 +1,6 @@
 const axios = require('axios')
 
 module.exports = (on, config) => {
-  const stubServerURL = `${config.env.MOUNTEBANK_URL}/imposters`
-
   // common task definitions - used by all test specs
   on('task', {
     /**
@@ -13,10 +11,8 @@ module.exports = (on, config) => {
      * the same call.
      */
     setupStubs (stubs) {
-      return axios.post(stubServerURL,
+      return axios.post(`${config.env.MOUNTEBANK_URL}/__add-mock-endpoints__`,
         {
-          port: config.env.MOUNTEBANK_IMPOSTERS_PORT,
-          protocol: 'http',
           stubs
         }
       ).then(function (response) {
@@ -28,7 +24,7 @@ module.exports = (on, config) => {
     },
 
     clearStubs () {
-      return axios.delete(stubServerURL)
+      return axios.post(`${config.env.MOUNTEBANK_URL}/__clear-all-endpoints__`)
         .then(function (response) {
           return ''
         })
