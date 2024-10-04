@@ -50,8 +50,10 @@
     "cypress:server": "mb | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
+    "cypress:zap": "cypress run --config-file cypress.zap.config.js --env MOUNTEBANK_URL=http://127.0.0.1:2525,MOUNTEBANK_IMPOSTERS_PORT=8000,zapProxy=http://localhost:8080,HTTP_PROXY=http://localhost:8080,NO_PROXY=\"<-loopback>\"",
     "snyk-protect": "snyk-protect",
-    "publish-pacts": "./bin/publish-pacts.js"
+    "publish-pacts": "./bin/publish-pacts.js",
+    "zap": "docker run --name zap-container -u zap -d -p 8080:8080 ghcr.io/zaproxy/zaproxy:stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config 'api.addrs.addr.name=.*' -config api.addrs.addr.regex=true -config gui.start=false -config 'network.log.enabled=true' && npm run cypress:zap"
   },
   "lint-staged": {
     "*.js": [
