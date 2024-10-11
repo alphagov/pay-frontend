@@ -2,7 +2,7 @@ const axios = require('axios')
 
 module.exports = (on, config) => {
   const stubSetupUrl = config.env.MOCK_HTTP_SERVER_URL + '/__add-mock-endpoints__'
-  const stubResetUrl = config.env.MOCK_HTTP_SERVER_URL + '/__clear-all-endpoints__'
+  const stubResetUrl = config.env.MOCK_HTTP_SERVER_URL + '/__clear-mock-endpoints__'
 
   // common task definitions - used by all test specs
   on('task', {
@@ -16,7 +16,7 @@ module.exports = (on, config) => {
     setupStubs (stubs) {
       return axios.post(stubSetupUrl,
         {
-          port: config.env.MOUNTEBANK_IMPOSTERS_PORT,
+          port: config.env.MOCK_HTTP_SERVER_PORT,
           protocol: 'http',
           stubs
         }

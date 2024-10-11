@@ -47,7 +47,7 @@
     "lint-sass": "stylelint '**/*.scss'",
     "watch-live-reload": "grunt watch",
     "test": "rm -rf ./pacts && NODE_ENV=test mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
-    "cypress:server": "http-configurable-mock-server --port=8000 | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
+    "cypress:server": "run-amock --port=8000 | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
     "snyk-protect": "snyk-protect",
@@ -108,7 +108,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
-    "@govuk-pay/http-configurable-mock-server": "github:alphagov/http-configurable-mock-server#ac13d2d",
+    "@govuk-pay/run-amock": "github:alphagov/govuk-pay-run-amock#8632a53",
     "@pact-foundation/pact": "^12.1.1",
     "@pact-foundation/pact-core": "^14.0.5",
     "@snyk/protect": "^1.1235.x",
