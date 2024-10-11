@@ -108,7 +108,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
-    "@govuk-pay/run-amock": "github:alphagov/govuk-pay-run-amock#8632a53",
+    "@govuk-pay/run-amock": "github:alphagov/govuk-pay-run-amock#6e5dcb9",
     "@pact-foundation/pact": "^12.1.1",
     "@pact-foundation/pact-core": "^14.0.5",
     "@snyk/protect": "^1.1235.x",
