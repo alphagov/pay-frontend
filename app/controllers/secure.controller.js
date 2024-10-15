@@ -55,6 +55,10 @@ exports.new = async function (req, res) {
       res.redirect(303, generateRoute(resolveActionName(chargeStatus, 'get'), { chargeId }))
     }
   } catch (err) {
+    if (err.message === 'NOT_FOUND') {
+      logger.info(`Call to /secure/{tokenId} is invalid. Token not found for tokenId [${chargeTokenId}].`, getLoggingFields(req))
+      return responseRouter.response(req, res, 'NOT_FOUND')
+    }
     if (err.message === 'UNAUTHORISED') {
       logger.info('Call to /secure/{tokenId} is Unauthorised. This could be due to the token not existing, ' +
         'the frontend state cookie not existing, or the frontend state cookie containing an invalid value.',

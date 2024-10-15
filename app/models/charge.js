@@ -80,6 +80,9 @@ module.exports = correlationId => {
     } catch (err) {
       throw new Error('CLIENT_UNAVAILABLE', err)
     }
+    if (response.status === 404) {
+      throw new Error('NOT_FOUND')
+    }
     if (response.status !== 200) {
       throw new Error('UNAUTHORISED')
     }
