@@ -7,7 +7,6 @@ const { configureClient } = require('./base/config')
 // Constants
 const CARD_URL = process.env.CARDID_HOST + '/v1/api/card'
 const client = new Client('cardid')
-configureClient(client, CARD_URL)
 
 /**
  *
@@ -18,6 +17,7 @@ configureClient(client, CARD_URL)
 
 exports.post = async (args) => {
   try {
+    configureClient(client, CARD_URL, args.correlationId)
     const response = await client.post(CARD_URL, args.payload, 'card id')
     return response
   } catch (err) {

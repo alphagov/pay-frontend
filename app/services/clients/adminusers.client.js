@@ -4,7 +4,6 @@
 const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-client/axios-base-client')
 const { configureClient } = require('./base/config')
 const logger = require('../../utils/logger')(__filename)
-const requestLogger = require('../../utils/request-logger')
 const Service = require('../../models/Service.class')
 const { getCounter } = require('../../metrics/graphite-reporter')
 
@@ -14,27 +13,16 @@ const METRICS_PREFIX = 'internal-rest-call.adminusers'
 const SUCCESS_CODES = [200, 201, 202, 204, 206]
 
 let baseUrl
+let correlationId
 
 /** @private */
 async function _getAdminUsers (url, description, findOptions, loggingFields = {}, callingFunctionName) {
-  const startTime = new Date()
-  const context = {
-    url: url,
-    startTime: startTime,
-    method: 'GET',
-    description: description,
-    service: SERVICE_NAME
-  }
-  requestLogger.logRequestStart(context, loggingFields)
-
   const client = new Client(SERVICE_NAME)
-  configureClient(client, url)
+  configureClient(client, url, correlationId)
 
   try {
     const fullUrl = `${url}?gatewayAccountId=${findOptions.gatewayAccountId}`
     const response = await client.get(fullUrl, description)
-
-    requestLogger.logRequestEnd(context, response.status, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.status)
     if (SUCCESS_CODES.includes(response.status)) {
       return new Service(response.data)
@@ -51,7 +39,6 @@ async function _getAdminUsers (url, description, findOptions, loggingFields = {}
       return response
     }
   } catch (err) {
-    requestLogger.logRequestError(context, err, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, 'error')
     throw err
   }
@@ -68,6 +55,8 @@ const findServiceBy = function findServiceBy (findOptions, loggingFields = {}) {
 
 module.exports = function (clientOptions = {}) {
   baseUrl = clientOptions.baseUrl || process.env.ADMINUSERS_URL
+  correlationId = clientOptions.correlationId
+
   return {
     findServiceBy
   }

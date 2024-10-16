@@ -6,6 +6,7 @@ const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-clien
 const { configureClient } = require('../services/clients/base/config')
 const SERVICE_NAME = 'frontend'
 const client = new Client(SERVICE_NAME)
+const { CORRELATION_HEADER } = require('../../config/correlation-header')
 
 const healthyPingResponse = { ping: { healthy: true } }
 
@@ -18,7 +19,7 @@ module.exports.healthcheck = async (req, res) => {
   if (process.env.FORWARD_PROXY_URL) {
     const url = `${process.env.FORWARD_PROXY_URL}/nginx_status`
 
-    configureClient(client, url)
+    configureClient(client, url, req.headers[CORRELATION_HEADER])
 
     let response
 
