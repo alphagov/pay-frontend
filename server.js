@@ -24,7 +24,6 @@ const Sentry = require('./app/utils/sentry.js').initialiseSentry()
 const { setReportingEndpoints, worldpayIframe } = require('./app/middleware/csp')
 const correlationHeader = require('./app/middleware/correlation-header')
 const errorHandlers = require('./app/middleware/error-handlers')
-const { requestContextMiddleware } = require('./app/services/clients/base/request-context')
 
 // Global constants
 const {
@@ -62,7 +61,6 @@ function initialiseGlobalMiddleware (app) {
   app.use(staticify.middleware)
 
   app.use(function (req, res, next) {
-    app.use(requestContextMiddleware)
     res.locals.asset_path = '/public/'
     res.locals.googlePayMerchantID = GOOGLE_PAY_MERCHANT_ID
     if (typeof ANALYTICS_TRACKING_ID === 'undefined') {

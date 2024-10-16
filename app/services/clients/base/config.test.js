@@ -8,14 +8,12 @@ const { Client } = require('@govuk-pay/pay-js-commons/lib/utils/axios-base-clien
 
 const baseUrl = 'http://localhost:8000'
 const app = 'an-app'
+const correlationId = 'abc123'
 
 const logInfoSpy = sinon.spy()
 
-function getConfigWithMocks (correlationId) {
+function getConfigWithMocks () {
   const config = proxyquire('./config.js', {
-    './request-context': {
-      getRequestCorrelationIDField: () => correlationId
-    },
     './request-logger': proxyquire('./request-logger', {
       '../../../utils/logger': () => ({
         info: logInfoSpy
@@ -33,9 +31,9 @@ describe('Client config', () => {
   describe('Headers', () => {
     it('should add correlation ID as header when correlation ID exists on request context', async () => {
       const client = new Client(app)
-      const config = getConfigWithMocks('abc123')
+      const config = getConfigWithMocks()
 
-      config.configureClient(client, baseUrl)
+      config.configureClient(client, baseUrl, correlationId)
 
       nock(baseUrl)
         .get('/')
@@ -65,8 +63,8 @@ describe('Client config', () => {
   describe('Logging', () => {
     it('should log request start', async () => {
       const client = new Client(app)
-      const config = getConfigWithMocks('abc123')
-      config.configureClient(client, baseUrl)
+      const config = getConfigWithMocks()
+      config.configureClient(client, baseUrl, correlationId)
 
       nock(baseUrl)
         .get('/')
@@ -83,6 +81,7 @@ describe('Client config', () => {
         method: 'get',
         url: '/',
         description: 'do something',
+        x_request_id: 'abc123',
         foo: 'bar'
       })
     })
