@@ -122,7 +122,7 @@
     "chokidar-cli": "latest",
     "cypress": "^13.3.1",
     "dotenv": "^16.3.1",
-    "govuk-country-and-territory-autocomplete": "^1.0.2",
+    "govuk-country-and-territory-autocomplete": "^2.0.0",
     "grunt": "1.5.3",
     "grunt-babel": "8.0.0",
     "grunt-browserify": "6.0.0",
