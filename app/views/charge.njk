@@ -530,42 +530,40 @@
                 {% if shouldShowEmail %}
                   <div class="govuk-!-width-three-quarters email-container govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
                     <fieldset class="govuk-fieldset" aria-describedby="email-hint">
-                      <div>
-                        <legend for="email" class="govuk-!-margin-bottom-6">
-                          {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement %}
-                            <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h3>
+                      <legend for="email" class="govuk-!-margin-bottom-6">
+                        {% if (allowApplePay or allowGooglePay) and not savePaymentInstrumentToAgreement %}
+                          <h3 class="govuk-heading-m govuk-!-margin-bottom-1 web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h3>
+                        {% endif %}
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h2>
+                      </legend>
+                      <div id="email-hint" class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</div>
+
+                      <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
+                        <label id="email-lbl" for="email" class="govuk-label">
+                          <span
+                            class="email-label"
+                            data-label-replace="email"
+                            data-original-label="{{ __p("cardDetails.email") }}">
+                              {{ __p("cardDetails.email") }}
+                          </span>
+                        </label>
+
+                        {% if highlightErrorFields.email %}
+                            <p class="govuk-error-message" id="error-email">
+                              <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
+                              {{ highlightErrorFields.email }}
+                            </p>
                           {% endif %}
-                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h2>
-                        </legend>
-                        <div id="email-hint" class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</div>
 
-                        <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
-                          <label id="email-lbl" for="email" class="govuk-label">
-                            <span
-                              class="email-label"
-                              data-label-replace="email"
-                              data-original-label="{{ __p("cardDetails.email") }}">
-                                {{ __p("cardDetails.email") }}
-                            </span>
-                          </label>
-
-                          {% if highlightErrorFields.email %}
-                              <p class="govuk-error-message" id="error-email">
-                                <span class="govuk-visually-hidden">{{ __p("fieldErrors.visuallyHiddenError") }}</span>
-                                {{ highlightErrorFields.email }}
-                              </p>
-                            {% endif %}
-
-                          <input id="email"
-                            type="email"
-                            name="email"
-                            maxlength="254"
-                            class="govuk-input govuk-!-width-full"
-                            value="{{ email }}"
-                            autocomplete="email"
-                            data-confirmation="true"
-                            data-confirmation-label="{{ __p("cardDetails.emailConfirmation") }} "/>
-                        </div>
+                        <input id="email"
+                          type="email"
+                          name="email"
+                          maxlength="254"
+                          class="govuk-input govuk-!-width-full"
+                          value="{{ email }}"
+                          autocomplete="email"
+                          data-confirmation="true"
+                          data-confirmation-label="{{ __p("cardDetails.emailConfirmation") }} "/>
                       </div>
                     </fieldset>
                   </div>
