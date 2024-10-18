@@ -197,8 +197,16 @@ async function _getConnector (url, description, loggingFields = {}, callingFunct
     const response = await client.get(`${url}`, description)
     logger.info('GET to %s ended - total time %dms', url, new Date() - startTime, loggingFields)
     incrementStatusCodeCounter(callingFunctionName, response.status)
-    if (response.status !== 200) {
+    if (response.status > 499 && response.status < 600) {
       logger.error(`Error communicating with ${url}`, {
+        ...loggingFields,
+        service: 'connector',
+        method: 'GET',
+        status_code: response.status,
+        url: url
+      })
+    } else if (response.status !== 200) {
+      logger.warn(`Non-200 response received communicating with ${url}`, {
         ...loggingFields,
         service: 'connector',
         method: 'GET',
