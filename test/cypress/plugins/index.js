@@ -7,8 +7,7 @@ module.exports = (on, config) => {
   // common task definitions - used by all test specs
   on('task', {
     /**
-     * Makes a post request to Mountebank to setup an Imposter with stubs built using the array of
-     * stubs
+     * Makes a post request to @govuk-pay/run-amock to setup stubs built using the array of stubs
      *
      * Note: this task can only be called once per test, so all stubs for a test must be set up in
      * the same call.
