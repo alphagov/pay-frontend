@@ -179,6 +179,6 @@ describe('The confirm view', function () {
 
   it('should have a \'Cancel\' button.', function () {
     const body = renderTemplate('charge', {})
-    body.should.containInputWithIdAndName('cancel-payment', 'cancel', 'submit')
+    body.should.containButtonWithIdAndName('cancel-payment', 'cancel', 'submit')
   })
 })

@@ -628,7 +628,14 @@
               </form>
               <form id="cancel" name="cancel" method="POST" action="{{ post_cancel_action }}" class="form" novalidate>
                 <div>
-                  <input id="cancel-payment" type="submit" class="button-reset" value="{{ __p("commonButtons.cancelButton") }}" name="cancel">
+                  {{ govukButton({
+                    text: __p("commonButtons.cancelButton"),
+                    classes: "govuk-button--secondary",
+                    attributes: {
+                      id: "cancel-payment",
+                      name: "cancel"
+                    }
+                  }) }}
                   <input id="csrf2" name="csrfToken" type="hidden" value="{{ csrf }}"/>
                 </div>
               </form>
