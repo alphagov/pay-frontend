@@ -152,6 +152,9 @@
     },
     "grunt-babel": {
       "grunt": "1.5.3"
+    },
+    "staticify": {
+      "send": "0.19.0"
     }
   },
   "snyk": true
