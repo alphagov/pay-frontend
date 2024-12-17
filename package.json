@@ -155,7 +155,8 @@
     },
     "staticify": {
       "send": "0.19.0"
-    }
+    },
+    "cross-spawn": "^7.0.5"
   },
   "snyk": true
 }
