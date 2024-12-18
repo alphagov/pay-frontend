@@ -1,52 +1,34 @@
-'use strict'
-
-// NPM dependencies
-const csrf = require('csrf')
-
-// Local dependencies
 const logger = require('../utils/logger')(__filename)
-const { getLoggingFields } = require('../utils/logging-fields-helper')
 const session = require('../utils/session')
 const responseRouter = require('../utils/response-router')
 const cookies = require('../utils/cookies')
+const { configureCsrfMiddleware } = require('@govuk-pay/pay-js-commons/lib/utils/middleware/csrf.middleware')
 
-exports.csrfSetSecret = (req, _, next) => {
-  const csrfSecret = cookies.getSessionCsrfSecret(req)
-  if (!csrfSecret) {
-    logger.info('Setting CSRF secret for session')
-    cookies.setSessionVariable(req, 'csrfSecret', csrf().secretSync())
-  }
-  next()
-}
+const csrfMiddleware = configureCsrfMiddleware(logger, cookies.getSessionCookieName(), 'csrfSecret', 'csrfToken')
 
-exports.csrfTokenGeneration = (req, res, next) => {
-  const csrfSecret = cookies.getSessionCsrfSecret(req)
-  res.locals.csrf = csrf().create(csrfSecret)
-  next()
-}
+exports.setSecret = csrfMiddleware.setSecret
 
-exports.csrfCheck = (req, res, next) => {
+exports.generateToken = csrfMiddleware.generateToken
+
+exports.checkToken = [checkToken, handleCsrfError]
+
+function checkToken (req, res, next) {
   const chargeId = fetchAndValidateChargeId(req)
   if (!chargeId) {
     return responseRouter.response(req, res, 'UNAUTHORISED')
   }
+  csrfMiddleware.checkToken(req, res, next)
+}
 
-  const sessionCsrfSecret = cookies.getSessionCsrfSecret(req)
-  const csrfToken = req.body.csrfToken
-
-  if (!sessionCsrfSecret) {
-    responseRouter.response(req, res, 'UNAUTHORISED')
-    logger.warn('CSRF secret is not defined', {
-      ...getLoggingFields(req),
-      referrer: req.get('Referrer'),
-      url: req.originalUrl,
-      method: req.method
-    })
-  } else if (!csrfValid(csrfToken, sessionCsrfSecret, req)) {
-    responseRouter.systemErrorResponse(req, res, 'CSRF is invalid')
-  } else {
-    next()
+function handleCsrfError (err, req, res, next) {
+  if (err && err.name === 'CsrfError') {
+    if (err.message.toLowerCase().includes('csrf secret was not found')) {
+      return responseRouter.response(req, res, 'UNAUTHORISED')
+    } else {
+      return responseRouter.systemErrorResponse(req, res, 'CSRF is invalid')
+    }
   }
+  next(err)
 }
 
 function fetchAndValidateChargeId (req) {
@@ -54,15 +36,4 @@ function fetchAndValidateChargeId (req) {
     return req.params.chargeId ? req.params.chargeId : req.body.chargeId
   }
   return false
-}
-
-function csrfValid (csrfToken, secret, req) {
-  if (!secret) {
-    return false
-  }
-  if (!['put', 'post'].includes(req.method.toLowerCase())) {
-    return true
-  } else {
-    return csrf().verify(secret, csrfToken)
-  }
 }

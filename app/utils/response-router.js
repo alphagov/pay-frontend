@@ -239,7 +239,7 @@ const actions = {
   }
 }
 
-exports.errorResponse = function errorReponse (req, res, reason, options = {}, error) {
+exports.errorResponse = function errorResponse (req, res, reason, options = {}, error) {
   const action = actions.ERROR
   logErrorPageShown(action.view, reason, getLoggingFields(req), error)
   options.viewName = 'ERROR'
