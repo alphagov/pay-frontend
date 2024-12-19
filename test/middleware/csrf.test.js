@@ -4,7 +4,7 @@ const _ = require('lodash')
 const expect = require('chai').expect
 const nock = require('nock')
 const helper = require('../test-helpers/test-helpers.js')
-const { csrfCheck, csrfTokenGeneration } = require('../../app/middleware/csrf.js')
+const { checkToken, generateToken } = require('../../app/middleware/csrf.js')
 
 describe('retrieve param test', function () {
   const response = {
@@ -32,9 +32,6 @@ describe('retrieve param test', function () {
   const noCharge = _.cloneDeep(validGetRequest)
   delete noCharge.frontend_state.ch_foo
 
-  const noSecret = _.cloneDeep(validGetRequest)
-  delete noSecret.frontend_state.csrfSecret
-
   const invalidPost = _.cloneDeep(validGetRequest)
   delete invalidPost.method
   const invalidPut = _.cloneDeep(invalidPost)
@@ -44,6 +41,9 @@ describe('retrieve param test', function () {
 
   const validPost = _.cloneDeep(invalidPost)
   validPost.body.csrfToken = helper.csrfToken()
+
+  const noSecret = _.cloneDeep(validPost)
+  delete noSecret.frontend_state.csrfSecret
 
   const validPut = _.cloneDeep(invalidPut)
   validPut.body.csrfToken = helper.csrfToken()
@@ -67,6 +67,18 @@ describe('retrieve param test', function () {
     expect(resp.locals.csrf).to.not.be.undefined // eslint-disable-line
   }
 
+  const callCheckToken = (scenario, expectedResponse, next) => {
+    const [checkTokenMiddleware, handleCsrfError] = checkToken
+    checkTokenMiddleware(scenario, expectedResponse, (err) => {
+      // simulate next(err)
+      if (err) {
+        handleCsrfError(err, scenario, expectedResponse, next)
+      } else {
+        next()
+      }
+    })
+  }
+
   beforeEach(function () {
     status = sinon.stub(response, 'status')
     render = sinon.stub(response, 'render')
@@ -81,38 +93,38 @@ describe('retrieve param test', function () {
 
   it('should append csrf token to response locals on get request', function () {
     const resp = _.cloneDeep(response)
-    csrfTokenGeneration(validGetRequest, resp, next)
+    generateToken(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
   })
 
   it('should error if no charge in session', function () {
     const resp = _.cloneDeep(response)
-    csrfCheck(noCharge, resp, next)
+    callCheckToken(noCharge, resp, next)
     assertUnauthorisedRequest(next, resp, status, render)
   })
 
   it('should error if no secret in session', function () {
     const resp = _.cloneDeep(response)
-    csrfCheck(noSecret, resp, next)
+    callCheckToken(noSecret, resp, next)
     assertUnauthorisedRequest(next, resp, status, render)
   })
 
   it('should error if no csrfToken in post request', function () {
     const resp = _.cloneDeep(response)
-    csrfCheck(invalidPost, resp, next)
+    callCheckToken(invalidPost, resp, next)
     assertErrorRequest(next, resp, status, render)
   })
 
   it('should be successful on post if valid put', function () {
     const resp = _.cloneDeep(response)
-    csrfCheck(validPut, resp, next)
-    csrfTokenGeneration(validGetRequest, resp, next)
+    callCheckToken(validPut, resp, next)
+    generateToken(validGetRequest, resp, next)
     assertValidRequest(next, resp, status, render)
   })
 
   it('should error if no csrfToken in put request', function () {
     const resp = _.cloneDeep(response)
-    csrfCheck(invalidPut, resp, next)
+    callCheckToken(invalidPut, resp, next)
     assertErrorRequest(next, resp, status, render)
   })
 })
