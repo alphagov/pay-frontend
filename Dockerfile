@@ -1,4 +1,4 @@
-FROM node:18.20.5-alpine3.20@sha256:2827b0ceb8d855cf7d2cdf2b0a8e9f5c3c91362b49f9c8d35f7db0d34167fd89 AS builder
+FROM node:18.20.6-alpine3.20@sha256:12c7561101f6afced8d79febd44f2a135f1096c35e5e1b942bd8c8efa662ab48 AS builder
 
 WORKDIR /app
 COPY package.json .
@@ -8,7 +8,7 @@ RUN npm ci --quiet
 COPY . .
 RUN npm run compile
 
-FROM node:18.20.5-alpine3.20@sha256:2827b0ceb8d855cf7d2cdf2b0a8e9f5c3c91362b49f9c8d35f7db0d34167fd89 AS final
+FROM node:18.20.6-alpine3.20@sha256:12c7561101f6afced8d79febd44f2a135f1096c35e5e1b942bd8c8efa662ab48 AS final
 
 RUN ["apk", "--no-cache", "upgrade"]
 
