@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
   Charge(req.headers[CORRELATION_HEADER]).find(chargeId, getLoggingFields(req))
     .then(data => {
       req.chargeData = data
+      res.locals.isTestPayment = data.gateway_account.type === 'test'
       setLoggingField(req, GATEWAY_ACCOUNT_ID, data.gateway_account.gateway_account_id)
       setLoggingField(req, GATEWAY_ACCOUNT_TYPE, data.gateway_account.type)
       setLoggingField(req, PROVIDER, data.payment_provider)

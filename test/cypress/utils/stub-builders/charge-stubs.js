@@ -30,7 +30,7 @@ function connectorMultipleSubsequentChargeDetails (...chargesArr) {
     })
   })
 
-  const stub = {
+  return {
     predicates: [{
       equals: {
         method: 'GET',
@@ -39,7 +39,6 @@ function connectorMultipleSubsequentChargeDetails (...chargesArr) {
     }],
     responses: responseArray
   }
-  return stub
 }
 
 function connectorValidPatchConfirmedChargeDetails (chargeId) {

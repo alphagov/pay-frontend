@@ -1,0 +1,14 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% if isTestPayment === true %}
+  {% set html %}
+    <p class="govuk-notification-banner__heading">
+      This is a test page. No money will be taken.
+    </p>
+    <p class="govuk-body">
+      Contact the service you’re trying to pay for if you are trying to make a payment.
+    </p>
+  {% endset %}
+  {{ govukNotificationBanner({
+    html: html
+  }) }}
+{% endif %}

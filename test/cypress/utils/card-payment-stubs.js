@@ -96,7 +96,8 @@ function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gate
       emailCollectionMode: gatewayAccountOpts.emailCollectionMode || 'MANDATORY',
       allowMoto: gatewayAccountOpts.allowMoto,
       motoMaskCardNumberInput: gatewayAccountOpts.motoMaskCardNumberInput,
-      motoMaskCardSecurityCodeInput: gatewayAccountOpts.motoMaskCardSecurityCodeInput
+      motoMaskCardSecurityCodeInput: gatewayAccountOpts.motoMaskCardSecurityCodeInput,
+      gatewayAccountType: gatewayAccountOpts.gatewayAccountType || 'test'
     }),
     cardIdValidCardDetails(),
     chargeStubs.connectorUpdateChargeStatus(chargeId),
