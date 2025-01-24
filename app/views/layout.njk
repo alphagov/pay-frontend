@@ -1,12 +1,13 @@
 {% extends "govuk/template.njk" %}
+{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
 {% set htmlLang = language %}
 
 {% block head %}
-  {% if service and service.customBranding and service.customBranding.cssUrl  %}
-    <link href="{{ service.customBranding.cssUrl }}" media="all" rel="stylesheet" />
+  {% if service and service.customBranding and service.customBranding.cssUrl %}
+    <link href="{{ service.customBranding.cssUrl }}" media="all" rel="stylesheet"/>
   {% else %}
-    <link href="{{ css_path }}" media="all" rel="stylesheet" />
+    <link href="{{ css_path }}" media="all" rel="stylesheet"/>
   {% endif %}
 
   {% include "includes/analytics.njk" %}
@@ -48,11 +49,21 @@
         </div>
         <div class="govuk-header__content">
           <span class="govuk-header__service-name">
-            {{serviceName}}
+            {{ serviceName }}
           </span>
         </div>
       </div>
     </header>
+  {% endif %}
+  {% if isTestPayment %}
+    <div class="govuk-width-container">
+      {{ govukPhaseBanner({
+        tag: {
+          text: "Test service"
+        },
+        html: 'This is a test payment service.'
+      }) }}
+    </div>
   {% endif %}
 {% endblock %}
 
@@ -84,7 +95,7 @@
             <ul class="govuk-footer__inline-list merchant-details">
               <li class="govuk-footer__inline-list-item merchant-details-line-1">Service provided by {{ service.merchantDetails.name }}</li>
               {% if service.hasCompleteMerchantDetailsAddress %}
-              <li class="govuk-footer__inline-list-item merchant-details-line-2">{{ service.merchantDetails.addressLine1 }}, {% if service.merchantDetails.addressLine2 -%} {{ service.merchantDetails.addressLine2 }}, {% endif -%} {{ service.merchantDetails.city }} {{ service.merchantDetails.postcode }} {{ service.merchantDetails.countryName }}</li>
+                <li class="govuk-footer__inline-list-item merchant-details-line-2">{{ service.merchantDetails.addressLine1 }}, {% if service.merchantDetails.addressLine2 -%} {{ service.merchantDetails.addressLine2 }}, {% endif -%} {{ service.merchantDetails.city }} {{ service.merchantDetails.postcode }} {{ service.merchantDetails.countryName }}</li>
               {% endif %}
             </ul>
           {% endif %}
