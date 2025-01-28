@@ -1,0 +1,6 @@
+.test-payment-banner {
+  padding-top: govuk-spacing(2);
+  @include govuk-media-query($until: tablet) {
+    padding-top: govuk-spacing(6);
+  }
+}
