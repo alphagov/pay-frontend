@@ -5,7 +5,7 @@ function stubBuilder (method, path, responseCode, additionalParams = {}) {
     method,
     path
   }
-  if (additionalParams.request) {
+  if (additionalParams.request !== undefined) {
     request.body = additionalParams.request
   }
   if (additionalParams.query) {
@@ -22,7 +22,7 @@ function stubBuilder (method, path, responseCode, additionalParams = {}) {
 
   const stub = {
     name: `${method} ${path} ${responseCode}`,
-    predicates: [{ deepEquals: request }],
+    predicates: additionalParams.deepMatchRequest === false ? [{ equals: request }] : [{ deepEquals: request }],
     responses: [{
       is: response
     }]

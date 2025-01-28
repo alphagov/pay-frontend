@@ -69,7 +69,7 @@ function buildCancelChargeStub (chargeId, gatewayAccountId = 42, providerOpts = 
 }
 
 function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gatewayAccountId = 42,
-  serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}, additionalChargeOpts = {}) {
+  serviceOpts = {}, providerOpts = {}, gatewayAccountOpts = {}, additionalChargeOpts = {}, cardIdOpts = {}) {
   return [
     tokenStubs.connectorFindChargeByToken({
       ...additionalChargeOpts,
@@ -99,9 +99,9 @@ function buildCreatePaymentChargeStubs (tokenId, chargeId, language = 'en', gate
       motoMaskCardSecurityCodeInput: gatewayAccountOpts.motoMaskCardSecurityCodeInput,
       gatewayAccountType: gatewayAccountOpts.gatewayAccountType || 'test'
     }),
-    cardIdValidCardDetails(),
+    cardIdValidCardDetails(cardIdOpts.cardNumber),
     chargeStubs.connectorUpdateChargeStatus(chargeId),
-    adminUsersGetService(serviceOpts),
+    adminUsersGetService(gatewayAccountId, serviceOpts),
     chargeStubs.connectorWorldpay3dsFlexDdcJwt(chargeId)
   ]
 }
