@@ -52,11 +52,11 @@ function connectorValidPatchConfirmedChargeDetails (chargeId) {
 }
 
 function connectorAuthWalletCharge (chargeId, walletType, paymentProvider) {
-  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}/${paymentProvider}`
+  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}`
 
   const response = paymentFixtures.validAuthorisationRequest()
 
-  return stubBuilder('POST', path, 200, { response })
+  return stubBuilder('POST', path, 200, { response, deepMatchRequest: false })
 }
 
 function connectorGetChargeDetails (opts) {
