@@ -8,7 +8,9 @@
       Contact the service you’re trying to pay for if you are trying to make a payment.
     </p>
   {% endset %}
-  {{ govukNotificationBanner({
-    html: html
-  }) }}
+  <div class="test-payment-banner">
+    {{ govukNotificationBanner({
+      html: html
+    }) }}
+  </div>
 {% endif %}
