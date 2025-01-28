@@ -178,7 +178,7 @@ describe('Standard card payment flow', () => {
 
   describe('Prepaid card blocking', () => {
     it('should block a prepaid card if gateway account is configured to not allow them', () => {
-      const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: true })
+      const blockedPrepaidStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', 42, {}, { blockPrepaidCards: true }, {}, {}, { cardNumber: 4000160000000004 })
       cy.task('setupStubs', blockedPrepaidStubs)
 
       cy.visit(`/secure/${tokenId}`)

@@ -81,11 +81,11 @@ describe('Google Pay payment flow', () => {
       connectorMultipleSubsequentChargeDetails([
         createdCharge,
         captureApprovedCharge]),
-      connectorFindChargeByToken({ tokenId }),
+      connectorFindChargeByToken({ tokenId, gatewayAccountId: 6 }),
       connectorMarkTokenAsUsed(tokenId),
       connectorUpdateChargeStatus(chargeId),
-      adminUsersGetService(),
-      cardIdValidCardDetails(),
+      adminUsersGetService(6),
+      cardIdValidCardDetails(4242424242424242),
       connectorAuthWalletCharge(chargeId, 'google', 'worldpay'),
       connectorPostValidCaptureCharge(chargeId),
       connectorWorldpay3dsFlexDdcJwt(chargeId)

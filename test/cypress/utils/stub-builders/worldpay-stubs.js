@@ -29,6 +29,7 @@ function worldpay3dsFlexDdcIframePost (sessionId, status) {
   </html>`
 
   return stubBuilder('POST', path, 200, {
+    deepMatchRequest: false,
     response,
     responseHeaders: { 'Content-Type': 'text/html;charset=ISO-8859-1' }
   })

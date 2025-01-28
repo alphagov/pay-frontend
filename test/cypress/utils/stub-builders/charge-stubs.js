@@ -52,11 +52,11 @@ function connectorValidPatchConfirmedChargeDetails (chargeId) {
 }
 
 function connectorAuthWalletCharge (chargeId, walletType, paymentProvider) {
-  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}/${paymentProvider}`
+  const path = `/v1/frontend/charges/${chargeId}/wallets/${walletType}`
 
   const response = paymentFixtures.validAuthorisationRequest()
 
-  return stubBuilder('POST', path, 200, { response })
+  return stubBuilder('POST', path, 200, { response, deepMatchRequest: false })
 }
 
 function connectorGetChargeDetails (opts) {
@@ -68,12 +68,18 @@ function connectorGetChargeDetails (opts) {
 
 function connectorCancelCharge (chargeId) {
   const path = `/v1/frontend/charges/${chargeId}/cancel`
-  return stubBuilder('POST', path, 204)
+  return stubBuilder('POST', path, 204, {
+    request: null
+  })
 }
 
-function connectorUpdateChargeStatus (chargeId) {
+function connectorUpdateChargeStatus (chargeId, newStatus = 'ENTERING CARD DETAILS') {
   const path = `/v1/frontend/charges/${chargeId}/status`
-  return stubBuilder('PUT', path, 204)
+  return stubBuilder('PUT', path, 204, {
+    request: {
+      new_status: newStatus
+    }
+  })
 }
 
 function connectorGetChargeDetailsWithPrefilledCardholderDetails (opts) {
@@ -99,7 +105,9 @@ function connectorPostValidChargeCardDetailsAuthorisation (chargeId) {
 
 function connectorPostValidCaptureCharge (chargeId) {
   const path = `/v1/frontend/charges/${chargeId}/capture`
-  return stubBuilder('POST', path, 204)
+  return stubBuilder('POST', path, 204, {
+    request: null
+  })
 }
 
 module.exports = {
