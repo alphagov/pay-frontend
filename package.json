@@ -134,7 +134,7 @@
     "grunt-contrib-watch": "1.1.0",
     "grunt-rewrite": "1.0.1",
     "grunt-sass": "3.1.0",
-    "mocha": "10.2.x",
+    "mocha": "10.8.x",
     "nock": "13.3.4",
     "nodemon": "^3.0.1",
     "proxyquire": "~2.1.3",
