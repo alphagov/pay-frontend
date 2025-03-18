@@ -111,7 +111,7 @@
     "@pact-foundation/pact": "^12.1.1",
     "@pact-foundation/pact-core": "^14.0.5",
     "@snyk/protect": "^1.1235.x",
-    "axios": "^1.7.4",
+    "axios": "^1.8.3",
     "browserify": "17.0.x",
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
