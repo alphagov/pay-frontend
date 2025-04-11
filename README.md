@@ -67,7 +67,7 @@ npm run compile && npm test
 #### IMPORTANT NOTE - some tests do not work in debug mode
 
 * Some integration tests do not work in debug mode. This is because the tests are dependent on other tests running
-  before hand.
+  beforehand.
 * Nevertheless, it is still useful to debug tests that do work in debug mode.
 
 #### Run tests in debug mode
