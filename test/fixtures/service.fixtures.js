@@ -10,7 +10,7 @@ module.exports = {
       name: opts.name || defaultServiceName,
       gateway_account_ids: opts.gateway_account_ids || [lodash.random(9999999)],
       service_name: {
-        en: { en: opts.name || defaultServiceName }
+        en: opts.service_name || defaultServiceName
       },
       redirect_to_service_immediately_on_terminal_state: opts.redirect_to_service_immediately_on_terminal_state === true,
       collect_billing_address: typeof opts.collect_billing_address === 'undefined' || opts.collect_billing_address
