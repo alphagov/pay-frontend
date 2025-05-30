@@ -25,6 +25,10 @@ describe('The footer displayed on payment pages', () => {
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('[data-cy=footer]')
+      .should('have.css', 'background-color', 'rgb(243, 242, 241)')
+      .should('have.css', 'border-top-color', 'rgb(29, 112, 184)')
+
+    cy.get('[data-cy=footer]')
       .find('.govuk-footer__inline-list .govuk-footer__link')
       .should('have.length', 4)
       .then(($elements) => {
