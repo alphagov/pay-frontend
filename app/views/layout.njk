@@ -1,6 +1,8 @@
 {% extends "govuk/template.njk" %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
+{% set govukRebrand = enableRebrand %}
+
 {% set htmlLang = language %}
 
 {% block head %}
@@ -30,6 +32,7 @@
   {% else %}
     {{ govukHeader({
       serviceName: serviceName,
+      rebrand: enableRebrand,
       attributes : {
         'data-cy': 'header'
       }
@@ -80,6 +83,7 @@
   {% endif %}
 
   {{ govukFooter({
+    rebrand: enableRebrand,
     meta: {
       items: [
         {
