@@ -48,8 +48,10 @@
     "watch-live-reload": "grunt watch",
     "test": "rm -rf ./pacts && NODE_ENV=test mocha --exclude **/*.cy.test.js '!(node_modules)/**/*.test'.js",
     "cypress:server": "run-amock --port=8000 | node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
-    "cypress:test": "cypress run",
+    "cypress:test": "cypress run --spec './test/cypress/integration/**/*.cy.js'",
     "cypress:test-headed": "cypress open",
+    "cypress:server-rebrand": "run-amock --port=8000 | ENABLE_REBRAND=true node -r dotenv/config start.js dotenv_config_path=test/cypress/test.env",
+    "cypress:test-rebrand": "cypress run --spec './test/cypress/integration/card/rebrand-header-footer.test.cy.rebrand.js,./test/cypress/integration/card/custom-branding.test.cy.js'",
     "snyk-protect": "snyk-protect",
     "publish-pacts": "./bin/publish-pacts.js"
   },
