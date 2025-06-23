@@ -21,7 +21,6 @@ const retrieveCharge = require('./middleware/retrieve-charge.js')
 const enforceSessionCookie = require('./middleware/enforce-session-cookie.js')
 const resolveService = require('./middleware/resolve-service.js')
 const resolveLanguage = require('./middleware/resolve-language.js')
-const addRebrandFlag = require('./middleware/add-rebrand-flag.js')
 const {
   cardDetails,
   rateLimitMiddleware,
@@ -53,8 +52,7 @@ exports.bind = function (app) {
     resolveLanguage,
     resolveService,
     stateEnforcer,
-    decryptCardData,
-    addRebrandFlag
+    decryptCardData
   ]
 
   const chargeCookieRequiredMiddlewareStack = [
