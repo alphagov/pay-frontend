@@ -25,7 +25,7 @@ describe('The footer displayed on payment pages', () => {
     cy.visit(`/secure/${tokenId}`)
 
     cy.get('[data-cy=footer]')
-      .should('have.css', 'background-color', 'rgb(243, 242, 241)')
+      .should('have.css', 'background-color', 'rgb(244, 248, 251)')
       .should('have.css', 'border-top-color', 'rgb(29, 112, 184)')
 
     cy.get('[data-cy=footer]')
