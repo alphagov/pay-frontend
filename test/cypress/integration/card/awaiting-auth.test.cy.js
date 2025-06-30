@@ -31,11 +31,11 @@ describe('Awaiting auth', () => {
 
     cy.log('Should display the GOV.UK header correctly')
 
-    cy.get('[data-cy=header]').should('have.css', 'background-color', 'rgb(11, 12, 12)')
+    cy.get('[data-cy=header]').should('have.css', 'background-color', 'rgb(29, 112, 184)')
     cy.get('[data-cy=header]').should('have.css', 'color', 'rgb(255, 255, 255)')
     cy.get('[data-cy=header]')
       .find('.govuk-header__container')
-      .should('have.css', 'border-bottom-color', 'rgb(29, 112, 184)')
+      .should('have.css', 'border-bottom-color', 'rgb(255, 255, 255)')
     cy.get('[data-cy=header]')
       .find('.govuk-header__service-name')
       .should('contain', 'service name')
