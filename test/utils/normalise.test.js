@@ -33,7 +33,8 @@ const unNormalisedCharge = {
       label: 'Visa'
     }]
   },
-  moto: false
+  moto: false,
+  payment_confirmation_email_enabled: true,
 }
 
 const unNormalisedChargeWithAgreement = {
@@ -66,7 +67,8 @@ const unNormalisedChargeWithAgreement = {
       label: 'Visa'
     }]
   },
-  moto: false
+  moto: false,
+  payment_confirmation_email_enabled: true
 }
 
 const normalisedCharge = {
@@ -98,7 +100,8 @@ const normalisedCharge = {
       credit: true
     }]
   },
-  moto: false
+  moto: false,
+  paymentConfirmationEmailEnabled: true
 }
 
 const normalisedChargeWithAgreement = {
@@ -132,7 +135,8 @@ const normalisedChargeWithAgreement = {
       credit: true
     }]
   },
-  moto: false
+  moto: false,
+  paymentConfirmationEmailEnabled:true
 }
 
 const unNormalisedChargeWithCardDetails = {
