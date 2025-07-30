@@ -185,7 +185,8 @@ const buildChargeDetails = function buildChargeDetails (opts) {
     created_date: '2019-02-12T17:53:31.307Z',
     delayed_capture: false,
     moto: opts.moto || false,
-    gateway_account: buildGatewayAccount(opts)
+    gateway_account: buildGatewayAccount(opts),
+    payment_confirmation_email_enabled: opts.payment_confirmation_email_enabled || true
   }
 
   if (opts.state) { data.state = opts.state }

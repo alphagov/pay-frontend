@@ -537,8 +537,9 @@
                         {% endif %}
                         <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">{{ __p("cardDetails.contactDetails") }}</h2>
                       </legend>
+                      {% if paymentConfirmationEmailEnabled %}
                       <div id="email-hint" class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</div>
-
+                      {% endif %}
                       <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
                         <label id="email-lbl" for="email" class="govuk-label">
                           <span

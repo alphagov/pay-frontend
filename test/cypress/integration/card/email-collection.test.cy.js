@@ -19,7 +19,7 @@ const validPayment = {
 describe('Standard card payment flow', () => {
   describe('Email collection off', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
-      tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OFF' })
+      tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OFF' }, {payment_confirmation_email_enabled: false })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OFF' })
 
     it('Should redirect to the confirmation page when valid details are entered', () => {
@@ -59,11 +59,14 @@ describe('Standard card payment flow', () => {
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
       cy.get('#email').should('not.exist')
+
+      cy.log('Checking for presence of email hint when email collection is off and payment confirmation is disabled')
+      cy.get('#email-hint').should('not.exist')
     })
   })
 
   describe('Email collection mandatory', () => {
-    const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, {}, {})
+    const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(tokenId, chargeId, 'en', gatewayAccountId, {}, {},{},{ payment_confirmation_email_enabled: true })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'MANDATORY' })
 
     it('Should show an error when an email is not provided', () => {
@@ -101,12 +104,15 @@ describe('Standard card payment flow', () => {
       cy.location('pathname').should('eq', `/card_details/${chargeId}`)
       cy.get('#error-summary-title').should(($td) => expect($td).to.contain('The following fields are missing or contain errors'))
       cy.contains('Enter a valid email')
+
+      cy.log('Checking for presence of email hint when email is mandatory and payment confirmation is enabled')
+      cy.get('#email-hint').should('exist').and('contain', 'We’ll send your payment confirmation here')
     })
   })
 
   describe('Email collection optional', () => {
     const createPaymentChargeStubs = cardPaymentStubs.buildCreatePaymentChargeStubs(
-      tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OPTIONAL' })
+      tokenId, chargeId, 'en', gatewayAccountId, {}, {}, { emailCollectionMode: 'OPTIONAL' },  { payment_confirmation_email_enabled: false })
     const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId, { emailCollectionMode: 'OPTIONAL' })
 
     it('Should show the confirmation page when an email is not provided', () => {
@@ -143,6 +149,9 @@ describe('Standard card payment flow', () => {
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
       cy.get('#email').should('not.exist')
+
+      cy.log('Checking for presence of email hint when email collection is optional and payment confirmation is disabled')
+      cy.get('#email-hint').should('not.exist')
     })
   })
 })

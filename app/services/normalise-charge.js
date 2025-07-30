@@ -21,6 +21,7 @@ module.exports = (function () {
       status: charge.status,
       email: charge.email,
       moto: charge.moto,
+      paymentConfirmationEmailEnabled: charge.payment_confirmation_email_enabled,
       gatewayAccount: _normaliseGatewayAccountDetails(charge.gateway_account)
     }
 
