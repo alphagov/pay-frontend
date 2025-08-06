@@ -57,7 +57,7 @@ module.exports = function (grunt) {
       files: [{
         expand: true,
         cwd: 'node_modules/govuk-country-and-territory-autocomplete/dist/',
-        src: '**',
+        src: ['**', '!stats.html'],
         dest: 'govuk_modules/govuk-country-and-territory-autocomplete/',
         rename: (dest, src) => dest + src.replace('min.css', 'scss')
       }]
