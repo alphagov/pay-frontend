@@ -87,6 +87,7 @@
 		"technicalProblems": "We’re experiencing technical problems"
 	},
 	"authorisation": {
+		"bankCheckingDetails": "Your bank is checking your details",
 		"extraSteps": "You may need to complete some extra verification steps.",
 		"approvalNeeded": "To continue with your payment, we need your bank’s approval.",
 		"approved": "The card details have been approved by the bank.",
