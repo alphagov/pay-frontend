@@ -90,6 +90,7 @@
 		"technicalProblems": "Rydym yn profi problemau technegol."
 	},
 	"authorisation": {
+		"bankCheckingDetails": "Mae eich banc yn gwirio eich manylion",
 		"extraSteps": "Efallai bydd angen i chi gwblhau camau gwirio pellach.",
 		"approvalNeeded": "I barhau â’ch taliad, mae arnom angen cymeradwyaeth eich banc.",
 		"approved": "Mae manylion y cerdyn wedi ei gymeradwyo gan y banc.",
