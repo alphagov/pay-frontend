@@ -9,7 +9,7 @@ GOV.UK Pay Frontend application (Node.js)
 * This requires the [Pay CLI](https://github.com/alphagov/pay-infra/tree/master/cli), which is not publicly available at
   present.
 * You
-  have [set up your local development environment](https://pay-team-manual.cloudapps.digital/manual/setup-local-dev-environment.html)
+  have [set up your local development environment](https://manual.payments.service.gov.uk/manual/development-processes/setup-local-dev-environment.html)
 * Clone this repo locally.
 
 ### Starting app
