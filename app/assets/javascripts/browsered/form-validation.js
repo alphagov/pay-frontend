@@ -1,4 +1,6 @@
 /* eslint-disable no-var */
+/* global MutationObserver */
+
 'use strict'
 
 const chargeValidation = require('../../../utils/charge-validation')
@@ -8,7 +10,6 @@ const { submitWithWorldpay3dsFlexDdcResult } = require('./worldpay-3ds-flex-ddc'
 var init = function () {
   var form = document.getElementById('card-details')
   var formInputs = Array.prototype.slice.call(form.querySelectorAll('input'))
-  var countrySelect = document.getElementById('address-country')
   var postcodeInput = document.getElementById('address-postcode')
   var cardInput = document.getElementById('card-no')
   var corporateCardMessageElement = document.getElementById('corporate-card-surcharge-message')
@@ -39,10 +40,18 @@ var init = function () {
       }, false)
     })
   }
+
   if (window.Charge.collect_billing_address === true) {
-    countrySelect.addEventListener('change', function () {
-      checkValidation(postcodeInput)
-    }, false)
+    var observer = new MutationObserver(function (mutations, obs) {
+      var countrySelect = document.getElementById('address-country')
+      if (countrySelect) {
+        countrySelect.addEventListener('change', function () {
+          checkValidation(postcodeInput)
+        }, false)
+        obs.disconnect()
+      }
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
   }
 
   var checkFormSubmission = function (e) {
