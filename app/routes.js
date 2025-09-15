@@ -12,6 +12,8 @@ const returnCont = require('./controllers/return.controller.js')
 const { healthcheck } = require('./controllers/healthcheck.controller.js')
 const { log } = require('./controllers/client-side-logging.controller')
 const paths = require('./paths.js')
+const Sentry = require('./utils/sentry').initialiseSentry()
+const logger = require('./utils/logger')(__filename)
 
 // Express middleware
 const { setSecret, generateToken, checkToken } = require('./middleware/csrf.js')
@@ -21,14 +23,14 @@ const retrieveCharge = require('./middleware/retrieve-charge.js')
 const enforceSessionCookie = require('./middleware/enforce-session-cookie.js')
 const resolveService = require('./middleware/resolve-service.js')
 const resolveLanguage = require('./middleware/resolve-language.js')
-const {
-  cardDetails,
+const decryptCardData = require('./middleware/decrypt-card-data')(process.env)
+const { cardDetails} = require('./middleware/csp')
+  const  {
   rateLimitMiddleware,
   requestParseMiddleware,
   detectErrorsMiddleware,
-  captureEventMiddleware
-} = require('./middleware/csp')
-const decryptCardData = require('./middleware/decrypt-card-data')(process.env)
+  captureEventMiddleware}
+  = require('@govuk-pay/pay-js-commons/lib/utils/middleware/csp')
 
 // Import AB test when we need to use it
 // const abTest = require('./utils/ab-test.js')
@@ -73,7 +75,9 @@ exports.bind = function (app) {
     captureEventMiddleware([
       'www.facebook.com',
       'spay.samsung.com'
-    ])
+    ],
+      logger,
+      Sentry)
   ]
 
   app.post(paths.csp.path, cspMiddlewareStack) // CSP violation monitoring

@@ -1,6 +1,10 @@
 // Node.js core dependencies
 const path = require('path')
 const crypto = require('crypto')
+const https = require('https')
+const fs = require('fs')
+const privateKey = fs.readFileSync('./localhost+2-key.pem')
+const certificate = fs.readFileSync('./localhost+2.pem')
 
 // NPM dependencies
 const express = require('express')
@@ -158,11 +162,20 @@ function setNoCacheHeadersForRoutes (app) {
   })
 }
 
+// function listen () {
+//   const app = initialise()
+//   const DEFAULT_PORT = 3000
+//   const DEFAULT_BIND_HOST = "127.0.0.1"
+//   app.listen(PORT || DEFAULT_PORT, BIND_HOST || DEFAULT_BIND_HOST)
+//   logger.info(`Listening on ${BIND_HOST || DEFAULT_BIND_HOST}:${PORT || DEFAULT_PORT}`)
+// }
+
 function listen () {
   const app = initialise()
+  const server = https.createServer({ key: privateKey, cert: certificate }, app)
   const DEFAULT_PORT = 3000
   const DEFAULT_BIND_HOST = "127.0.0.1"
-  app.listen(PORT || DEFAULT_PORT, BIND_HOST || DEFAULT_BIND_HOST)
+  server.listen(PORT || DEFAULT_PORT, BIND_HOST || DEFAULT_BIND_HOST)
   logger.info(`Listening on ${BIND_HOST || DEFAULT_BIND_HOST}:${PORT || DEFAULT_PORT}`)
 }
 

@@ -540,6 +540,10 @@
                       {% if paymentConfirmationEmailEnabled %}
                       <div id="email-hint" class="govuk-hint govuk-!-margin-bottom-2">{{ __p("cardDetails.emailHint") }}</div>
                       {% endif %}
+                      <script>
+                        console.log("INLINE SCRIPT: this should be blocked by CSP");
+                        document.body.insertAdjacentHTML("beforeend", "<p id='inline'>Inline ran</p>");
+                      </script>
                       <div class="govuk-form-group {% if highlightErrorFields.email %} govuk-form-group--error{% endif %}" data-validation="email">
                         <label id="email-lbl" for="email" class="govuk-label">
                           <span
