@@ -1,5 +1,7 @@
 'use strict'
 
+const express = require('express')
+
 // Local dependencies
 const charge = require('./controllers/charge.controller.js')
 const threeDS = require('./controllers/three-d-secure.controller.js')
@@ -21,13 +23,21 @@ const retrieveCharge = require('./middleware/retrieve-charge.js')
 const enforceSessionCookie = require('./middleware/enforce-session-cookie.js')
 const resolveService = require('./middleware/resolve-service.js')
 const resolveLanguage = require('./middleware/resolve-language.js')
+
 const {
-  cardDetails,
+  cardDetails
+} = require('./middleware/csp')
+
+const {
   rateLimitMiddleware,
   requestParseMiddleware,
   detectErrorsMiddleware,
   captureEventMiddleware
-} = require('./middleware/csp')
+} = require('@govuk-pay/pay-js-commons/lib/utils/middleware/csp')
+
+const logger = require('./utils/logger')(__filename)
+const Sentry = require('./utils/sentry.js').initialiseSentry()
+
 const decryptCardData = require('./middleware/decrypt-card-data')(process.env)
 
 // Import AB test when we need to use it
@@ -68,12 +78,12 @@ exports.bind = function (app) {
 
   const cspMiddlewareStack = [
     rateLimitMiddleware,
-    requestParseMiddleware(50000),
-    detectErrorsMiddleware,
+    requestParseMiddleware(50000, express),
+    detectErrorsMiddleware(logger),
     captureEventMiddleware([
       'www.facebook.com',
       'spay.samsung.com'
-    ])
+    ], logger, Sentry)
   ]
 
   app.post(paths.csp.path, cspMiddlewareStack) // CSP violation monitoring
