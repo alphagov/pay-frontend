@@ -72,7 +72,7 @@
   "dependencies": {
     "@aws-crypto/decrypt-node": "^1.0.3",
     "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
-    "@govuk-pay/pay-js-commons": "^7.0.20",
+    "@govuk-pay/pay-js-commons": "^7.0.28",
     "@govuk-pay/pay-js-metrics": "^1.0.14",
     "@sentry/node": "7.119.2",
     "cert-info": "^1.5.1",
@@ -81,7 +81,6 @@
     "compression": "1.8.x",
     "credit-card-type": "6.3.x",
     "express": "4.21.2",
-    "express-rate-limit": "^7.1.4",
     "gaap-analytics": "^3.1.0",
     "govuk-frontend": "^5.10.2",
     "helmet": "^7.1.0",
