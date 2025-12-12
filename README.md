@@ -32,7 +32,7 @@ npm run start:dev
 ```
 
 Make a create payment request to the locally running Public API app, and visit the `next_url` with the host changed
-to http://127.0.0.1:3000.
+to <http://127.0.0.1:3000>.
 
 ### Debug using Visual Studio Code
 
@@ -40,8 +40,8 @@ to http://127.0.0.1:3000.
 * From the **Run** toolbar, select tne launch config `Frontend`.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
 * Press The `green play` button (`F5` MacOS):
-    * This will run the app in debug mode.
-    * Uses `nodemon` so it will automatically restart on code changes.
+  * This will run the app in debug mode.
+  * Uses `nodemon` so it will automatically restart on code changes.
 
 ### Watching for changes
 
@@ -74,8 +74,8 @@ npm run compile && npm test
 
 * In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
 * From the **Run** toolbar, select the launch config you want to run:
-    * `Mocha All` - runs all tests.
-    * `Mocha Current File` - only run currently open test file.
+  * `Mocha All` - runs all tests.
+  * `Mocha Current File` - only run currently open test file.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
 * Press The `green play` button or `F5`.
 
@@ -89,8 +89,8 @@ Run in two separate terminals:
 
 2. Either:
 
-- `npm run cypress:test` to run headless
-- `npm run cypress:test-headed` to run headed
+* `npm run cypress:test` to run headless
+* `npm run cypress:test-headed` to run headed
 
 ## Key environment variables
 
