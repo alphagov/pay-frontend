@@ -40,8 +40,8 @@ to <http://127.0.0.1:3000>.
 * From the **Run** toolbar, select tne launch config `Frontend`.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
 * Press The `green play` button (`F5` MacOS):
-  * This will run the app in debug mode.
-  * Uses `nodemon` so it will automatically restart on code changes.
+    * This will run the app in debug mode.
+    * Uses `nodemon` so it will automatically restart on code changes.
 
 ### Watching for changes
 
@@ -51,8 +51,7 @@ We use [nodemon](https://github.com/remy/nodemon) which watches for changes to f
 
 If you’re making changes to client-side JS or Sass files (anything within [`/assets/`](app/assets/)) then
 running `npm run watch-live-reload` will watch for changes and recompile. Nodemon does not do anything here as that’s
-not necessary. If you install the [livereload browser plugin](http://livereload.com/extensions/) then it will refresh
-your page once the assets have been compiled to the `/public` folder.
+not necessary.
 
 ## Running tests
 
@@ -74,8 +73,8 @@ npm run compile && npm test
 
 * In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
 * From the **Run** toolbar, select the launch config you want to run:
-  * `Mocha All` - runs all tests.
-  * `Mocha Current File` - only run currently open test file.
+    * `Mocha All` - runs all tests.
+    * `Mocha Current File` - only run currently open test file.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
 * Press The `green play` button or `F5`.
 
@@ -85,7 +84,8 @@ Run in two separate terminals:
 
 1. `npm run cypress:server`
 
-   _This runs both the Cypress server and @govuk-pay/run-amock which is the server used for stubbing out external API calls._
+   _This runs both the Cypress server and @govuk-pay/run-amock which is the server used for stubbing out external API
+   calls._
 
 2. Either:
 
@@ -94,32 +94,30 @@ Run in two separate terminals:
 
 ## Key environment variables
 
-| variable                               | required |                         default value                         | Description                                                                                                                                           |
-|:---------------------------------------|:--------:|:-------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `BIND_HOST`                            |          |                           127.0.0.1                           | The IP address for the application to bind to.                                                                                                        |
-| `PORT`                                 |    X     |                             9200                              | The port number for the express server to be bound at runtime                                                                                         |
-| `SESSION_ENCRYPTION_KEY`               |    X     |                                                               | key to be used by the cookie encryption algorithm. Should be a large unguessable string ([More Info](https://www.npmjs.com/package/client-sessions)). |
-| `CONNECTOR_TOKEN_URL`                  |    X     |                                                               | The connector endpoint to use when validating the one time token.                                                                                     |
-| `ANALYTICS_TRACKING_ID`                |    X     |                                                               | Tracking ID to be used by 'Google-Analytics'.                                                                                                         |
-| `SECURE_COOKIE_OFF`                    |          |                        false/undefined                        | To switch off generating secure cookies. Set this to `true` only if you are running self service in a `non HTTPS` environment.                        |
-| `NODE_WORKER_COUNT`                    |          |                               1                               | The number of worker threads started by node cluster when run in production mode                                                                      |
-| `WORLDPAY_3DS_FLEX_DDC_TEST_URL`       |    X     |    `https://secure-test.worldpay.com/shopper/3ds/ddc.html`    | URL for Device Data Collection (DDC) initiation in TEST                                                                                               |
-| `WORLDPAY_3DS_FLEX_DDC_LIVE_URL`       |    X     |                                                               | URL for Device Data Collection (DDC) initiation in LIVE                                                                                               |
-| `WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL` |    X     | `https://secure-test.worldpay.com/shopper/3ds/challenge.html` | Pointing to Worldpay's TEST 3ds flex challenge URL.                                                                                                   |
-| `WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL` |    X     |  `https://centinelapi.cardinalcommerce.com/V2/Cruise/StepUp`  | Pointing to Worldpay's LIVE 3ds flex challenge URL.                                                                                                   |
-| `CSP_SEND_HEADER`                      |          |                        false/undefined                        | Apply card payment contest security policy headers.                                                                                                   |
-| `CSP_ENFORCE`                          |          |                        false/undefined                        | Browser will block content security policy violations if set to true, default is to only report on violations.                                        |
-| `CSP_REPORT_URI`                       |          |                                                               | URI to receive CSP violation reports.                                                                                                                 |
-| `GOOGLE_PAY_MERCHANT_ID`               |          |                                                               | Merchant ID used to identify GOV.UK Pay to Google when making a payment request. This ID is got from the Google Pay Developer Profile.                |
-| `GOOGLE_PAY_MERCHANT_ID_2`             |          |                                                               | The same as GOOGLE_PAY_MERCHANT_ID, but used to rotate to a new merchant id in a safe way.                                                            |
-| `WORLDPAY_APPLE_PAY_ENABLED`           |          |                             true                              | Feature toggle that enables Apple Pay for Worldpay accounts                                                                                           |
-| `WORLDPAY_GOOGLE_PAY_ENABLED`          |          |                             true                              | Feature toggle that enables Google Pay for Worldpay accounts                                                                                          |
-| `STRIPE_APPLE_PAY_ENABLED`             |          |                             true                              | Feature toggle that enables Apple Pay for Stripe accounts                                                                                             |
-| `STRIPE_GOOGLE_PAY_ENABLED`            |          |                             true                              | Feature toggle that enables Google Pay for Stripe accounts                                                                                            |
-| `PAY_TEST_GATEWAY_ACCOUNTS`            |          |                             [""]                              | Gateway accounts that should ignore the wallet feature toggles                                                                                        |
-| `STRIPE_TEST_PUBLISHABLE_API_KEY`      |          |                                                               | Non-secret Stripe API key we used by Google to process Stripe based Google Pay charges                                                                |
-| `STRIPE_LIVE_PUBLISHABLE_API_KEY`      |          |                                                               | Non-secret Stripe API key we used by Google to process Stripe based Google Pay charges                                                                |
-| `FRONTEND_URL`                         |          |                                                               | Used to set the CSP `Reporting-Endpoint` header                                                                                                       |
+| variable                               |      required      |                      default value                      | Description                                                                                                                                           |
+|:---------------------------------------|:------------------:|:-------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `BIND_HOST`                            |                    |                        127.0.0.1                        | The IP address for the application to bind to.                                                                                                        |
+| `PORT`                                 |                    |                                                         | The port number for the express server to be bound at runtime                                                                                         |
+| `SESSION_ENCRYPTION_KEY`               | :white_check_mark: |                                                         | key to be used by the cookie encryption algorithm. Should be a large unguessable string ([More Info](https://www.npmjs.com/package/client-sessions)). |                                                                                    |
+| `ANALYTICS_TRACKING_ID`                | :white_check_mark: |                                                         | Tracking ID to be used by 'Google-Analytics'.                                                                                                         |
+| `SECURE_COOKIE_OFF`                    |                    |                     false/undefined                     | To switch off generating secure cookies. Set this to `true` only if you are running self service in a `non HTTPS` environment.                        |
+| `NODE_WORKER_COUNT`                    |                    |                            1                            | The number of worker threads started by node cluster when run in production mode                                                                      |
+| `WORLDPAY_3DS_FLEX_DDC_TEST_URL`       | :white_check_mark: | `https://secure-test.worldpay.com/shopper/3ds/ddc.html` | URL for Device Data Collection (DDC) initiation in TEST                                                                                               |
+| `WORLDPAY_3DS_FLEX_DDC_LIVE_URL`       | :white_check_mark: |                                                         | URL for Device Data Collection (DDC) initiation in LIVE                                                                                               |
+| `WORLDPAY_3DS_FLEX_CHALLENGE_TEST_URL` | :white_check_mark: |                                                         | Pointing to Worldpay's TEST 3ds flex challenge URL.                                                                                                   |
+| `WORLDPAY_3DS_FLEX_CHALLENGE_LIVE_URL` | :white_check_mark: |                                                         | Pointing to Worldpay's LIVE 3ds flex challenge URL.                                                                                                   |
+| `CSP_SEND_HEADER`                      |                    |                     false/undefined                     | Apply card payment contest security policy headers.                                                                                                   |
+| `CSP_ENFORCE`                          |                    |                     false/undefined                     | Browser will block content security policy violations if set to true, default is to only report on violations.                                        |                                                                                                               |
+| `GOOGLE_PAY_MERCHANT_ID`               |                    |                                                         | Merchant ID used to identify GOV.UK Pay to Google when making a payment request. This ID is got from the Google Pay Developer Profile.                |
+| `GOOGLE_PAY_MERCHANT_ID_2`             |                    |                                                         | The same as GOOGLE_PAY_MERCHANT_ID, but used to rotate to a new merchant id in a safe way.                                                            |
+| `WORLDPAY_APPLE_PAY_ENABLED`           |                    |                          true                           | Feature toggle that enables Apple Pay for Worldpay accounts                                                                                           |
+| `WORLDPAY_GOOGLE_PAY_ENABLED`          |                    |                          true                           | Feature toggle that enables Google Pay for Worldpay accounts                                                                                          |
+| `STRIPE_APPLE_PAY_ENABLED`             |                    |                          true                           | Feature toggle that enables Apple Pay for Stripe accounts                                                                                             |
+| `STRIPE_GOOGLE_PAY_ENABLED`            |                    |                          true                           | Feature toggle that enables Google Pay for Stripe accounts                                                                                            |
+| `PAY_TEST_GATEWAY_ACCOUNTS`            |                    |                          [""]                           | Gateway accounts that should ignore the wallet feature toggles                                                                                        |
+| `STRIPE_TEST_PUBLISHABLE_API_KEY`      |                    |                                                         | Non-secret Stripe API key we used by Google to process Stripe based Google Pay charges                                                                |
+| `STRIPE_LIVE_PUBLISHABLE_API_KEY`      |                    |                                                         | Non-secret Stripe API key we used by Google to process Stripe based Google Pay charges                                                                |
+| `FRONTEND_URL`                         |                    |                                                         | Used to set the CSP `Reporting-Endpoint` header                                                                                                       |
 
 ## Licence
 
