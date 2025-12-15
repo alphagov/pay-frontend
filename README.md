@@ -6,8 +6,7 @@ GOV.UK Pay Frontend application (Node.js)
 
 ### Prerequisites
 
-* This requires the [Pay CLI](https://github.com/alphagov/pay-infra/tree/master/cli), which is not publicly available at
-  present.
+* This requires the [Pay CLI](https://www.npmjs.com/package/@govuk-pay/cli)
 * You
   have [set up your local development environment](https://manual.payments.service.gov.uk/manual/development-processes/setup-local-dev-environment.html)
 * Clone this repo locally.
@@ -97,7 +96,7 @@ Run in two separate terminals:
 | variable                               |      required      |                      default value                      | Description                                                                                                                                           |
 |:---------------------------------------|:------------------:|:-------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `BIND_HOST`                            |                    |                        127.0.0.1                        | The IP address for the application to bind to.                                                                                                        |
-| `PORT`                                 |                    |                                                         | The port number for the express server to be bound at runtime                                                                                         |
+| `PORT`                                 |                    |                          3000                           | The port number for the express server to be bound at runtime                                                                                         |
 | `SESSION_ENCRYPTION_KEY`               | :white_check_mark: |                                                         | key to be used by the cookie encryption algorithm. Should be a large unguessable string ([More Info](https://www.npmjs.com/package/client-sessions)). |                                                                                    |
 | `ANALYTICS_TRACKING_ID`                | :white_check_mark: |                                                         | Tracking ID to be used by 'Google-Analytics'.                                                                                                         |
 | `SECURE_COOKIE_OFF`                    |                    |                     false/undefined                     | To switch off generating secure cookies. Set this to `true` only if you are running self service in a `non HTTPS` environment.                        |
