@@ -42,7 +42,8 @@
 		"confirmButton": "Cadarnhau’r taliad",
 		"continueButton": "Parhau",
 		"cancelButton": "Canslo’r taliad",
-		"goBackToService": "Mynd yn ôl i’r gwasanaeth"
+		"goBackToService": "Mynd yn ôl i’r gwasanaeth",
+		"startAgain": "Dechrau eto"
 	},
 	"confirmDetails": {
 		"description": "Disgrifiad",
