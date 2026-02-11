@@ -39,7 +39,8 @@
 		"confirmButton": "Confirm payment",
 		"continueButton": "Continue",
 		"cancelButton": "Cancel payment",
-		"goBackToService": "Go back to the service"
+		"goBackToService": "Go back to the service",
+		"startAgain": "Start again"
 	},
 	"confirmDetails": {
 		"description": "Description",
