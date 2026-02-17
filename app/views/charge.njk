@@ -546,7 +546,11 @@
                             class="email-label"
                             data-label-replace="email"
                             data-original-label="{{ __p("cardDetails.email") }}">
+                            {% if gatewayAccount.emailCollectionMode === 'OPTIONAL' %}
+                              {{ __p("cardDetails.emailOptional") }}
+                            {% else %}
                               {{ __p("cardDetails.email") }}
+                            {% endif %}
                           </span>
                         </label>
 

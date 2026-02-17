@@ -50,6 +50,7 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
 
       cy.get('#email').should('not.exist')
+      cy.get('#email-lbl').should('not.exist')
 
       cy.task('clearStubs')
       cy.task('setupStubs', confirmPaymentDetailsStubs)
@@ -59,6 +60,7 @@ describe('Standard card payment flow', () => {
       cy.get('#card-details').submit()
       cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
       cy.get('#email').should('not.exist')
+      cy.get('#email-lbl').should('not.exist')
 
       cy.log('Checking for presence of email hint when email collection is off and payment confirmation is disabled')
       cy.get('#email-hint').should('not.exist')
@@ -95,6 +97,7 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
 
       cy.get('#email').should('exist')
+      cy.get('#email-lbl').should('exist').and('not.contain', '(optional)')
 
       cy.log('Submitting confirmation should show email error')
 
@@ -141,6 +144,7 @@ describe('Standard card payment flow', () => {
       cy.get('#address-postcode').type(validPayment.postcode)
 
       cy.get('#email').should('exist')
+      cy.get('#email-lbl').should('exist').and('contain', '(optional)')
 
       cy.log('Submitting confirmation with valid details should redirect to confirmation page')
 

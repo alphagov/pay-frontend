@@ -30,6 +30,7 @@
 		"country": "Country or territory",
 		"contactDetails": "Contact details",
 		"email": "Email",
+		"emailOptional": "Email (optional)",
 		"emailHint": "We’ll send your payment confirmation here",
 		"emailConfirmation": "An email will be sent to:",
 		"corporateCreditCardSurchargeMessage": "There is a fee of £%s for using a corporate credit card",
