@@ -33,6 +33,7 @@
 		"country": "Gwlad neu diriogaeth",
 		"contactDetails": "Manylion cyswllt",
 		"email": "E-bost",
+		"emailOptional": "E-bost (dewisol)",
 		"emailHint": "Byddwn yn anfon eich cadarnhad taliad yma",
 		"emailConfirmation": "Byddwn an anfon e-bost i:",
 		"corporateCreditCardSurchargeMessage": "Mae ffi o £%s am ddefnyddio cerdyn credyd corfforaethol",
