@@ -56,7 +56,8 @@
 		"address": "Cyfeiriad bilio",
 		"email": "E-bost cadarnhad",
 		"pay": "Talu",
-		"now": "nawr"
+		"now": "nawr",
+        "Payment confirmation submitted": "Cadarnhad o daliad wedi'i gyflwyno"
 	},
 	"commonConjunctions": {
 		"or": "neu"
