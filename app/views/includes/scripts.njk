@@ -51,8 +51,10 @@
     } else if (mainWrap.classList.contains('confirm-page')) {
       var confirmationForm = document.getElementById('confirmation')
       var confirmButton = document.getElementById('confirm')
+      var announcer = document.getElementById('confirm-button-announcer')
       confirmationForm.addEventListener('submit', function () {
         confirmButton.setAttribute('disabled', 'disabled')
+        announcer.textContent = "Payment confirmation submitted."
       })
     }
     {% if allowGooglePay%}
