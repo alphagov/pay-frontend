@@ -73,7 +73,7 @@
   "dependencies": {
     "@aws-crypto/decrypt-node": "^1.0.3",
     "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
-    "@govuk-pay/pay-js-commons": "^7.0.42",
+    "@govuk-pay/pay-js-commons": "^7.0.43",
     "@govuk-pay/pay-js-metrics": "^1.0.14",
     "@sentry/node": "7.119.2",
     "cert-info": "^1.5.1",
@@ -112,7 +112,7 @@
     "@pact-foundation/pact": "~12.5.2",
     "@pact-foundation/pact-core": "~14.3.8",
     "@snyk/protect": "^1.1235.x",
-    "axios": "^1.13.5",
+    "axios": "1.14.0",
     "browserify": "17.0.x",
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
@@ -156,7 +156,11 @@
     "staticify": {
       "send": "0.19.0"
     },
-    "cross-spawn": "^7.0.5"
+    "cross-spawn": "^7.0.5",
+    "axios": "1.14.0"
+  },
+  "resolutions": {
+    "axios": "1.14.0"
   },
   "snyk": true
 }
