@@ -1,184 +1,185 @@
 {
-	"cardDetails": {
-		"webPayments": {
-			"payWithApplePay": "Pay with Apple Pay",
-			"payWithGooglePay": "Pay with Google Pay"
-		},
-		"withdrawalText": {
-			"debit_credit": "Accepted credit and debit card types",
-			"debit": "Credit card payments are not accepted. Please use a debit card.",
-			"credit": "Debit card payments are not accepted. Please use a credit card."
-		},
-		"enterPaymentDetails": "Enter payment details",
-		"enterCardDetails": "Enter card details",
-		"expiry": "Expiry date",
-		"expiryHint": "For example, 10/%s",
-		"expiryMonth": "Month",
-		"expiryYear": "Year",
-		"cvc": "Card security code",
-		"cvcTip": "The last 3 digits on the back of the card",
-		"amexcvcTip": "The last 4 digits after the card number on the front",
-		"amexcvcNonjs": "For American Express,",
-		"cardNo": "Card number",
-		"cardholderName": "Name on card",
-		"billingAddress": "Billing address",
-		"billingAddressHint": "This is the address associated with the card",
-		"addressLine1": "Address line 1",
-		"addressLine2": "Address line 2 (optional)",
-		"city": "Town or city",
-		"postcode": "Postcode",
-		"country": "Country or territory",
-		"contactDetails": "Contact details",
-		"email": "Email",
-		"emailOptional": "Email (optional)",
-		"emailHint": "We’ll send your payment confirmation here",
-		"emailConfirmation": "An email will be sent to:",
-		"corporateCreditCardSurchargeMessage": "There is a fee of £%s for using a corporate credit card",
-		"corporateDebitCardSurchargeMessage": "There is a fee of £%s for using a corporate debit card"
-	},
-	"commonButtons": {
-		"confirmButton": "Confirm payment",
-		"continueButton": "Continue",
-		"cancelButton": "Cancel payment",
-		"goBackToService": "Go back to the service",
-		"startAgain": "Start again"
-	},
-	"confirmDetails": {
-		"description": "Description",
-		"cardDetails": "Card details",
-		"title": "Confirm your payment",
-		"card": "Card number",
-		"expiry": "Expiry date",
-		"name": "Name on card",
-		"address": "Billing address",
-		"email": "Confirmation email",
-		"pay": "Pay",
-		"now": "now"
-	},
-	"commonConjunctions": {
-		"or": "or"
-	},
-	"commonHeadings": {
-		"inProgress": "Your payment is in progress"
-	},
-	"paymentSummary": {
-		"title": "Payment summary",
-		"amount": "Amount",
-		"corporateCardFee": "Corporate card fee:",
-		"totalAmount": "Total amount:"
-	},
-	"errorViews": {
-		"either": "You can either:",
-		"continue": "Continue with your payment",
-		"tryAgain": "Cancel and go back to try the payment again",
-		"problem": "There was a problem with your payment",
-		"declined": "Your payment has been declined",
-		"contactYourBank": "No money has been taken from your account. Contact your bank for more details.",
-		"paymentStatus": "Your payment was",
-		"unsuccessful": "Your payment was unsuccessful",
-		"noMoneyTaken": "No money has been taken from your account.",
-		"sessionExpiredNoMoneyTaken": "Your payment session has expired. This may be because you have completed your payment or your session has timed out.",
-		"toMakeChanges": "To make any changes to your payment you’ll need to contact the service.",
-		"viewSummary": "View your payment summary",
-		"paymentExpired": "Your payment expired",
-		"sessionExpired": "Your payment session has expired",
-		"paymentCancelled": "Your Payment was cancelled",
-		"paymentCancelledTitle": "Payment cancelled",
-		"paymentCancelledDescription": "The service you’re trying to pay has cancelled your payment. No money has been taken from your account.",
-		"error": "An error occurred",
-		"technicalProblems": "We’re experiencing technical problems"
-	},
-	"authorisation": {
-		"bankCheckingDetails": "Your bank is checking your details",
-		"extraSteps": "You may need to complete some extra verification steps.",
-		"approvalNeeded": "To continue with your payment, we need your bank’s approval.",
-		"approved": "The card details have been approved by the bank.",
-		"checkingDetails": "Checking card details",
-		"checkingDetailsDescription": "Your payment details are being checked.",
-		"spinnerAltText": "waiting",
-		"processingPayment": "Your payment is being processed.",
-		"processing": "Processing card details",
-		"userCancelledPayment": "Your payment has been cancelled"
-	},
-	"fieldErrors": {
-		"summary": "The following fields are missing or contain errors",
-		"generic": "Enter a valid %s",
-		"visuallyHiddenError": "Error:",
-		"fields": {
-			"cardholderName": {
-				"name": "name",
-				"message": "Enter the name as it appears on the card",
-				"containsTooManyDigits": "Enter the name as it appears on the card",
-				"containsSuspectedCVC": "Enter the name as it appears on the card"
-			},
-			"cardNo": {
-				"name": "card number",
-				"message": "Enter a valid card number",
-				"numberIncorrectLength": "Card number is not the correct length",
-				"luhnInvalid": "Enter a valid card number",
-				"cardNotSupported": "This card type is not accepted",
-				"nonNumeric": "Enter a valid card number",
-				"unsupportedBrand": "%s is not supported",
-				"unsupportedDebitCard": "%s debit cards are not supported",
-				"unsupportedCreditCard": "%s credit cards are not supported",
-				"unsupportedPrepaidCard": "Prepaid cards are not accepted"
-			},
-			"cvc": {
-				"name": "card security code",
-				"message": "Enter a valid card security code",
-				"invalidLength": "Enter a valid card security code"
-			},
-			"expiryDate": {
-				"name": "expiry date",
-				"message": "Enter a valid expiry date"
-			},
-			"expiryMonth": {
-				"name": "expiry date",
-				"message": "Enter a valid expiry date",
-				"invalidMonth": "Enter a valid expiry date",
-				"invalidYear": "Enter a valid expiry date",
-				"inThePast": "Enter an expiry date in the future"
-			},
-			"expiryYear": {
-				"name": "expiry year",
-				"message": "Enter a valid expiry date",
-				"invalidYear": "This expiry year is not a valid"
-			},
-			"addressLine1": {
-				"name": "address line 1",
-				"message": "Enter address line 1, typically the building and street",
-				"containsTooManyDigits": "Enter address line 1, typically the building and street"
-			},
-			"addressLine2": {
-				"name": "address line 2",
-				"message": "Enter address line 2",
-				"containsTooManyDigits": "Enter address line 2"
-			},
-			"addressCity": {
-				"name": "town/city",
-				"message": "Enter a valid town/city",
-				"containsTooManyDigits": "Enter a valid town/city"
-			},
-			"addressPostcode": {
-				"name": "postcode",
-				"message": "Enter a valid postcode",
-				"containsTooManyDigits": "Enter a valid postcode"
-			},
-			"email": {
-				"name": "email",
-				"message": "Enter a valid email",
-				"containsTooManyDigits": "Enter a valid email",
-				"typo": "There might be a mistake in the last part of your email address. Select your email address."
-			},
-			"addressCountry": {
-				"name": "country or territory",
-				"message": "Enter a valid country or territory"
-			}
-		},
-		"webPayments": {
-			"apple": "There was an error contacting Apple Pay, please try again",
-			"failureTitle": "There was a problem processing your payment.",
-			"failureBody": "No money has been taken from your account, please try again"
-		}
-	}
+  "cardDetails": {
+    "webPayments": {
+      "payWithApplePay": "Pay with Apple Pay",
+      "payWithGooglePay": "Pay with Google Pay"
+    },
+    "withdrawalText": {
+      "debit_credit": "Accepted credit and debit card types",
+      "debit": "Credit card payments are not accepted. Please use a debit card.",
+      "credit": "Debit card payments are not accepted. Please use a credit card."
+    },
+    "enterPaymentDetails": "Enter payment details",
+    "enterCardDetails": "Enter card details",
+    "expiry": "Expiry date",
+    "expiryHint": "For example, 10/%s",
+    "expiryMonth": "Month",
+    "expiryYear": "Year",
+    "cvc": "Card security code",
+    "cvcTip": "The last 3 digits on the back of the card",
+    "amexcvcTip": "The last 4 digits after the card number on the front",
+    "amexcvcNonjs": "For American Express,",
+    "cardNo": "Card number",
+    "cardholderName": "Name on card",
+    "billingAddress": "Billing address",
+    "billingAddressHint": "This is the address associated with the card",
+    "addressLine1": "Address line 1",
+    "addressLine2": "Address line 2 (optional)",
+    "city": "Town or city",
+    "postcode": "Postcode",
+    "country": "Country or territory",
+    "contactDetails": "Contact details",
+    "email": "Email",
+    "emailOptional": "Email (optional)",
+    "emailHint": "We’ll send your payment confirmation here",
+    "emailConfirmation": "An email will be sent to:",
+    "corporateCreditCardSurchargeMessage": "There is a fee of £%s for using a corporate credit card",
+    "corporateDebitCardSurchargeMessage": "There is a fee of £%s for using a corporate debit card"
+  },
+  "commonButtons": {
+    "confirmButton": "Confirm payment",
+    "continueButton": "Continue",
+    "cancelButton": "Cancel payment",
+    "goBackToService": "Go back to the service",
+    "startAgain": "Start again"
+  },
+  "confirmDetails": {
+    "description": "Description",
+    "cardDetails": "Card details",
+    "title": "Confirm your payment",
+    "card": "Card number",
+    "expiry": "Expiry date",
+    "name": "Name on card",
+    "address": "Billing address",
+    "email": "Confirmation email",
+    "pay": "Pay",
+    "now": "now",
+    "Payment confirmation submitted": "Payment confirmation submitted"
+  },
+  "commonConjunctions": {
+    "or": "or"
+  },
+  "commonHeadings": {
+    "inProgress": "Your payment is in progress"
+  },
+  "paymentSummary": {
+    "title": "Payment summary",
+    "amount": "Amount",
+    "corporateCardFee": "Corporate card fee:",
+    "totalAmount": "Total amount:"
+  },
+  "errorViews": {
+    "either": "You can either:",
+    "continue": "Continue with your payment",
+    "tryAgain": "Cancel and go back to try the payment again",
+    "problem": "There was a problem with your payment",
+    "declined": "Your payment has been declined",
+    "contactYourBank": "No money has been taken from your account. Contact your bank for more details.",
+    "paymentStatus": "Your payment was",
+    "unsuccessful": "Your payment was unsuccessful",
+    "noMoneyTaken": "No money has been taken from your account.",
+    "sessionExpiredNoMoneyTaken": "Your payment session has expired. This may be because you have completed your payment or your session has timed out.",
+    "toMakeChanges": "To make any changes to your payment you’ll need to contact the service.",
+    "viewSummary": "View your payment summary",
+    "paymentExpired": "Your payment expired",
+    "sessionExpired": "Your payment session has expired",
+    "paymentCancelled": "Your Payment was cancelled",
+    "paymentCancelledTitle": "Payment cancelled",
+    "paymentCancelledDescription": "The service you’re trying to pay has cancelled your payment. No money has been taken from your account.",
+    "error": "An error occurred",
+    "technicalProblems": "We’re experiencing technical problems"
+  },
+  "authorisation": {
+    "bankCheckingDetails": "Your bank is checking your details",
+    "extraSteps": "You may need to complete some extra verification steps.",
+    "approvalNeeded": "To continue with your payment, we need your bank’s approval.",
+    "approved": "The card details have been approved by the bank.",
+    "checkingDetails": "Checking card details",
+    "checkingDetailsDescription": "Your payment details are being checked.",
+    "spinnerAltText": "waiting",
+    "processingPayment": "Your payment is being processed.",
+    "processing": "Processing card details",
+    "userCancelledPayment": "Your payment has been cancelled"
+  },
+  "fieldErrors": {
+    "summary": "The following fields are missing or contain errors",
+    "generic": "Enter a valid %s",
+    "visuallyHiddenError": "Error:",
+    "fields": {
+      "cardholderName": {
+        "name": "name",
+        "message": "Enter the name as it appears on the card",
+        "containsTooManyDigits": "Enter the name as it appears on the card",
+        "containsSuspectedCVC": "Enter the name as it appears on the card"
+      },
+      "cardNo": {
+        "name": "card number",
+        "message": "Enter a valid card number",
+        "numberIncorrectLength": "Card number is not the correct length",
+        "luhnInvalid": "Enter a valid card number",
+        "cardNotSupported": "This card type is not accepted",
+        "nonNumeric": "Enter a valid card number",
+        "unsupportedBrand": "%s is not supported",
+        "unsupportedDebitCard": "%s debit cards are not supported",
+        "unsupportedCreditCard": "%s credit cards are not supported",
+        "unsupportedPrepaidCard": "Prepaid cards are not accepted"
+      },
+      "cvc": {
+        "name": "card security code",
+        "message": "Enter a valid card security code",
+        "invalidLength": "Enter a valid card security code"
+      },
+      "expiryDate": {
+        "name": "expiry date",
+        "message": "Enter a valid expiry date"
+      },
+      "expiryMonth": {
+        "name": "expiry date",
+        "message": "Enter a valid expiry date",
+        "invalidMonth": "Enter a valid expiry date",
+        "invalidYear": "Enter a valid expiry date",
+        "inThePast": "Enter an expiry date in the future"
+      },
+      "expiryYear": {
+        "name": "expiry year",
+        "message": "Enter a valid expiry date",
+        "invalidYear": "This expiry year is not a valid"
+      },
+      "addressLine1": {
+        "name": "address line 1",
+        "message": "Enter address line 1, typically the building and street",
+        "containsTooManyDigits": "Enter address line 1, typically the building and street"
+      },
+      "addressLine2": {
+        "name": "address line 2",
+        "message": "Enter address line 2",
+        "containsTooManyDigits": "Enter address line 2"
+      },
+      "addressCity": {
+        "name": "town/city",
+        "message": "Enter a valid town/city",
+        "containsTooManyDigits": "Enter a valid town/city"
+      },
+      "addressPostcode": {
+        "name": "postcode",
+        "message": "Enter a valid postcode",
+        "containsTooManyDigits": "Enter a valid postcode"
+      },
+      "email": {
+        "name": "email",
+        "message": "Enter a valid email",
+        "containsTooManyDigits": "Enter a valid email",
+        "typo": "There might be a mistake in the last part of your email address. Select your email address."
+      },
+      "addressCountry": {
+        "name": "country or territory",
+        "message": "Enter a valid country or territory"
+      }
+    },
+    "webPayments": {
+      "apple": "There was an error contacting Apple Pay, please try again",
+      "failureTitle": "There was a problem processing your payment.",
+      "failureBody": "No money has been taken from your account, please try again"
+    }
+  }
 }
