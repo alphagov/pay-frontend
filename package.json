@@ -81,7 +81,7 @@
     "client-sessions": "0.8.x",
     "compression": "1.8.x",
     "credit-card-type": "6.3.x",
-    "express": "4.22.1",
+    "express": "^5.2.1",
     "gaap-analytics": "^3.1.0",
     "govuk-frontend": "^5.10.2",
     "helmet": "^7.1.0",

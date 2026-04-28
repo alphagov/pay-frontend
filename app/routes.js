@@ -129,5 +129,5 @@ exports.bind = function (app) {
 
   // route to gov.uk 404 page
   // this has to be the last route registered otherwise it will redirect other routes
-  app.all('*', (req, res) => res.redirect('https://www.gov.uk/404'))
+  app.all('*splat', (req, res) => res.redirect('https://www.gov.uk/404'))
 }
