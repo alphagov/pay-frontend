@@ -112,7 +112,7 @@
     "@pact-foundation/pact": "~12.5.2",
     "@pact-foundation/pact-core": "~14.3.8",
     "@snyk/protect": "^1.1235.x",
-    "axios": "1.15.0",
+    "axios": "1.15.2",
     "browserify": "17.0.x",
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
@@ -157,10 +157,10 @@
       "send": "0.19.0"
     },
     "cross-spawn": "^7.0.5",
-    "axios": "1.15.0"
+    "axios": "1.15.2"
   },
   "resolutions": {
-    "axios": "1.15.0"
+    "axios": "1.15.2"
   },
   "snyk": true
 }
