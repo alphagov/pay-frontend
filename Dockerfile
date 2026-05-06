@@ -1,4 +1,4 @@
-FROM node:22.22.2-alpine3.22@sha256:b77017c37f430e4466ff497058948a2f16e8b59779600d53711eeb7b999b0f4e AS builder
+FROM node:22.22.2-alpine3.23@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN npm ci --quiet
 COPY . .
 RUN npm run compile
 
-FROM node:22.22.2-alpine3.22@sha256:b77017c37f430e4466ff497058948a2f16e8b59779600d53711eeb7b999b0f4e AS final
+FROM node:22.22.2-alpine3.23@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f AS final
 
 RUN ["apk", "--no-cache", "upgrade"]
 
