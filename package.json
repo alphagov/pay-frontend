@@ -52,7 +52,7 @@
     "cypress:test": "cypress run",
     "cypress:test-headed": "cypress open",
     "snyk-protect": "snyk-protect",
-    "publish-pacts": "./bin/publish-pacts.js"
+    "publish-pacts": "find ./pacts -name '*.json' ! -name '*to-be*' | xargs pact-broker publish --consumer-app-version=$PACT_CONSUMER_VERSION --broker-base-url=$PACT_BROKER_URL --broker-username=$PACT_BROKER_USERNAME --broker-password=$PACT_BROKER_PASSWORD"
   },
   "lint-staged": {
     "*.js": [
@@ -109,8 +109,9 @@
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
     "@govuk-pay/run-amock": "0.0.13",
-    "@pact-foundation/pact": "~12.5.2",
-    "@pact-foundation/pact-core": "~14.3.8",
+    "@pact-foundation/pact": "^16.4.0",
+    "@pact-foundation/pact-cli": "^18.1.0",
+    "@pact-foundation/pact-core": "^19.2.0",
     "@snyk/protect": "^1.1235.x",
     "axios": "1.16.0",
     "browserify": "17.0.x",
