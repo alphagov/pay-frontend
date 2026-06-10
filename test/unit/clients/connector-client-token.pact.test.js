@@ -2,7 +2,7 @@
 
 // NPM dependencies
 const path = require('path')
-const { Pact } = require('@pact-foundation/pact')
+const { PactV2: Pact } = require('@pact-foundation/pact')
 const { expect } = require('chai')
 
 // Local dependencies

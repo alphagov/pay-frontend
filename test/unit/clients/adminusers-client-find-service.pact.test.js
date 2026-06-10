@@ -4,7 +4,7 @@
 const path = require('path')
 
 // NPM dependencies
-const { Pact } = require('@pact-foundation/pact')
+const { PactV2: Pact } = require('@pact-foundation/pact')
 const { expect } = require('chai')
 
 // Constants

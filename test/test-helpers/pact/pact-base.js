@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const matchers = require('@pact-foundation/pact').Matchers
+const matchers = require('@pact-foundation/pact').MatchersV2
 
 module.exports = function (options = {}) {
   const pactifyArray = (arr) => {
