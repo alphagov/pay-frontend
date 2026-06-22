@@ -38,7 +38,7 @@
   }
 
   &[disabled] {
-    background: $govuk-secondary-text-colour;
+    background: govuk-functional-colour(secondary-text);
   }
 
   //https://developer.apple.com/documentation/apple_pay_on_the_web/displaying_apple_pay_buttons
