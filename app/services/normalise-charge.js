@@ -187,6 +187,10 @@ module.exports = (function () {
       payload.js_timezone_offset_mins = req.body.jsTimezoneOffsetMins
     }
 
+    if (req.body.jsEnabled) {
+      payload.js_enabled = req.body.jsEnabled
+    }
+
     return payload
   }
 

@@ -177,6 +177,9 @@
                 {% if worldpay3dsFlexDdcJwt %}
                   <input name="worldpay3dsFlexDdcStatus" id="worldpay3dsFlexDdcStatus" type="hidden" value="Not initiated"/>
                 {% endif %}
+                {% if collectAdditionalBrowserInfoAdyen %}
+                  <input name="jsEnabled" id="jsEnabled" type="hidden" value="false"/>
+                {% endif %}
 
                 <div class="govuk-form-group{% if highlightErrorFields.cardNo %} govuk-form-group--error{% endif %} card-no-group" data-validation="cardNo">
                   <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-width-three-quarters">

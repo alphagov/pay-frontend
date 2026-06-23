@@ -1,12 +1,13 @@
 'use strict'
 
 const init = () => {
-  if (window.Charge.collect_additional_browser_data_for_epdq_3ds) {
+  if (window.Charge.collect_additional_browser_info_adyen) {
     addAdditionalInformation()
   }
 }
 
 const addAdditionalInformation = () => {
+  document.getElementById('jsEnabled').value = 'true'
   if (typeof navigator.language === 'string') {
     appendHiddenInputToForm('jsNavigatorLanguage', navigator.language)
   }

@@ -1,12 +1,10 @@
 'use strict'
 
-// NPM dependencies
 const _ = require('lodash')
 const nock = require('nock')
 const logger = require('../../app/utils/logger')(__filename)
 const proxyquire = require('proxyquire')
 
-// Local dependencies
 const cookie = require('../test-helpers/session')
 const helper = require('../test-helpers/test-helpers')
 const {
@@ -16,7 +14,6 @@ const {
 } = helper
 const State = require('../../config/state')
 
-// Constants
 const app = proxyquire('../../server.js',
   {
     'memory-cache': {
@@ -31,8 +28,7 @@ let mockServer
 
 const gatewayAccount = {
   gatewayAccountId: '12345',
-  paymentProvider: 'epdq',
-  analyticsId: 'test-1234',
+  paymentProvider: 'adyen',
   type: 'test'
 }
 
@@ -89,7 +85,8 @@ const formSubmissionData = {
   jsScreenColorDepth: jsScreenColorDepth,
   jsScreenHeight: jsScreenHeight,
   jsScreenWidth: jsScreenWidth,
-  jsTimezoneOffsetMins: jsTimezoneOffsetMins
+  jsTimezoneOffsetMins: jsTimezoneOffsetMins,
+  jsEnabled: true
 }
 
 const expectedDataSentToConnector = {
@@ -113,7 +110,8 @@ const expectedDataSentToConnector = {
   js_screen_height: jsScreenHeight,
   js_screen_width: jsScreenWidth,
   js_timezone_offset_mins: jsTimezoneOffsetMins,
-  ip_address: '127.0.0.1'
+  ip_address: '127.0.0.1',
+  js_enabled: 'true'
 }
 
 function connectorExpects (data) {
@@ -130,7 +128,7 @@ function connectorExpects (data) {
   })
 }
 
-describe('Enter card details page — sending ePDQ 3DS2 additional data to connector', function () {
+describe('Enter card details page — sending additional browser data to connector for Adyen payments', function () {
   beforeEach(function () {
     nock.cleanAll()
     mockServer = nock(process.env.CONNECTOR_HOST)
@@ -141,7 +139,7 @@ describe('Enter card details page — sending ePDQ 3DS2 additional data to conne
     logger.level = 'none'
   })
 
-  it('should send card data including all ePDQ 3DS2 additional data', function (done) {
+  it('should send card data including all browser info', function (done) {
     const cookieValue = cookie.create(chargeId)
 
     nock(process.env.CONNECTOR_HOST)
@@ -153,26 +151,6 @@ describe('Enter card details page — sending ePDQ 3DS2 additional data to conne
 
     connectorExpects(expectedDataSentToConnector).reply(200)
 
-    postChargeRequest(app, cookieValue, formSubmissionData, chargeId)
-      .expect(303)
-      .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')
-      .end(done)
-  })
-
-  it('should send card data including ePDQ 3DS2 additional data without jsScreenColorDepth', function (done) {
-    const cookieValue = cookie.create(chargeId)
-
-    nock(process.env.CONNECTOR_HOST)
-      .patch('/v1/frontend/charges/' + chargeId)
-      .reply(200)
-    defaultConnectorResponseForGetCharge(chargeId, State.ENTERING_CARD_DETAILS, gatewayAccountId)
-    defaultAdminusersResponseForGetService(gatewayAccountId)
-    mockSuccessCardIdResponse()
-
-    delete expectedDataSentToConnector.js_screen_color_depth
-    connectorExpects(expectedDataSentToConnector).reply(200)
-
-    delete formSubmissionData.jsScreenColorDepth
     postChargeRequest(app, cookieValue, formSubmissionData, chargeId)
       .expect(303)
       .expect('Location', frontendCardDetailsPath + '/' + chargeId + '/confirm')

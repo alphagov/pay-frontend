@@ -30,7 +30,7 @@
   window.Charge = {
     email_collection_mode: '{{ gatewayAccount.emailCollectionMode | safe }}',
     collect_billing_address: {{ "true" if collectBillingAddress else "false" }},
-    collect_additional_browser_data_for_epdq_3ds: {{"true" if collectAdditionalBrowserDataForEpdq3ds else "false" }},
+    collect_additional_browser_info_adyen: {{"true" if collectAdditionalBrowserInfoAdyen else "false" }},
     worldpay_3ds_flex_ddc_jwt: '{{ worldpay3dsFlexDdcJwt }}',
     worldpay_3ds_flex_ddc_url: '{{ worldpay3dsFlexDdcUrl }}',
     payment_provider: '{{ paymentProvider }}'
@@ -47,7 +47,7 @@
       {% endif %}
       window.payScripts.inputConfirm.init()
       window.payScripts.formValidation.init()
-      window.payScripts.epdq3ds2.init()
+      window.payScripts.collectAdditionalBrowserInfoAdyen.init()
     } else if (mainWrap.classList.contains('confirm-page')) {
       var confirmationForm = document.getElementById('confirmation')
       var confirmButton = document.getElementById('confirm')
