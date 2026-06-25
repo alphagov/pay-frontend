@@ -1,5 +1,6 @@
 {% extends "govuk/template.njk" %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% set htmlLang = language %}
 
@@ -30,21 +31,29 @@
   {% else %}
     {{ govukHeader({
       homepageUrl: "https://www.gov.uk/",
-      serviceName: serviceName,
       attributes : {
         'data-cy': 'header'
+      }
+    }) }}
+
+    {{ govukServiceNavigation({
+      serviceName: serviceName,
+      attributes : {
+        'data-cy': 'service-navigation'
       }
     }) }}
   {% endif %}
 
   {% if isTestPayment %}
     <div class="govuk-width-container">
+    {% block headerEnd %}
       {{ govukPhaseBanner({
         tag: {
           text: "Test service"
         },
         html: 'This is a test payment service.'
       }) }}
+    {% endblock %}
     </div>
   {% endif %}
 {% endblock %}
@@ -53,8 +62,7 @@
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
   {% include "includes/scripts.njk" %}
 {% endblock %}
-
-{% block footer %}
+{% block govukFooter %}
   {% if service and service.merchantDetails and service.merchantDetails.name %}
     {% set footerMetaText = 'Service provided by ' + service.merchantDetails.name %}
     
