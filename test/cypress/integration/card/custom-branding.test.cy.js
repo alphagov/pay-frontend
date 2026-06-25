@@ -37,6 +37,7 @@ describe('Custom branding', () => {
     cy.get('[data-cy=service-name]').should('have.css', 'color', 'rgb(0, 0, 0)')
     cy.get('[data-cy=custom-branding-image-container]').should('have.css', 'background-color', 'rgba(0, 0, 0, 0)')
     cy.get('[data-cy=custom-branding-image]').should('have.attr', 'src', '/public/images/custom/cypress-testing.svg')
+    cy.get('[data-cy=service-navigation]').should('not.exist')
   })
 
   it('Should setup custom branding correctly when purple background with white text', () => {
@@ -72,5 +73,6 @@ describe('Custom branding', () => {
     cy.get('[data-cy=service-name]').should('have.css', 'color', 'rgb(255, 255, 255)')
     cy.get('[data-cy=custom-branding-image-container]').should('have.css', 'background-color', 'rgba(0, 0, 0, 0)')
     cy.get('[data-cy=custom-branding-image]').should('have.attr', 'src', '/public/images/custom/cypress-testing.svg')
+    cy.get('[data-cy=service-navigation]').should('not.exist')
   })
 })
