@@ -1,7 +1,9 @@
+@use "govuk-frontend/dist/govuk" as govuk-frontend;
+
 .payment-summary {
-  border-top: 2px solid $govuk-brand-colour;
+  border-top: 2px solid govuk-functional-colour(brand);
   padding: govuk-spacing(3);
-  background-color: govuk-colour('light-grey');
+  background-color: govuk-frontend.govuk-colour('black', $variant: 'tint-95');
 
   .amount {
     display: block;

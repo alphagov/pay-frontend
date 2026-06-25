@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as govuk-frontend;
+
 .apple-pay-container{
   display: none;
 
@@ -38,7 +40,7 @@
   }
 
   &[disabled] {
-    background: $govuk-secondary-text-colour;
+    background: govuk-functional-colour(secondary-text);
   }
 
   //https://developer.apple.com/documentation/apple_pay_on_the_web/displaying_apple_pay_buttons
@@ -98,11 +100,11 @@
     }
   }
 
-  @include govuk-media-query($until: desktop) {
+  @include govuk-frontend.govuk-media-query($until: desktop) {
     margin-top: govuk-spacing(2);
   }
 
-  @include govuk-media-query($from: tablet) {
+  @include govuk-frontend.govuk-media-query($from: tablet) {
     width: 200px;
   }
 }

@@ -1,6 +1,8 @@
+@use "govuk-frontend/dist/govuk" as govuk-frontend;
+
 .test-payment-banner {
   padding-top: govuk-spacing(2);
-  @include govuk-media-query($until: tablet) {
+  @include govuk-frontend.govuk-media-query($until: tablet) {
     padding-top: govuk-spacing(6);
   }
 }

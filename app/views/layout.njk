@@ -53,8 +53,7 @@
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
   {% include "includes/scripts.njk" %}
 {% endblock %}
-
-{% block footer %}
+{% block govukFooter %}
   {% if service and service.merchantDetails and service.merchantDetails.name %}
     {% set footerMetaText = 'Service provided by ' + service.merchantDetails.name %}
     

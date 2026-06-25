@@ -1,9 +1,11 @@
+@use "govuk-frontend/dist/govuk" as govuk-frontend;
+
 .govuk-date-input__item--with-separator {
   position: relative;
   margin-right: govuk-spacing(7);
 
   &:after {
-    @include govuk-font($size: 27);
+    @include govuk-frontend.govuk-font($size: 27);
 
     content: '/';
     position: absolute;

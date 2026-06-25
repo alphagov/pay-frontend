@@ -1,3 +1,6 @@
+@use 'sass:list';
+@use "govuk-frontend/dist/govuk" as govuk-frontend;
+
 .accepted-cards {
   display: block;
   width: 100%;
@@ -6,7 +9,7 @@
   float: none;
   overflow: hidden;
 
- @include govuk-media-query($from: tablet) {
+ @include govuk-frontend.govuk-media-query($from: tablet) {
     width: 66.666%;
   }
 
@@ -22,21 +25,21 @@
   }
 
   $cards: visa master-card american-express jcb diners-club discover maestro visa-electron unionpay;
-  @for $i from 1 through length($cards) {
+  @for $i from 1 through list.length($cards) {
     // sass-lint:disable space-around-operator
     $x-pos: 12.5 * ($i - 1);
 
-    .#{nth($cards, $i)} {
+    .#{list.nth($cards, $i)} {
       background-position: #{$x-pos + "%"} 100%;
     }
 
-    &.field-empty .#{nth($cards, $i)},
-    .#{nth($cards, $i)}.selected {
+    &.field-empty .#{list.nth($cards, $i)},
+    .#{list.nth($cards, $i)}.selected {
       background-position: #{$x-pos + "%"} 0%;
     }
   }
 
   &-hint {
-    color: $govuk-secondary-text-colour;
+    color: govuk-functional-colour(secondary-text);
   }
 }
