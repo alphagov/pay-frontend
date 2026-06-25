@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .govuk-date-input__item--with-separator {
   position: relative;
   margin-right: govuk-spacing(7);
