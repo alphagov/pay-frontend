@@ -81,8 +81,7 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
     charge.stripePublishableKey = STRIPE_LIVE_PUBLISHABLE_API_KEY
   }
 
-  charge.collectAdditionalBrowserDataForEpdq3ds = charge.paymentProvider === 'epdq' &&
-    charge.gatewayAccount.requires3ds && charge.gatewayAccount.integrationVersion3ds === 2
+  charge.collectAdditionalBrowserInfoAdyen = (charge.paymentProvider === 'adyen' && !charge.moto)
 }
 
 const routeFor = (resource, chargeId) => paths.generateRoute(`card.${resource}`, { chargeId: chargeId })

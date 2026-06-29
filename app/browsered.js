@@ -2,7 +2,7 @@ const inputConfirm = require('./assets/javascripts/browsered/form-input-confirm'
 const webPayments = require('./assets/javascripts/browsered/web-payments')
 const analytics = require('gaap-analytics')
 const formValidation = require('./assets/javascripts/browsered/form-validation')
-const epdq3ds2 = require('./assets/javascripts/browsered/epdq-3ds2')
+const collectAdditionalBrowserInfoAdyen = require('./assets/javascripts/browsered/collect-additional-browser-info-adyen')
 const helpers = require('./assets/javascripts/browsered/helpers')
 
 exports.chargeValidation = require('./utils/charge-validation')
@@ -14,7 +14,7 @@ window.payScripts = { // eslint-disable-line no-unused-vars
   inputConfirm,
   webPayments,
   formValidation,
-  epdq3ds2
+  collectAdditionalBrowserInfoAdyen
 }
 
 // GA tracking if an email typo is spotted
