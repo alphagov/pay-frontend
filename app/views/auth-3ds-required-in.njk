@@ -17,6 +17,9 @@
     {% if md %}
         <input type="hidden" name="MD" value="{{ md }}"/>
     {% endif %}
+    {% if redirectResult %}
+      <input type="hidden" name="redirectResult" value="{{ redirectResult }}"/>
+    {% endif %}
     <noscript>
         <button id="confirm" class="govuk-button">{{ __p("commonButtons.continueButton") }}</button>
     </noscript>
