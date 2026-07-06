@@ -52,6 +52,11 @@ const build3dsPayload = (chargeId, req) => {
     auth3dsPayload.md = md
   }
 
+  const redirectResult = _.get(req, 'body.redirectResult')
+  if (!_.isUndefined(redirectResult)) {
+    auth3dsPayload.redirect_result = redirectResult
+  }
+
   return auth3dsPayload
 }
 
@@ -176,6 +181,16 @@ module.exports = {
     responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_IN_VIEW, {
       threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
       providerStatus: _.get(req, 'query.status', 'success')
+    })
+  },
+  auth3dsRequiredInAdyen: (req, res) => {
+    const charge = normalise.charge(req.chargeData, req.chargeId)
+    if (_.isUndefined(_.get(req, 'query.redirectResult'))) {
+      logger.info('redirectResult is not present')
+    }
+    responseRouter.response(req, res, views.AUTH_3DS_REQUIRED_IN_VIEW, {
+      threeDsHandlerUrl: routeFor('auth3dsHandler', charge.id),
+      redirectResult: _.get(req, 'query.redirectResult', '')
     })
   }
 }

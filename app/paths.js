@@ -46,6 +46,10 @@ const paths = {
       path: '/card_details/:chargeId/3ds_required_in/epdq',
       action: 'post'
     },
+    auth3dsRequiredInAdyen: {
+      path: '/card_details/:chargeId/3ds_required_in/adyen',
+      action: 'post'
+    },
     auth3dsRequiredOut: {
       path: '/card_details/:chargeId/3ds_required_out',
       action: 'get'
