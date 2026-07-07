@@ -336,6 +336,75 @@ describe('chargeTests', function () {
       })
     })
 
+    describe('for adyen payment provider', function () {
+      it('should return the data, including redirectResult, in the UI for POST to 3ds_required_in/adyen', function (done) {
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'adyen'
+        })
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+
+        const data = {}
+        postChargeRequest(app, false, data, chargeId, false, '/3ds_required_in/adyen')
+          .expect(200)
+          .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\'] > input[name=\'redirectResult\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+
+      it('should return the data, including redirectResult, in the UI for GET to 3ds_required_in/adyen', function (done) {
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'adyen'
+        })
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+
+        getChargeRequest(app, false, chargeId, '/3ds_required_in/adyen?redirectResult=XtestX')
+          .expect(200)
+          .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\'] > input[name=\'redirectResult\']').attr('value')).to.eql('XtestX')
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+
+      it('should return the data, with missing redirectResult, in the UI for GET to 3ds_required_in/adyen', function (done) {
+        const chargeResponse = paymentFixtures.validChargeDetails({
+          ...chargeOptionsWith3dsRequired,
+          paymentProvider: 'adyen'
+        })
+        defaultAdminusersResponseForGetService(gatewayAccountId)
+
+        nock(process.env.CONNECTOR_HOST)
+          .get('/v1/frontend/charges/' + chargeId).reply(200, chargeResponse)
+
+        getChargeRequest(app, false, chargeId, '/3ds_required_in/adyen')
+          .expect(200)
+          .expect(function (res) {
+            expect(res.header['set-cookie'] === undefined).to.be.true // eslint-disable-line
+            const $ = cheerio.load(res.text)
+            expect($('form[name=\'three_ds_required\'] > input[name=\'csrfToken\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\'] > input[name=\'redirectResult\']').attr('value')).to.not.exist // eslint-disable-line
+            expect($('form[name=\'three_ds_required\']').attr('action')).to.eql(`/card_details/${chargeId}/3ds_handler`)
+          })
+          .end(done)
+      })
+    })
+
     describe('for smartpay payment provider', function () {
       it('should return the data needed for the UI when GET', function (done) {
         const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
@@ -364,6 +433,19 @@ describe('chargeTests', function () {
 
   describe('The /card_details/charge_id/3ds_handler', function () {
     const chargeResponse = paymentFixtures.validChargeDetails(chargeOptionsWith3dsRequired)
+
+    it('should send adyen 3ds data to connector and redirect to confirm', function (done) {
+      const cookieValue = cookie.create(chargeId)
+      nock(process.env.CONNECTOR_HOST)
+        .get(`/v1/frontend/charges/${chargeId}`).reply(200, chargeResponse)
+        .post(`${connectorChargePath}${chargeId}/3ds`, { redirect_result: 'XtestX' }).reply(200)
+      defaultAdminusersResponseForGetService(gatewayAccountId)
+
+      postChargeRequest(app, cookieValue, { redirectResult: 'XtestX' }, chargeId, true, '/3ds_handler')
+        .expect(303)
+        .expect('Location', `${frontendCardDetailsPath}/${chargeId}/confirm`)
+        .end(done)
+    })
 
     it('should send 3ds data to connector and redirect to confirm', function (done) {
       const cookieValue = cookie.create(chargeId)

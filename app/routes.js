@@ -103,6 +103,8 @@ exports.bind = function (app) {
   app.get(card.auth3dsRequiredOut.path, standardMiddlewareStack, threeDS.auth3dsRequiredOut)
   app.post(card.auth3dsRequiredInEpdq.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
   app.get(card.auth3dsRequiredInEpdq.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInEpdq)
+  app.post(card.auth3dsRequiredInAdyen.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInAdyen)
+  app.get(card.auth3dsRequiredInAdyen.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredInAdyen)
   app.post(card.auth3dsRequiredIn.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
   app.get(card.auth3dsRequiredIn.path, chargeNoCookieRequiredMiddlewareStack, threeDS.auth3dsRequiredIn)
   app.post(card.auth3dsHandler.path, [actionName, enforceSessionCookie, retrieveCharge, resolveLanguage, resolveService, stateEnforcer], threeDS.auth3dsHandler)
