@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .hidden {
   display: none;
 }
@@ -34,7 +36,7 @@ body:not(.js-enabled) {
   .either {
     @include govuk-font($size: 19);
     line-height: 37px!important;
-    color: $govuk-secondary-text-colour;
+    color: govuk-functional-colour(secondary-text);
     float: left;
     margin-right: govuk-spacing(3);
   }
