@@ -46,6 +46,14 @@ module.exports = async (req, res) => {
     return res.sendStatus(400)
   }
   const { url, paymentProvider } = req.body
+  try {
+    const parsedUrl = new URL(url)
+    if (parsedUrl.protocol !== 'https:' || !parsedUrl.hostname.endsWith('.apple.com')) {
+      return res.sendStatus(400)
+    }
+  } catch (e) {
+    return res.sendStatus(400)
+  }
   const merchantIdentityVars = getApplePayMerchantIdentityVariables(paymentProvider)
   if (!merchantIdentityVars) {
     return res.sendStatus(400)
