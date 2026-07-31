@@ -158,7 +158,8 @@
       "send": "0.19.0"
     },
     "grunt-contrib-compress": {
-      "brace-expansion": "^2.1.4"
+      "brace-expansion": "^2.1.4",
+      "minimatch": "^5.1.9"
     },
     "mocha": {
       "brace-expansion": "^2.1.4",
