@@ -161,7 +161,8 @@
       "brace-expansion": "^2.1.4"
     },
     "mocha": {
-      "brace-expansion": "^2.1.4"
+      "brace-expansion": "^2.1.4",
+      "minimatch": "^5.1.9"
     },
     "cross-spawn": "^7.0.5",
     "axios": "1.18.0",
