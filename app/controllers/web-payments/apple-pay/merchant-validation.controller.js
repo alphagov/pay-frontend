@@ -19,21 +19,29 @@ ${key}
 }
 
 function getApplePayMerchantIdentityVariables (paymentProvider) {
-  if (paymentProvider === 'worldpay' || paymentProvider === 'sandbox') {
-    return {
-      merchantIdentifier: process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID,
-      cert: getCertificateMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
-      key: getPrivateKeyMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
-    }
-  } else if (paymentProvider === 'stripe') {
-    return {
-      merchantIdentifier: process.env.STRIPE_APPLE_PAY_MERCHANT_ID,
-      cert: getCertificateMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
-      key: getPrivateKeyMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
-    }
-  } else {
-    logger.error(`Unexpected payment provider [${paymentProvider}] when getting Merchant Identity variables for Apple Pay`)
-    return false
+  switch (paymentProvider) {
+    case 'sandbox':
+    case 'worldpay':
+      return {
+        merchantIdentifier: process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID,
+        cert: getCertificateMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+        key: getPrivateKeyMultiline(process.env.WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+      }
+    case 'stripe':
+      return {
+        merchantIdentifier: process.env.STRIPE_APPLE_PAY_MERCHANT_ID,
+        cert: getCertificateMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+        key: getPrivateKeyMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+      }
+    case 'adyen':
+      return {
+        merchantIdentifier: process.env.ADYEN_APPLE_PAY_MERCHANT_ID,
+        cert: getCertificateMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+        key: getPrivateKeyMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+      }
+    default:
+      logger.error(`Unexpected payment provider [${paymentProvider}] when getting Merchant Identity variables for Apple Pay`)
+      return false
   }
 }
 
@@ -41,7 +49,6 @@ function getApplePayMerchantIdentityVariables (paymentProvider) {
 // is coming from a registered and authorised Apple Merchant Account. The
 // browser will produce a URL which we should dial with our certificates server side.
 module.exports = async (req, res) => {
-
   if (!req.body.url) {
     return res.sendStatus(400)
   }
@@ -72,7 +79,7 @@ module.exports = async (req, res) => {
     key: merchantIdentityVars.key
   })
 
-  const axiosInstance = axios.create({ httpsAgent, proxy: false });
+  const axiosInstance = axios.create({ httpsAgent, proxy: false })
 
   try {
     const response = await axiosInstance.post(url, data, { headers: { 'Content-Type': 'application/json; charset=utf-8' } })
