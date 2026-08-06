@@ -10,6 +10,9 @@ const worldpayKey = 'A-WORLDPAY-KEY'
 const stripeMerchantId = 'stripe.merchant.id'
 const stripeCertificate = 'A-STRIPE-CERTIFICATE'
 const stripeKey = 'A-STRIPE-KEY'
+const adyenMerchantId = 'adyen.merchant.id'
+const adyenCertificate = 'AN-ADYEN-CERTIFICATE'
+const adyenKey = 'AN-ADYEN-KEY'
 const url = 'https://fakeapple.url'
 
 const appleResponse = { status: 200, data: { foo: 'bar' } }
@@ -38,6 +41,9 @@ describe('Validate with Apple the merchant is legitimate', () => {
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID = stripeMerchantId
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE = stripeCertificate
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = stripeKey
+    process.env.ADYEN_APPLE_PAY_MERCHANT_ID = adyenMerchantId
+    process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE = adyenCertificate
+    process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = adyenKey
 
     sendSpy = sinon.spy()
     res = {
@@ -171,6 +177,51 @@ describe('Validate with Apple the merchant is legitimate', () => {
         sinon.match(url),
         sinon.match({
           merchantIdentifier: worldpayMerchantId,
+          displayName: 'GOV.UK Pay',
+          initiative: 'web',
+          initiativeContext: merchantDomain
+        }),
+        sinon.match({
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        })
+      )
+
+      sinon.assert.calledWith(res.status, 200)
+      sinon.assert.calledWith(sendSpy, appleResponse.data)
+    })
+
+    it('should return a payload for a Adyen payment if Merchant is valid', async () => {
+      const axiosPostStub = sinon.stub().resolves(appleResponse)
+      const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
+      const axiosStub = {
+        create: axiosCreateStub
+      }
+      const controller = getControllerWithMocks(axiosStub)
+
+      const req = {
+        body: {
+          url,
+          paymentProvider: 'adyen'
+        }
+      }
+
+      await controller(req, res)
+
+      sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
+        proxy: 'https://fakeproxy.com',
+        cert: sinon.match(cert => cert.includes(adyenCertificate)),
+        key: sinon.match(key => key.includes(adyenKey))
+      }))
+
+      sinon.assert.calledWith(axiosCreateStub, sinon.match({
+        httpsAgent: sinon.match.any,
+        proxy: false
+      }))
+
+      sinon.assert.calledWith(axiosPostStub,
+        sinon.match(url),
+        sinon.match({
+          merchantIdentifier: adyenMerchantId,
           displayName: 'GOV.UK Pay',
           initiative: 'web',
           initiativeContext: merchantDomain
