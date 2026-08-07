@@ -117,7 +117,7 @@ const actions = {
     code: 200,
     view: 'plain-message',
     locals: {
-      message: 'GOV.UK Pay is built by a team at the Government Digital Service in London, Manchester and Bristol. If you\'d like to join us, see https://gds.blog.gov.uk/jobs'
+      message: 'Thanks for everything, Rich.'
     }
   },
 
