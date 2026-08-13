@@ -193,7 +193,7 @@ describe('Worldpay 3ds flex card payment flow', () => {
           // Stub Payment Request API
           if (win.PaymentRequest) {
             // If we’re running in headed mode
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validGooglePayment))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validGooglePayment))
           } else {
             // else headless
             win.PaymentRequest = getMockPaymentRequest(validGooglePayment)

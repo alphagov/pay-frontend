@@ -110,7 +110,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
@@ -138,7 +138,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`, {
         onBeforeLoad: win => {
           if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
@@ -163,7 +163,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`, {
         onBeforeLoad: win => {
           if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
@@ -226,7 +226,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`, {
         onBeforeLoad: win => {
           if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
@@ -270,7 +270,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/secure/${tokenId}`, {
         onBeforeLoad: win => {
           if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
@@ -360,7 +360,7 @@ describe('Google Pay payment flow', () => {
       cy.visit(`/card_details/${chargeId}`, {
         onBeforeLoad: win => {
           if (win.PaymentRequest) {
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
           }
@@ -393,7 +393,7 @@ describe('Google Pay payment flow', () => {
         cy.visit(`/card_details/${chargeId}`, {
           onBeforeLoad: win => {
             if (win.PaymentRequest) {
-              cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+              cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
             } else {
               win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)
             }

@@ -277,7 +277,7 @@ describe('Standard card payment flow', () => {
           // Stub Payment Request API
           if (win.PaymentRequest) {
             // If we’re running in headed mode
-            cy.stub(win, 'PaymentRequest', getMockPaymentRequest(validPaymentRequestResponse))
+            cy.stub(win, 'PaymentRequest').callsFake(getMockPaymentRequest(validPaymentRequestResponse))
           } else {
             // else headless
             win.PaymentRequest = getMockPaymentRequest(validPaymentRequestResponse)

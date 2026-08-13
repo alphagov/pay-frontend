@@ -167,7 +167,7 @@ describe('Apple Pay payment flow', () => {
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
-          cy.stub(win, 'fetch', mockFetchAPI)
+          cy.stub(win, 'fetch').callsFake(mockFetchAPI)
         }
       })
 
@@ -211,7 +211,7 @@ describe('Apple Pay payment flow', () => {
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
-          cy.stub(win, 'fetch', mockFetchAPI)
+          cy.stub(win, 'fetch').callsFake(mockFetchAPI)
         }
       })
 
@@ -249,7 +249,7 @@ describe('Apple Pay payment flow', () => {
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
-          cy.stub(win, 'fetch', mockFetchAPI)
+          cy.stub(win, 'fetch').callsFake(mockFetchAPI)
         }
       })
 
@@ -294,7 +294,7 @@ describe('Apple Pay payment flow', () => {
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
-          cy.stub(win, 'fetch', mockFetchAPI)
+          cy.stub(win, 'fetch').callsFake(mockFetchAPI)
         }
       })
 
@@ -392,7 +392,7 @@ describe('Apple Pay payment flow', () => {
           // Stub fetch so we can simulate
           // 1. The merchant validation call to Apple
           // 2. The auth call to connector
-          cy.stub(win, 'fetch', mockFetchAPI)
+          cy.stub(win, 'fetch').callsFake(mockFetchAPI)
         }
       })
 
@@ -485,7 +485,7 @@ describe('Apple Pay payment flow', () => {
             // Stub fetch so we can simulate
             // 1. The merchant validation call to Apple
             // 2. The auth call to connector
-            cy.stub(win, 'fetch', mockFetchAPI)
+            cy.stub(win, 'fetch').callsFake(mockFetchAPI)
           }
         })
 
