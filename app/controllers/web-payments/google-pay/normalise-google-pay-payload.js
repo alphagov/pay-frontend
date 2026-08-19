@@ -83,7 +83,6 @@ module.exports = (req, paymentProvider) => {
   logSelectedPayloadProperties(req)
 
   const payload = req.body
-
   const paymentInfo = {
     last_digits_card_number: normaliseLastDigitsCardNumber(lodash.get(payload, 'paymentResponse.details.paymentMethodData.info.cardDetails', '')),
     brand: normaliseCardName(lodash.get(payload, 'paymentResponse.details.paymentMethodData.info.cardNetwork', '')),
@@ -99,15 +98,28 @@ module.exports = (req, paymentProvider) => {
 
   delete payload.paymentResponse.details.paymentMethodData
 
-  if (paymentProvider === 'stripe') {
-    return {
-      payment_info: paymentInfo,
-      token_id: paymentData.id
-    }
-  } else {
-    return {
-      payment_info: paymentInfo,
-      encrypted_payment_data: paymentData
-    }
+  switch (paymentProvider) {
+    case 'stripe':
+      return {
+        payment_info: paymentInfo,
+        token_id: paymentData.id
+      }
+    case 'adyen':
+      paymentInfo.js_enabled = payload.paymentResponse.browser_info.js_enabled
+      paymentInfo.js_navigator_language = payload.paymentResponse.browser_info.js_navigator_language
+      paymentInfo.js_screen_color_depth = payload.paymentResponse.browser_info.js_screen_color_depth
+      paymentInfo.js_screen_height = payload.paymentResponse.browser_info.js_screen_height
+      paymentInfo.js_screen_width = payload.paymentResponse.browser_info.js_screen_width
+      paymentInfo.js_timezone_offset_mins = payload.paymentResponse.browser_info.js_timezone_offset_mins
+      return {
+        payment_info: paymentInfo,
+        token: JSON.stringify(paymentData)
+      }
+    case 'sandbox':
+    case 'worldpay':
+      return {
+        payment_info: paymentInfo,
+        encrypted_payment_data: paymentData
+      }
   }
 }

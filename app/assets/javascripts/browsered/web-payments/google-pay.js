@@ -1,6 +1,6 @@
 'use strict'
 
-const { getGooglePaymentsConfiguration, showErrorSummary } = require('./helpers')
+const { getGooglePaymentsConfiguration, showErrorSummary, getBrowserInfo } = require('./helpers')
 const { toggleSubmitButtons, showSpinnerAndHideMainContent, hideSpinnerAndShowMainContent, sendLogMessage } = require('../helpers')
 const { email_collection_mode, payment_provider } = window.Charge // eslint-disable-line camelcase
 
@@ -111,6 +111,10 @@ const performDeviceDataCollectionForGooglePay = (paymentData) => {
 const processPayment = paymentData => {
   toggleSubmitButtons()
   showSpinnerAndHideMainContent()
+
+  if (payment_provider === 'adyen' && Charge.collect_additional_browser_info_adyen === true) { // eslint-disable-line camelcase
+    paymentData.browser_info = getBrowserInfo()
+  }
 
   // attempt device data collection for worldpay only
   if (payment_provider === 'worldpay') { // eslint-disable-line camelcase
