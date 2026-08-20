@@ -94,8 +94,8 @@ module.exports = (req, paymentProvider) => {
     ip_address: userIpAddress(req)
   }
 
-  const paymentData = keysToSnakeCase(JSON.parse(payload.paymentResponse.details.paymentMethodData.tokenizationData.token))
-
+  const token = payload.paymentResponse.details.paymentMethodData.tokenizationData.token
+  const paymentData = keysToSnakeCase(JSON.parse(token))
   delete payload.paymentResponse.details.paymentMethodData
 
   switch (paymentProvider) {
@@ -113,7 +113,7 @@ module.exports = (req, paymentProvider) => {
       paymentInfo.js_timezone_offset_mins = payload.paymentResponse.browser_info.js_timezone_offset_mins
       return {
         payment_info: paymentInfo,
-        token: JSON.stringify(paymentData)
+        token: token
       }
     case 'sandbox':
     case 'worldpay':
