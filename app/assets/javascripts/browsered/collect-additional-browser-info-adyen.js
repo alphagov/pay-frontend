@@ -1,5 +1,8 @@
 'use strict'
 
+const { keysToCamelCase } = require('../../../utils/key-camelizer')
+const { getBrowserInfo } = require('./web-payments/helpers')
+
 const init = () => {
   if (window.Charge.collect_additional_browser_info_adyen) {
     addAdditionalInformation()
@@ -8,26 +11,11 @@ const init = () => {
 
 const addAdditionalInformation = () => {
   document.getElementById('jsEnabled').value = 'true'
-  if (typeof navigator.language === 'string') {
-    appendHiddenInputToForm('jsNavigatorLanguage', navigator.language)
+  const browserInfo = keysToCamelCase(getBrowserInfo())
+
+  for (const [key, value] of Object.entries(browserInfo)) {
+    appendHiddenInputToForm(key, value)
   }
-
-  if (window.screen) {
-    if (typeof window.screen.colorDepth === 'number') {
-      appendHiddenInputToForm('jsScreenColorDepth', window.screen.colorDepth)
-    }
-
-    if (typeof window.screen.height === 'number') {
-      appendHiddenInputToForm('jsScreenHeight', window.screen.height)
-    }
-
-    if (typeof window.screen.width === 'number') {
-      appendHiddenInputToForm('jsScreenWidth', window.screen.width)
-    }
-  }
-
-  const date = new Date()
-  appendHiddenInputToForm('jsTimezoneOffsetMins', date.getTimezoneOffset())
 }
 
 const appendHiddenInputToForm = (name, value) => {
