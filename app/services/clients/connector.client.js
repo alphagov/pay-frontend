@@ -30,11 +30,18 @@ const _getFindChargeUrlFor = chargeId => baseUrl + CARD_CHARGE_PATH.replace('{ch
 const _getAuthUrlFor = chargeId => baseUrl + CARD_AUTH_PATH.replace('{chargeId}', chargeId)
 
 /** @private */
-const _getWalletAuthUrlFor = (chargeId, walletType) => {
-  const walletAuthUrl = baseUrl + WALLET_AUTH_PATH
+const _getWalletAuthUrlFor = (chargeId, walletType, paymentProvider) => {
+  let pathSuffix = ''
+
+  if (paymentProvider === 'adyen' && walletType === 'google') {
+    pathSuffix = '/adyen'
+  }
+
+  const path = WALLET_AUTH_PATH
     .replace('{chargeId}', chargeId)
     .replace('{walletType}', walletType)
-  return walletAuthUrl
+
+  return baseUrl + path + pathSuffix
 }
 
 /** @private */
@@ -178,8 +185,8 @@ const chargeAuth = (chargeOptions, loggingFields = {}) => {
   return _postConnector(authUrl, chargeOptions.payload, 'create charge', loggingFields, 'chargeAuth')
 }
 
-const chargeAuthWithWallet = (chargeOptions, loggingFields = {}) => {
-  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.wallet)
+const chargeAuthWithWallet = (chargeOptions, paymentProvider, loggingFields = {}) => {
+  const authUrl = _getWalletAuthUrlFor(chargeOptions.chargeId, chargeOptions.wallet, paymentProvider)
   return _postConnector(authUrl, chargeOptions.payload, 'create charge using e-wallet payment', loggingFields, 'chargeAuthWithWallet')
 }
 

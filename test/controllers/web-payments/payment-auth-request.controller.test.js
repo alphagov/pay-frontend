@@ -123,8 +123,7 @@ describe('The web payments auth request controller', () => {
         expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
         expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
-      }
-      )
+      })
     })
 
     it('should set error identifier in the session for declined transaction, if it is present in the response body ' +
@@ -149,8 +148,7 @@ describe('The web payments auth request controller', () => {
           expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
           expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
         done()
-      }
-      )
+      })
     })
 
     it('should not set payload in the session and return handle payment url if error', done => {
@@ -169,8 +167,7 @@ describe('The web payments auth request controller', () => {
         expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
         expect(mockCookies.setSessionVariable.called).to.be.false // eslint-disable-line
         done()
-      }
-      )
+      })
     })
 
     it('should call the `next` function when the Google Pay normalise function throws an error', done => {
@@ -191,6 +188,53 @@ describe('The web payments auth request controller', () => {
       sinon.assert.calledWith(next, error)
 
       done()
+    })
+  })
+
+  describe('when processing an Adyen Google Pay payment', () => {
+    const wallet = 'google'
+    const req = {
+      headers: {
+        'x-request-id': 'aaa'
+      },
+      chargeId,
+      chargeData: paymentFixtures.validChargeDetails({ paymentProvider: 'adyen' }),
+      params: {
+        wallet
+      },
+      body: {}
+    }
+
+    const requirePaymentAuthRequestController = (mockedNormalise, mockedCookies) => {
+      const proxyquireMocks = {
+        '../../utils/cookies': mockedCookies,
+        './google-pay/normalise-google-pay-payload': mockedNormalise
+      }
+
+      return proxyquire('../../../app/controllers/web-payments/payment-auth-request.controller.js', proxyquireMocks)
+    }
+
+    it('should set payload in the session and return handle payment url when payment provider is Adyen', done => {
+      const res = {
+        status: sinon.spy(),
+        send: sinon.spy()
+      }
+
+      const mockCookies = {
+        setSessionVariable: sinon.spy()
+      }
+      const expectedBodySavedInSession = {
+        statusCode: 200
+      }
+      nock(process.env.CONNECTOR_HOST)
+        .post(`/v1/frontend/charges/${chargeId}/wallets/google/adyen`)
+        .reply(200)
+      requirePaymentAuthRequestController(mockNormalise, mockCookies)(req, res).then(() => {
+        expect(res.status.calledWith(200)).to.be.ok // eslint-disable-line
+        expect(res.send.calledWith({ url: `/handle-payment-response/google/${chargeId}` })).to.be.ok // eslint-disable-line
+        expect(mockCookies.setSessionVariable.calledWith(req, `ch_${chargeId}.webPaymentAuthResponse`, expectedBodySavedInSession)).to.be.ok // eslint-disable-line
+        done()
+      })
     })
   })
 })
