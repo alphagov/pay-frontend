@@ -125,7 +125,6 @@ function initialiseTemplateEngine (app) {
   nunjucksEnvironment.addGlobal('css_path', NODE_ENV === 'production' ? staticify.getVersionedPath(CSS_PATH) : CSS_PATH)
   nunjucksEnvironment.addGlobal('js_path', NODE_ENV === 'production' ? staticify.getVersionedPath(JAVASCRIPT_PATH) : JAVASCRIPT_PATH)
   nunjucksEnvironment.addGlobal('isDevelopment', NODE_ENV !== 'production')
-  nunjucksEnvironment.addGlobal('govukRebrand', true)
 }
 
 function initialisePublic (app) {
