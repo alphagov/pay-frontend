@@ -1,5 +1,5 @@
 # Taken from here
-# https://github.com/alphagov/govuk-frontend/blob/master/config/.sass-lint.yml
+# https://github.com/govuk-pay/govuk-frontend/blob/master/config/.sass-lint.yml
 
 # Not yet supported by sass-lint:
 # ChainedClasses, DisableLinterReason, ElsePlacement, PropertyCount

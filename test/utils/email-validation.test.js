@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const { validateEmail } = require('../../app/utils/email-validation')
 
 // test emails taken from Notify's internal validation
-// https://github.com/alphagov/notifications-utils
+// https://github.com/govuk-pay/notifications-utils
 const validEmailAddresses = [
   'email@domain.com',
   'email@domain.COM',
