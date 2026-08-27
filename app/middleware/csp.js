@@ -37,7 +37,7 @@ const formActionCardDetails = (req, res) => {
   return CSP_SELF[0]
 }
 
-// Script that is being used during zap test: https://github.com/alphagov/pay-endtoend/blob/d685d5bc38d639e8adef629673e5577cb923408e/src/test/resources/uk/gov/pay/pen/tests/frontend.feature#L23
+// Script that is being used during zap test: https://github.com/govuk-pay/pay-endtoend/blob/d685d5bc38d639e8adef629673e5577cb923408e/src/test/resources/uk/gov/pay/pen/tests/frontend.feature#L23
 if (allowUnsafeEvalScripts) {
   scriptSourceCardDetails.push('\'unsafe-eval\'')
 }
