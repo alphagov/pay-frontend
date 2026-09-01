@@ -10,6 +10,9 @@ updates:
   - govuk-pay
   - dependencies
   - javascript
+  cooldown:
+    exclude:
+      - "@govuk-pay/*"
   ignore:
   - dependency-name: "@aws-crypto/decrypt-node"
     versions: ["2.x", "3.x", "4.x"]
