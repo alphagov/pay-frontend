@@ -7,6 +7,21 @@ describe('Enter card details page - browser info collection', () => {
   const sessionOpts = {}
 
   it('should collect extra browser information for an Adyen non-MOTO payment', () => {
+    const validPayment = {
+      cardNumber: '4444333322221111',
+      expiryMonth: '01',
+      expiryYear: '30',
+      name: 'Valid Paying Name',
+      securityCode: '012',
+      addressLine1: '10 Valid Paying Address',
+      city: 'London',
+      postcode: 'E1 8QS',
+      email: 'test@test.test'
+    }
+
+    const checkCardDetailsStubs = cardPaymentStubs.checkCardDetailsStubs(chargeId)
+    const confirmPaymentDetailsStubs = cardPaymentStubs.confirmPaymentDetailsStubs(chargeId, validPayment, gatewayAccountId)
+
     const providerOpts = {
       paymentProvider: 'adyen'
     }
@@ -43,6 +58,32 @@ describe('Enter card details page - browser info collection', () => {
       cy.get('#card-details input[name=jsEnabled]').should('exist')
       cy.get('#card-details input[name=jsEnabled]').should('have.attr', 'value', 'true')
     })
+
+    cy.log('Submitting valid payment details to check the hidden form fields are processed without error')
+
+    cy.task('clearStubs')
+    cy.task('setupStubs', checkCardDetailsStubs)
+
+    cy.intercept('POST', `/check_card/${chargeId}`).as('checkCard')
+
+    cy.get('#card-no').type(validPayment.cardNumber)
+    cy.get('#card-no').blur()
+    cy.wait('@checkCard')
+    cy.get('#expiry-month').type(validPayment.expiryMonth)
+    cy.get('#expiry-year').type(validPayment.expiryYear)
+    cy.get('#cardholder-name').type(validPayment.name)
+    cy.get('#cvc').type(validPayment.securityCode)
+    cy.get('#address-line-1').type(validPayment.addressLine1)
+    cy.get('#address-city').type(validPayment.city)
+    cy.get('#address-postcode').type(validPayment.postcode)
+    cy.get('#email').type(validPayment.email)
+
+    cy.task('clearStubs')
+    cy.task('setupStubs', confirmPaymentDetailsStubs)
+
+    cy.get('#card-details').submit()
+    cy.location('pathname').should('eq', `/card_details/${chargeId}/confirm`)
+    cy.get('#confirm').should('exist')
   })
 
   it('should not collect extra browser information on the page for an Adyen MOTO payment', () => {

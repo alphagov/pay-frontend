@@ -114,6 +114,7 @@ const processPayment = paymentData => {
 
   if (payment_provider === 'adyen' && Charge.collect_additional_browser_info_adyen === true) { // eslint-disable-line camelcase
     paymentData.browser_info = getBrowserInfo()
+    paymentData.browser_info.js_enabled = true
   }
 
   // attempt device data collection for worldpay only
