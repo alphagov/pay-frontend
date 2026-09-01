@@ -125,15 +125,30 @@ const getGooglePaymentsConfiguration = (paymentProvider) => {
 }
 
 const getBrowserInfo = () => {
-  const timezoneOffset = new Date().getTimezoneOffset()
-  return {
-    js_enabled: true,
-    js_navigator_language: typeof navigator.language === 'string' ? navigator.language : null,
-    js_screen_color_depth: typeof window.screen.colorDepth === 'number' ? window.screen.colorDepth : null,
-    js_screen_height: typeof window.screen.height === 'number' ? window.screen.height : null,
-    js_screen_width: typeof window.screen.width === 'number' ? window.screen.width : null,
-    js_timezone_offset_mins: typeof timezoneOffset === 'number' ? timezoneOffset : null
+  let browserInfo = {}
+
+  if (typeof navigator.language === 'string') {
+    browserInfo.js_navigator_language = navigator.language
   }
+
+  if (typeof window.screen.colorDepth === 'number') {
+    browserInfo.js_screen_color_depth = window.screen.colorDepth
+  }
+
+  if (typeof window.screen.height === 'number') {
+    browserInfo.js_screen_height = window.screen.height
+  }
+
+  if (typeof window.screen.height === 'number') {
+    browserInfo.js_screen_width = window.screen.width
+  }
+
+  const timezoneOffset = new Date().getTimezoneOffset()
+  if (typeof timezoneOffset === 'number') {
+    browserInfo.js_timezone_offset_mins = timezoneOffset
+  }
+
+  return browserInfo
 }
 
 module.exports = {
