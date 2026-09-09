@@ -9,7 +9,7 @@ GOV.UK Pay Frontend application (Node.js)
 * This requires the [Pay CLI](https://www.npmjs.com/package/@govuk-pay/cli)
 * You
   have [set up your local development environment](https://manual.payments.service.gov.uk/manual/development-processes/setup-local-dev-environment.html)
-* Clone this repo locally.
+* Clone this repo locally
 
 ### Starting app
 
