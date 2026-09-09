@@ -12,7 +12,9 @@ const {
   GOOGLE_PAY_MERCHANT_ID,
   GOOGLE_PAY_MERCHANT_ID_2,
   STRIPE_TEST_PUBLISHABLE_API_KEY,
-  STRIPE_LIVE_PUBLISHABLE_API_KEY
+  STRIPE_LIVE_PUBLISHABLE_API_KEY,
+  ADYEN_GOOGLE_PAY_GATEWAY_MERCHANT_ID_TEST,
+  ADYEN_GOOGLE_PAY_GATEWAY_MERCHANT_ID_LIVE
 } = process.env
 const logger = require('../utils/logger')(__filename)
 const logging = require('../utils/logging')
@@ -76,9 +78,11 @@ const appendChargeForNewView = async (charge, req, chargeId) => {
   if (charge.gatewayAccount.type !== 'live') {
     charge.worldpay3dsFlexDdcUrl = WORLDPAY_3DS_FLEX_DDC_TEST_URL
     charge.stripePublishableKey = STRIPE_TEST_PUBLISHABLE_API_KEY
+    charge.adyenGooglePayGatewayMerchantId = ADYEN_GOOGLE_PAY_GATEWAY_MERCHANT_ID_TEST
   } else {
     charge.worldpay3dsFlexDdcUrl = WORLDPAY_3DS_FLEX_DDC_LIVE_URL
     charge.stripePublishableKey = STRIPE_LIVE_PUBLISHABLE_API_KEY
+    charge.adyenGooglePayGatewayMerchantId = ADYEN_GOOGLE_PAY_GATEWAY_MERCHANT_ID_LIVE
   }
 
   charge.collectAdditionalBrowserInfoAdyen = (charge.paymentProvider === 'adyen' && !charge.moto)
