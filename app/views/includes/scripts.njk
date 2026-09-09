@@ -60,6 +60,7 @@
       window.googlePayMerchantID = '{{ googlePayMerchantID }}'
       window.gatewayAccountType = '{{ gatewayAccount.type }}'
       window.stripePublishableKey = '{{ stripePublishableKey }}'
+      window.adyenGooglePayGatewayMerchantId = '{{ adyenGooglePayGatewayMerchantId }}'
     {% endif %}
     {% if allowApplePay or allowGooglePay %}
       window.payScripts.webPayments.init()

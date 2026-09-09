@@ -83,6 +83,10 @@ const getGooglePaymentsConfiguration = (paymentProvider) => {
         'stripe:version': '2018-10-31',
         'stripe:publishableKey': window.stripePublishableKey
       }),
+      ...(paymentProvider === 'adyen' && {
+        gateway: 'adyen',
+        gatewayMerchantId: window.adyenGooglePayGatewayMerchantId
+      }),
       ...(paymentProvider === 'worldpay' && {
         gateway: 'worldpay',
         gatewayMerchantId: window.googlePayGatewayMerchantID
