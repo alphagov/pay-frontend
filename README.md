@@ -35,10 +35,10 @@ to <http://127.0.0.1:3000>.
 
 ### Debug using Visual Studio Code
 
-* In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
+* In VS Code, go to the `Debug` view (on macOS, use shortcut `CMD + shift + D`).
 * From the **Run** toolbar, select tne launch config `Frontend`.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
-* Press The `green play` button (`F5` MacOS):
+* Press The `green play` button (`F5` macOS):
     * This will run the app in debug mode.
     * Uses `nodemon` so it will automatically restart on code changes.
 
