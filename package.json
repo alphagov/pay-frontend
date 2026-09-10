@@ -94,7 +94,7 @@
     "memory-cache": "^0.2.0",
     "metrics": "0.1.21",
     "minimist": "1.2.8",
-    "morgan": "1.11.x",
+    "morgan": "1.12.x",
     "nunjucks": "^3.2.4",
     "polyfill-array-includes": "^2.0.0",
     "promise-polyfill": "8.3.0",
