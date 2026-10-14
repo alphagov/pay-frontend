@@ -45,11 +45,24 @@ function getApplePayMerchantIdentityVariables (paymentProvider) {
   }
 }
 
+// Apple only ever sends back validation URLs on its own `apple.com` domains, so
+// to prevent server-side request forgery we only allow requests to hosts that
+// are exactly `apple.com` or a subdomain of it.
+function isAllowedAppleMerchantValidationUrl (url) {
+  try {
+    const parsedUrl = new URL(url)
+    return parsedUrl.protocol === 'https:' &&
+      (parsedUrl.hostname === 'apple.com' || parsedUrl.hostname.endsWith('.apple.com'))
+  } catch (err) {
+    return false
+  }
+}
+
 // When an Apple payment is initiated in Safari, it must check that the request
 // is coming from a registered and authorised Apple Merchant Account. The
 // browser will produce a URL which we should dial with our certificates server side.
 module.exports = async (req, res) => {
-  if (!req.body.url) {
+  if (!req.body.url || !isAllowedAppleMerchantValidationUrl(req.body.url)) {
     return res.sendStatus(400)
   }
   const { url, paymentProvider } = req.body
