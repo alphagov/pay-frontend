@@ -58,11 +58,11 @@
     {% if allowGooglePay%}
       window.googlePayGatewayMerchantID = '{{ googlePayGatewayMerchantID }}'
       window.googlePayMerchantID = '{{ googlePayMerchantID }}'
-      window.gatewayAccountType = '{{ gatewayAccount.type }}'
       window.stripePublishableKey = '{{ stripePublishableKey }}'
       window.adyenGooglePayGatewayMerchantId = '{{ adyenGooglePayGatewayMerchantId }}'
     {% endif %}
     {% if allowApplePay or allowGooglePay %}
+      window.gatewayAccountType = '{{ gatewayAccount.type }}'
       window.payScripts.webPayments.init()
     {% endif %}
   })

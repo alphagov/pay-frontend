@@ -18,7 +18,7 @@ ${key}
 -----END PRIVATE KEY-----`
 }
 
-function getApplePayMerchantIdentityVariables (paymentProvider) {
+function getApplePayMerchantIdentityVariables (paymentProvider, gatewayAccountType) {
   switch (paymentProvider) {
     case 'sandbox':
     case 'worldpay':
@@ -34,10 +34,18 @@ function getApplePayMerchantIdentityVariables (paymentProvider) {
         key: getPrivateKeyMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
       }
     case 'adyen':
-      return {
-        merchantIdentifier: process.env.ADYEN_APPLE_PAY_MERCHANT_ID,
-        cert: getCertificateMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
-        key: getPrivateKeyMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+      if (gatewayAccountType === 'live') {
+        return {
+          merchantIdentifier: process.env.ADYEN_APPLE_PAY_MERCHANT_ID_LIVE,
+          cert: getCertificateMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_LIVE),
+          key: getPrivateKeyMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY_LIVE)
+        }
+      } else {
+        return {
+          merchantIdentifier: process.env.ADYEN_APPLE_PAY_MERCHANT_ID_TEST,
+          cert: getCertificateMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_TEST),
+          key: getPrivateKeyMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY_TEST)
+        }
       }
     default:
       logger.error(`Unexpected payment provider [${paymentProvider}] when getting Merchant Identity variables for Apple Pay`)
@@ -52,8 +60,8 @@ module.exports = async (req, res) => {
   if (!req.body.url) {
     return res.sendStatus(400)
   }
-  const { url, paymentProvider } = req.body
-  const merchantIdentityVars = getApplePayMerchantIdentityVariables(paymentProvider)
+  const { url, paymentProvider, gatewayAccountType } = req.body
+  const merchantIdentityVars = getApplePayMerchantIdentityVariables(paymentProvider, gatewayAccountType)
   if (!merchantIdentityVars) {
     return res.sendStatus(400)
   }

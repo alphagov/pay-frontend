@@ -22,7 +22,8 @@ module.exports = () => {
       },
       body: JSON.stringify({
         url,
-        paymentProvider: window.Charge.payment_provider
+        paymentProvider: window.Charge.payment_provider,
+        gatewayAccountType: window.gatewayAccountType
       })
     }).then(response => {
       if (response.status >= 200 && response.status < 300) {

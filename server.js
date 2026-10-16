@@ -33,7 +33,8 @@ const {
   ANALYTICS_TRACKING_ID,
   GOOGLE_PAY_MERCHANT_ID,
   WORLDPAY_APPLE_PAY_MERCHANT_ID_CERTIFICATE,
-  STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE
+  STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE,
+  ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_LIVE
 } = process.env
 const CSS_PATH = '/stylesheets/application.min.css'
 const JAVASCRIPT_PATH = '/javascripts/application.min.js'
@@ -177,6 +178,12 @@ function logApplePayCertificateTimeToExpiry () {
     const certificateTimeToExpiry = Math.floor((merchantIdCert.expiresAt - Date.now()) / 1000 / 60 / 60 / 24)
     // used by Splunk alert
     logger.info(`The Apple Pay Merchant identity cert will expire in ${certificateTimeToExpiry} days for Stripe`)
+  }
+  if (ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_LIVE !== undefined) {
+    const merchantIdCert = certinfo.info(ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_LIVE)
+    const certificateTimeToExpiry = Math.floor((merchantIdCert.expiresAt - Date.now()) / 1000 / 60 / 60 / 24)
+    // used by Splunk alert
+    logger.info(`The Apple Pay Merchant identity cert will expire in ${certificateTimeToExpiry} days for Adyen`)
   }
 }
 
