@@ -70,7 +70,7 @@ npm run compile && npm test
 
 #### Run tests in debug mode
 
-* In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
+* In VS Code, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
 * From the **Run** toolbar, select the launch config you want to run:
     * `Mocha All` - runs all tests.
     * `Mocha Current File` - only run currently open test file.
