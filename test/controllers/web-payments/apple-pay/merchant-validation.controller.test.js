@@ -10,9 +10,12 @@ const worldpayKey = 'A-WORLDPAY-KEY'
 const stripeMerchantId = 'stripe.merchant.id'
 const stripeCertificate = 'A-STRIPE-CERTIFICATE'
 const stripeKey = 'A-STRIPE-KEY'
-const adyenMerchantId = 'adyen.merchant.id'
-const adyenCertificate = 'AN-ADYEN-CERTIFICATE'
-const adyenKey = 'AN-ADYEN-KEY'
+const adyenLiveMerchantId = 'adyen.live.merchant.id'
+const adyenTestMerchantId = 'adyen.test.merchant.id'
+const adyenLiveCertificate = 'AN-ADYEN-LIVE-CERTIFICATE'
+const adyenLiveKey = 'AN-ADYEN-LIVE-KEY'
+const adyenTestCertificate = 'AN-ADYEN-TEST-CERTIFICATE'
+const adyenTestKey = 'AN-ADYEN-TEST-KEY'
 const url = 'https://fakeapple.url'
 
 const appleResponse = { status: 200, data: { foo: 'bar' } }
@@ -41,9 +44,12 @@ describe('Validate with Apple the merchant is legitimate', () => {
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID = stripeMerchantId
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE = stripeCertificate
     process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = stripeKey
-    process.env.ADYEN_APPLE_PAY_MERCHANT_ID = adyenMerchantId
-    process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE = adyenCertificate
-    process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = adyenKey
+    process.env.ADYEN_LIVE_APPLE_PAY_MERCHANT_ID = adyenLiveMerchantId
+    process.env.ADYEN_LIVE_APPLE_PAY_MERCHANT_ID_CERTIFICATE = adyenLiveCertificate
+    process.env.ADYEN_LIVE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = adyenLiveKey
+    process.env.ADYEN_TEST_APPLE_PAY_MERCHANT_ID = adyenTestMerchantId
+    process.env.ADYEN_TEST_APPLE_PAY_MERCHANT_ID_CERTIFICATE = adyenTestCertificate
+    process.env.ADYEN_TEST_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY = adyenTestKey
 
     sendSpy = sinon.spy()
     res = {
@@ -54,7 +60,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
 
   describe('when there is a proxy', () => {
     beforeEach(() => {
-      process.env.HTTPS_PROXY = 'https://fakeproxy.com'
+      process.env.HTTPS_PROXY = 'https://fakeproxy.test'
     })
 
     it('should return a payload for a Worldpay payment if Merchant is valid', async () => {
@@ -68,13 +74,14 @@ describe('Validate with Apple the merchant is legitimate', () => {
       const req = {
         body: {
           url,
-          paymentProvider: 'worldpay'
+          paymentProvider: 'worldpay',
+          gatewayAccountType: 'live'
         }
       }
       await controller(req, res)
 
       sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
-        proxy: 'https://fakeproxy.com',
+        proxy: 'https://fakeproxy.test',
         cert: sinon.match(cert => cert.includes(worldpayCertificate)),
         key: sinon.match(key => key.includes(worldpayKey))
       }))
@@ -112,13 +119,14 @@ describe('Validate with Apple the merchant is legitimate', () => {
       const req = {
         body: {
           url,
-          paymentProvider: 'stripe'
+          paymentProvider: 'stripe',
+          gatewayAccountType: 'live'
         }
       }
       await controller(req, res)
 
       sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
-        proxy: 'https://fakeproxy.com',
+        proxy: 'https://fakeproxy.test',
         cert: sinon.match(cert => cert.includes(stripeCertificate)),
         key: sinon.match(key => key.includes(stripeKey))
       }))
@@ -156,14 +164,15 @@ describe('Validate with Apple the merchant is legitimate', () => {
       const req = {
         body: {
           url,
-          paymentProvider: 'sandbox'
+          paymentProvider: 'sandbox',
+          gatewayAccountType: 'live'
         }
       }
 
       await controller(req, res)
 
       sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
-        proxy: 'https://fakeproxy.com',
+        proxy: 'https://fakeproxy.test',
         cert: sinon.match(cert => cert.includes(worldpayCertificate)),
         key: sinon.match(key => key.includes(worldpayKey))
       }))
@@ -190,7 +199,7 @@ describe('Validate with Apple the merchant is legitimate', () => {
       sinon.assert.calledWith(sendSpy, appleResponse.data)
     })
 
-    it('should return a payload for a Adyen payment if Merchant is valid', async () => {
+    it('should return a payload for a Adyen payment if Merchant is valid and gateway account type is live', async () => {
       const axiosPostStub = sinon.stub().resolves(appleResponse)
       const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
       const axiosStub = {
@@ -201,16 +210,17 @@ describe('Validate with Apple the merchant is legitimate', () => {
       const req = {
         body: {
           url,
-          paymentProvider: 'adyen'
+          paymentProvider: 'adyen',
+          gatewayAccountType: 'live'
         }
       }
 
       await controller(req, res)
 
       sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
-        proxy: 'https://fakeproxy.com',
-        cert: sinon.match(cert => cert.includes(adyenCertificate)),
-        key: sinon.match(key => key.includes(adyenKey))
+        proxy: 'https://fakeproxy.test',
+        cert: sinon.match(cert => cert.includes(adyenLiveCertificate)),
+        key: sinon.match(key => key.includes(adyenLiveKey))
       }))
 
       sinon.assert.calledWith(axiosCreateStub, sinon.match({
@@ -221,7 +231,53 @@ describe('Validate with Apple the merchant is legitimate', () => {
       sinon.assert.calledWith(axiosPostStub,
         sinon.match(url),
         sinon.match({
-          merchantIdentifier: adyenMerchantId,
+          merchantIdentifier: adyenLiveMerchantId,
+          displayName: 'GOV.UK Pay',
+          initiative: 'web',
+          initiativeContext: merchantDomain
+        }),
+        sinon.match({
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        })
+      )
+
+      sinon.assert.calledWith(res.status, 200)
+      sinon.assert.calledWith(sendSpy, appleResponse.data)
+    })
+
+    it('should return a payload for a Adyen payment if Merchant is valid and gateway account type is test', async () => {
+      const axiosPostStub = sinon.stub().resolves(appleResponse)
+      const axiosCreateStub = sinon.stub().returns({ post: axiosPostStub })
+      const axiosStub = {
+        create: axiosCreateStub
+      }
+      const controller = getControllerWithMocks(axiosStub)
+
+      const req = {
+        body: {
+          url,
+          paymentProvider: 'adyen',
+          gatewayAccountType: 'test'
+        }
+      }
+
+      await controller(req, res)
+
+      sinon.assert.calledWith(hpagentMock.HttpsProxyAgent, sinon.match({
+        proxy: 'https://fakeproxy.test',
+        cert: sinon.match(cert => cert.includes(adyenTestCertificate)),
+        key: sinon.match(key => key.includes(adyenTestKey))
+      }))
+
+      sinon.assert.calledWith(axiosCreateStub, sinon.match({
+        httpsAgent: sinon.match.any,
+        proxy: false
+      }))
+
+      sinon.assert.calledWith(axiosPostStub,
+        sinon.match(url),
+        sinon.match({
+          merchantIdentifier: adyenTestMerchantId,
           displayName: 'GOV.UK Pay',
           initiative: 'web',
           initiativeContext: merchantDomain
@@ -242,7 +298,8 @@ describe('Validate with Apple the merchant is legitimate', () => {
 
     const req = {
       body: {
-        paymentProvider: 'worldpay'
+        paymentProvider: 'worldpay',
+        gatewayAccountType: 'live'
       }
     }
     await controller(req, res)
@@ -257,7 +314,24 @@ describe('Validate with Apple the merchant is legitimate', () => {
     const req = {
       body: {
         url,
-        paymentProvider: 'mystery'
+        paymentProvider: 'mystery',
+        gatewayAccountType: 'live'
+      }
+    }
+    await controller(req, res)
+    sinon.assert.calledWith(res.sendStatus, 400)
+    sinon.assert.notCalled(axiosStub)
+  })
+
+    it('should return 400 for unexpected gateway account type', async () => {
+    const axiosStub = sinon.stub().resolves({ data: appleResponse.data, status: 200 })
+    const controller = getControllerWithMocks(axiosStub)
+
+    const req = {
+      body: {
+        url,
+        paymentProvider: 'adyen',
+        gatewayAccountType: 'dead'
       }
     }
     await controller(req, res)
@@ -276,7 +350,8 @@ describe('Validate with Apple the merchant is legitimate', () => {
     const req = {
       body: {
         url,
-        paymentProvider: 'worldpay'
+        paymentProvider: 'worldpay',
+        gatewayAccountType: 'live'
       }
     }
     await controller(req, res)

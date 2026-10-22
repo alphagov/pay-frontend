@@ -18,7 +18,7 @@ ${key}
 -----END PRIVATE KEY-----`
 }
 
-function getApplePayMerchantIdentityVariables (paymentProvider) {
+function getApplePayMerchantIdentityVariables (paymentProvider, gatewayAccountType) {
   switch (paymentProvider) {
     case 'sandbox':
     case 'worldpay':
@@ -34,11 +34,23 @@ function getApplePayMerchantIdentityVariables (paymentProvider) {
         key: getPrivateKeyMultiline(process.env.STRIPE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
       }
     case 'adyen':
-      return {
-        merchantIdentifier: process.env.ADYEN_APPLE_PAY_MERCHANT_ID,
-        cert: getCertificateMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
-        key: getPrivateKeyMultiline(process.env.ADYEN_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
-      }
+      switch (gatewayAccountType) {
+        case 'test':
+          return {
+            merchantIdentifier: process.env.ADYEN_TEST_APPLE_PAY_MERCHANT_ID,
+            cert: getCertificateMultiline(process.env.ADYEN_TEST_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+            key: getPrivateKeyMultiline(process.env.ADYEN_TEST_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+          }
+        case 'live':
+          return {
+            merchantIdentifier: process.env.ADYEN_LIVE_APPLE_PAY_MERCHANT_ID,
+            cert: getCertificateMultiline(process.env.ADYEN_LIVE_APPLE_PAY_MERCHANT_ID_CERTIFICATE),
+            key: getPrivateKeyMultiline(process.env.ADYEN_LIVE_APPLE_PAY_MERCHANT_ID_CERTIFICATE_KEY)
+          }
+        default:
+          logger.error(`Unexpected gatewayAccountType [${gatewayAccountType}] when getting Merchant Identity variables for Apple Pay`)
+          return false
+        }
     default:
       logger.error(`Unexpected payment provider [${paymentProvider}] when getting Merchant Identity variables for Apple Pay`)
       return false
@@ -52,8 +64,8 @@ module.exports = async (req, res) => {
   if (!req.body.url) {
     return res.sendStatus(400)
   }
-  const { url, paymentProvider } = req.body
-  const merchantIdentityVars = getApplePayMerchantIdentityVariables(paymentProvider)
+  const { url, paymentProvider, gatewayAccountType } = req.body
+  const merchantIdentityVars = getApplePayMerchantIdentityVariables(paymentProvider, gatewayAccountType)
   if (!merchantIdentityVars) {
     return res.sendStatus(400)
   }
