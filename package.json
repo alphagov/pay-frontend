@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "^22.22.0",
-    "npm": "^11.18.0"
+    "node": "^24.22.1",
+    "npm": "^11.19.1"
   },
   "standard": {
     "globals": [
@@ -74,8 +74,8 @@
   "dependencies": {
     "@aws-crypto/decrypt-node": "^1.0.3",
     "@aws-crypto/raw-rsa-keyring-node": "^1.1.0",
-    "@govuk-pay/pay-js-commons": "^7.0.77",
-    "@govuk-pay/pay-js-metrics": "^2.0.7",
+    "@govuk-pay/pay-js-commons": "^7.0.95",
+    "@govuk-pay/pay-js-metrics": "^2.0.17",
     "@sentry/node": "7.119.2",
     "cert-info": "^1.5.1",
     "change-case": "2.3.x",
